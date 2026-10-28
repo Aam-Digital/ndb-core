@@ -1,7 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import type { MockInstance } from "vitest";
-import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
+import {
+  AutomatedFieldUpdateConfigService,
+  MAX_ENTITIES_TO_REVIEW,
+} from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   MockEntityMapperService,
@@ -450,6 +455,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     open: vi.fn().mockName("MatDialog.open"),
   };
   const alertService = { addDanger: vi.fn() };
+  const confirmationDialog = mockConfirmationDialog();
   mockDialog.open.mockImplementation((component, config) => {
     mockDialogAfterClosed = () => of(config?.data?.entities || []);
     return mockDialogRef;
@@ -497,6 +503,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
         { provide: AlertService, useValue: alertService },
+        { provide: ConfirmationDialogService, useValue: confirmationDialog },
         // only the datatypes of the test entities' schemas, rather than a whole module
         {
           provide: DefaultDatatype,
@@ -794,6 +801,86 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     expect(updatedChild1.category).toBe("secondary-student");
     expect(updatedChild2.category).toBe("secondary-student");
+  });
+
+  describe("more affected records than can be shown quickly for review", () => {
+    function createSchoolWithChildren(numberOfChildren: number) {
+      const school = createSchool("primary");
+      const children = Array.from({ length: numberOfChildren }, () => {
+        const child = new Child();
+        child.school = school.getId();
+        return child;
+      });
+      entityMapper.addAll([school, ...children]);
+      return { school, children };
+    }
+
+    async function changeCategory(school: School) {
+      const before = school.copy();
+      school.category = TEST_SCHOOL_ENUM[1];
+      mockDialog.open.mockClear();
+      confirmationDialog.getConfirmation.mockClear();
+      return service.applyRulesToDependentEntities(school, before);
+    }
+
+    async function loadCategories(children: Child[]) {
+      const saved = await entityMapper.loadType(Child);
+      return children.map(
+        (child) => saved.find((s) => s.getId() === child.getId()).category,
+      );
+    }
+
+    it("shows them for review directly if there are not too many", async () => {
+      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW);
+
+      await changeCategory(school);
+
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+      expect(mockDialog.open).toHaveBeenCalledOnce();
+    });
+
+    it("asks the user first, and shows them for review if the user chooses so", async () => {
+      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW + 1);
+      confirmationDialog.getConfirmation.mockResolvedValueOnce("review");
+
+      await changeCategory(school);
+
+      expect(confirmationDialog.getConfirmation).toHaveBeenCalledOnce();
+      expect(mockDialog.open).toHaveBeenCalledOnce();
+    });
+
+    it("updates all of them with the suggested values without showing them, if the user chooses so", async () => {
+      const { school, children } = createSchoolWithChildren(
+        MAX_ENTITIES_TO_REVIEW + 1,
+      );
+      confirmationDialog.getConfirmation.mockResolvedValueOnce("update-all");
+
+      const previousVersions = await changeCategory(school);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      expect(new Set(await loadCategories(children))).toEqual(
+        new Set(["secondary-student"]),
+      );
+      expect(previousVersions).toHaveLength(children.length);
+    });
+
+    it.each([
+      ["cancels", false],
+      ["closes the question", undefined],
+    ])("updates none of them if the user %s", async (_, dialogResult) => {
+      const { school, children } = createSchoolWithChildren(
+        MAX_ENTITIES_TO_REVIEW + 1,
+      );
+      confirmationDialog.getConfirmation.mockResolvedValueOnce(dialogResult);
+
+      const previousVersions = await changeCategory(school);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      expect(new Set(await loadCategories(children))).toEqual(
+        new Set([undefined]),
+      );
+      expect(previousVersions).toEqual([]);
+    });
   });
 
   it("should map each value of a multi-select enum source and remove duplicates", () => {

@@ -3,6 +3,8 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import {
   AffectedEntity,
   AffectedRule,
@@ -27,6 +29,9 @@ import {
   QueuedChange,
 } from "./affected-entities-calculation";
 
+/** Above this number of affected entities, the dialog to review them can take long to show, so the user is asked first */
+export const MAX_ENTITIES_TO_REVIEW = 100;
+
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
   DatabaseIndexingService["generateIndexOnProperty"]
@@ -41,6 +46,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly ability = inject(EntityAbility, { optional: true });
@@ -578,10 +584,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       return { hasAffectedEntities: false, previousVersions: [] };
     }
 
-    const userConfirmed = await this.showConfirmationDialog(
-      affectedEntities,
-      triggers,
-    );
+    const userConfirmed = await this.confirmUpdates(affectedEntities, triggers);
     if (!userConfirmed) {
       return { hasAffectedEntities: true, previousVersions: [] };
     }
@@ -622,6 +625,45 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     // together, so that none of them is saved if the user may not save one of them
     await this.entityMapper.saveAll(entitiesToSave);
     return { hasAffectedEntities: true, previousVersions };
+  }
+
+  /**
+   * Lets the user confirm the updates. If there are too many to show them quickly for review,
+   * the user can also update all of them with the suggested values without reviewing them.
+   */
+  private async confirmUpdates(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise<AffectedEntity[] | null> {
+    if (entitiesToUpdate.length > MAX_ENTITIES_TO_REVIEW) {
+      const choice = await this.askHowToConfirmMany(entitiesToUpdate, triggers);
+      if (choice === "update-all") return entitiesToUpdate;
+      if (choice !== "review") return null;
+    }
+    return this.showConfirmationDialog(entitiesToUpdate, triggers);
+  }
+
+  private askHowToConfirmMany(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise<boolean | string | undefined> {
+    const count = new Set(entitiesToUpdate.map((entity) => entity.id)).size;
+    let text = $localize`:automated update of many related records:Showing all of them for review may take a while. You can also update all of them with the suggested values directly.`;
+    if (triggers.length > 1) {
+      text +=
+        "\n\n" +
+        $localize`:automated update of many related records after a bulk edit:If this is too slow, edit fewer records at once.`;
+    }
+    const buttons: ConfirmationDialogButton[] = [
+      { text: $localize`Review`, dialogResult: "review", click() {} },
+      { text: $localize`Update all`, dialogResult: "update-all", click() {} },
+      { text: $localize`Do not update`, dialogResult: false, click() {} },
+    ];
+    return this.confirmationDialog.getConfirmation(
+      $localize`:automated update of many related records:Update ${count}:count: related records?`,
+      text,
+      buttons,
+    );
   }
 
   /**
