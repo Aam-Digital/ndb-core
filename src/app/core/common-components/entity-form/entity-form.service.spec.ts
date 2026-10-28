@@ -33,10 +33,16 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
 import { Logging } from "../../logging/logging.service";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import {
+  ConfirmationDialogMock,
+  mockConfirmationDialog,
+} from "../../../utils/test-utils/dialog-mocks";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
   let destroyRef: MockDestroyRef;
+  let confirmationDialog: ConfirmationDialogMock;
 
   /** wrapper passing a controllable DestroyRef to the service under test */
   const createForm = <T extends Entity>(
@@ -56,8 +62,12 @@ describe("EntityFormService", () => {
     );
 
   beforeEach(waitForAsync(() => {
+    confirmationDialog = mockConfirmationDialog();
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
+      providers: [
+        { provide: ConfirmationDialogService, useValue: confirmationDialog },
+      ],
     });
     service = TestBed.inject(EntityFormService);
     destroyRef = new MockDestroyRef();
@@ -274,6 +284,67 @@ describe("EntityFormService", () => {
     return expect(
       service.saveChanges(form, new ChildSchoolRelation()),
     ).rejects.toEqual(expect.any(InvalidFormFieldError));
+  });
+
+  describe("warnings (validation errors marked with `warning: true`)", () => {
+    const warning = () => ({
+      withinParent: {
+        warning: true,
+        errorMessage: "Outside the period of Training",
+      },
+    });
+
+    function entityFormWith(controls: Record<string, FormControl>) {
+      TestBed.inject(EntityAbility).update([
+        { subject: "Entity", action: "create" },
+      ]);
+      const entity = new Entity("1");
+      return {
+        entity,
+        entityForm: createMockEntityForm(
+          entity,
+          new UntypedFormGroup(controls),
+        ),
+      };
+    }
+
+    it("asks to confirm the warnings and saves after confirming them", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+
+      await service.saveChanges(entityForm, entity);
+
+      expect(confirmationDialog.getConfirmation).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining("Outside the period of Training"),
+      );
+      expect(entityForm.formGroup.disabled).toBe(true);
+    });
+
+    it("does not save if the warnings are not confirmed", async () => {
+      confirmationDialog.getConfirmation.mockResolvedValue(false);
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+
+      await expect(service.saveChanges(entityForm, entity)).rejects.toEqual(
+        expect.any(InvalidFormFieldError),
+      );
+      expect(entityForm.formGroup.enabled).toBe(true);
+    });
+
+    it("does not ask about warnings while another field has a real error", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+        name: new FormControl("", { validators: () => ({ required: true }) }),
+      });
+
+      await expect(service.saveChanges(entityForm, entity)).rejects.toEqual(
+        expect.any(InvalidFormFieldError),
+      );
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    });
   });
 
   it("should set pending changes once a form is edited and reset it once saved or canceled", async () => {

@@ -1,6 +1,11 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  FormGroup,
+} from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -11,6 +16,8 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { filter } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
@@ -39,6 +46,7 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
+  private confirmationDialog = inject(ConfirmationDialogService);
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -303,7 +311,7 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    this.checkFormValidity(form);
+    await this.checkFormValidity(form);
 
     const originalEntity = entity.copy();
     const updatedEntity = this.createUpdatedEntity(entity, form);
@@ -337,10 +345,30 @@ export class EntityFormService {
     return entity;
   }
 
-  private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
+  /**
+   * Throws an `InvalidFormFieldError` if a field is invalid.
+   * Errors marked with `warning: true` (e.g. a period outside its parent's) only need to be confirmed by the user.
+   */
+  private async checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
-    if (form.invalid) {
+    if (form.pending) {
+      await firstValueFrom(
+        form.statusChanges.pipe(filter((status) => status !== "PENDING")),
+      );
+    }
+    if (!form.invalid) {
+      return;
+    }
+
+    const warnings = getWarnings(form);
+    const confirmed =
+      warnings &&
+      (await this.confirmationDialog.getConfirmation(
+        $localize`Save anyway?`,
+        warnings.join("\n"),
+      ));
+    if (!confirmed) {
       throw new InvalidFormFieldError();
     }
   }
@@ -410,4 +438,17 @@ export class EntityFormService {
     this.unsavedChanges.setUnsavedChanges(entityForm, false);
     entityForm.onFormStateChange.emit("cancelled");
   }
+}
+
+/** the messages of the form's errors, if all of them are warnings (marked with `warning: true`) */
+function getWarnings(form: FormGroup): string[] | undefined {
+  if (form.errors) {
+    return undefined;
+  }
+  const errors = Object.values(form.controls).flatMap((control) =>
+    Object.values(control.errors ?? {}),
+  );
+  return errors.every((error) => error?.warning)
+    ? errors.map((error) => error.errorMessage)
+    : undefined;
 }
