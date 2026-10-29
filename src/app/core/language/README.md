@@ -179,10 +179,10 @@ An internal entity's own texts (e.g. `ReportConfig.title`,
 title: TranslatableText;
 ```
 
-That one line gives the field a translations editor, sorting and filtering by the
-displayed text, and resolved CSV exports. The datatype's transforms are the
-identity on purpose: the entity holds the raw value, because resolving on save
-would drop the other languages.
+That one line gives the field a translations editor, sorting by the displayed
+text, a text filter matching the text in any language, and resolved CSV
+exports. The datatype's transforms are the identity on purpose: the entity
+holds the raw value, because resolving on save would drop the other languages.
 
 Admins edit these through `TranslatableTextInputComponent`, which shows the active
 language inline and opens `ConfigureTranslationsPopupComponent` for the full
