@@ -6,6 +6,7 @@ import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Subject } from "rxjs";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import {
@@ -371,6 +372,33 @@ describe("EditDateRangeComponent", () => {
         "Period of Training",
       );
       expect(form.get("period").value).toEqual({ start, end });
+    });
+
+    it("sets the predefined period selected in the panel, even if the parent's period loads while the panel is open", async () => {
+      const { form, warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      const panelClosed = new Subject<{ selectedOptionValues: string[] }>();
+      dialog.open.mockReturnValue({
+        ...mockMatDialogRef(),
+        afterClosed: vi.fn().mockReturnValue(panelClosed),
+      });
+
+      component.openPanel(new Event("click"));
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions).toEqual(
+        periodRangeOptions,
+      );
+      await warning();
+      panelClosed.next({ selectedOptionValues: ["0"] });
+
+      expect(form.get("period").value).toEqual({
+        start: new Date(today.getFullYear(), today.getMonth(), 1),
+        end: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+      });
     });
 
     it("shades the parent's period in the calendar", async () => {

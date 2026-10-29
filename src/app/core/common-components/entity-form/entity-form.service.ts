@@ -1,6 +1,12 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  FormGroup,
+} from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -455,21 +461,29 @@ function getWarnings<T extends Entity>(
   entityForm: EntityForm<T>,
 ): string[] | undefined {
   const form = entityForm.formGroup;
-  if (form.errors) {
-    return undefined;
-  }
-  const errors = Object.entries(form.controls).flatMap(([fieldId, control]) =>
-    Object.values(control.errors ?? {}).map((error) => ({ fieldId, error })),
-  );
-  if (!errors.every(({ error }) => error?.warning)) {
+  if (!hasOnlyWarnings(form)) {
     return undefined;
   }
   const label = (fieldId: string) =>
     entityForm.fieldConfigs.find((field) => field.id === fieldId)?.label ??
     fieldId;
-  return errors.map(
-    ({ fieldId, error }) =>
-      `**${escapeMarkdown(label(fieldId))}:** ${escapeMarkdown(error.errorMessage)}`,
+  return Object.entries(form.controls).flatMap(([fieldId, control]) =>
+    Object.values(control.errors ?? {}).map(
+      (error) =>
+        `**${escapeMarkdown(label(fieldId))}:** ${escapeMarkdown(error.errorMessage)}`,
+    ),
+  );
+}
+
+/** whether all errors of the form are warnings (marked with `warning: true`), which saving only asks to confirm */
+export function hasOnlyWarnings(form: FormGroup): boolean {
+  return (
+    !form.errors &&
+    Object.values<AbstractControl>(form.controls).every((control) =>
+      Object.values<{ warning?: boolean }>(control.errors ?? {}).every(
+        (error) => error?.warning,
+      ),
+    )
   );
 }
 

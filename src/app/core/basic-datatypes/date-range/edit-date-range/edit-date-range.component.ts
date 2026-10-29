@@ -237,13 +237,15 @@ export class EditDateRangeComponent
     }
 
     const { start, end } = this.range.value;
+    // the panel returns an index into these, which must not shift if the parent's period loads in the meantime
+    const rangeOptions = this.rangeOptions();
     this.dialog
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
         data: {
           dateRange: new DateRange(start ?? null, end ?? null),
-          rangeOptions: this.rangeOptions(),
+          rangeOptions,
           hideAllOption: true,
           highlightRange: this.highlightedParentRange(),
         },
@@ -251,13 +253,18 @@ export class EditDateRangeComponent
       .afterClosed()
       .subscribe((result?: { selectedOptionValues: string[] }) => {
         if (result?.selectedOptionValues?.length) {
-          this.range.setValue(this.toDates(result.selectedOptionValues));
+          this.range.setValue(
+            this.toDates(result.selectedOptionValues, rangeOptions),
+          );
         }
       });
   }
 
   /** The dates of a selection in the panel: "no date", the index of a predefined range, or two picked dates. */
-  private toDates([first, second]: string[]): {
+  private toDates(
+    [first, second]: string[],
+    rangeOptions: DateRangeFilterConfigOption[],
+  ): {
     start: Date | null;
     end: Date | null;
   } {
@@ -265,7 +272,7 @@ export class EditDateRangeComponent
       return { start: null, end: null };
     }
     if (second === undefined) {
-      const range = calculateDateRange(this.rangeOptions()[Number(first)]);
+      const range = calculateDateRange(rangeOptions[Number(first)]);
       return { start: startOfDay(range.start), end: startOfDay(range.end) };
     }
     return { start: fromDateString(first), end: fromDateString(second) };
