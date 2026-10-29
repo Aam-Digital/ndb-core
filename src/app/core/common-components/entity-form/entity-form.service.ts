@@ -1,11 +1,6 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  FormBuilder,
-  FormControl,
-  FormControlOptions,
-  FormGroup,
-} from "@angular/forms";
+import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -18,6 +13,7 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { filter } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { CustomYesNoButtons } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
@@ -319,7 +315,7 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    await this.checkFormValidity(form);
+    await this.checkFormValidity(entityForm);
 
     const originalEntity = entity.copy();
     const updatedEntity = this.createUpdatedEntity(entity, form);
@@ -357,7 +353,8 @@ export class EntityFormService {
    * Throws an `InvalidFormFieldError` if a field is invalid.
    * Errors marked with `warning: true` (e.g. a period outside its parent's) only need to be confirmed by the user.
    */
-  private async checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
+  private async checkFormValidity<T extends Entity>(entityForm: EntityForm<T>) {
+    const form = entityForm.formGroup;
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.pending) {
@@ -369,12 +366,15 @@ export class EntityFormService {
       return;
     }
 
-    const warnings = getWarnings(form);
+    const warnings = getWarnings(entityForm);
     const confirmed =
-      warnings &&
+      warnings?.length &&
       (await this.confirmationDialog.getConfirmation(
         $localize`Save anyway?`,
-        warnings.join("\n"),
+        warnings.length > 1
+          ? warnings.map((warning) => `- ${warning}`).join("\n")
+          : warnings[0],
+        CustomYesNoButtons($localize`Save anyway`, $localize`Keep editing`),
       ));
     if (!confirmed) {
       throw new InvalidFormFieldError();
@@ -448,15 +448,32 @@ export class EntityFormService {
   }
 }
 
-/** the messages of the form's errors, if all of them are warnings (marked with `warning: true`) */
-function getWarnings(form: FormGroup): string[] | undefined {
+/**
+ * The form's errors as "field label: message" (in markdown), if all of them are warnings (marked with `warning: true`).
+ */
+function getWarnings<T extends Entity>(
+  entityForm: EntityForm<T>,
+): string[] | undefined {
+  const form = entityForm.formGroup;
   if (form.errors) {
     return undefined;
   }
-  const errors = Object.values(form.controls).flatMap((control) =>
-    Object.values(control.errors ?? {}),
+  const errors = Object.entries(form.controls).flatMap(([fieldId, control]) =>
+    Object.values(control.errors ?? {}).map((error) => ({ fieldId, error })),
   );
-  return errors.every((error) => error?.warning)
-    ? errors.map((error) => error.errorMessage)
-    : undefined;
+  if (!errors.every(({ error }) => error?.warning)) {
+    return undefined;
+  }
+  const label = (fieldId: string) =>
+    entityForm.fieldConfigs.find((field) => field.id === fieldId)?.label ??
+    fieldId;
+  return errors.map(
+    ({ fieldId, error }) =>
+      `**${escapeMarkdown(label(fieldId))}:** ${escapeMarkdown(error.errorMessage)}`,
+  );
+}
+
+/** so that markdown shows the text as it is (e.g. a record name in angle brackets, which would be read as HTML) */
+function escapeMarkdown(text: string): string {
+  return text.replace(/[\\`*_[\]<>#|~]/g, "\\$&");
 }

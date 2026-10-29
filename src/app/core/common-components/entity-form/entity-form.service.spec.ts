@@ -378,6 +378,7 @@ describe("EntityFormService", () => {
       expect(confirmationDialog.getConfirmation).toHaveBeenCalledWith(
         expect.any(String),
         expect.stringContaining("Outside the period of Training"),
+        expect.anything(),
       );
       expect(entityForm.formGroup.disabled).toBe(true);
     });
