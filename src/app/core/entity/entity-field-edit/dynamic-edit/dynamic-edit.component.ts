@@ -25,6 +25,7 @@ export class DynamicEditComponent
 
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
+  highlightAdded = input<boolean>();
 
   override get disabled(): boolean {
     const control = this.ngControl?.control;

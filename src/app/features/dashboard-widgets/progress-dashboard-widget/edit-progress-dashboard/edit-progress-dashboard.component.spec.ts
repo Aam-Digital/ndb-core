@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
@@ -44,6 +46,10 @@ describe("EditProgressDashboardComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
         {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,

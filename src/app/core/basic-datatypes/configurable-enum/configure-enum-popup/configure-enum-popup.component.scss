@@ -1,4 +1,13 @@
+@use "variables/colors";
+
 .grab-icon {
   cursor: grab;
   padding-inline-start: 5px;
+}
+.translations-button {
+  color: colors.$muted;
+}
+
+.translations-button.is-multi-lingual {
+  color: colors.$accent;
 }

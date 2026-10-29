@@ -4,28 +4,52 @@
     {
       "id": "PRESENT",
       "shortName": "P",
-      "label": "Present",
+      "label": {
+        "en-US": "Present",
+        "de": "Anwesend",
+        "fr": "Présent",
+        "es": "Presente",
+        "ar": "حاضر"
+      },
       "color": "#c8e6c9",
       "countAs": "PRESENT"
     },
     {
       "id": "ABSENT",
       "shortName": "A",
-      "label": "Absent",
+      "label": {
+        "en-US": "Absent",
+        "de": "Abwesend",
+        "fr": "Absent",
+        "es": "Ausente",
+        "ar": "غائب"
+      },
       "color": "#ff8a65",
       "countAs": "ABSENT"
     },
     {
       "id": "LATE",
       "shortName": "L",
-      "label": "Late",
+      "label": {
+        "en-US": "Late",
+        "de": "Zu spät",
+        "fr": "En retard",
+        "es": "Tarde",
+        "ar": "متأخر"
+      },
       "color": "#ffecb3",
       "countAs": "PRESENT"
     },
     {
       "id": "EXCUSED",
       "shortName": "E",
-      "label": "Excused",
+      "label": {
+        "en-US": "Excused",
+        "de": "Entschuldigt",
+        "fr": "Excusé",
+        "es": "Justificado",
+        "ar": "بعذر"
+      },
       "color": "#d7ccc8",
       "countAs": "IGNORE"
     }

@@ -6,6 +6,7 @@ import { of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ConfigurableEnum } from "../configurable-enum";
@@ -65,6 +66,20 @@ describe("EditConfigurableEnumComponent", () => {
 
   it("should extract the enum ID", () => {
     expect(component.enumId()).toBe("some-id");
+  });
+
+  it("should only compare with the existing values of the entity if added values are highlighted", () => {
+    const existing = { id: "a", label: "A" };
+    const entity = new Entity();
+    entity["test"] = [existing];
+    fixture.componentRef.setInput("entity", entity);
+    expect(component.existingValues()).toBeUndefined();
+
+    fixture.componentRef.setInput("highlightAdded", true);
+    expect(component.existingValues()).toEqual([existing]);
+
+    fixture.componentRef.setInput("entity", new Entity());
+    expect(component.existingValues()).toEqual([]);
   });
 
   it("should detect multi selection mode", async () => {

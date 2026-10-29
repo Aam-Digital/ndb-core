@@ -56,7 +56,7 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).not.toHaveBeenCalled();
 
-    settings.displayLanguageSelect = false;
+    settings.hideSiteNameInToolbar = true;
     entityMapper.add(settings);
 
     expect(titleSpy).not.toHaveBeenCalled();
@@ -67,16 +67,71 @@ describe("SiteSettingsService", () => {
     expect(titleSpy).toHaveBeenCalled();
 
     titleSpy.mockClear();
-    settings.displayLanguageSelect = true;
+    settings.hideSiteNameInToolbar = false;
     entityMapper.add(settings);
 
     expect(titleSpy).not.toHaveBeenCalled();
 
-    settings.displayLanguageSelect = false;
+    settings.hideSiteNameInToolbar = true;
     settings.siteName = "Another new name";
     entityMapper.add(settings);
 
     expect(titleSpy).toHaveBeenCalled();
+  });
+
+  const DE = { id: "de", label: "German" };
+  const FR = { id: "fr", label: "French" };
+  const EN = { id: "en-US", label: "English" };
+
+  it.each([
+    ["no list: only the default language", [], DE, [DE]],
+    [
+      "no list and no default language: all languages",
+      [],
+      undefined,
+      availableLocales.values,
+    ],
+    ["list with the default language", [DE, FR], DE, [DE, FR]],
+    ["list without the default language", [FR], DE, [FR, DE]],
+    ["list and no default language set", [FR, EN], undefined, [FR, EN]],
+  ])(
+    "should enable locales for %s",
+    (_, enabled, defaultLanguage, expected) => {
+      entityMapper.add(
+        SiteSettings.create({
+          availableLocales: enabled,
+          defaultLanguage: defaultLanguage,
+        }),
+      );
+
+      expect(service.enabledLocales()).toEqual(expected);
+    },
+  );
+
+  describe("translationsEnabled", () => {
+    const originalFlag = environment.multiLingualConfigEnabled;
+
+    afterEach(() => {
+      environment.multiLingualConfigEnabled = originalFlag;
+    });
+
+    it.each([
+      ["the flag is off", false, [DE, FR], false],
+      [
+        "the flag is on but only the default language is enabled",
+        true,
+        [],
+        false,
+      ],
+      ["the flag is on and several languages are enabled", true, [FR], true],
+    ])("is %s", (_, flag, enabled, expected) => {
+      environment.multiLingualConfigEnabled = flag;
+      entityMapper.add(
+        SiteSettings.create({ availableLocales: enabled, defaultLanguage: DE }),
+      );
+
+      expect(service.translationsEnabled()).toBe(expected);
+    });
   });
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
@@ -206,5 +261,37 @@ describe("SiteSettingsService", () => {
       }
       environment.session_type = originalSessionType;
     }
+  });
+  it("saves a new default language without losing other settings", async () => {
+    entityMapper.add(SiteSettings.create({ siteName: "My site" }));
+
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    const saved = await entityMapper.load(SiteSettings, SiteSettings.ENTITY_ID);
+    expect(saved.defaultLanguage.id).toBe("de");
+    expect(saved.siteName).toBe("My site");
+  });
+
+  it("caches a saved default language before the database change feed delivers it", async () => {
+    // a cached default from a previous system (e.g. before restarting the demo)
+    storage.setItem(
+      service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+      JSON.stringify({ defaultLanguage: "fr" }),
+    );
+    // the update is not emitted yet when the caller reloads the app right after saving
+    vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
+
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    expect(storage.getItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY)).toMatch(
+      '"defaultLanguage":"de"',
+    );
+  });
+
+  it("creates the site settings to save the default language on a fresh system", async () => {
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    const saved = await entityMapper.load(SiteSettings, SiteSettings.ENTITY_ID);
+    expect(saved.defaultLanguage.id).toBe("de");
   });
 });

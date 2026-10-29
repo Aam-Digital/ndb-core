@@ -32,6 +32,13 @@
           "NotificationEvent"
         ],
         "action": "manage"
+      },
+      {
+        "subject": "UserSettings",
+        "action": "manage",
+        "conditions": {
+          "userId": "${user.id}"
+        }
       }
     ],
     "user_app": [

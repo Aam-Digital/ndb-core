@@ -42,6 +42,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { DateFilter } from "../filters/dateFilter";
 import { StringFilter } from "../filters/stringFilter";
+import { TranslatableTextFilter } from "../filters/translatableTextFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
@@ -483,6 +484,28 @@ describe("FilterGeneratorService", () => {
     TestEntity.schema.delete("customEditField");
   });
 
+  it("should create a text filter searching all languages for 'translatable-text' fields", async () => {
+    @DatabaseEntity("TranslatableTextFilterTestEntity")
+    class TranslatableTextFilterTestEntity extends Entity {}
+    TranslatableTextFilterTestEntity.schema.set("title", {
+      dataType: "translatable-text",
+      label: "Title",
+    });
+    const entity = new TranslatableTextFilterTestEntity();
+    entity["title"] = { "en-US": "Monthly report", de: "Monatsbericht" };
+
+    const filter = (
+      await service.generate(
+        [{ id: "title" }],
+        TranslatableTextFilterTestEntity,
+        [entity],
+      )
+    )[0];
+
+    expect(filter).toBeInstanceOf(TranslatableTextFilter);
+    expect(filter.label).toBe("Title");
+  });
+
   it("should not create a string filter for string fields with a special edit component", async () => {
     TestEntity.schema.set("specialString", {
       dataType: "string",
@@ -731,76 +754,70 @@ describe("FilterGeneratorService", () => {
     expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
   });
 
-  describe("filters for properties nested in an embedded field (e.g. Note.childrenAttendance.participant)", () => {
+  describe("filters for properties nested in an embedded field (e.g. childrenAttendance.participant)", () => {
     it("should create an entity filter for a reference nested in an embedded array field, matching if any entry has the selected value", async () => {
-      const outerSchema = Note.schema.get("childrenAttendance");
-      const participantSchema = outerSchema.additional.participant;
-      const original = {
-        outerLabel: outerSchema.label,
-        participantLabel: participantSchema.label,
-        participantAdditional: participantSchema.additional,
-      };
-      outerSchema.label = "Children attendance";
-      participantSchema.label = "Participant";
-      // simplify the test to not depend on the real "Child" entity type
-      participantSchema.additional = TestEntity.ENTITY_TYPE;
+      @DatabaseEntity("EmbeddedAttendanceTestEntity")
+      class EmbeddedAttendanceTestEntity extends Entity {}
+      EmbeddedAttendanceTestEntity.schema.set("childrenAttendance", {
+        dataType: "event-attendance-map",
+        label: "Children attendance",
+        additional: {
+          participant: {
+            dataType: "entity",
+            label: "Participant",
+            additional: TestEntity.ENTITY_TYPE,
+          },
+        },
+      });
 
-      try {
-        const child1 = new TestEntity();
-        child1.name = "Child One";
-        const child2 = new TestEntity();
-        child2.name = "Child Two";
-        await TestBed.inject(EntityMapperService).saveAll([child1, child2]);
+      const child1 = new TestEntity();
+      child1.name = "Child One";
+      const child2 = new TestEntity();
+      child2.name = "Child Two";
+      await TestBed.inject(EntityMapperService).saveAll([child1, child2]);
 
-        const note1 = new Note();
-        note1.childrenAttendance = [
-          new AttendanceItem(undefined, undefined, child1.getId()),
-        ];
-        const note2 = new Note();
-        note2.childrenAttendance = [
-          new AttendanceItem(undefined, undefined, child2.getId()),
-          new AttendanceItem(undefined, undefined, child1.getId()),
-        ];
-        const note3 = new Note(); // no attendance entries at all
-        const note4 = new Note();
-        note4.childrenAttendance = [new AttendanceItem()]; // entry without a participant
-        const allNotes = [note1, note2, note3, note4];
+      const note1 = new EmbeddedAttendanceTestEntity();
+      note1["childrenAttendance"] = [
+        new AttendanceItem(undefined, undefined, child1.getId()),
+      ];
+      const note2 = new EmbeddedAttendanceTestEntity();
+      note2["childrenAttendance"] = [
+        new AttendanceItem(undefined, undefined, child2.getId()),
+        new AttendanceItem(undefined, undefined, child1.getId()),
+      ];
+      const note3 = new EmbeddedAttendanceTestEntity(); // no attendance entries at all
+      note3["childrenAttendance"] = [];
+      const note4 = new EmbeddedAttendanceTestEntity();
+      note4["childrenAttendance"] = [new AttendanceItem()]; // entry without a participant
+      const allNotes = [note1, note2, note3, note4];
 
-        const filterOptions = (
-          await service.generate(
-            [{ id: "childrenAttendance.participant" }],
-            Note,
-            allNotes,
-          )
-        )[0] as EntityFilter<TestEntity>;
+      const filterOptions = (
+        await service.generate(
+          [{ id: "childrenAttendance.participant" }],
+          EmbeddedAttendanceTestEntity,
+          allNotes,
+        )
+      )[0] as EntityFilter<TestEntity>;
 
-        expect(filterOptions.label).toEqual(
-          "Children attendance -> Participant",
-        );
-        expect(filterOptions.name).toEqual("childrenAttendance.participant");
+      expect(filterOptions.label).toEqual("Children attendance -> Participant");
+      expect(filterOptions.name).toEqual("childrenAttendance.participant");
 
-        const child1Option = filterOptions.options.find(
-          (opt) => opt.key === child1.getId(),
-        );
-        expect(child1Option.label).toEqual(child1.name);
-        expect(filter(allNotes, child1Option)).toEqual([note1, note2]);
+      const child1Option = filterOptions.options.find(
+        (opt) => opt.key === child1.getId(),
+      );
+      expect(child1Option.label).toEqual(child1.name);
+      expect(filter(allNotes, child1Option)).toEqual([note1, note2]);
 
-        const child2Option = filterOptions.options.find(
-          (opt) => opt.key === child2.getId(),
-        );
-        expect(filter(allNotes, child2Option)).toEqual([note2]);
+      const child2Option = filterOptions.options.find(
+        (opt) => opt.key === child2.getId(),
+      );
+      expect(filter(allNotes, child2Option)).toEqual([note2]);
 
-        const emptyOption = filterOptions.options.find(
-          (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
-        );
-        // notes without any attendance entries, or with an entry lacking a participant
-        expect(filter(allNotes, emptyOption)).toEqual([note3, note4]);
-      } finally {
-        // restore even on a failed assertion, the schema is shared across spec files
-        outerSchema.label = original.outerLabel;
-        participantSchema.label = original.participantLabel;
-        participantSchema.additional = original.participantAdditional;
-      }
+      const emptyOption = filterOptions.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      // records without any attendance entries, or with an entry lacking a participant
+      expect(filter(allNotes, emptyOption)).toEqual([note3, note4]);
     });
 
     it("should create a configurable-enum filter for a property nested in an embedded array field", async () => {

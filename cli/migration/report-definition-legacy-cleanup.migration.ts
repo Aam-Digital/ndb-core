@@ -60,7 +60,7 @@ type CleanupOutcome =
  * Idempotent: once the legacy fields are gone, a re-run is a no-op.
  */
 export const reportDefinitionLegacyCleanup: MigrationDefinition = {
-  id: "oneoff-20261022-report-definition-legacy-cleanup",
+  id: "v4-upgrade-report-definition-legacy-cleanup",
   description:
     "Remove legacy ReportConfig fields (aggregationDefinitions, SQL v1 aggregationDefinition/neededArgs/version), consolidating them into reportDefinition first where needed. Safe to re-run.",
 

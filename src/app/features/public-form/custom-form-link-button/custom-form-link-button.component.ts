@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { LocaleTextPipe } from "#src/app/core/language/locale-text.pipe";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -24,6 +25,7 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
     MatTooltipModule,
     FontAwesomeModule,
     FaDynamicIconComponent,
+    LocaleTextPipe,
   ],
 })
 export class CustomFormLinkButtonComponent {

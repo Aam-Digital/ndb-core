@@ -154,4 +154,39 @@ describe("Entity", () => {
       "Male 25 " + new Date("2025-01-31").toLocaleDateString(),
     );
   });
+
+  it("should resolve a multi-lingual configured text in toStringAttributes (#3862)", () => {
+    @DatabaseEntity("TestEntityMultiLingualToString")
+    class TestEntityMultiLingualToString extends Entity {
+      static override readonly toStringAttributes = ["title"];
+      static override readonly label = "TestMultiLingual";
+      title: any = { "en-US": "Example form", de: "Beispielformular" };
+    }
+
+    const testEntity = new TestEntityMultiLingualToString();
+
+    // the default active locale in tests is en-US
+    expect(testEntity.toString()).toBe("Example form");
+    // the raw value is untouched, so saving the entity keeps every language
+    expect(testEntity.title).toEqual({
+      "en-US": "Example form",
+      de: "Beispielformular",
+    });
+  });
+
+  it("should leave values that are not translation maps untouched", () => {
+    @DatabaseEntity("TestEntityNonTranslatableToString")
+    class TestEntityNonTranslatableToString extends Entity {
+      static override readonly toStringAttributes = ["plain", "notALocaleMap"];
+      static override readonly label = "TestNonTranslatable";
+      plain = "Plain";
+      // keys that are not locale ids must not be treated as translations
+      notALocaleMap: any = { label: "FromLabel" };
+    }
+
+    const testEntity = new TestEntityNonTranslatableToString();
+
+    // `label` is still preferred, and the plain string passes through unchanged
+    expect(testEntity.toString()).toBe("Plain FromLabel");
+  });
 });

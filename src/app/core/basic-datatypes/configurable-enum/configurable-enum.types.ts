@@ -10,6 +10,7 @@ export interface ConfigurableEnumValue extends HasOrdinal {
 
   /**
    * human-readable name that is displayed representing the value in the UI
+   * (stored it may be a per-language map, resolved by `getEnumValues()`)
    */
   label: string;
 

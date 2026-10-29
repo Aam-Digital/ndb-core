@@ -27,6 +27,7 @@ import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { DateFilter } from "../filters/dateFilter";
 import { StringFilter } from "../filters/stringFilter";
+import { TranslatableTextFilter } from "../filters/translatableTextFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import {
   buildEnumValueFilter,
@@ -37,6 +38,7 @@ import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynami
 import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
 import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
 import { UrlDatatype } from "../../basic-datatypes/string/url.datatype";
+import { TranslatableTextDatatype } from "../../config/translatable-text.datatype";
 import { asArray } from "app/utils/asArray";
 import {
   EmbeddedFieldRef,
@@ -154,6 +156,8 @@ export class FilterGeneratorService {
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
           this.getDateDatatype(type) instanceof DateRangeDatatype,
         );
+      } else if (type === TranslatableTextDatatype.dataType) {
+        filter = new TranslatableTextFilter(filterConfig.id, label);
       } else if (this.isFreeTextField(type, schema)) {
         filter = new StringFilter(filterConfig.id, label);
       } else if (

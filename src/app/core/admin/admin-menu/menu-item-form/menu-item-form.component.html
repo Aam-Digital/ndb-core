@@ -2,11 +2,10 @@
   @if (!hideLabel()) {
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Label</mat-label>
-      <input
-        matInput
-        [ngModel]="itemLabel()"
-        (ngModelChange)="itemLabel.set($event)"
-      />
+      <app-translatable-text-input
+        [value]="itemLabel()"
+        (valueChange)="itemLabel.set($event)"
+      ></app-translatable-text-input>
     </mat-form-field>
   }
 

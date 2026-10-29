@@ -96,7 +96,7 @@
             {
               "label": "Users",
               "icon": "users",
-              "link": "/user"
+              "entityType": "User"
             }
           ]
         }
@@ -129,7 +129,10 @@
             }
           },
           {
-            "component": "EntityCountDashboard"
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Child"
+            }
           },
           {
             "component": "ImportantNotesDashboard",
@@ -141,11 +144,13 @@
             }
           },
           {
-            "component": "TodosDashboard"
+            "component": "TodosDashboard",
+            "config": {}
           },
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "with-recent-notes"
@@ -154,6 +159,7 @@
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "without-recent-notes"
@@ -208,14 +214,6 @@
       "labelPlural": "Notes",
       "hasPII": true,
       "attributes": {
-        "children": {
-          "label": "Children",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "Child",
-          "entityReferenceRole": "composite",
-          "anonymize": "retain"
-        },
         "date": {
           "label": "Date",
           "dataType": "date-only",
@@ -266,14 +264,11 @@
         "relatedEntities": {
           "label": "Related Records",
           "dataType": "entity",
+          "additional": [
+            "Child",
+            "School"
+          ],
           "isArray": true,
-          "anonymize": "retain"
-        },
-        "schools": {
-          "label": "Groups",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "School",
           "entityReferenceRole": "composite",
           "anonymize": "retain"
         },
@@ -300,7 +295,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -308,7 +303,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]
@@ -880,10 +875,9 @@
             "title": "Education",
             "components": [
               {
-                "title": "School History",
-                "component": "ChildSchoolOverview",
+                "component": "RelatedEntities",
                 "config": {
-                  "single": true,
+                  "entityType": "ChildSchoolRelation",
                   "columns": [
                     {
                       "id": "start",
@@ -896,7 +890,10 @@
                     "schoolId",
                     "schoolClass",
                     "result"
-                  ]
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations",
+                  "showInactive": true,
+                  "single": true
                 }
               },
               {
@@ -947,7 +944,8 @@
             "components": [
               {
                 "title": "",
-                "component": "GroupedChildAttendance"
+                "component": "GroupedChildAttendance",
+                "config": {}
               },
               {
                 "title": "Event Attendance",
@@ -974,11 +972,69 @@
             "components": [
               {
                 "title": "",
-                "component": "NotesRelatedToEntity"
+                "component": "NotesRelatedToEntity",
+                "config": {
+                  "entityType": "Note",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "subject",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "text",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "authors",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "warningLevel",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
               },
               {
                 "title": "Tasks",
-                "component": "TodosRelatedToEntity"
+                "component": "TodosRelatedToEntity",
+                "config": {
+                  "entityType": "Todo",
+                  "columns": [
+                    {
+                      "id": "deadline"
+                    },
+                    {
+                      "id": "subject"
+                    },
+                    {
+                      "id": "startDate"
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "repetitionInterval",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "relatedEntities",
+                      "hideFromTable": true
+                    },
+                    {
+                      "id": "completed",
+                      "hideFromForm": true
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1301,7 +1357,8 @@
             "title": "Events & Attendance",
             "components": [
               {
-                "component": "ActivityAttendanceSection"
+                "component": "ActivityAttendanceSection",
+                "config": {}
               }
             ]
           }
@@ -1344,7 +1401,10 @@
         },
         "projectNumber": {
           "dataType": "string",
-          "label": "Project Number",
+          "label": {
+            "en-US": "Project Number",
+            "de": "Projektnummer"
+          },
           "labelShort": "PN",
           "searchable": true,
           "anonymize": "retain",
@@ -1401,12 +1461,12 @@
           "dataType": "string",
           "label": "Status",
           "defaultValue": {
-            "mode": "updated-from-referencing-entity",
+            "mode": "inherited-field",
             "config": {
-              "relatedReferenceField": "participants",
-              "relatedEntityType": "RecurringActivity",
-              "relatedTriggerField": "status",
-              "automatedMapping": {
+              "sourceReferenceEntity": "RecurringActivity",
+              "sourceReferenceField": "participants",
+              "sourceValueField": "status",
+              "valueMapping": {
                 "PLANNED": "coaching requested",
                 "ONGOING": "in coaching",
                 "COMPLETED": "coaching completed"
@@ -1528,9 +1588,42 @@
         "enumMulti": {
           "id": "enumMulti",
           "label": "enum multi",
+          "description": "Collects the Centers of all children linked to this school",
           "dataType": "configurable-enum",
           "isArray": true,
-          "additional": "center"
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "Child",
+              "sourceReferenceField": "schoolId",
+              "sourceValueField": "center",
+              "aggregation": "add"
+            }
+          }
+        },
+        "parentSchool": {
+          "id": "parentSchool",
+          "label": "Parent school",
+          "dataType": "entity",
+          "additional": "School"
+        },
+        "allCenters": {
+          "id": "allCenters",
+          "label": "All centers",
+          "description": "Collects the values of \"enum multi\" of all schools that have this school as Parent school",
+          "dataType": "configurable-enum",
+          "isArray": true,
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "School",
+              "sourceReferenceField": "parentSchool",
+              "sourceValueField": "enumMulti",
+              "aggregation": "add"
+            }
+          }
         },
         "numberField": {
           "id": "numberField",
@@ -1747,6 +1840,8 @@
                         "enumDropdown",
                         "enumMulti",
                         "childrenCenter",
+                        "parentSchool",
+                        "allCenters",
                         "numberField",
                         "longTextField",
                         "percentageField",
@@ -1896,7 +1991,8 @@
           "dataType": "string",
           "label": "Contact"
         }
-      }
+      },
+      "enableUserAccounts": true
     },
     "appConfig:matching-entities": {
       "columns": [
@@ -1947,10 +2043,10 @@
         "prefilter": {
           "$or": [
             {
-              "center.id": "C1"
+              "center": "C1"
             },
             {
-              "center.id": "C2"
+              "center": "C2"
             }
           ]
         }

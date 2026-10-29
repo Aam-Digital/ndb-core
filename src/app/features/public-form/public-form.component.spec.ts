@@ -14,6 +14,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
+import { environment } from "../../../environments/environment";
 import { CurrentUserSubject } from "../../core/session/current-user-subject";
 
 describe("PublicFormComponent", () => {
@@ -63,6 +64,29 @@ describe("PublicFormComponent", () => {
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  describe("language selector", () => {
+    const originalFlag = environment.multiLingualConfigEnabled;
+
+    afterEach(() => {
+      environment.multiLingualConfigEnabled = originalFlag;
+    });
+
+    it.each([
+      [true, true],
+      [false, false],
+    ])(
+      "is shown for multiple enabled languages only if switching is enabled (%s)",
+      (switchingEnabled, expected) => {
+        environment.multiLingualConfigEnabled = switchingEnabled;
+
+        const freshComponent =
+          TestBed.createComponent(PublicFormComponent).componentInstance;
+
+        expect(freshComponent.showLanguageSelect()).toBe(expected);
+      },
+    );
   });
 
   it("should initialize for remote DB on startup", () => {

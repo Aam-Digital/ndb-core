@@ -34,6 +34,7 @@ import { firstValueFrom } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
+import { resolveLocaleText } from "app/core/language/active-locale";
 import {
   DateRangeFilterConfig,
   DateRangeFilterConfigOption,
@@ -95,7 +96,13 @@ export class ReportingComponent {
     loader: () =>
       this.entityMapper
         .loadType(ReportEntity)
-        .then((res) => res.sort((a, b) => a.title?.localeCompare(b.title))),
+        .then((res) =>
+          res.toSorted((a, b) =>
+            resolveLocaleText(a.title)?.localeCompare(
+              resolveLocaleText(b.title),
+            ),
+          ),
+        ),
   });
   reports = this.reportsResource.value;
 

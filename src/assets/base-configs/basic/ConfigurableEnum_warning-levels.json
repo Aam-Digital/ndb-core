@@ -9,17 +9,35 @@
     {
       "_ordinal": 1,
       "id": "OK",
-      "label": "Solved"
+      "label": {
+        "en-US": "Solved",
+        "de": "OK",
+        "fr": "bien",
+        "es": "Resuelto",
+        "ar": "تم الحل"
+      }
     },
     {
       "_ordinal": 2,
       "id": "WARNING",
-      "label": "Needs Follow-Up"
+      "label": {
+        "en-US": "Needs Follow-Up",
+        "de": "nachfassen",
+        "fr": "suivi nécessaire",
+        "es": "Necesita seguimiento",
+        "ar": "يحتاج متابعة"
+      }
     },
     {
       "_ordinal": 3,
       "id": "URGENT",
-      "label": "Urgent Follow-Up"
+      "label": {
+        "en-US": "Urgent Follow-Up",
+        "de": "Dringend nachfassen",
+        "fr": "suivi urgent",
+        "es": "Seguimiento urgente",
+        "ar": "متابعة عاجلة"
+      }
     }
   ]
 }

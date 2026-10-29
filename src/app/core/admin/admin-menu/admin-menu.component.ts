@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { NavigationMenuConfig } from "app/core/ui/navigation/menu-item";
+import { MenuItem } from "../../ui/navigation/menu-item";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "app/core/config/config";
 import { MatButton } from "@angular/material/button";
@@ -56,8 +57,12 @@ export class AdminMenuComponent implements OnInit {
       Config<{ navigationMenu: NavigationMenuConfig }>,
       Config.CONFIG_KEY,
     );
+    // the edited items keep their raw labels (a plain string or a per-language
+    // map); NavigationMenuConfig describes the resolved shape the menu renders
     currentConfig.data.navigationMenu.items =
-      MenuItemListEditorComponent.toPlainMenuItems(this.menuItems());
+      MenuItemListEditorComponent.toPlainMenuItems(
+        this.menuItems(),
+      ) as MenuItem[];
     await this.entityMapper.save(currentConfig);
 
     this.resetChangeTracking();

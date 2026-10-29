@@ -18,13 +18,18 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
-import { of } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DefaultValueMode } from "../../../core/default-values/default-value-config";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import {
+  SessionInfo,
+  SessionSubject,
+} from "#src/app/core/session/auth/session-info";
 
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
@@ -223,10 +228,179 @@ class CommonValueGroup extends Entity {
 const isIndexOfParentAction = ([, , field]: string[]) =>
   field === "parentAction";
 
+/** a record that collects the tags of its sub-records and can have several parents */
+@DatabaseEntity("HierarchyAction")
+class HierarchyAction extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: "HierarchyAction",
+    isArray: true,
+  })
+  parents: string[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "HierarchyAction",
+        sourceReferenceField: "parents",
+        sourceValueField: "tags",
+        aggregation: "add",
+      },
+    },
+  })
+  tags: ConfigurableEnumValue[];
+}
+
+/** a record that takes the tags that all its member records have in common */
+@DatabaseEntity("HierarchyGroup")
+class HierarchyGroup extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: "HierarchyAction",
+    isArray: true,
+  })
+  members: string[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "members",
+        sourceValueField: "tags",
+      },
+    },
+  })
+  tags: ConfigurableEnumValue[];
+}
+
+/** a record whose parent collects its "lowerTags" in "middleTags", from where the parent of the parent collects them in "upperTags" */
+@DatabaseEntity("FieldChainAction")
+class FieldChainAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "FieldChainAction" })
+  parent: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+  })
+  lowerTags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FieldChainAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "lowerTags",
+        aggregation: "add",
+      },
+    },
+  })
+  middleTags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FieldChainAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "middleTags",
+        aggregation: "add",
+      },
+    },
+  })
+  upperTags: ConfigurableEnumValue[];
+}
+
+/** a record whose "value" is collected in the "total" of its parent, from where it comes back down to all sub-records */
+@DatabaseEntity("CycleAction")
+class CycleAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "CycleAction" })
+  parent: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "total" },
+    },
+  })
+  value: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "CycleAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "value",
+        aggregation: "add",
+      },
+    },
+  })
+  total: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "total" },
+    },
+  })
+  inheritedTotal: ConfigurableEnumValue[];
+}
+
+/** a record whose "mainTag" goes down to its sub-records, from where their "tags" are collected again (like Center in the all-features config) */
+@DatabaseEntity("FanOutAction")
+class FanOutAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "FanOutAction" })
+  parent: string;
+  @DatabaseField({ dataType: "configurable-enum", additional: "action-tags" })
+  mainTag: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "mainTag" },
+    },
+  })
+  tag: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FanOutAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "tag",
+        aggregation: "add",
+      },
+    },
+  })
+  subTags: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
   let entitySchemaService: EntitySchemaService;
+  let ability: { initialized: boolean; can: ReturnType<typeof vi.fn> };
 
   const TEST_MENTORSHIP_ENUM: ConfigurableEnumValue[] = [
     { id: "active", label: "Active" },
@@ -270,7 +444,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("Assignment", Assignment);
     entityRegistry.set("AggregatingAction", AggregatingAction);
+    entityRegistry.set("HierarchyAction", HierarchyAction);
+    entityRegistry.set("HierarchyGroup", HierarchyGroup);
+    entityRegistry.set("FieldChainAction", FieldChainAction);
+    entityRegistry.set("CycleAction", CycleAction);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
+    entityRegistry.set("FanOutAction", FanOutAction);
 
     mockIndexing = {
       generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
@@ -288,9 +467,19 @@ describe("AutomatedFieldUpdateConfigService", () => {
           .filter((record) => asArray(record[field]).includes(key));
       },
     );
+    ability = { initialized: true, can: vi.fn(() => true) };
     TestBed.configureTestingModule({
       providers: [
         AutomatedFieldUpdateConfigService,
+        { provide: EntityAbility, useValue: ability },
+        {
+          provide: SessionSubject,
+          useValue: new BehaviorSubject<SessionInfo>({
+            name: "test-user",
+            id: "test-user",
+            roles: [],
+          }),
+        },
         { provide: DatabaseIndexingService, useValue: mockIndexing },
         EntitySchemaService,
         ...mockEntityMapperProvider(),
@@ -306,10 +495,10 @@ describe("AutomatedFieldUpdateConfigService", () => {
         {
           provide: ConfigurableEnumService,
           useValue: {
-            getEnumValues: (id: string) =>
-              id === "mentorship-status-enum"
-                ? TEST_MENTORSHIP_ENUM
-                : TEST_SCHOOL_ENUM,
+            getEnumValues: (id: string) => {
+              if (id === "mentorship-status-enum") return TEST_MENTORSHIP_ENUM;
+              return id === "action-tags" ? TEST_TAGS : TEST_SCHOOL_ENUM;
+            },
           },
         },
       ],
@@ -563,6 +752,45 @@ describe("AutomatedFieldUpdateConfigService", () => {
     expect(currentChild.category).toBe("");
   });
 
+  describe("finding the records linking to a changed record", () => {
+    let school: School;
+    let originalSchool: School;
+    let child: Child;
+
+    beforeEach(() => {
+      school = createSchool("primary");
+      child = new Child();
+      child.school = school.getId();
+      child.category = "";
+      entityMapper.addAll([school, child]);
+      originalSchool = school.copy();
+      mockDialog.open.mockClear();
+
+      school.category = TEST_SCHOOL_ENUM[1];
+    });
+
+    it("does not use the reference index for a visitor without an account", async () => {
+      TestBed.inject(SessionSubject).next(undefined);
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      const updatedChild = await entityMapper.load(Child, child.getId());
+      expect(updatedChild.category).toBe("secondary-student");
+    });
+
+    it("does not look for records of a type that the user may not read", async () => {
+      ability.can.mockImplementation((action: string) => action !== "read");
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      const currentChild = await entityMapper.load(Child, child.getId());
+      expect(currentChild.category).toBe("");
+    });
+  });
+
   it("should handle multiple children referencing same school", async () => {
     const school = new School();
     school.name = "Test School";
@@ -715,11 +943,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
       return { previousParent, newParent };
     }
 
+    /** the suggestions for the tags that the parents collect (not for the other fields of the saved record) */
     const suggestions = () =>
-      mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
-        e.id,
-        e.newValue,
-      ]);
+      mockDialog.open.mock.calls[0]?.[1].data.entities
+        .filter((e) => e.targetFieldId === "tags")
+        .map((e) => [e.id, e.newValue]);
 
     it.each([
       [["health"], [], ["education"], [], ["health", "education"]],
@@ -1193,13 +1421,15 @@ describe("AutomatedFieldUpdateConfigService", () => {
     });
 
     it("does not save the record again if the dialog is confirmed without a change of its value", async () => {
-      const saveSpy = vi.spyOn(entityMapper, "save");
+      const saveSpy = vi.spyOn(entityMapper, "saveAll");
 
       await saveSchoolCategory(["secondary"], "primary", "secondary");
 
       expect(mockDialog.open).toHaveBeenCalledTimes(1);
       expect(
-        saveSpy.mock.calls.some(([e]) => e instanceof CommonValueGroup),
+        saveSpy.mock.calls
+          .flatMap(([entities]) => entities)
+          .some((e) => e instanceof CommonValueGroup),
       ).toBe(false);
     });
 
@@ -1219,5 +1449,357 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ).toBe(false);
       },
     );
+  });
+
+  describe("across several hierarchy levels", () => {
+    function createAction(tags: string[], ...parents: HierarchyAction[]) {
+      const action = new HierarchyAction();
+      action.tags = toTags(tags);
+      action.parents = parents.map((parent) => parent.getId());
+      action._rev = "1-existing";
+      return action;
+    }
+
+    /** change the tags of the action (which has to be added to the database) and return the suggestions of the dialog */
+    async function changeTags(
+      action: HierarchyAction,
+      tagsAfter: string[],
+      actionBefore = action.copy(),
+    ) {
+      action.tags = toTags(tagsAfter);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(action, actionBefore);
+
+      return (
+        mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
+          e.id,
+          e.newValue,
+          e.level,
+          e.via,
+        ]) ?? []
+      );
+    }
+
+    it("suggests the new values for the parent and the parent of the parent", async () => {
+      const project = createAction(["health"]);
+      const workPackage = createAction(["health"], project);
+      const activity = createAction([], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+
+      const suggestions = await changeTags(activity, ["education"]);
+
+      expect(suggestions).toEqual([
+        [workPackage.getId(), ["health", "education"], 1, [activity.getId()]],
+        [project.getId(), ["health", "education"], 2, [workPackage.getId()]],
+      ]);
+    });
+
+    it("bases the entities above on the changed field of the changed record, also if each level passes on another field", async () => {
+      const project = new FieldChainAction();
+      const workPackage = new FieldChainAction();
+      workPackage.parent = project.getId();
+      const activity = new FieldChainAction();
+      activity.parent = workPackage.getId();
+      [project, workPackage, activity].forEach(
+        (action) => (action._rev = "1-existing"),
+      );
+      entityMapper.addAll([project, workPackage, activity]);
+      const activityBefore = activity.copy();
+      activity.lowerTags = toTags(["health"]);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(activity, activityBefore);
+
+      expect(
+        mockDialog.open.mock.calls[0][1].data.entities.map((e) => [
+          e.id,
+          e.targetFieldId,
+          e.sourceFieldId,
+        ]),
+      ).toEqual([
+        [workPackage.getId(), "middleTags", "lowerTags"],
+        [project.getId(), "upperTags", "lowerTags"],
+      ]);
+    });
+
+    it("saves the confirmed values of the entities above in entity format", async () => {
+      const project = createAction([]);
+      const activity = createAction([], project);
+      entityMapper.addAll([project, activity]);
+
+      await changeTags(activity, ["health", "education"]);
+
+      const savedProject = await entityMapper.load(
+        HierarchyAction,
+        project.getId(),
+      );
+      expect(savedProject.tags).toEqual(toTags(["health", "education"]));
+    });
+
+    it("also offers the fields of the changed record that are based on the changed values above, but not the field that was changed", async () => {
+      const project = new CycleAction();
+      const activity = new CycleAction();
+      const otherActivity = new CycleAction();
+      [activity, otherActivity].forEach((action) => {
+        action.parent = project.getId();
+        action.value = [];
+        action.inheritedTotal = [];
+      });
+      [project, activity, otherActivity].forEach(
+        (action) => (action._rev = "1-existing"),
+      );
+      entityMapper.addAll([project, activity, otherActivity]);
+      const activityBefore = activity.copy();
+      activity.value = toTags(["health"]);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(activity, activityBefore);
+
+      const offered = mockDialog.open.mock.calls[0][1].data.entities.map(
+        (e) => `${e.id}|${e.targetFieldId}`,
+      );
+      expect(offered.sort()).toEqual(
+        [
+          `${project.getId()}|total`,
+          `${otherActivity.getId()}|value`,
+          `${otherActivity.getId()}|inheritedTotal`,
+          `${activity.getId()}|inheritedTotal`,
+        ].sort(),
+      );
+    });
+
+    describe("when the changed record passes a value down to its sub-records, which pass it up again", () => {
+      let project: FanOutAction;
+
+      /** change the main tag of a project with several activities, which have the old main tag */
+      async function changeMainTag(dialogResult?: () => unknown) {
+        project = new FanOutAction();
+        project.mainTag = toTagValue("health");
+        project.subTags = toTags(["health"]);
+        const activities = Array.from({ length: 5 }, () => {
+          const activity = new FanOutAction();
+          activity.parent = project.getId();
+          activity.tag = toTagValue("health");
+          return activity;
+        });
+        [project, ...activities].forEach(
+          (action) => (action._rev = "1-existing"),
+        );
+        entityMapper.addAll([project, ...activities]);
+        const projectBefore = project.copy();
+        project.mainTag = toTagValue("education");
+        mockDialog.open.mockClear();
+        if (dialogResult) {
+          mockDialog.open.mockImplementationOnce(() => ({
+            afterClosed: () => of(dialogResult()),
+          }));
+        }
+        mockIndexing.queryIndexDocs.mockClear();
+
+        await service.applyRulesToDependentEntities(project, projectBefore);
+
+        return mockDialog.open.mock.calls[0][1].data.entities;
+      }
+
+      it("loads the sub-records of a record only once, also if each of its changed sub-records updates it", async () => {
+        const suggestions = await changeMainTag();
+
+        expect(
+          suggestions.find((e) => e.targetFieldId === "subTags").newValue,
+        ).toEqual(["education"]);
+        expect(
+          mockIndexing.queryIndexDocs.mock.calls.filter(
+            ([, , key]) => key === project.getId(),
+          ),
+        ).toHaveLength(1);
+      });
+
+      it("does not set the suggested value of a field of the changed record before the user confirms it", async () => {
+        await changeMainTag(() => undefined);
+
+        expect(project.subTags).toEqual(toTags(["health"]));
+      });
+    });
+
+    it("stops at the level where nothing changes", async () => {
+      const project = createAction(["health", "education"]);
+      const workPackage = createAction(["health"], project);
+      const activity = createAction([], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+
+      const suggestions = await changeTags(activity, ["education"]);
+
+      expect(suggestions.map(([id]) => id)).toEqual([workPackage.getId()]);
+    });
+
+    it("lists a parent reached over several branches once, with all the records it is reached from", async () => {
+      const district = createAction(["health"]);
+      const school1 = createAction(["health"], district);
+      const school2 = createAction(["health"], district);
+      const child = createAction([], school1, school2);
+      entityMapper.addAll([district, school1, school2, child]);
+
+      const suggestions = await changeTags(child, ["education"]);
+
+      expect(suggestions).toEqual([
+        [school1.getId(), ["health", "education"], 1, [child.getId()]],
+        [school2.getId(), ["health", "education"], 1, [child.getId()]],
+        [
+          district.getId(),
+          ["health", "education"],
+          2,
+          [school1.getId(), school2.getId()],
+        ],
+      ]);
+    });
+
+    it("does not offer an update for the changed record itself if the links form a loop", async () => {
+      const a = createAction(["health"]);
+      const b = createAction(["health"], a);
+      a.parents = [b.getId()];
+      entityMapper.addAll([a, b]);
+
+      const suggestions = await changeTags(a, ["health", "education"]);
+
+      expect(suggestions.map(([id]) => id)).toEqual([b.getId()]);
+    });
+
+    it("stops after a maximum number of levels", async () => {
+      let parent: HierarchyAction | undefined;
+      const chain: HierarchyAction[] = [];
+      for (let i = 0; i < 14; i++) {
+        parent = createAction(["health"], ...(parent ? [parent] : []));
+        chain.unshift(parent);
+      }
+      entityMapper.addAll(chain);
+
+      const suggestions = await changeTags(chain[0], ["education"]);
+
+      expect(suggestions).toHaveLength(10);
+      expect(suggestions.at(-1)[2]).toBe(10);
+    });
+
+    it("only lists the levels that can be loaded", async () => {
+      const unknownParent = new HierarchyAction("unknown");
+      const parent = createAction(["health"], unknownParent);
+      const child = createAction([], parent);
+      entityMapper.addAll([parent, child]);
+
+      const suggestions = await changeTags(child, ["education"]);
+
+      expect(suggestions.map(([id]) => id)).toEqual([parent.getId()]);
+    });
+
+    it("removes a value from the parent of the parent if no record below it keeps the value", async () => {
+      const project = createAction(["education"]);
+      const workPackage = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions).toEqual([
+        [workPackage.getId(), [], 1, [activity.getId()]],
+        [project.getId(), [], 2, [workPackage.getId()]],
+      ]);
+    });
+
+    it("keeps a value of the parent of the parent that another record below it still has", async () => {
+      const project = createAction(["education"]);
+      const workPackage1 = createAction(["education"], project);
+      const workPackage2 = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage1);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions.map(([id]) => id)).toEqual([workPackage1.getId()]);
+    });
+
+    it("removes a value from the parent of the parent once all records below it that had it are updated", async () => {
+      const project = createAction(["education"]);
+      const workPackage1 = createAction(["education"], project);
+      const workPackage2 = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage1, workPackage2);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions.map(([id, value]) => [id, value])).toEqual([
+        [workPackage1.getId(), []],
+        [workPackage2.getId(), []],
+        [project.getId(), []],
+      ]);
+    });
+
+    it("removes a value from the parent of the parent that one branch below it drops while another branch only adds values", async () => {
+      const project = createAction(["water", "health"]);
+      const workPackage1 = createAction(["water"], project);
+      const workPackage2 = createAction(["health"], project);
+      const activity = createAction(["water"], workPackage1);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+      const activityBefore = activity.copy();
+      activity.parents = [workPackage2.getId()];
+
+      const suggestions = await changeTags(
+        activity,
+        ["education"],
+        activityBefore,
+      );
+
+      expect(suggestions.map(([id, value]) => [id, value])).toEqual([
+        [workPackage2.getId(), ["health", "education"]],
+        [workPackage1.getId(), []],
+        [project.getId(), ["health", "education"]],
+      ]);
+    });
+
+    it("does not offer a record the user may not update, nor the records above it", async () => {
+      const project = createAction(["health"]);
+      const workPackage = createAction(["health"], project);
+      const activity = createAction([], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+      ability.can.mockImplementation(
+        (action: string, entity: Entity) =>
+          action === "read" || entity.getId() !== workPackage.getId(),
+      );
+
+      const suggestions = await changeTags(activity, ["education"]);
+
+      expect(suggestions).toEqual([]);
+    });
+
+    it("suggests the shared value to a record linking to several updated parents", async () => {
+      const workPackage1 = createAction(["health"]);
+      const workPackage2 = createAction(["health"]);
+      const activity = createAction([], workPackage1, workPackage2);
+      const group = new HierarchyGroup();
+      group.members = [workPackage1.getId(), workPackage2.getId()];
+      group.tags = toTags(["health"]);
+      entityMapper.addAll([workPackage1, workPackage2, activity, group]);
+
+      await changeTags(activity, ["education"]);
+
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.id === group.getId(),
+      );
+      expect(suggestion.newValue).toEqual(["health", "education"]);
+      expect(suggestion.noCommonValue).toBeUndefined();
+    });
+
+    it("also covers the levels above when updating the linked records from the field button", async () => {
+      const project = createAction(["health"]);
+      const workPackage = createAction(["health"], project);
+      const activity = createAction(["education"], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+      mockDialog.open.mockClear();
+
+      await service.updateLinkedRecords(activity, "tags");
+
+      expect(
+        mockDialog.open.mock.calls[0][1].data.entities.map((e) => e.id),
+      ).toEqual([workPackage.getId(), project.getId()]);
+    });
   });
 });

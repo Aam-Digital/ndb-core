@@ -8,7 +8,10 @@
     "navigationMenu": {
       "items": [
         {
-          "label": "Dashboard",
+          "label": {
+            "en-US": "Dashboard",
+            "ar": "لوحة المعلومات"
+          },
           "icon": "home",
           "link": "/"
         },
@@ -25,7 +28,10 @@
           "entityType": "User"
         },
         {
-          "label": "Reports",
+          "label": {
+            "en-US": "Reports",
+            "ar": "التقارير"
+          },
           "icon": "line-chart",
           "link": "/report"
         }
@@ -38,6 +44,7 @@
           {
             "component": "EntityCountDashboard",
             "config": {
+              "entityType": "Child",
               "groupBy": [
                 "gender"
               ]
@@ -66,7 +73,10 @@
       "config": {
         "entityType": "Note",
         "clickMode": "popup-details",
-        "title": "Notes & Reports",
+        "title": {
+          "en-US": "Notes & Reports",
+          "ar": "الملاحظات والتقارير"
+        },
         "columnGroups": {
           "groups": [
             {
@@ -76,7 +86,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -84,7 +94,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]
@@ -106,15 +116,42 @@
         ]
       }
     },
+    "entity:Note": {
+      "attributes": {
+        "relatedEntities": {
+          "label": {
+            "en-US": "Related Records",
+            "ar": "السجلات المرتبطة"
+          },
+          "dataType": "entity",
+          "additional": [
+            "Child",
+            "School"
+          ],
+          "isArray": true,
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        }
+      }
+    },
     "entity:User": {
-      "label": "User",
-      "labelPlural": "Users",
+      "label": {
+        "en-US": "User",
+        "ar": "مستخدم"
+      },
+      "labelPlural": {
+        "en-US": "Users",
+        "ar": "المستخدمون"
+      },
       "icon": "user",
       "enableUserAccounts": true,
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "Name"
+          "label": {
+            "en-US": "Name",
+            "ar": "الاسم"
+          }
         }
       }
     },
@@ -136,7 +173,10 @@
         "entityType": "User",
         "panels": [
           {
-            "title": "User Information",
+            "title": {
+              "en-US": "User Information",
+              "ar": "معلومات المستخدم"
+            },
             "components": [
               {
                 "title": "",
@@ -161,13 +201,22 @@
         "name"
       ],
       "icon": "university",
-      "label": "School",
-      "labelPlural": "Schools",
+      "label": {
+        "en-US": "School",
+        "ar": "مدرسة"
+      },
+      "labelPlural": {
+        "en-US": "Schools",
+        "ar": "المدارس"
+      },
       "color": "#9E9D24",
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "Name",
+          "label": {
+            "en-US": "Name",
+            "ar": "الاسم"
+          },
           "validators": {
             "required": true
           },
@@ -175,37 +224,58 @@
         },
         "privateSchool": {
           "dataType": "boolean",
-          "label": "Private School",
+          "label": {
+            "en-US": "Private School",
+            "ar": "مدرسة خاصة"
+          },
           "id": "privateSchool"
         },
         "language": {
           "dataType": "string",
-          "label": "Language",
+          "label": {
+            "en-US": "Language",
+            "ar": "اللغة"
+          },
           "id": "language"
         },
         "address": {
           "dataType": "location",
-          "label": "Address",
+          "label": {
+            "en-US": "Address",
+            "ar": "العنوان"
+          },
           "id": "address"
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number",
+          "label": {
+            "en-US": "Phone Number",
+            "ar": "رقم الهاتف"
+          },
           "id": "phone"
         },
         "timing": {
           "dataType": "string",
-          "label": "School Timing",
+          "label": {
+            "en-US": "School Timing",
+            "ar": "توقيت الدوام المدرسي"
+          },
           "id": "timing"
         },
         "remarks": {
           "dataType": "string",
-          "label": "Remarks",
+          "label": {
+            "en-US": "Remarks",
+            "ar": "ملاحظات"
+          },
           "id": "remarks"
         },
         "website": {
           "dataType": "url",
-          "label": "Website",
+          "label": {
+            "en-US": "Website",
+            "ar": "الموقع الإلكتروني"
+          },
           "id": "website"
         },
         "_id": {
@@ -251,13 +321,19 @@
           {
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
-            "label": "Participants"
+            "label": {
+              "en-US": "Participants",
+              "ar": "المشاركون"
+            }
           }
         ],
         "filters": [
           {
             "id": "privateSchool",
-            "label": "Private School"
+            "label": {
+              "en-US": "Private School",
+              "ar": "مدرسة خاصة"
+            }
           }
         ]
       }
@@ -268,7 +344,10 @@
         "entityType": "School",
         "panels": [
           {
-            "title": "Basic Information",
+            "title": {
+              "en-US": "Basic Information",
+              "ar": "المعلومات الأساسية"
+            },
             "components": [
               {
                 "title": "",
@@ -300,7 +379,10 @@
             ]
           },
           {
-            "title": "Students",
+            "title": {
+              "en-US": "Students",
+              "ar": "الطلاب"
+            },
             "components": [
               {
                 "component": "RelatedEntities",
@@ -335,8 +417,14 @@
       "_id": "view:school/:id"
     },
     "entity:Child": {
-      "label": "Participant",
-      "labelPlural": "Participants",
+      "label": {
+        "en-US": "Participant",
+        "ar": "مشارك"
+      },
+      "labelPlural": {
+        "en-US": "Participants",
+        "ar": "المشاركون"
+      },
       "icon": "person",
       "toStringAttributes": [
         "name"
@@ -344,7 +432,10 @@
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "Name",
+          "label": {
+            "en-US": "Name",
+            "ar": "الاسم"
+          },
           "validators": {
             "required": true
           }
@@ -352,23 +443,32 @@
         "gender": {
           "dataType": "configurable-enum",
           "additional": "genders",
-          "label": "Gender"
+          "label": {
+            "en-US": "Gender",
+            "ar": "الجنس"
+          }
         }
       }
     },
     "view:child": {
-      "component": "ChildrenList",
+      "component": "EntityList",
       "config": {
         "entityType": "Child",
         "columns": [
           {
-            "viewComponent": "ChildBlock",
-            "label": "Name",
+            "viewComponent": "EntityBlock",
+            "label": {
+              "en-US": "Name",
+              "ar": "الاسم"
+            },
             "id": "name"
           },
           {
-            "viewComponent": "DisplayEntityArray",
-            "label": "School",
+            "viewComponent": "DisplayEntity",
+            "label": {
+              "en-US": "School",
+              "ar": "مدرسة"
+            },
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
@@ -388,7 +488,8 @@
           {
             "id": "gender"
           }
-        ]
+        ],
+        "loaderMethod": "ChildrenService"
       }
     },
     "view:child/:id": {
@@ -397,7 +498,10 @@
         "entityType": "Child",
         "panels": [
           {
-            "title": "Basic Information",
+            "title": {
+              "en-US": "Basic Information",
+              "ar": "المعلومات الأساسية"
+            },
             "components": [
               {
                 "title": "",
@@ -408,13 +512,19 @@
                       "fields": [
                         "name"
                       ],
-                      "header": "Personal Information"
+                      "header": {
+                        "en-US": "Personal Information",
+                        "ar": "المعلومات الشخصية"
+                      }
                     },
                     {
                       "fields": [
                         "gender"
                       ],
-                      "header": "Additional"
+                      "header": {
+                        "en-US": "Additional",
+                        "ar": "معلومات إضافية"
+                      }
                     }
                   ]
                 }
@@ -422,13 +532,15 @@
             ]
           },
           {
-            "title": "Groups",
+            "title": {
+              "en-US": "Groups",
+              "ar": "المجموعات"
+            },
             "components": [
               {
-                "title": "",
-                "component": "ChildSchoolOverview",
+                "component": "RelatedEntities",
                 "config": {
-                  "single": true,
+                  "entityType": "ChildSchoolRelation",
                   "columns": [
                     {
                       "id": "start",
@@ -439,21 +551,88 @@
                       "visibleFrom": "sm"
                     },
                     "schoolId"
-                  ]
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations",
+                  "showInactive": true,
+                  "single": true
                 }
               }
             ]
           },
           {
-            "title": "Notes & Tasks",
+            "title": {
+              "en-US": "Notes & Tasks",
+              "ar": "الملاحظات والمهام"
+            },
             "components": [
               {
                 "title": "",
-                "component": "NotesRelatedToEntity"
+                "component": "NotesRelatedToEntity",
+                "config": {
+                  "entityType": "Note",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "subject",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "text",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "authors",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "warningLevel",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
               },
               {
-                "title": "Tasks",
-                "component": "TodosRelatedToEntity"
+                "title": {
+                  "en-US": "Tasks",
+                  "ar": "المهام"
+                },
+                "component": "TodosRelatedToEntity",
+                "config": {
+                  "entityType": "Todo",
+                  "columns": [
+                    {
+                      "id": "deadline"
+                    },
+                    {
+                      "id": "subject"
+                    },
+                    {
+                      "id": "startDate"
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "repetitionInterval",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "relatedEntities",
+                      "hideFromTable": true
+                    },
+                    {
+                      "id": "completed",
+                      "hideFromForm": true
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -461,8 +640,14 @@
       }
     },
     "entity:Todo": {
-      "label": "Task",
-      "labelPlural": "Tasks",
+      "label": {
+        "en-US": "Task",
+        "ar": "مهمة"
+      },
+      "labelPlural": {
+        "en-US": "Tasks",
+        "ar": "المهام"
+      },
       "attributes": {}
     },
     "entity:ChildSchoolRelation": {
@@ -476,7 +661,10 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "Child"
+          "label": {
+            "en-US": "Child",
+            "ar": "طفل"
+          }
         },
         "schoolId": {
           "dataType": "entity",
@@ -486,28 +674,49 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "School"
+          "label": {
+            "en-US": "School",
+            "ar": "مدرسة"
+          }
         },
         "schoolClass": {
           "dataType": "string",
-          "label": "Class",
+          "label": {
+            "en-US": "Class",
+            "ar": "الصف"
+          },
           "anonymize": "retain"
         },
         "start": {
           "dataType": "date-only",
-          "label": "Start date",
-          "description": "The date a child joins a school",
+          "label": {
+            "en-US": "Start date",
+            "ar": "تاريخ البدء"
+          },
+          "description": {
+            "en-US": "The date a child joins a school",
+            "ar": "تاريخ التحاق الطفل بالمدرسة"
+          },
           "anonymize": "retain"
         },
         "end": {
           "dataType": "date-only",
-          "label": "End date",
-          "description": "The date of a child leaving the school",
+          "label": {
+            "en-US": "End date",
+            "ar": "تاريخ الانتهاء"
+          },
+          "description": {
+            "en-US": "The date of a child leaving the school",
+            "ar": "تاريخ مغادرة الطفل للمدرسة"
+          },
           "anonymize": "retain"
         },
         "result": {
           "dataType": "percentage",
-          "label": "Result",
+          "label": {
+            "en-US": "Result",
+            "ar": "النتيجة"
+          },
           "validators": {
             "min": 0,
             "max": 100

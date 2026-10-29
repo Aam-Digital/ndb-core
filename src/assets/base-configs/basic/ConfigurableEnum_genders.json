@@ -3,15 +3,33 @@
   "values": [
     {
       "id": "M",
-      "label": "Male"
+      "label": {
+        "en-US": "Male",
+        "de": "männlich",
+        "fr": "masculin",
+        "es": "Masculino",
+        "ar": "ذكر"
+      }
     },
     {
       "id": "F",
-      "label": "Female"
+      "label": {
+        "en-US": "Female",
+        "de": "weiblich",
+        "fr": "féminin",
+        "es": "Femenino",
+        "ar": "أنثى"
+      }
     },
     {
       "id": "X",
-      "label": "Non-binary / third gender"
+      "label": {
+        "en-US": "Non-binary / third gender",
+        "de": "nicht-binär",
+        "fr": "non binaire",
+        "es": "No binario / tercer género",
+        "ar": "غير ثنائي / جنس ثالث"
+      }
     }
   ]
 }

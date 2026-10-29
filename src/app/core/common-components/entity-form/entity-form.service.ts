@@ -21,6 +21,7 @@ import {
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -95,7 +96,23 @@ export class EntityFormService {
         fullField.label || fullField.label || fullField.labelShort;
     }
 
+    this.resolveTranslatableLabels(fullField);
+
     return fullField;
+  }
+
+  /**
+   * Config loaded through ConfigService is already resolved, but the runtime
+   * schema can hold a translation map while an admin has configured
+   * translations that are not saved to the config document yet.
+   */
+  private resolveTranslatableLabels(field: FormFieldConfig) {
+    for (const property of ["label", "labelShort", "description"]) {
+      if (field[property] === undefined) {
+        continue;
+      }
+      field[property] = resolveLocaleText(field[property]);
+    }
   }
 
   /**

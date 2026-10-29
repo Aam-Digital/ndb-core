@@ -18,6 +18,9 @@ exists.
 3. Importing a base config means fetching its JSON documents and saving them as entities, force-
    overwriting anything already there. `Config:CONFIG_ENTITY` is just one of these documents, alongside
    permissions, enum definitions, site settings, sample reports/forms, etc.
+   The language selected at the top of the Assistant is saved as the default language
+   (`SiteSettings.defaultLanguage`) when it is picked, and again after the import, so it always
+   overrides a language the imported `SiteSettings:global` document defines.
 4. Once the config document is saved, the app reconfigures itself reactively — routing and entity
    types are rebuilt and the current page re-renders. There's no redirect and no page reload.
 5. If the logged-in account isn't linked to any profile yet, a second step offers to create one and
@@ -74,9 +77,14 @@ them, and is matched by base language too (`en` matches `en-US`), because partne
 by hand; a config without a `locale` is offered in every language. If no localised config matches the
 current locale, the picker offers all of them greyed out with a hint instead of showing an empty list.
 
+A use case can be worth having for its structure even in another language, so a toggle below the
+dropdown reveals the ones that are not offered in the current locale. It is off by default, hidden
+when there is nothing to reveal, and fixed on when nothing matches the locale at all - there it
+explains the greyed-out options instead of offering a choice that cannot be made.
+
 `startFromScratch` marks the config that sets up a system with no predefined record types. That is a
 categorically different choice, so it is a checkbox below the dropdown rather than one entry among
-the scenarios.
+the scenarios. Ticking it clears the dropdown, which then reads "empty system".
 
 ## Things worth knowing before changing this flow
 

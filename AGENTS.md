@@ -48,7 +48,7 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 - **Permissions:** check them with `EntityAbility` and `DisableEntityOperationDirective` ([permissions](src/app/core/permissions/README.md)).
 - **Config:** the platform is configured through JSON ([config](src/app/core/config/README.md)). Use the existing config patterns for new features, create interfaces for config objects, and validate configs.
 - **UX and styling:** follow the [UX guidelines](doc/compodoc_sources/concepts/ux-guidelines.md): Angular Material, SCSS with the global variables and classes in `src/styles/`, no inline styles. For mockups in Figma, use the `figma-mockups` skill.
-- **i18n:** all user-facing strings are translatable (Angular i18n markers or `$localize`); no context labels unless the string is truly ambiguous ([i18n](doc/compodoc_sources/concepts/i18n.md)).
+- **i18n:** all user-facing strings are translatable (Angular i18n markers or `$localize`); no context labels unless the string is truly ambiguous ([i18n](src/app/core/language/README.md)).
 - **Accessibility:** follow WCAG and use the Angular Material accessibility features.
 
 ## Errors and logging
@@ -59,6 +59,7 @@ Use `Logging` (from `#src/app/core/logging/logging.service`), never `console.log
 
 - **Unit tests (Vitest):** test behaviour, not existence; write the failing test first for a bug fix; do not generate "too many" tests; use `it.each` tables for repeated shapes. The rules and examples are in [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md).
 - **e2e tests (Playwright):** add an e2e scenario for a new larger feature, but keep the number of stand-alone tests, scenarios and screenshots small: prefer a step in an existing scenario. See [`e2e/README.md`](e2e/README.md).
+- **Config for manual testing:** if trying a change needs a special config (fields, rules, features), add it to the [all-features config](src/assets/base-configs/all-features/) in the same PR, and revert it before merge only if it should not stay. The manual testing steps of the PR then say "demo mode All Features" instead of listing admin-UI setup steps.
 
 ## Public GitHub content (PRs, issues, comments, commit messages)
 
@@ -66,7 +67,7 @@ This repository is public. Never include customer/project-identifying informatio
 
 ## Skills
 
-Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`.
+Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`. Outside that flow, `translate-base-configs` adds a language to the base configs in `src/assets/base-configs/`.
 
 ## Common commands
 

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { RollCallComponent } from "./roll-call.component";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
@@ -50,11 +50,13 @@ describe("RollCallComponent", () => {
 
   let mockEnumService: any;
 
-  function addParticipant(note: Note, participant: Entity | string) {
+  function addParticipant(
+    event: TestEventEntity,
+    participant: Entity | string,
+  ) {
     const id =
       typeof participant === "string" ? participant : participant.getId();
-    note.children.push(id);
-    note.childrenAttendance.push(new AttendanceItem(undefined, "", id));
+    event.attendance.push(new AttendanceItem(undefined, "", id));
   }
 
   async function stabilize() {
@@ -123,8 +125,8 @@ describe("RollCallComponent", () => {
             createEventForActivity: () =>
               Promise.resolve(
                 new EventWithAttendance(
-                  new Note(),
-                  "childrenAttendance",
+                  new TestEventEntity(),
+                  "attendance",
                   "date",
                   "relatesTo",
                   "authors",
@@ -144,8 +146,8 @@ describe("RollCallComponent", () => {
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
-        Note.create(new Date()),
-        "childrenAttendance",
+        TestEventEntity.create(new Date()),
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -158,13 +160,13 @@ describe("RollCallComponent", () => {
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
     mockEnumService.getEnumValues.mockReturnValue(options);
-    const event = Note.create(new Date());
+    const event = TestEventEntity.create(new Date());
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
         event,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -178,7 +180,7 @@ describe("RollCallComponent", () => {
 
   it("should not record attendance if childId does not exist", async () => {
     const nonExistingChildId = "TestEntity:notExistingChild";
-    const noteWithNonExistingChild = new Note();
+    const noteWithNonExistingChild = new TestEventEntity();
     addParticipant(noteWithNonExistingChild, participant1);
     addParticipant(noteWithNonExistingChild, nonExistingChildId);
 
@@ -186,7 +188,7 @@ describe("RollCallComponent", () => {
       "eventEntity",
       new EventWithAttendance(
         noteWithNonExistingChild,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -196,14 +198,14 @@ describe("RollCallComponent", () => {
     await stabilize();
 
     expect(component.participants()).toEqual([participant1]);
-    const note = component.event()?.entity as Note;
+    const note = component.event()?.entity as TestEventEntity;
     expect(
-      note.childrenAttendance.some((a) => a.participant === nonExistingChildId),
+      note.attendance.some((a) => a.participant === nonExistingChildId),
     ).toBe(false);
   });
 
   it("should exclude archived participants from event attendanceItems by default", async () => {
-    const note = new Note();
+    const note = new TestEventEntity();
     addParticipant(note, participant1);
     addParticipant(note, archivedParticipant);
 
@@ -211,7 +213,7 @@ describe("RollCallComponent", () => {
       "eventEntity",
       new EventWithAttendance(
         note,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -228,7 +230,7 @@ describe("RollCallComponent", () => {
   });
 
   it("should correctly assign the attendance", async () => {
-    const note = new Note("noteWithAttendance");
+    const note = new TestEventEntity("noteWithAttendance");
     addParticipant(note, participant1);
     addParticipant(note, participant2);
 
@@ -236,7 +238,7 @@ describe("RollCallComponent", () => {
       "eventEntity",
       new EventWithAttendance(
         note,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -249,19 +251,17 @@ describe("RollCallComponent", () => {
     component.markAttendance(ABSENT);
 
     expect(
-      note.childrenAttendance.find(
-        (a) => a.participant === participant1.getId(),
-      ).status,
+      note.attendance.find((a) => a.participant === participant1.getId())
+        .status,
     ).toEqual(PRESENT);
     expect(
-      note.childrenAttendance.find(
-        (a) => a.participant === participant2.getId(),
-      ).status,
+      note.attendance.find((a) => a.participant === participant2.getId())
+        .status,
     ).toEqual(ABSENT);
   });
 
   it("should save event when all existing children are finished", async () => {
-    const note = new Note();
+    const note = new TestEventEntity();
     addParticipant(note, participant1);
     addParticipant(note, "notExistingChild");
     addParticipant(note, participant2);
@@ -271,7 +271,7 @@ describe("RollCallComponent", () => {
       "eventEntity",
       new EventWithAttendance(
         note,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -303,8 +303,8 @@ describe("RollCallComponent", () => {
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
-        Note.create(new Date()),
-        "childrenAttendance",
+        TestEventEntity.create(new Date()),
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -332,16 +332,16 @@ describe("RollCallComponent", () => {
   });
 
   it("isn't dirty when the user has skipped participants", async () => {
-    const event = new Note();
+    const event = new TestEventEntity();
     addParticipant(event, participant1.getId());
     addParticipant(event, participant2.getId());
     event.date = new Date();
-    event.subject = "test";
+    event.title = "test";
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
         event,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -357,15 +357,15 @@ describe("RollCallComponent", () => {
   });
 
   it("is dirty when the user has entered some attendance", async () => {
-    const event = new Note();
+    const event = new TestEventEntity();
     addParticipant(event, participant1.getId());
     event.date = new Date();
-    event.subject = "test";
+    event.title = "test";
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
         event,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -379,13 +379,13 @@ describe("RollCallComponent", () => {
   });
 
   it("starts with the initial child if no attendance has been registered", async () => {
-    const event = Note.create(new Date());
+    const event = TestEventEntity.create(new Date());
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
         event,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -399,21 +399,19 @@ describe("RollCallComponent", () => {
   });
 
   it("starts with the first child that doesn't have an attendance status set", async () => {
-    const note = Note.create(new Date());
+    const note = TestEventEntity.create(new Date());
     for (const child of [participant1, participant2, participant3]) {
       addParticipant(note, child);
     }
-    note.childrenAttendance.find(
-      (a) => a.participant === participant1.getId(),
-    ).status = PRESENT;
-    note.childrenAttendance.find(
-      (a) => a.participant === participant3.getId(),
-    ).status = ABSENT;
+    note.attendance.find((a) => a.participant === participant1.getId()).status =
+      PRESENT;
+    note.attendance.find((a) => a.participant === participant3.getId()).status =
+      ABSENT;
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
         note,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -467,7 +465,7 @@ describe("RollCallComponent", () => {
     expectedParticipantsOrder: TestEntity[],
     sortParticipantsBy: string,
   ) {
-    const event = new Note();
+    const event = new TestEventEntity();
     for (const p of participantsInput) {
       addParticipant(event, p);
     }
@@ -475,7 +473,7 @@ describe("RollCallComponent", () => {
       "eventEntity",
       new EventWithAttendance(
         event,
-        "childrenAttendance",
+        "attendance",
         "date",
         "relatesTo",
         "authors",
@@ -488,7 +486,7 @@ describe("RollCallComponent", () => {
     await stabilize();
 
     expect(component.participants()).toEqual(expectedParticipantsOrder);
-    expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
+    expect(event.attendance.map((a) => a.participant)).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
   }

@@ -111,6 +111,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "ConflictResolution",
   "EditAge",
   "EditAttendance",
+  "EditAvailableLocales",
   "EditBoolean",
   "EditConfigurableEnum",
   "EditDate",

@@ -78,6 +78,9 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
   /** Whether to display the field label or not. */
   hideLabel = input<boolean>();
 
+  /** Whether to highlight the values of a multi-value field that the entity does not have yet. */
+  highlightAdded = input<boolean>(false);
+
   /** Whether to hide the inherit value button for inherited-field default values. */
   hideInheritButton = input<boolean>(false);
 

@@ -1,4 +1,5 @@
-import { inject, Injectable } from "@angular/core";
+import { computed, inject, Injectable } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay, take } from "rxjs/operators";
@@ -10,6 +11,7 @@ import { Logging } from "../logging/logging.service";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
@@ -39,8 +41,57 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   siteName = this.getPropertyObservable("siteName");
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
-  displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   dateFormat = this.getPropertyObservable("dateFormat");
+
+  /**
+   * Whether users may switch the app's language themselves. If not, everyone uses
+   * the default language ({@link defaultLanguage}). Bound to the deployment's
+   * `multiLingualConfigEnabled` flag, read at runtime because `config.json` overwrites it.
+   */
+  get languageSwitchingEnabled(): boolean {
+    return !!environment.multiLingualConfigEnabled;
+  }
+
+  /** The site's default language (system-wide), if one is set. */
+  readonly defaultLocale = toSignal(
+    this.siteSettings.pipe(map((settings) => settings?.defaultLanguage)),
+  );
+
+  /**
+   * The enabled languages of this system: the default language ({@link defaultLanguage})
+   * plus the admin's selection (`availableLocales`). Order: the stored selection first,
+   * the default language appended if it is not part of it. It is added here at read time,
+   * so changing the default language needs no data fix-up.
+   *
+   * So an empty selection enables only the default language. Only if neither a selection
+   * nor a default language is set (system not set up yet, or settings not loaded yet)
+   * are all languages enabled. Never returns an empty list.
+   */
+  readonly enabledLocales = toSignal(
+    this.siteSettings.pipe(
+      map((settings) => {
+        const selected = settings?.availableLocales ?? [];
+        const defaultLanguage = settings?.defaultLanguage;
+        if (!defaultLanguage?.id) {
+          return selected.length ? selected : availableLocales.values;
+        }
+        return selected.some(({ id }) => id === defaultLanguage.id)
+          ? selected
+          : [...selected, defaultLanguage];
+      }),
+    ),
+    { initialValue: availableLocales.values },
+  );
+
+  /**
+   * Whether the UI to configure texts in several languages is shown (the translations
+   * buttons of admin forms). Requires the `multiLingualConfigEnabled` flag AND more than
+   * one enabled language: if only the default language is enabled, there is nothing to
+   * translate into. Texts already stored per language are resolved and kept as always.
+   */
+  readonly translationsEnabled = computed(
+    () => this.languageSwitchingEnabled && this.enabledLocales().length > 1,
+  );
 
   private entityConfigReady = inject(EntityConfigReadyService);
 
@@ -117,7 +168,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   init() {
-    this.initAvailableLocales();
+    this.cacheLocalesEnum();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
     this.subscribeFontChanges();
@@ -132,11 +183,26 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   /**
-   * Making locales enum available at runtime
-   * so that UI can show dropdown options
-   * @private
+   * Make the given language the default language for all users,
+   * keeping the other site settings (a new settings document is created if none exists yet).
+   * Resolves once saved and cached in localStorage.
    */
-  private initAvailableLocales() {
+  async setDefaultLanguage(locale: ConfigurableEnumValue): Promise<void> {
+    // a failure other than "does not exist" must not end up replacing the existing settings
+    const settings = (await this.loadOnce()) ?? new SiteSettings();
+    settings.defaultLanguage = locale;
+    await this.entityMapper.save(settings);
+    // callers reload the app right after this to apply the language; the database change feed
+    // may not have arrived by then, and the old cached default would be applied again after the reload
+    this.entityUpdated.next(settings);
+  }
+
+  /**
+   * Cache the full locales enum, so dropdowns can render their options.
+   * Deliberately unfiltered: the admin picks from it which ones to enable, so
+   * narrowing it here would make the choice impossible to widen again.
+   */
+  private cacheLocalesEnum() {
     this.enumService["cacheEnum"](availableLocales);
   }
 

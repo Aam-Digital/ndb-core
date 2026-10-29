@@ -33,18 +33,18 @@ describe("AdminAiAgentComponent", () => {
       if (entityType === ConfigurableEnum) {
         return Promise.resolve([configurableEnumDocument]);
       }
-      if (entityType === SiteSettings) {
-        return Promise.resolve([siteSettingsDocument]);
-      }
       if (entityType === ReportEntity) {
         return Promise.resolve([reportDocument]);
       }
       if (entityType === PublicFormConfig) {
         return Promise.resolve([publicFormDocument]);
       }
+      if (entityType === SiteSettings) {
+        return Promise.resolve([siteSettingsDocument]);
+      }
       return Promise.resolve([]);
     });
-    mockEntityMapper.load.mockReturnValue(Promise.resolve(null));
+    mockEntityMapper.load.mockImplementation(() => Promise.resolve(null));
 
     mockDownloadService = {
       triggerDownload: vi.fn().mockName("DownloadService.triggerDownload"),
@@ -96,7 +96,7 @@ describe("AdminAiAgentComponent", () => {
     );
   });
 
-  it("omits config and permissions documents that fail to load", async () => {
+  it("omits documents that fail to load", async () => {
     mockEntityMapper.load.mockImplementation(() =>
       Promise.reject(new Error("document not found")),
     );

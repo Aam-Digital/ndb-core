@@ -126,6 +126,18 @@ describe("PaginatedDataSource", () => {
       });
     });
 
+    it("should keep the language segment of a multi-lingual field's path", () => {
+      @DatabaseEntity("PaginatedTranslatableTest")
+      class TranslatableTest extends Entity {}
+      TranslatableTest.schema.set("title", { dataType: "translatable-text" });
+      dataSource.loadRecordConfig.set({ entityCtr: TranslatableTest });
+
+      // the language is a path into the stored translation map, not a field of its own
+      expect(
+        processFilter({ "title.en-US": { $regex: "report", $options: "i" } }),
+      ).toEqual({ "title.en-US": { $regex: "(?i)report" } });
+    });
+
     describe("on fields nested inside embedded fields", () => {
       @DatabaseEntity("PaginatedEmbedTest")
       class EmbedTest extends Entity {}
