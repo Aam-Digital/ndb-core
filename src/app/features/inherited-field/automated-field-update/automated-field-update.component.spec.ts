@@ -466,11 +466,8 @@ describe("AutomatedFieldUpdateComponent", () => {
       expect(item.changes()[0].added?.["center"]).toBe("new");
     });
 
-    it.each([
-      ["the field did not change", [A]],
-      ["only the label of its value changed", [{ id: "a", label: "A (new)" }]],
-    ])("should show the field as unchanged if %s", (_, after) => {
-      const result = change([A], after, true);
+    it("should show neither removed nor added values if the field did not change", () => {
+      const result = change([A], [A], true);
 
       expect(result).toEqual({
         isChanged: false,
@@ -478,32 +475,6 @@ describe("AutomatedFieldUpdateComponent", () => {
         added: undefined,
       });
     });
-
-    it.each([
-      ["links to other records", "p2", ["center", "parent"]],
-      // e.g. a single link that was saved as a list
-      ["still links to the same records", "p1", ["center"]],
-    ])(
-      "should list the link to the affected records only if it %s",
-      (_, linkAfter, expectedFields) => {
-        const trigger = centerChange("trigger", "old", "new");
-        Object.assign(trigger.before, { parent: ["p1"] });
-        Object.assign(trigger.entity, { parent: linkAfter });
-        initDialog(
-          [
-            {
-              ...affected(FIRST, ["new"], 1),
-              sourceFieldId: "center",
-              relatedReferenceFieldEntityType: Entity,
-            },
-          ],
-          [trigger],
-        );
-
-        const changes = component.groups()[0].triggers[0].changes();
-        expect(changes.map((c) => c.field.id)).toEqual(expectedFields);
-      },
-    );
   });
 
   describe("removed values", () => {

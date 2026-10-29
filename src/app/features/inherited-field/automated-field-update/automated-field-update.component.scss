@@ -55,8 +55,7 @@
   .trigger-removed {
     color: colors.$error;
 
-    // on each element, as the line of a parent does not go through values shown as a block (e.g. a record, a chip)
-    app-entity-field-view ::ng-deep * {
+    app-entity-field-view {
       text-decoration: line-through;
     }
   }

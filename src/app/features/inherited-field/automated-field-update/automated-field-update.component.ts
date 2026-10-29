@@ -236,17 +236,13 @@ export class AutomatedFieldUpdateComponent {
           isFieldChanged(trigger.entity, trigger.before, fieldId),
         ),
     ]).filter((fieldId) => !!fieldId);
-    return fieldIds
-      .map((fieldId) => {
-        const key = `${trigger.entity.getId()}|${fieldId}`;
-        if (!this.triggerChanges.has(key)) {
-          this.triggerChanges.set(key, this.getTriggerChange(trigger, fieldId));
-        }
-        return this.triggerChanges.get(key);
-      })
-      .filter(
-        (change) => change.field.id === sourceFieldId || change.isChanged,
-      );
+    return fieldIds.map((fieldId) => {
+      const key = `${trigger.entity.getId()}|${fieldId}`;
+      if (!this.triggerChanges.has(key)) {
+        this.triggerChanges.set(key, this.getTriggerChange(trigger, fieldId));
+      }
+      return this.triggerChanges.get(key);
+    });
   }
 
   private getTriggerChange(
@@ -257,9 +253,11 @@ export class AutomatedFieldUpdateComponent {
       fieldId,
       trigger.entity.getConstructor(),
     );
-    const { removed, added } = this.getRemovedAndAdded(trigger, field);
-    // the saved value can differ without a change of the shown values (e.g. a single link saved as a list)
-    return { field, isChanged: !!(removed || added), removed, added };
+    return {
+      field,
+      isChanged: isFieldChanged(trigger.entity, trigger.before, fieldId),
+      ...this.getRemovedAndAdded(trigger, field),
+    };
   }
 
   /** What a change of the changed entity removed from the old value of the field, and what it added */
