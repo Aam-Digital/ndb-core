@@ -81,14 +81,25 @@ export class Note extends Entity {
 
   /**
    * Returns the name of the Note property where (multiple) entities of the given entity type are stored:
-   * the first "entity" array field specifically configured for that type (e.g. a legacy `children` field),
+   * `relatedEntities` if it is configured for that type,
+   * otherwise the first "entity" array field specifically configured for that type (e.g. a legacy `children` field),
    * otherwise `relatedEntities`.
+   * `authors` is never returned, even for "User" entities.
    * @param entityType
    */
   static getPropertyFor(entityType: string): string {
+    if (
+      asArray(Note.schema.get("relatedEntities")?.additional).includes(
+        entityType,
+      )
+    ) {
+      return "relatedEntities";
+    }
+
     const matchingField = [...Note.schema.entries()].find(
       ([key, field]) =>
         key !== "relatedEntities" &&
+        key !== "authors" &&
         field.dataType === "entity" &&
         field.isArray &&
         asArray(field.additional).includes(entityType),

@@ -119,22 +119,22 @@ describe("Note", () => {
       expect(Note.getLinkFields()).toContain("relatedEntities");
       expect(Note.getLinkFields()).not.toContain("authors");
       expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
-      expect(Note.getPropertyFor("User")).toBe("authors");
+      expect(Note.getPropertyFor("User")).toBe("relatedEntities");
       expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
     } finally {
       Note.schema.delete("linkedTestType");
     }
   });
 
-  it("should store multiple entities of a type in a field specific to that type rather than a single-value field or relatedEntities", () => {
+  it("should prefer relatedEntities for an entity type it allows over a field specific to that type", () => {
     const relatedEntities = Note.schema.get("relatedEntities");
     Note.schema.set("relatedEntities", {
       ...relatedEntities,
-      additional: ["TestType", "Other"],
+      additional: ["TestType", "User"],
     });
-    Note.schema.set("mainTestType", {
+    Note.schema.set("mainOtherType", {
       dataType: "entity",
-      additional: "TestType",
+      additional: "OtherType",
     });
     Note.schema.set("linkedTestType", {
       dataType: "entity",
@@ -142,11 +142,12 @@ describe("Note", () => {
       additional: "TestType",
     });
     try {
-      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
-      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+      expect(Note.getPropertyFor("TestType")).toBe("relatedEntities");
+      expect(Note.getPropertyFor("User")).toBe("relatedEntities");
+      expect(Note.getPropertyFor("OtherType")).toBe("relatedEntities");
     } finally {
       Note.schema.set("relatedEntities", relatedEntities);
-      Note.schema.delete("mainTestType");
+      Note.schema.delete("mainOtherType");
       Note.schema.delete("linkedTestType");
     }
   });
