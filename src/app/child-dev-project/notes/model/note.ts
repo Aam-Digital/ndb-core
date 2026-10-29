@@ -98,7 +98,6 @@ export class Note extends Entity {
 
     const matchingField = [...Note.schema.entries()].find(
       ([key, field]) =>
-        key !== "relatedEntities" &&
         key !== "authors" &&
         field.dataType === "entity" &&
         field.isArray &&
