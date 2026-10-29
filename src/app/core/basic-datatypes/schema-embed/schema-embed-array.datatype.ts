@@ -40,4 +40,9 @@ export class SchemaEmbedArrayDatatype<
     // schema-embed-array always requires isArray
     return { ...schemaField, isArray: true };
   }
+
+  /** Sort list columns by the number of entries. */
+  override sortValue(fieldValue: EntityType): number {
+    return Array.isArray(fieldValue) ? fieldValue.length : 0;
+  }
 }

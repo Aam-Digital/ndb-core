@@ -352,5 +352,20 @@ describe("Schema data type: schema-embed", () => {
         ).toBe(true);
       },
     );
+
+    it.each([
+      [[{ value: "a" }, { value: "b" }], 2],
+      [[], 0],
+      [undefined, 0],
+    ])(
+      "sorts schema-embed-array values %j by their number of entries",
+      (value, expected) => {
+        const datatype = TestBed.runInInjectionContext(
+          () => new SchemaEmbedArrayDatatype(),
+        );
+
+        expect(datatype.sortValue(value)).toBe(expected);
+      },
+    );
   });
 });
