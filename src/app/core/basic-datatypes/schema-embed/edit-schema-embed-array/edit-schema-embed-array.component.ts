@@ -72,8 +72,10 @@ export class EditSchemaEmbedArrayComponent
 
   rows = computed(() => this.valueSignal() ?? []);
 
-  protected readonly manageLabel = $localize`Manage entries`;
-  protected readonly viewLabel = $localize`View entries`;
+  /** Label of the button opening the dialog, which is read-only while the field is disabled. */
+  protected readonly actionLabel = computed(() =>
+    this.enabled() ? $localize`Manage entries` : $localize`View entries`,
+  );
 
   /** Opens the dialog - also in view mode, where it is read-only. */
   override onContainerClick() {

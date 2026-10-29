@@ -17,8 +17,8 @@
     mat-icon-button
     class="input-action-button"
     (click)="openDialog(); $event.stopPropagation()"
-    [attr.aria-label]="enabled() ? manageLabel : viewLabel"
-    [matTooltip]="enabled() ? manageLabel : viewLabel"
+    [attr.aria-label]="actionLabel()"
+    [matTooltip]="actionLabel()"
   >
     <app-fa-dynamic-icon aria-hidden="true" icon="table"></app-fa-dynamic-icon>
   </button>

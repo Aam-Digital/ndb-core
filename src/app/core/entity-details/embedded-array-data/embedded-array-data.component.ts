@@ -80,7 +80,7 @@ export class EmbeddedArrayDataComponent {
   );
 
   /** The configured columns, extended with the inner field details (falling back to all inner fields). */
-  readonly _columns = computed<FormFieldConfig[]>(() =>
+  readonly displayedColumns = computed<FormFieldConfig[]>(() =>
     getSchemaEmbedArrayColumns(
       this.fieldConfig(),
       this.entitySchemaService,
@@ -114,9 +114,9 @@ export class EmbeddedArrayDataComponent {
       [property],
       entity,
       this.destroyRef,
-      false,
-      true,
-      false,
+      /* forTable */ false,
+      /* withPermissionCheck */ true,
+      /* withDefaultValues */ false,
     );
     entityForm.formGroup.get(property).setValue(entries);
 
