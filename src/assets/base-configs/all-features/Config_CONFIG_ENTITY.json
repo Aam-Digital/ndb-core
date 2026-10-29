@@ -266,7 +266,8 @@
           "dataType": "entity",
           "additional": [
             "Child",
-            "School"
+            "School",
+            "User"
           ],
           "isArray": true,
           "entityReferenceRole": "composite",
@@ -659,7 +660,8 @@
                     },
                     {
                       "fields": [
-                        "phone"
+                        "phone",
+                        "email"
                       ]
                     }
                   ]
@@ -1951,6 +1953,10 @@
         "phone": {
           "dataType": "string",
           "label": "Contact"
+        },
+        "email": {
+          "dataType": "email",
+          "label": "Email"
         }
       },
       "enableUserAccounts": true
