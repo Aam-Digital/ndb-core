@@ -267,10 +267,10 @@ create a circular import.</p>
   label: $localize`:ReportConfig:Title`,
   dataType: TranslatableTextDatatype.dataType,
 })
-title: TranslatableText;</code></pre></div><p>That one line gives the field a translations editor, sorting and filtering by the
-displayed text, and resolved CSV exports. The datatype&#39;s transforms are the
-identity on purpose: the entity holds the raw value, because resolving on save
-would drop the other languages.</p>
+title: TranslatableText;</code></pre></div><p>That one line gives the field a translations editor, sorting by the displayed
+text, a text filter matching the text in any language, and resolved CSV
+exports. The datatype&#39;s transforms are the identity on purpose: the entity
+holds the raw value, because resolving on save would drop the other languages.</p>
 <p>Admins edit these through <code>TranslatableTextInputComponent</code>, which shows the active
 language inline and opens <code>ConfigureTranslationsPopupComponent</code> for the full
 per-language list.</p>

@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="65"
-                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:65</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -370,6 +370,7 @@ import { StringDatatype } from &quot;../../basic-datatypes/string/string.datatyp
 import { LongTextDatatype } from &quot;../../basic-datatypes/string/long-text.datatype&quot;;
 import { DateFilter } from &quot;../filters/dateFilter&quot;;
 import { StringFilter } from &quot;../filters/stringFilter&quot;;
+import { TranslatableTextFilter } from &quot;../filters/translatableTextFilter&quot;;
 import { BooleanFilter } from &quot;../filters/booleanFilter&quot;;
 import {
   buildEnumValueFilter,
@@ -380,6 +381,7 @@ import { DynamicPlaceholderValueService } from &quot;app/core/default-values/x-d
 import { todoDueStatusFilter } from &quot;../../../features/todos/add-default-todo-views&quot;;
 import { EmailDatatype } from &quot;../../basic-datatypes/string/email.datatype&quot;;
 import { UrlDatatype } from &quot;../../basic-datatypes/string/url.datatype&quot;;
+import { TranslatableTextDatatype } from &quot;../../config/translatable-text.datatype&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import {
   EmbeddedFieldRef,
@@ -497,6 +499,8 @@ export class FilterGeneratorService {
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
           this.getDateDatatype(type) instanceof DateRangeDatatype,
         );
+      } else if (type &#x3D;&#x3D;&#x3D; TranslatableTextDatatype.dataType) {
+        filter &#x3D; new TranslatableTextFilter(filterConfig.id, label);
       } else if (this.isFreeTextField(type, schema)) {
         filter &#x3D; new StringFilter(filterConfig.id, label);
       } else if (

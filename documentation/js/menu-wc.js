@@ -1973,6 +1973,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/Todo.html" data-type="entity-link" >Todo</a>
                             </li>
                             <li class="link">
+                                <a href="classes/TranslatableTextFilter.html" data-type="entity-link" >TranslatableTextFilter&lt;T extends Entity&gt;</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/UnknownTotalPaginatorIntl.html" data-type="entity-link" >UnknownTotalPaginatorIntl</a>
                             </li>
                             <li class="link">
