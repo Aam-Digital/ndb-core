@@ -266,8 +266,7 @@
           "dataType": "entity",
           "additional": [
             "Child",
-            "School",
-            "User"
+            "School"
           ],
           "isArray": true,
           "entityReferenceRole": "composite",
