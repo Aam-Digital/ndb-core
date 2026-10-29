@@ -17,7 +17,6 @@ import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeValue } from "../date-range.datatype";
-import { withinParentValidator } from "../within-parent-validator";
 import {
   MatDialogMock,
   mockMatDialog,
@@ -25,10 +24,7 @@ import {
 } from "../../../../utils/test-utils/dialog-mocks";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { periodRangeOptions } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
-import {
-  EditDateRangeComponent,
-  endNotBeforeStart,
-} from "./edit-date-range.component";
+import { EditDateRangeComponent } from "./edit-date-range.component";
 
 @DatabaseEntity("EditDateRangeTestAction")
 class EditDateRangeTestAction extends Entity {
@@ -242,23 +238,6 @@ describe("EditDateRangeComponent", () => {
     },
   );
 
-  it("should mark the field as invalid if the end date is before the start date", () => {
-    component.range.setValue({ start: end, end: start });
-
-    expect(component.formControl.errors?.dateRange.errorMessage).toBeTruthy();
-  });
-
-  it.each([
-    ["no value", null, true],
-    ["only a start date", { start }, true],
-    ["only an end date", { end }, true],
-    ["the end date after the start date", { start, end }, true],
-    ["the same day", { start, end: start }, true],
-    ["the end date before the start date", { start: end, end: start }, false],
-  ])("validator: %s", (_, value, valid) => {
-    expect(endNotBeforeStart(new FormControl(value)) === null).toBe(valid);
-  });
-
   describe("period of a linked parent record", () => {
     const outside = {
       start: new Date(2026, 4, 20),
@@ -371,25 +350,6 @@ describe("EditDateRangeComponent", () => {
       );
 
       expect(await warning()).toBeUndefined();
-    });
-
-    it("validates the dates again when the parent link entered in the form changes", async () => {
-      const { form } = await render(within, null, undefined, false, true);
-      const period = form.get("period");
-      period.setAsyncValidators(
-        withinParentValidator(withinParent, "period", undefined, async () => [
-          { name: "Training", range: { start, end } },
-        ]),
-      );
-      period.setValue(outside);
-      await vi.waitFor(() => expect(period.pending).toBe(false));
-      expect(period.errors).toBeNull();
-
-      form.get("parent").setValue(parentAction.getId());
-
-      await vi.waitFor(() =>
-        expect(period.errors?.withinParent?.warning).toBe(true),
-      );
     });
 
     it("offers the parent's period as the first predefined period", async () => {

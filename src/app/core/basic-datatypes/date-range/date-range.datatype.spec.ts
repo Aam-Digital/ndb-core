@@ -1,8 +1,10 @@
+import { FormControl } from "@angular/forms";
 import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
 import {
   DateRangeDatabaseValue,
   DateRangeDatatype,
   DateRangeValue,
+  endNotBeforeStart,
 } from "./date-range.datatype";
 import { isOutsideRange } from "./is-outside-range";
 
@@ -79,6 +81,19 @@ describe("Schema data type: date-range", () => {
       start: new Date(2026, 6, 1),
       end: new Date(2027, 6, 1),
     });
+  });
+
+  const start = new Date(2026, 2, 1);
+  const end = new Date(2026, 4, 31);
+  it.each([
+    ["no value", null, true],
+    ["only a start date", { start }, true],
+    ["only an end date", { end }, true],
+    ["the end date after the start date", { start, end }, true],
+    ["the same day", { start, end: start }, true],
+    ["the end date before the start date", { start: end, end: start }, false],
+  ])("validator: %s", (_, value, valid) => {
+    expect(endNotBeforeStart(new FormControl(value)) === null).toBe(valid);
   });
 });
 

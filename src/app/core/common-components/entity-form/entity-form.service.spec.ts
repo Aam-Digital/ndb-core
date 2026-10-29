@@ -38,6 +38,25 @@ import {
   ConfirmationDialogMock,
   mockConfirmationDialog,
 } from "../../../utils/test-utils/dialog-mocks";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
+
+@DatabaseEntity("EntityFormServiceTestAction")
+class EntityFormServiceTestAction extends Entity {
+  static override readonly toStringAttributes = ["name"];
+
+  @DatabaseField() name: string;
+  @DatabaseField({
+    dataType: "entity",
+    additional: "EntityFormServiceTestAction",
+  })
+  parent: string;
+  @DatabaseField({
+    dataType: "date-range",
+    validators: { withinParent: { parentReferenceField: "parent" } },
+  })
+  period: DateRangeValue;
+}
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -284,6 +303,47 @@ describe("EntityFormService", () => {
     return expect(
       service.saveChanges(form, new ChildSchoolRelation()),
     ).rejects.toEqual(expect.any(InvalidFormFieldError));
+  });
+
+  describe("date range fields", () => {
+    const march = new Date(2026, 2, 1);
+    const may = new Date(2026, 4, 31);
+    const june = new Date(2026, 5, 15);
+
+    it("rejects a range that ends before it starts, as a rule of the datatype that needs no config", async () => {
+      const form = await createForm(
+        [{ id: "period" }],
+        new EntityFormServiceTestAction(),
+      );
+
+      form.formGroup.get("period").setValue({ start: may, end: march });
+
+      expect(form.formGroup.get("period").errors?.dateRange).toBeTruthy();
+    });
+
+    it("checks the range again when the parent link entered in the same form changes", async () => {
+      const parent = Object.assign(new EntityFormServiceTestAction("parent"), {
+        name: "Training",
+        period: { start: march, end: may },
+      });
+      (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(
+        parent,
+      );
+      const form = await createForm(
+        [{ id: "parent" }, { id: "period" }],
+        new EntityFormServiceTestAction(),
+      );
+      const period = form.formGroup.get("period");
+      period.setValue({ start: may, end: june });
+      await vi.waitFor(() => expect(period.pending).toBe(false));
+      expect(period.errors).toBeNull();
+
+      form.formGroup.get("parent").setValue(parent.getId());
+
+      await vi.waitFor(() =>
+        expect(period.errors?.withinParent?.warning).toBe(true),
+      );
+    });
   });
 
   describe("warnings (validation errors marked with `warning: true`)", () => {

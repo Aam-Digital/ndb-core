@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { AbstractControl, ValidationErrors } from "@angular/forms";
 import {
   DefaultDatatype,
   ExportColumnMapping,
@@ -18,6 +19,21 @@ export interface DateRangeDatabaseValue {
   end?: string;
 }
 
+/** Validator for the value of the field: the end must not be before the start. */
+export function endNotBeforeStart(
+  control: AbstractControl<DateRangeValue | null>,
+): ValidationErrors | null {
+  const { start, end } = control.value ?? {};
+  if (start && end && end < start) {
+    return {
+      dateRange: {
+        errorMessage: $localize`The end date must not be before the start date.`,
+      },
+    };
+  }
+  return null;
+}
+
 /**
  * Datatype for a period of time: the start and the end date in one field.
  *
@@ -35,6 +51,8 @@ export class DateRangeDatatype extends DefaultDatatype<
 
   override viewComponent = "DisplayDateRange";
   override editComponent = "EditDateRange";
+
+  override readonly validators = [endNotBeforeStart];
 
   /** converts the single dates, so that they are stored like all other date-only fields */
   private readonly dateOnly = new DateOnlyDatatype();

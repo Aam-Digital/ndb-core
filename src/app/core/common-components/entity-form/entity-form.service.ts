@@ -29,6 +29,7 @@ import {
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
 import { resolveLocaleText } from "../../language/active-locale";
+import { revalidateOnParentLinkChange } from "../../basic-datatypes/date-range/within-parent-validator";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -230,6 +231,7 @@ export class EntityFormService {
       this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
+    revalidateOnParentLinkChange(group, formFields, destroyRef);
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -268,6 +270,12 @@ export class EntityFormService {
       );
       Object.assign(controlOptions, validators);
     }
+
+    controlOptions.validators = [
+      ...asArray(controlOptions.validators ?? []),
+      ...this.entitySchemaService.getDatatypeOrDefault(field.dataType)
+        .validators,
+    ];
 
     if (withPermissionCheck) {
       const conditionValidator = this.permissionConditionValidators.forField(
