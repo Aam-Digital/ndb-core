@@ -1,0 +1,26 @@
+@use "grid-layout";
+@use "../variables/sizes";
+
+/*
+ * Layout of the fields in an entity form (see EntityFormComponent),
+ * also used by other forms of entity fields to look the same.
+ */
+
+/* adaptive grid of the form's field groups */
+@mixin grid {
+  @include grid-layout.adaptive(
+    $min-block-width: sizes.$form-group-min-width,
+    $max-screen-width: 414px
+  );
+}
+
+/* one group (column) of fields, stretching each form field to the available width */
+@mixin cell {
+  display: flex;
+  flex-direction: column;
+
+  mat-form-field {
+    width: 100%;
+    max-width: 864px;
+  }
+}

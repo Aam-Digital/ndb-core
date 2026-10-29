@@ -1,24 +1,14 @@
-@use "mixins/grid-layout";
-@use "variables/sizes";
+@use "mixins/entity-form";
 
 /* same form layout as the EntityFormComponent used in the popup of related entities
    (not encapsulated to reach the nested mat-form-fields, therefore scoped to this component's element) */
 app-schema-embed-array-entry-dialog {
   .entry-form {
-    @include grid-layout.adaptive(
-      $min-block-width: sizes.$form-group-min-width,
-      $max-screen-width: 414px
-    );
+    @include entity-form.grid;
   }
 
   .entry-form-cell {
-    display: flex;
-    flex-direction: column;
-
-    mat-form-field {
-      width: 100%;
-      max-width: 864px;
-    }
+    @include entity-form.cell;
   }
 
   .context-menu-button {
