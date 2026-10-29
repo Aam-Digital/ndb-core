@@ -82,11 +82,11 @@ describe("PaginatedDataSource", () => {
     );
   });
 
-  describe("processFilterForDB", () => {
-    function processFilter(filter: object) {
-      return (dataSource as any).processFilterForDB(filter);
-    }
+  function processFilter(filter: object) {
+    return (dataSource as any).processFilterForDB(filter);
+  }
 
+  describe("processFilterForDB", () => {
     it("should leave filters without 'isActive' unchanged", () => {
       expect(processFilter({ name: "x", $or: [{ a: 1 }] })).toEqual({
         name: "x",
@@ -312,97 +312,97 @@ describe("PaginatedDataSource", () => {
         expect(result.docs.map((d) => d._id)).toEqual(["PaginatedEmbedTest:a"]);
       });
     });
+  });
 
-    describe("on date fields not stored as a day", () => {
-      @DatabaseEntity("PaginatedDateTest")
-      class DateTest extends Entity {}
-      DateTest.schema.set("time", { dataType: "date" });
-      DateTest.schema.set("month", { dataType: "month" });
-      DateTest.schema.set("log", {
-        dataType: "schema-embed",
-        isArray: true,
-        additional: { time: { dataType: "date" } },
-      });
+  describe("processFilterForDB on date fields not stored as a day", () => {
+    @DatabaseEntity("PaginatedDateTest")
+    class DateTest extends Entity {}
+    DateTest.schema.set("time", { dataType: "date" });
+    DateTest.schema.set("month", { dataType: "month" });
+    DateTest.schema.set("log", {
+      dataType: "schema-embed",
+      isArray: true,
+      additional: { time: { dataType: "date" } },
+    });
 
-      /** a local date and time as stored in the database for a "date" field: a UTC timestamp */
-      const timestamp = (localTime: string) => moment(localTime).toISOString();
+    /** a local date and time as stored in the database for a "date" field: a UTC timestamp */
+    const timestamp = (localTime: string) => moment(localTime).toISOString();
 
-      // documents as stored in the database, not as loaded entities
-      const docs = [
-        ["a", "2026-03-11T23:30", "2026-02"],
-        ["b", "2026-03-12T00:00", "2026-03"],
-        ["c", "2026-03-12T23:30", "2026-04"],
-        ["d", "2026-03-13T00:00", "2026-05"],
-      ].map(([id, time, month]) => ({
-        _id: `PaginatedDateTest:${id}`,
-        time: timestamp(time),
-        month,
-        log: [{ time: timestamp(time) }],
-      }));
+    // documents as stored in the database, not as loaded entities
+    const docs = [
+      ["a", "2026-03-11T23:30", "2026-02"],
+      ["b", "2026-03-12T00:00", "2026-03"],
+      ["c", "2026-03-12T23:30", "2026-04"],
+      ["d", "2026-03-13T00:00", "2026-05"],
+    ].map(([id, time, month]) => ({
+      _id: `PaginatedDateTest:${id}`,
+      time: timestamp(time),
+      month,
+      log: [{ time: timestamp(time) }],
+    }));
 
-      let database: MemoryPouchDatabase;
+    let database: MemoryPouchDatabase;
 
-      beforeEach(async () => {
-        database = new MemoryPouchDatabase(
-          "paginated-date-test",
-          new SyncStateSubject(),
-        );
-        database.init();
-        await database.putAll(docs);
-        dataSource.loadRecordConfig.set({ entityCtr: DateTest });
-      });
-
-      afterEach(() => database.destroy());
-
-      it.each([
-        ["time", "2026-03-12", "2026-03-12", ["b", "c"]],
-        ["log.time", "2026-03-12", "2026-03-12", ["b", "c"]],
-        ["month", "2026-03-01", "2026-03-31", ["b"]],
-        // a month counts as its first day
-        ["month", "2026-03-15", "2026-04-15", ["c"]],
-      ])(
-        "matches the same records in the database as in memory for a date filter on %s from %s to %s",
-        async (field, from, to, expected) => {
-          const dateFilter = (
-            await TestBed.inject(FilterGeneratorService).generate(
-              [{ id: field }],
-              DateTest,
-              [],
-            )
-          )[0];
-          dateFilter.selectedOptionValues = [from, to];
-          const filter = dateFilter.getFilter();
-          const expectedIds = expected.map((id) => `PaginatedDateTest:${id}`);
-
-          const result = await database.find(
-            "PaginatedDateTest",
-            processFilter(filter),
-          );
-          const inMemory = docs
-            .map((doc) =>
-              TestBed.inject(EntitySchemaService).loadDataIntoEntity(
-                new DateTest(),
-                doc,
-              ),
-            )
-            .filter(TestBed.inject(FilterService).getFilterPredicate(filter));
-
-          expect(result.docs.map((d) => d._id)).toEqual(expectedIds);
-          expect(inMemory.map((e) => e.getId())).toEqual(expectedIds);
-        },
+    beforeEach(async () => {
+      database = new MemoryPouchDatabase(
+        "paginated-date-test",
+        new SyncStateSubject(),
       );
+      database.init();
+      await database.putAll(docs);
+      dataSource.loadRecordConfig.set({ entityCtr: DateTest });
+    });
 
-      it("compares a day with a timestamp at day precision also for exclusive bounds", async () => {
+    afterEach(() => database.destroy());
+
+    it.each([
+      ["time", "2026-03-12", "2026-03-12", ["b", "c"]],
+      ["log.time", "2026-03-12", "2026-03-12", ["b", "c"]],
+      ["month", "2026-03-01", "2026-03-31", ["b"]],
+      // a month counts as its first day
+      ["month", "2026-03-15", "2026-04-15", ["c"]],
+    ])(
+      "matches the same records in the database as in memory for a date filter on %s from %s to %s",
+      async (field, from, to, expected) => {
+        const dateFilter = (
+          await TestBed.inject(FilterGeneratorService).generate(
+            [{ id: field }],
+            DateTest,
+            [],
+          )
+        )[0];
+        dateFilter.selectedOptionValues = [from, to];
+        const filter = dateFilter.getFilter();
+        const expectedIds = expected.map((id) => `PaginatedDateTest:${id}`);
+
         const result = await database.find(
           "PaginatedDateTest",
-          processFilter({ time: { $gt: "2026-03-11", $lt: "2026-03-13" } }),
+          processFilter(filter),
         );
+        const inMemory = docs
+          .map((doc) =>
+            TestBed.inject(EntitySchemaService).loadDataIntoEntity(
+              new DateTest(),
+              doc,
+            ),
+          )
+          .filter(TestBed.inject(FilterService).getFilterPredicate(filter));
 
-        expect(result.docs.map((d) => d._id)).toEqual([
-          "PaginatedDateTest:b",
-          "PaginatedDateTest:c",
-        ]);
-      });
+        expect(result.docs.map((d) => d._id)).toEqual(expectedIds);
+        expect(inMemory.map((e) => e.getId())).toEqual(expectedIds);
+      },
+    );
+
+    it("compares a day with a timestamp at day precision also for exclusive bounds", async () => {
+      const result = await database.find(
+        "PaginatedDateTest",
+        processFilter({ time: { $gt: "2026-03-11", $lt: "2026-03-13" } }),
+      );
+
+      expect(result.docs.map((d) => d._id)).toEqual([
+        "PaginatedDateTest:b",
+        "PaginatedDateTest:c",
+      ]);
     });
   });
 
