@@ -140,6 +140,19 @@ export class ApiClientService {
     );
   }
 
+  /**
+   * Replace the client scopes (the access) of the API client.
+   * Access tokens the external system got before keep their previous access until they expire.
+   */
+  updateScopes(clientId: string, scopes: string[]): Promise<ApiClient> {
+    return firstValueFrom(
+      this.http.put<ApiClient>(
+        `${this.API_URL}/${encodeURIComponent(clientId)}/scope`,
+        { scopes },
+      ),
+    );
+  }
+
   async deleteApiClient(clientId: string): Promise<void> {
     await firstValueFrom(
       this.http.delete(`${this.API_URL}/${encodeURIComponent(clientId)}`),

@@ -1,0 +1,32 @@
+<h2 mat-dialog-title i18n>Access of "{{ apiClient.name }}"</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    Choose what the external system can access through the API. It keeps its
+    current credentials. Access tokens it already got keep their previous access
+    until they expire.
+  </p>
+
+  <app-api-client-scope-selection
+    [control]="scopes"
+  ></app-api-client-scope-selection>
+
+  @if (error(); as error) {
+    <p class="color-error" role="alert">{{ error }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    type="button"
+    (click)="save()"
+    [disabled]="scopes.invalid || scopes.pristine || saving()"
+    i18n="Button label"
+  >
+    Save
+  </button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>
