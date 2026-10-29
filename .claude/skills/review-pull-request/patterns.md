@@ -49,3 +49,8 @@ reviewers keep finding on top of that.
 15. **Test setup missing from the PR.** A change that needs a special config to try
     (fields, rules, features) should add it to the all-features config in the PR, so
     the manual testing steps need no admin-UI setup (#4526).
+16. **Config texts shown unresolved.** A `label`, `description` or other text read from
+    the config or an entity schema can be a translation map in a multilingual config,
+    even where its type says `string` (e.g. `EntitySchemaField.label` in the Admin UI).
+    Shown without `resolveLocaleText()` or the `localeText` pipe, it reads
+    "[object Object]" (#4573). See the [language README](src/app/core/language/README.md).

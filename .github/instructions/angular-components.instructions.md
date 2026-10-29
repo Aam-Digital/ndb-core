@@ -32,12 +32,12 @@ export class ExampleComponent {
 
 ## Dependency Injection
 
-Use `inject()` — **not** constructor injection:
+Use `inject()` into a `private readonly` field — **not** constructor injection:
 
 ```typescript
 export class ExampleComponent {
-  private entityMapper = inject(EntityMapperService);
-  private route = inject(ActivatedRoute);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly route = inject(ActivatedRoute);
 }
 ```
 
