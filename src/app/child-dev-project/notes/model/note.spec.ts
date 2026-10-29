@@ -141,14 +141,21 @@ describe("Note", () => {
       isArray: true,
       additional: "TestType",
     });
+    Note.schema.set("linkedOtherType", {
+      dataType: "entity",
+      isArray: true,
+      additional: "OtherType",
+    });
     try {
       expect(Note.getPropertyFor("TestType")).toBe("relatedEntities");
       expect(Note.getPropertyFor("User")).toBe("relatedEntities");
-      expect(Note.getPropertyFor("OtherType")).toBe("relatedEntities");
+      // not allowed in relatedEntities: the array field for the type, not the single-value one
+      expect(Note.getPropertyFor("OtherType")).toBe("linkedOtherType");
     } finally {
       Note.schema.set("relatedEntities", relatedEntities);
       Note.schema.delete("mainOtherType");
       Note.schema.delete("linkedTestType");
+      Note.schema.delete("linkedOtherType");
     }
   });
 
