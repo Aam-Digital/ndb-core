@@ -5,7 +5,7 @@ import {
 } from "./data-transformation-service/export-column-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
-import { buildExportColumnResolvers } from "./download-service/download.service";
+import { buildExportColumnResolvers } from "./export-column-resolvers";
 
 export interface BuildExportColumnsOptions {
   schema: Map<string, any> | undefined;
