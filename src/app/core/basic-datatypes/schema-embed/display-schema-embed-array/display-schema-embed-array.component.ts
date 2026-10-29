@@ -12,6 +12,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 
 /**
  * Generic view component for the `schema-embed-array` datatype.
@@ -67,19 +68,10 @@ export class DisplaySchemaEmbedArrayComponent extends ViewDirective<
     }
     return this.rows()
       .map((row) => row?.[column.id])
-      .filter((value) => !isEmpty(value))
+      .filter((value) => !isEmptyValue(value))
       .slice(0, DisplaySchemaEmbedArrayComponent.MAX_PREVIEW_ENTRIES);
   });
 
   /** Number of entries not covered by {@link previewValues}. */
   moreCount = computed(() => this.rows().length - this.previewValues().length);
-}
-
-function isEmpty(value: any): boolean {
-  return (
-    value === undefined ||
-    value === null ||
-    value === "" ||
-    (Array.isArray(value) && value.length === 0)
-  );
 }

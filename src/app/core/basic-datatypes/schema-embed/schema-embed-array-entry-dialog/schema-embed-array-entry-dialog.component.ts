@@ -23,7 +23,7 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
-import { isEmptyValue } from "#src/app/features/inherited-field/add-missing-values";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 import { buildSchemaEmbedEntryForm } from "../schema-embed-entry-form";
 
 /**
