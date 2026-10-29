@@ -126,7 +126,7 @@ describe("Note", () => {
     }
   });
 
-  it("should prefer relatedEntities for an entity type it allows over a field specific to that type", () => {
+  it("should store entities of a type in the first entity array field allowing that type, but never in authors", () => {
     const relatedEntities = Note.schema.get("relatedEntities");
     Note.schema.set("relatedEntities", {
       ...relatedEntities,
