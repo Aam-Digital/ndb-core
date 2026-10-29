@@ -185,7 +185,7 @@ export class SchemaEmbedDatatype<
 
   /**
    * The inner fields of the embedded object as columns for tables and forms,
-   * each with its resolved `viewComponent` for rendering values.
+   * extended with their schema details (like any entity field), including the components to display them.
    *
    * @param schemaField the field using this datatype (holding the inner fields in `additional`)
    * @param columns optional selection (and overrides) of the inner fields, in display order;
@@ -195,33 +195,26 @@ export class SchemaEmbedDatatype<
     schemaField?: EntitySchemaField,
     columns?: ColumnConfig[],
   ): FormFieldConfig[] {
-    const allColumns: FormFieldConfig[] = [
-      ...this.getEffectiveSchema(schemaField).entries(),
-    ].map(([id, column]) => ({
-      ...column,
-      id,
-      viewComponent: this.schemaService.getComponent(column, "view"),
-    }));
-    if (!columns?.length) {
-      return allColumns;
-    }
+    const innerSchema = this.getEffectiveSchema(schemaField);
+    const fieldConfigs: FormFieldConfig[] = columns?.length
+      ? columns.map(toFormFieldConfig)
+      : [...innerSchema.keys()].map((id) => ({ id }));
 
-    const selected: FormFieldConfig[] = [];
-    for (const column of columns) {
-      const config = toFormFieldConfig(column);
-      const innerField = allColumns.find((c) => c.id === config?.id);
+    const result: FormFieldConfig[] = [];
+    for (const config of fieldConfigs) {
+      const innerField = innerSchema.get(config?.id);
       if (!innerField) {
         // an instance config mistake (not a bug in our code): must not block the other columns
         // from rendering, and is not reported (this runs in computed()s, so it would repeat)
         Logging.debug("Could not display an unknown embedded table column", {
-          column,
+          column: config,
           field: schemaField?.id,
         });
         continue;
       }
-      selected.push({ ...innerField, ...config });
+      result.push(this.schemaService.addSchemaToFormField(config, innerField));
     }
-    return selected;
+    return result;
   }
 
   override transformToDatabaseFormat(

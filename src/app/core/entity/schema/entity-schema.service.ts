@@ -22,6 +22,8 @@ import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { asArray } from "app/utils/asArray";
 import { Logging } from "../../logging/logging.service";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * Transform between entity instances and database objects
@@ -206,6 +208,41 @@ export class EntitySchemaService {
   }
 
   /**
+   * Extend a form field config with the details from its property schema:
+   * the schema's settings (with the form field's own settings taking precedence),
+   * the edit and view components and the resolved (translated) labels.
+   *
+   * @param formField the field config to extend; it is not changed
+   * @param propertySchema the schema of the property displayed by the field
+   * @param forTable whether the field is displayed in a table (hiding its description)
+   */
+  addSchemaToFormField(
+    formField: FormFieldConfig,
+    propertySchema: EntitySchemaField | undefined,
+    forTable = false,
+  ): FormFieldConfig {
+    // formField config has precedence over schema
+    const fullField: FormFieldConfig = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
+      formField,
+    );
+
+    fullField.editComponent =
+      fullField.editComponent || this.getComponent(propertySchema, "edit");
+    fullField.viewComponent =
+      fullField.viewComponent || this.getComponent(propertySchema, "view");
+    fullField.label = fullField.label || fullField.labelShort;
+    fullField.forTable = forTable;
+    if (forTable) {
+      delete fullField.description;
+    }
+
+    resolveTranslatableLabels(fullField);
+    return fullField;
+  }
+
+  /**
    * Transform a single value into database format
    * @param value
    * @param schemaField
@@ -276,5 +313,19 @@ export class EntitySchemaService {
         " Further occurrences of the same dataType will not be logged again this session.",
       { dataType: datatypeName },
     );
+  }
+}
+
+/**
+ * Config loaded through ConfigService is already resolved, but the runtime
+ * schema can hold a translation map while an admin has configured
+ * translations that are not saved to the config document yet.
+ */
+function resolveTranslatableLabels(field: FormFieldConfig) {
+  for (const property of ["label", "labelShort", "description"]) {
+    if (field[property] === undefined) {
+      continue;
+    }
+    field[property] = resolveLocaleText(field[property]);
   }
 }

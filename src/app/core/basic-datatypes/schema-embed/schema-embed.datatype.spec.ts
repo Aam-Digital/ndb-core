@@ -318,9 +318,9 @@ describe("Schema data type: schema-embed", () => {
         );
       });
 
-      it("returns the selected inner fields in the given order, with overrides", () => {
+      it("returns the selected inner fields in the given order, with overrides in the active language", () => {
         const columns = datatype().getColumns(field, [
-          { id: "value2", label: "Custom" },
+          { id: "value2", label: { en: "Custom", de: "Angepasst" } as any },
           "value",
         ]);
 

@@ -11,7 +11,6 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { filter } from "rxjs/operators";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
 import {
@@ -21,7 +20,6 @@ import {
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
-import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -54,7 +52,7 @@ export class EntityFormService {
     const fullField = toFormFieldConfig(formField);
 
     try {
-      return this.addSchemaToFormField(
+      return this.entitySchemaService.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
         forTable,
@@ -63,55 +61,6 @@ export class EntityFormService {
       throw new Error(
         `Could not create form config for ${fullField?.id}: ${err}`,
       );
-    }
-  }
-
-  private addSchemaToFormField(
-    formField: FormFieldConfig,
-    propertySchema: EntitySchemaField | undefined,
-    forTable: boolean,
-  ): FormFieldConfig {
-    // formField config has precedence over schema
-    const fullField = Object.assign(
-      {},
-      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
-      formField,
-    );
-
-    fullField.editComponent =
-      fullField.editComponent ||
-      this.entitySchemaService.getComponent(propertySchema, "edit");
-    fullField.viewComponent =
-      fullField.viewComponent ||
-      this.entitySchemaService.getComponent(propertySchema, "view");
-
-    if (forTable) {
-      fullField.forTable = true;
-      fullField.label =
-        fullField.label || fullField.labelShort || fullField.label;
-      delete fullField.description;
-    } else {
-      fullField.forTable = false;
-      fullField.label =
-        fullField.label || fullField.label || fullField.labelShort;
-    }
-
-    this.resolveTranslatableLabels(fullField);
-
-    return fullField;
-  }
-
-  /**
-   * Config loaded through ConfigService is already resolved, but the runtime
-   * schema can hold a translation map while an admin has configured
-   * translations that are not saved to the config document yet.
-   */
-  private resolveTranslatableLabels(field: FormFieldConfig) {
-    for (const property of ["label", "labelShort", "description"]) {
-      if (field[property] === undefined) {
-        continue;
-      }
-      field[property] = resolveLocaleText(field[property]);
     }
   }
 
