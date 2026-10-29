@@ -81,8 +81,9 @@ export class Note extends Entity {
 
   /**
    * Returns the name of the Note property where (multiple) entities of the given entity type are stored:
-   * the first "entity" array field configured for that type (e.g. `relatedEntities` or a legacy `children` field),
-   * otherwise `relatedEntities`.
+   * the first "entity" array field configured for that type (e.g. `relatedEntities` or a legacy `children` field).
+   * If no field is configured for that type, `relatedEntities` is returned as fallback,
+   * so that the entity is still linked to the note.
    * `authors` is never returned, even for "User" entities.
    * @param entityType
    */
