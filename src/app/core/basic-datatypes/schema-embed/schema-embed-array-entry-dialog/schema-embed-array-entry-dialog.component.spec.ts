@@ -126,6 +126,28 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     },
   );
 
+  it.each([
+    { name: "a new entry left empty", index: undefined, value: null, saved: 0 },
+    {
+      name: "a new entry with a value",
+      index: undefined,
+      value: "C3",
+      saved: 1,
+    },
+    { name: "an existing entry cleared", index: 0, value: null, saved: 1 },
+  ])(
+    "adds no blank entry: $name is applied $saved time(s)",
+    async ({ index, value, saved }) => {
+      await createDialog({ index, columns: [columns[1]] });
+
+      component.form.setValue({ documentNumber: value });
+      await component.save();
+
+      expect(applyChange).toHaveBeenCalledTimes(saved);
+      expect(mockDialogRef.close).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it("keeps the values of inner fields that are not edited in the popup", async () => {
     await createDialog({ index: 1, columns: [columns[0]] });
 
