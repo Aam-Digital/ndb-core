@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
@@ -26,7 +21,6 @@ import { ApiClientScopeSelectionComponent } from "../api-client-scope-selection/
  */
 @Component({
   selector: "app-edit-api-client-scopes-dialog",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
     MatButtonModule,

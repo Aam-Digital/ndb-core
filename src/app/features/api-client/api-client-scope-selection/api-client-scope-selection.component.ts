@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  resource,
-} from "@angular/core";
+import { Component, computed, inject, input, resource } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
@@ -20,7 +13,6 @@ import { getScopeLabel, SINGLE_SIGN_ON_SCOPE } from "../api-client-scopes";
  */
 @Component({
   selector: "app-api-client-scope-selection",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
     MatProgressBarModule,
