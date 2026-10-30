@@ -43,6 +43,11 @@ export class DateRangeFilterComponent<T extends Entity> {
   readonly toDate = signal<Date | null>(null);
 
   filterConfig = input<DateFilter<T>>();
+
+  readonly label = computed(
+    () => this.filterConfig()?.label || this.filterConfig()?.name,
+  );
+
   dateRangeChange = output<{ from: Date | null; to: Date | null }>();
   readonly isNoDateFilterActive = computed(
     () => this.selectedOptionValues()[0] === EMPTY_FILTER_OPTION_KEY,
