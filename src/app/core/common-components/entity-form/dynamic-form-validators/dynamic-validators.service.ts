@@ -15,7 +15,6 @@ import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
 import { withinParentValidator } from "../../../basic-datatypes/date-range/within-parent-validator";
-import { loadParentRanges } from "../../../basic-datatypes/date-range/parent-ranges";
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -127,8 +126,11 @@ export class DynamicValidatorsService {
         return value && fieldId
           ? {
               async: true,
-              fn: withinParentValidator(value, fieldId, entity, (ids, field) =>
-                loadParentRanges(this.entityMapper, ids, field),
+              fn: withinParentValidator(
+                value,
+                fieldId,
+                entity,
+                this.entityMapper,
               ),
             }
           : null;

@@ -37,7 +37,11 @@ import {
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 import { DateRangeValue } from "../date-range.datatype";
-import { findParentOutside, parentRangesResource } from "../parent-ranges";
+import {
+  findParentOutside,
+  ParentLinkInForm,
+  parentRangesResource,
+} from "../parent-ranges";
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
@@ -108,25 +112,16 @@ export class EditDateRangeComponent
    * the parent link as entered in the form, if the form has that field (otherwise the record's saved link is used),
    * so that the parent's period offered and shaded while editing follows a changed link before it is saved
    */
-  private readonly parentReferenceInForm = signal<
-    { value: string | string[] | null } | undefined
-  >(undefined);
+  private readonly parentReferenceInForm = signal<ParentLinkInForm | undefined>(
+    undefined,
+  );
 
-  private readonly parents = parentRangesResource(() => {
-    const field = this.formFieldConfig();
-    const config = field?.validators?.withinParent;
-    if (!config || this.entity()?.anonymized) {
-      return undefined;
-    }
-    const inForm = this.parentReferenceInForm();
-    return {
-      parentReference: inForm
-        ? inForm.value
-        : this.entity()?.[config.parentReferenceField],
-      config,
-      fieldId: field.id,
-    };
-  });
+  private readonly parents = parentRangesResource(() => ({
+    record: this.entity(),
+    fieldId: this.formFieldConfig()?.id,
+    config: this.formFieldConfig()?.validators?.withinParent,
+    linkInForm: this.parentReferenceInForm(),
+  }));
 
   /** name of the first linked parent record whose range the entered range goes beyond */
   protected readonly outsideParent = computed(() =>

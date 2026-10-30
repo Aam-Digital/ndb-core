@@ -24,19 +24,12 @@ export class DisplayDateRangeComponent extends ViewDirective<DateRangeValue> {
     this.isPartiallyAnonymized() ? "yyyy" : "shortDate",
   );
 
-  private readonly parents = parentRangesResource(() => {
-    const entity = this.entity();
-    const fieldId = this.id();
-    const config = entity?.getSchema()?.get(fieldId)?.validators?.withinParent;
-    if (!config || entity.anonymized) {
-      return undefined;
-    }
-    return {
-      parentReference: entity[config.parentReferenceField],
-      config,
-      fieldId,
-    };
-  });
+  private readonly parents = parentRangesResource(() => ({
+    record: this.entity(),
+    fieldId: this.id(),
+    config: this.entity()?.getSchema()?.get(this.id())?.validators
+      ?.withinParent,
+  }));
 
   /** name of the first linked parent record whose range this value goes beyond */
   protected readonly outsideParent = computed(() =>

@@ -13,6 +13,30 @@ export interface ParentRange {
   range: DateRangeValue;
 }
 
+/** the parent link as entered in a form (e.g. its form control) */
+export interface ParentLinkInForm {
+  value: string | string[] | null;
+}
+
+/**
+ * The ids of the parent records to compare a record's range with:
+ * the link entered in the form if the form has a field for it, otherwise the record's saved link.
+ * None for an anonymized record, whose dates are reduced to the year.
+ */
+export function getParentIds(
+  config: WithinParentConfig,
+  record: Entity | undefined,
+  linkInForm?: ParentLinkInForm | null,
+): string[] {
+  if (record?.anonymized) {
+    return [];
+  }
+  return asArray(
+    (linkInForm ? linkInForm.value : record?.[config.parentReferenceField]) ??
+      [],
+  );
+}
+
 /**
  * Loads the ranges of the given parent records
  * (except anonymized ones, whose dates are reduced to the year, and the ones that cannot be loaded).
@@ -40,31 +64,28 @@ export async function loadParentRanges(
 }
 
 /**
- * Loads the ranges of the parent records that a record links to (see {@link loadParentRanges}).
+ * Loads the ranges of the parent records that a record links to (see {@link getParentIds} and {@link loadParentRanges}).
  * Must be called in an injection context (e.g. as a field initializer of a component).
  *
- * @param params the parent link (one or several ids), the config and the id of the field, or undefined if there is nothing to check
+ * @param params the record, the id and the `withinParent` config of its field (without a config nothing is loaded)
+ *   and the parent link entered in the form, if the form has a field for it
  */
 export function parentRangesResource(
-  params: () =>
-    | {
-        parentReference: string | string[] | null | undefined;
-        config: WithinParentConfig;
-        fieldId: string;
-      }
-    | undefined,
+  params: () => {
+    record: Entity | undefined;
+    fieldId: string | undefined;
+    config: WithinParentConfig | undefined;
+    linkInForm?: ParentLinkInForm;
+  },
 ) {
   const entityMapper = inject(EntityMapperService);
 
   return resource({
     params: () => {
-      const current = params();
-      const parentIds = asArray(current?.parentReference ?? []);
+      const { record, fieldId, config, linkInForm } = params();
+      const parentIds = config ? getParentIds(config, record, linkInForm) : [];
       return parentIds.length
-        ? {
-            parentIds,
-            valueField: current.config.parentValueField ?? current.fieldId,
-          }
+        ? { parentIds, valueField: config.parentValueField ?? fieldId }
         : undefined;
     },
     loader: ({ params: { parentIds, valueField } }) =>
