@@ -17,6 +17,7 @@
 
 import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../model/entity";
+import { EmbeddedEntity } from "../model/embedded-entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Observable } from "rxjs";
 import { UpdatedEntity } from "../model/entity-update";
@@ -265,6 +266,7 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false,
   ): Promise<any> {
+    this.assertSavable(entity);
     this.assertPermission(entity);
     this.setEntityMetadata(entity);
     const rawData =
@@ -295,6 +297,7 @@ export class EntityMapperService {
       return [];
     }
 
+    entities.forEach((e) => this.assertSavable(e));
     entities.forEach((e) => this.assertPermission(e));
     entities.forEach((e) => this.setEntityMetadata(e));
 
@@ -358,6 +361,15 @@ export class EntityMapperService {
       return this.registry.get(constructible) as EntityConstructor<T>;
     } else {
       return constructible;
+    }
+  }
+
+  private assertSavable(entity: Entity) {
+    if (entity instanceof EmbeddedEntity) {
+      // only a stand-in while editing an embedded entry, which is stored as part of its record
+      throw new Error(
+        "An embedded entry cannot be saved on its own, save the record holding it instead",
+      );
     }
   }
 

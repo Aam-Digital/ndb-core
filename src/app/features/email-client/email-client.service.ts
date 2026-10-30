@@ -1,5 +1,6 @@
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { getSavedRecord } from "#src/app/core/entity/model/embedded-entity";
 import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -62,9 +63,10 @@ export class EmailClientService {
       return false;
     }
 
-    const filteredEntities = entityList.filter(
-      (e) => !excludedEntities.includes(e),
-    );
+    // for an embedded entry (e.g. a row of an embedded table), the template and note refer to the record holding it
+    const filteredEntities = entityList
+      .filter((e) => !excludedEntities.includes(e))
+      .map(getSavedRecord);
 
     const result = await this.selectTemplate(
       filteredEntities[0],
