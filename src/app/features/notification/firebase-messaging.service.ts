@@ -64,7 +64,7 @@ export class FirebaseMessagingService {
    * Ask the user for the notification permission (if not decided yet), then get the token of this device.
    */
   readonly requestToken: Observable<string | null> = defer(async () => {
-    if (hasPushApis()) {
+    if (this.isAvailable()) {
       await Notification.requestPermission();
     }
     return this.loadToken();
@@ -92,6 +92,14 @@ export class FirebaseMessagingService {
   );
 
   /**
+   * Whether push notifications can work here at all:
+   * the browser has the push APIs and this deployment has a Firebase config.
+   */
+  isAvailable(): boolean {
+    return hasPushApis() && !!environment.notificationsConfig;
+  }
+
+  /**
    * Delete the token of this device, which stops push messages to it.
    */
   deleteToken(): Observable<boolean> {
@@ -102,7 +110,7 @@ export class FirebaseMessagingService {
   }
 
   private async loadToken(): Promise<string | null> {
-    if (!hasPushApis() || Notification.permission !== "granted") {
+    if (!this.isAvailable() || Notification.permission !== "granted") {
       return null;
     }
     const firebase = await this.loadFirebase();

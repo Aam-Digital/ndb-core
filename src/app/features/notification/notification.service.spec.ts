@@ -13,6 +13,7 @@ import type { MessagePayload } from "firebase/messaging";
 import type { Mock } from "vitest";
 import { environment } from "../../../environments/environment";
 import { FirebaseConfiguration } from "./notification-config.interface";
+import { Logging } from "app/core/logging/logging.service";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -24,6 +25,7 @@ class MockFirebaseMessagingService {
   getToken: Observable<any> = of("mock-token");
   messages = new Subject<MessagePayload>();
   deleteToken = vi.fn(() => of(true));
+  isAvailable = () => true;
 }
 
 describe("NotificationService", () => {
@@ -99,6 +101,7 @@ describe("NotificationService", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
     environment.notificationsConfig = originalFirebaseConfig;
   });
 
@@ -160,14 +163,18 @@ describe("NotificationService", () => {
     expect(mockRegistration.showNotification).toHaveBeenCalledTimes(1);
   });
 
-  it("does not unregister anything without a device token (e.g. after the browser permission was revoked)", async () => {
+  it("treats a device without token as already unregistered (e.g. after the browser permission was revoked)", async () => {
     mockFireMessaging.getToken = of(null);
+    const errorSpy = vi.spyOn(Logging, "error");
 
     service.unregisterDevice();
 
     await vi.waitFor(() =>
-      expect(TestBed.inject(AlertService).addInfo).toHaveBeenCalled(),
+      expect(TestBed.inject(AlertService).addInfo).toHaveBeenCalledWith(
+        expect.stringContaining("un-registered"),
+      ),
     );
+    expect(errorSpy).not.toHaveBeenCalled();
     expect(mockFireMessaging.deleteToken).not.toHaveBeenCalled();
     expect(mockHttpClient.delete).not.toHaveBeenCalled();
   });

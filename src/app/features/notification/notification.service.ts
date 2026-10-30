@@ -132,7 +132,8 @@ export class NotificationService {
     this.tokenSubscription = this.firebaseMessaging.requestToken.subscribe({
       next: (token) => {
         if (!token) {
-          Logging.error("Could not get token for device.");
+          // permission denied or browser not supported: nothing a developer can fix
+          Logging.debug("Could not get token for device.");
           this.alertService.addInfo(
             $localize`Please enable notification permissions to receive important updates.`,
           );
@@ -209,12 +210,9 @@ export class NotificationService {
     this.firebaseMessaging.getToken
       .pipe(
         mergeMap((token) => {
-          if (!token) {
-            // e.g. the browser permission was revoked: nothing to delete, neither in Firebase nor the backend
-            return of(false);
-          }
           tempToken = token;
-          return this.firebaseMessaging.deleteToken();
+          // without a token (e.g. the browser permission was revoked) the device is not registered anyway
+          return token ? this.firebaseMessaging.deleteToken() : of(true);
         }),
       )
       .subscribe({
@@ -227,9 +225,16 @@ export class NotificationService {
             return;
           }
 
-          this.unRegisterNotificationToken(tempToken).catch((err) => {
-            Logging.error("Could not unregister device from aam-backend.", err);
-          });
+          if (tempToken) {
+            this.unRegisterNotificationToken(tempToken).catch((err) => {
+              Logging.error(
+                "Could not unregister device from aam-backend.",
+                err,
+              );
+            });
+          } else {
+            Logging.debug("No push notification token to unregister");
+          }
 
           this.alertService.addInfo(
             $localize`Device un-registered for push notifications.`,
@@ -369,7 +374,12 @@ export class NotificationService {
     });
   }
 
-  readonly isPushNotificationSupported = signal("Notification" in window);
+  /**
+   * Whether this browser and deployment can use push notifications at all.
+   */
+  readonly isPushNotificationSupported = signal(
+    this.firebaseMessaging.isAvailable(),
+  );
 
   /**
    * Whether the user has given this app the browser permission to show notifications.
