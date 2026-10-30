@@ -53,4 +53,4 @@ reviewers keep finding on top of that.
     the config or an entity schema can be a translation map in a multilingual config,
     even where its type says `string` (e.g. `EntitySchemaField.label` in the Admin UI).
     Shown without `resolveLocaleText()` or the `localeText` pipe, it reads
-    "[object Object]" (#4573). See the [language README](src/app/core/language/README.md).
+    "[object Object]". See the [language README](src/app/core/language/README.md).
