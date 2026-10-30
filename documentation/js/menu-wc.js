@@ -846,6 +846,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ApiClientListComponent.html" data-type="entity-link" >ApiClientListComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ApiClientScopeSelectionComponent.html" data-type="entity-link" >ApiClientScopeSelectionComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ApplicationLoadingComponent.html" data-type="entity-link" >ApplicationLoadingComponent</a>
                             </li>
                             <li class="link">
@@ -1099,6 +1102,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EditAgeComponent.html" data-type="entity-link" >EditAgeComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditApiClientScopesDialogComponent.html" data-type="entity-link" >EditApiClientScopesDialogComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EditAttendanceComponent.html" data-type="entity-link" >EditAttendanceComponent</a>

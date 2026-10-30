@@ -237,6 +237,10 @@ see <a href="https://github.com/Aam-Digital/aam-services/blob/main/docs/api-spec
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#regenerateSecret" >regenerateSecret</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#updateScopes" >updateScopes</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -380,8 +384,8 @@ if not given, the backend generates one from the name</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="143"
-                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:143</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -447,8 +451,8 @@ if not given, the backend generates one from the name</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="160"
-                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:160</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -565,8 +569,8 @@ if not given, the backend generates one from the name</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="149"
-                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:149</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -679,6 +683,88 @@ if not given, the backend generates one from the name</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;ApiClientCredentials&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateScopes"></a>
+                    <span class="name">
+                        <span ><b>updateScopes</b></span>
+                        <a href="#updateScopes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateScopes(clientId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, scopes: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/features/api-client/api-client.service.ts:147</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Replace the client scopes (the access) of the API client.
+Access tokens the external system got before keep their previous access until they expire.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>clientId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>scopes</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ApiClient.html" target="_self" >Promise&lt;ApiClient&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -919,6 +1005,19 @@ export class ApiClientService {
       this.http.post&lt;ApiClientCredentials&gt;(
         &#x60;${this.API_URL}/${encodeURIComponent(clientId)}/secret&#x60;,
         null,
+      ),
+    );
+  }
+
+  /**
+   * Replace the client scopes (the access) of the API client.
+   * Access tokens the external system got before keep their previous access until they expire.
+   */
+  updateScopes(clientId: string, scopes: string[]): Promise&lt;ApiClient&gt; {
+    return firstValueFrom(
+      this.http.put&lt;ApiClient&gt;(
+        &#x60;${this.API_URL}/${encodeURIComponent(clientId)}/scope&#x60;,
+        { scopes },
       ),
     );
   }
