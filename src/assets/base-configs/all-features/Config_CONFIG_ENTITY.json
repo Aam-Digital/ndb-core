@@ -659,7 +659,8 @@
                     },
                     {
                       "fields": [
-                        "phone"
+                        "phone",
+                        "email"
                       ]
                     }
                   ]
@@ -1951,6 +1952,10 @@
         "phone": {
           "dataType": "string",
           "label": "Contact"
+        },
+        "email": {
+          "dataType": "email",
+          "label": "Email"
         }
       },
       "enableUserAccounts": true
