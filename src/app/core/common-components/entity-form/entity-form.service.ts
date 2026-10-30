@@ -321,7 +321,9 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    await this.checkFormValidity(entityForm);
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
 
     const originalEntity = entity.copy();
     const updatedEntity = this.createUpdatedEntity(entity, form);
@@ -356,10 +358,12 @@ export class EntityFormService {
   }
 
   /**
-   * Throws an `InvalidFormFieldError` if a field is invalid.
-   * Errors marked with `warning: true` (e.g. a period outside its parent's) only need to be confirmed by the user.
+   * Whether the form can be saved: it is valid (after waiting for running async checks),
+   * or its only errors are warnings (marked with `warning: true`, e.g. a period outside its parent's) that the user confirmed.
    */
-  private async checkFormValidity<T extends Entity>(entityForm: EntityForm<T>) {
+  async confirmValidity<T extends Entity>(
+    entityForm: EntityForm<T>,
+  ): Promise<boolean> {
     const form = entityForm.formGroup;
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
@@ -369,22 +373,20 @@ export class EntityFormService {
       );
     }
     if (!form.invalid) {
-      return;
+      return true;
     }
 
     const warnings = getWarnings(entityForm);
-    const confirmed =
-      warnings?.length &&
-      (await this.confirmationDialog.getConfirmation(
+    return (
+      !!warnings?.length &&
+      !!(await this.confirmationDialog.getConfirmation(
         $localize`Save anyway?`,
         warnings.length > 1
           ? warnings.map((warning) => `- ${warning}`).join("\n")
           : warnings[0],
         CustomYesNoButtons($localize`Save anyway`, $localize`Keep editing`),
-      ));
-    if (!confirmed) {
-      throw new InvalidFormFieldError();
-    }
+      ))
+    );
   }
 
   private createUpdatedEntity<T extends Entity>(

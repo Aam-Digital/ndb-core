@@ -24,7 +24,10 @@ import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import {
+  EntityFormService,
+  hasOnlyWarnings,
+} from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
@@ -65,6 +68,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   mergedEntity: E;
   fieldsToMerge = signal<FormFieldConfig[]>([]);
   mergeForm: EntityForm<E>;
+
+  /** whether the merge preview has errors that block merging (warnings are only confirmed when merging) */
+  get hasBlockingErrors(): boolean {
+    const form = this.mergeForm?.formGroup;
+    return !!form?.invalid && !hasOnlyWarnings(form);
+  }
 
   showOnlyDifferences = signal(false);
 
@@ -154,8 +163,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   async confirmAndMergeRecords(): Promise<boolean> {
-    this.mergeForm.formGroup.markAllAsTouched();
-    if (this.mergeForm.formGroup.invalid) return false;
+    if (!(await this.entityFormService.confirmValidity(this.mergeForm))) {
+      return false;
+    }
 
     const accountDecision =
       await this.accountSection()?.validateAndGetDecision();

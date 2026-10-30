@@ -92,7 +92,7 @@ parent action's period) with the `withinParent` validator of the field (in its `
 the field linking to the parent, `parentValueField` the date range field of the parent (by default the field with the
 same id, as in a hierarchy of records of the same type). A missing date leaves the range open on that side (e.g. no end
 date = ongoing). A range beyond the parent's is only a warning: its validation error is marked with `warning: true`, so
-saving asks the user to confirm it instead of being blocked (see `EntityFormService.saveChanges`). In view mode and in
+saving (or merging records) asks the user to confirm it instead of being blocked (see `EntityFormService.confirmValidity`). In view mode and in
 lists, where no validation runs, a warning icon shows instead. When the parent link changes in the same form, the
 form validates the range again. See [`within-parent-validator.ts`](date-range/within-parent-validator.ts). In the Admin UI, the "Validation" tab of a date
 range field sets it ("Must lie within the period of a linked record").
