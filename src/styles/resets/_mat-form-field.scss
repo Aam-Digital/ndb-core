@@ -9,3 +9,8 @@
 button.input-action-button {
   pointer-events: auto;
 }
+
+/* A long label is cut off with "…" within the field, before buttons such as a date picker or upload button */
+.mat-form-field-appearance-fill .mdc-floating-label {
+  width: 100%;
+}

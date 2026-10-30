@@ -1,8 +1,3 @@
-// the floated label is scaled to 75%: this keeps a long label (cut off with "…") before the date picker button
-:host ::ng-deep .mdc-floating-label--float-above {
-  max-width: 133.3333333333%;
-}
-
 .date-reset-button {
   color: #000;
 }
