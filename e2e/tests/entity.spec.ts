@@ -554,6 +554,35 @@ test("Add related entries inline in the tables of a child's details", async ({
   await page.getByRole("menuitem", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Yes" }).click();
   await expect(documentsTable.getByRole("row")).toHaveCount(1);
+
+  // The same field in a form: entries are managed in a dialog and only saved
+  // together with the form.
+  await page.getByRole("tab", { name: "Basic Information" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Manage entries" }).click();
+  const entriesDialog = page.getByRole("dialog", {
+    name: "Identification Documents",
+  });
+  await entriesDialog.getByRole("button", { name: "add entry" }).click();
+  const entryDialog = page.getByRole("dialog").last();
+  await entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("V-1111111");
+  await entryDialog.getByRole("button", { name: "Apply" }).click();
+  await expect(
+    entriesDialog.getByRole("cell", { name: "V-1111111" }),
+  ).toBeVisible();
+  await entriesDialog.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
+
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  await expect(
+    documentsTable.getByRole("cell", { name: "V-1111111" }),
+  ).toBeVisible();
 });
 
 const UNSAVED_CHILD_NAME = "<UNSAVED CHANGES CHILD>";
