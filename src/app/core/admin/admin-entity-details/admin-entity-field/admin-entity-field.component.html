@@ -292,6 +292,7 @@
             <app-configure-entity-field-validator
               [entitySchemaField]="data.entitySchemaField"
               [entityType]="data.entityType"
+              [dataType]="selectedDataType()"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
               (entitySchemaFieldChanges)="onEntitySchemaFieldChanges($event)"
             ></app-configure-entity-field-validator>

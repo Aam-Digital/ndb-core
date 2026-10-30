@@ -71,6 +71,16 @@ export class ConfigureEntityFieldValidatorComponent {
   entityType = input<EntityConstructor>();
 
   /**
+   * the data type currently selected for the field, if it can change while editing
+   * (a change of `entitySchemaField.dataType` in place is not noticed)
+   */
+  dataType = input<string>();
+
+  private readonly fieldDataType = computed(
+    () => this.dataType() ?? this.entitySchemaField()?.dataType,
+  );
+
+  /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
    */
   entityValidatorChanges = output<FormValidatorConfig>();
@@ -91,7 +101,7 @@ export class ConfigureEntityFieldValidatorComponent {
   readonly parentRangeOptions = computed(() => {
     const field = this.entitySchemaField();
     const entityType = this.entityType();
-    if (field?.dataType !== DateRangeDatatype.dataType || !entityType) {
+    if (this.fieldDataType() !== DateRangeDatatype.dataType || !entityType) {
       return [];
     }
 
@@ -189,8 +199,8 @@ export class ConfigureEntityFieldValidatorComponent {
       const sub = form.valueChanges.subscribe(() => {
         const rawValues = form.getRawValue();
         this.transformPatternValue(rawValues);
-        if (this.entitySchemaField()?.dataType !== DateRangeDatatype.dataType) {
-          // only offered for date ranges (the type can change while the dialog is open)
+        if (this.fieldDataType() !== DateRangeDatatype.dataType) {
+          // only offered for date ranges
           delete rawValues.withinParent;
         }
         const cleanedValues =
@@ -201,6 +211,17 @@ export class ConfigureEntityFieldValidatorComponent {
         patternSub.unsubscribe();
         sub.unsubscribe();
       });
+    });
+
+    effect(() => {
+      const withinParent = this.validatorForm().get("withinParent");
+      // only offered for date ranges, so it would stay in the config without being visible anywhere
+      if (
+        this.fieldDataType() !== DateRangeDatatype.dataType &&
+        withinParent.value
+      ) {
+        withinParent.setValue(null);
+      }
     });
 
     effect((onCleanup) => {

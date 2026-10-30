@@ -269,6 +269,17 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ required: true });
     });
 
+    it("drops the setting when the type of the field is changed to another one", async () => {
+      const { emitted } = await renderDateRangeField({
+        parentReferenceField: "parent",
+      });
+
+      fixture.componentRef.setInput("dataType", "string");
+      fixture.detectChanges();
+
+      expect(emitted.at(-1)).toEqual({});
+    });
+
     it("shows the saved setting", async () => {
       const { select } = await renderDateRangeField({
         parentReferenceField: "project",

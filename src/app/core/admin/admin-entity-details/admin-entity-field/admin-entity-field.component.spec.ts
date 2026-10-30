@@ -281,6 +281,7 @@ describe("AdminEntityFieldComponent", () => {
     component.schemaFieldsForm
       .get("dataType")
       .setValue(StringDatatype.dataType);
+    fixture.detectChanges();
     await fixture.whenStable();
 
     expect(dialogData.entitySchemaField.validators).toEqual({
