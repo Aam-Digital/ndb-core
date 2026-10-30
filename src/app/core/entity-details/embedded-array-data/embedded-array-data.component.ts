@@ -70,7 +70,7 @@ export class EmbeddedArrayDataComponent {
   /** @see EmbeddedArrayDataConfig.editable */
   editable = input<boolean>(true);
 
-  private readonly fieldConfig = computed<FormFieldConfig | undefined>(() => {
+  readonly fieldConfig = computed<FormFieldConfig | undefined>(() => {
     const field = this.entity()?.getSchema().get(this.property());
     return field ? { ...field, id: this.property() } : undefined;
   });

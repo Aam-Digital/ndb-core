@@ -33,6 +33,7 @@ describe("SchemaEmbedArrayDialogComponent", () => {
 
     dialogData = {
       formControl,
+      field: { id: "documents", dataType: "schema-embed-array" },
       columns: [
         { id: "documentType", dataType: "string", label: "Document Type" },
         { id: "documentNumber", dataType: "string", label: "Document Number" },

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
@@ -26,6 +27,17 @@ const columns: FormFieldConfig[] = [
   { id: "documentNumber", dataType: "string", label: "Document Number" },
 ];
 
+/** the `schema-embed-array` field holding the entries, with one more inner field than shown in the popup */
+const field: FormFieldConfig = {
+  id: "documents",
+  dataType: "schema-embed-array",
+  additional: {
+    documentType: columns[0],
+    documentNumber: columns[1],
+    remarks: { dataType: "string", label: "Remarks" },
+  },
+};
+
 describe("SchemaEmbedArrayEntryDialogComponent", () => {
   let fixture: ComponentFixture<SchemaEmbedArrayEntryDialogComponent>;
   let component: SchemaEmbedArrayEntryDialogComponent;
@@ -52,7 +64,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { entries, entity, columns, applyChange, ...data },
+          useValue: { entries, entity, field, columns, applyChange, ...data },
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
@@ -62,7 +74,19 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     fixture = TestBed.createComponent(SchemaEmbedArrayEntryDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    // the form of the entry is created asynchronously
     await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  function form(): FormGroup {
+    return component.entryForm().formGroup;
+  }
+
+  /** change the values in the popup, as a user would */
+  function enterValues(values: Record<string, any>) {
+    form().setValue(values);
+    form().markAsDirty();
   }
 
   function appliedChange(): SchemaEmbedArrayEntryChange {
@@ -95,25 +119,89 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     applyChange = vi.fn().mockResolvedValue(undefined);
   });
 
-  it.each<[string, number | undefined]>([
-    ["an edited entry", 1],
-    ["a new entry", undefined],
+  it.each<
+    [string, number | undefined, Record<string, any>, Record<string, any>]
+  >([
+    [
+      "an edited entry",
+      1,
+      { documentType: "Visa", documentNumber: "C3" },
+      { documentType: "Visa", documentNumber: "C3" },
+    ],
+    [
+      "a new entry",
+      undefined,
+      { documentType: "Visa", documentNumber: "C3" },
+      { documentType: "Visa", documentNumber: "C3" },
+    ],
+    [
+      "a new entry, leaving out empty inner fields",
+      undefined,
+      { documentType: "Visa", documentNumber: null },
+      { documentType: "Visa" },
+    ],
+    [
+      "an edited entry, removing cleared inner fields",
+      1,
+      { documentType: "Visa", documentNumber: null },
+      { documentType: "Visa" },
+    ],
   ])(
     "applies only the change of %s, together with the entry as it was when opened",
-    async (_, index) => {
+    async (_, index, values, expectedEntry) => {
       await createDialog({ index });
       const original = index === undefined ? undefined : { ...entries[index] };
 
-      component.form.setValue({ documentType: "Visa", documentNumber: "C3" });
+      enterValues(values);
       await component.save();
 
-      const expected = {
-        entry: { documentType: "Visa", documentNumber: "C3" },
-        index,
-        original,
-      };
+      const expected = { entry: expectedEntry, index, original };
       expect(appliedChange()).toEqual(expected);
       expect(mockDialogRef.close).toHaveBeenCalledWith(expected);
+    },
+  );
+
+  it("keeps the values of the entry that are not edited in the popup", async () => {
+    entries[0] = { ...entries[0], remarks: "verified", legacyField: "old" };
+    await createDialog({ index: 0 });
+
+    enterValues({ documentType: "Visa", documentNumber: "A1" });
+    await component.save();
+
+    expect(appliedChange()).toEqual(
+      expect.objectContaining({
+        entry: {
+          documentType: "Visa",
+          documentNumber: "A1",
+          remarks: "verified",
+          legacyField: "old",
+        },
+      }),
+    );
+  });
+
+  it("closes without applying anything if an existing entry is unchanged", async () => {
+    await createDialog({ index: 0 });
+
+    await component.save();
+
+    expect(applyChange).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalledTimes(1);
+  });
+
+  it.each<[string, number | undefined, boolean]>([
+    ["a new entry", undefined, false],
+    ["an existing entry", 0, true],
+  ])(
+    "locks a read-only-after-set field depending on whether its own entry is new, not its record (%s, locked: %s)",
+    async (_, index, expectedDisabled) => {
+      entity._rev = "1-existing";
+      await createDialog({
+        index,
+        columns: [{ ...columns[1], validators: { readonlyAfterSet: true } }],
+      });
+
+      expect(form().get("documentNumber").disabled).toBe(expectedDisabled);
     },
   );
 
@@ -131,7 +219,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     async ({ index, value, saved }) => {
       await createDialog({ index, columns: [columns[1]] });
 
-      component.form.setValue({ documentNumber: value });
+      enterValues({ documentNumber: value });
       await component.save();
 
       expect(applyChange).toHaveBeenCalledTimes(saved);
@@ -151,7 +239,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
   it("starts with the values of the edited entry", async () => {
     await createDialog({ index: 1 });
 
-    expect(component.form.getRawValue()).toEqual({
+    expect(form().getRawValue()).toEqual({
       documentType: "ID Card",
       documentNumber: "B2",
     });
@@ -160,10 +248,13 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
   it("does not save or close while an inner field is invalid", async () => {
     await createDialog({ index: undefined });
 
-    component.form.setValue({ documentType: null, documentNumber: "C3" });
+    const alertSpy = vi.spyOn(TestBed.inject(AlertService), "addDanger");
+
+    enterValues({ documentType: null, documentNumber: "C3" });
     await component.save();
 
     expect(applyChange).not.toHaveBeenCalled();
+    expect(alertSpy).not.toHaveBeenCalled();
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
@@ -172,6 +263,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     await createDialog({ index: 0 });
     const alertSpy = vi.spyOn(TestBed.inject(AlertService), "addDanger");
 
+    enterValues({ documentType: "Visa", documentNumber: "A1" });
     await component.save();
 
     expect(alertSpy).toHaveBeenCalledWith("save failed");
@@ -215,16 +307,16 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     await createDialog(data);
 
     expect(buttonTexts()).toEqual(expectedButtons);
-    expect(component.form.disabled).toBe(!!data.readonly);
+    expect(form().disabled).toBe(!!data.readonly);
   });
 
   it("asks before discarding changes when clicking outside the popup", async () => {
     mockConfirmation.getDiscardConfirmation.mockResolvedValue(false);
     await createDialog({ index: 0 });
 
-    component.form.get("documentNumber").setValue("changed");
-    component.form.markAsDirty();
-    component.form.updateValueAndValidity();
+    form().get("documentNumber").setValue("changed");
+    form().markAsDirty();
+    form().updateValueAndValidity();
     backdropClick.next(new MouseEvent("click"));
     await fixture.whenStable();
 

@@ -8,7 +8,10 @@ import { isEqual } from "lodash-es";
  */
 export type SchemaEmbedArrayEntryChange =
   | {
-      /** The values of the new or edited entry */
+      /**
+       * The new or edited entry with all its values, replacing the entry as it was when the popup opened
+       * (so inner fields cleared in the popup are removed)
+       */
       entry: Record<string, any>;
       /** Position of the edited entry when the popup opened; a new entry is added if not given */
       index?: number;
@@ -62,8 +65,8 @@ export function applySchemaEmbedArrayEntryChange(
   if ("delete" in change) {
     result.splice(index, 1);
   } else {
-    // keep values of inner fields that are not edited in the popup
-    result[index] = { ...result[index], ...change.entry };
+    // the latest entry equals the original (see findCurrentIndex), so the edited entry replaces it completely
+    result[index] = change.entry;
   }
   return result;
 }
