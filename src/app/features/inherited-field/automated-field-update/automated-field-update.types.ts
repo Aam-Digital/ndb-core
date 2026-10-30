@@ -2,6 +2,7 @@ import { NoCommonValueReason } from "#src/app/core/default-values/default-value-
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
+import { StartingChange } from "./change-set";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -73,14 +74,8 @@ export interface DialogRow extends AffectedEntity {
   removedEntity?: Entity;
 }
 
-/** The change that opened the update dialog */
-export interface UpdateTrigger {
-  /** The changed entity */
-  entity: Entity;
-
-  /** The changed entity before the change (the same as entity if there is no change) */
-  before: Entity;
-
+/** The change that opened the update dialog (before is the same as entity if there is no change) */
+export interface UpdateTrigger extends StartingChange {
   /** The field of the entity to pass on to the entities it links to, regardless of a change (from the button next to the field) */
   fieldId?: string;
 }

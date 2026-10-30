@@ -3,6 +3,8 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import {
   AffectedEntity,
   AffectedRule,
@@ -11,14 +13,16 @@ import {
   UpdateTrigger,
 } from "./automated-field-update.types";
 import { lastValueFrom } from "rxjs";
+import { groupBy } from "lodash-es";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
 import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
-import { ChangeSet } from "./change-set";
+import { ChangeSet, getChangedFields } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { SessionSubject } from "#src/app/core/session/auth/session-info";
 import {
@@ -26,6 +30,9 @@ import {
   AffectedEntitiesContext,
   QueuedChange,
 } from "./affected-entities-calculation";
+
+/** Above this number of affected records, the dialog to review them can take long to show, so the user is asked first */
+export const MAX_ENTITIES_TO_REVIEW = 100;
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -41,9 +48,11 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly alertService = inject(AlertService);
   private readonly sessionInfo = inject(SessionSubject, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
@@ -55,21 +64,59 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly processedRevisions = new Set<string>();
 
   /**
-   * Applies rules to dependent entities based on changes in the provided entity.
+   * Applies rules to dependent entities based on changes in the provided entities.
    * Also prompts user confirmation and saves updates if any changes were made.
-   * @param entity - The source entity whose changes should trigger updates
-   * @param entityBeforeChanges The state of the entity before changes were applied to identify what has changed
+   * Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
+   * @param entities - The source entities whose changes should trigger updates
+   * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
+   *   (in the same order)
+   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
+   * @return the updated entities as they were before the update (to undo it), without the given entities themselves
    */
   public async applyRulesToDependentEntities(
-    entity: Entity,
-    entityBeforeChanges: Entity,
-  ): Promise<void> {
-    if (this.checkRefAlreadyProcessed(entity)) return;
+    entities: Entity | Entity[],
+    entitiesBeforeChanges: Entity | Entity[],
+  ): Promise<Entity[]> {
+    try {
+      return await this.updateEntitiesDependingOn(
+        asArray(entities),
+        asArray(entitiesBeforeChanges),
+      );
+    } catch (error) {
+      Logging.error(
+        "AutomatedFieldUpdateConfigService: Could not update the linked records after saving",
+        error,
+      );
+      this.alertService.addDanger(
+        $localize`The linked records could not be updated.`,
+      );
+      return [];
+    }
+  }
 
-    await this.confirmAndSaveAffectedEntities({
-      entity,
-      before: entityBeforeChanges,
-    });
+  private async updateEntitiesDependingOn(
+    entities: Entity[],
+    before: Entity[],
+  ): Promise<Entity[]> {
+    // only the entities with a change that is passed on (saving also changes e.g. the update time)
+    const triggers: UpdateTrigger[] = entities
+      .map((entity, i) => ({
+        entity,
+        before: before[i],
+        changedFields: getChangedFields(entity, before[i]),
+      }))
+      .filter(
+        (trigger) =>
+          this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
+            .length > 0 && !this.checkRefAlreadyProcessed(trigger.entity),
+      );
+    if (triggers.length === 0) return [];
+
+    const { previousVersions } =
+      await this.confirmAndSaveAffectedEntities(triggers);
+    // the caller has the given entities as they were before their change
+    const givenIds = new Set(entities.map((entity) => entity.getId()));
+    return previousVersions.filter((entity) => !givenIds.has(entity.getId()));
   }
 
   /**
@@ -90,30 +137,29 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * regardless of whether the field was changed recently.
    * @return whether there were any linked entities to update
    */
-  public updateLinkedRecords(
+  public async updateLinkedRecords(
     entity: Entity,
     fieldId: string,
   ): Promise<boolean> {
-    return this.confirmAndSaveAffectedEntities({
-      entity,
-      before: entity,
-      fieldId,
-    });
+    const { hasAffectedEntities } = await this.confirmAndSaveAffectedEntities([
+      { entity, before: entity, fieldId, changedFields: [fieldId] },
+    ]);
+    return hasAffectedEntities;
   }
 
   /**
    * Find the entities that the rules would update, level by level up the hierarchy
    * (see {@link AffectedEntitiesCalculation}).
-   * @param trigger the change that starts the update
+   * @param triggers the changes that start the update
    * @param enteredValues values the user entered for affected entities (database format),
    *   which the entities above are based on instead of the suggestions
    * @return the affected entities, ordered by level
    */
   private findAffectedEntities(
-    trigger: UpdateTrigger,
+    triggers: UpdateTrigger[],
     enteredValues: EnteredValue[] = [],
   ): Promise<AffectedEntity[]> {
-    return new AffectedEntitiesCalculation(this, trigger, enteredValues).run();
+    return new AffectedEntitiesCalculation(this, triggers, enteredValues).run();
   }
 
   /**
@@ -555,37 +601,35 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   /**
    * Find the entities affected by the change and open a dialog to confirm their updates with the user.
    * Saves entities only if the user confirms the changes.
-   * @return whether there were any affected entities
+   * @return whether there were any affected entities, and the saved entities as they were before (to undo the update)
    */
   private async confirmAndSaveAffectedEntities(
-    trigger: UpdateTrigger,
-  ): Promise<boolean> {
-    const affectedEntities = await this.findAffectedEntities(trigger);
-    if (affectedEntities.length === 0) return false;
+    triggers: UpdateTrigger[],
+  ): Promise<{ hasAffectedEntities: boolean; previousVersions: Entity[] }> {
+    const affectedEntities = await this.findAffectedEntities(triggers);
+    if (affectedEntities.length === 0) {
+      return { hasAffectedEntities: false, previousVersions: [] };
+    }
 
-    const userConfirmed = await this.showConfirmationDialog(
-      affectedEntities,
-      trigger,
-    );
-    if (!userConfirmed) return true;
+    const userConfirmed = await this.confirmUpdates(affectedEntities, triggers);
+    if (!userConfirmed) {
+      return { hasAffectedEntities: true, previousVersions: [] };
+    }
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
-    const updatesByEntityId = new Map<string, AffectedEntity[]>();
-    userConfirmed.forEach((update) => {
-      const existing = updatesByEntityId.get(update.id) || [];
-      existing.push(update);
-      updatesByEntityId.set(update.id, existing);
-    });
+    const updatesByEntityId = groupBy(userConfirmed, (update) => update.id);
 
     const entitiesToSave: Entity[] = [];
-    updatesByEntityId.forEach((updates) => {
+    const previousVersions: Entity[] = [];
+    Object.values(updatesByEntityId).forEach((updates) => {
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes = updates.filter(
         (update) => entity && !isSameValue(update.newValue, update.savedValue),
       );
       if (changes.length > 0) {
+        previousVersions.push(entity.copy());
         changes.forEach((update) => {
           entity[update.targetFieldId] =
             this.entitySchemaService.valueToEntityFormat(
@@ -599,7 +643,50 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
     // together, so that none of them is saved if the user may not save one of them
     await this.entityMapper.saveAll(entitiesToSave);
-    return true;
+    return { hasAffectedEntities: true, previousVersions };
+  }
+
+  /**
+   * Lets the user confirm the updates. If there are too many to show them quickly for review,
+   * the user can also update all of them with the suggested values without reviewing them.
+   */
+  private async confirmUpdates(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise<AffectedEntity[] | null> {
+    // an entity is listed once for each of its fields that is updated
+    const count = new Set(entitiesToUpdate.map((entity) => entity.id)).size;
+    if (count > MAX_ENTITIES_TO_REVIEW) {
+      const choice = await this.askHowToConfirmMany(count, triggers.length > 1);
+      if (choice === "update-all") return entitiesToUpdate;
+      if (choice !== "review") return null;
+    }
+    return this.showConfirmationDialog(entitiesToUpdate, triggers);
+  }
+
+  private askHowToConfirmMany(
+    count: number,
+    afterBulkEdit: boolean,
+  ): Promise<boolean | string | undefined> {
+    let text = $localize`Showing all of them for review may take a while. You can also update all of them with the suggested values directly.`;
+    if (afterBulkEdit) {
+      text +=
+        "\n\n" + $localize`If this is too slow, edit fewer records at once.`;
+    }
+    const buttons: ConfirmationDialogButton[] = [
+      {
+        text: $localize`:button to show the related records for review:Review`,
+        dialogResult: "review",
+        click() {},
+      },
+      { text: $localize`Update all`, dialogResult: "update-all", click() {} },
+      { text: $localize`Do not update`, dialogResult: false, click() {} },
+    ];
+    return this.confirmationDialog.getConfirmation(
+      $localize`Update ${count}:count: related records?`,
+      text,
+      buttons,
+    );
   }
 
   /**
@@ -608,7 +695,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
-    trigger: UpdateTrigger,
+    triggers: UpdateTrigger[],
   ): Promise<AffectedEntity[] | null> {
     // loaded lazily to avoid a circular import (dialog -> field edit -> inherited value button -> this service)
     const { AutomatedFieldUpdateComponent } =
@@ -617,9 +704,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       maxHeight: "90vh",
       data: {
         entities: entitiesToUpdate,
-        trigger,
+        triggers,
         recalculate: (enteredValues: EnteredValue[]) =>
-          this.findAffectedEntities(trigger, enteredValues),
+          this.findAffectedEntities(triggers, enteredValues),
       },
     });
     return await lastValueFrom(dialogRef.afterClosed());

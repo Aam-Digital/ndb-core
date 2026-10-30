@@ -33,6 +33,15 @@
     &:not(:last-child) {
       margin-bottom: sizes.$small;
     }
+
+    // under the record it belongs to, if several records were changed
+    &.of-record {
+      margin-inline-start: sizes.$regular;
+    }
+  }
+
+  .trigger-record {
+    display: block;
   }
 
   // the change as removed and added values, in the style of the values that the suggestions add and remove

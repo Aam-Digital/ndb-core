@@ -1,7 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import type { MockInstance } from "vitest";
-import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
+import {
+  AutomatedFieldUpdateConfigService,
+  MAX_ENTITIES_TO_REVIEW,
+} from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   MockEntityMapperService,
@@ -15,6 +20,8 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { UpdateMetadata } from "#src/app/core/entity/model/update-metadata";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
@@ -363,6 +370,25 @@ class CycleAction extends Entity {
   inheritedTotal: ConfigurableEnumValue[];
 }
 
+/** a record that takes the status of its parent, translated by a value mapping */
+@DatabaseEntity("MappedStatusAction")
+class MappedStatusAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "MappedStatusAction" })
+  parent: string;
+  @DatabaseField({
+    dataType: "string",
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "parent",
+        sourceValueField: "status",
+        valueMapping: { planned: "in planning" },
+      },
+    },
+  })
+  status: string;
+}
+
 /** a record whose "mainTag" goes down to its sub-records, from where their "tags" are collected again (like Center in the all-features config) */
 @DatabaseEntity("FanOutAction")
 class FanOutAction extends Entity {
@@ -432,6 +458,8 @@ describe("AutomatedFieldUpdateConfigService", () => {
   const mockDialog = {
     open: vi.fn().mockName("MatDialog.open"),
   };
+  const alertService = { addDanger: vi.fn() };
+  const confirmationDialog = mockConfirmationDialog();
   mockDialog.open.mockImplementation((component, config) => {
     mockDialogAfterClosed = () => of(config?.data?.entities || []);
     return mockDialogRef;
@@ -450,6 +478,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("CycleAction", CycleAction);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
     entityRegistry.set("FanOutAction", FanOutAction);
+    entityRegistry.set("MappedStatusAction", MappedStatusAction);
 
     mockIndexing = {
       generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
@@ -485,6 +514,8 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: AlertService, useValue: alertService },
+        { provide: ConfirmationDialogService, useValue: confirmationDialog },
         // only the datatypes of the test entities' schemas, rather than a whole module
         {
           provide: DefaultDatatype,
@@ -821,6 +852,107 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     expect(updatedChild1.category).toBe("secondary-student");
     expect(updatedChild2.category).toBe("secondary-student");
+  });
+
+  describe("more affected records than can be shown quickly for review", () => {
+    function createSchoolWithChildren(numberOfChildren: number) {
+      const school = createSchool("primary");
+      const children = Array.from({ length: numberOfChildren }, () => {
+        const child = new Child();
+        child.school = school.getId();
+        return child;
+      });
+      entityMapper.addAll([school, ...children]);
+      return { school, children };
+    }
+
+    async function changeCategory(school: School) {
+      const before = school.copy();
+      school.category = TEST_SCHOOL_ENUM[1];
+      mockDialog.open.mockClear();
+      confirmationDialog.getConfirmation.mockClear();
+      return service.applyRulesToDependentEntities(school, before);
+    }
+
+    async function loadCategories(children: Child[]) {
+      const saved = await entityMapper.loadType(Child);
+      return children.map(
+        (child) => saved.find((s) => s.getId() === child.getId()).category,
+      );
+    }
+
+    it("shows them for review directly if there are not too many", async () => {
+      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW);
+
+      await changeCategory(school);
+
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+      expect(mockDialog.open).toHaveBeenCalledOnce();
+    });
+
+    it("counts each record once, also if several of its fields are updated", async () => {
+      const project = new CycleAction();
+      const activities = Array.from({ length: 60 }, () => {
+        const activity = new CycleAction();
+        activity.parent = project.getId();
+        return activity;
+      });
+      [project, ...activities].forEach((a) => (a._rev = "1-existing"));
+      entityMapper.addAll([project, ...activities]);
+      const before = project.copy();
+      project.total = toTags(["health"]);
+      mockDialog.open.mockClear();
+      confirmationDialog.getConfirmation.mockClear();
+
+      await service.applyRulesToDependentEntities(project, before);
+
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+      const rows = mockDialog.open.mock.calls[0][1].data.entities;
+      expect(rows.length).toBeGreaterThan(MAX_ENTITIES_TO_REVIEW);
+    });
+
+    it("asks the user first, and shows them for review if the user chooses so", async () => {
+      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW + 1);
+      confirmationDialog.getConfirmation.mockResolvedValueOnce("review");
+
+      await changeCategory(school);
+
+      expect(confirmationDialog.getConfirmation).toHaveBeenCalledOnce();
+      expect(mockDialog.open).toHaveBeenCalledOnce();
+    });
+
+    it("updates all of them with the suggested values without showing them, if the user chooses so", async () => {
+      const { school, children } = createSchoolWithChildren(
+        MAX_ENTITIES_TO_REVIEW + 1,
+      );
+      confirmationDialog.getConfirmation.mockResolvedValueOnce("update-all");
+
+      const previousVersions = await changeCategory(school);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      expect(new Set(await loadCategories(children))).toEqual(
+        new Set(["secondary-student"]),
+      );
+      expect(previousVersions).toHaveLength(children.length);
+    });
+
+    it.each([
+      ["cancels", false],
+      ["closes the question", undefined],
+    ])("updates none of them if the user %s", async (_, dialogResult) => {
+      const { school, children } = createSchoolWithChildren(
+        MAX_ENTITIES_TO_REVIEW + 1,
+      );
+      confirmationDialog.getConfirmation.mockResolvedValueOnce(dialogResult);
+
+      const previousVersions = await changeCategory(school);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      expect(new Set(await loadCategories(children))).toEqual(
+        new Set([undefined]),
+      );
+      expect(previousVersions).toEqual([]);
+    });
   });
 
   it("should map each value of a multi-select enum source and remove duplicates", () => {
@@ -1800,6 +1932,242 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(
         mockDialog.open.mock.calls[0][1].data.entities.map((e) => e.id),
       ).toEqual([workPackage.getId(), project.getId()]);
+    });
+
+    describe("changes of several records at once", () => {
+      /** change the tags of all the actions (which have to be added to the database) and return the data of the dialog */
+      async function changeAllTags(
+        actions: HierarchyAction[],
+        tagsAfter: string[],
+      ) {
+        const before = actions.map((action) => action.copy());
+        actions.forEach((action) => (action.tags = toTags(tagsAfter)));
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(actions, before);
+
+        return mockDialog.open.mock.calls[0]?.[1].data;
+      }
+
+      afterEach(() => {
+        vi.restoreAllMocks();
+      });
+
+      it("lists a record that several changed records link to once, based on the values of all of them", async () => {
+        const workPackage = createAction(["health", "education"]);
+        const activity1 = createAction(["health"], workPackage);
+        const activity2 = createAction(["health"], workPackage);
+        const activity3 = createAction(["education"], workPackage);
+        entityMapper.addAll([workPackage, activity1, activity2, activity3]);
+
+        const data = await changeAllTags([activity1, activity2], ["water"]);
+
+        expect(data.entities.map((e) => [e.id, e.newValue, e.via])).toEqual([
+          [
+            workPackage.getId(),
+            ["education", "water"],
+            [activity1.getId(), activity2.getId()],
+          ],
+        ]);
+      });
+
+      it("calculates a record that many changed records link to only until its value settles, not again for each of them", async () => {
+        const workPackage = createAction(["health"]);
+        const activities = Array.from({ length: 20 }, () =>
+          createAction(["health"], workPackage),
+        );
+        entityMapper.addAll([workPackage, ...activities]);
+        const collectValues = vi.spyOn(service, "collectValues");
+
+        await changeAllTags(activities, ["water"]);
+
+        expect(collectValues.mock.calls.length).toBeLessThan(activities.length);
+      });
+
+      it("calculates a record again when another record linking to it gets a new value later", async () => {
+        const project = createAction(["health"]);
+        const workPackage1 = createAction(["health"], project);
+        const workPackage2 = createAction(["health"], project);
+        const activity = createAction(["health"], workPackage1);
+        entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+        const before = [workPackage2.copy(), activity.copy()];
+        // the project is calculated from the second work package before the first one gets the new value of the activity
+        workPackage2.tags = toTags(["water"]);
+        activity.tags = toTags(["education"]);
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(
+          [workPackage2, activity],
+          before,
+        );
+
+        const projectRow = mockDialog.open.mock.calls[0][1].data.entities.find(
+          (e) => e.id === project.getId(),
+        );
+        expect([...projectRow.newValue].sort()).toEqual(["education", "water"]);
+      });
+
+      it("keeps the value that the change set on a record that another changed record passes its value to", async () => {
+        const project = new MappedStatusAction();
+        const activity = new MappedStatusAction();
+        activity.parent = project.getId();
+        [project, activity].forEach((action) => (action._rev = "1-existing"));
+        entityMapper.addAll([project, activity]);
+        const before = [project.copy(), activity.copy()];
+        project.status = "planned";
+        activity.status = "planned";
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(
+          [project, activity],
+          before,
+        );
+
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+
+      it("reaches the levels above also if more records changed than the calculation takes steps at most", async () => {
+        const project = createAction(["health"]);
+        const workPackage = createAction(["health"], project);
+        const activities = Array.from({ length: 1001 }, () =>
+          createAction(["health"], workPackage),
+        );
+        entityMapper.addAll([project, workPackage, ...activities]);
+
+        const data = await changeAllTags(activities, ["water"]);
+
+        expect(data.entities.map((e) => [e.id, e.newValue])).toEqual([
+          [workPackage.getId(), ["water"]],
+          [project.getId(), ["water"]],
+        ]);
+      });
+
+      it("returns the updated records as they were before the update, so that it can be undone", async () => {
+        const workPackage = createAction(["health"]);
+        const activity1 = createAction(["health"], workPackage);
+        const activity2 = createAction(["health"], workPackage);
+        entityMapper.addAll([workPackage, activity1, activity2]);
+        const before = [activity1.copy(), activity2.copy()];
+        activity1.tags = toTags(["water"]);
+        activity2.tags = toTags(["water"]);
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity1, activity2],
+          before,
+        );
+
+        expect(
+          previousVersions.map((record) => [record.getId(), record["tags"]]),
+        ).toEqual([[workPackage.getId(), toTags(["health"])]]);
+        const saved = await entityMapper.load(
+          HierarchyAction,
+          workPackage.getId(),
+        );
+        expect(saved.tags).toEqual(toTags(["water"]));
+      });
+
+      it("reports a failure to update the linked records and tells the user, without failing the save of the changed records", async () => {
+        const workPackage = createAction(["health"]);
+        const activity = createAction(["health"], workPackage);
+        entityMapper.addAll([workPackage, activity]);
+        const before = activity.copy();
+        activity.tags = toTags(["water"]);
+        const error = new Error("Failed to fetch dynamically imported module");
+        mockDialog.open.mockImplementationOnce(() => {
+          throw error;
+        });
+        const logError = vi
+          .spyOn(Logging, "error")
+          .mockImplementation(() => {});
+        alertService.addDanger.mockClear();
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity],
+          [before],
+        );
+
+        expect(previousVersions).toEqual([]);
+        expect(logError).toHaveBeenCalledWith(expect.any(String), error);
+        expect(alertService.addDanger).toHaveBeenCalledOnce();
+      });
+
+      it("does not return a changed record that the update changed again, as the caller has it from before its change", async () => {
+        const project = new CycleAction();
+        const activity = new CycleAction();
+        const otherActivity = new CycleAction();
+        [activity, otherActivity].forEach((action) => {
+          action.parent = project.getId();
+          action.value = [];
+          action.inheritedTotal = [];
+        });
+        [project, activity, otherActivity].forEach(
+          (action) => (action._rev = "1-existing"),
+        );
+        entityMapper.addAll([project, activity, otherActivity]);
+        const activityBefore = activity.copy();
+        activity.value = toTags(["health"]);
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity],
+          [activityBefore],
+        );
+
+        expect(previousVersions.map((record) => record.getId()).sort()).toEqual(
+          [project.getId(), otherActivity.getId()].sort(),
+        );
+      });
+
+      it("does not return a given record that the update changed, also if its own change is not passed on", async () => {
+        const parent = new FieldChainAction();
+        parent.lowerTags = toTags(["water"]);
+        parent.middleTags = toTags(["health"]);
+        const child = new FieldChainAction();
+        child.parent = parent.getId();
+        child.lowerTags = toTags(["health"]);
+        [parent, child].forEach((action) => (action._rev = "1-existing"));
+        entityMapper.addAll([parent, child]);
+        const before = [parent.copy(), child.copy()];
+        // e.g. a bulk edit of both, where the parent already had the value
+        child.lowerTags = toTags(["water"]);
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [parent, child],
+          before,
+        );
+
+        const saved = await entityMapper.load(FieldChainAction, parent.getId());
+        expect(saved.middleTags).toEqual(toTags(["water"]));
+        expect(previousVersions).toEqual([]);
+      });
+
+      it("passes only the records whose change is passed on to the dialog", async () => {
+        const workPackage = createAction(["health", "water"]);
+        const changed = createAction(["health"], workPackage);
+        const unchanged = createAction(["water"], workPackage);
+        entityMapper.addAll([workPackage, changed, unchanged]);
+        const before = [changed.copy(), unchanged.copy()];
+        changed.tags = toTags(["water"]);
+        // saving gives each record a new revision and update time, also if its value is the same
+        for (const action of [changed, unchanged]) {
+          action._rev = "2-saved";
+          action.updated = Object.assign(new UpdateMetadata(), {
+            at: new Date(),
+            by: "user",
+          });
+        }
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(
+          [changed, unchanged],
+          before,
+        );
+
+        expect(
+          mockDialog.open.mock.calls[0][1].data.triggers.map((t) =>
+            t.entity.getId(),
+          ),
+        ).toEqual([changed.getId()]);
+      });
     });
   });
 });
