@@ -4,9 +4,11 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { FormControl, NgControl } from "@angular/forms";
-import { of } from "rxjs";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
+import { BehaviorSubject, of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
@@ -26,12 +28,15 @@ describe("EditEntityComponent", () => {
   let test2Entities: Test2Entity[];
   let formControl: FormControl;
   let loadTypeSpy: ReturnType<typeof vi.spyOn>;
+  /** the state of the record being edited, as provided by the form this field is part of */
+  let recordState: BehaviorSubject<Entity | undefined>;
 
   @DatabaseEntity("Test2Entity")
   class Test2Entity extends TestEntity {}
 
   beforeEach(async () => {
     formControl = new FormControl();
+    recordState = new BehaviorSubject<Entity | undefined>(undefined);
 
     test1Entities = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
       return new TestEntity(s);
@@ -48,7 +53,13 @@ describe("EditEntityComponent", () => {
           ...otherEntities,
         ]),
       ],
-      providers: [{ provide: NgControl, useValue: { control: formControl } }],
+      providers: [
+        { provide: NgControl, useValue: { control: formControl } },
+        {
+          provide: CurrentRecordContext,
+          useValue: { currentRecordState: () => recordState },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditEntityComponent);
@@ -382,4 +393,220 @@ describe("EditEntityComponent", () => {
       expect.objectContaining({ name: "my new record" }),
     );
   });
+
+  describe("with a selectionCondition", () => {
+    const female = () => ({ id: "F", label: "female" });
+    const male = () => ({ id: "M", label: "male" });
+
+    beforeEach(() => {
+      ["Abc", "Bcd", "Abd", "Aba"].forEach(
+        (name, i) => (test1Entities[i].name = name),
+      );
+      ["BERLIN", "HAMBURG", "BERLIN", undefined].forEach(
+        (location, i) => (test1Entities[i].other = location),
+      );
+      [female(), male(), female(), undefined].forEach(
+        (category, i) => (test1Entities[i].category = category),
+      );
+    });
+
+    /**
+     * Render the field while editing a record with the given (unsaved) values.
+     */
+    function editRecordWithCondition(
+      selectionCondition: DataFilter<any>,
+      recordValues: Record<string, unknown> = {},
+      entityType: string | string[] = TestEntity.ENTITY_TYPE,
+    ) {
+      changeRecord(recordValues);
+      fixture.componentRef.setInput("formFieldConfig", {
+        id: "testProperty",
+        additional: entityType,
+        selectionCondition,
+      });
+      fixture.detectChanges();
+    }
+
+    /** the user edits the record, so its form provides a new state */
+    function changeRecord(recordValues: Record<string, unknown>) {
+      recordState.next(Object.assign(new TestEntity(), recordValues));
+    }
+
+    async function expectOfferedNames(expected: string[]) {
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(
+          sortedNames(component.availableEntitiesResource.value()),
+        ).toEqual(expected);
+      });
+    }
+
+    it.each([
+      ["a fixed condition", { other: { $in: ["BERLIN"] } }, {}, ["Abc", "Abd"]],
+      [
+        "a condition referring to a field of the record being edited",
+        { other: { $in: ["$current_record.other"] } },
+        { other: "HAMBURG" },
+        ["Bcd"],
+      ],
+      [
+        "a condition referring to an enum field of the record being edited",
+        { category: { $in: ["$current_record.category"] } },
+        { category: female() },
+        ["Abc", "Abd"],
+      ],
+      [
+        "a condition referring to an empty field of the record being edited (not applied)",
+        { other: { $in: ["$current_record.other"] } },
+        { other: null },
+        ["Aba", "Abc", "Abd", "Bcd"],
+      ],
+      [
+        "a fixed condition next to a condition referring to an empty field (only the latter is not applied)",
+        {
+          other: { $in: ["BERLIN"] },
+          category: { $in: ["$current_record.category"] },
+        },
+        { category: null },
+        ["Abc", "Abd"],
+      ],
+      [
+        "an alternative referring to an empty field (only that alternative is not applied)",
+        {
+          $or: [
+            { other: { $in: ["BERLIN"] } },
+            { category: { $in: ["$current_record.category"] } },
+          ],
+        },
+        { category: null },
+        ["Abc", "Abd"],
+      ],
+    ])(
+      "offers the records matching %s",
+      async (_, condition, recordValues, expectedNames) => {
+        editRecordWithCondition(condition, recordValues);
+
+        await expectOfferedNames(expectedNames);
+      },
+    );
+
+    it("updates the offered records when the record being edited is changed", async () => {
+      editRecordWithCondition(
+        { other: { $in: ["$current_record.other"] } },
+        { other: "HAMBURG" },
+      );
+      await expectOfferedNames(["Bcd"]);
+
+      changeRecord({ other: "BERLIN" });
+      fixture.detectChanges();
+
+      await expectOfferedNames(["Abc", "Abd"]);
+    });
+
+    it("does not apply references to the record if it edits several records at once (no record)", async () => {
+      editRecordWithCondition({ other: { $in: ["$current_record.other"] } });
+      recordState.next(undefined);
+      fixture.detectChanges();
+
+      await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+    });
+
+    it("does not follow the record while the field has no selectionCondition", () => {
+      fixture.componentRef.setInput("formFieldConfig", {
+        id: "testProperty",
+        additional: TestEntity.ENTITY_TYPE,
+      });
+      fixture.detectChanges();
+
+      expect(recordState.observed).toBe(false);
+    });
+
+    it("does not apply the condition to a field referencing multiple entity types", async () => {
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } }, {}, [
+        TestEntity.ENTITY_TYPE,
+        Test2Entity.ENTITY_TYPE,
+      ]);
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(component.availableEntitiesResource.value()).toHaveLength(
+          test1Entities.length + test2Entities.length,
+        );
+      });
+    });
+
+    it("keeps offering a selected record that does not match the condition", async () => {
+      formControl.setValue(test1Entities[1].getId()); // Bcd in HAMBURG
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } });
+
+      await expectOfferedNames(["Abc", "Abd", "Bcd"]);
+    });
+
+    it("counts the records each toggle would additionally show", async () => {
+      test1Entities[1].inactive = true; // Bcd: not matching, inactive
+      test1Entities[2].inactive = true; // Abd: matching, inactive
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } });
+      await expectOfferedNames(["Abc"]);
+      expect(component.currentlyMatchingInactive()).toBe(1);
+      expect(component.currentlyMatchingIneligible()).toBe(1);
+
+      component.toggleIncludeIneligible();
+      fixture.detectChanges();
+
+      await expectOfferedNames(["Aba", "Abc"]);
+      expect(component.currentlyMatchingInactive()).toBe(2);
+      expect(component.currentlyMatchingIneligible()).toBe(1);
+    });
+
+    it("does not count selected records, which are shown anyway", async () => {
+      test1Entities[2].inactive = true; // Abd: matching, inactive
+      formControl.setValue([
+        test1Entities[1].getId(), // Bcd: not matching
+        test1Entities[2].getId(),
+      ]);
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } });
+      await expectOfferedNames(["Abc", "Abd", "Bcd"]);
+
+      expect(component.currentlyMatchingIneligible()).toBe(1); // only Aba
+      expect(component.currentlyMatchingInactive()).toBe(0);
+    });
+
+    it("keeps an invalid condition out of remote monitoring and its record values out of the logs", async () => {
+      const warnSpy = vi.spyOn(Logging, "warn");
+      const debugSpy = vi.spyOn(Logging, "debug");
+
+      editRecordWithCondition(
+        { other: { $in: "$current_record.other" } }, // resolves to a string, but $in needs a list
+        { other: "SECRET-VALUE" },
+      );
+
+      await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalledWith(
+        expect.stringContaining("selectionCondition"),
+        expect.anything(),
+      );
+      expect(JSON.stringify(debugSpy.mock.calls)).not.toContain("SECRET-VALUE");
+    });
+
+    it("pre-fills a new record so that it matches the condition", async () => {
+      editRecordWithCondition(
+        { other: { $in: ["$current_record.other"] } },
+        { other: "BERLIN" },
+      );
+      const formDialogSpy = vi
+        .spyOn(TestBed.inject(FormDialogService), "openFormPopup")
+        .mockReturnValue({ afterClosed: () => of(undefined) } as any);
+
+      await component.createNewEntity("Chris");
+
+      expect(formDialogSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Chris", other: "BERLIN" }),
+      );
+    });
+  });
 });
+
+function sortedNames(entities: Entity[]): string[] {
+  return entities.map((e) => e["name"]).sort((a, b) => a.localeCompare(b));
+}

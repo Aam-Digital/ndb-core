@@ -223,6 +223,28 @@
               </mat-form-field>
             }
 
+            @if (selectionConditionTargetType(); as referencedEntityType) {
+              <app-admin-display-condition-button
+                class="margin-top-regular"
+                target="field"
+                [showLabel]="true"
+                [entityType]="referencedEntityType"
+                [currentRecordType]="data.entityType"
+                createLabel="Create Selection Filter"
+                i18n-createLabel
+                editLabel="Edit Selection Filter"
+                i18n-editLabel
+                tooltip="Only offer records matching a condition for selection in this field, e.g. based on the values of the record being edited."
+                i18n-tooltip
+                explanation="The selection dropdown shows only records that match the condition below (users can choose an option to also see other records)."
+                i18n-explanation
+                [condition]="schemaFieldsForm.get('selectionCondition').value"
+                (conditionChange)="
+                  schemaFieldsForm.get('selectionCondition').setValue($event)
+                "
+              ></app-admin-display-condition-button>
+            }
+
             <!-- "additional" for date-range datatype -->
             @if (formDataType.value === "date-range") {
               <mat-checkbox

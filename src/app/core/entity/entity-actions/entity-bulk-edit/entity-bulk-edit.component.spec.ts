@@ -3,7 +3,12 @@ import { EntityBulkEditComponent } from "./entity-bulk-edit.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import {
@@ -12,7 +17,7 @@ import {
 } from "../../database-entity.decorator";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
-import { Subject } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 
 type DialogRefMock = {
@@ -101,6 +106,20 @@ describe("EntityBulkEditComponent", () => {
 
     component.ngOnInit();
     expect(component.selectedFieldFormControl.value).toBe("");
+  });
+
+  it("edits the value for several records, so there is no single record other fields could refer to", async () => {
+    mockEntityFormService.extendFormFieldConfig.mockReturnValue({ id: "name" });
+    mockEntityFormService.createEntityForm.mockResolvedValue({
+      formGroup: new FormGroup({ name: new FormControl("") }),
+    });
+
+    component.selectedFieldFormControl.setValue("name");
+    await vi.waitFor(() => expect(component.showValueForm).toBe(true));
+
+    await expect(
+      firstValueFrom(component.fieldValueForm.currentRecord),
+    ).resolves.toBeUndefined();
   });
 
   it("should not save if the form is invalid", () => {

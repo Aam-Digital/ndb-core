@@ -25,12 +25,13 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { asArray } from "app/utils/asArray";
-import { lastValueFrom, map, startWith, switchMap } from "rxjs";
+import { lastValueFrom, map, of, startWith, switchMap } from "rxjs";
 import {
   BasicAutocompleteComponent,
   CreateOptionConfig,
 } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -40,6 +41,9 @@ import {
 } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
+import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { FilterService } from "../../../filter/filter.service";
+import { DataFilter } from "../../../filter/filters/filters";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
@@ -98,6 +102,8 @@ export class EditEntityComponent<
   private readonly formDialog = inject(FormDialogService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility);
+  private readonly placeholderService = inject(DynamicPlaceholderValueService);
+  private readonly filterService = inject(FilterService);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:Loading...`;
 
@@ -202,10 +208,102 @@ export class EditEntityComponent<
     },
   });
 
+  private readonly recordContext = inject(CurrentRecordContext, {
+    optional: true,
+  });
+
+  /**
+   * The record being edited, with the current, possibly unsaved values of its form,
+   * to resolve placeholders in the `selectionCondition` referring to that record.
+   * Only followed while the field has such a condition.
+   */
+  private readonly currentRecord: Signal<Entity | undefined> = toSignal(
+    toObservable(
+      computed(() => !!this.formFieldConfig()?.selectionCondition),
+    ).pipe(
+      switchMap((hasCondition) =>
+        hasCondition && this.recordContext
+          ? this.recordContext.currentRecordState()
+          : of(undefined),
+      ),
+    ),
+    { initialValue: undefined },
+  );
+
+  /**
+   * The configured `selectionCondition` with placeholders resolved,
+   * or `undefined` if no condition applies.
+   */
+  private readonly selectionFilter: Signal<DataFilter<E> | undefined> =
+    computed(
+      () => {
+        const condition = this.formFieldConfig()?.selectionCondition;
+        // a condition cannot be applied to records of different types with different fields
+        if (
+          !condition ||
+          Object.keys(condition).length === 0 ||
+          this.entityType().length !== 1
+        ) {
+          return undefined;
+        }
+
+        const resolved = this.placeholderService.resolveRecordPlaceholders(
+          condition,
+          this.currentRecord(),
+        );
+        return Object.keys(resolved).length > 0 ? resolved : undefined;
+      },
+      // only notify of an actual change, not of every change of other fields in the form
+      { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
+    );
+
+  private readonly isEligible: Signal<(e: E) => boolean> = computed(() => {
+    const filter = this.selectionFilter();
+    if (!filter) {
+      return () => true;
+    }
+    try {
+      return this.filterService.getFilterPredicate(filter);
+    } catch (err) {
+      // an instance config problem and the resolved condition contains record data: not for remote monitoring
+      Logging.debug("[ENTITY_SELECT] Invalid selectionCondition.", err);
+      return () => true;
+    }
+  });
+
+  /**
+   * Number of inactive records that would additionally be shown when including inactive records.
+   */
   currentlyMatchingInactive: Signal<number> = computed(() => {
+    const isEligible = this.isEligible();
+    const selected = this.values();
     return this.allEntities
       .value()
-      .filter((e) => e.inactive && this.autocompleteFilter()(e)).length;
+      .filter(
+        (e) =>
+          e.inactive &&
+          !selected.includes(e.getId()) &&
+          (this.includeIneligible() || isEligible(e)) &&
+          this.autocompleteFilter()(e),
+      ).length;
+  });
+
+  /**
+   * Number of records not matching the `selectionCondition`
+   * that would additionally be shown when including those.
+   */
+  currentlyMatchingIneligible: Signal<number> = computed(() => {
+    const isEligible = this.isEligible();
+    const selected = this.values();
+    return this.allEntities
+      .value()
+      .filter(
+        (e) =>
+          !isEligible(e) &&
+          !selected.includes(e.getId()) &&
+          (this.includeInactive() || !e.inactive) &&
+          this.autocompleteFilter()(e),
+      ).length;
   });
 
   readonly isCreateDisabled = computed(() => {
@@ -253,6 +351,7 @@ export class EditEntityComponent<
   );
 
   includeInactive = signal<boolean>(false);
+  includeIneligible = signal<boolean>(false);
 
   readonly availableEntitiesResource: Resource<E[]> = resourceWithRetention({
     defaultValue: [],
@@ -260,14 +359,16 @@ export class EditEntityComponent<
       allEntities: this.allEntities.value(),
       values: this.values(),
       includeInactive: this.includeInactive(),
+      includeIneligible: this.includeIneligible(),
+      isEligible: this.isEligible(),
       getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       const availableEntities = params.allEntities.filter(
         (e) =>
           params.values.includes(e.getId()) ||
-          params.includeInactive ||
-          !e.inactive,
+          ((params.includeInactive || !e.inactive) &&
+            (params.includeIneligible || params.isEligible(e))),
       );
 
       for (const id of params.values) {
@@ -347,6 +448,10 @@ export class EditEntityComponent<
     this.includeInactive.set(!this.includeInactive());
   }
 
+  toggleIncludeIneligible() {
+    this.includeIneligible.set(!this.includeIneligible());
+  }
+
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
 
   recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
@@ -364,6 +469,10 @@ export class EditEntityComponent<
 
     const newEntity = new (this.entityRegistry.get(targetType))();
     applyTextToCreatedEntity(newEntity, input);
+    const selectionFilter = this.selectionFilter();
+    if (selectionFilter) {
+      this.filterService.alignEntityWithFilter(newEntity, selectionFilter);
+    }
 
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());

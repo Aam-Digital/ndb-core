@@ -22,6 +22,11 @@
   flex: 0 0 110px;
 }
 
+.compare-mode {
+  margin-inline-start: 8px;
+  --mat-standard-button-toggle-height: 36px;
+}
+
 .value-input {
   // wraps to its own line rather than being squeezed unreadably narrow
   flex: 1 1 220px;

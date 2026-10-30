@@ -10,6 +10,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -25,6 +26,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
+import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { negate, splitNegation, withSameNegation } from "./condition-negation";
 import {
@@ -33,6 +35,11 @@ import {
   DEFAULT_COMBINATOR,
   parseConditions,
 } from "./conditions-combinator";
+import {
+  CURRENT_RECORD_PLACEHOLDER_PREFIX,
+  isCurrentRecordPlaceholder,
+} from "../../filter/filters/filters";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -53,6 +60,8 @@ import {
     DynamicEditComponent,
     ReactiveFormsModule,
     EntityFieldSelectComponent,
+    NgTemplateOutlet,
+    FaDynamicIconComponent,
   ],
 })
 export class ConditionsEditorComponent implements OnInit {
@@ -73,6 +82,12 @@ export class ConditionsEditorComponent implements OnInit {
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   readonly showInternalIdField = input(false);
 
+  /**
+   * (Optional) type of the record being edited when the condition is applied.
+   * If given, a condition row can compare with a field of that record instead of a fixed value.
+   */
+  readonly currentRecordType = input<EntityConstructor>();
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
@@ -86,6 +101,15 @@ export class ConditionsEditorComponent implements OnInit {
 
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
+
+  /** per row: hides the fields of the current record whose values cannot be compared with the row's field */
+  referenceFieldFilters = new Map<
+    string,
+    (field: FormFieldConfig) => boolean
+  >();
+
+  /** rows switched to compare with a field of the current record, before that field is selected */
+  private readonly referenceRows = new WeakSet<object>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dialog = inject(MatDialog);
@@ -130,6 +154,84 @@ export class ConditionsEditorComponent implements OnInit {
 
   setCombinator(combinator: Combinator): void {
     this.combinator.set(combinator);
+    this.emitConditions();
+  }
+
+  /** whether the given row compares with a field of the current record instead of a fixed value */
+  isReferenceRow(conditionIndex: number): boolean {
+    if (!this.currentRecordType()) return false;
+
+    const condition = this.conditionsArray()[conditionIndex];
+    return (
+      this.referenceRows.has(condition) ||
+      this.getReferencedField(conditionIndex) !== undefined
+    );
+  }
+
+  /** id of the current record's field the given row compares with, if any */
+  getReferencedField(conditionIndex: number): string | undefined {
+    const condition = this.conditionsArray()[conditionIndex];
+    const { positive } = splitNegation(
+      condition?.[this.getConditionField(condition)],
+    );
+    const placeholder = [
+      positive,
+      positive?.$eq,
+      positive?.$in?.[0],
+      positive?.$elemMatch?.$in?.[0],
+    ].find(isCurrentRecordPlaceholder);
+    return placeholder?.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+  }
+
+  /** switch a row between comparing with a fixed value and with a field of the current record */
+  setReferenceRow(conditionIndex: number, isReference: boolean): void {
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    if (!fieldKey || this.isReferenceRow(conditionIndex) === isReference) {
+      return;
+    }
+
+    if (isReference) {
+      this.referenceRows.add(condition);
+    } else {
+      this.referenceRows.delete(condition);
+    }
+    // the value does not fit the new mode, an "is not" the admin chose still applies
+    condition[fieldKey] = withSameNegation(condition[fieldKey], null);
+    this.createFormConfigForCondition(conditionIndex, fieldKey);
+
+    this.conditionsSignal.set({ ...this.working });
+    this.emitConditions();
+  }
+
+  onReferencedFieldChange(
+    conditionIndex: number,
+    recordFieldId: string | string[],
+  ): void {
+    const actualRecordFieldId = Array.isArray(recordFieldId)
+      ? recordFieldId[0]
+      : recordFieldId;
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    const fieldConfig = this.entityConstructor.schema.get(fieldKey);
+    if (!actualRecordFieldId || !fieldConfig) return;
+
+    const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
+    const conditionFieldConfig = {
+      ...fieldConfig,
+      isArray: this.shouldUseMultiSelectCondition(
+        fieldConfig,
+        this.entitySchemaService.getComponent(fieldConfig, "edit"),
+      ),
+    };
+    const positive = this.wrapConditionValue(
+      fieldConfig,
+      conditionFieldConfig,
+      conditionFieldConfig.isArray ? [placeholder] : placeholder,
+    );
+    condition[fieldKey] = withSameNegation(condition[fieldKey], positive);
+
+    this.conditionsSignal.set({ ...this.working });
     this.emitConditions();
   }
 
@@ -187,6 +289,7 @@ export class ConditionsEditorComponent implements OnInit {
 
     Object.keys(condition).forEach((key) => delete condition[key]);
     condition[actualFieldKey] = null;
+    this.referenceRows.delete(condition);
     this.conditionsSignal.set({ ...this.working });
 
     this.createFormConfigForCondition(conditionIndex, actualFieldKey);
@@ -219,11 +322,14 @@ export class ConditionsEditorComponent implements OnInit {
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    const initialValue = this.extractValueFromCondition(
-      condition[fieldKey],
-      fieldConfig,
-      conditionFieldConfig,
-    );
+    // a placeholder is not a valid value for the field's value editor (e.g. not an existing record id)
+    const initialValue = this.isReferenceRow(conditionIndex)
+      ? null
+      : this.extractValueFromCondition(
+          condition[fieldKey],
+          fieldConfig,
+          conditionFieldConfig,
+        );
     const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
@@ -245,6 +351,16 @@ export class ConditionsEditorComponent implements OnInit {
       label: fieldConfig.label || fieldKey,
       isArray: isDropdownMultiSelect,
     } as FormFieldConfig);
+
+    const sameOptions = (a: EntitySchemaField) =>
+      JSON.stringify(asArray(a.additional ?? [])) ===
+      JSON.stringify(asArray(fieldConfig.additional ?? []));
+    this.referenceFieldFilters.set(
+      key,
+      (recordField) =>
+        recordField.dataType !== fieldConfig.dataType ||
+        !sameOptions(recordField),
+    );
   }
 
   private extractValueFromCondition(
@@ -297,25 +413,30 @@ export class ConditionsEditorComponent implements OnInit {
       conditionFieldConfig,
     );
 
-    let positive: any;
-    if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
-      // For array fields, wrap in $elemMatch with $in for proper array matching
-      positive = { $elemMatch: { $in: dbValue } };
-    } else if (
-      !fieldConfig.isArray &&
-      conditionFieldConfig.isArray &&
-      Array.isArray(dbValue) &&
-      dbValue.length > 0
-    ) {
-      // For non-array dropdown fields, wrap multi selection in $in
-      positive = { $in: dbValue };
-    } else {
-      positive = dbValue;
-    }
-
-    condition[fieldKey] = withSameNegation(previous, positive);
+    condition[fieldKey] = withSameNegation(
+      previous,
+      this.wrapConditionValue(fieldConfig, conditionFieldConfig, dbValue),
+    );
 
     this.emitConditions();
+  }
+
+  /**
+   * The stored form of a row's value (in database format), depending on its field:
+   * array fields match with `$elemMatch`, other dropdown fields offering multiple options with `$in`.
+   */
+  private wrapConditionValue(
+    fieldConfig: EntitySchemaField,
+    conditionFieldConfig: EntitySchemaField,
+    value: any,
+  ): any {
+    if (!Array.isArray(value) || value.length === 0) {
+      return value;
+    }
+    if (fieldConfig.isArray) {
+      return { $elemMatch: { $in: value } };
+    }
+    return conditionFieldConfig.isArray ? { $in: value } : value;
   }
 
   private shouldUseMultiSelectCondition(

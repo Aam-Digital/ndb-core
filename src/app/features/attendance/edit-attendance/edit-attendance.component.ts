@@ -33,6 +33,7 @@ import {
   NullAttendanceStatusType,
 } from "../model/attendance-status";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { mergeEmbeddedSchema } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 
 /**
  * Edit component for the `attendance` datatype.
@@ -110,12 +111,17 @@ export class EditAttendanceComponent
       AttendanceItem.schema.get("remarks")?.label,
   );
 
-  /** FormFieldConfig for the internal entity autocomplete */
+  /**
+   * FormFieldConfig for the internal entity autocomplete:
+   * the embedded `participant` field including everything configured for it in the field config.
+   */
   participantFieldConfig = computed<FormFieldConfig>(() => ({
+    ...mergeEmbeddedSchema(
+      AttendanceItem.schema,
+      this.formFieldConfig()?.additional,
+    ).get("participant"),
     id: "participant",
     label: $localize`:Placeholder for adding a participant:Select additional participant`,
-    dataType: "entity",
-    additional: this.formFieldConfig()?.additional?.participant?.additional,
   }));
 
   /** Per-participant FormControls used by EditConfigurableEnumComponent */

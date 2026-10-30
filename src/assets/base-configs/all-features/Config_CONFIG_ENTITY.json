@@ -1258,7 +1258,21 @@
           "label": "Participants",
           "dataType": "entity",
           "isArray": true,
-          "additional": "Child"
+          "additional": "Child",
+          "description": "Filtered to show only participants from the same center",
+          "selectionCondition": {
+            "center": {
+              "$in": [
+                "$current_record.center"
+              ]
+            }
+          }
+        },
+        "center": {
+          "label": "Center",
+          "description": "Only children of this center are offered as participants.",
+          "dataType": "configurable-enum",
+          "additional": "center"
         },
         "assignedTo": {
           "label": "Assigned user(s)",
@@ -1323,6 +1337,7 @@
                   "fieldGroups": [
                     {
                       "fields": [
+                        "center",
                         "participants"
                       ]
                     }

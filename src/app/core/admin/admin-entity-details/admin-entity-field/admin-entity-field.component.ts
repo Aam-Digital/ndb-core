@@ -3,7 +3,9 @@ import {
   computed,
   DestroyRef,
   inject,
+  Injector,
   OnInit,
+  Signal,
   signal,
   viewChild,
   WritableSignal,
@@ -53,8 +55,14 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { filter } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  startWith,
+} from "rxjs/operators";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -67,6 +75,7 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { asArray } from "app/utils/asArray";
 import { DateRangeDatatype } from "../../../basic-datatypes/date-range/date-range.datatype";
 import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 
@@ -134,6 +143,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
   private readonly entityConfigService = inject(EntityConfigService);
   private readonly labelValue = signal<TranslatableText | undefined>(undefined);
 
@@ -276,6 +286,7 @@ export class AdminEntityFieldComponent implements OnInit {
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
       displayCondition: [this.data.entitySchemaField.displayCondition],
+      selectionCondition: [this.data.entitySchemaField.selectionCondition],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
@@ -323,6 +334,34 @@ export class AdminEntityFieldComponent implements OnInit {
         this.resetIsArrayIfUnsupported(v);
       });
     this.updateForNewOrExistingField();
+    this.initSelectionConditionTarget();
+  }
+
+  /**
+   * The record type this field references, if a `selectionCondition` can be applied to the field
+   * (and the admin can therefore configure one).
+   */
+  selectionConditionTargetType: Signal<EntityConstructor | undefined>;
+
+  private initSelectionConditionTarget() {
+    const targetType$ = merge(
+      this.additionalForm.valueChanges,
+      this.schemaFieldsForm.get("dataType").valueChanges,
+    ).pipe(
+      startWith(null),
+      map(() => this.getSelectionConditionTargetType()),
+      distinctUntilChanged(),
+    );
+    this.selectionConditionTargetType = toSignal(targetType$, {
+      injector: this.injector,
+    });
+
+    // a condition refers to fields of the previous target and would otherwise stay (invisible) in the config
+    targetType$
+      .pipe(pairwise(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() =>
+        this.schemaFieldsForm.get("selectionCondition").setValue(null),
+      );
   }
 
   private updateSchemaFieldFromForm(formValues) {
@@ -384,6 +423,25 @@ export class AdminEntityFieldComponent implements OnInit {
         label: d.label,
         value: d.dataType,
       }));
+  }
+
+  /**
+   * The record type this field references, if it is exactly one,
+   * as required for a `selectionCondition`.
+   */
+  private getSelectionConditionTargetType(): EntityConstructor | undefined {
+    if (
+      this.schemaFieldsForm.get("dataType").value !== EntityDatatype.dataType
+    ) {
+      return undefined;
+    }
+
+    const types = asArray(this.additionalForm.value ?? []);
+    // TODO: generalize to support multiple entity types
+    if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
+      return undefined;
+    }
+    return this.entityRegistry.get(types[0]);
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
@@ -488,10 +546,7 @@ export class AdminEntityFieldComponent implements OnInit {
       const validValues = newAdditional.filter((value) =>
         this.isValidEntityType(value),
       );
-      // Use setTimeout to ensure Angular processes the multi input change before setting the value
-      setTimeout(() => {
-        this.additionalForm.setValue(validValues);
-      });
+      this.additionalForm.setValue(validValues);
       return;
     }
 
@@ -524,12 +579,14 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     if (validValues.length > 0) {
-      this.additionalForm.setValue(this.buildAttendanceAdditional(validValues));
+      this.additionalForm.setValue(
+        this.buildAttendanceAdditional(validValues, newAdditional),
+      );
     }
 
-    // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
-    setTimeout(() => {
-      this.attendanceParticipantTypesForm.setValue(validValues);
+    // not emitted: `additional` already holds these types, with the rest of its config
+    this.attendanceParticipantTypesForm.setValue(validValues, {
+      emitEvent: false,
     });
   }
 
@@ -551,10 +608,36 @@ export class AdminEntityFieldComponent implements OnInit {
     );
   }
 
-  private buildAttendanceAdditional(types: string[]): object | null {
-    return types && types.length > 0
-      ? { participant: { dataType: "entity", additional: types } }
-      : null;
+  /**
+   * The `additional` of an attendance field with the given participant types,
+   * keeping the other config of its embedded fields (e.g. set in the JSON config).
+   */
+  private buildAttendanceAdditional(
+    types: string[],
+    previous = this.additionalForm.value,
+  ): object | null {
+    if (!types || types.length === 0) {
+      return null;
+    }
+
+    const base =
+      typeof previous === "object" && !Array.isArray(previous)
+        ? previous
+        : undefined;
+    const { selectionCondition, ...participant } = base?.participant ?? {};
+    const sameTypes =
+      JSON.stringify(asArray(participant.additional ?? [])) ===
+      JSON.stringify(types);
+    return {
+      ...base,
+      participant: {
+        ...participant,
+        dataType: "entity",
+        additional: types,
+        // a selection filter refers to fields of the previous participant types
+        ...(sameTypes && selectionCondition ? { selectionCondition } : {}),
+      },
+    };
   }
 
   private isValidEntityType(type: string): boolean {

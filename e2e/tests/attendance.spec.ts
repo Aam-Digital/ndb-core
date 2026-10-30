@@ -175,6 +175,10 @@ test("Recurring activities list and calendar navigation", async ({ page }) => {
   await expect(calendar.getByRole("grid")).toBeVisible();
 });
 
+// Center enum values from configurable-enums.json (id: label)
+const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
+const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
+
 test("Edit participants of a recurring activity", async ({ page }) => {
   const [user] = generateUsers();
 
@@ -190,10 +194,17 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   const childToRemove = generateChild({
     name: "Prayag Talwar",
   });
+  // the activity's "Center" limits which children are offered as participants
+  const childInCenter = generateChild({ name: "Ishaan Mehta" });
+  childInCenter["center"] = CENTER_ALIPORE;
+  const childInOtherCenter = generateChild({ name: "Rhea Kapoor" });
+  childInOtherCenter["center"] = CENTER_TOLLYGUNGE;
   const allChildren = [
     childToAdd,
     childToKeep,
     childToRemove,
+    childInCenter,
+    childInOtherCenter,
     ...times(6, () => generateChild()),
   ];
 
@@ -263,6 +274,36 @@ test("Edit participants of a recurring activity", async ({ page }) => {
 
   // And the "Participants" field does not contain "Abhisyanta Sharma."
   await expect(page.getByText(childToRemove.name)).not.toBeVisible();
+
+  // When I edit the activity again and select its center
+  await page.getByRole("button", { name: "Edit" }).click();
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+  await page.locator("#entity-field__center .fa-caret-down").click();
+  await page
+    .getByRole("option", { name: CENTER_ALIPORE.label, exact: true })
+    .click();
+
+  // Then only children of that center are offered as participants
+  await page
+    .locator("#entity-field__participants")
+    .locator(".fa-caret-down")
+    .click();
+  await expect(
+    page.getByRole("option", { name: childInCenter.name }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: childInOtherCenter.name }),
+  ).not.toBeVisible();
+
+  // And I can still show the children of other centers on request
+  await page.getByText(/not matching the filter/).click();
+  await expect(
+    page.getByRole("option", { name: childInOtherCenter.name }),
+  ).toBeVisible();
+
+  // When I discard these changes
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Cancel" }).click();
 
   // When I navigate to the Record Attendance screen
   await page.getByRole("navigation").getByText("Attendance").click();
