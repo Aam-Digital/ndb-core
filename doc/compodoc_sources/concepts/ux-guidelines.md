@@ -18,3 +18,6 @@ Until then, our UX "policy" is loosely documented below:
   creating new styles.
 - If a custom style is needed, create a class with a meaningful name in the component's scss file
   and avoid inline styles.
+- Use logical CSS properties (`margin-inline-start`, `padding-inline-end`, `text-align: start`)
+  instead of `left` / `right`, so the layout mirrors for right-to-left languages
+  (see [RTL languages](../../../src/app/core/language/README.md#right-to-left-rtl-languages)).
