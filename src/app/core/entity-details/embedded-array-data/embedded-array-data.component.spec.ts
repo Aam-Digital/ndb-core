@@ -7,6 +7,10 @@ import { EmbeddedArrayDataComponent } from "./embedded-array-data.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { SchemaEmbedArrayTableComponent } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
+import {
+  SchemaEmbedArrayEntryChange,
+  SchemaEmbedArrayEntryConflictError,
+} from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change";
 
 @DatabaseEntity("EmbeddedArrayDataTest")
 class EmbeddedArrayDataTest extends Entity {}
@@ -133,18 +137,74 @@ describe("EmbeddedArrayDataComponent", () => {
     expect(table().readonly()).toBe(true);
   });
 
-  it("saves the entity with the changed entries and displays them", async () => {
+  it("saves the entity with the changed entry and displays the entries", async () => {
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
     await render();
 
-    await table().applyChange()([
-      { documentType: "Visa", documentNumber: "C3" },
-    ]);
+    await table().applyChange()({
+      entry: { documentType: "Visa" },
+      index: 1,
+      original: { documentType: "ID Card", documentNumber: "B2" },
+    });
 
-    expect(saveSpy.mock.lastCall[0]["documents"]).toEqual([
-      { documentType: "Visa", documentNumber: "C3" },
+    // inner fields not edited in the popup are kept
+    const expected = [
+      { documentType: "Passport", documentNumber: "A1" },
+      { documentType: "Visa", documentNumber: "B2" },
+    ];
+    expect(saveSpy.mock.lastCall[0]["documents"]).toEqual(expected);
+    await waitForRowTexts([
+      ["Passport", "A1"],
+      ["Visa", "B2"],
     ]);
-    await waitForRowTexts([["Visa", "C3"]]);
+  });
+
+  const passport = { documentType: "Passport", documentNumber: "A1" };
+  const idCard = { documentType: "ID Card", documentNumber: "B2" };
+  const visa = { documentType: "Visa", documentNumber: "C3" };
+  const syncedEntry = { documentType: "Synced", documentNumber: "S1" };
+
+  it.each<[string, SchemaEmbedArrayEntryChange, Record<string, any>[]]>([
+    ["adding", { entry: visa }, [syncedEntry, passport, idCard, visa]],
+    [
+      "editing",
+      { entry: visa, index: 1, original: idCard },
+      [syncedEntry, passport, visa],
+    ],
+    [
+      "deleting",
+      { delete: true, index: 0, original: passport },
+      [syncedEntry, idCard],
+    ],
+  ])(
+    "keeps entries updated since the popup opened when %s an entry",
+    async (_, change, expected) => {
+      const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+      await render();
+      // e.g. a sync brings in another user's entry while the popup is open
+      const updated = entity.copy();
+      updated["documents"] = [syncedEntry, ...entity["documents"]];
+      fixture.componentRef.setInput("entity", updated);
+      await render();
+
+      await table().applyChange()(change);
+
+      expect(saveSpy.mock.lastCall[0]["documents"]).toEqual(expected);
+    },
+  );
+
+  it("does not save if the opened entry has been changed in the meantime", async () => {
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+    await render();
+    const updated = entity.copy();
+    updated["documents"] = [passport, { ...idCard, documentNumber: "X9" }];
+    fixture.componentRef.setInput("entity", updated);
+    await render();
+
+    await expect(
+      table().applyChange()({ entry: visa, index: 1, original: idCard }),
+    ).rejects.toThrow(SchemaEmbedArrayEntryConflictError);
+    expect(saveSpy).not.toHaveBeenCalled();
   });
 
   it("keeps displaying the previous entries and passes on the error if saving fails", async () => {
@@ -154,7 +214,9 @@ describe("EmbeddedArrayDataComponent", () => {
     await render();
 
     await expect(
-      table().applyChange()([{ documentType: "Visa", documentNumber: "C3" }]),
+      table().applyChange()({
+        entry: { documentType: "Visa", documentNumber: "C3" },
+      }),
     ).rejects.toThrow("save failed");
 
     fixture.detectChanges();

@@ -11,6 +11,7 @@ import {
   SchemaEmbedArrayEntryDialogComponent,
   SchemaEmbedArrayEntryDialogData,
 } from "./schema-embed-array-entry-dialog.component";
+import { SchemaEmbedArrayEntryChange } from "../schema-embed-array-entry-change";
 
 @DatabaseEntity("SchemaEmbedArrayEntryDialogTest")
 class SchemaEmbedArrayEntryDialogTest extends Entity {}
@@ -64,7 +65,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     await fixture.whenStable();
   }
 
-  function appliedEntries(): Record<string, any>[] {
+  function appliedChange(): SchemaEmbedArrayEntryChange {
     return applyChange.mock.lastCall[0];
   }
 
@@ -94,35 +95,25 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     applyChange = vi.fn().mockResolvedValue(undefined);
   });
 
-  it.each<[string, number | undefined, Record<string, any>[]]>([
-    [
-      "replaces the edited entry",
-      1,
-      [
-        { documentType: "Passport", documentNumber: "A1" },
-        { documentType: "Visa", documentNumber: "C3" },
-      ],
-    ],
-    [
-      "appends a new entry",
-      undefined,
-      [
-        { documentType: "Passport", documentNumber: "A1" },
-        { documentType: "ID Card", documentNumber: "B2" },
-        { documentType: "Visa", documentNumber: "C3" },
-      ],
-    ],
+  it.each<[string, number | undefined]>([
+    ["an edited entry", 1],
+    ["a new entry", undefined],
   ])(
-    "%s when saving and closes with the changed entries",
-    async (_, index, expected) => {
+    "applies only the change of %s, together with the entry as it was when opened",
+    async (_, index) => {
       await createDialog({ index });
+      const original = index === undefined ? undefined : { ...entries[index] };
 
       component.form.setValue({ documentType: "Visa", documentNumber: "C3" });
       await component.save();
 
-      expect(appliedEntries()).toEqual(expected);
+      const expected = {
+        entry: { documentType: "Visa", documentNumber: "C3" },
+        index,
+        original,
+      };
+      expect(appliedChange()).toEqual(expected);
       expect(mockDialogRef.close).toHaveBeenCalledWith(expected);
-      expect(entries).toHaveLength(2); // the given entries are not mutated
     },
   );
 
@@ -147,18 +138,6 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
       expect(mockDialogRef.close).toHaveBeenCalledTimes(1);
     },
   );
-
-  it("keeps the values of inner fields that are not edited in the popup", async () => {
-    await createDialog({ index: 1, columns: [columns[0]] });
-
-    component.form.setValue({ documentType: "Visa" });
-    await component.save();
-
-    expect(appliedEntries()[1]).toEqual({
-      documentType: "Visa",
-      documentNumber: "B2",
-    });
-  });
 
   it("does not natively submit the form (e.g. when pressing Enter in a field)", async () => {
     await createDialog({ index: 0 });
@@ -199,19 +178,20 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [true, [{ documentType: "ID Card", documentNumber: "B2" }]],
-    [false, undefined],
-  ])(
+  it.each([true, false])(
     "removes the entry only if deletion is confirmed (%s)",
-    async (confirmed, expected) => {
+    async (confirmed) => {
       mockConfirmation.getConfirmation.mockResolvedValue(confirmed);
       await createDialog({ index: 0 });
 
       await component.delete();
 
-      if (expected) {
-        expect(appliedEntries()).toEqual(expected);
+      if (confirmed) {
+        expect(appliedChange()).toEqual({
+          delete: true,
+          index: 0,
+          original: { documentType: "Passport", documentNumber: "A1" },
+        });
       } else {
         expect(applyChange).not.toHaveBeenCalled();
       }

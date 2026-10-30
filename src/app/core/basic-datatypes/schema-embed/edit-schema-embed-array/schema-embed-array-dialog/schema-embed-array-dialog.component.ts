@@ -12,6 +12,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { Entity } from "#src/app/core/entity/model/entity";
 import { SchemaEmbedArrayTableComponent } from "../../schema-embed-array-table/schema-embed-array-table.component";
 import { SchemaEmbedArrayApplyChange } from "../../schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
+import { applySchemaEmbedArrayEntryChange } from "../../schema-embed-array-entry-change";
 
 export interface SchemaEmbedArrayDialogData {
   /** The field's FormControl, holding the entries and receiving their changes. */
@@ -53,7 +54,11 @@ export class SchemaEmbedArrayDialogComponent {
     this.data.formControl.value ?? [],
   );
 
-  readonly applyChange: SchemaEmbedArrayApplyChange = async (entries) => {
+  readonly applyChange: SchemaEmbedArrayApplyChange = async (change) => {
+    const entries = applySchemaEmbedArrayEntryChange(
+      this.data.formControl.value,
+      change,
+    );
     this.data.formControl.setValue(entries);
     this.data.formControl.markAsDirty();
     this.rows.set(entries);

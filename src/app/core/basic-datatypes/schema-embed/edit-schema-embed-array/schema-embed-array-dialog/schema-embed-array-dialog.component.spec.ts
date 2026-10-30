@@ -83,9 +83,10 @@ describe("SchemaEmbedArrayDialogComponent", () => {
   });
 
   it("writes changed entries to the field's control and lists them", async () => {
-    const changed = [{ documentType: "Visa", documentNumber: "C3" }];
+    const entry = { documentType: "Visa", documentNumber: "C3" };
+    const changed = [...formControl.value, entry];
 
-    await table().applyChange()(changed);
+    await table().applyChange()({ entry });
     fixture.detectChanges();
 
     expect(formControl.value).toEqual(changed);

@@ -19,6 +19,7 @@ import { EntityFormService } from "../../common-components/entity-form/entity-fo
 import { getSchemaEmbedArrayColumns } from "../../basic-datatypes/schema-embed/schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../../basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
 import { SchemaEmbedArrayApplyChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
+import { applySchemaEmbedArrayEntryChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-change";
 
 /**
  * Config format that the EmbeddedArrayDataComponent handles.
@@ -104,12 +105,15 @@ export class EmbeddedArrayDataComponent {
   });
 
   /**
-   * Save the entity with the given entries through the standard entity form logic
-   * (including validation and permission checks), displaying the saved entries.
+   * Save the entity with the given change applied to its latest entries
+   * (which may have been updated since the popup opened, e.g. by a sync)
+   * through the standard entity form logic (including validation and permission checks),
+   * displaying the saved entries.
    */
-  readonly applyChange: SchemaEmbedArrayApplyChange = async (entries) => {
+  readonly applyChange: SchemaEmbedArrayApplyChange = async (change) => {
     const entity = this.entity();
     const property = this.property();
+    const entries = applySchemaEmbedArrayEntryChange(entity[property], change);
     const entityForm = await this.entityFormService.createEntityForm(
       [property],
       entity,
