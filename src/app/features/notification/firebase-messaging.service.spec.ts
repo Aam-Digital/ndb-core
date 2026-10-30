@@ -44,7 +44,7 @@ describe("FirebaseMessagingService", () => {
       },
       requestPermission: vi.fn(async () => notificationPermission),
     });
-    vi.stubGlobal("PushManager", class {});
+    vi.stubGlobal("PushManager", {});
     registerServiceWorker = vi.fn().mockResolvedValue(registration);
     sdk = {
       initializeApp: vi.fn().mockReturnValue({}),
