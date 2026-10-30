@@ -187,6 +187,11 @@ new changes correctly to the entity.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#confirmValidity" >confirmValidity</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
                                 <a href="#createEntityForm" >createEntityForm</a>
@@ -228,6 +233,86 @@ new changes correctly to the entity.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="confirmValidity"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>confirmValidity</b></span>
+                        <a href="#confirmValidity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>confirmValidity&lt;T&gt;(entityForm: <a href="../interfaces/EntityForm.html" target="_self">EntityForm&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="364"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:364</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the form can be saved: it is valid (after waiting for running async checks),
+or its only errors are warnings (marked with <code>warning: true</code>, e.g. a period outside its parent&#39;s) that the user confirmed.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityForm</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntityForm.html" target="_self" >EntityForm&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="createEntityForm"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -247,8 +332,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="129"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:129</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -424,8 +509,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -525,8 +610,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="403"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:403</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="447"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:447</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +700,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="300"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:300</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="318"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:318</a></div>
                         </td>
                     </tr>
 
@@ -705,7 +790,13 @@ The input entity will not be modified but a copy of it will be returned in case 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DestroyRef, EventEmitter, inject, Injectable } from &quot;@angular/core&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
-import { FormBuilder, FormControl, FormControlOptions } from &quot;@angular/forms&quot;;
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  FormGroup,
+} from &quot;@angular/forms&quot;;
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from &quot;./FormConfig&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
@@ -716,6 +807,9 @@ import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quo
 import { InvalidFormFieldError } from &quot;./invalid-form-field.error&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
 import { filter } from &quot;rxjs/operators&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
+import { ConfirmationDialogService } from &quot;../confirmation-dialog/confirmation-dialog.service&quot;;
+import { CustomYesNoButtons } from &quot;../confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DefaultValueService } from &quot;../../default-values/default-value-service/default-value.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
@@ -727,6 +821,7 @@ import {
 } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
+import { revalidateOnParentLinkChange } from &quot;../../basic-datatypes/date-range/within-parent-validator&quot;;
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -744,6 +839,7 @@ export class EntityFormService {
   private ability &#x3D; inject(EntityAbility);
   private unsavedChanges &#x3D; inject(UnsavedChangesService);
   private defaultValueService &#x3D; inject(DefaultValueService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -927,6 +1023,7 @@ export class EntityFormService {
       this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group &#x3D; this.fb.group&lt;Partial&lt;T&gt;&gt;(formConfig);
+    revalidateOnParentLinkChange(group, formFields, destroyRef);
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -965,6 +1062,12 @@ export class EntityFormService {
       );
       Object.assign(controlOptions, validators);
     }
+
+    controlOptions.validators &#x3D; [
+      ...asArray(controlOptions.validators ?? []),
+      ...this.entitySchemaService.getDatatypeOrDefault(field.dataType)
+        .internalValidators,
+    ];
 
     if (withPermissionCheck) {
       const conditionValidator &#x3D; this.permissionConditionValidators.forField(
@@ -1008,7 +1111,9 @@ export class EntityFormService {
   ): Promise&lt;T&gt; {
     const form: EntityFormGroup&lt;T&gt; &#x3D; entityForm.formGroup;
 
-    this.checkFormValidity(form);
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
 
     const originalEntity &#x3D; entity.copy();
     const updatedEntity &#x3D; this.createUpdatedEntity(entity, form);
@@ -1042,12 +1147,36 @@ export class EntityFormService {
     return entity;
   }
 
-  private checkFormValidity&lt;T extends Entity&gt;(form: EntityFormGroup&lt;T&gt;) {
+  /**
+   * Whether the form can be saved: it is valid (after waiting for running async checks),
+   * or its only errors are warnings (marked with &#x60;warning: true&#x60;, e.g. a period outside its parent&#x27;s) that the user confirmed.
+   */
+  async confirmValidity&lt;T extends Entity&gt;(
+    entityForm: EntityForm&lt;T&gt;,
+  ): Promise&lt;boolean&gt; {
+    const form &#x3D; entityForm.formGroup;
     // errors regarding invalid fields won&#x27;t be displayed unless marked as touched
     form.markAllAsTouched();
-    if (form.invalid) {
-      throw new InvalidFormFieldError();
+    if (form.pending) {
+      await firstValueFrom(
+        form.statusChanges.pipe(filter((status) &#x3D;&gt; status !&#x3D;&#x3D; &quot;PENDING&quot;)),
+      );
     }
+    if (!form.invalid) {
+      return true;
+    }
+
+    const warnings &#x3D; getWarnings(entityForm);
+    return (
+      !!warnings?.length &amp;&amp;
+      !!(await this.confirmationDialog.getConfirmation(
+        $localize&#x60;Save anyway?&#x60;,
+        warnings.length &gt; 1
+          ? warnings.map((warning) &#x3D;&gt; &#x60;- ${warning}&#x60;).join(&quot;\n&quot;)
+          : warnings[0],
+        CustomYesNoButtons($localize&#x60;Save anyway&#x60;, $localize&#x60;Keep editing&#x60;),
+      ))
+    );
   }
 
   private createUpdatedEntity&lt;T extends Entity&gt;(
@@ -1115,6 +1244,44 @@ export class EntityFormService {
     this.unsavedChanges.setUnsavedChanges(entityForm, false);
     entityForm.onFormStateChange.emit(&quot;cancelled&quot;);
   }
+}
+
+/**
+ * The form&#x27;s errors as &quot;field label: message&quot; (in markdown), if all of them are warnings (marked with &#x60;warning: true&#x60;).
+ */
+function getWarnings&lt;T extends Entity&gt;(
+  entityForm: EntityForm&lt;T&gt;,
+): string[] | undefined {
+  const form &#x3D; entityForm.formGroup;
+  if (!hasOnlyWarnings(form)) {
+    return undefined;
+  }
+  const label &#x3D; (fieldId: string) &#x3D;&gt;
+    entityForm.fieldConfigs.find((field) &#x3D;&gt; field.id &#x3D;&#x3D;&#x3D; fieldId)?.label ??
+    fieldId;
+  return Object.entries(form.controls).flatMap(([fieldId, control]) &#x3D;&gt;
+    Object.values(control.errors ?? {}).map(
+      (error) &#x3D;&gt;
+        &#x60;**${escapeMarkdown(label(fieldId))}:** ${escapeMarkdown(error.errorMessage)}&#x60;,
+    ),
+  );
+}
+
+/** whether all errors of the form are warnings (marked with &#x60;warning: true&#x60;), which saving only asks to confirm */
+export function hasOnlyWarnings(form: FormGroup): boolean {
+  return (
+    !form.errors &amp;&amp;
+    Object.values&lt;AbstractControl&gt;(form.controls).every((control) &#x3D;&gt;
+      Object.values&lt;{ warning?: boolean }&gt;(control.errors ?? {}).every(
+        (error) &#x3D;&gt; error?.warning,
+      ),
+    )
+  );
+}
+
+/** so that markdown shows the text as it is (e.g. a record name in angle brackets, which would be read as HTML) */
+function escapeMarkdown(text: string): string {
+  return text.replace(/[\\&#x60;*_[\]&lt;&gt;#|~]/g, &quot;\\$&amp;&quot;);
 }
 </code></pre>
     </div>

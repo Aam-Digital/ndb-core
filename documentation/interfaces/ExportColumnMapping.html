@@ -237,7 +237,7 @@ fully controlling which CSV columns a field produces.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:55</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:56</a></div>
                                 </td>
                             </tr>
 
@@ -283,7 +283,7 @@ Use an empty string for the primary/default column.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:61</a></div>
                                 </td>
                             </tr>
 
@@ -328,7 +328,7 @@ Use an empty string for the primary/default column.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:65</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:66</a></div>
                                 </td>
                             </tr>
 
@@ -345,7 +345,8 @@ Use an empty string for the primary/default column.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import type { ValidatorFn } from &quot;@angular/forms&quot;;
+import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
@@ -488,6 +489,12 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
    * during import.
    */
   readonly importAllowsMultiMapping: boolean &#x3D; false;
+
+  /**
+   * Validators that every value of this datatype has to pass in entity forms,
+   * in addition to the &#x60;validators&#x60; configured for the field.
+   */
+  readonly internalValidators: ValidatorFn[] &#x3D; [];
 
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;

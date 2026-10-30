@@ -164,7 +164,6 @@
     </p>
     <p class="comment">
                     <code><a href="../interfaces/EditComponent.html" target="_self" >EditComponent</a></code>
-                    <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
     </p>
 
 
@@ -276,9 +275,6 @@
                                 </li>
                                 <li>
                                             <code><a href="../interfaces/EditComponent.html" target="_self" >EditComponent</a></code>
-                                </li>
-                                <li>
-                                            <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -481,7 +477,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:45</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -502,7 +498,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:50</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:44</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -741,8 +737,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -1836,14 +1832,8 @@ import {
   Component,
   inject,
   input,
-  OnInit,
 } from &quot;@angular/core&quot;;
-import {
-  ReactiveFormsModule,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-} from &quot;@angular/forms&quot;;
+import { ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
@@ -1875,16 +1865,12 @@ import { EditComponent } from &quot;../../../entity/entity-field-edit/dynamic-ed
 })
 export class EditEmailComponent
   extends CustomFormControlDirective&lt;string&gt;
-  implements EditComponent, OnInit
+  implements EditComponent
 {
   formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
   entity &#x3D; input&lt;Entity&gt;();
 
   private readonly emailClientService &#x3D; inject(EmailClientService);
-
-  ngOnInit() {
-    this.formControl.addValidators([emailValidatorWithMessage]);
-  }
 
   openEmailDialog(event: Event) {
     event.stopPropagation();
@@ -1902,20 +1888,6 @@ export class EditEmailComponent
 
     this.emailClientService.executeMailto(entityWithCurrentValue, fieldId);
   }
-}
-
-function emailValidatorWithMessage(
-  control: AbstractControl,
-): ValidationErrors | null {
-  const emailError &#x3D; Validators.email(control);
-  if (emailError) {
-    return {
-      email: {
-        errorMessage: $localize&#x60;:form field validation error:Please enter a valid email&#x60;,
-      },
-    };
-  }
-  return null;
 }
 </code></pre>
     </div>

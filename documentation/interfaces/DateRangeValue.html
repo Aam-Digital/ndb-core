@@ -237,7 +237,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/basic-datatypes/date-range/date-range.datatype.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/core/basic-datatypes/date-range/date-range.datatype.ts:13</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/basic-datatypes/date-range/date-range.datatype.ts:11</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/basic-datatypes/date-range/date-range.datatype.ts:12</a></div>
                                 </td>
                             </tr>
 
@@ -293,6 +293,7 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { AbstractControl, ValidationErrors } from &quot;@angular/forms&quot;;
 import {
   DefaultDatatype,
   ExportColumnMapping,
@@ -312,6 +313,21 @@ export interface DateRangeDatabaseValue {
   end?: string;
 }
 
+/** Validator for the value of the field: the end must not be before the start. */
+export function endNotBeforeStart(
+  control: AbstractControl&lt;DateRangeValue | null&gt;,
+): ValidationErrors | null {
+  const { start, end } &#x3D; control.value ?? {};
+  if (start &amp;&amp; end &amp;&amp; end &lt; start) {
+    return {
+      dateRange: {
+        errorMessage: $localize&#x60;The end date must not be before the start date.&#x60;,
+      },
+    };
+  }
+  return null;
+}
+
 /**
  * Datatype for a period of time: the start and the end date in one field.
  *
@@ -329,6 +345,8 @@ export class DateRangeDatatype extends DefaultDatatype&lt;
 
   override viewComponent &#x3D; &quot;DisplayDateRange&quot;;
   override editComponent &#x3D; &quot;EditDateRange&quot;;
+
+  override readonly internalValidators &#x3D; [endNotBeforeStart];
 
   /** converts the single dates, so that they are stored like all other date-only fields */
   private readonly dateOnly &#x3D; new DateOnlyDatatype();

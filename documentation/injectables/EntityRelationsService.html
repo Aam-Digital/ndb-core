@@ -190,6 +190,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getFieldsOfLinkedTypes" >getFieldsOfLinkedTypes</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#itemReferencesId" >itemReferencesId</a>
                             </li>
                             <li>
@@ -235,8 +239,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="30"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:30</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -289,6 +293,89 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getFieldsOfLinkedTypes"></a>
+                    <span class="name">
+                        <span ><b>getFieldsOfLinkedTypes</b></span>
+                        <a href="#getFieldsOfLinkedTypes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getFieldsOfLinkedTypes(entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, dataType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:68</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the fields of the given data type in each entity type that the given type links to,
+along with the field linking to it.</p>
+<p>e.g. given Child and &quot;date-range&quot; -&gt; [{ linkId: &quot;projectSchool&quot;, linkedType: School, fields: [[&quot;dateRangeField&quot;, …]] }]</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dataType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/LinkedTypeFields.html" target="_self" >LinkedTypeFields[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="itemReferencesId"></a>
                     <span class="name">
                         <span ><b>itemReferencesId</b></span>
@@ -305,8 +392,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="180"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:180</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:220</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +491,8 @@ Without such schema info the function falls back to checking all object values.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="70"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:70</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:110</a></div>
                         </td>
                     </tr>
 
@@ -477,6 +564,17 @@ import { EntitySchemaService } from &quot;../schema/entity-schema.service&quot;;
 import { getEmbeddedEntityReferenceFields } from &quot;../schema/embedded-schema-field.util&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
+import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+
+/** fields of an entity type that another type links to (see {@link EntityRelationsService.getFieldsOfLinkedTypes}) */
+export interface LinkedTypeFields {
+  /** id of the field linking to the type */
+  linkId: string;
+  link: EntitySchemaField;
+  linkedType: EntityConstructor;
+  /** the matching fields of the linked type, as [id, schema] */
+  fields: [string, EntitySchemaField][];
+}
 
 /**
  * Service to work with related, interlinked entities.
@@ -514,6 +612,35 @@ export class EntityRelationsService {
       }
     }
     return referencingTypes;
+  }
+
+  /**
+   * Get the fields of the given data type in each entity type that the given type links to,
+   * along with the field linking to it.
+   *
+   * e.g. given Child and &quot;date-range&quot; -&gt; [{ linkId: &quot;projectSchool&quot;, linkedType: School, fields: [[&quot;dateRangeField&quot;, …]] }]
+   */
+  getFieldsOfLinkedTypes(
+    entityType: EntityConstructor,
+    dataType: string,
+  ): LinkedTypeFields[] {
+    return Array.from(entityType.schema)
+      .filter(([, link]) &#x3D;&gt; link.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType)
+      .flatMap(([linkId, link]) &#x3D;&gt;
+        asArray(link.additional ?? [])
+          .filter((typeId) &#x3D;&gt; this.entityRegistry.has(typeId))
+          .map((typeId) &#x3D;&gt; {
+            const linkedType &#x3D; this.entityRegistry.get(typeId);
+            return {
+              linkId,
+              link,
+              linkedType,
+              fields: Array.from(linkedType.schema).filter(
+                ([, field]) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; dataType,
+              ),
+            };
+          }),
+      );
   }
 
   /**

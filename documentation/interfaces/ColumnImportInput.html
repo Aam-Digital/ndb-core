@@ -231,7 +231,7 @@ value from the current row.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:33</a></div>
                                 </td>
                             </tr>
 
@@ -270,7 +270,7 @@ value from the current row.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:33</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:34</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,8 @@ value from the current row.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import type { ValidatorFn } from &quot;@angular/forms&quot;;
+import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
@@ -424,6 +425,12 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
    * during import.
    */
   readonly importAllowsMultiMapping: boolean &#x3D; false;
+
+  /**
+   * Validators that every value of this datatype has to pass in entity forms,
+   * in addition to the &#x60;validators&#x60; configured for the field.
+   */
+  readonly internalValidators: ValidatorFn[] &#x3D; [];
 
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;

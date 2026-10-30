@@ -507,6 +507,11 @@ export class AdminEntityFieldComponent implements OnInit {
   entityAdditionalMultiSelect: WritableSignal&lt;boolean&gt; &#x3D; signal(false);
   attendanceParticipantTypesForm &#x3D; new FormControl&lt;string[]&gt;([]);
 
+  /** the data type selected in the form, for the validator settings that depend on it */
+  readonly selectedDataType &#x3D; signal&lt;string&gt;(
+    this.data.entitySchemaField.dataType,
+  );
+
   /** whether a &quot;date-range&quot; field offers predefined periods (&#x60;additional&#x60; is not an empty list) */
   datePresetsOffered: WritableSignal&lt;boolean&gt; &#x3D; signal(true);
   /** the periods that were configured for the field, to offer them again after they were switched off */
@@ -668,6 +673,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .subscribe((v) &#x3D;&gt; {
         this.updateDataTypeAdditional(v);
         this.resetIsArrayIfUnsupported(v);
+        this.selectedDataType.set(v);
       });
     this.updateForNewOrExistingField();
   }

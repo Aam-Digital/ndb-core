@@ -2862,6 +2862,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/FirebaseConfiguration.html" data-type="entity-link" >FirebaseConfiguration</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/FixedDateRangeOption.html" data-type="entity-link" >FixedDateRangeOption</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/FlattenedReportRow.html" data-type="entity-link" >FlattenedReportRow</a>
                             </li>
                             <li class="link">
@@ -2941,6 +2944,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/LegacyNoteField.html" data-type="entity-link" >LegacyNoteField</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/LinkedTypeFields.html" data-type="entity-link" >LinkedTypeFields</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/LinkExternalProfileDialogData.html" data-type="entity-link" >LinkExternalProfileDialogData</a>
@@ -3025,6 +3031,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/PanelConfig.html" data-type="entity-link" >PanelConfig&lt;T &#x3D; any&gt;</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ParentLinkInForm.html" data-type="entity-link" >ParentLinkInForm</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ParentRange.html" data-type="entity-link" >ParentRange</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ParentRangeOption.html" data-type="entity-link" >ParentRangeOption</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ParsedConditions.html" data-type="entity-link" >ParsedConditions</a>
@@ -3226,6 +3241,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/WidgetOption.html" data-type="entity-link" >WidgetOption</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/WithinParentConfig.html" data-type="entity-link" >WithinParentConfig</a>
                             </li>
                         </ul>
                     </li>

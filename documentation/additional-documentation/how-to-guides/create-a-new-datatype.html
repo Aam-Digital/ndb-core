@@ -154,6 +154,7 @@ You can use Angular&#39;s dependency injection to access any other services, if 
 <li><code>label</code>: To allow admin users to select this type in the form builder under this human-readable name</li>
 <li><code>viewComponent</code>: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables</li>
 <li><code>editComponent</code>: The string ID for the EditComponent (see below) used for form field UI of the value in detail views</li>
+<li><code>internalValidators</code>: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the <code>validators</code> configured for the field)</li>
 </ul>
 </li>
 <li>Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)</li>
@@ -194,8 +195,8 @@ export class MyCustomDatatype extends DefaultDatatype&lt;SpecialObject, string&g
 <p>A datatype can store several values together in one field. The <code>date-range</code> type is an example: it holds a
 start and an end date as one object (<code>{ start: &quot;2026-03-01&quot;, end: &quot;2026-05-31&quot; }</code> in the database), either of which
 can be missing. Its datatype class reuses the <code>date-only</code> conversion for both dates, and it contributes its own edit
-component (a range picker), display component, sorting (by start date), export (one column per date) and
-anonymization. See <a href="date-range/date-range.datatype.ts"><code>date-range</code></a>.</p>
+component (a range picker), display component, sorting (by start date), export (one column per date),
+anonymization and a validator (the end must not be before the start). See <a href="date-range/date-range.datatype.ts"><code>date-range</code></a>.</p>
 <p>Next to the calendar, its edit component offers predefined periods (the current and the last month, quarter and year).
 The <code>additional</code> config of the field can change them: a list in the format of the options of date filters
 (<code>DateRangeFilterConfigOption</code>) replaces them, and an empty list offers none. In the Admin UI, a checkbox

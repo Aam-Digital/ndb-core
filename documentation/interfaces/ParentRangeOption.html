@@ -1,0 +1,704 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  ParentRangeOption</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>an option of the date ranges a date range field can be checked against</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#label" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">label</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#value" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">value</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="label"></a>
+                                <span class="name "><b>label</b>
+                                    <a href="#label">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>label:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:41</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="value"></a>
+                                <span class="name "><b>value</b>
+                                    <a href="#value">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>value:         <code><a href="../interfaces/WithinParentConfig.html" target="_self" >WithinParentConfig</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/WithinParentConfig.html" target="_self" >WithinParentConfig</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:42</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  input,
+  output,
+  ChangeDetectionStrategy,
+  effect,
+  computed,
+} from &quot;@angular/core&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+} from &quot;@angular/forms&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
+import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import {
+  EntityRelationsService,
+  LinkedTypeFields,
+} from &quot;app/core/entity/entity-mapper/entity-relations.service&quot;;
+import { DateRangeDatatype } from &quot;app/core/basic-datatypes/date-range/date-range.datatype&quot;;
+import { resolveLocaleText } from &quot;app/core/language/active-locale&quot;;
+import {
+  FormValidatorConfig,
+  WithinParentConfig,
+} from &quot;app/core/common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
+import { HelpButtonComponent } from &quot;../../../../common-components/help-button/help-button.component&quot;;
+import { EditDateComponent } from &quot;../../../../basic-datatypes/date/edit-date/edit-date.component&quot;;
+import { EditMonthComponent } from &quot;../../../../basic-datatypes/month/edit-month/edit-month.component&quot;;
+
+/** an option of the date ranges a date range field can be checked against */
+interface ParentRangeOption {
+  label: string;
+  value: WithinParentConfig;
+}
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: &quot;app-configure-entity-field-validator&quot;,
+  imports: [
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    HelpButtonComponent,
+    EditDateComponent,
+    EditMonthComponent,
+    MatSelectModule,
+  ],
+  templateUrl: &quot;./configure-entity-field-validator.component.html&quot;,
+  styleUrl: &quot;./configure-entity-field-validator.component.scss&quot;,
+})
+export class ConfigureEntityFieldValidatorComponent {
+  private fb &#x3D; inject(FormBuilder);
+  private readonly entityRelations &#x3D; inject(EntityRelationsService);
+
+  /**
+   * the field definition with the currently existing validator settings to be edited
+   */
+  entitySchemaField &#x3D; input.required&lt;EntitySchemaField&gt;();
+
+  /** the record type of the field, to offer the date ranges of the records it links to */
+  entityType &#x3D; input&lt;EntityConstructor&gt;();
+
+  /**
+   * the data type currently selected for the field, if it can change while editing
+   * (a change of &#x60;entitySchemaField.dataType&#x60; in place is not noticed)
+   */
+  dataType &#x3D; input&lt;string&gt;();
+
+  private readonly fieldDataType &#x3D; computed(
+    () &#x3D;&gt; this.dataType() ?? this.entitySchemaField()?.dataType,
+  );
+
+  /**
+   * Emit the latest state of the validators config whenever the user changed it in the displayed form.
+   */
+  entityValidatorChanges &#x3D; output&lt;FormValidatorConfig&gt;();
+
+  /**
+   * Emit changes to EntitySchemaField properties (e.g. trim) that are not validators.
+   */
+  entitySchemaFieldChanges &#x3D; output&lt;Partial&lt;EntitySchemaField&gt;&gt;();
+
+  trimControl &#x3D; computed(
+    () &#x3D;&gt; new FormControl(this.entitySchemaField()?.trim !&#x3D;&#x3D; false),
+  );
+
+  /**
+   * The date ranges a date range field can be checked against:
+   * each date range field of the record types that this record links to (&quot;link field › date range field&quot;).
+   */
+  readonly parentRangeOptions &#x3D; computed(() &#x3D;&gt; {
+    const field &#x3D; this.entitySchemaField();
+    const entityType &#x3D; this.entityType();
+    if (this.fieldDataType() !&#x3D;&#x3D; DateRangeDatatype.dataType || !entityType) {
+      return [];
+    }
+
+    return this.entityRelations
+      .getFieldsOfLinkedTypes(entityType, DateRangeDatatype.dataType)
+      .flatMap((linked) &#x3D;&gt;
+        this.rangeOptionsOfLinkedType(linked, entityType, field),
+      );
+  });
+
+  /** the date range fields of a record type that the link field links to (&quot;link field › date range field&quot;) */
+  private rangeOptionsOfLinkedType(
+    { linkId, link, linkedType, fields }: LinkedTypeFields,
+    entityType: EntityConstructor,
+    field: EntitySchemaField,
+  ): ParentRangeOption[] {
+    const linkLabel &#x3D; resolveLocaleText(link.label) ?? linkId;
+    const isSameType &#x3D; linkedType &#x3D;&#x3D;&#x3D; entityType;
+    const options: ParentRangeOption[] &#x3D; [];
+    if (isSameType) {
+      // the field itself (as the default), even if it is not saved to the schema yet
+      const thisField &#x3D; resolveLocaleText(field.label) || $localize&#x60;this field&#x60;;
+      options.push({
+        label: &#x60;${linkLabel} › ${thisField}&#x60;,
+        value: { parentReferenceField: linkId },
+      });
+    }
+    for (const [valueId, parentField] of fields) {
+      if (!(isSameType &amp;&amp; valueId &#x3D;&#x3D;&#x3D; field.id)) {
+        options.push({
+          label: &#x60;${linkLabel} › ${resolveLocaleText(parentField.label) ?? valueId}&#x60;,
+          value: { parentReferenceField: linkId, parentValueField: valueId },
+        });
+      }
+    }
+    return options;
+  }
+
+  readonly isSameParentRange &#x3D; (
+    a: WithinParentConfig | null,
+    b: WithinParentConfig | null,
+  ) &#x3D;&gt;
+    a?.parentReferenceField &#x3D;&#x3D;&#x3D; b?.parentReferenceField &amp;&amp;
+    a?.parentValueField &#x3D;&#x3D;&#x3D; b?.parentValueField;
+
+  validatorForm &#x3D; computed(() &#x3D;&gt; {
+    const v &#x3D; this.entitySchemaField()?.validators;
+    const isObjectForm &#x3D; typeof v?.pattern &#x3D;&#x3D;&#x3D; &quot;object&quot;;
+    return this.fb.group({
+      required: [v?.required ?? false],
+      min: [v?.min ?? null],
+      max: [v?.max ?? null],
+      minAge: [v?.minAge ?? null],
+      maxAge: [v?.maxAge ?? null],
+      minDate: [v?.minDate ?? null],
+      maxDate: [v?.maxDate ?? null],
+      pattern: [
+        (isObjectForm ? v.pattern.pattern : v?.pattern) ?? &quot;&quot;,
+        validRegexValidator,
+      ],
+      patternMessage: [(isObjectForm ? v.pattern.message : &quot;&quot;) ?? &quot;&quot;],
+      uniqueId: [v?.uniqueId ?? &quot;&quot;],
+      readonlyAfterSet: [v?.readonlyAfterSet ?? false],
+      withinParent: [v?.withinParent ?? null],
+    });
+  });
+
+  constructor() {
+    effect((onCleanup) &#x3D;&gt; {
+      const form &#x3D; this.validatorForm();
+
+      this.normalizeDateControl(form, &quot;minDate&quot;);
+      this.normalizeDateControl(form, &quot;maxDate&quot;);
+      this.syncPatternMessageAvailability(form);
+
+      const patternSub &#x3D; form
+        .get(&quot;pattern&quot;)
+        .valueChanges.subscribe(() &#x3D;&gt;
+          this.syncPatternMessageAvailability(form),
+        );
+      const sub &#x3D; form.valueChanges.subscribe(() &#x3D;&gt; {
+        const rawValues &#x3D; form.getRawValue();
+        this.transformPatternValue(rawValues);
+        const cleanedValues &#x3D;
+          this.removeDefaultValuesFromValidatorConfig(rawValues);
+        this.entityValidatorChanges.emit(cleanedValues);
+      });
+      onCleanup(() &#x3D;&gt; {
+        patternSub.unsubscribe();
+        sub.unsubscribe();
+      });
+    });
+
+    effect(() &#x3D;&gt; {
+      const withinParent &#x3D; this.validatorForm().get(&quot;withinParent&quot;);
+      // only offered for date ranges, so it would stay in the config without being visible anywhere
+      if (
+        this.fieldDataType() !&#x3D;&#x3D; DateRangeDatatype.dataType &amp;&amp;
+        withinParent.value
+      ) {
+        withinParent.setValue(null);
+      }
+    });
+
+    effect((onCleanup) &#x3D;&gt; {
+      const ctrl &#x3D; this.trimControl();
+      const sub &#x3D; ctrl.valueChanges.subscribe((value: boolean) &#x3D;&gt; {
+        this.entitySchemaFieldChanges.emit({ trim: value });
+      });
+      onCleanup(() &#x3D;&gt; sub.unsubscribe());
+    });
+  }
+
+  /**
+   * The custom validation error text is only meaningful together with a pattern,
+   * so the input is disabled while no pattern is entered.
+   */
+  private syncPatternMessageAvailability(form: FormGroup) {
+    const messageControl &#x3D; form.get(&quot;patternMessage&quot;);
+    if (form.get(&quot;pattern&quot;).value) {
+      messageControl.enable({ emitEvent: false });
+    } else {
+      messageControl.disable({ emitEvent: false });
+    }
+  }
+
+  isDateLikeValidatorType &#x3D; computed(() &#x3D;&gt; {
+    return [&quot;date&quot;, &quot;date-only&quot;, &quot;date-with-age&quot;, &quot;month&quot;].includes(
+      this.entitySchemaField()?.dataType,
+    );
+  });
+
+  isStringType &#x3D; computed(() &#x3D;&gt; {
+    return [&quot;string&quot;, &quot;long-text&quot;].includes(this.entitySchemaField()?.dataType);
+  });
+
+  /**
+   * Replaces the raw pattern and patternMessage inputs with a config value for the &quot;pattern&quot; validator:
+   * drops it if the pattern is empty or not a compilable regex,
+   * uses the object form { pattern, message } if a custom error message is entered.
+   */
+  private transformPatternValue(
+    values: FormValidatorConfig &amp; { patternMessage?: string },
+  ) {
+    const newPattern &#x3D; values.pattern;
+    const message &#x3D; values.patternMessage;
+    delete values.patternMessage;
+
+    if (!newPattern || !isValidRegex(newPattern)) {
+      delete values.pattern;
+      return;
+    }
+
+    if (message) {
+      values.pattern &#x3D; { pattern: newPattern, message };
+    }
+  }
+
+  isDateWithAgeType &#x3D; computed(() &#x3D;&gt; {
+    return this.entitySchemaField()?.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;;
+  });
+
+  isMonthType &#x3D; computed(() &#x3D;&gt; {
+    return this.entitySchemaField()?.dataType &#x3D;&#x3D;&#x3D; &quot;month&quot;;
+  });
+
+  private normalizeDateControl(form: FormGroup, controlName: string): void {
+    const ctrl &#x3D; form.get(controlName);
+    const val &#x3D; ctrl?.value;
+    if (typeof val &#x3D;&#x3D;&#x3D; &quot;string&quot; || typeof val &#x3D;&#x3D;&#x3D; &quot;number&quot;) {
+      const parsed &#x3D; new Date(val as any);
+      if (!Number.isNaN(parsed.getTime())) {
+        ctrl?.setValue(parsed, { emitEvent: false });
+      }
+    }
+  }
+
+  /**
+   * Removes default fields and returns a validator config that only contains explicitly activated validators.
+   * @param validators form values including default values that are unchanged
+   */
+  removeDefaultValuesFromValidatorConfig(
+    validators: FormValidatorConfig,
+  ): FormValidatorConfig {
+    for (let key of Object.keys(validators)) {
+      if (isDefaultValue(validators[key])) {
+        delete validators[key];
+      }
+    }
+
+    function isDefaultValue(value): boolean {
+      return value &#x3D;&#x3D;&#x3D; false || value &#x3D;&#x3D;&#x3D; &quot;&quot; || value &#x3D;&#x3D;&#x3D; null;
+    }
+
+    return validators;
+  }
+}
+
+function isValidRegex(pattern: string): boolean {
+  try {
+    new RegExp(pattern);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Marks the control as invalid if its value cannot be compiled as a regular expression.
+ */
+function validRegexValidator(
+  control: AbstractControl,
+): ValidationErrors | null {
+  if (!control.value || isValidRegex(control.value)) {
+    return null;
+  }
+  return { invalidPattern: true };
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ParentRangeOption.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

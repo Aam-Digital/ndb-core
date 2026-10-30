@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="145"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:145</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="158"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:158</a></div>
                         </td>
                     </tr>
 
@@ -334,6 +334,7 @@ import { EntityMapperService } from &quot;../../../entity/entity-mapper/entity-m
 import { buildReadonlyValidator } from &quot;./readonly-after-set.validator&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
 import { AsyncPromiseValidatorFn } from &quot;./validator-types&quot;;
+import { withinParentValidator } from &quot;../../../basic-datatypes/date-range/within-parent-validator&quot;;
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -441,6 +442,18 @@ export class DynamicValidatorsService {
         return value ? { fn: Validators.required } : null;
       case &quot;readonlyAfterSet&quot;:
         return value ? buildReadonlyValidator(entity) : null;
+      case &quot;withinParent&quot;:
+        return value &amp;&amp; fieldId
+          ? {
+              async: true,
+              fn: withinParentValidator(
+                value,
+                fieldId,
+                entity,
+                this.entityMapper,
+              ),
+            }
+          : null;
       default:
         // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
         Logging.debug(&quot;Trying to generate a validator that does not exist&quot;, {
@@ -572,6 +585,8 @@ export class DynamicValidatorsService {
         return $localize&#x60;Please enter a valid date&#x60;;
       case &quot;isNumber&quot;:
         return $localize&#x60;Please enter a valid number&#x60;;
+      case &quot;withinParent&quot;:
+        return validationValue?.errorMessage;
       case &quot;uniqueId&quot;:
         if (typeof validationValue &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
           return validationValue;

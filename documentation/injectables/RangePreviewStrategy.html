@@ -375,7 +375,7 @@ import { DateRangeFilterConfigOption } from &quot;../../../../entity-list/Entity
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { dateToString } from &quot;../../../../../utils/utils&quot;;
 import { DateFilter } from &quot;app/core/filter/filters/dateFilter&quot;;
-import { calculateDateRange } from &quot;./date-range-utils&quot;;
+import { calculateDateRange, DateRangeOption } from &quot;./date-range-utils&quot;;
 import { EMPTY_FILTER_OPTION_KEY } from &quot;app/core/filter/filters/filters&quot;;
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] &#x3D; [
@@ -449,12 +449,14 @@ export class DateRangeFilterPanelComponent {
     selectedOptionValues?: string[];
     selectedOption?: DateRangeFilterConfigOption;
     dateRange?: DateRange&lt;Date&gt;;
-    rangeOptions?: DateRangeFilterConfigOption[];
+    rangeOptions?: DateRangeOption[];
     /**
      * For selecting the dates of a field rather than a filter:
      * no &quot;All&quot; option, and without given dates nothing is selected initially.
      */
     hideAllOption?: boolean;
+    /** a range shaded in the calendar while no predefined range is hovered (e.g. the period of a parent record) */
+    highlightRange?: DateRange&lt;Date&gt;;
   };
   private dialogRef &#x3D;
     inject&lt;MatDialogRef&lt;DateRangeFilterPanelComponent&gt;&gt;(MatDialogRef);
@@ -478,12 +480,17 @@ export class DateRangeFilterPanelComponent {
   selectedOptionValues &#x3D; signal&lt;string[]&gt;(
     this.data?.selectedOptionValues ?? [],
   );
-  rangeOptions &#x3D; signal&lt;DateRangeFilterConfigOption[]&gt;(
-    this.data?.rangeOptions ?? [],
-  );
-  comparisonRange &#x3D; signal&lt;DateRange&lt;Date&gt;&gt;(new DateRange(null, null));
+  rangeOptions &#x3D; signal&lt;DateRangeOption[]&gt;(this.data?.rangeOptions ?? []);
+  private readonly highlightRange &#x3D;
+    this.data?.highlightRange ?? new DateRange&lt;Date&gt;(null, null);
+  comparisonRange &#x3D; signal&lt;DateRange&lt;Date&gt;&gt;(this.highlightRange);
 
-  preselectRange(dateRangeOption): void {
+  /** the month shown first: for a field its start date, else the highlighted range (a filter starts at today) */
+  readonly startAt: Date | null &#x3D; this.showAllOption
+    ? null
+    : (this.data?.dateRange?.start ?? this.highlightRange.start ?? null);
+
+  preselectRange(dateRangeOption: DateRangeOption): void {
     this.comparisonRange.set(calculateDateRange(dateRangeOption));
   }
 
@@ -494,7 +501,7 @@ export class DateRangeFilterPanelComponent {
   }
 
   unselectRange() {
-    this.comparisonRange.set(new DateRange(null, null));
+    this.comparisonRange.set(this.highlightRange);
   }
 
   selectRangeAndClose(index: number | &quot;all&quot; | &quot;empty&quot;): void {
