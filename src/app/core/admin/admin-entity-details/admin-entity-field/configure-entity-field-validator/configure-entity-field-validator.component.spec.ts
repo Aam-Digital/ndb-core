@@ -28,6 +28,7 @@ import {
   WithinParentConfig,
 } from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { TranslatableText } from "../../../../config/multi-lingual-config";
+import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
 
 @DatabaseEntity("ValidatorTestProject")
 class ValidatorTestProject extends Entity {
@@ -73,6 +74,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       providers: [
         FormBuilder,
         { provide: EntityRegistry, useValue: entityRegistry },
+        ...mockEntityMapperProvider(),
       ],
     }).compileComponents();
 

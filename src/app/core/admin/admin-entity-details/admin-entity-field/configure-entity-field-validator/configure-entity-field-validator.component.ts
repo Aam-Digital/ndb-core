@@ -22,10 +22,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
+import {
+  EntityRelationsService,
+  LinkedTypeFields,
+} from "app/core/entity/entity-mapper/entity-relations.service";
 import { DateRangeDatatype } from "app/core/basic-datatypes/date-range/date-range.datatype";
-import { asArray } from "app/utils/asArray";
 import { resolveLocaleText } from "app/core/language/active-locale";
 import {
   FormValidatorConfig,
@@ -60,7 +61,7 @@ interface ParentRangeOption {
 })
 export class ConfigureEntityFieldValidatorComponent {
   private fb = inject(FormBuilder);
-  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly entityRelations = inject(EntityRelationsService);
 
   /**
    * the field definition with the currently existing validator settings to be edited
@@ -105,32 +106,21 @@ export class ConfigureEntityFieldValidatorComponent {
       return [];
     }
 
-    return Array.from(entityType.schema)
-      .filter(([, link]) => link.dataType === EntityDatatype.dataType)
-      .flatMap(([linkId, link]) =>
-        asArray(link.additional ?? [])
-          .filter((typeId) => this.entityRegistry.has(typeId))
-          .flatMap((typeId) =>
-            this.rangeOptionsOfLinkedType(
-              linkId,
-              resolveLocaleText(link.label) ?? linkId,
-              this.entityRegistry.get(typeId),
-              entityType,
-              field,
-            ),
-          ),
+    return this.entityRelations
+      .getFieldsOfLinkedTypes(entityType, DateRangeDatatype.dataType)
+      .flatMap((linked) =>
+        this.rangeOptionsOfLinkedType(linked, entityType, field),
       );
   });
 
   /** the date range fields of a record type that the link field links to ("link field › date range field") */
   private rangeOptionsOfLinkedType(
-    linkId: string,
-    linkLabel: string,
-    parentType: EntityConstructor,
+    { linkId, link, linkedType, fields }: LinkedTypeFields,
     entityType: EntityConstructor,
     field: EntitySchemaField,
   ): ParentRangeOption[] {
-    const isSameType = parentType === entityType;
+    const linkLabel = resolveLocaleText(link.label) ?? linkId;
+    const isSameType = linkedType === entityType;
     const options: ParentRangeOption[] = [];
     if (isSameType) {
       // the field itself (as the default), even if it is not saved to the schema yet
@@ -140,11 +130,8 @@ export class ConfigureEntityFieldValidatorComponent {
         value: { parentReferenceField: linkId },
       });
     }
-    for (const [valueId, parentField] of parentType.schema) {
-      if (
-        parentField.dataType === DateRangeDatatype.dataType &&
-        !(isSameType && valueId === field.id)
-      ) {
+    for (const [valueId, parentField] of fields) {
+      if (!(isSameType && valueId === field.id)) {
         options.push({
           label: `${linkLabel} › ${resolveLocaleText(parentField.label) ?? valueId}`,
           value: { parentReferenceField: linkId, parentValueField: valueId },
