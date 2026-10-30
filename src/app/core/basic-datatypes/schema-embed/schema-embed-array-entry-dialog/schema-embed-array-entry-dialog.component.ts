@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
+  resource,
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -17,15 +19,27 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
-import { DynamicValidatorsService } from "#src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
+import { InvalidFormFieldError } from "#src/app/core/common-components/entity-form/invalid-form-field.error";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { Entity } from "#src/app/core/entity/model/entity";
+import {
+  createEmbeddedEntity,
+  EmbeddedEntity,
+} from "#src/app/core/entity/model/embedded-entity";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { getEmbeddedSchema } from "#src/app/core/entity/schema/embedded-schema-field.util";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
-import { buildSchemaEmbedEntryForm } from "../schema-embed-entry-form";
-import { SchemaEmbedArrayEntryChange } from "../schema-embed-array-entry-change";
+import {
+  isStoredEntry,
+  markStoredEntry,
+  SchemaEmbedArrayEntryChange,
+} from "../schema-embed-array-entry-change";
 
 /**
  * Apply the change of a single entry of a `schema-embed-array` field to its latest entries
@@ -46,10 +60,15 @@ export interface SchemaEmbedArrayEntryDialogData {
   entries: Record<string, any>[];
   /** Position of the entry to edit within the entries; a new entry is added if not given */
   index?: number;
+  /** The `schema-embed-array` field holding the entries */
+  field: FormFieldConfig;
   /** The inner fields of the embedded entries to edit */
   columns: FormFieldConfig[];
-  /** The entity holding the embedded entries (context for the inner fields' validators) */
-  entity: Entity;
+  /**
+   * The record holding the embedded entries, which is the context of the entry's inner fields
+   * (e.g. for permissions); not set if the entries are edited without a record
+   */
+  entity?: Entity;
   /** Whether the entry can only be viewed, not changed */
   readonly?: boolean;
   /** Called with the change of the entry when saving or deleting it */
@@ -64,6 +83,9 @@ export interface SchemaEmbedArrayEntryDialogData {
 /**
  * Popup to view, edit or delete a single entry of a `schema-embed-array` field,
  * looking like the {@link RowDetailsComponent} popup of related entities.
+ *
+ * The entry is edited like a record through the standard entity form logic,
+ * wrapped as {@link EmbeddedEntity}.
  *
  * Saving or deleting the entry passes only that change to `applyChange`
  * (deciding how to persist it, based on the latest entries) and closes the popup with the change as result.
@@ -96,7 +118,8 @@ export class SchemaEmbedArrayEntryDialogComponent {
         SchemaEmbedArrayEntryChange
       >
     >(MatDialogRef);
-  private readonly dynamicValidators = inject(DynamicValidatorsService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly entityFormService = inject(EntityFormService);
   private readonly unsavedChanges = inject(UnsavedChangesService);
   private readonly confirmation = inject(ConfirmationDialogService);
   private readonly alertService = inject(AlertService);
@@ -109,52 +132,108 @@ export class SchemaEmbedArrayEntryDialogComponent {
     ? undefined
     : this.data.entries[this.data.index];
 
-  readonly form: FormGroup = buildSchemaEmbedEntryForm(
-    this.data.columns,
-    this.original ?? {},
-    this.dynamicValidators,
-    this.data.entity,
+  /**
+   * Whether the edited entry is stored in its record.
+   * An entry that was only added in a form of the record that is not saved yet is not,
+   * so its fields (e.g. with `readonlyAfterSet`) can still be corrected.
+   */
+  private readonly isStored =
+    !this.isNew &&
+    (!this.data.entity ||
+      isStoredEntry(this.original, this.data.entity[this.data.field.id]));
+
+  /** The edited entry, wrapped to be edited like a record */
+  readonly entry: EmbeddedEntity = createEmbeddedEntity(
+    getEmbeddedSchema(this.entitySchemaService, this.data.field) ?? new Map(),
+    {
+      record: this.data.entity,
+      field: this.data.field.id,
+      existing: this.isStored,
+    },
+    this.original,
+  );
+
+  private readonly entryFormResource = resource({
+    loader: () =>
+      this.createEntryForm().catch((err) => {
+        Logging.error("Could not create the form of an embedded entry", err);
+        return undefined;
+      }),
+  });
+
+  /** The form of the entry, available once created */
+  readonly entryForm = computed<EntityForm<EmbeddedEntity> | undefined>(() =>
+    this.entryFormResource.value(),
   );
 
   constructor() {
-    if (this.data.readonly) {
-      this.form.disable();
-    }
-
     // same as the popup of related entities: ask before discarding changes when clicking outside
     this.dialogRef.disableClose = true;
     this.dialogRef
       .backdropClick()
       .pipe(takeUntilDestroyed())
       .subscribe(async () => {
-        if (await this.unsavedChanges.checkUnsavedChanges(this)) {
+        // only this popup's changes count, not those of a form it was opened from
+        const entryForm = this.entryForm();
+        if (
+          !entryForm ||
+          (await this.unsavedChanges.checkUnsavedChanges(entryForm))
+        ) {
           this.dialogRef.close();
         }
       });
-    this.form.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.unsavedChanges.setUnsavedChanges(this, this.form.dirty),
-      );
-    this.destroyRef.onDestroy(() =>
-      this.unsavedChanges.setUnsavedChanges(this, false),
+  }
+
+  private async createEntryForm(): Promise<EntityForm<EmbeddedEntity>> {
+    const entryForm = await this.entityFormService.createEntityForm(
+      this.data.columns,
+      this.entry,
+      this.destroyRef,
+      /* forTable */ false,
+      // without a record, there are no permissions to check the entry against
+      /* withPermissionCheck */ !!this.data.entity,
+      // default values for new entries are not supported yet
+      /* withDefaultValues */ false,
     );
+    if (this.data.readonly) {
+      entryForm.formGroup.disable();
+    }
+    return entryForm;
   }
 
   async save() {
-    // errors regarding invalid fields won't be displayed unless marked as touched
-    this.form.markAllAsTouched();
-    if (this.form.invalid) {
+    const entryForm = this.entryForm();
+    if (!entryForm) {
+      return;
+    }
+    if (!this.isNew && !entryForm.formGroup.dirty) {
+      // nothing changed
+      this.cancel();
       return;
     }
 
-    const entry = this.form.getRawValue();
+    let edited: EmbeddedEntity;
+    try {
+      edited = this.entityFormService.applyChanges(entryForm, this.entry);
+    } catch (err) {
+      // invalid fields are highlighted in the form, other errors need an alert
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
+      return;
+    }
+
+    const entry = edited.toEntryValue(this.original);
     if (this.isNew && Object.values(entry).every(isEmptyValue)) {
       // nothing entered, don't add a blank entry
       this.cancel();
       return;
     }
 
+    if (this.isStored) {
+      // keeps the entry's fields locked when it is opened again before its record is saved
+      markStoredEntry(entry);
+    }
     await this.applyChange({
       entry,
       index: this.data.index,
@@ -179,15 +258,21 @@ export class SchemaEmbedArrayEntryDialogComponent {
   }
 
   cancel() {
-    // discard this form's unsaved changes
-    this.unsavedChanges.setUnsavedChanges(this, false);
+    this.discardUnsavedChanges();
     this.dialogRef.close();
+  }
+
+  private discardUnsavedChanges() {
+    const entryForm = this.entryForm();
+    if (entryForm) {
+      this.unsavedChanges.setUnsavedChanges(entryForm, false);
+    }
   }
 
   private async applyChange(change: SchemaEmbedArrayEntryChange) {
     try {
       await this.data.applyChange(change);
-      this.unsavedChanges.setUnsavedChanges(this, false);
+      this.discardUnsavedChanges();
       this.dialogRef.close(change);
     } catch (err) {
       // e.g. validation errors of the whole property are not visible in this popup's fields, so always show an alert

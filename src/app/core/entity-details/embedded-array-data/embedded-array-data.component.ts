@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  createEnvironmentInjector,
   DestroyRef,
+  EnvironmentInjector,
   inject,
   input,
   linkedSignal,
@@ -56,7 +58,7 @@ export class EmbeddedArrayDataComponent {
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly entityFormService = inject(EntityFormService);
   private readonly ability = inject(EntityAbility);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly environmentInjector = inject(EnvironmentInjector);
 
   /** currently viewed/main entity holding the embedded entries */
   entity = input<Entity>();
@@ -70,7 +72,7 @@ export class EmbeddedArrayDataComponent {
   /** @see EmbeddedArrayDataConfig.editable */
   editable = input<boolean>(true);
 
-  private readonly fieldConfig = computed<FormFieldConfig | undefined>(() => {
+  readonly fieldConfig = computed<FormFieldConfig | undefined>(() => {
     const field = this.entity()?.getSchema().get(this.property());
     return field ? { ...field, id: this.property() } : undefined;
   });
@@ -114,17 +116,28 @@ export class EmbeddedArrayDataComponent {
     const entity = this.entity();
     const property = this.property();
     const entries = applySchemaEmbedArrayEntryChange(entity[property], change);
-    const entityForm = await this.entityFormService.createEntityForm(
-      [property],
-      entity,
-      this.destroyRef,
-      /* forTable */ false,
-      /* withPermissionCheck */ true,
-      /* withDefaultValues */ false,
-    );
-    entityForm.formGroup.get(property).setValue(entries);
 
-    const saved = await this.entityFormService.saveChanges(entityForm, entity);
-    this.rows.set(saved[property] ?? []);
+    // the form is only needed for this save (the entity is replaced after each save anyway),
+    // so its subscriptions are cleaned up right after instead of piling up until this panel is destroyed
+    const saveScope = createEnvironmentInjector([], this.environmentInjector);
+    try {
+      const entityForm = await this.entityFormService.createEntityForm(
+        [property],
+        entity,
+        saveScope.get(DestroyRef),
+        /* forTable */ false,
+        /* withPermissionCheck */ true,
+        /* withDefaultValues */ false,
+      );
+      entityForm.formGroup.get(property).setValue(entries);
+
+      const saved = await this.entityFormService.saveChanges(
+        entityForm,
+        entity,
+      );
+      this.rows.set(saved[property] ?? []);
+    } finally {
+      saveScope.destroy();
+    }
   };
 }

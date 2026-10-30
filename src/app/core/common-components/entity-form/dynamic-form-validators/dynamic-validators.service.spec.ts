@@ -12,6 +12,8 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { Entity } from "../../../entity/model/entity";
+import { createEmbeddedEntity } from "../../../entity/model/embedded-entity";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -194,6 +196,22 @@ describe("DynamicValidatorsService", () => {
     expect(validationErrors.uniqueProperty).toBeUndefined();
 
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
+  });
+
+  it("skips the uniqueId validator for inner fields of embedded entries", () => {
+    const entry = createEmbeddedEntity(new Map(), {
+      record: new Entity("record"),
+      field: "documents",
+      existing: false,
+    });
+
+    const options = service.buildValidators(
+      { uniqueId: true },
+      entry,
+      "documentNumber",
+    );
+
+    expect(options.asyncValidators).toEqual([]);
   });
 
   it("keeps minDate as a date validator for date-with-age fields", () => {

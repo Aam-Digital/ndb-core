@@ -8,7 +8,10 @@ import { isEqual } from "lodash-es";
  */
 export type SchemaEmbedArrayEntryChange =
   | {
-      /** The values of the new or edited entry */
+      /**
+       * The new or edited entry with all its values, replacing the entry as it was when the popup opened
+       * (so inner fields cleared in the popup are removed)
+       */
       entry: Record<string, any>;
       /** Position of the edited entry when the popup opened; a new entry is added if not given */
       index?: number;
@@ -23,6 +26,36 @@ export type SchemaEmbedArrayEntryChange =
       /** The deleted entry as it was when the popup opened */
       original: Record<string, any>;
     };
+
+/**
+ * Entries known to be stored in their record, even if they changed since
+ * (e.g. edited in a form of the record that is not saved yet).
+ * Entries are plain objects without an id of their own, so they are tracked by identity.
+ */
+const storedEntries = new WeakSet<object>();
+
+/**
+ * Remember that the entry stems from an entry stored in its record, see {@link isStoredEntry}.
+ */
+export function markStoredEntry(entry: Record<string, any>) {
+  storedEntries.add(entry);
+}
+
+/**
+ * Whether the entry is stored in its record, as opposed to only added in a form that is not saved yet.
+ *
+ * @param entry the entry to check
+ * @param savedEntries the entries of the field as saved in the record
+ */
+export function isStoredEntry(
+  entry: Record<string, any>,
+  savedEntries: Record<string, any>[] | undefined,
+): boolean {
+  return (
+    storedEntries.has(entry) ||
+    !!savedEntries?.some((saved) => isEqual(saved, entry))
+  );
+}
 
 /**
  * The opened entry is no longer found in the latest entries,
@@ -62,8 +95,8 @@ export function applySchemaEmbedArrayEntryChange(
   if ("delete" in change) {
     result.splice(index, 1);
   } else {
-    // keep values of inner fields that are not edited in the popup
-    result[index] = { ...result[index], ...change.entry };
+    // the latest entry equals the original (see findCurrentIndex), so the edited entry replaces it completely
+    result[index] = change.entry;
   }
   return result;
 }

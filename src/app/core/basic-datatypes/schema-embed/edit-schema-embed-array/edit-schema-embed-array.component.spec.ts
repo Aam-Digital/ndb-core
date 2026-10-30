@@ -82,7 +82,7 @@ describe("EditSchemaEmbedArrayComponent", () => {
     expect(mockDialog.open).toHaveBeenCalledTimes(2);
   });
 
-  it("opens the dialog with the field's formControl, resolved columns and label", () => {
+  it("opens the dialog with the field, its formControl, resolved columns and label", () => {
     fixture.detectChanges();
 
     button().nativeElement.click();
@@ -92,6 +92,7 @@ describe("EditSchemaEmbedArrayComponent", () => {
       expect.objectContaining({
         data: {
           formControl,
+          field: expect.objectContaining({ id: "documents" }),
           columns: [
             expect.objectContaining({
               id: "documentType",

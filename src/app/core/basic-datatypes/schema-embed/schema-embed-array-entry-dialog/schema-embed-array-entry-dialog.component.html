@@ -1,16 +1,20 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <form class="entry-form">
-    @for (column of data.columns; track column.id) {
-      <div class="entry-form-cell">
-        <app-entity-field-edit
-          [field]="column"
-          [fieldFormGroup]="form"
-        ></app-entity-field-edit>
-      </div>
-    }
-  </form>
+  @if (entryForm(); as entryForm) {
+    <form class="entry-form">
+      @for (column of data.columns; track column.id) {
+        <div class="entry-form-cell">
+          <app-entity-field-edit
+            [field]="column"
+            [form]="entryForm"
+            [entity]="entry"
+            [hideInheritButton]="true"
+          ></app-entity-field-edit>
+        </div>
+      }
+    </form>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
