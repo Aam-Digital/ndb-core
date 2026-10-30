@@ -3,7 +3,6 @@ import { AttendanceDatatype } from "./attendance.datatype";
 import { AttendanceItem } from "./attendance-item";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "./attendance-status";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
 describe("AttendanceDatatype", () => {
   let datatype: AttendanceDatatype;
@@ -17,11 +16,7 @@ describe("AttendanceDatatype", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AttendanceDatatype,
-        // sortValue does not touch the entityMapper, it is only needed to construct the datatype
-        { provide: EntityMapperService, useValue: {} },
-      ],
+      providers: [AttendanceDatatype],
     });
     datatype = TestBed.inject(AttendanceDatatype);
   });

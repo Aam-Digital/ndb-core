@@ -7,59 +7,16 @@ import {
 } from "../data-transformation-service/export-column-config";
 import { Papa } from "ngx-papaparse";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import {
-  ExportColumnMapping,
-  ExportContext,
-} from "app/core/entity/default-datatype/default.datatype";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { ExportContext } from "app/core/entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { Workbook } from "exceljs";
-import moment from "moment";
 import { mapInBatches } from "app/utils/utils";
 import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
-
-export interface ExportColumnResolver {
-  sourceFieldId: string;
-  schemaField: EntitySchemaField;
-  column: ExportColumnMapping;
-}
-
-/**
- * Build export column resolvers for all fields in a schema.
- *
- * Iterates the schema, looks up each field's datatype, and collects
- * the columns the datatype contributes via `getExportColumns`.
- *
- * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
- *   use the field id as label (useful for embedded schemas like attendance items).
- */
-export function buildExportColumnResolvers(
-  schema: Map<string, EntitySchemaField>,
-  entitySchemaService: EntitySchemaService,
-  useFieldIdAsFallbackLabel = false,
-): ExportColumnResolver[] {
-  const resolvers: ExportColumnResolver[] = [];
-
-  for (const [fieldId, field] of schema.entries()) {
-    if (field.isInternalField) continue;
-
-    const schemaField: EntitySchemaField = {
-      ...field,
-      id: field.id ?? fieldId,
-      label: field.label || (useFieldIdAsFallbackLabel ? fieldId : undefined),
-    };
-
-    const datatype = entitySchemaService.getDatatypeOrDefault(
-      schemaField.dataType,
-    );
-
-    for (const column of datatype.getExportColumns(schemaField)) {
-      resolvers.push({ sourceFieldId: fieldId, schemaField, column });
-    }
-  }
-
-  return resolvers;
-}
+import {
+  buildExportColumnResolvers,
+  ExportColumnResolver,
+} from "../export-column-resolvers";
+import { toExportValue } from "../export-value";
 
 export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx" | "zip";
 
@@ -246,7 +203,7 @@ export class DownloadService {
         Object.fromEntries(
           Object.entries(row).map(([key, value]) => [
             key,
-            this.ensureCsvFriendlyValue(value),
+            toExportValue(value),
           ]),
         ),
       );
@@ -301,7 +258,7 @@ export class DownloadService {
         columnKeys.map((key) =>
           columnResolvers.has(key)
             ? exportEntities[i][key]
-            : this.ensureCsvFriendlyValue(item[key]),
+            : toExportValue(item[key]),
         ),
       ),
     ];
@@ -320,39 +277,9 @@ export class DownloadService {
         resolver.schemaField,
         exportContext,
       );
-      newItem[columnId] = this.ensureCsvFriendlyValue(formattedValue);
+      newItem[columnId] = toExportValue(formattedValue);
     }
 
     return newItem;
-  }
-
-  /**
-   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
-   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
-   */
-  private ensureCsvFriendlyValue(value: any): any {
-    if (value === null || value === undefined) {
-      return value;
-    }
-
-    if (value instanceof Date) {
-      return moment(value).format("YYYY-MM-DD");
-    }
-
-    if (Array.isArray(value)) {
-      return value.map((entry) => this.ensureCsvFriendlyValue(entry)).join(",");
-    }
-
-    if (typeof value === "object") {
-      if ("label" in value) {
-        return value.label;
-      }
-      if ("locationString" in value) {
-        return value.locationString;
-      }
-      return JSON.stringify(value);
-    }
-
-    return value;
   }
 }

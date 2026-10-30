@@ -5,7 +5,7 @@ import {
 } from "./data-transformation-service/export-column-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
-import { buildExportColumnResolvers } from "./download-service/download.service";
+import { buildExportColumnResolvers } from "./export-column-resolvers";
 
 export interface BuildExportColumnsOptions {
   schema: Map<string, any> | undefined;
@@ -36,7 +36,7 @@ export class ExportColumnsService {
     // export columns contributed by each schema field, keyed by field id
     const columnsByField = new Map<
       string,
-      { columnId: string; keySuffix: string }[]
+      { columnId: string; keySuffix: string; preselect: boolean }[]
     >();
     if (schema) {
       const resolvers = buildExportColumnResolvers(
@@ -54,7 +54,11 @@ export class ExportColumnsService {
         if (this.appendUnique(allAvailableColumns, col)) {
           columnById.set(columnId, col);
           const fieldColumns = columnsByField.get(r.sourceFieldId) ?? [];
-          fieldColumns.push({ columnId, keySuffix });
+          fieldColumns.push({
+            columnId,
+            keySuffix,
+            preselect: r.column.preselect ?? true,
+          });
           columnsByField.set(r.sourceFieldId, fieldColumns);
         }
       }
@@ -76,8 +80,9 @@ export class ExportColumnsService {
     }
 
     // For each visible list column preselect ALL export columns of its
-    // underlying field, so e.g. an entity field exports both its readable name
-    // and its raw id by default (the "usual additional columns" of #4057).
+    // underlying field (except those the datatype marks with `preselect: false`),
+    // so e.g. an entity field exports both its readable name and its raw id
+    // by default (the "usual additional columns" of #4057).
     // The primary column (the human-readable name for entity references, the
     // derived value for virtual display columns such as a `DisplayAge` column,
     // otherwise the raw value) keeps the label shown in the list view so the
@@ -107,11 +112,13 @@ export class ExportColumnsService {
         if (this.appendUnique(allAvailableColumns, col)) {
           columnById.set(colId, col);
         }
-        fieldColumns = [{ columnId: colId, keySuffix: "" }];
+        fieldColumns = [{ columnId: colId, keySuffix: "", preselect: true }];
         columnsByField.set(colId, fieldColumns);
       }
 
-      for (const c of fieldColumns) preselectedKeys.add(c.columnId);
+      for (const c of fieldColumns) {
+        if (c.preselect) preselectedKeys.add(c.columnId);
+      }
 
       const base = fieldColumns.find((c) => c.keySuffix === "");
       const readable = fieldColumns.find((c) => c.keySuffix === "_readable");

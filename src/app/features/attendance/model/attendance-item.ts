@@ -12,6 +12,13 @@ import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
 export class AttendanceItem {
   declare static schema: EntitySchema;
 
+  // declared first, so that the participant comes first in generic lists of the inner fields (e.g. exports)
+  @DatabaseField({
+    dataType: "entity",
+    label: $localize`:Attendance embedded field label:Participant`,
+  })
+  participant?: string;
+
   private _status: AttendanceStatusType;
   @DatabaseField({
     label: $localize`:Attendance status field label:Status`,
@@ -39,12 +46,6 @@ export class AttendanceItem {
       this._status = NullAttendanceStatusType;
     }
   }
-
-  @DatabaseField({
-    dataType: "entity",
-    label: $localize`:Attendance embedded field label:Participant`,
-  })
-  participant?: string;
 
   @DatabaseField({
     label: $localize`:Attendance remarks field label:Remarks`,

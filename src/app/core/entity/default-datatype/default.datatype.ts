@@ -60,6 +60,13 @@ export interface ExportColumnMapping<EntityType = any> {
   label: string;
 
   /**
+   * Whether this column is selected by default in the export dialog when its field
+   * is shown in the list (default: true).
+   * Set to false for detail columns that are offered but rarely needed.
+   */
+  preselect?: boolean;
+
+  /**
    * Resolve the value for this export column.
    */
   resolveValue: (

@@ -145,6 +145,23 @@ Saving an entry in this panel saves the entity directly, as the panel is not par
 button. Users without the permission to update the field only see the entries (read-only). See the full example in
 [`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
 
+**Export**
+
+Exports format each inner field like a top-level field of the same type (e.g. names of referenced records, option
+labels, dates). An embedded table offers these columns ("preselected": selected by default in the export dialog when
+the field is shown in the list):
+
+| Column                                                           | Example                                                 | Preselected |
+| ---------------------------------------------------------------- | ------------------------------------------------------- | ----------- |
+| `Identification Documents`                                       | `Passport, 12345, 2020-01-01; ID Card, 678, 2022-05-10` | yes         |
+| `Identification Documents (Document Type)` (one per inner field) | `Passport; ID Card`                                     | no          |
+| `Identification Documents (number of entries)`                   | `2`                                                     | yes         |
+
+Entries are separated by `;`. In the columns per inner field, an empty value keeps its place (e.g. `; Sick`), so the
+values of one entry are at the same position in every column. A single embedded object (`schema-embed` without
+`isArray`) is exported as one column per inner field. See
+[`schema-embed-export-columns.ts`](schema-embed/schema-embed-export-columns.ts).
+
 **Not yet configurable in the Admin UI.** The Admin UI cannot configure the inner fields yet
 ([#3840](https://github.com/Aam-Digital/ndb-core/issues/3840)), so the type is not offered in its field type
 dropdown (the datatype has no `label`). Define such fields in the config JSON.
