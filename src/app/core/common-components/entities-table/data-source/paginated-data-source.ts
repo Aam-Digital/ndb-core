@@ -352,7 +352,13 @@ function toDbDateBound(
   // `$lte` and `$gt` compare with the end of the day, `$gte` and `$lt` with its start
   const atEndOfDay = operator === "$lte" || operator === "$gt";
   if (dataType === "date") {
-    return (atEndOfDay ? day.endOf("day") : day.startOf("day")).toISOString();
+    if (atEndOfDay) {
+      return day.endOf("day").toISOString();
+    }
+    // a date stored without time ("YYYY-MM-DD") counts as midnight UTC but sorts right before that timestamp,
+    // so where the day starts at midnight UTC, only the day itself as bound treats it like in memory
+    const startOfDay = day.startOf("day").toISOString();
+    return startOfDay === `${value}T00:00:00.000Z` ? value : startOfDay;
   }
   return (atEndOfDay || day.date() === 1 ? day : day.add(1, "month")).format(
     "YYYY-MM",
