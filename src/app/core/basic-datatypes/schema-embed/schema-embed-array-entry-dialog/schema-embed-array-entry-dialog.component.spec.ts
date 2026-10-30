@@ -12,7 +12,10 @@ import {
   SchemaEmbedArrayEntryDialogComponent,
   SchemaEmbedArrayEntryDialogData,
 } from "./schema-embed-array-entry-dialog.component";
-import { SchemaEmbedArrayEntryChange } from "../schema-embed-array-entry-change";
+import {
+  isStoredEntry,
+  SchemaEmbedArrayEntryChange,
+} from "../schema-embed-array-entry-change";
 
 @DatabaseEntity("SchemaEmbedArrayEntryDialogTest")
 class SchemaEmbedArrayEntryDialogTest extends Entity {}
@@ -189,19 +192,38 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalledTimes(1);
   });
 
-  it.each<[string, number | undefined, boolean]>([
-    ["a new entry", undefined, false],
-    ["an existing entry", 0, true],
+  it.each<[string, number | undefined, number, boolean]>([
+    ["a new entry", undefined, 2, false],
+    ["an entry stored in the record", 0, 2, true],
+    ["an entry only added in a form that is not saved yet", 1, 1, false],
   ])(
-    "locks a read-only-after-set field depending on whether its own entry is new, not its record (%s, locked: %s)",
-    async (_, index, expectedDisabled) => {
+    "locks a read-only-after-set field depending on whether its own entry is stored, not its record (%s, locked: %s)",
+    async (_, index, storedCount, expectedDisabled) => {
       entity._rev = "1-existing";
+      entity["documents"] = entries.slice(0, storedCount);
       await createDialog({
         index,
         columns: [{ ...columns[1], validators: { readonlyAfterSet: true } }],
       });
 
       expect(form().get("documentNumber").disabled).toBe(expectedDisabled);
+    },
+  );
+
+  it.each<[string, number | undefined, boolean]>([
+    ["a stored entry", 0, true],
+    ["a new entry", undefined, false],
+  ])(
+    "keeps track of whether an applied entry stems from a stored entry (%s)",
+    async (_, index, expectedStored) => {
+      entity["documents"] = entries;
+      await createDialog({ index });
+
+      enterValues({ documentType: "Visa", documentNumber: "C3" });
+      await component.save();
+
+      const { entry } = appliedChange() as { entry: Record<string, any> };
+      expect(isStoredEntry(entry, [])).toBe(expectedStored);
     },
   );
 

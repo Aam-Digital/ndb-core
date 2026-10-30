@@ -35,7 +35,11 @@ import { getEmbeddedSchema } from "#src/app/core/entity/schema/embedded-schema-f
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
-import { SchemaEmbedArrayEntryChange } from "../schema-embed-array-entry-change";
+import {
+  isStoredEntry,
+  markStoredEntry,
+  SchemaEmbedArrayEntryChange,
+} from "../schema-embed-array-entry-change";
 
 /**
  * Apply the change of a single entry of a `schema-embed-array` field to its latest entries
@@ -128,13 +132,23 @@ export class SchemaEmbedArrayEntryDialogComponent {
     ? undefined
     : this.data.entries[this.data.index];
 
+  /**
+   * Whether the edited entry is stored in its record.
+   * An entry that was only added in a form of the record that is not saved yet is not,
+   * so its fields (e.g. with `readonlyAfterSet`) can still be corrected.
+   */
+  private readonly isStored =
+    !this.isNew &&
+    (!this.data.entity ||
+      isStoredEntry(this.original, this.data.entity[this.data.field.id]));
+
   /** The edited entry, wrapped to be edited like a record */
   readonly entry: EmbeddedEntity = createEmbeddedEntity(
     getEmbeddedSchema(this.entitySchemaService, this.data.field) ?? new Map(),
     {
       record: this.data.entity,
       field: this.data.field.id,
-      existing: !this.isNew,
+      existing: this.isStored,
     },
     this.original,
   );
@@ -216,6 +230,10 @@ export class SchemaEmbedArrayEntryDialogComponent {
       return;
     }
 
+    if (this.isStored) {
+      // keeps the entry's fields locked when it is opened again before its record is saved
+      markStoredEntry(entry);
+    }
     await this.applyChange({
       entry,
       index: this.data.index,

@@ -28,6 +28,36 @@ export type SchemaEmbedArrayEntryChange =
     };
 
 /**
+ * Entries known to be stored in their record, even if they changed since
+ * (e.g. edited in a form of the record that is not saved yet).
+ * Entries are plain objects without an id of their own, so they are tracked by identity.
+ */
+const storedEntries = new WeakSet<object>();
+
+/**
+ * Remember that the entry stems from an entry stored in its record, see {@link isStoredEntry}.
+ */
+export function markStoredEntry(entry: Record<string, any>) {
+  storedEntries.add(entry);
+}
+
+/**
+ * Whether the entry is stored in its record, as opposed to only added in a form that is not saved yet.
+ *
+ * @param entry the entry to check
+ * @param savedEntries the entries of the field as saved in the record
+ */
+export function isStoredEntry(
+  entry: Record<string, any>,
+  savedEntries: Record<string, any>[] | undefined,
+): boolean {
+  return (
+    storedEntries.has(entry) ||
+    !!savedEntries?.some((saved) => isEqual(saved, entry))
+  );
+}
+
+/**
  * The opened entry is no longer found in the latest entries,
  * because it has been changed or removed in the meantime (e.g. by another user).
  */
