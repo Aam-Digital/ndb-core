@@ -1,11 +1,35 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, InjectionToken } from "@angular/core";
 import { defer, Observable } from "rxjs";
+import type * as AppSdk from "firebase/app";
 import type * as MessagingSdk from "firebase/messaging";
 import { environment } from "../../../environments/environment";
 import { FirebaseMessagingServiceWorker } from "./firebase-messaging-service-worker";
 
+type FirebaseSdk = Pick<typeof AppSdk, "initializeApp"> &
+  Pick<
+    typeof MessagingSdk,
+    "isSupported" | "getMessaging" | "getToken" | "deleteToken" | "onMessage"
+  >;
+
+/**
+ * Loads the parts of the Firebase SDK used here (as a separate chunk).
+ */
+export const FIREBASE_SDK = new InjectionToken<() => Promise<FirebaseSdk>>(
+  "FIREBASE_SDK",
+  {
+    providedIn: "root",
+    factory: () => async () => {
+      const [app, messaging] = await Promise.all([
+        import("firebase/app"),
+        import("firebase/messaging"),
+      ]);
+      return { ...messaging, initializeApp: app.initializeApp };
+    },
+  },
+);
+
 interface LoadedFirebase {
-  sdk: typeof MessagingSdk;
+  sdk: FirebaseSdk;
   messaging: MessagingSdk.Messaging;
 }
 
@@ -19,6 +43,7 @@ interface LoadedFirebase {
 @Injectable({ providedIn: "root" })
 export class FirebaseMessagingService {
   private readonly serviceWorker = inject(FirebaseMessagingServiceWorker);
+  private readonly loadSdk = inject(FIREBASE_SDK);
   private firebase: Promise<LoadedFirebase | undefined> | undefined;
 
   /**
@@ -96,13 +121,10 @@ export class FirebaseMessagingService {
       return undefined;
     }
 
-    const [{ initializeApp }, sdk] = await Promise.all([
-      import("firebase/app"),
-      import("firebase/messaging"),
-    ]);
+    const sdk = await this.loadSdk();
     if (!(await sdk.isSupported())) {
       return undefined;
     }
-    return { sdk, messaging: sdk.getMessaging(initializeApp(config)) };
+    return { sdk, messaging: sdk.getMessaging(sdk.initializeApp(config)) };
   }
 }
