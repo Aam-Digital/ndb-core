@@ -1,5 +1,4 @@
-import { inject, Injectable, Provider } from "@angular/core";
-import { SERVICE_WORKER } from "@angular/fire/compat/messaging";
+import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { FirebaseConfiguration } from "./notification-config.interface";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
@@ -59,25 +58,4 @@ function waitUntilActive(registration: ServiceWorkerRegistration) {
       }
     });
   });
-}
-
-/**
- * Let AngularFire use our registration of the service worker instead of the Firebase default
- * (which would not pass the Firebase config to it).
- *
- * The registration is only done once AngularFire awaits it (i.e. when requesting a device token)
- * and repeated on every request, so a failed attempt (e.g. while offline) can succeed later.
- */
-export function provideFirebaseMessagingServiceWorker(): Provider {
-  return {
-    provide: SERVICE_WORKER,
-    useFactory: () => {
-      const serviceWorker = inject(FirebaseMessagingServiceWorker);
-      const lazyRegistration: PromiseLike<ServiceWorkerRegistration> = {
-        then: (onFulfilled, onRejected) =>
-          serviceWorker.register().then(onFulfilled, onRejected),
-      };
-      return lazyRegistration;
-    },
-  };
 }

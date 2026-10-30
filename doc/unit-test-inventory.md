@@ -315,7 +315,7 @@ checked against the real service's shape.
 
 Fifteen of the 101 go further and import `MockedTestingModule.withState()`, which imports
 the entire `AppModule` — every feature module, `RouterModule.forRoot(allRoutes)`,
-`ServiceWorkerModule`, AngularFire, Angulartics — to reach that one-line assertion.
+`ServiceWorkerModule`, Angulartics — to reach that one-line assertion.
 
 ---
 

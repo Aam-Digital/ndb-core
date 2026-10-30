@@ -35,7 +35,6 @@
     "@angular/common": "^22.2.3",
     "@angular/compiler": "^22.2.3",
     "@angular/core": "^22.2.3",
-    "@angular/fire": "^21.0.0",
     "@angular/forms": "^22.2.3",
     "@angular/localize": "^22.2.3",
     "@angular/material": "^22.2.4",
@@ -64,7 +63,7 @@
     "buffer": "^6.0.3",
     "deep-object-diff": "^1.1.9",
     "exceljs": "^4.4.0",
-    "firebase": "^12.19.0",
+    "firebase": "^13.1.0",
     "json-query": "^2.2.2",
     "jsondiffpatch": "^0.7.6",
     "keycloak-angular": "^22.0.0",
@@ -148,12 +147,6 @@
   "overrides": {
     "@angular-devkit/build-angular": "^22.2.4",
     "madge": {
-      "typescript": "$typescript"
-    },
-    "@angular/fire": {
-      "@angular/core": "$@angular/core",
-      "@angular/common": "$@angular/common",
-      "@angular/platform-browser": "$@angular/platform-browser",
       "typescript": "$typescript"
     }
   }

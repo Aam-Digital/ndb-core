@@ -2,7 +2,6 @@ import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { filter, firstValueFrom, mergeMap, Subscription, take } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
@@ -14,7 +13,8 @@ import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-da
 import { NotificationEvent } from "./model/notification-event";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { FirebaseMessagingServiceWorker } from "./firebase-messaging-service-worker";
-import type firebase from "firebase/compat/app";
+import { FirebaseMessagingService } from "./firebase-messaging.service";
+import type { MessagePayload } from "firebase/messaging";
 
 /**
  * Status of a backend feature, as reported by the `/actuator/features` endpoint.
@@ -41,7 +41,7 @@ type FeatureFlags = Record<string, FeatureFlag> & {
   providedIn: "root",
 })
 export class NotificationService {
-  private readonly firebaseMessaging = inject(AngularFireMessaging);
+  private readonly firebaseMessaging = inject(FirebaseMessagingService);
   private readonly httpClient = inject(HttpClient);
   private readonly authService = inject(KeycloakAuthService);
   private readonly alertService = inject(AlertService);
@@ -210,7 +210,7 @@ export class NotificationService {
       .pipe(
         mergeMap((token) => {
           tempToken = token;
-          return this.firebaseMessaging.deleteToken(token);
+          return this.firebaseMessaging.deleteToken();
         }),
       )
       .subscribe({
@@ -343,7 +343,7 @@ export class NotificationService {
    * The payload is attached the same way Firebase does for notifications it shows itself,
    * so that Firebase's click handler in the service worker also handles clicks on these (focus or open the app).
    */
-  private async showNotification(payload: firebase.messaging.MessagePayload) {
+  private async showNotification(payload: MessagePayload) {
     if (!payload.notification) {
       // data-only message, not meant to be displayed (Firebase also doesn't show these while in background)
       return;
