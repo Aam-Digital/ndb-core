@@ -21,13 +21,18 @@ you can.
    number), or the PR of the current branch if there is none, and ask if there is no PR
    either. Read the PR and its diff with `gh`, and the linked issue (`closes #`, `fixes #`,
    or a number in the title) with its comments, because scope often changes there. If
-   there is no linked issue, say so and do not invent one.
+   there is no linked issue, say so and do not invent one. To read the PR's files, fetch
+   it (`git fetch origin pull/<n>/head:<ref>`) and use `git show <ref>:<path>` or a
+   separate worktree. Never check it out in the user's working copy.
 2. **Check coverage.** Compare the ask with what the diff changes and state one of: fully
    addressed / partially addressed (name the gap) / diff does not obviously match the
    issue / no linked issue.
 3. **Read the diff.** Every hunk, plus the whole function around each hunk: a bug in an
    unchanged line of a touched function is in scope when the PR exposes it or fails to
-   fix it. For each hunk ask what input, state or timing makes the line wrong.
+   fix it. For each hunk ask what input, state or timing makes the line wrong. When the
+   PR changes what a shared function, type or state means (e.g. a form can now be
+   invalid with only a warning that may be saved), search the code outside the diff that
+   relies on the old meaning and check it too: those callers break without being touched.
 4. **Run the checklist in [patterns.md](patterns.md)** against the changed files. Check
    each pattern on purpose, and do not skip one because it "looks irrelevant" before
    you have looked.
