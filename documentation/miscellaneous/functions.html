@@ -1199,6 +1199,9 @@
                             <a href="#testEntitySubclass" title="src/app/core/entity/model/entity.test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>testEntitySubclass</b>&nbsp;&nbsp;&nbsp;(src/.../entity.test-utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#toDbDateBound" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toDbDateBound</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#toFormFieldConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toFormFieldConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</span></a>
                         </li>
                         <li>
@@ -10339,6 +10342,94 @@ Values that are not translation maps are returned unchanged.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toDbDateBound"></a>
+                    <span class="name">
+                        <span ><b>toDbDateBound</b></span>
+                        <a href="#toDbDateBound"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toDbDateBound(operator: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, value, dataType)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Date filters compare with a day (&quot;YYYY-MM-DD&quot;), which records in memory match at day precision.
+For a field stored in another format, rewrite the day into that format, keeping this meaning:
+a &quot;date&quot; is a UTC timestamp, so the day becomes its first or last moment in local time;
+a &quot;month&quot; is &quot;YYYY-MM&quot; and counts as its first day.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>operator</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dataType</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
 
                         </div>
                             <div class="io-description">

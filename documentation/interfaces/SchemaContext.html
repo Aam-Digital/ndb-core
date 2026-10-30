@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="317" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:317</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="318" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:318</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="319" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:319</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="320" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:320</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="315" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:315</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="316" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:316</a></div>
                                 </td>
                             </tr>
 
@@ -375,6 +375,7 @@ import { EntitySchema } from &quot;#src/app/core/entity/schema/entity-schema&quo
 import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
 import { getSchemaEmbedDatatype } from &quot;#src/app/core/entity/schema/embedded-schema-field.util&quot;;
 import { SchemaEmbedDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype&quot;;
+import moment from &quot;moment&quot;;
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES &#x3D; [&quot;configurable-enum&quot;, &quot;entity&quot;];
@@ -652,7 +653,7 @@ export class PaginatedDataSource&lt;
       } else if (operator &#x3D;&#x3D;&#x3D; &quot;$not&quot;) {
         result[operator] &#x3D; this.toDbCondition(value, field);
       } else {
-        result[operator] &#x3D; value;
+        result[operator] &#x3D; toDbDateBound(operator, value, field?.dataType);
       }
     }
     return result;
@@ -678,6 +679,45 @@ interface SchemaContext {
 function isOperatorObject(condition: unknown): condition is object {
   return (
     !!condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; !Array.isArray(condition)
+  );
+}
+
+/**
+ * Date filters compare with a day (&quot;YYYY-MM-DD&quot;), which records in memory match at day precision.
+ * For a field stored in another format, rewrite the day into that format, keeping this meaning:
+ * a &quot;date&quot; is a UTC timestamp, so the day becomes its first or last moment in local time;
+ * a &quot;month&quot; is &quot;YYYY-MM&quot; and counts as its first day.
+ */
+function toDbDateBound(
+  operator: string,
+  value: unknown,
+  dataType: string | undefined,
+): unknown {
+  if (
+    (dataType !&#x3D;&#x3D; &quot;date&quot; &amp;&amp; dataType !&#x3D;&#x3D; &quot;month&quot;) ||
+    ![&quot;$gte&quot;, &quot;$gt&quot;, &quot;$lte&quot;, &quot;$lt&quot;].includes(operator) ||
+    typeof value !&#x3D;&#x3D; &quot;string&quot;
+  ) {
+    return value;
+  }
+  const day &#x3D; moment(value, &quot;YYYY-MM-DD&quot;, true);
+  if (!day.isValid()) {
+    return value;
+  }
+
+  // &#x60;$lte&#x60; and &#x60;$gt&#x60; compare with the end of the day, &#x60;$gte&#x60; and &#x60;$lt&#x60; with its start
+  const atEndOfDay &#x3D; operator &#x3D;&#x3D;&#x3D; &quot;$lte&quot; || operator &#x3D;&#x3D;&#x3D; &quot;$gt&quot;;
+  if (dataType &#x3D;&#x3D;&#x3D; &quot;date&quot;) {
+    if (atEndOfDay) {
+      return day.endOf(&quot;day&quot;).toISOString();
+    }
+    // a date stored without time (&quot;YYYY-MM-DD&quot;) counts as midnight UTC but sorts right before that timestamp,
+    // so where the day starts at midnight UTC, only the day itself as bound treats it like in memory
+    const startOfDay &#x3D; day.startOf(&quot;day&quot;).toISOString();
+    return startOfDay &#x3D;&#x3D;&#x3D; &#x60;${value}T00:00:00.000Z&#x60; ? value : startOfDay;
+  }
+  return (atEndOfDay || day.date() &#x3D;&#x3D;&#x3D; 1 ? day : day.add(1, &quot;month&quot;)).format(
+    &quot;YYYY-MM&quot;,
   );
 }
 
