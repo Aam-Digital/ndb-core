@@ -157,7 +157,7 @@ the field is shown in the list):
 | `Identification Documents (Document Type)` (one per inner field) | `Passport; ID Card`                                     | no          |
 | `Identification Documents (number of entries)`                   | `2`                                                     | yes         |
 
-Entries are separated by `; `. In the columns per inner field, an empty value keeps its place (e.g. `; Sick`), so the
+Entries are separated by `;`. In the columns per inner field, an empty value keeps its place (e.g. `; Sick`), so the
 values of one entry are at the same position in every column. A single embedded object (`schema-embed` without
 `isArray`) is exported as one column per inner field. See
 [`schema-embed-export-columns.ts`](schema-embed/schema-embed-export-columns.ts).
