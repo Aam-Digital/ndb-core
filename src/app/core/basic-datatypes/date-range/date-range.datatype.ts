@@ -52,7 +52,7 @@ export class DateRangeDatatype extends DefaultDatatype<
   override viewComponent = "DisplayDateRange";
   override editComponent = "EditDateRange";
 
-  override readonly validators = [endNotBeforeStart];
+  override readonly internalValidators = [endNotBeforeStart];
 
   /** converts the single dates, so that they are stored like all other date-only fields */
   private readonly dateOnly = new DateOnlyDatatype();

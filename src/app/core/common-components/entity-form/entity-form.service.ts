@@ -276,7 +276,7 @@ export class EntityFormService {
     controlOptions.validators = [
       ...asArray(controlOptions.validators ?? []),
       ...this.entitySchemaService.getDatatypeOrDefault(field.dataType)
-        .validators,
+        .internalValidators,
     ];
 
     if (withPermissionCheck) {

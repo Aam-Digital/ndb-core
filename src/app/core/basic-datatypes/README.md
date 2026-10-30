@@ -33,7 +33,7 @@ You can use Angular's dependency injection to access any other services, if need
    - `label`: To allow admin users to select this type in the form builder under this human-readable name
    - `viewComponent`: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables
    - `editComponent`: The string ID for the EditComponent (see below) used for form field UI of the value in detail views
-   - `validators`: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the `validators` configured for the field)
+   - `internalValidators`: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the `validators` configured for the field)
 5. Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)
 6. **Register the datatype** as a "multi" provider so the platform picks it up (see [Registering the new Datatype](#registering-the-new-datatype) below).
 

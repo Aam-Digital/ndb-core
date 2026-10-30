@@ -164,7 +164,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * Validators that every value of this datatype has to pass in entity forms,
    * in addition to the `validators` configured for the field.
    */
-  readonly validators: ValidatorFn[] = [];
+  readonly internalValidators: ValidatorFn[] = [];
 
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
