@@ -1,0 +1,28 @@
+@if (scopes.hasValue()) {
+  @let offeredScopes = scopes.value();
+  <mat-selection-list
+    [formControl]="control()"
+    aria-label="Access"
+    i18n-aria-label
+  >
+    @for (scope of offeredScopes; track scope.name) {
+      <mat-list-option [value]="scope.name">
+        <span matListItemTitle>{{ scope.label }}</span>
+      </mat-list-option>
+    }
+  </mat-selection-list>
+} @else if (scopes.isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+} @else if (loadingError(); as loadingError) {
+  <p class="color-error" role="alert">{{ loadingError }}</p>
+}
+
+@if (singleSignOnSelected()) {
+  <app-hint-box type="warning" class="margin-top-small">
+    <span i18n>
+      With single sign-on, the external system can sign in to this system as any
+      of its users, including administrators, without their password. Only give
+      this access to systems you fully trust.
+    </span>
+  </app-hint-box>
+}

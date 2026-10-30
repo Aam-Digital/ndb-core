@@ -11,6 +11,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import { ApiClientListComponent } from "./api-client-list.component";
 import { ApiClient, ApiClientService } from "../api-client.service";
 import { CreateApiClientDialogComponent } from "../create-api-client-dialog/create-api-client-dialog.component";
+import { EditApiClientScopesDialogComponent } from "../edit-api-client-scopes-dialog/edit-api-client-scopes-dialog.component";
 import { ApiClientCredentialsDialogComponent } from "../api-client-credentials-dialog/api-client-credentials-dialog.component";
 
 describe("ApiClientListComponent", () => {
@@ -140,6 +141,33 @@ describe("ApiClientListComponent", () => {
           ([component]) => component === ApiClientCredentialsDialogComponent,
         ),
       ).toHaveLength(expectedCalls);
+    },
+  );
+
+  it.each([
+    [{ ...existingClient, scopes: ["reporting_write"] }, 2],
+    [undefined, 1],
+  ])(
+    "reloads the list only if the access of an API client was changed (%#)",
+    async (dialogResult, expectedLoads) => {
+      await render({ available: true, dialogResult });
+      await vi.waitFor(() =>
+        expect(apiClientService.getApiClients).toHaveBeenCalledTimes(1),
+      );
+
+      await clickButton("Change access");
+
+      expect(openDialog).toHaveBeenCalledWith(
+        EditApiClientScopesDialogComponent,
+        expect.objectContaining({
+          data: expect.objectContaining(existingClient),
+        }),
+      );
+      await vi.waitFor(() =>
+        expect(apiClientService.getApiClients).toHaveBeenCalledTimes(
+          expectedLoads,
+        ),
+      );
     },
   );
 
