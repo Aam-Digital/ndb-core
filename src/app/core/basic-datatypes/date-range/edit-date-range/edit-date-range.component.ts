@@ -104,8 +104,6 @@ export class EditDateRangeComponent
     return range && new DateRange(range.start, range.end);
   });
 
-  private readonly currentValue = signal<DateRangeValue | null>(null);
-
   /**
    * the parent link as entered in the form, if the form has that field (otherwise the record's saved link is used),
    * so that the parent's period offered and shaded while editing follows a changed link before it is saved
@@ -132,7 +130,7 @@ export class EditDateRangeComponent
 
   /** name of the first linked parent record whose range the entered range goes beyond */
   protected readonly outsideParent = computed(() =>
-    findParentOutside(this.currentValue(), this.parents.value()),
+    findParentOutside(this.valueSignal(), this.parents.value()),
   );
 
   /** the two inputs of the range picker, which are kept in sync with the form control of the field */
@@ -180,10 +178,7 @@ export class EditDateRangeComponent
         startWith(this.formControl.value),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((value) => {
-        this.showValue(value);
-        this.currentValue.set(value);
-      });
+      .subscribe((value) => this.showValue(value));
     this.followParentReferenceInForm();
     this.range.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

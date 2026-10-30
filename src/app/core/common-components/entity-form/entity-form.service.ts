@@ -49,7 +49,7 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
-  private confirmationDialog = inject(ConfirmationDialogService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.

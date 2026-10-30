@@ -103,7 +103,7 @@ export class ConfigureEntityFieldValidatorComponent {
           .flatMap((typeId) =>
             this.rangeOptionsOfLinkedType(
               linkId,
-              link.label ?? linkId,
+              resolveLocaleText(link.label) ?? linkId,
               this.entityRegistry.get(typeId),
               entityType,
               field,
@@ -136,7 +136,7 @@ export class ConfigureEntityFieldValidatorComponent {
         !(isSameType && valueId === field.id)
       ) {
         options.push({
-          label: `${linkLabel} › ${parentField.label ?? valueId}`,
+          label: `${linkLabel} › ${resolveLocaleText(parentField.label) ?? valueId}`,
           value: { parentReferenceField: linkId, parentValueField: valueId },
         });
       }
