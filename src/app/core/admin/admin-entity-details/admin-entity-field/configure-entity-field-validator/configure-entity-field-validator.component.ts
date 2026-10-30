@@ -186,10 +186,6 @@ export class ConfigureEntityFieldValidatorComponent {
       const sub = form.valueChanges.subscribe(() => {
         const rawValues = form.getRawValue();
         this.transformPatternValue(rawValues);
-        if (this.fieldDataType() !== DateRangeDatatype.dataType) {
-          // only offered for date ranges
-          delete rawValues.withinParent;
-        }
         const cleanedValues =
           this.removeDefaultValuesFromValidatorConfig(rawValues);
         this.entityValidatorChanges.emit(cleanedValues);
@@ -209,14 +205,6 @@ export class ConfigureEntityFieldValidatorComponent {
       ) {
         withinParent.setValue(null);
       }
-    });
-
-    effect((onCleanup) => {
-      const ctrl = this.trimControl();
-      const sub = ctrl.valueChanges.subscribe((value: boolean) => {
-        this.entitySchemaFieldChanges.emit({ trim: value });
-      });
-      onCleanup(() => sub.unsubscribe());
     });
 
     effect((onCleanup) => {
