@@ -2,7 +2,7 @@ import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { filter, firstValueFrom, mergeMap, Subscription, take } from "rxjs";
+import { filter, firstValueFrom, mergeMap, of, Subscription, take } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 import { catchError, map } from "rxjs/operators";
@@ -209,6 +209,10 @@ export class NotificationService {
     this.firebaseMessaging.getToken
       .pipe(
         mergeMap((token) => {
+          if (!token) {
+            // e.g. the browser permission was revoked: nothing to delete, neither in Firebase nor the backend
+            return of(false);
+          }
           tempToken = token;
           return this.firebaseMessaging.deleteToken();
         }),

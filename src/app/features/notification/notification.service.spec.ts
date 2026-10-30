@@ -23,6 +23,7 @@ class MockKeycloakAuthService {
 class MockFirebaseMessagingService {
   getToken: Observable<any> = of("mock-token");
   messages = new Subject<MessagePayload>();
+  deleteToken = vi.fn(() => of(true));
 }
 
 describe("NotificationService", () => {
@@ -83,8 +84,8 @@ describe("NotificationService", () => {
           provide: FirebaseMessagingServiceWorker,
           useValue: mockServiceWorker,
         },
+        { provide: AlertService, useValue: { addInfo: vi.fn() } },
         // only constructed, not used by the functionality under test
-        { provide: AlertService, useValue: {} },
         { provide: EntityMapperService, useValue: {} },
         {
           provide: DatabaseResolverService,
@@ -157,6 +158,18 @@ describe("NotificationService", () => {
       expect(mockRegistration.showNotification).toHaveBeenCalled(),
     );
     expect(mockRegistration.showNotification).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not unregister anything without a device token (e.g. after the browser permission was revoked)", async () => {
+    mockFireMessaging.getToken = of(null);
+
+    service.unregisterDevice();
+
+    await vi.waitFor(() =>
+      expect(TestBed.inject(AlertService).addInfo).toHaveBeenCalled(),
+    );
+    expect(mockFireMessaging.deleteToken).not.toHaveBeenCalled();
+    expect(mockHttpClient.delete).not.toHaveBeenCalled();
   });
 
   it("reflects a notification permission granted after the service was created", () => {

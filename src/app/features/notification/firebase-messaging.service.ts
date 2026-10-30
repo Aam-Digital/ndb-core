@@ -34,6 +34,15 @@ interface LoadedFirebase {
 }
 
 /**
+ * Quick check of the browser APIs, so the SDK (which checks support in detail) is not downloaded without them.
+ */
+function hasPushApis(): boolean {
+  return (
+    typeof Notification !== "undefined" && typeof PushManager !== "undefined"
+  );
+}
+
+/**
  * Access to Firebase Cloud Messaging in the app window.
  *
  * The Firebase SDK is only loaded (as a separate chunk) once a token or messages are requested.
@@ -55,7 +64,9 @@ export class FirebaseMessagingService {
    * Ask the user for the notification permission (if not decided yet), then get the token of this device.
    */
   readonly requestToken: Observable<string | null> = defer(async () => {
-    await Notification.requestPermission();
+    if (hasPushApis()) {
+      await Notification.requestPermission();
+    }
     return this.loadToken();
   });
 
@@ -91,7 +102,7 @@ export class FirebaseMessagingService {
   }
 
   private async loadToken(): Promise<string | null> {
-    if (Notification.permission !== "granted") {
+    if (!hasPushApis() || Notification.permission !== "granted") {
       return null;
     }
     const firebase = await this.loadFirebase();
@@ -117,7 +128,7 @@ export class FirebaseMessagingService {
 
   private async initFirebase(): Promise<LoadedFirebase | undefined> {
     const config = environment.notificationsConfig;
-    if (!config) {
+    if (!config || !hasPushApis()) {
       return undefined;
     }
 

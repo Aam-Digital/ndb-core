@@ -44,6 +44,7 @@ describe("FirebaseMessagingService", () => {
       },
       requestPermission: vi.fn(async () => notificationPermission),
     });
+    vi.stubGlobal("PushManager", class {});
     registerServiceWorker = vi.fn().mockResolvedValue(registration);
     sdk = {
       initializeApp: vi.fn().mockReturnValue({}),
@@ -88,21 +89,36 @@ describe("FirebaseMessagingService", () => {
     [
       "without the notification permission",
       () => (notificationPermission = "denied"),
+      false,
     ],
     [
       "without push notifications set up for the deployment",
       () => (environment.notificationsConfig = undefined),
+      false,
     ],
     [
-      "in browsers without push support",
-      () => sdk.isSupported.mockResolvedValue(false),
+      "in browsers without the Notification API",
+      () => vi.stubGlobal("Notification", undefined),
+      false,
     ],
-  ])("has no device token %s", async (_, removeSetup) => {
+    [
+      "in browsers without the Push API",
+      () => vi.stubGlobal("PushManager", undefined),
+      false,
+    ],
+    [
+      "in browsers Firebase does not support",
+      () => sdk.isSupported.mockResolvedValue(false),
+      true,
+    ],
+  ])("has no device token %s", async (_, removeSetup, downloadsSdk) => {
     removeSetup();
 
     await expect(firstValueFrom(service.getToken)).resolves.toBeNull();
+    await expect(firstValueFrom(service.requestToken)).resolves.toBeNull();
     expect(registerServiceWorker).not.toHaveBeenCalled();
     expect(sdk.getToken).not.toHaveBeenCalled();
+    expect(loadSdk).toHaveBeenCalledTimes(downloadsSdk ? 1 : 0);
   });
 
   it("loads Firebase again after a failed attempt (e.g. offline)", async () => {
