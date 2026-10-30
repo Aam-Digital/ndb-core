@@ -140,10 +140,6 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
-            <a href="#styleData" class="nav-link"
-                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
-        </li>
-        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
@@ -215,10 +211,6 @@
                 </td>
             </tr>
 
-            <tr>
-                <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./edit-text.component.scss</code></td>
-            </tr>
 
 
 
@@ -460,7 +452,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/basic-datatypes/string/edit-text/edit-text.component.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/basic-datatypes/string/edit-text/edit-text.component.ts:22</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -1732,7 +1724,6 @@ import { EditComponent } from &quot;../../../entity/entity-field-edit/dynamic-ed
 @Component({
   selector: &quot;app-edit-text&quot;,
   templateUrl: &quot;./edit-text.component.html&quot;,
-  styleUrls: [&quot;./edit-text.component.scss&quot;],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatInputModule, FormsModule, ReactiveFormsModule],
   providers: [{ provide: MatFormFieldControl, useExisting: EditTextComponent }],
@@ -1753,15 +1744,6 @@ export class EditTextComponent
 </code></pre>
     </div>
 
-    <div class="tab-pane fade " id="styleData">
-                <p class="comment">
-                    <code>./edit-text.component.scss</code>
-                </p>
-                <pre class="line-numbers"><code class="language-scss">::ng-deep .mdc-floating-label {
-  width: 100%;
-}
-</code></pre>
-    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
