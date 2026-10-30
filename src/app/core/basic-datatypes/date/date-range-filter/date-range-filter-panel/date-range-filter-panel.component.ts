@@ -23,7 +23,7 @@ import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListC
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
-import { calculateDateRange } from "./date-range-utils";
+import { calculateDateRange, DateRangeOption } from "./date-range-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
@@ -97,7 +97,7 @@ export class DateRangeFilterPanelComponent {
     selectedOptionValues?: string[];
     selectedOption?: DateRangeFilterConfigOption;
     dateRange?: DateRange<Date>;
-    rangeOptions?: DateRangeFilterConfigOption[];
+    rangeOptions?: DateRangeOption[];
     /**
      * For selecting the dates of a field rather than a filter:
      * no "All" option, and without given dates nothing is selected initially.
@@ -128,9 +128,7 @@ export class DateRangeFilterPanelComponent {
   selectedOptionValues = signal<string[]>(
     this.data?.selectedOptionValues ?? [],
   );
-  rangeOptions = signal<DateRangeFilterConfigOption[]>(
-    this.data?.rangeOptions ?? [],
-  );
+  rangeOptions = signal<DateRangeOption[]>(this.data?.rangeOptions ?? []);
   private readonly highlightRange =
     this.data?.highlightRange ?? new DateRange<Date>(null, null);
   comparisonRange = signal<DateRange<Date>>(this.highlightRange);
@@ -140,7 +138,7 @@ export class DateRangeFilterPanelComponent {
     ? null
     : (this.data?.dateRange?.start ?? this.highlightRange.start ?? null);
 
-  preselectRange(dateRangeOption): void {
+  preselectRange(dateRangeOption: DateRangeOption): void {
     this.comparisonRange.set(calculateDateRange(dateRangeOption));
   }
 

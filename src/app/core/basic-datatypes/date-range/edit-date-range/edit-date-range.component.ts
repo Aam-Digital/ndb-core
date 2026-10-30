@@ -33,9 +33,9 @@ import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import {
   calculateDateRange,
+  DateRangeOption,
   periodRangeOptions,
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
-import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 import { DateRangeValue } from "../date-range.datatype";
 import {
   findParentOutside,
@@ -82,12 +82,14 @@ export class EditDateRangeComponent
    * The predefined ranges offered next to the calendar: the periods of the linked parent records (see `withinParent`),
    * then the ones in the `additional` config of the field (an empty list offers none), or the default ones.
    */
-  readonly rangeOptions = computed<DateRangeFilterConfigOption[]>(() => {
+  readonly rangeOptions = computed<DateRangeOption[]>(() => {
     const configured = this.formFieldConfig()?.additional;
     return [
-      ...this.closedParentPeriods().map(({ name, range }) =>
-        fixedRangeOption($localize`Period of ${name}`, range),
-      ),
+      ...this.closedParentPeriods().map(({ name, range }) => ({
+        label: $localize`Period of ${name}`,
+        start: range.start,
+        end: range.end,
+      })),
       ...(Array.isArray(configured) ? configured : periodRangeOptions),
     ];
   });
@@ -253,7 +255,7 @@ export class EditDateRangeComponent
   /** The dates of a selection in the panel: "no date", the index of a predefined range, or two picked dates. */
   private toDates(
     [first, second]: string[],
-    rangeOptions: DateRangeFilterConfigOption[],
+    rangeOptions: DateRangeOption[],
   ): {
     start: Date | null;
     end: Date | null;
@@ -267,21 +269,6 @@ export class EditDateRangeComponent
     }
     return { start: fromDateString(first), end: fromDateString(second) };
   }
-}
-
-/** a predefined range for the given dates (the options are offsets from today) */
-function fixedRangeOption(
-  label: string,
-  range: DateRangeValue,
-): DateRangeFilterConfigOption {
-  const today = moment().startOf("day");
-  const daysFromToday = (date: Date) =>
-    moment(date).startOf("day").diff(today, "days");
-  return {
-    label,
-    startOffsets: [{ amount: daysFromToday(range.start), unit: "days" }],
-    endOffsets: [{ amount: daysFromToday(range.end), unit: "days" }],
-  };
 }
 
 function startOfDay(date: Date): Date {
