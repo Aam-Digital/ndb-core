@@ -262,6 +262,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EmbeddedArrayData",
+    () =>
+      import("./entity-details/embedded-array-data/embedded-array-data.component").then(
+        (c) => c.EmbeddedArrayDataComponent,
+      ),
+  ],
+  [
     "RelatedTimePeriodEntities",
     () =>
       import("./entity-details/related-time-period-entities/related-time-period-entities.component").then(
@@ -337,6 +344,20 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./admin/json-editor/edit-json/edit-json.component").then(
         (c) => c.EditJsonComponent,
+      ),
+  ],
+  [
+    "EditSchemaEmbedArray",
+    () =>
+      import("./basic-datatypes/schema-embed/edit-schema-embed-array/edit-schema-embed-array.component").then(
+        (c) => c.EditSchemaEmbedArrayComponent,
+      ),
+  ],
+  [
+    "DisplaySchemaEmbedArray",
+    () =>
+      import("./basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component").then(
+        (c) => c.DisplaySchemaEmbedArrayComponent,
       ),
   ],
 ];

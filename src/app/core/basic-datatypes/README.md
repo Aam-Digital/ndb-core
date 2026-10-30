@@ -86,6 +86,74 @@ The `additional` config of the field can change them: a list in the format of th
 (`DateRangeFilterConfigOption`) replaces them, and an empty list offers none. In the Admin UI, a checkbox
 switches them off.
 
+## Embedded tables (`schema-embed-array`)
+
+The `schema-embed-array` type stores an array of custom sub-objects on the entity itself, for example several
+identification documents of a person. It is the lightweight alternative to a separate entity type that is linked
+through `RelatedEntities`: use it for entries that have no life of their own (no separate record, permissions or
+list view). It generalizes the `attendance` type, which extends it
+(see [`SchemaEmbedArrayDatatype`](schema-embed/schema-embed-array.datatype.ts)).
+
+The inner fields are defined in the `additional` config of the field, in the same format as entity `attributes`.
+`isArray` is set automatically:
+
+```json
+"identificationDocuments": {
+  "dataType": "schema-embed-array",
+  "label": "Identification Documents",
+  "additional": {
+    "documentType": { "dataType": "string", "label": "Document Type" },
+    "documentNumber": { "dataType": "string", "label": "Document Number" },
+    "issueDate": { "dataType": "date", "label": "Issue Date" }
+  }
+}
+```
+
+**Display and editing**
+
+- In forms, the field shows a summary of its entries with a button that opens a popup with the full table.
+  Each entry is added or edited in a popup of its own.
+- Wherever the value is only displayed (e.g. in table columns), the first column's values of the first entries are
+  shown (e.g. "Passport, ID Card +1 more"). Hovering shows a preview table with all entries.
+
+**Panel in the entity details**
+
+The `EmbeddedArrayData` component shows the entries as a table in a panel of the entity details view, like a list of
+related records. Its config is:
+
+- `property`: the entity field of type `schema-embed-array`
+- `columns` (optional): the inner fields to show, as ids or column config objects that override the field details,
+  e.g. `{ "id": "issueDate", "visibleFrom": "md" }`. Defaults to all inner fields.
+- `editable` (optional, default `true`): whether entries can be added and edited.
+
+```json
+{
+  "title": "Identification Documents",
+  "components": [
+    {
+      "component": "EmbeddedArrayData",
+      "config": {
+        "property": "identificationDocuments",
+        "columns": ["documentType", "documentNumber", { "id": "issueDate", "visibleFrom": "md" }]
+      }
+    }
+  ]
+}
+```
+
+Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a "Save"
+button. Users without the permission to update the field only see the entries (read-only). See the full example in
+[`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
+
+**Not yet configurable in the Admin UI.** The Admin UI cannot configure the inner fields yet
+([#3840](https://github.com/Aam-Digital/ndb-core/issues/3840)), so the type is not offered in its field type
+dropdown (the datatype has no `label`). Define such fields in the config JSON.
+
+**For developers:** a subclass can set `embeddedType` to a class with `@DatabaseField()` annotations instead of (or in
+addition to) defining the inner fields in `additional`; the config is merged over the annotations. See
+[`SchemaEmbedDatatype`](schema-embed/schema-embed.datatype.ts) and `AttendanceDatatype`
+(`AttendanceItem` as `embeddedType`).
+
 ## Customizing how values are sorted in tables
 
 By default, table columns are sorted on the readable value of the field.

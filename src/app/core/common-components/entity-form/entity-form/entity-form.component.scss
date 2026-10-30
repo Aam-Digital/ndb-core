@@ -1,23 +1,11 @@
-@use "mixins/grid-layout";
-@use "variables/sizes";
+@use "mixins/entity-form";
 
 .grid-layout {
-  @include grid-layout.adaptive(
-    $min-block-width: sizes.$form-group-min-width,
-    $max-screen-width: 414px
-  );
+  @include entity-form.grid;
 }
 
 .entity-form-cell {
-  display: flex;
-  flex-direction: column;
-
-  /* set the width of each form field to 100% in every form component that is a descendent
-     of the columns-wrapper class */
-  mat-form-field {
-    width: 100%;
-    max-width: 864px;
-  }
+  @include entity-form.cell;
 }
 
 .full-width mat-form-field {
