@@ -100,9 +100,6 @@ import { BulkEditModule } from "./features/bulk-edit/bulk-edit.module";
 import { ChangeHistoryModule } from "./features/change-history/change-history.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
-import { provideFirebaseMessagingServiceWorker } from "./features/notification/firebase-messaging-service-worker";
-import { AngularFireModule } from "@angular/fire/compat";
-import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 import { UserAdminService } from "./core/user/user-admin-service/user-admin.service";
 import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-admin.service";
 import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
@@ -167,9 +164,6 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     MatSnackBarModule,
     MatDialogModule,
     ApplicationLoadingComponent,
-    AngularFireModule.initializeApp(
-      environment.notificationsConfig as FirebaseConfiguration,
-    ),
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
@@ -204,7 +198,6 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     NotificationService,
-    provideFirebaseMessagingServiceWorker(),
     ...defaultValueStrategyProviders,
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
