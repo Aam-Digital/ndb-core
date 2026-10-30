@@ -234,6 +234,44 @@ describe("PublicFormComponent", () => {
     }
   });
 
+  it.each([
+    [
+      "warning",
+      {
+        withinParent: {
+          warning: true,
+          errorMessage: "Outside the period of Training",
+        },
+      },
+      true,
+    ],
+    ["error", { required: true }, false],
+  ])(
+    "only stops the submission before saving for errors that are not warnings, which saving asks to confirm (%s)",
+    async (_, error, saved) => {
+      vi.useFakeTimers();
+      try {
+        initComponent();
+        await vi.advanceTimersByTimeAsync(0);
+        const saveSpy = vi
+          .spyOn(TestBed.inject(EntityFormService), "saveChanges")
+          .mockResolvedValue(undefined);
+        const name = component
+          .entityFormEntries()[0]
+          .form.formGroup.get("name");
+        name.addValidators(() => error);
+        name.updateValueAndValidity();
+
+        await component.submit();
+
+        expect(saveSpy).toHaveBeenCalledTimes(saved ? 1 : 0);
+        expect(component.validationError()).toBe(!saved);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   it("should skip already-saved entries on re-submit but still save the not-yet-saved ones", async () => {
     vi.useFakeTimers();
     try {

@@ -268,6 +268,27 @@ describe("AdminEntityFieldComponent", () => {
     expect(dialogData.entitySchemaField.isArray).toBeUndefined();
   });
 
+  it("should remove withinParent when switching away from a date range", async () => {
+    await recreateComponentWithData({
+      label: "planned period",
+      dataType: "date-range",
+      validators: {
+        required: true,
+        withinParent: { parentReferenceField: "ref" },
+      },
+    } as EntitySchemaField);
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(StringDatatype.dataType);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(dialogData.entitySchemaField.validators).toEqual({
+      required: true,
+    });
+  });
+
   it("should keep isArray when switching between dataTypes that support multiple values", async () => {
     await recreateComponentWithData({
       label: "related records",

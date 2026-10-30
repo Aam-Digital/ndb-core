@@ -22,16 +22,22 @@ test("Update related records over several levels: child, school and parent schoo
 }) => {
   // In the all-features config, the school collects the centers of its children ("enum multi")
   // and its parent school collects the centers of its schools ("All centers").
+  // A school's "Date Range Field" is checked against the one of its parent school.
   const parentSchool = createEntityOfType("School", "levels-parent-school");
   Object.assign(parentSchool, {
     name: PARENT_SCHOOL_NAME,
     allCenters: [CENTER_ALIPORE],
+    dateRangeField: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
   });
   const school = createEntityOfType("School", "levels-school");
   Object.assign(school, {
     name: SCHOOL_NAME,
     parentSchool: parentSchool.getId(),
     enumMulti: [CENTER_ALIPORE],
+    dateRangeField: {
+      start: new Date(2026, 4, 20),
+      end: new Date(2026, 5, 15),
+    },
   });
   const child = generateChild({ name: CHILD_NAME });
   Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
@@ -94,5 +100,14 @@ test("Update related records over several levels: child, school and parent schoo
   await page.getByRole("cell", { name: SCHOOL_NAME }).click();
   await expect(page.locator("#entity-field__enumMulti")).toContainText(
     "Tollygunge",
+  );
+
+  // the school's period goes beyond the one of its parent school (hovering shows why)
+  const periodWarning = page
+    .locator("#entity-field__dateRangeField")
+    .locator("app-fa-dynamic-icon");
+  await periodWarning.hover();
+  await expect(periodWarning).toHaveAccessibleDescription(
+    `Outside the period of ${PARENT_SCHOOL_NAME}`,
   );
 });

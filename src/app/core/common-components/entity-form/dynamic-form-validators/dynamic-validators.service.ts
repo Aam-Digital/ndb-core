@@ -14,6 +14,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
+import { withinParentValidator } from "../../../basic-datatypes/date-range/within-parent-validator";
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -121,6 +122,18 @@ export class DynamicValidatorsService {
         return value ? { fn: Validators.required } : null;
       case "readonlyAfterSet":
         return value ? buildReadonlyValidator(entity) : null;
+      case "withinParent":
+        return value && fieldId
+          ? {
+              async: true,
+              fn: withinParentValidator(
+                value,
+                fieldId,
+                entity,
+                this.entityMapper,
+              ),
+            }
+          : null;
       default:
         // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
         Logging.debug("Trying to generate a validator that does not exist", {
@@ -252,6 +265,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid date`;
       case "isNumber":
         return $localize`Please enter a valid number`;
+      case "withinParent":
+        return validationValue?.errorMessage;
       case "uniqueId":
         if (typeof validationValue === "string") {
           return validationValue;

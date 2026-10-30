@@ -1,5 +1,22 @@
+import { FormControl } from "@angular/forms";
 import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
+import { EmailDatatype } from "./email.datatype";
 import { StringDatatype } from "./string.datatype";
+
+describe("Schema data type: email", () => {
+  it.each([
+    ["test@example.com", true],
+    ["invalid-email", false],
+    [null, true],
+  ])("accepts %j as a value: %s", (value, valid) => {
+    const control = new FormControl(
+      value,
+      new EmailDatatype().internalValidators,
+    );
+
+    expect(control.valid).toBe(valid);
+  });
+});
 
 describe("Schema data type: string", () => {
   testDatatype(new StringDatatype(), "test", "test");

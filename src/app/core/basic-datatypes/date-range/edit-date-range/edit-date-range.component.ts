@@ -7,10 +7,10 @@ import {
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -20,37 +20,33 @@ import { DateRange, MatDatepickerModule } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import moment from "moment";
+import { startWith } from "rxjs";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../entity/model/entity";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import {
   calculateDateRange,
+  DateRangeOption,
   periodRangeOptions,
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
-import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 import { DateRangeValue } from "../date-range.datatype";
-
-/** Validator for the value of the field: the end must not be before the start. */
-export function endNotBeforeStart(
-  control: AbstractControl<DateRangeValue | null>,
-): ValidationErrors | null {
-  const { start, end } = control.value ?? {};
-  if (start && end && end < start) {
-    return {
-      dateRange: {
-        errorMessage: $localize`The end date must not be before the start date.`,
-      },
-    };
-  }
-  return null;
-}
+import {
+  findParentOutside,
+  ParentLinkInForm,
+  parentRangesResource,
+} from "../parent-ranges";
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
+ * With the `withinParent` validator, a warning icon shows in view mode when the range goes beyond a linked parent's range
+ * (while editing, the validator's error shows below the field instead).
  */
 @DynamicComponent("EditDateRange")
 @Component({
@@ -59,8 +55,15 @@ export function endNotBeforeStart(
   templateUrl: "./edit-date-range.component.html",
   styleUrls: [
     "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "./edit-date-range.component.scss",
   ],
-  imports: [MatInputModule, ReactiveFormsModule, MatDatepickerModule],
+  imports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    FaDynamicIconComponent,
+    MatTooltipModule,
+  ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditDateRangeComponent },
   ],
@@ -70,18 +73,62 @@ export class EditDateRangeComponent
   implements EditComponent, OnInit
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
 
   /**
-   * The predefined ranges offered next to the calendar: the ones in the `additional` config of the field
-   * (an empty list offers none), or the default ones.
+   * The predefined ranges offered next to the calendar: the periods of the linked parent records (see `withinParent`),
+   * then the ones in the `additional` config of the field (an empty list offers none), or the default ones.
    */
-  readonly rangeOptions = computed<DateRangeFilterConfigOption[]>(() => {
+  readonly rangeOptions = computed<DateRangeOption[]>(() => {
     const configured = this.formFieldConfig()?.additional;
-    return Array.isArray(configured) ? configured : periodRangeOptions;
+    return [
+      ...this.closedParentPeriods().map(({ name, range }) => ({
+        label: $localize`Period of ${name}`,
+        start: range.start,
+        end: range.end,
+      })),
+      ...(Array.isArray(configured) ? configured : periodRangeOptions),
+    ];
   });
+
+  /**
+   * The linked parent periods with a start and an end
+   * (a predefined range always has an end, so an ongoing period cannot be one).
+   */
+  private readonly closedParentPeriods = computed(() =>
+    (this.parents.value() ?? []).filter(
+      ({ range }) => range?.start && range?.end,
+    ),
+  );
+
+  /** shaded in the calendar: the period of the (first) parent */
+  private readonly highlightedParentRange = computed(() => {
+    const range = this.closedParentPeriods()[0]?.range;
+    return range && new DateRange(range.start, range.end);
+  });
+
+  /**
+   * the parent link as entered in the form, if the form has that field (otherwise the record's saved link is used),
+   * so that the parent's period offered and shaded while editing follows a changed link before it is saved
+   */
+  private readonly parentReferenceInForm = signal<ParentLinkInForm | undefined>(
+    undefined,
+  );
+
+  private readonly parents = parentRangesResource(() => ({
+    record: this.entity(),
+    fieldId: this.formFieldConfig()?.id,
+    config: this.formFieldConfig()?.validators?.withinParent,
+    linkInForm: this.parentReferenceInForm(),
+  }));
+
+  /** name of the first linked parent record whose range the entered range goes beyond */
+  protected readonly outsideParent = computed(() =>
+    findParentOutside(this.valueSignal(), this.parents.value()),
+  );
 
   /** the two inputs of the range picker, which are kept in sync with the form control of the field */
   readonly range = new FormGroup({
@@ -115,10 +162,7 @@ export class EditDateRangeComponent
       : null;
 
   ngOnInit() {
-    this.formControl.addValidators([
-      endNotBeforeStart,
-      this.pickerInputsReadable,
-    ]);
+    this.formControl.addValidators(this.pickerInputsReadable);
     this.formControl.updateValueAndValidity({ emitEvent: false });
     // it checks the inputs of this component, so it must not stay on the field once the component is gone
     this.destroyRef.onDestroy(() => {
@@ -126,10 +170,13 @@ export class EditDateRangeComponent
       this.formControl.updateValueAndValidity({ emitEvent: false });
     });
 
-    this.showValue(this.formControl.value);
     this.formControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        startWith(this.formControl.value),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((value) => this.showValue(value));
+    this.followParentReferenceInForm();
     this.range.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.formControl.updateValueAndValidity());
@@ -143,6 +190,19 @@ export class EditDateRangeComponent
         );
         this.formControl.markAsDirty();
       });
+  }
+
+  private followParentReferenceInForm() {
+    const field =
+      this.formFieldConfig()?.validators?.withinParent?.parentReferenceField;
+    const control = field && this.formControl.parent?.get(field);
+    if (!control) {
+      return;
+    }
+    this.parentReferenceInForm.set({ value: control.value });
+    control.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.parentReferenceInForm.set({ value }));
   }
 
   /** Show a value that was set from outside, without resetting what the user is just typing. */
@@ -169,26 +229,34 @@ export class EditDateRangeComponent
     }
 
     const { start, end } = this.range.value;
+    // the panel returns an index into these, which must not shift if the parent's period loads in the meantime
+    const rangeOptions = this.rangeOptions();
     this.dialog
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
         data: {
           dateRange: new DateRange(start ?? null, end ?? null),
-          rangeOptions: this.rangeOptions(),
+          rangeOptions,
           hideAllOption: true,
+          highlightRange: this.highlightedParentRange(),
         },
       })
       .afterClosed()
       .subscribe((result?: { selectedOptionValues: string[] }) => {
         if (result?.selectedOptionValues?.length) {
-          this.range.setValue(this.toDates(result.selectedOptionValues));
+          this.range.setValue(
+            this.toDates(result.selectedOptionValues, rangeOptions),
+          );
         }
       });
   }
 
   /** The dates of a selection in the panel: "no date", the index of a predefined range, or two picked dates. */
-  private toDates([first, second]: string[]): {
+  private toDates(
+    [first, second]: string[],
+    rangeOptions: DateRangeOption[],
+  ): {
     start: Date | null;
     end: Date | null;
   } {
@@ -196,7 +264,7 @@ export class EditDateRangeComponent
       return { start: null, end: null };
     }
     if (second === undefined) {
-      const range = calculateDateRange(this.rangeOptions()[Number(first)]);
+      const range = calculateDateRange(rangeOptions[Number(first)]);
       return { start: startOfDay(range.start), end: startOfDay(range.end) };
     }
     return { start: fromDateString(first), end: fromDateString(second) };

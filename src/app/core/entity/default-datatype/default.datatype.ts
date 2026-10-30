@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { ValidatorFn } from "@angular/forms";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
 import { asArray } from "../../../utils/asArray";
@@ -158,6 +159,12 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * during import.
    */
   readonly importAllowsMultiMapping: boolean = false;
+
+  /**
+   * Validators that every value of this datatype has to pass in entity forms,
+   * in addition to the `validators` configured for the field.
+   */
+  readonly internalValidators: ValidatorFn[] = [];
 
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
