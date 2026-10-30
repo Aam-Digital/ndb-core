@@ -30,9 +30,9 @@ export interface ExportColumnResolver {
  * Iterates the schema, looks up each field's datatype, and collects
  * the columns the datatype contributes via `getExportColumns`.
  *
- * Internal fields are included only if they carry an explicit label, which marks
- * them as meaningful to users (today only `_id`, the internal record id). They can
- * be selected for an export but are left out of an export that selects no columns,
+ * Internal fields are excluded, except the record's internal id `_id`, which users
+ * need to relate exported records to each other ). It can be selected for an
+ * export but is left out of an export that selects no columns,
  * see {@link DownloadService.prepareExportData}.
  *
  * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
@@ -46,7 +46,7 @@ export function buildExportColumnResolvers(
   const resolvers: ExportColumnResolver[] = [];
 
   for (const [fieldId, field] of schema.entries()) {
-    if (field.isInternalField && !field.label) continue;
+    if (field.isInternalField && fieldId !== "_id") continue;
 
     const schemaField: EntitySchemaField = {
       ...field,
