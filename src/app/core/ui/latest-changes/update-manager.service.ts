@@ -30,7 +30,8 @@ export class UpdateManagerService {
 
   constructor() {
     this.updates.unrecoverable.subscribe((err) => {
-      Logging.error("App is in unrecoverable state", { reason: err.reason });
+      // usually the browser evicted cached app files; reloading fetches them again
+      Logging.debug("App is in unrecoverable state", { reason: err.reason });
       this.location.reload();
     });
     const currentVersion = this.localStorage.getItem(

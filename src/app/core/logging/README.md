@@ -39,10 +39,13 @@ who has to act on the failure:
 - **User or device environment** (e.g. offline or flaky connection, expired session, a record the
   user may not read, a browser permission the user denied such as clipboard or notifications):
   do not report it (`Logging.debug`); tell the user what happened and what they can do.
-- **Instance configuration or data** (e.g. an unknown `dataType`, icon or validator in the config;
-  a permission rule variable for an account without a linked profile; a file field pointing to a
-  missing file; an optional feature not set up for the instance): do not report it
-  (`Logging.debug`); make it visible to admins in the UI, and validate the config when it is saved.
+- **Instance configuration or data problem** (e.g. an unknown `dataType`, icon or validator in the
+  config; a permission rule variable for an account without a linked profile; a file field pointing
+  to a missing file): report it with `Logging.warn`, with a static message and the offending value
+  in the context. If it would recur on every page load, report it once per session. Also make it
+  visible to admins in the UI where possible, and validate the config when it is saved.
+- **Optional feature not set up for the instance** (e.g. push notifications without a Firebase
+  config): this is not a problem, do not report it (`Logging.debug`).
 
 Rules that keep one root cause in one Sentry issue (see also "Log an error together with a message"
 and "Log a failure once" below):
@@ -67,8 +70,8 @@ and "Log a failure once" below):
 `warn` and `error` go to Sentry, `debug` and `info` only to the browser console. Decide per call site:
 
 - **Keep `warn`** for an unexpected but handled situation that a developer or support has to act on:
-  - a code defect, or a data or config inconsistency that is not already shown to admins in the UI
-    (if it would recur on every page load, report it once per session, e.g. an invalid locale);
+  - a code defect, or a data or config inconsistency (if it would recur on every page load, report
+    it once per session, e.g. an invalid locale);
   - a risk of data loss: the local database lost or evicted, user data that could not be saved for a
     reason other than permissions or connectivity;
   - a permission inconsistency that indicates a bug (e.g. the server refusing docs the client let the

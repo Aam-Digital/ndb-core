@@ -89,7 +89,7 @@ describe("UpdateManagerService", () => {
     latestChangesDialog = {
       showLatestChangesIfUpdated: vi.fn(),
     };
-    vi.spyOn(Logging, "error");
+    vi.spyOn(Logging, "debug");
     unsavedChanges = { pending: signal(true) };
 
     service = createService();
@@ -227,7 +227,7 @@ describe("UpdateManagerService", () => {
       type: "UNRECOVERABLE_STATE",
     });
 
-    expect(Logging.error).toHaveBeenCalledWith(
+    expect(Logging.debug).toHaveBeenCalledWith(
       "App is in unrecoverable state",
       { reason: "ERROR REASON" },
     );
