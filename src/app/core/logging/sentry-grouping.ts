@@ -1,19 +1,18 @@
 import type * as Sentry from "@sentry/angular";
-import {
-  CONNECTIVITY_ERROR_NAMES,
-  CONNECTIVITY_ERROR_STATUS,
-  isConnectivityErrorMessage,
-} from "#src/app/utils/connectivity-error";
+import { classifyError, ErrorClassification } from "./error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
  * grouping by stack trace would split one problem into many issues.
  * The rules are explained in the logging README ("How events are grouped").
+ *
+ * @param classification of the event's error chain (see `classifyErrorChain`)
  */
 export function groupSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
+  classification?: ErrorClassification,
 ): Sentry.ErrorEvent {
   const values = event.exception?.values;
   if (!values?.length) {
@@ -25,15 +24,16 @@ export function groupSentryEvent(
 
   const thrown = values[values.length - 1];
   const original = hint?.originalException;
+  const links = classifyExceptions(values, original);
   const ours =
     original instanceof NamedError || original instanceof LoggedError
       ? thrown
       : rewrappedNamedError(values, original);
 
   if (ours) {
-    const failedRequest = failedRequestPassedOn(ours, values, original);
+    const failedRequest = failedRequestPassedOn(ours, values, links, original);
     if (!failedRequest) {
-      return groupByErrorChain(event, values, ours);
+      return groupByRootCause(event, values, links, ours);
     }
     if (original instanceof LoggedError) {
       event.tags = {
@@ -44,7 +44,7 @@ export function groupSentryEvent(
     return groupAsNetworkError(event, thrown, failedRequest);
   }
 
-  if (isConnectivityFailure(event)) {
+  if (classification === "connectivity") {
     return groupAsNetworkError(event, thrown);
   }
 
@@ -57,6 +57,32 @@ export function groupSentryEvent(
 }
 
 /**
+ * The classification of each exception of the event (innermost first, like `values`).
+ *
+ * Taken from the error objects where Sentry's exceptions are their `cause` chain;
+ * else (e.g. an event without the original error) from the serialized exception.
+ */
+function classifyExceptions(
+  values: Sentry.Exception[],
+  original: unknown,
+): (ErrorClassification | undefined)[] {
+  const errors: Error[] = [];
+  for (
+    let error = original;
+    error instanceof Error && errors.length < values.length;
+    error = error.cause
+  ) {
+    errors.unshift(error);
+  }
+  if (errors.length === values.length && !(errors[0]?.cause instanceof Error)) {
+    return errors.map((error) => classifyError(error));
+  }
+  return values.map((exception) =>
+    classifyError({ name: exception.type, message: exception.value ?? "" }),
+  );
+}
+
+/**
  * The failed request that our error only passes on, if that is all it reports:
  * a `DatabaseException` that is a connectivity failure itself, or one logged
  * with a message (whatever component logged it, it is the same dropped connection).
@@ -64,16 +90,17 @@ export function groupSentryEvent(
 function failedRequestPassedOn(
   ours: Sentry.Exception,
   values: Sentry.Exception[],
+  links: (ErrorClassification | undefined)[],
   original: unknown,
 ): Sentry.Exception | undefined {
-  if (isConnectivityException(ours)) {
+  if (links[values.indexOf(ours)] === "connectivity") {
     return ours;
   }
-  const cause = values[values.length - 2];
+  const causeIndex = values.length - 2;
   return original instanceof LoggedError &&
-    cause &&
-    isConnectivityException(cause)
-    ? cause
+    causeIndex >= 0 &&
+    links[causeIndex] === "connectivity"
+    ? values[causeIndex]
     : undefined;
 }
 
@@ -99,34 +126,86 @@ function rewrappedNamedError(
 }
 
 /**
- * Group by the error identifying the problem plus the root cause, which is also
- * appended to the title so that issues split by it can be told apart.
+ * Errors whose message does not tell where the bug is ("x is undefined"):
+ * as a root cause, they are told apart by the function that threw them.
+ */
+const PROGRAMMING_ERROR_TYPES = [
+  "TypeError",
+  "RangeError",
+  "ReferenceError",
+  "SyntaxError",
+  "EvalError",
+  "URIError",
+];
+
+/**
+ * Group one failure into one issue, whichever component wrapped and logged it:
+ * by its root cause, with the component's message as the `reported_by` tag.
+ *
+ * Exceptions to grouping by the root cause alone:
+ * - a programming error (`TypeError`, ...) also by the function that threw it,
+ *   or by the wrapper if that is unknown, as its message is not specific to one bug;
+ * - a network failure (e.g. `AppBootstrapError` caused by a failed request) by the
+ *   wrapper as well, as the wrapper says what could not be done.
+ *
  * `values` are ordered innermost-first: `values[0]` is the root cause.
  */
-function groupByErrorChain(
+function groupByRootCause(
   event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
-  grouped: Sentry.Exception,
+  links: (ErrorClassification | undefined)[],
+  ours: Sentry.Exception,
 ): Sentry.ErrorEvent {
-  const fingerprint = [grouped.type ?? "", groupingValue(grouped)];
-
+  const oursIndex = values.indexOf(ours);
+  const oursKey = [ours.type ?? "", groupingValue(ours, links[oursIndex])];
   const rootCause = values[0];
-  if (rootCause !== grouped) {
-    const rootFingerprint = [rootCause.type ?? "", groupingValue(rootCause)];
-    // a wrapper repeating its cause's type and message is one failure, not two
-    if (rootFingerprint.join() !== fingerprint.join()) {
-      fingerprint.push(...rootFingerprint);
-      grouped.value = `${grouped.value} ${describeCause(rootCause)}`;
-    }
-  }
-
+  const rootKey = [rootCause.type ?? "", groupingValue(rootCause, links[0])];
   // Sentry titles an event by its thrown error
   const thrown = values[values.length - 1];
-  thrown.type = grouped.type;
-  thrown.value = grouped.value;
 
-  event.fingerprint = fingerprint;
+  // a wrapper repeating its cause's type and message is one failure, not two
+  if (rootCause === ours || rootKey.join() === oursKey.join()) {
+    event.fingerprint = oursKey;
+    thrown.type = ours.type;
+    thrown.value = ours.value;
+    return event;
+  }
+
+  if (links[0] === "connectivity") {
+    event.fingerprint = [...oursKey, ...rootKey];
+    thrown.type = ours.type;
+    thrown.value = `${ours.value} (caused by ${rootCause.type ?? "Error"}: ${NETWORK_FAILURE})`;
+    return event;
+  }
+
+  event.fingerprint = rootKey;
+  if (PROGRAMMING_ERROR_TYPES.includes(rootCause.type ?? "")) {
+    const location = throwingFunction(rootCause);
+    event.fingerprint.push(...(location ? [location] : oursKey));
+  }
+
+  const reportedBy = `${ours.type ?? "Error"}: ${normalizeErrorValue(ours.value)}`;
+  event.tags = { ...event.tags, reported_by: truncateTag(reportedBy) };
+  event.extra = { ...event.extra, reported_by: reportedBy };
+  thrown.type = rootCause.type;
+  thrown.value = normalizeErrorValue(rootCause.value);
   return event;
+}
+
+/**
+ * The name of the function that threw the error: the innermost stack frame
+ * with a name that survives minification (a method name, not `t` or `<anonymous>`),
+ * so that it is the same in every release.
+ */
+function throwingFunction(exception: Sentry.Exception): string | undefined {
+  const frames = exception.stacktrace?.frames ?? [];
+  for (let i = frames.length - 1; i >= 0; i--) {
+    const name = frames[i].function?.split(".").pop();
+    if (name && name.length > 2 && !name.includes("<anonymous>")) {
+      return name;
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -139,7 +218,7 @@ function groupAsNetworkError(
   thrown: Sentry.Exception,
   failedRequest: Sentry.Exception = thrown,
 ): Sentry.ErrorEvent {
-  event.fingerprint = ["network-error"];
+  event.fingerprint = [NETWORK_ERROR_FINGERPRINT];
   event.level = "warning";
   event.tags = {
     ...event.tags,
@@ -154,41 +233,19 @@ function groupAsNetworkError(
   return event;
 }
 
-/**
- * Whether the event is a request that never reached the server: by any link of
- * its error chain, by a gateway status, or by its message.
- */
-export function isConnectivityFailure(event: Sentry.ErrorEvent): boolean {
-  const status = event.extra?.status;
-  return (
-    !!event.exception?.values?.some(isConnectivityException) ||
-    (typeof status === "number" &&
-      CONNECTIVITY_ERROR_STATUS.includes(status)) ||
-    (!!event.message && isConnectivityErrorMessage(event.message))
-  );
-}
-
-function isConnectivityException(exception: Sentry.Exception): boolean {
-  return (
-    CONNECTIVITY_ERROR_NAMES.includes(exception.type ?? "") ||
-    isConnectivityErrorMessage(exception.value ?? "")
-  );
-}
+/** The fingerprint of the one issue collecting all connectivity failures. */
+export const NETWORK_ERROR_FINGERPRINT = "network-error";
 
 /** Stands in for a connectivity failure, which every browser words differently. */
 const NETWORK_FAILURE = "network failure";
 
-function groupingValue(exception: Sentry.Exception): string {
-  return isConnectivityException(exception)
+function groupingValue(
+  exception: Sentry.Exception,
+  classification: ErrorClassification | undefined,
+): string {
+  return classification === "connectivity"
     ? NETWORK_FAILURE
     : fingerprintKey(exception.value);
-}
-
-function describeCause(rootCause: Sentry.Exception): string {
-  const cause = isConnectivityException(rootCause)
-    ? NETWORK_FAILURE
-    : normalizeErrorValue(rootCause.value);
-  return `(caused by ${rootCause.type ?? "Error"}: ${cause})`;
 }
 
 /**
@@ -211,7 +268,7 @@ function reportNormalized(
 }
 
 /** Sentry rejects tag values longer than 200 characters. */
-function truncateTag(value: string): string {
+export function truncateTag(value: string): string {
   return value.slice(0, 200);
 }
 

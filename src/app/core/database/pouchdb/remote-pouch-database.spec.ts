@@ -355,6 +355,43 @@ describe("RemotePouchDatabase tests", () => {
     expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
   });
 
+  it.each([
+    {
+      response: "no response",
+      fetch: () => Promise.reject(new TypeError("Failed to fetch")),
+      expected: { name: "ConnectivityError", classification: "connectivity" },
+    },
+    {
+      response: "a gateway timeout of the proxy",
+      fetch: async () => new Response("", { status: 504 }),
+      expected: {
+        name: "ConnectivityError",
+        classification: "connectivity",
+        status: 504,
+      },
+    },
+    {
+      // not a dropped connection: was reported in the shared network issue before
+      response: "a server error",
+      fetch: async () => new Response("", { status: 500 }),
+      expected: {
+        name: "ServerError",
+        classification: "server-error",
+        status: 500,
+      },
+    },
+  ])(
+    "should classify a request with $response where it fails",
+    async ({ fetch, expected }) => {
+      database.init("");
+      (PouchDB.fetch as Mock).mockImplementationOnce(fetch);
+
+      await expect(
+        (database as any).defaultFetch(READ_URL, { headers: {} }),
+      ).rejects.toMatchObject(expected);
+    },
+  );
+
   describe("session renewal alert", () => {
     let mockAlertService: { addWarning: Mock };
 

@@ -23,6 +23,11 @@ import {
   describeResponse,
   unexpectedResponseMessage,
 } from "../../logging/http-response-logging";
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  ConnectivityError,
+  ServerError,
+} from "../../logging/error-classification";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -34,6 +39,34 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
 ];
+
+/**
+ * The error for a request that got no usable response: a {@link ConnectivityError}
+ * if it never reached CouchDB (no response, or a gateway status of the proxy in
+ * front of it), else a {@link ServerError} carrying the status - a server that
+ * fails is a fault to fix, not a dropped connection.
+ */
+async function failedResponseError(
+  result: Response | undefined,
+  method: string,
+  remoteUrl: string,
+): Promise<ConnectivityError | ServerError> {
+  const details = {
+    requestedUrl: remoteUrl,
+    actualResponse: describeResponse(result, method),
+    actualResponseBody: await result?.text(),
+  };
+  if (!result || CONNECTIVITY_ERROR_STATUS.includes(result.status)) {
+    return new ConnectivityError("Failed to fetch from DB", {
+      status: result?.status,
+      details,
+    });
+  }
+  return new ServerError("Server error response from DB", {
+    status: result.status,
+    details,
+  });
+}
 
 /** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
 function requestMethod(opts: RequestInit | undefined): string {
@@ -219,12 +252,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
-      throw new DatabaseException({
-        message: "Failed to fetch from DB",
-        requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(describeResponse(result, method)),
-        actualResponseBody: await result?.text(),
-      });
+      throw await failedResponseError(result, method, remoteUrl);
     }
 
     // additional output for debugging

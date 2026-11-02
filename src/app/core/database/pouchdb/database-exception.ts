@@ -1,7 +1,12 @@
 import { NamedError } from "../../logging/reported-errors";
+import { classifyError } from "../../logging/error-classification";
 
 /**
- * This overwrites PouchDB's error class which only logs limited information
+ * This overwrites PouchDB's error class which only logs limited information.
+ *
+ * It is where errors of the (local or remote) PouchDB enter the app, so it also
+ * records what kind of failure the wrapped error is (`classification`, e.g. a
+ * broken local database or a request the permission rules refused).
  */
 export class DatabaseException extends NamedError {
   entityId?: string;
@@ -11,8 +16,7 @@ export class DatabaseException extends NamedError {
    * "TimeoutError", "not_found"). Preserved separately because {@link name} is
    * deliberately kept as "DatabaseException" for stable Sentry grouping — which
    * would otherwise erase the original name and hide that a failure is actually
-   * a transient network abort. Read by {@link isConnectivityError} so wrapped
-   * transient errors stay classifiable.
+   * a transient network abort.
    */
   originalName?: string;
 
@@ -20,7 +24,9 @@ export class DatabaseException extends NamedError {
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super("DatabaseException", error?.message || "Database error");
+    super("DatabaseException", error?.message || "Database error", {
+      classification: classifyError(error),
+    });
 
     this.entityId = entityId;
     // Capture the wrapped error's name before Object.assign / `this.name` erase it.

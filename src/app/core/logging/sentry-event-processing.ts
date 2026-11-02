@@ -1,16 +1,17 @@
 import type * as Sentry from "@sentry/angular";
-import { HttpStatusCode } from "@angular/common/http";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
 import {
-  fingerprintKey,
-  groupSentryEvent,
-  isConnectivityFailure,
-} from "./sentry-grouping";
-import { NamedError } from "./reported-errors";
+  classifyError,
+  classifyErrorChain,
+  causeChain,
+  ErrorClassification,
+} from "./error-classification";
+import { groupSentryEvent, truncateTag } from "./sentry-grouping";
+import { LoggedError, NamedError } from "./reported-errors";
+import { reportOnce } from "./report-once";
 
 /**
  * Sentry `beforeSend` hook: adds structured details, drops events nobody can act
- * on, sets the grouping fingerprint and caps repeats per issue.
+ * on, sets the grouping fingerprint and reports each failure once per page load.
  * See the logging README for the reasoning behind each step.
  */
 export function processSentryEvent(
@@ -18,33 +19,107 @@ export function processSentryEvent(
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
   enrichSentryEvent(event, hint);
-
-  if (
-    (!navigator.onLine && isConnectivityFailure(event)) ||
-    isDocumentUpdateConflict(event) ||
-    isUnhandledErrorInPageScript(event) ||
-    causeChain(hint?.originalException).some(isExpiredSessionError)
-  ) {
+  if (isUnhandledErrorInPageScript(event)) {
     return null;
   }
 
+  const classification = classifySentryEvent(event, hint);
+  const policy = classification ? REPORTING_POLICY[classification] : undefined;
+  if (policy?.drop(hint)) {
+    return null;
+  }
+  if (classification) {
+    event.tags = { ...event.tags, error_class: classification };
+  }
+
   // grouping first, as the repeat cap is per issue
-  groupSentryEvent(event, hint);
-  return isExcessiveRepeat(event) ? null : event;
+  groupSentryEvent(event, hint, classification);
+  policy?.adjust?.(event);
+  return reportOnce(event, hint, classification);
 }
 
 /**
- * A rejected write with an outdated revision: normal for an offline-first app,
- * the user is told by the form and it is counted in usage analytics instead.
- * The status is not always preserved, so PouchDB's wording counts as well.
+ * What is done with an event by the classification of the failure it reports
+ * (see `error-classification.ts`). Failures without a classification are
+ * reported as they are, grouped as described in the README.
  */
-function isDocumentUpdateConflict(event: Sentry.ErrorEvent): boolean {
+const REPORTING_POLICY: Record<
+  ErrorClassification,
+  {
+    /** whether nobody can act on it: not reported at all */
+    drop: (hint: Sentry.EventHint) => boolean;
+    /** changes to the event after grouping */
+    adjust?: (event: Sentry.ErrorEvent) => void;
+  }
+> = {
+  // into the shared `network-error` issue at level warning (see `groupSentryEvent`),
+  // once per page load (see `reportOnce`); while offline it is expected
+  connectivity: { drop: () => !navigator.onLine },
+  // the user is told; the code waiting for the data is not at fault
+  "session-expired": { drop: () => true },
+  // a permission-configuration state, not a bug: reported (as a warning) only
+  // where a component deliberately logged it with a message of its own
+  "not-permitted": {
+    drop: (hint) => !isDeliberatelyLogged(hint?.originalException),
+    adjust: (event) => (event.level = "warning"),
+  },
+  // normal for an offline-first app: the user is told by the form and it is
+  // counted in usage analytics instead
+  "write-conflict": { drop: () => true },
+  // one incident per page load (see `local-db-incident.ts`)
+  "local-storage": { drop: () => false },
+  // a fault of our backend, whoever logged it and at which level
+  "server-error": { drop: () => false, adjust: reportServerError },
+};
+
+/**
+ * The classification of the failure an event reports: of its error chain if the
+ * error object is known, else (e.g. for an event of a captured message) by the
+ * reported exceptions, status and message.
+ */
+function classifySentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): ErrorClassification | undefined {
+  const original = hint?.originalException;
+  if (original instanceof Error) {
+    return classifyErrorChain(original);
+  }
   return (
-    event.extra?.status === HttpStatusCode.Conflict ||
-    [event.message, ...(event.exception?.values?.map((v) => v.value) ?? [])]
-      .filter(Boolean)
-      .some((msg) => fingerprintKey(msg).includes("document update conflict"))
+    classifyErrorChain(original) ??
+    classifyError({ status: event.extra?.status }) ??
+    event.exception?.values
+      ?.map((exception) =>
+        classifyError({ name: exception.type, message: exception.value ?? "" }),
+      )
+      .find(Boolean) ??
+    classifyError(event.message)
   );
+}
+
+/** A failure logged with a message by a component, or wrapped in one of our named errors. */
+function isDeliberatelyLogged(error: unknown): boolean {
+  return (
+    error instanceof LoggedError ||
+    (error instanceof NamedError && !classifyError(error))
+  );
+}
+
+/** Report a server fault as an error, with an issue per status. */
+function reportServerError(event: Sentry.ErrorEvent) {
+  event.level = "error";
+  const status = event.extra?.status;
+  if (typeof status !== "number") {
+    return;
+  }
+  event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
+  if (event.fingerprint?.length) {
+    event.fingerprint = [...event.fingerprint, String(status)];
+  }
+  const thrown = event.exception?.values?.at(-1);
+  if (thrown) {
+    thrown.value = `${thrown.value} (HTTP ${status})`;
+  }
 }
 
 /**
@@ -68,22 +143,6 @@ function isUnhandledErrorInPageScript(event: Sentry.ErrorEvent): boolean {
   );
 }
 
-/** The error and the `cause`s it wraps, outermost first (cycle-safe, max 6 levels). */
-function causeChain(error: unknown): object[] {
-  const chain: object[] = [];
-  let current = error;
-  while (
-    current &&
-    typeof current === "object" &&
-    !chain.includes(current) &&
-    chain.length <= 5
-  ) {
-    chain.push(current);
-    current = (current as { cause?: unknown }).cause;
-  }
-  return chain;
-}
-
 const REPORTED_ERROR_PROPERTIES = [
   "entityId",
   "status",
@@ -104,6 +163,9 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
     string,
     any
   >[]) {
+    if (typeof error !== "object") {
+      continue;
+    }
     for (const key of REPORTED_ERROR_PROPERTIES) {
       details[key] ??= error[key];
     }
@@ -125,40 +187,4 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
   for (const exception of event.exception?.values ?? []) {
     exception.type ||= "Error";
   }
-}
-
-/**
- * How often an issue is reported per page load, against error loops (e.g. an
- * error on every change detection) flooding monitoring and the quota.
- */
-export const MAX_REPEATED_SENTRY_EVENTS = 5;
-
-const sentryEventCounts = new Map<string, number>();
-
-/** Exported for tests, which would otherwise share one budget. */
-export function resetSentryEventCounts() {
-  sentryEventCounts.clear();
-}
-
-function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
-  const key = repeatKey(event);
-  const count = (sentryEventCounts.get(key) ?? 0) + 1;
-  sentryEventCounts.set(key, count);
-  return count > MAX_REPEATED_SENTRY_EVENTS;
-}
-
-/**
- * The issue an event ends up in, as far as known here: its fingerprint, or for
- * stack-grouped errors the thrown error (without the stack, so that an error
- * loop is capped even where its frames differ).
- */
-function repeatKey(event: Sentry.ErrorEvent): string {
-  if (event.fingerprint?.length) {
-    return JSON.stringify(["fingerprint", ...event.fingerprint]);
-  }
-  const values = event.exception?.values;
-  const thrown = values?.[values.length - 1];
-  return thrown
-    ? JSON.stringify(["exception", thrown.type, fingerprintKey(thrown.value)])
-    : JSON.stringify(["message", fingerprintKey(event.message)]);
 }

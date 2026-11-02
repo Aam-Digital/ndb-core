@@ -582,4 +582,45 @@ describe("DatabaseException", () => {
 
     expect(outer.originalName).toBeUndefined();
   });
+
+  it.each([
+    [
+      "an expired session",
+      { status: 401, reason: "exp not in future", message: "unauthorized" },
+      "session-expired",
+    ],
+    [
+      "a record the user may not read (401)",
+      { status: 401, reason: "User is not permitted", message: "unauthorized" },
+      "not-permitted",
+    ],
+    [
+      "a record the user may not read (403)",
+      { status: 403, message: "forbidden" },
+      "not-permitted",
+    ],
+    [
+      "another 401 (a misconfiguration)",
+      { status: 401, reason: "Unknown kid", message: "unauthorized" },
+      undefined,
+    ],
+    [
+      "a broken IndexedDB",
+      { status: 500, name: "indexed_db_went_bad", message: "unknown" },
+      "local-storage",
+    ],
+    [
+      "multi-tab corruption",
+      {
+        status: 500,
+        name: "unknown_error",
+        message: "Database encountered an unknown error",
+        reason: "transaction was aborted",
+      },
+      "local-storage",
+    ],
+    ["a missing document", { status: 404, message: "missing" }, undefined],
+  ])("records what kind of failure it wraps: %s", (_, error, expected) => {
+    expect(new DatabaseException(error).classification).toBe(expected);
+  });
 });

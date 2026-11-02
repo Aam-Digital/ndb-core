@@ -4,40 +4,52 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { LogLevel } from "./log-level";
 import { LoggingService, toReportedError } from "./logging.service";
 import { LoggedError, NamedError } from "./reported-errors";
-import {
-  MAX_REPEATED_SENTRY_EVENTS,
-  processSentryEvent,
-  resetSentryEventCounts,
-} from "./sentry-event-processing";
+import { processSentryEvent } from "./sentry-event-processing";
+import { MAX_REPEATED_SENTRY_EVENTS, resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
+import {
+  classifyError,
+  ConnectivityError,
+  ServerError,
+} from "./error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
+type Frame = { function?: string; filename?: string };
+
 /** The event Sentry builds for an error: its `cause` chain innermost-first. */
-function eventFor(error: Error, withStack = false): Sentry.ErrorEvent {
+function eventFor(
+  error: Error,
+  options: { frames?: Frame[]; unhandled?: boolean } = {},
+): Sentry.ErrorEvent {
   const chain: Error[] = [];
   for (let e: unknown = error; e instanceof Error; e = e.cause) {
     chain.unshift(e);
   }
-  const stacktrace = withStack
-    ? { frames: [{ filename: "app.ts" }] }
-    : undefined;
+  const stacktrace = options.frames ? { frames: options.frames } : undefined;
+  const mechanism = { type: "generic", handled: !options.unhandled };
   return {
     exception: {
-      values: chain.map((e) => ({
+      values: chain.map((e, i) => ({
         type: e.name,
         value: e.message,
         stacktrace,
+        mechanism: i === chain.length - 1 ? mechanism : undefined,
       })),
     },
   } as Sentry.ErrorEvent;
 }
 
-function process(error: Error, withStack = false) {
-  return processSentryEvent(eventFor(error, withStack), {
+function process(
+  error: Error,
+  options?: { frames?: Frame[]; unhandled?: boolean },
+) {
+  return processSentryEvent(eventFor(error, options), {
     originalException: error,
   });
 }
+
+const withStack = { frames: [{ filename: "app.ts" }] };
 
 /** How Sentry titles an event: by its thrown error. */
 function title(event: Sentry.ErrorEvent): string {
@@ -46,8 +58,22 @@ function title(event: Sentry.ErrorEvent): string {
   return `${thrown.type}: ${thrown.value}`;
 }
 
+/** What the remote database throws (wrapped by PouchDatabase) for a request without response. */
 const failedFetch = () =>
-  new DatabaseException({ message: "Failed to fetch from DB" });
+  new DatabaseException(new ConnectivityError("Failed to fetch from DB"));
+
+/** PouchDB's error once the IndexedDB of the device is broken (AAM-DIGITAL-7CQ). */
+const brokenIndexedDb = () =>
+  Object.assign(new Error("unknown"), {
+    name: "indexed_db_went_bad",
+    status: 500,
+    reason:
+      "The requested version (5) is less than the existing version (21793192942062).",
+  });
+
+/** A raw browser error, e.g. IndexedDB closed underneath PouchDB (AAM-DIGITAL-5WD). */
+const browserError = (name: string, message: string) =>
+  Object.assign(new Error(message), { name });
 
 describe("LoggingService", () => {
   const failure = new Error("Failed to fetch");
@@ -137,9 +163,54 @@ describe("normalizeErrorValue", () => {
   });
 });
 
+describe("classifyError", () => {
+  it.each([
+    [
+      "a response that never arrived",
+      new HttpErrorResponse({ status: 0 }),
+      "connectivity",
+    ],
+    [
+      "a gateway status",
+      new HttpErrorResponse({ status: 503 }),
+      "connectivity",
+    ],
+    ["a server error", new HttpErrorResponse({ status: 500 }), "server-error"],
+    ["a 403", new HttpErrorResponse({ status: 403 }), "not-permitted"],
+    [
+      "a typed error, by its type rather than its wording",
+      new ServerError("Failed to fetch from DB", { status: 500 }),
+      "server-error",
+    ],
+    [
+      "a raw browser error, by its wording",
+      browserError(
+        "InvalidStateError",
+        "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
+      ),
+      "local-storage",
+    ],
+    [
+      "a programming error in a database call, not as a broken database",
+      browserError(
+        "RangeError",
+        "Failed to execute 'put' on 'IDBObjectStore': Maximum call stack size exceeded",
+      ),
+      undefined,
+    ],
+    [
+      "a logged message, never by its wording",
+      new LoggedError("Failed to fetch notifications"),
+      undefined,
+    ],
+  ])("should classify %s", (_, error, expected) => {
+    expect(classifyError(error)).toBe(expected);
+  });
+});
+
 describe("processSentryEvent", () => {
   beforeEach(() => {
-    resetSentryEventCounts();
+    resetReportedEvents();
     vi.stubGlobal("navigator", { onLine: true });
   });
   afterEach(() => vi.unstubAllGlobals());
@@ -147,20 +218,15 @@ describe("processSentryEvent", () => {
   describe("grouping", () => {
     it.each([
       {
-        case: "a named error, by name and root cause",
+        case: "a named error, by its root cause",
         error: new NamedError(
           "ConfigLoadError",
           "Failed to load configuration.",
           { cause: new DatabaseException({ message: "Unknown kid" }) },
         ),
-        fingerprint: [
-          "ConfigLoadError",
-          "failed to load configuration",
-          "DatabaseException",
-          "unknown kid",
-        ],
-        title:
-          "ConfigLoadError: Failed to load configuration. (caused by DatabaseException: Unknown kid)",
+        fingerprint: ["DatabaseException", "unknown kid"],
+        title: "DatabaseException: Unknown kid",
+        reportedBy: "ConfigLoadError: Failed to load configuration.",
       },
       {
         case: "a named error caused by a network failure, in an issue of its own",
@@ -204,19 +270,29 @@ describe("processSentryEvent", () => {
         title: "NetworkError: Failed to reach the server",
       },
       {
-        case: "a logged other failure, by message and root cause",
+        case: "a logged other failure, by its root cause",
         error: new LoggedError(
           "Could not load notes",
           new DatabaseException({ message: "Unauthorized" }),
         ),
+        fingerprint: ["DatabaseException", "unauthorized"],
+        title: "DatabaseException: Unauthorized",
+        reportedBy: "Error: Could not load notes",
+      },
+      {
+        case: "a programming error without a stack, by its root cause and the wrapper",
+        error: new LoggedError(
+          "Could not render",
+          new TypeError("x is undefined"),
+        ),
         fingerprint: [
+          "TypeError",
+          "x is undefined",
           "Error",
-          "could not load notes",
-          "DatabaseException",
-          "unauthorized",
+          "could not render",
         ],
-        title:
-          "Error: Could not load notes (caused by DatabaseException: Unauthorized)",
+        title: "TypeError: x is undefined",
+        reportedBy: "Error: Could not render",
       },
       {
         // Angular re-throws an error raised in a `resource()` loader as its own
@@ -239,11 +315,60 @@ describe("processSentryEvent", () => {
         fingerprint: ["Error", "missing document <entityid>"],
         title: "Error: Missing document <entityId>",
       },
-    ])("should group $case", ({ error, fingerprint, title: expected }) => {
-      const event = process(error);
+    ])(
+      "should group $case",
+      ({ error, fingerprint, title: expected, reportedBy }) => {
+        const event = process(error);
 
-      expect(event.fingerprint).toEqual(fingerprint);
-      expect(title(event)).toBe(expected);
+        expect(event.fingerprint).toEqual(fingerprint);
+        expect(title(event)).toBe(expected);
+        expect(event.tags?.reported_by).toBe(reportedBy);
+      },
+    );
+
+    it("should group one root cause logged by different components into one issue, telling the components apart by tag", () => {
+      // like AAM-DIGITAL-7CQ, 7CR, 77R: one failure, one issue per component
+      const root = new DatabaseException({
+        status: 401,
+        reason: "Unknown kid",
+        message: "unauthorized",
+      });
+      const bySync = process(new LoggedError("sync failed", root));
+      const byPermissions = process(
+        new LoggedError("Failed to load permission rules", root),
+      );
+
+      expect(bySync.fingerprint).toEqual(byPermissions.fingerprint);
+      expect(bySync.tags.reported_by).toBe("Error: sync failed");
+      expect(byPermissions.tags.reported_by).toBe(
+        "Error: Failed to load permission rules",
+      );
+    });
+
+    it("should keep programming errors thrown in different functions apart, even with the same message", () => {
+      const thrownIn = (fn: string) => {
+        const error = new LoggedError(
+          "Failed to load dynamic component",
+          new TypeError("Cannot read properties of undefined (reading 'id')"),
+        );
+        const event = eventFor(error);
+        event.exception.values[0].stacktrace = {
+          frames: [
+            { function: "t.<anonymous>" },
+            { function: `_EntityDetails.${fn}` },
+            { function: "t" },
+          ],
+        };
+        return processSentryEvent(event, { originalException: error })
+          .fingerprint;
+      };
+
+      expect(thrownIn("loadRelated")).toEqual([
+        "TypeError",
+        "cannot read properties of undefined (reading 'id')",
+        "loadRelated",
+      ]);
+      expect(thrownIn("initPanels")).not.toEqual(thrownIn("loadRelated"));
     });
 
     it.each([
@@ -252,7 +377,7 @@ describe("processSentryEvent", () => {
     ])(
       "should leave a generic error with a stack to Sentry, unless it is %s",
       (_, error, fingerprint) => {
-        expect(process(error, true).fingerprint).toEqual(fingerprint);
+        expect(process(error, withStack).fingerprint).toEqual(fingerprint);
       },
     );
 
@@ -332,6 +457,19 @@ describe("processSentryEvent", () => {
         }),
         dropped: false,
       },
+      {
+        case: "a record the permission rules exclude, reaching the error handler",
+        error: new DatabaseException({ status: 403, message: "forbidden" }),
+        dropped: true,
+      },
+      {
+        case: "a record the permission rules exclude, logged by a component",
+        error: new LoggedError(
+          "Could not load record",
+          new DatabaseException({ status: 403, message: "forbidden" }),
+        ),
+        dropped: false,
+      },
     ])("should drop $case: $dropped", ({ error, offline, dropped }) => {
       vi.stubGlobal("navigator", { onLine: !offline });
 
@@ -397,6 +535,40 @@ describe("processSentryEvent", () => {
     expect(process(error).extra).toMatchObject(extra);
   });
 
+  it.each([
+    {
+      case: "a server error, as an error with its status",
+      error: new LoggedError(
+        "Could not load notes",
+        new DatabaseException(
+          new ServerError("Server error response from DB", { status: 500 }),
+        ),
+      ),
+      level: "error",
+      title: "DatabaseException: Server error response from DB (HTTP 500)",
+      tags: { http_status: "500", error_class: "server-error" },
+    },
+    {
+      case: "a logged not-permitted failure, as a warning",
+      error: new LoggedError(
+        "Could not load record",
+        new DatabaseException({ status: 403, message: "forbidden" }),
+      ),
+      level: "warning",
+      title: "DatabaseException: forbidden",
+      tags: { error_class: "not-permitted" },
+    },
+  ])("should report $case", ({ error, level, title: expected, tags }) => {
+    const event = processSentryEvent(
+      { ...eventFor(error), level: "error" },
+      { originalException: error },
+    );
+
+    expect(event.level).toBe(level);
+    expect(title(event)).toBe(expected);
+    expect(event.tags).toMatchObject(tags);
+  });
+
   it("should cap the events of one issue per session, without silencing other issues", () => {
     const repeated = () => process(new Error("Repeated failure"));
     for (let i = 0; i < MAX_REPEATED_SENTRY_EVENTS; i++) {
@@ -405,5 +577,88 @@ describe("processSentryEvent", () => {
 
     expect(repeated()).toBeNull();
     expect(process(new Error("Another failure"))).not.toBeNull();
+  });
+
+  describe("reporting each failure once per page load", () => {
+    it("should report an error once when it is logged by a component and then reaches the error handler unhandled", () => {
+      const failure = brokenIndexedDb();
+
+      expect(process(new LoggedError("sync failed", failure))).not.toBeNull();
+      expect(process(failure, { unhandled: true })).toBeNull();
+    });
+
+    it("should report the same error object only once", () => {
+      const failure = new Error("Missing document Child:1");
+
+      expect(process(failure)).not.toBeNull();
+      expect(process(failure)).toBeNull();
+    });
+
+    it("should report the first failure of a broken local database, as an incident, and none of its follow-ups", () => {
+      // AAM-DIGITAL-7CN, then 7CR, 77R, 5WD, 7CP, 7CQ in the same page load
+      const first = process(
+        browserError(
+          "Error",
+          'Incorrect adapter: you should specify the "idb" adapter to open this DB',
+        ),
+        { unhandled: true },
+      );
+      const followUps = [
+        new LoggedError(
+          "Failed to load permission rules",
+          new DatabaseException(brokenIndexedDb(), "Config:Permissions"),
+        ),
+        new NamedError(
+          "ConfigLoadError",
+          "Failed to load configuration from the database.",
+          { cause: new DatabaseException(brokenIndexedDb()) },
+        ),
+        browserError(
+          "InvalidStateError",
+          "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
+        ),
+        browserError(
+          "NotFoundError",
+          "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.",
+        ),
+        new LoggedError("sync failed", brokenIndexedDb()),
+      ].map((error) => process(error));
+
+      expect(first.tags).toMatchObject({ incident: "local-db" });
+      expect(followUps).toEqual(followUps.map(() => null));
+      // other failures are still reported
+      expect(process(new Error("Another failure"))).not.toBeNull();
+    });
+
+    it("should count multi-tab corruption as a local database failure, but not a programming error in a database call", () => {
+      // AAM-DIGITAL-74Z and 7CV, one page load
+      const rangeError = browserError(
+        "RangeError",
+        "Failed to execute 'put' on 'IDBObjectStore': Maximum call stack size exceeded",
+      );
+      const corruption = new LoggedError(
+        "sync failed: likely multi-tab IndexedDB corruption",
+        Object.assign(new Error("Database encountered an unknown error"), {
+          name: "unknown_error",
+          status: 500,
+          reason: "transaction was aborted",
+        }),
+      );
+
+      expect(process(rangeError, { unhandled: true }).tags?.incident).toBe(
+        undefined,
+      );
+      expect(process(corruption).tags).toMatchObject({ incident: "local-db" });
+      expect(process(corruption)).toBeNull();
+    });
+
+    it("should report the network issue once per page load", () => {
+      // AAM-DIGITAL-77E: all pending requests fail at the same moment
+      const network = () =>
+        process(new LoggedError("Could not load notes", failedFetch()));
+
+      expect(network().fingerprint).toEqual(["network-error"]);
+      expect(network()).toBeNull();
+    });
   });
 });

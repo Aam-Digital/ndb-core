@@ -1,12 +1,8 @@
-import { HttpStatusCode } from "@angular/common/http";
+import { classifyError } from "#src/app/core/logging/error-classification";
 
 /**
- * CouchDB's `reason` for rejecting a request whose JWT `exp` claim has passed.
- */
-const EXPIRED_TOKEN_REASON = "exp not in future";
-
-/**
- * Check whether a database error is the server rejecting an expired access token.
+ * Check whether a database error is the server rejecting an expired access token
+ * (`401` with the reason "exp not in future").
  *
  * `RemotePouchDatabase` already retries such a request after renewing the
  * session, so this only reaches a caller when the renewal failed - usually
@@ -18,10 +14,6 @@ const EXPIRED_TOKEN_REASON = "exp not in future";
  * Deliberately narrow: other `401` reasons (e.g. an invalid token signature)
  * indicate a misconfiguration and must keep being reported.
  */
-export function isExpiredSessionError(err: any): boolean {
-  return (
-    err?.status === HttpStatusCode.Unauthorized &&
-    typeof err?.reason === "string" &&
-    err.reason.includes(EXPIRED_TOKEN_REASON)
-  );
+export function isExpiredSessionError(err: unknown): boolean {
+  return classifyError(err) === "session-expired";
 }
