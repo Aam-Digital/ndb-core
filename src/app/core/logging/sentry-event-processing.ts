@@ -69,7 +69,7 @@ const REPORTING_POLICY: Record<
   // normal for an offline-first app: the user is told by the form and it is
   // counted in usage analytics instead
   "write-conflict": { drop: () => true },
-  // one incident per page load (see `local-db-incident.ts`)
+  // one incident per page load (see `report-once.ts`)
   "local-storage": { drop: () => false },
   // a fault of our backend, whoever logged it: at the level it was logged with
   "server-error": { drop: () => false, adjust: reportServerError },
@@ -90,7 +90,6 @@ function classifySentryEvent(
   }
   return (
     classifyErrorChain(original) ??
-    classifyError({ status: event.extra?.status }) ??
     event.exception?.values
       ?.map((exception) =>
         classifyError({ name: exception.type, message: exception.value ?? "" }),

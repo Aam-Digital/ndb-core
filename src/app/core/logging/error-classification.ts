@@ -97,7 +97,7 @@ const CONNECTIVITY_ERROR_PATTERNS = [
 /**
  * What counts as the device's local database being broken (`local-storage`):
  * nothing in our code to fix per occurrence, and once it happens every later
- * database access of the page load fails as well (see `local-db-incident.ts`).
+ * database access of the page load fails as well (see `report-once.ts`).
  */
 const LOCAL_STORAGE_ERROR_NAMES = [
   // PouchDB's "idb" adapter could not open or use IndexedDB

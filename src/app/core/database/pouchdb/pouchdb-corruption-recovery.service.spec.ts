@@ -1,10 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
-import {
-  isKnownMultiTabDatabaseCorruption,
-  PouchdbCorruptionRecoveryService,
-} from "./pouchdb-corruption-recovery.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import { isKnownMultiTabDatabaseCorruption } from "../../logging/error-classification";
 import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";

@@ -60,7 +60,11 @@ function title(event: Sentry.ErrorEvent): string {
 
 /** What the remote database throws (wrapped by PouchDatabase) for a request without response. */
 const failedFetch = () =>
-  new DatabaseException(new ConnectivityError("Failed to fetch from DB"));
+  new DatabaseException(
+    new ConnectivityError("Failed to fetch from DB", {
+      cause: new TypeError("Failed to fetch"),
+    }),
+  );
 
 /** PouchDB's error once the IndexedDB of the device is broken (AAM-DIGITAL-7CQ). */
 const brokenIndexedDb = () =>

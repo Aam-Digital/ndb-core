@@ -40,6 +40,8 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.NotFound,
 ];
 
+const MAX_RESPONSE_BODY_LENGTH = 500;
+
 /**
  * The error for a request that got no usable response: a {@link ConnectivityError}
  * if it never reached CouchDB (no response, or a gateway status of the proxy in
@@ -50,15 +52,21 @@ async function failedResponseError(
   result: Response | undefined,
   method: string,
   remoteUrl: string,
+  fetchError?: unknown,
 ): Promise<ConnectivityError | ServerError> {
   const details = {
     requestedUrl: remoteUrl,
     actualResponse: describeResponse(result, method),
-    actualResponseBody: await result?.text(),
+    // e.g. a proxy's whole HTML error page: enough of it to tell what answered
+    actualResponseBody: (await result?.text())?.slice(
+      0,
+      MAX_RESPONSE_BODY_LENGTH,
+    ),
   };
   if (!result || CONNECTIVITY_ERROR_STATUS.includes(result.status)) {
     return new ConnectivityError("Failed to fetch from DB", {
       status: result?.status,
+      cause: fetchError,
       details,
     });
   }
@@ -224,9 +232,11 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     let result: Response;
+    let fetchError: unknown;
     try {
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
+      fetchError = err;
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
       this.showConnectionIssueAlert();
@@ -252,7 +262,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
-      throw await failedResponseError(result, method, remoteUrl);
+      throw await failedResponseError(result, method, remoteUrl, fetchError);
     }
 
     // additional output for debugging

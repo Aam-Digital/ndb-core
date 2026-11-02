@@ -286,7 +286,7 @@ load into a breadcrumb (category `sentry.suppressed`), so it still shows in the 
   then re-thrown and reaching Angular's `ErrorHandler`), or an unhandled error whose root cause was.
   Two components logging the same root cause are both reported (into one issue if the root cause is
   classified, see above).
-- **A broken local database** (`local-db-incident.ts`) — once the IndexedDB is broken, every later
+- **A broken local database** — once the IndexedDB is broken, every later
   database access fails too (config, permission rules, sync, each view). Only the first
   `local-storage` event of the page load is reported, tagged `incident: local-db`.
 - **The network issue** — once per page load: when the connection drops, all pending requests fail at
@@ -318,5 +318,5 @@ under the GDPR.
 - `error-classification.ts` — the typed errors of the boundaries (`ConnectivityError`, `ServerError`), `classifyError()` and all message patterns
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
-- `report-once.ts`, `local-db-incident.ts` — turning repeated reports of one failure into breadcrumbs
+- `report-once.ts` — turning repeated reports of one failure into breadcrumbs
 - `log-level.ts` — the `LogLevel` definitions

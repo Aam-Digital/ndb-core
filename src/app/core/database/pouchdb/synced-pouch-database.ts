@@ -21,10 +21,8 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
-import {
-  PouchdbCorruptionRecoveryService,
-  isKnownMultiTabDatabaseCorruption,
-} from "./pouchdb-corruption-recovery.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import { isKnownMultiTabDatabaseCorruption } from "../../logging/error-classification";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 

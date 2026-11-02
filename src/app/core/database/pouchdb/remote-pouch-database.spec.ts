@@ -359,7 +359,11 @@ describe("RemotePouchDatabase tests", () => {
     {
       response: "no response",
       fetch: () => Promise.reject(new TypeError("Failed to fetch")),
-      expected: { name: "ConnectivityError", classification: "connectivity" },
+      expected: {
+        name: "ConnectivityError",
+        classification: "connectivity",
+        cause: expect.objectContaining({ message: "Failed to fetch" }),
+      },
     },
     {
       response: "a gateway timeout of the proxy",
@@ -373,11 +377,13 @@ describe("RemotePouchDatabase tests", () => {
     {
       // not a dropped connection: was reported in the shared network issue before
       response: "a server error",
-      fetch: async () => new Response("", { status: 500 }),
+      // e.g. a proxy's whole HTML error page
+      fetch: async () => new Response("x".repeat(5000), { status: 500 }),
       expected: {
         name: "ServerError",
         classification: "server-error",
         status: 500,
+        details: { actualResponseBody: "x".repeat(500) },
       },
     },
   ])(

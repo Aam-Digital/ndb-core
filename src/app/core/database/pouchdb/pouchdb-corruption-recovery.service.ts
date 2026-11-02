@@ -113,6 +113,3 @@ This can happen after using multiple tabs in parallel.` +
     );
   }
 }
-
-// the patterns live with the other error classifications, in one place
-export { isKnownMultiTabDatabaseCorruption };
