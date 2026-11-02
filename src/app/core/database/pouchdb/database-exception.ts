@@ -19,12 +19,6 @@ import {
 export class DatabaseException extends NamedError {
   entityId?: string;
 
-  /**
-   * The `name` of the wrapped error (e.g. "AbortError", "indexed_db_went_bad"),
-   * which tells what kind of failure it is, while {@link name} stays "DatabaseException".
-   */
-  originalName?: string;
-
   constructor(
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
@@ -40,17 +34,12 @@ export class DatabaseException extends NamedError {
     );
 
     this.entityId = entityId;
-    // capture the wrapped error's name before Object.assign / `this.name` erase it
-    const originalName = (error as { name?: string })?.name;
     Object.assign(this, error);
     // restore the class name after Object.assign overwrote it with PouchDB's (e.g. "not_found")
     this.name = "DatabaseException";
     if (cause) {
       // passes on the typed error (see `classifyError`)
       this.message = cause.message;
-    }
-    if (originalName && originalName !== "DatabaseException") {
-      this.originalName = originalName;
     }
   }
 }

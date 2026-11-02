@@ -10,6 +10,7 @@ import { normalizeErrorValue } from "./sentry-grouping";
 import {
   classifyError,
   ConnectivityError,
+  NotPermittedError,
   ServerError,
 } from "./error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
@@ -179,12 +180,26 @@ describe("classifyError", () => {
       new HttpErrorResponse({ status: 503 }),
       "connectivity",
     ],
-    ["a server error", new HttpErrorResponse({ status: 500 }), "server-error"],
-    ["a 403", new HttpErrorResponse({ status: 403 }), "not-permitted"],
     [
       "a typed error, by its type rather than its wording",
       new ServerError("Failed to fetch from DB", { status: 500 }),
       "server-error",
+    ],
+    ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
+    [
+      "a DatabaseException, by the typed error it passes on",
+      new DatabaseException({ status: 409, message: "conflict" }),
+      "write-conflict",
+    ],
+    [
+      "a typed error that lost its class, by its name",
+      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      "session-expired",
+    ],
+    [
+      "a failed response of our backend not by its status, as the HTTP interceptor converts it",
+      new HttpErrorResponse({ status: 403 }),
+      undefined,
     ],
     [
       "a raw browser error, by its wording",

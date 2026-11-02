@@ -1,16 +1,18 @@
-import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import { HttpStatusCode } from "@angular/common/http";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
  * What kind of failure an error is, for reporting it.
  *
- * Our own errors say it by their type: a boundary that knows what went wrong
- * throws a typed error (e.g. the remote database's fetch wrapper throws a
- * {@link ConnectivityError} or a {@link ServerError}); for a new kind of error,
- * extend one of these classes. Errors not created by us (raw browser, PouchDB or
- * HTTP errors, also wrapped in a `DatabaseException`) are classified by their
- * status, name and - as a last resort - by the message patterns below, which
- * are kept in this one file.
+ * Errors are converted into our typed errors where they enter the app: the
+ * database layer (`DatabaseException` / `toTypedDatabaseError`, the remote
+ * database's fetch wrapper) and the HTTP interceptor (`typedHttpErrorInterceptor`).
+ * There, {@link classifyResponseStatus} and the name and message patterns below
+ * tell what a raw error is. Everywhere else, errors are classified by their type;
+ * for a new kind of error, extend one of the typed classes.
+ *
+ * {@link classifyError} only falls back to the patterns for foreign errors that
+ * never pass such a boundary (see {@link classifyForeignError}).
  *
  * What remote monitoring does with each classification is in
  * `sentry-event-processing.ts` (`REPORTING_POLICY`).
@@ -18,9 +20,9 @@ import { LoggedError, NamedError } from "./reported-errors";
 
 /**
  * What kind of failure an error is, as far as reporting it is concerned:
- * derived by {@link classifyError} from the error's type
- * or, for errors not created by us, its status, name and message. Mapped to what
- * remote monitoring does with it in `sentry-event-processing.ts`.
+ * derived by {@link classifyError}, mostly from the error's type (one typed
+ * error class per classification). Mapped to what remote monitoring does with
+ * it in `sentry-event-processing.ts`.
  */
 export type ErrorClassification =
   /** the request never reached our backend: no response, status 0, 502-504 */
@@ -146,17 +148,25 @@ function typedClassification(error: unknown): ErrorClassification | undefined {
 /**
  * The classification of the typed error the given one only passes on, keeping
  * its message: a `DatabaseException` around the typed error of the database
- * layer, or a framework re-throwing it.
+ * layer (also wrapped again), or a framework re-throwing it.
  */
 function passedOnClassification(
   error: unknown,
 ): ErrorClassification | undefined {
-  if (
-    error instanceof Error &&
-    error.cause instanceof Error &&
-    error.message === error.cause.message
-  ) {
-    return typedClassification(error.cause);
+  let wrapper = error;
+  for (const cause of causeChain(error).slice(1)) {
+    if (
+      !(wrapper instanceof Error) ||
+      !(cause instanceof Error) ||
+      wrapper.message !== cause.message
+    ) {
+      return undefined;
+    }
+    const typed = typedClassification(cause);
+    if (typed) {
+      return typed;
+    }
+    wrapper = cause;
   }
   return undefined;
 }
@@ -280,8 +290,9 @@ export function classifyResponseStatus(
 
 /**
  * What kind of failure the given error is, judged by this one error (not its `cause`s):
- * by its type if it is one of ours (also if it only passes one on, keeping its
- * message, see {@link passedOnClassification}), else by its status, name and message.
+ * by its type if it is one of our typed errors (also if it only passes one on,
+ * keeping its message, see {@link passedOnClassification}); a foreign error by
+ * its status, name and message (see {@link classifyForeignError}).
  *
  * A {@link LoggedError} or another error of ours is never classified by its text.
  */
@@ -290,15 +301,10 @@ export function classifyError(error: unknown): ErrorClassification | undefined {
     return undefined;
   }
   const typed = typedClassification(error) ?? passedOnClassification(error);
-  if (typed) {
+  if (typed || error instanceof LoggedError || error instanceof NamedError) {
     return typed;
   }
-  if (error instanceof LoggedError) {
-    return undefined;
-  }
-  return (
-    classifyByStatus(error) ?? classifyByName(error) ?? classifyByMessage(error)
-  );
+  return classifyForeignError(error);
 }
 
 /**
@@ -337,50 +343,46 @@ type ErrorLike = {
   status?: unknown;
   response?: { status?: unknown };
   reason?: unknown;
-  error?: unknown;
   message?: unknown;
   name?: unknown;
-  originalName?: unknown;
 };
 
-function classifyByStatus(
+/**
+ * The fallback for foreign errors that never pass one of the boundaries
+ * converting them into typed errors:
+ * - unhandled browser errors, e.g. a failed `fetch` or chunk load;
+ * - IndexedDB errors raised inside PouchDB's callbacks, outside our calls;
+ * - errors of requests to other services than our backend: keycloak-js errors
+ *   (with the whole `Response` attached) and `HttpErrorResponse`s of third-party
+ *   services, as far as they did not reach the server (connectivity only);
+ * - errors that lost their class: a Sentry event without the original error
+ *   object, or a copy PouchDB's replication makes, by the name of our typed error.
+ *
+ * The boundaries use it as well, for the name and wording of a raw error.
+ */
+function classifyForeignError(
   error: object | string,
 ): ErrorClassification | undefined {
   const err = error as ErrorLike;
-  // `err.response.status` as well: a library that wraps `fetch` may hand on the
-  // whole `Response` instead of lifting the status out of it (keycloak-js does)
-  if (CONNECTIVITY_ERROR_STATUS.has(err.response?.status as number)) {
+  if (
+    CONNECTIVITY_ERROR_STATUS.has(err.status as number) ||
+    // keycloak-js hands on the whole `Response` instead of lifting the status out of it
+    CONNECTIVITY_ERROR_STATUS.has(err.response?.status as number)
+  ) {
     return "connectivity";
   }
-  const byStatus = classifyResponseStatus(err.status, [
-    err.error,
-    err.reason,
-    err.message,
-  ]);
-  if (byStatus) {
-    return byStatus;
-  }
-  // only a response of our backend: PouchDB uses 500 for local failures as well
-  if (error instanceof HttpErrorResponse && error.status >= 500) {
-    return "server-error";
-  }
-  return undefined;
+  return classifyByName(err) ?? classifyByMessage(error);
 }
 
-function classifyByName(
-  error: object | string,
-): ErrorClassification | undefined {
-  const err = error as ErrorLike;
-  // `originalName`: the name of the error a DatabaseException wraps
-  const names = [err.name, err.originalName] as string[];
-  const typedName = names.find((name) => TYPED_ERROR_NAMES.has(name));
-  if (typedName) {
-    return TYPED_ERROR_NAMES.get(typedName);
+function classifyByName(err: ErrorLike): ErrorClassification | undefined {
+  const name = err.name as string;
+  if (TYPED_ERROR_NAMES.has(name)) {
+    return TYPED_ERROR_NAMES.get(name);
   }
-  if (names.some((name) => CONNECTIVITY_ERROR_NAMES.has(name))) {
+  if (CONNECTIVITY_ERROR_NAMES.has(name)) {
     return "connectivity";
   }
-  if (names.some((name) => LOCAL_STORAGE_ERROR_NAMES.has(name))) {
+  if (LOCAL_STORAGE_ERROR_NAMES.has(name)) {
     return "local-storage";
   }
   return undefined;
@@ -402,6 +404,7 @@ function classifyByMessage(
   if (CONNECTIVITY_ERROR_PATTERNS.some((pattern) => text.includes(pattern))) {
     return "connectivity";
   }
+  // e.g. a replication checkpoint write rejected inside PouchDB
   if (text.toLowerCase().includes(WRITE_CONFLICT_TEXT)) {
     return "write-conflict";
   }

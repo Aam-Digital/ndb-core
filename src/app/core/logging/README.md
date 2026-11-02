@@ -161,8 +161,9 @@ error, the message itself is the title and the grouping key, so keep it stable a
 event, the error would only be extra data that none of the processing below looks at: a failed request
 would not count as a connectivity failure, an expired session would not be filtered, and the status
 would not be reported. Only a warning without any error is reported as a plain message, grouped by its
-message. Angular's `HttpErrorResponse` is not an `Error` and counts as "no error" here: whether a
-failed response is exceptional is for the code that made the request to decide.
+message. A failed response of our backend that maps to a typed error is an `Error` (see below);
+an `HttpErrorResponse` that stays one is not, and counts as "no error" here: whether such a failed
+response is exceptional is for the code that made the request to decide.
 
 So do not drop the error before logging (a `catchError(() => of(null))` followed by a log call
 without it leaves the report impossible to diagnose), and do not pass the same error object twice.
@@ -194,25 +195,33 @@ one issue per call site (and per build, as releases without source maps report m
 
 ### Classifying failures where they enter the app
 
-What remote monitoring does with a failure depends on what kind of failure it is
-(`classifyError()` in `error-classification.ts`):
+**Convert errors to typed errors where they enter the app**; `classifyError()` (`error-classification.ts`)
+then judges an error by its type, and only falls back to status, name and wording for foreign errors
+that never passed such a boundary (unhandled browser errors such as a failed `fetch` or chunk load,
+IndexedDB errors raised inside PouchDB callbacks, keycloak-js and third-party request errors, Sentry
+events without the original error).
 
-- **Our errors say it by their type.** Where the app knows what went wrong, it throws a typed error:
-  the remote database's fetch wrapper throws a `ConnectivityError` for a request without response or
-  with a gateway status (0, 502, 503, 504), and a `ServerError` carrying the status for any other 5xx.
-  For a new kind of error, extend one of these classes; errors carry no separate classification flag.
-- **Other errors by their data.** A raw browser or PouchDB error, an `HttpErrorResponse`, or one
-  wrapped in a `DatabaseException` (which takes over its `status`, `reason` and keeps its name as
-  `originalName`) is classified by its status and name, and as a last resort by its wording.
-  These message patterns are all in `error-classification.ts`.
+- **Database layer:** `DatabaseException` converts the raw PouchDB / IndexedDB error it wraps
+  (`toTypedDatabaseError`) and keeps the typed error as its `cause` (and the raw error's `status`,
+  `reason`, ... for callers); the sync converts the replication's error the same way. The remote
+  database's fetch wrapper throws `ConnectivityError` / `ServerError` itself, and a
+  `SessionExpiredError` when a 401 persists because the session could not be renewed.
+- **HTTP:** `typedHttpErrorInterceptor` converts a failed response of our backend (`/db`, `/api`)
+  that maps to a class, with the `HttpErrorResponse` as `cause`. Other statuses (e.g. 400, 404) and
+  other services (Keycloak, the address lookup, ...) stay an `HttpErrorResponse`; read the response
+  of either with `failedHttpResponse()`.
 
-The helpers `isConnectivityError()`, `isExpiredSessionError()` and `isNotPermittedError()` in
-`src/app/utils/` are thin wrappers around `classifyError()`.
+The typed errors keep the `status` and the original error as `cause`; there is one per
+classification: `ConnectivityError`, `ServerError`, `NotPermittedError`, `SessionExpiredError`,
+`WriteConflictError`, `LocalStorageError`. For a new kind of error, extend one of them; errors carry
+no separate classification flag. Check for them with the helpers in `src/app/utils/`
+(`isConnectivityError()`, `isNotPermittedError()`, `isExpiredSessionError()`), which also find
+them in the `cause` chain.
 
 | Classification    | What it is                                                                                                          | Reported                                                                  |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `connectivity`    | no response, status 0, 502-504, timeout/abort, failed chunk load                                                    | shared `network-error` issue, warning, 1 per page load; not while offline |
-| `session-expired` | 401 with an expired token the app could not renew                                                                   | no                                                                        |
+| `session-expired` | 401 with an expired token, or a 401 that persists because the session could not be renewed                          | no                                                                        |
 | `not-permitted`   | 403, or 401 "User is not permitted"                                                                                 | as a warning if a component logged it with a message, or if unhandled     |
 | `write-conflict`  | 409 / "Document update conflict"                                                                                    | no                                                                        |
 | `local-storage`   | the device's IndexedDB is broken (`indexed_db_went_bad`, connection closing, object store not found, wrong adapter) | first event of the page load, tagged `incident: local-db`                 |
@@ -234,9 +243,11 @@ hook (`processSentryEvent`) therefore sets one where the stack is the wrong key:
    gets an issue (and a new-issue alert) of its own. Exceptions:
    - a **classified** root cause that means the same whichever component ran into it (`local-storage`,
      `server-error`, `not-permitted`, see the table above) is grouped by the root cause only, so one
-     failure is one issue. The issue is titled by the root cause (e.g. "DatabaseException: Unknown
-     kid"); the wrapper's message is kept as the `reported_by` tag (and extra), so the issue's tag
-     breakdown shows which components were affected;
+     failure is one issue. The issue is titled by the root cause (e.g. "LocalStorageError: unknown");
+     the wrapper's message is kept as the `reported_by` tag (and extra), so the issue's tag
+     breakdown shows which components were affected. The root cause is the innermost typed error:
+     the foreign error it was converted from (its `cause`) is only its detail, and a
+     `DatabaseException` passing it on adds nothing;
    - a network failure as root cause of a named error (`ConfigLoadError`, `AppBootstrapError`) is
      titled e.g. "AppBootstrapError: Application Bootstrap failed (caused by TypeError: network
      failure)", without the browser's wording.
@@ -318,7 +329,8 @@ under the GDPR.
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `error-classification.ts` — the typed errors of the boundaries (`ConnectivityError`, `ServerError`), `classifyError()` and all message patterns
+- `error-classification.ts` — the typed errors, `classifyError()`, the status mapping of the boundaries and all message patterns
+- `typed-http-error.interceptor.ts` — the boundary converting failed responses of our backend into typed errors
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
 - `report-once.ts` — turning repeated reports of one failure into breadcrumbs

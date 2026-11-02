@@ -1,5 +1,7 @@
 import { isConnectivityError } from "./connectivity-error";
 import { DatabaseException } from "../core/database/pouchdb/pouch-database";
+import { ConnectivityError } from "../core/logging/error-classification";
+import { SyncFailedError } from "../core/database/pouchdb/synced-pouch-database";
 
 describe("isConnectivityError", () => {
   it("returns false for nullish or unrelated errors", () => {
@@ -65,6 +67,14 @@ describe("isConnectivityError", () => {
 
     expect(wrapped.name).toBe("DatabaseException");
     expect(isConnectivityError(wrapped)).toBe(true);
+  });
+
+  it("detects a connectivity failure wrapped by another error", () => {
+    const failedFetch = new DatabaseException(
+      new ConnectivityError("Failed to fetch from DB"),
+    );
+
+    expect(isConnectivityError(new SyncFailedError(failedFetch))).toBe(true);
   });
 
   it("classifies a DatabaseException whose message is a network failure", () => {

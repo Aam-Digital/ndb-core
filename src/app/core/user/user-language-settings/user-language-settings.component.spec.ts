@@ -13,6 +13,7 @@ import { availableLocales } from "../../language/languages";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
 import { Logging } from "../../logging/logging.service";
+import { DatabaseException } from "../../database/pouchdb/database-exception";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -112,7 +113,10 @@ describe("UserLanguageSettingsComponent", () => {
       "the local permission check",
       new EntityPermissionError("create", "user-1", "UserSettings"),
     ],
-    ["the server", { status: 403, error: "forbidden" }],
+    [
+      "the server",
+      new DatabaseException({ status: 403, message: "forbidden" }),
+    ],
   ])(
     "should not report a save rejected by %s, since the permission config causes it",
     async (_source, rejection) => {
