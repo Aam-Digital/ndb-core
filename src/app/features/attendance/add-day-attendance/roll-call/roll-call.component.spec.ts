@@ -23,6 +23,8 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 const PRESENT = {
   id: "PRESENT",
@@ -156,6 +158,35 @@ describe("RollCallComponent", () => {
     );
     fixture.detectChanges();
   }));
+
+  it.each([
+    ["a record that does not exist", undefined, "debug"],
+    ["an unexpected failure", new Error("unexpected"), "warn"],
+  ] as const)(
+    "logs %s while loading the event by id at %s level and shows the 404 page",
+    async (_, failure, expectedLevel) => {
+      if (failure) {
+        vi.spyOn(TestBed.inject(EntityMapperService), "load").mockRejectedValue(
+          failure,
+        );
+      }
+      vi.spyOn(Logging, "debug");
+      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+      const router = TestBed.inject(Router);
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+      const eventId = `${TestEventEntity.ENTITY_TYPE}:missing`;
+
+      fixture.componentRef.setInput("eventEntity", undefined);
+      fixture.componentRef.setInput("id", eventId);
+      await stabilize();
+
+      expect(Logging[expectedLevel]).toHaveBeenCalledWith(
+        "Could not load event",
+        expect.objectContaining({ eventId }),
+      );
+      expect(router.navigate).toHaveBeenCalledWith(["/404"]);
+    },
+  );
 
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];

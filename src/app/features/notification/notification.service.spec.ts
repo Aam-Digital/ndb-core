@@ -179,6 +179,30 @@ describe("NotificationService", () => {
     expect(mockHttpClient.delete).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["denied", "debug"],
+    ["granted", "error"],
+  ] as const)(
+    "logs a failed token request at %s permission on %s level",
+    (permission, expectedLevel) => {
+      vi.spyOn(Logging, "debug");
+      vi.spyOn(Logging, "error").mockImplementation(() => undefined);
+      notificationPermission = permission;
+      const failure = new Error("token request failed");
+      (mockFireMessaging as any).requestToken = throwError(() => failure);
+
+      service.registerDevice();
+
+      expect(Logging[expectedLevel]).toHaveBeenCalledWith(
+        expect.any(String),
+        failure,
+      );
+      expect(
+        Logging[expectedLevel === "debug" ? "error" : "debug"],
+      ).not.toHaveBeenCalled();
+    },
+  );
+
   it("reflects a notification permission granted after the service was created", () => {
     notificationPermission = "default";
     expect(service.hasNotificationPermissionGranted()).toBe(false);
