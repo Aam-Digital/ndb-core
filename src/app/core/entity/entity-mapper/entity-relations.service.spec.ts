@@ -179,6 +179,22 @@ describe("EntityRelationsService", () => {
     ]);
   });
 
+  it("lists the fields of a data type in each registered type that the link fields of a type link to", () => {
+    const fieldIds = service
+      .getFieldsOfLinkedTypes(EntityWithTestRelations, "number")
+      .map(({ linkId, linkedType, fields }) => [
+        linkId,
+        linkedType,
+        fields.map(([id]) => id),
+      ]);
+
+    // "Other" is not a registered type
+    expect(fieldIds).toEqual([
+      ["refSingle", TestEntity, ["rating"]],
+      ["refMulti", TestEntity, ["rating"]],
+    ]);
+  });
+
   describe("itemReferencesId", () => {
     const attendanceField: EntitySchemaField = {
       dataType: "schema-embed",

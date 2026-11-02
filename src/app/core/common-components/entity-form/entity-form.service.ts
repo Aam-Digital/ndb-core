@@ -1,6 +1,12 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  FormGroup,
+} from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -11,6 +17,9 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { filter } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { CustomYesNoButtons } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
@@ -22,6 +31,7 @@ import {
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
 import { resolveLocaleText } from "../../language/active-locale";
+import { revalidateOnParentLinkChange } from "../../basic-datatypes/date-range/within-parent-validator";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -39,6 +49,7 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -222,6 +233,7 @@ export class EntityFormService {
       this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
+    revalidateOnParentLinkChange(group, formFields, destroyRef);
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -260,6 +272,12 @@ export class EntityFormService {
       );
       Object.assign(controlOptions, validators);
     }
+
+    controlOptions.validators = [
+      ...asArray(controlOptions.validators ?? []),
+      ...this.entitySchemaService.getDatatypeOrDefault(field.dataType)
+        .internalValidators,
+    ];
 
     if (withPermissionCheck) {
       const conditionValidator = this.permissionConditionValidators.forField(
@@ -303,7 +321,9 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    this.checkFormValidity(form);
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
 
     const originalEntity = entity.copy();
     const updatedEntity = this.createUpdatedEntity(entity, form);
@@ -337,12 +357,36 @@ export class EntityFormService {
     return entity;
   }
 
-  private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
+  /**
+   * Whether the form can be saved: it is valid (after waiting for running async checks),
+   * or its only errors are warnings (marked with `warning: true`, e.g. a period outside its parent's) that the user confirmed.
+   */
+  async confirmValidity<T extends Entity>(
+    entityForm: EntityForm<T>,
+  ): Promise<boolean> {
+    const form = entityForm.formGroup;
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
-    if (form.invalid) {
-      throw new InvalidFormFieldError();
+    if (form.pending) {
+      await firstValueFrom(
+        form.statusChanges.pipe(filter((status) => status !== "PENDING")),
+      );
     }
+    if (!form.invalid) {
+      return true;
+    }
+
+    const warnings = getWarnings(entityForm);
+    return (
+      !!warnings?.length &&
+      !!(await this.confirmationDialog.getConfirmation(
+        $localize`Save anyway?`,
+        warnings.length > 1
+          ? warnings.map((warning) => `- ${warning}`).join("\n")
+          : warnings[0],
+        CustomYesNoButtons($localize`Save anyway`, $localize`Keep editing`),
+      ))
+    );
   }
 
   private createUpdatedEntity<T extends Entity>(
@@ -410,4 +454,42 @@ export class EntityFormService {
     this.unsavedChanges.setUnsavedChanges(entityForm, false);
     entityForm.onFormStateChange.emit("cancelled");
   }
+}
+
+/**
+ * The form's errors as "field label: message" (in markdown), if all of them are warnings (marked with `warning: true`).
+ */
+function getWarnings<T extends Entity>(
+  entityForm: EntityForm<T>,
+): string[] | undefined {
+  const form = entityForm.formGroup;
+  if (!hasOnlyWarnings(form)) {
+    return undefined;
+  }
+  const label = (fieldId: string) =>
+    entityForm.fieldConfigs.find((field) => field.id === fieldId)?.label ??
+    fieldId;
+  return Object.entries(form.controls).flatMap(([fieldId, control]) =>
+    Object.values(control.errors ?? {}).map(
+      (error) =>
+        `**${escapeMarkdown(label(fieldId))}:** ${escapeMarkdown(error.errorMessage)}`,
+    ),
+  );
+}
+
+/** whether all errors of the form are warnings (marked with `warning: true`), which saving only asks to confirm */
+export function hasOnlyWarnings(form: FormGroup): boolean {
+  return (
+    !form.errors &&
+    Object.values<AbstractControl>(form.controls).every((control) =>
+      Object.values<{ warning?: boolean }>(control.errors ?? {}).every(
+        (error) => error?.warning,
+      ),
+    )
+  );
+}
+
+/** so that markdown shows the text as it is (e.g. a record name in angle brackets, which would be read as HTML) */
+function escapeMarkdown(text: string): string {
+  return text.replace(/[\\`*_[\]<>#|~]/g, "\\$&");
 }

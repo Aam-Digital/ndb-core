@@ -6,14 +6,8 @@ import {
   Component,
   inject,
   input,
-  OnInit,
 } from "@angular/core";
-import {
-  ReactiveFormsModule,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-} from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -45,16 +39,12 @@ import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/ed
 })
 export class EditEmailComponent
   extends CustomFormControlDirective<string>
-  implements EditComponent, OnInit
+  implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
 
   private readonly emailClientService = inject(EmailClientService);
-
-  ngOnInit() {
-    this.formControl.addValidators([emailValidatorWithMessage]);
-  }
 
   openEmailDialog(event: Event) {
     event.stopPropagation();
@@ -72,18 +62,4 @@ export class EditEmailComponent
 
     this.emailClientService.executeMailto(entityWithCurrentValue, fieldId);
   }
-}
-
-function emailValidatorWithMessage(
-  control: AbstractControl,
-): ValidationErrors | null {
-  const emailError = Validators.email(control);
-  if (emailError) {
-    return {
-      email: {
-        errorMessage: $localize`:form field validation error:Please enter a valid email`,
-      },
-    };
-  }
-  return null;
 }
