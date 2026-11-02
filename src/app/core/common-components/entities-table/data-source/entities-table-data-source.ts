@@ -12,7 +12,10 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { classifyError } from "#src/app/core/logging/error-classification";
+import {
+  classifyError,
+  ErrorClassification,
+} from "#src/app/core/logging/error-classification";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -44,6 +47,13 @@ export interface LoadRecordConfig<T extends Entity> {
 
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
+
+/** The cause named in the toast for a failed load, by its classification. */
+const LOAD_ERROR_CAUSES: Partial<Record<ErrorClassification, LoadErrorCause>> =
+  {
+    "not-permitted": "notPermitted",
+    "session-expired": "sessionExpired",
+  };
 
 /**
  * Abstract data source for tables that handles all data handling internally.
@@ -175,13 +185,7 @@ export abstract class EntitiesTableDataSource<
           err,
           this.loadRecordConfig(),
         );
-        const classification = classifyError(err);
-        const cause: LoadErrorCause =
-          classification === "not-permitted"
-            ? "notPermitted"
-            : classification === "session-expired"
-              ? "sessionExpired"
-              : "connection";
+        const cause = LOAD_ERROR_CAUSES[classifyError(err)] ?? "connection";
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself

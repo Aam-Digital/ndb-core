@@ -9,7 +9,7 @@ import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-regis
 import {
   brokenIndexedDb,
   failedFetch,
-  process,
+  processError,
   setUpPageLoad,
   title,
   withStack,
@@ -174,7 +174,7 @@ describe("processSentryEvent", () => {
     ])(
       "should group $case",
       ({ error, fingerprint, title: expected, reportedBy }) => {
-        const event = process(error);
+        const event = processError(error);
 
         expect(event.fingerprint).toEqual(fingerprint);
         expect(title(event)).toBe(expected);
@@ -184,14 +184,14 @@ describe("processSentryEvent", () => {
 
     it("should group one classified root cause logged by different components into one issue, telling the components apart by tag", () => {
       // like AAM-DIGITAL-7CQ, 7CR, 77R: one broken local database, one issue
-      const bySync = process(
+      const bySync = processError(
         new LoggedError(
           "sync failed",
           new DatabaseException(brokenIndexedDb()),
         ),
       );
       resetReportedEvents(); // the next page load
-      const byPermissions = process(
+      const byPermissions = processError(
         new LoggedError(
           "Failed to load permission rules",
           new DatabaseException(brokenIndexedDb()),
@@ -221,7 +221,7 @@ describe("processSentryEvent", () => {
       "should keep %s logged by different components in issues of their own, whatever library function threw it",
       (_, rootCause) => {
         const loggedBy = (message: string) =>
-          process(new LoggedError(message, rootCause()), {
+          processError(new LoggedError(message, rootCause()), {
             // e.g. thrown in a callback of `Array.map`
             frames: [{ function: "Array.map", filename: "<anonymous>" }],
           }).fingerprint;
@@ -238,12 +238,12 @@ describe("processSentryEvent", () => {
     ])(
       "should leave a generic error with a stack to Sentry, unless it is %s",
       (_, error, fingerprint) => {
-        expect(process(error, withStack).fingerprint).toEqual(fingerprint);
+        expect(processError(error, withStack).fingerprint).toEqual(fingerprint);
       },
     );
 
     it("should keep the logged message and the original error of a network failure searchable", () => {
-      const event = process(
+      const event = processError(
         new LoggedError("Could not load notes", failedFetch()),
       );
 

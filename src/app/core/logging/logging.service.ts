@@ -176,7 +176,7 @@ export class LoggingService {
   }
 
   private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
-    console[CONSOLE_METHODS[logLevel] ?? "log"](message, ...context);
+    console[CONSOLE_METHODS[logLevel]](message, ...context);
   }
 
   private logToRemoteMonitoring(

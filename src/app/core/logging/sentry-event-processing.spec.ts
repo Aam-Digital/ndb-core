@@ -7,7 +7,7 @@ import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-regis
 import {
   eventFor,
   failedFetch,
-  process,
+  processError,
   setUpPageLoad,
   title,
 } from "./logging-test-utils";
@@ -83,7 +83,7 @@ describe("processSentryEvent", () => {
     ])("should drop $case: $dropped", ({ error, offline, dropped }) => {
       vi.stubGlobal("navigator", { onLine: !offline });
 
-      expect(process(error) === null).toBe(dropped);
+      expect(processError(error) === null).toBe(dropped);
     });
   });
 
@@ -142,7 +142,7 @@ describe("processSentryEvent", () => {
       extra: { registry: "EntityRegistry", registryKey: "Child" },
     },
   ])("should report the details $case", ({ error, extra }) => {
-    expect(process(error).extra).toMatchObject(extra);
+    expect(processError(error).extra).toMatchObject(extra);
   });
 
   it.each([

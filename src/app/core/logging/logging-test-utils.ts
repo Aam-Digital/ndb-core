@@ -31,7 +31,7 @@ export function eventFor(
   } as Sentry.ErrorEvent;
 }
 
-export function process(
+export function processError(
   error: Error,
   options?: { frames?: Frame[]; unhandled?: boolean },
 ) {
