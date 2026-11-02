@@ -6,7 +6,6 @@ import {
   signal,
 } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
-import { isConnectivityError } from "app/utils/connectivity-error";
 import { GpsService } from "../gps.service";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -68,9 +67,10 @@ export class AddressGpsLocationComponent {
 }
 
 /**
- * Failures caused by the device or the external address lookup rather than a defect:
- * a denied or blocked location permission, no position available or a timeout,
- * or the lookup service being unreachable. The user is told in any case.
+ * Failures caused by the device rather than a defect: a denied or blocked location
+ * permission, no position available or a timeout. The user is told in any case.
+ * (A failed address lookup does not get here: `GeoService.reverseLookup` falls back
+ * to the plain coordinates.)
  */
 function isExpectedLocationFailure(error: unknown): boolean {
   if (
@@ -80,13 +80,8 @@ function isExpectedLocationFailure(error: unknown): boolean {
   ) {
     return true;
   }
-  if (
+  return (
     typeof GeolocationPositionError !== "undefined" &&
     error instanceof GeolocationPositionError
-  ) {
-    return true;
-  }
-  return (
-    isConnectivityError(error) || (error as { status?: number })?.status >= 500
   );
 }
