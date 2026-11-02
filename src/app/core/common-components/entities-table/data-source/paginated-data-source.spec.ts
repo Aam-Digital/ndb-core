@@ -10,6 +10,7 @@ import {
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSort } from "@angular/material/sort";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import {
   createEmptyValueFilter,
@@ -879,6 +880,26 @@ describe("PaginatedDataSource", () => {
         expect(dataSource.filteredRecords()).toEqual([]);
       });
     });
+  });
+
+  it("should keep the order of the records as sorted by the database", async () => {
+    dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+    // the database collates case-insensitively, a plain JS comparison would put "Ben" first
+    const sortedByDb = ["anna", "Ben", "carla"].map((name) =>
+      TestEntity.create(name),
+    );
+    findTypeSpy.mockResolvedValue({ records: sortedByDb, bookmark: "bm" });
+    const sort = TestBed.runInInjectionContext(() => new MatSort());
+    sort.active = "name";
+    sort.direction = "asc";
+    dataSource.sort = sort;
+
+    const paginator = createFakePaginator(10, 0);
+    dataSource.paginator = paginator as unknown as MatPaginator;
+    paginator.initialized.next();
+    await flush();
+
+    expect(dataSource.renderedRows()).toEqual(sortedByDb);
   });
 
   it("should send only a single request even when config, filter and sort change during init", async () => {
