@@ -563,7 +563,7 @@ export class ExportDialogComponent {
   isLoading &#x3D; signal&lt;boolean&gt;(false);
   downloadError &#x3D; signal&lt;string | null&gt;(null);
 
-  /** All available export column options (deduped, excludes internal fields). */
+  /** All available export column options, as offered by the caller (deduped). */
   availableColumns: ExportColumnConfig[] &#x3D; this.buildAvailableColumns();
 
   /** Selected export column keys in the order chosen by the user (undefined &#x3D; use default passed config). */
@@ -633,7 +633,6 @@ export class ExportDialogComponent {
     const seen &#x3D; new Set&lt;string&gt;();
     for (const c of configs) {
       const key &#x3D; normalizeQueryKey(c.query);
-      if (key.startsWith(&quot;_&quot;)) continue;
       if (!seen.has(key)) {
         seen.add(key);
         out.push(c);

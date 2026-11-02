@@ -270,8 +270,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:161</a></div>
                         </td>
                     </tr>
 
@@ -361,8 +361,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="181"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:181</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:186</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ handling so the same data can be exported to both CSV and XLSX.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="225"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:225</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="230"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:230</a></div>
                         </td>
                     </tr>
 
@@ -533,8 +533,8 @@ For plain objects: the first row contains the object keys as headers.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="87"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:87</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -668,7 +668,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/export/download-service/download.service.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/export/download-service/download.service.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -707,7 +707,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/export/download-service/download.service.ts:76</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/export/download-service/download.service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -758,6 +758,11 @@ export interface ExportColumnResolver {
  * Iterates the schema, looks up each field&#x27;s datatype, and collects
  * the columns the datatype contributes via &#x60;getExportColumns&#x60;.
  *
+ * Internal fields are excluded, except the record&#x27;s internal id &#x60;_id&#x60;, which users
+ * need to relate exported records to each other ). It can be selected for an
+ * export but is left out of an export that selects no columns,
+ * see {@link DownloadService.prepareExportData}.
+ *
  * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
  *   use the field id as label (useful for embedded schemas like attendance items).
  */
@@ -769,7 +774,7 @@ export function buildExportColumnResolvers(
   const resolvers: ExportColumnResolver[] &#x3D; [];
 
   for (const [fieldId, field] of schema.entries()) {
-    if (field.isInternalField) continue;
+    if (field.isInternalField &amp;&amp; fieldId !&#x3D;&#x3D; &quot;_id&quot;) continue;
 
     const schemaField: EntitySchemaField &#x3D; {
       ...field,
@@ -1006,7 +1011,11 @@ export class DownloadService {
     // fields like a Child&#x27;s &#x60;schoolId&#x60;, or configured query-expression columns)
     // and read their value directly from the entity, so they are not silently
     // dropped from the export.
-    const columnKeys &#x3D; selectedKeys ?? Array.from(columnLabels.keys());
+    const columnKeys &#x3D;
+      selectedKeys ??
+      Array.from(columnResolvers)
+        .filter(([, resolver]) &#x3D;&gt; !resolver.schemaField.isInternalField)
+        .map(([columnId]) &#x3D;&gt; columnId);
 
     // Only resolve the selected columns: resolving a column can require loading
     // referenced entities, which is wasted effort for columns that are not exported.

@@ -349,6 +349,11 @@ export interface ExportColumnResolver {
  * Iterates the schema, looks up each field&#x27;s datatype, and collects
  * the columns the datatype contributes via &#x60;getExportColumns&#x60;.
  *
+ * Internal fields are excluded, except the record&#x27;s internal id &#x60;_id&#x60;, which users
+ * need to relate exported records to each other ). It can be selected for an
+ * export but is left out of an export that selects no columns,
+ * see {@link DownloadService.prepareExportData}.
+ *
  * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
  *   use the field id as label (useful for embedded schemas like attendance items).
  */
@@ -360,7 +365,7 @@ export function buildExportColumnResolvers(
   const resolvers: ExportColumnResolver[] &#x3D; [];
 
   for (const [fieldId, field] of schema.entries()) {
-    if (field.isInternalField) continue;
+    if (field.isInternalField &amp;&amp; fieldId !&#x3D;&#x3D; &quot;_id&quot;) continue;
 
     const schemaField: EntitySchemaField &#x3D; {
       ...field,
@@ -597,7 +602,11 @@ export class DownloadService {
     // fields like a Child&#x27;s &#x60;schoolId&#x60;, or configured query-expression columns)
     // and read their value directly from the entity, so they are not silently
     // dropped from the export.
-    const columnKeys &#x3D; selectedKeys ?? Array.from(columnLabels.keys());
+    const columnKeys &#x3D;
+      selectedKeys ??
+      Array.from(columnResolvers)
+        .filter(([, resolver]) &#x3D;&gt; !resolver.schemaField.isInternalField)
+        .map(([columnId]) &#x3D;&gt; columnId);
 
     // Only resolve the selected columns: resolving a column can require loading
     // referenced entities, which is wasted effort for columns that are not exported.

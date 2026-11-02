@@ -6741,6 +6741,10 @@ A plain equality selector alone does not match array values in CouchDB&#39;s Man
                         <div class="io-description"><p>Build export column resolvers for all fields in a schema.</p>
 <p>Iterates the schema, looks up each field&#39;s datatype, and collects
 the columns the datatype contributes via <code>getExportColumns</code>.</p>
+<p>Internal fields are excluded, except the record&#39;s internal id <code>_id</code>, which users
+need to relate exported records to each other ). It can be selected for an
+export but is left out of an export that selects no columns,
+see <a href="DownloadService.prepareExportData">DownloadService.prepareExportData</a>.</p>
 </div>
 
                             <div class="io-description">

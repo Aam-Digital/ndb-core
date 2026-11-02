@@ -219,8 +219,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="28"
-                                    class="link-to-prism">src/app/core/export/export-columns.service.ts:28</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/app/core/export/export-columns.service.ts:31</a></div>
                         </td>
                     </tr>
 
@@ -229,6 +229,8 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Build a list of export columns available for selection and which of those
 should be preselected based on the currently visible list columns.</p>
+<p>This includes the record&#39;s internal id (<code>_id</code>), which is never a visible list
+column and therefore offered for selection but not preselected.</p>
 </div>
 
                             <div class="io-description">
@@ -302,6 +304,9 @@ export class ExportColumnsService {
   /**
    * Build a list of export columns available for selection and which of those
    * should be preselected based on the currently visible list columns.
+   *
+   * This includes the record&#x27;s internal id (&#x60;_id&#x60;), which is never a visible list
+   * column and therefore offered for selection but not preselected.
    */
   buildExportColumns(
     opts: BuildExportColumnsOptions,
@@ -324,7 +329,6 @@ export class ExportColumnsService {
       for (const r of resolvers) {
         const keySuffix &#x3D; r.column.keySuffix ?? &quot;&quot;;
         const columnId &#x3D; r.sourceFieldId + keySuffix;
-        if (columnId.startsWith(&quot;_&quot;)) continue;
         const col: ExportColumnConfig &#x3D; {
           query: &#x60;.${columnId}&#x60;,
           label: r.column.label,
