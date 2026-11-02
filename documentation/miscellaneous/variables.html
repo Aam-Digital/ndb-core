@@ -251,6 +251,9 @@
                             <a href="#CITY_FIELDS" title="src/app/features/location/geo-location.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CITY_FIELDS</b>&nbsp;&nbsp;&nbsp;(src/.../geo-location.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#CLOSE_OTHER_TABS_NOTICE_ID" title="src/bootstrap-reset.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CLOSE_OTHER_TABS_NOTICE_ID</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-reset.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#COMPONENT_PERMISSIONS" title="src/app/features/attendance/attendance-permission.guard.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>COMPONENT_PERMISSIONS</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-permission.guard.ts)</span></a>
                         </li>
                         <li>
@@ -3467,6 +3470,107 @@ infrastructure component in front of it.</p>
 town, ordered from the most specific to the widest area.
 Many places have no <code>city</code> at all: an address in a Dublin suburb, for
 example, only carries <code>suburb</code>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/bootstrap-reset.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CLOSE_OTHER_TABS_NOTICE_ID"></a>
+                    <span class="name">
+                        <span ><b>CLOSE_OTHER_TABS_NOTICE_ID</b></span>
+                        <a href="#CLOSE_OTHER_TABS_NOTICE_ID"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;reset-close-other-tabs-notice&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>id of the notice on the loading screen, see <a href="../miscellaneous/functions.html#showCloseOtherTabsNotice">showCloseOtherTabsNotice</a></p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LAST_SYNC_KEY_PREFIX"></a>
+                    <span class="name">
+                        <span ><b>LAST_SYNC_KEY_PREFIX</b></span>
+                        <a href="#LAST_SYNC_KEY_PREFIX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;LAST_SYNC_&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>localStorage key prefix under which <code>SyncedPouchDatabase</code> records when a
+database last completed a sync (one key per database).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RESET_PENDING_KEY"></a>
+                    <span class="name">
+                        <span ><b>RESET_PENDING_KEY</b></span>
+                        <a href="#RESET_PENDING_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;__RESET_PENDING&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>sessionStorage key used to signal that a reset is pending.
+Set before a page reload; checked on the next bootstrap in <a href="../miscellaneous/functions.html#runPendingReset">runPendingReset</a>.</p>
 </div>
                 </td>
             </tr>
@@ -8224,75 +8328,6 @@ see <code>cli/tsconfig.json</code>.)</p>
                     </td>
                 </tr>
 
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/bootstrap-reset.ts</h3>
-    <section data-compodoc="block-properties">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="LAST_SYNC_KEY_PREFIX"></a>
-                    <span class="name">
-                        <span ><b>LAST_SYNC_KEY_PREFIX</b></span>
-                        <a href="#LAST_SYNC_KEY_PREFIX"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;LAST_SYNC_&quot;</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>localStorage key prefix under which <code>SyncedPouchDatabase</code> records when a
-database last completed a sync (one key per database).</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="RESET_PENDING_KEY"></a>
-                    <span class="name">
-                        <span ><b>RESET_PENDING_KEY</b></span>
-                        <a href="#RESET_PENDING_KEY"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;__RESET_PENDING&quot;</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>sessionStorage key used to signal that a reset is pending.
-Set before a page reload; checked on the next bootstrap in <a href="../miscellaneous/functions.html#runPendingReset">runPendingReset</a>.</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
