@@ -214,7 +214,7 @@ export class SchemaEmbedArrayEntryDialogComponent {
 
     let edited: EmbeddedEntity;
     try {
-      edited = this.entityFormService.applyChanges(entryForm, this.entry);
+      edited = await this.entityFormService.applyChanges(entryForm, this.entry);
     } catch (err) {
       // invalid fields are highlighted in the form, other errors need an alert
       if (!(err instanceof InvalidFormFieldError)) {

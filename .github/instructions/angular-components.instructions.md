@@ -9,12 +9,12 @@ Examples for the component rules in `AGENTS.md` (which also covers templates, st
 
 ## Change Detection
 
-All components **must** use `OnPush` change detection:
+Components use `OnPush` change detection, which is the default since Angular 22.
+Do **not** set `changeDetection: ChangeDetectionStrategy.OnPush` in new components.
 
 ```typescript
 @Component({
   selector: "app-example",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 ```
 
@@ -32,12 +32,12 @@ export class ExampleComponent {
 
 ## Dependency Injection
 
-Use `inject()` — **not** constructor injection:
+Use `inject()` into a `private readonly` field — **not** constructor injection:
 
 ```typescript
 export class ExampleComponent {
-  private entityMapper = inject(EntityMapperService);
-  private route = inject(ActivatedRoute);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly route = inject(ActivatedRoute);
 }
 ```
 
@@ -99,13 +99,12 @@ Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*
 ## Canonical Component Structure
 
 ```typescript
-import { Component, ChangeDetectionStrategy, computed, inject, input, output, resource } from "@angular/core";
+import { Component, computed, inject, input, output, resource } from "@angular/core";
 
 @Component({
   selector: "app-example",
   templateUrl: "./example.component.html",
   styleUrl: "./example.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, AsyncPipe],
 })
 export class ExampleComponent {

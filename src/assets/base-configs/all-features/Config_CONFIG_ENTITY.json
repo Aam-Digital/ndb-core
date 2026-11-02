@@ -659,7 +659,8 @@
                     },
                     {
                       "fields": [
-                        "phone"
+                        "phone",
+                        "email"
                       ]
                     }
                   ]
@@ -815,7 +816,9 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId"
+                        "schoolId",
+                        "projectSchool",
+                        "projectPeriod"
                       ]
                     },
                     {
@@ -1457,6 +1460,21 @@
           "label": "Admission",
           "anonymize": "retain-anonymized"
         },
+        "projectSchool": {
+          "dataType": "entity",
+          "label": "Project school",
+          "additional": "School"
+        },
+        "projectPeriod": {
+          "dataType": "date-range",
+          "label": "Project period",
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "projectSchool",
+              "parentValueField": "dateRangeField"
+            }
+          }
+        },
         "status": {
           "dataType": "string",
           "label": "Status",
@@ -1668,12 +1686,23 @@
         "dateRangeField": {
           "id": "dateRangeField",
           "label": "Date Range Field",
-          "dataType": "date-range"
+          "dataType": "date-range",
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "parentSchool"
+            }
+          }
         },
         "dateRangeFieldOwnPeriods": {
           "id": "dateRangeFieldOwnPeriods",
           "label": "Date Range Field (own periods)",
           "dataType": "date-range",
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "parentSchool",
+              "parentValueField": "dateRangeField"
+            }
+          },
           "additional": [
             {
               "label": "This year and the next 2 years",
@@ -1993,6 +2022,10 @@
         "phone": {
           "dataType": "string",
           "label": "Contact"
+        },
+        "email": {
+          "dataType": "email",
+          "label": "Email"
         }
       },
       "enableUserAccounts": true

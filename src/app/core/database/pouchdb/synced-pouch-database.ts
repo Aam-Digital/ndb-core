@@ -397,8 +397,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * that the user may not read - it has no knowledge of which of those the
    * client actually holds locally. Most reported ids therefore do not exist
    * locally at all and purging them is a no-op. Only an actual local deletion
-   * is reported as a warning, so that the log stays a signal for data being
-   * removed rather than a count of what the server reported.
+   * is logged with details, so that the log stays a signal for data being
+   * removed rather than a count of what the server reported. That is the
+   * expected outcome of a change of permissions, so it is not reported to
+   * remote monitoring; only a failed purge is.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
     const reportedIds = this.remoteDatabase
@@ -407,6 +409,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) => !id.startsWith("_design/"));
 
     if (reportedIds.length === 0) {
+      return;
+    }
+
+    if (this.adapter === "idb") {
+      // a known limitation, not an event: the legacy "idb" adapter does not implement purge()
+      // (LocalPermissionEnforcerService destroys the local db instead where necessary)
+      Logging.debug(
+        "sync: cannot purge local docs on the legacy idb adapter, skipping",
+        { db: this.dbName, reportedByServer: reportedIds.length },
+      );
       return;
     }
 
@@ -437,8 +449,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
     };
 
     if (purgedIds.length > 0) {
-      // local data was actually deleted - log for traceability of possible data loss
-      Logging.warn(
+      // expected after a change of permissions: the user can no longer read these docs,
+      // so local changes to them could not have been synced anyway
+      Logging.debug(
         "sync: purged local docs that the server reported as no longer permitted",
         {
           ...stats,
@@ -458,7 +471,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     if (failedIds.length > 0) {
       // the local database keeps docs the user is no longer allowed to read
-      // (the legacy "idb" adapter does not implement purge at all, see purge())
       Logging.warn(
         "sync: failed to purge local docs that the server reported as no longer permitted",
         { ...stats, sampleIds: failedIds.slice(0, this.SAMPLE_IDS_LOGGED) },

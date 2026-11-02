@@ -395,7 +395,8 @@ export class PouchDatabase extends Database {
             err.statusCode === HttpStatusCode.Unauthorized ||
             err.statusCode === HttpStatusCode.GatewayTimeout
           ) {
-            Logging.warn(err);
+            // expired session or a gateway timeout: transient, retried below
+            Logging.debug("changes feed failed (unauthorized or timeout)", err);
           } else {
             Logging.error(err);
           }

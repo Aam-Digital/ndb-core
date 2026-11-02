@@ -5,6 +5,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
 import { NamedError } from "../logging/reported-errors";
+import { isConnectivityError } from "../../utils/connectivity-error";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
@@ -96,7 +97,13 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    Logging.error(new NamedError("ConfigLoadError", message, { cause }));
+    const error = new NamedError("ConfigLoadError", message, { cause });
+    if (isConnectivityError(cause)) {
+      // offline or the server unreachable (remote-only session): the user is told below
+      Logging.debug(error);
+    } else {
+      Logging.error(error);
+    }
 
     if (this.registerReloadAttempt()) {
       alert(

@@ -33,6 +33,7 @@ You can use Angular's dependency injection to access any other services, if need
    - `label`: To allow admin users to select this type in the form builder under this human-readable name
    - `viewComponent`: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables
    - `editComponent`: The string ID for the EditComponent (see below) used for form field UI of the value in detail views
+   - `internalValidators`: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the `validators` configured for the field)
 5. Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)
 6. **Register the datatype** as a "multi" provider so the platform picks it up (see [Registering the new Datatype](#registering-the-new-datatype) below).
 
@@ -78,8 +79,8 @@ Please also refer to the extensive JsDoc code comments in the `DefaultDatatype` 
 A datatype can store several values together in one field. The `date-range` type is an example: it holds a
 start and an end date as one object (`{ start: "2026-03-01", end: "2026-05-31" }` in the database), either of which
 can be missing. Its datatype class reuses the `date-only` conversion for both dates, and it contributes its own edit
-component (a range picker), display component, sorting (by start date), export (one column per date) and
-anonymization. See [`date-range`](date-range/date-range.datatype.ts).
+component (a range picker), display component, sorting (by start date), export (one column per date),
+anonymization and a validator (the end must not be before the start). See [`date-range`](date-range/date-range.datatype.ts).
 
 Next to the calendar, its edit component offers predefined periods (the current and the last month, quarter and year).
 The `additional` config of the field can change them: a list in the format of the options of date filters

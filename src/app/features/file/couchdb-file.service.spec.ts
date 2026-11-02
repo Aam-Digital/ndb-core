@@ -216,29 +216,31 @@ describe("CouchdbFileService", () => {
     });
   });
 
-  it("should log a missing file (404) only at debug level and return empty url", async () => {
-    mockHttp.get.mockReturnValue(
-      throwError(() => new HttpErrorResponse({ status: 404 })),
-    );
-    vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
-    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+  it.each([
+    [404, false], // the file field points to a missing attachment
+    [0, false], // offline
+    [401, false], // expired session
+    [403, false], // a file the user may not read
+    [500, true],
+  ])(
+    "reports a file that fails to load with status %s only if the failure is unexpected",
+    async (status, reported) => {
+      mockHttp.get.mockReturnValue(
+        throwError(() => new HttpErrorResponse({ status })),
+      );
+      vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
+      const warn = vi
+        .spyOn(Logging, "warn")
+        .mockImplementation(() => undefined);
+      warn.mockClear();
 
-    await firstValueFrom(service.loadFile(new Entity("missing"), "logo"));
+      await firstValueFrom(
+        service.loadFile(new Entity(`failing-${status}`), "logo"),
+      );
 
-    expect(Logging.debug).toHaveBeenCalled();
-    expect(Logging.warn).not.toHaveBeenCalled();
-  });
-
-  it("should warn if loading a file fails for other reasons", async () => {
-    mockHttp.get.mockReturnValue(
-      throwError(() => new HttpErrorResponse({ status: 500 })),
-    );
-    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
-
-    await firstValueFrom(service.loadFile(new Entity("broken"), "logo"));
-
-    expect(Logging.warn).toHaveBeenCalled();
-  });
+      expect(warn).toHaveBeenCalledTimes(reported ? 1 : 0);
+    },
+  );
 
   it("should forward any other errors", async () => {
     mockHttp.get.mockReturnValue(

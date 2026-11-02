@@ -58,13 +58,16 @@ export async function runPendingReset(): Promise<void> {
             const del = indexedDB.deleteDatabase(name);
             del.onsuccess = () => resolve();
             del.onerror = () => reject(del.error);
-            // Another open tab still has a connection to this database. The
-            // browser keeps the deletion pending (not stuck) until that
-            // connection closes; just surface why this is taking a while.
-            del.onblocked = () =>
+            // Another open tab still has a connection to this database (e.g.
+            // Firebase's databases, which never close on request). The browser
+            // keeps the deletion pending until that tab is closed, so ask the
+            // user to do that - otherwise the app just seems to load forever.
+            del.onblocked = () => {
               console.warn(
                 `Reset pending: deleting IndexedDB database "${name}" is blocked by another open tab.`,
               );
+              showCloseOtherTabsNotice();
+            };
           }),
       ),
   );
@@ -79,4 +82,32 @@ export async function runPendingReset(): Promise<void> {
   // (rejected promise, thrown error) leaves it in place for a retry on the
   // next bootstrap instead of silently abandoning the reset.
   sessionStorage.removeItem(RESET_PENDING_KEY);
+}
+
+/** id of the notice on the loading screen, see {@link showCloseOtherTabsNotice} */
+export const CLOSE_OTHER_TABS_NOTICE_ID = "reset-close-other-tabs-notice";
+
+/**
+ * Ask the user on the static loading screen (`index.html`) to close other tabs,
+ * because they block the reset (and therefore the app start) until closed.
+ *
+ * The text is English only, like the rest of the loading screen:
+ * translations are not loaded yet at this point of the bootstrap.
+ * Angular replaces the loading screen (incl. this notice) once the app starts.
+ */
+function showCloseOtherTabsNotice() {
+  if (document.getElementById(CLOSE_OTHER_TABS_NOTICE_ID)) {
+    return;
+  }
+  const notice = document.createElement("p");
+  notice.id = CLOSE_OTHER_TABS_NOTICE_ID;
+  notice.style.fontWeight = "bold";
+  notice.textContent =
+    "Resetting the local data on this device. Please close all other tabs and windows of Aam Digital to continue.";
+  const heading = document.querySelector("app-root h1");
+  if (heading) {
+    heading.after(notice);
+  } else {
+    document.body.prepend(notice);
+  }
 }

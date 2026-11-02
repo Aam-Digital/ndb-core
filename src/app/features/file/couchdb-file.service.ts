@@ -12,6 +12,7 @@ import { from, Observable, of, throwError } from "rxjs";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { FileService } from "./file.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { environment } from "#src/environments/environment";
@@ -166,6 +167,18 @@ export class CouchdbFileService extends FileService {
             if (err?.status === 404) {
               // the file field points to an attachment that does not exist (config / data problem)
               Logging.debug("File not found", entity?.getId(), property);
+            } else if (
+              isConnectivityError(err) ||
+              err?.status === HttpStatusCode.Unauthorized ||
+              err?.status === HttpStatusCode.Forbidden
+            ) {
+              // offline, an expired session or a file the user may not read: nothing to fix
+              Logging.debug(
+                "Could not load file (offline or not permitted)",
+                entity?.getId(),
+                property,
+                err,
+              );
             } else {
               Logging.warn(
                 "Could not load file",
