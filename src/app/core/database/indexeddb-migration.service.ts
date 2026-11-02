@@ -146,7 +146,7 @@ export class IndexeddbMigrationService {
       if (!(await this.syncLastChanges(legacyDb))) {
         return;
       }
-      if (!(await this.deleteLegacyDb(legacyDb))) {
+      if (!(await this.deleteLegacyDb(session, legacyDb))) {
         return;
       }
     } finally {
@@ -189,6 +189,7 @@ export class IndexeddbMigrationService {
   }
 
   private async deleteLegacyDb(
+    session: SessionInfo,
     legacyDb: SyncedPouchDatabase,
   ): Promise<boolean> {
     // checked again: another tab may have been opened while the dialogs were shown
@@ -214,7 +215,34 @@ export class IndexeddbMigrationService {
       return false;
     }
     await this.logStep("migration_legacy-db-deleted", "legacy DB deleted");
+    await this.deleteLegacyNotificationsDb(session);
     return true;
+  }
+
+  /** Its notifications are no longer synced. It has another name than the new DB, so a failure does not block the switch. */
+  private async deleteLegacyNotificationsDb(
+    session: SessionInfo,
+  ): Promise<void> {
+    const indexedDB = this.window?.indexedDB;
+    if (!indexedDB) {
+      return;
+    }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const request = indexedDB.deleteDatabase(
+          `_pouch_${computeLegacyDbNames(session).notifications}`,
+        );
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+        // if it is open in this tab, the "idb" adapter closes it, so only another connection blocks it
+        request.onblocked = () => resolve();
+      });
+    } catch (err) {
+      Logging.debug(
+        "IndexeddbMigration: failed to delete legacy notifications DB",
+        err,
+      );
+    }
   }
 
   /** whose unsynced changes would be lost with a deleted legacy DB */

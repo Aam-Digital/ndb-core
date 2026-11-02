@@ -20,6 +20,7 @@ import { MultiTabDetectionService } from "./multi-tab-detection.service";
 const MIGRATED_FLAG = "DB_MIGRATED_abc-123-uuid";
 const LEGACY_APP_DB = "_pouch_testuser-app";
 const NEW_APP_DB = "_pouch_abc-123-uuid-app";
+const LEGACY_NOTIFICATIONS_DB = "_pouch_notifications_abc-123-uuid";
 const LEGACY_DB_NAMES = {
   app: "testuser-app",
   notifications: "notifications_abc-123-uuid",
@@ -46,6 +47,7 @@ describe("IndexeddbMigrationService", () => {
     };
     indexedDB: {
       databases: Mock;
+      deleteDatabase: Mock;
     };
   };
   let multiTabDetection: { isMultipleTabsOpen: boolean };
@@ -57,6 +59,21 @@ describe("IndexeddbMigrationService", () => {
   };
 
   let originalUseIndexeddbAdapter: boolean;
+
+  /** an IndexedDB deletion request that succeeds or fails */
+  const mockDeleteDatabase = (fails: boolean) =>
+    vi.fn(() => {
+      const request = {
+        error: new DOMException("deletion failed"),
+      } as IDBOpenDBRequest;
+      // after the caller has set the handlers
+      queueMicrotask(() =>
+        fails
+          ? request.onerror?.(new Event("error"))
+          : request.onsuccess?.(new Event("success")),
+      );
+      return request;
+    });
 
   /** the legacy db the app runs on, recording the final sync and its deletion */
   const createLegacyDbMock = () => {
@@ -90,6 +107,7 @@ describe("IndexeddbMigrationService", () => {
       location: { reload: vi.fn() },
       indexedDB: {
         databases: vi.fn().mockResolvedValue([]),
+        deleteDatabase: mockDeleteDatabase(false),
       },
     };
     multiTabDetection = { isMultipleTabsOpen: false };
@@ -246,34 +264,51 @@ describe("IndexeddbMigrationService", () => {
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
     });
 
-    it("switches to the new db only after a final sync of the legacy db, which is then deleted", async () => {
-      confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
-      const progressDialog = { close: vi.fn() };
-      confirmationDialogSpy.showProgressDialog.mockReturnValue(progressDialog);
-      const { legacyDb, localSyncState, calls, ensureSynced } =
-        createLegacyDbMock();
-      let blockedDuringFinalSync: boolean;
-      ensureSynced.mockImplementation(async () => {
-        calls.push("final sync");
-        blockedDuringFinalSync = progressDialog.close.mock.calls.length === 0;
-      });
+    it.each([
+      { scenario: "", notificationsDeletionFails: false },
+      {
+        scenario: " (even if its notifications db cannot be deleted)",
+        notificationsDeletionFails: true,
+      },
+    ])(
+      "switches to the new db only after a final sync of the legacy db, which is then deleted$scenario",
+      async ({ notificationsDeletionFails }) => {
+        mockWindow.indexedDB.deleteDatabase = mockDeleteDatabase(
+          notificationsDeletionFails,
+        );
+        confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
+        const progressDialog = { close: vi.fn() };
+        confirmationDialogSpy.showProgressDialog.mockReturnValue(
+          progressDialog,
+        );
+        const { legacyDb, localSyncState, calls, ensureSynced } =
+          createLegacyDbMock();
+        let blockedDuringFinalSync: boolean;
+        ensureSynced.mockImplementation(async () => {
+          calls.push("final sync");
+          blockedDuringFinalSync = progressDialog.close.mock.calls.length === 0;
+        });
 
-      service.startMigrationIfPending(session, legacyDb, PENDING_CONFIG);
-      await flushPromises();
-      // offered only after a completed sync of the legacy db
-      expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
+        service.startMigrationIfPending(session, legacyDb, PENDING_CONFIG);
+        await flushPromises();
+        // offered only after a completed sync of the legacy db
+        expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
 
-      localSyncState.next(SyncState.COMPLETED);
-      await flushPromises();
+        localSyncState.next(SyncState.COMPLETED);
+        await flushPromises();
 
-      expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
-      expect(calls).toEqual(["final sync", "delete"]);
-      // the user cannot change data on the legacy db during the final sync
-      expect(blockedDuringFinalSync).toBe(true);
-      expect(progressDialog.close).toHaveBeenCalled();
-      expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
-      expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
-    });
+        expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
+        expect(calls).toEqual(["final sync", "delete"]);
+        expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
+          LEGACY_NOTIFICATIONS_DB,
+        );
+        // the user cannot change data on the legacy db during the final sync
+        expect(blockedDuringFinalSync).toBe(true);
+        expect(progressDialog.close).toHaveBeenCalled();
+        expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
+        expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
+      },
+    );
 
     it.each([
       {
