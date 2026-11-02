@@ -405,7 +405,8 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         entityId,
       );
     } catch (error) {
-      Logging.warn(
+      // the expected fallback described above, which still finds all linked records
+      Logging.debug(
         "AutomatedFieldUpdateConfigService: Could not use the index of linked records, loading all records of the type instead",
         { entityType: ctor.ENTITY_TYPE, referenceField },
         error,

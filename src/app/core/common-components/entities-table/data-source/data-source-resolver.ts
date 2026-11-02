@@ -40,7 +40,8 @@ function supportsPagination(injector: Injector): boolean {
 
   // the database was created during startup and may not match a session_type changed afterwards
   if (!injector.get(DatabaseResolverService).getDatabase().supportsFind()) {
-    Logging.warn(
+    // a normal fallback, the table still works
+    Logging.debug(
       "session_type is online but the database does not support pagination; falling back to InMemoryDataSource",
     );
     return false;

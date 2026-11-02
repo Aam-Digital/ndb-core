@@ -46,6 +46,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { RouterLink } from "@angular/router";
 import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
@@ -292,9 +293,12 @@ export class ReportingComponent {
       this.data.set(reportData.data);
       this.reportCalculation.set(calculation);
     } catch (reason) {
-      if (reason instanceof ReportCalculationError) {
+      if (
+        reason instanceof ReportCalculationError ||
+        isConnectivityError(reason)
+      ) {
         // the calculation itself failed (e.g. a problem in the report definition),
-        // which the user is shown when they calculate the report explicitly
+        // which the user is shown when they calculate the report explicitly - or offline
         Logging.debug("Background report refresh failed", reason);
       } else {
         Logging.warn("Background report refresh failed", reason);

@@ -51,11 +51,8 @@ export class AddressGpsLocationComponent {
         );
       }
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === "USER_DENIED_PERMISSION"
-      ) {
-        Logging.debug("User denied location permission");
+      if (isExpectedLocationFailure(error)) {
+        Logging.debug("Could not access device location", error);
       } else {
         Logging.warn("Failed to access device location", error);
       }
@@ -67,4 +64,24 @@ export class AddressGpsLocationComponent {
       this.gpsLoading.set(false);
     }
   }
+}
+
+/**
+ * Failures caused by the device rather than a defect: a denied or blocked location
+ * permission, no position available or a timeout. The user is told in any case.
+ * (A failed address lookup does not get here: `GeoService.reverseLookup` falls back
+ * to the plain coordinates.)
+ */
+function isExpectedLocationFailure(error: unknown): boolean {
+  if (
+    error instanceof Error &&
+    (error.message === "USER_DENIED_PERMISSION" ||
+      error.message.startsWith("GPS permission denied"))
+  ) {
+    return true;
+  }
+  return (
+    typeof GeolocationPositionError !== "undefined" &&
+    error instanceof GeolocationPositionError
+  );
 }
