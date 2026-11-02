@@ -12,7 +12,7 @@ import {
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
+import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";

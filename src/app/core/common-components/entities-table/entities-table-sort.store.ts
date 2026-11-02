@@ -15,7 +15,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
 import { SortValueFns } from "./table-sort/table-sort";
-import { TableStateUrlService } from "./table-state-url.service";
+import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
 
 type ReadSignal<T> = () => T;
 

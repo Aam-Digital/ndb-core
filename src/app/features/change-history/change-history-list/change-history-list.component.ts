@@ -28,7 +28,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { AuditRecord } from "../model/audit-record";
-import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
+import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
 import {
   authorFilterOptions,
   AUDIT_BASE_FILTER,

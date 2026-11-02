@@ -14,7 +14,7 @@ import { AuditRecord } from "../model/audit-record";
 import { Entity } from "../../../core/entity/model/entity";
 import { By } from "@angular/platform-browser";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
+import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
 
 /** the built selector, which is an untyped Mango object at the database edge */
 function selector(): Record<string, any> {
