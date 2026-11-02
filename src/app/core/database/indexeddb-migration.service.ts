@@ -15,8 +15,7 @@ import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
 import {
-  isReplicationConnectivityError,
-  isReplicationUnauthorizedError,
+  isTransientReplicationFailure,
   SyncedPouchDatabase,
 } from "./pouchdb/synced-pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
@@ -202,10 +201,7 @@ export class IndexeddbMigrationService {
       })
       .catch(async (err) => {
         this.closePouchDb(remotePouchDB);
-        if (
-          isReplicationConnectivityError(err) ||
-          isReplicationUnauthorizedError(err)
-        ) {
+        if (isTransientReplicationFailure(err)) {
           // offline or session expired: nothing to fix, retried on next app start
           Logging.debug(
             "IndexeddbMigration: replication into new db failed (offline or session expired)",

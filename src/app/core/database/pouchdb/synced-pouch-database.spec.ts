@@ -211,6 +211,37 @@ describe("SyncedPouchDatabase", () => {
     );
   });
 
+  it.each([
+    ["offline", new TypeError("Failed to fetch"), "debug"],
+    [
+      "an expired session behind the replication backend",
+      { status: 401, statusCode: 401, message: "Unauthorized" },
+      "debug",
+    ],
+    [
+      "cut off while reading the checkpoint",
+      new Error("getCheckpoint rejected with "),
+      "debug",
+    ],
+    ["unexpected", new Error("unexpected"), "warn"],
+  ] as const)(
+    "should log a sync failure that is %s at %s level",
+    async (_, failure, level) => {
+      vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
+      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+      const { mockLocalDb } = mockPouchDatabaseService();
+      mockLocalDb.sync.mockReturnValue(mockSyncHandler(failure, true));
+
+      await expect(service.sync()).rejects.toBeTruthy();
+
+      expect(Logging[level]).toHaveBeenCalledWith(
+        expect.stringContaining("sync failed"),
+        expect.anything(),
+        failure,
+      );
+    },
+  );
+
   it("should not show fallback popup for known multi-tab IndexedDB sync errors", async () => {
     const { mockLocalDb } = mockPouchDatabaseService();
     mockLocalDb.sync.mockReturnValue(

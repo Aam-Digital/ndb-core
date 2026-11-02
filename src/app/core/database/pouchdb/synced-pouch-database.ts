@@ -339,10 +339,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
       )
     ) {
       // reported (with the offer to reset the local data) by the recovery service
-    } else if (isReplicationConnectivityError(err)) {
-      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (isReplicationUnauthorizedError(err)) {
-      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
+    } else if (isTransientReplicationFailure(err)) {
+      Logging.debug(
+        `sync failed (offline or unauthorized)`,
+        { db: this.dbName },
+        err,
+      );
     } else {
       Logging.warn(`sync failed`, { db: this.dbName }, err);
     }
@@ -592,24 +594,24 @@ export class SyncFailedError extends NamedError {
 /** Thrown internally when a sync is cancelled for making no progress. */
 class SyncStalledError extends NamedError {
   constructor() {
-    super("SyncStalledError", "Sync cancelled after making no progress");
+    super("SyncStalledError", "Sync cancelled after making no progress", {
+      classification: "connectivity",
+    });
   }
 }
 
 /**
- * Whether a replication with the server failed only because of the connection
- * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
+ * Whether a replication with the server failed for a reason that is retried later
+ * and that nothing can be fixed for: the connection (offline, stalled, cut off
+ * while reading the checkpoint) or a 401 (the fetch layer already triggers a
+ * re-login; the replication backend answers an expired session with a plain 401).
  */
-export function isReplicationConnectivityError(err: any): boolean {
-  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
+export function isTransientReplicationFailure(err: any): boolean {
   const message = err?.message || err?.reason || String(err);
-  return message.includes("getCheckpoint");
-}
-
-/**
- * Whether a replication with the server failed because the session expired:
- * the fetch layer already triggers a re-login.
- */
-export function isReplicationUnauthorizedError(err: any): boolean {
-  return err?.status === 401 || err?.statusCode === 401;
+  return (
+    isConnectivityError(err) ||
+    err?.status === 401 ||
+    err?.statusCode === 401 ||
+    message.includes("getCheckpoint")
+  );
 }
