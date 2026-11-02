@@ -615,19 +615,21 @@ describe("AbilityService", () => {
     beforeEach(() => vi.useFakeTimers());
     afterEach(() => vi.useRealTimers());
 
-    it("should not report an expected permission denial as an error", async () => {
+    it.each([
       // anonymous visitors of a public form may not read the rules config
+      [
+        "a permission denial",
+        {
+          status: 401,
+          message: "unauthorized",
+          error: "User is not permitted",
+        },
+      ],
+      ["a connectivity failure", new Error("Failed to fetch from DB")],
+    ])("should not report %s as an error", async (_, err) => {
       const errorSpy = vi.spyOn(Logging, "error");
 
-      await initWithLoadError({ status: 401, message: "unauthorized" });
-
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
-    it("should not report a connectivity failure as an error", async () => {
-      const errorSpy = vi.spyOn(Logging, "error");
-
-      await initWithLoadError(new Error("Failed to fetch from DB"));
+      await initWithLoadError(err);
 
       expect(errorSpy).not.toHaveBeenCalled();
     });

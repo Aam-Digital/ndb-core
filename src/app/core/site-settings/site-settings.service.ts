@@ -17,7 +17,6 @@ import { EntityConfigReadyService } from "../entity/entity-config-ready.service"
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
-import { isConnectivityError } from "#src/app/core/logging/error-classification";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -139,23 +138,13 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     if (!response.ok) {
       // Pre-login access may be unavailable by design. Keep this best-effort only.
-      if (
-        response.status === 401 ||
-        response.status === 403 ||
-        response.status === 404
-      ) {
-        return;
-      }
-      const failure = { status: response.status };
-      if (isConnectivityError(failure)) {
-        // a gateway error: the server could not be reached (e.g. during a deployment)
-        Logging.debug(
-          "SiteSettingsService: anonymous fetch failed (connectivity)",
-          failure,
+      if (![401, 403, 404].includes(response.status)) {
+        // e.g. a gateway error during a deployment is only logged for debugging
+        Logging.warnUnlessExpected(
+          "SiteSettingsService: anonymous fetch failed",
+          { status: response.status },
         );
-        return;
       }
-      Logging.warn("SiteSettingsService: anonymous fetch failed", failure);
       return;
     }
 

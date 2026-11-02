@@ -391,14 +391,12 @@ export class PouchDatabase extends Database {
           }
         })
         .catch((err) => {
-          if (
-            err.statusCode === HttpStatusCode.Unauthorized ||
-            err.statusCode === HttpStatusCode.GatewayTimeout
-          ) {
-            // expired session or a gateway timeout: transient, retried below
-            Logging.debug("changes feed failed (unauthorized or timeout)", err);
+          if (err?.status === HttpStatusCode.Unauthorized) {
+            // a session that could not be renewed, which the replication
+            // backend answers with a plain 401: retried below
+            Logging.debug("changes feed failed (unauthorized)", err);
           } else {
-            Logging.error(err);
+            Logging.errorUnlessExpected("changes feed failed", err);
           }
 
           // retry

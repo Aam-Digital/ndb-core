@@ -12,6 +12,7 @@ import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { LoggedError } from "./reported-errors";
+import { isExpectedFailure } from "./error-classification";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -121,6 +122,39 @@ export class LoggingService {
    */
   public error(message: any, ...context: any[]) {
     this.log(message, LogLevel.ERROR, ...context);
+  }
+
+  /**
+   * Log a caught error as a warning, or only for debugging if it is an expected
+   * failure of the user's environment (offline, expired session, missing
+   * permission, edit conflict; see `isExpectedFailure`).
+   * @param message static description of what failed
+   * @param err the caught error, reported as the cause of the message
+   * @param context Additional context for debugging
+   */
+  public warnUnlessExpected(
+    message: string,
+    err: unknown,
+    ...context: unknown[]
+  ) {
+    if (isExpectedFailure(err)) {
+      this.debug(message, err, ...context);
+    } else {
+      this.warn(message, err, ...context);
+    }
+  }
+
+  /** Like {@link warnUnlessExpected}, for a failure that is an error unless expected. */
+  public errorUnlessExpected(
+    message: string,
+    err: unknown,
+    ...context: unknown[]
+  ) {
+    if (isExpectedFailure(err)) {
+      this.debug(message, err, ...context);
+    } else {
+      this.error(message, err, ...context);
+    }
   }
 
   /**

@@ -12,10 +12,7 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import {
-  classifyError,
-  isNotPermittedError,
-} from "#src/app/core/logging/error-classification";
+import { classifyError } from "#src/app/core/logging/error-classification";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -173,24 +170,18 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        let cause: LoadErrorCause = "connection";
-        if (isNotPermittedError(err)) {
-          // a permission rule excludes these records for the user, not an app error
-          cause = "notPermitted";
-          Logging.debug(
-            "User is not permitted to load data in datasource",
-            err,
-          );
-        } else {
-          if (classifyError(err) === "session-expired") {
-            cause = "sessionExpired";
-          }
-          Logging.error(
-            "Error loading data in datasource",
-            err,
-            this.loadRecordConfig(),
-          );
-        }
+        Logging.errorUnlessExpected(
+          "Error loading data in datasource",
+          err,
+          this.loadRecordConfig(),
+        );
+        const classification = classifyError(err);
+        const cause: LoadErrorCause =
+          classification === "not-permitted"
+            ? "notPermitted"
+            : classification === "session-expired"
+              ? "sessionExpired"
+              : "connection";
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself

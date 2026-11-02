@@ -325,16 +325,16 @@ export class EditEntityComponent<
     const entity = await this.entityMapperService
       .load<E>(type, selectedId)
       .catch((err: any) => {
-        if (err?.status === 404 || err?.status === 401) {
+        if (err?.status === 404) {
           Logging.debug(
             "[ENTITY_SELECT] Selected entity not found.",
             selectedId,
           );
         } else {
-          Logging.warn(
+          Logging.warnUnlessExpected(
             "[ENTITY_SELECT] Error loading selected entity.",
-            selectedId,
             err,
+            selectedId,
           );
         }
         return undefined;

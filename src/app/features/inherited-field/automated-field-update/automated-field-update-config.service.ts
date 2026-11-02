@@ -533,22 +533,12 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         entityId,
       );
     } catch (error) {
-      const context = { entityType: entityType?.ENTITY_TYPE, entityId };
-      const status = error?.["status"] ?? error?.["statusCode"];
-      if (status === 401 || status === 403) {
-        // the user simply has no read access to the linked entity - expected for some roles
-        Logging.debug(
-          "AutomatedFieldUpdateConfigService: No permission to load linked entity",
-          context,
-          error,
-        );
-      } else {
-        Logging.warn(
-          "AutomatedFieldUpdateConfigService: Failed to load linked entity",
-          context,
-          error,
-        );
-      }
+      // e.g. no read access to the linked entity - expected for some roles
+      Logging.warnUnlessExpected(
+        "AutomatedFieldUpdateConfigService: Failed to load linked entity",
+        error,
+        { entityType: entityType?.ENTITY_TYPE, entityId },
+      );
       return undefined;
     }
   }

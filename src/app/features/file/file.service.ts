@@ -5,7 +5,6 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { catchError, filter, map, shareReplay } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
-import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
 import { waitForChangeTo } from "../../core/session/session-states/session-utils";
@@ -150,16 +149,12 @@ export abstract class FileService {
         ) {
           errorMessage = $localize`:File Download Error Message:You do not have permission to open this file.`;
         } else {
-          if (isConnectivityError(err)) {
-            Logging.debug("Could not download file (connectivity)", err);
-          } else {
-            Logging.warn(
-              "Could not download file",
-              entity?.getId(),
-              property,
-              err,
-            );
-          }
+          Logging.warnUnlessExpected(
+            "Could not download file",
+            err,
+            entity?.getId(),
+            property,
+          );
           errorMessage = $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
         }
 

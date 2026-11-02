@@ -128,6 +128,40 @@ describe("LoggingService", () => {
     },
   );
 
+  it.each([
+    ["offline", new TypeError("Failed to fetch"), "debug"],
+    [
+      "a wrapped missing permission",
+      new NamedError("SomeError", "x", {
+        cause: new HttpErrorResponse({ status: 403 }),
+      }),
+      "debug",
+    ],
+    ["an edit conflict", { status: 409 }, "debug"],
+    [
+      "a 401 for an invalid token",
+      { status: 401, reason: "Token signature is not valid" },
+      "warn",
+    ],
+    ["a server error", new HttpErrorResponse({ status: 500 }), "warn"],
+    ["a bug", new TypeError("x is undefined"), "warn"],
+  ] as const)(
+    "should log a failure that is %s at %s level with warnUnlessExpected",
+    (_, err, level) => {
+      const logging = new LoggingService();
+      vi.spyOn(logging, "debug").mockImplementation(() => undefined);
+      vi.spyOn(logging, "warn").mockImplementation(() => undefined);
+
+      logging.warnUnlessExpected("Could not load X", err, "Child:1");
+
+      expect(logging[level]).toHaveBeenCalledWith(
+        "Could not load X",
+        err,
+        "Child:1",
+      );
+    },
+  );
+
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
   });
