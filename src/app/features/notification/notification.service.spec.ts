@@ -2,17 +2,18 @@ import { TestBed } from "@angular/core/testing";
 import { NotificationService } from "./notification.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { Observable, of, Subject, throwError } from "rxjs";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { DatabaseResolverService } from "app/core/database/database-resolver.service";
 import { FirebaseMessagingServiceWorker } from "./firebase-messaging-service-worker";
-import type firebase from "firebase/compat/app";
+import { FirebaseMessagingService } from "./firebase-messaging.service";
+import type { MessagePayload } from "firebase/messaging";
 import type { Mock } from "vitest";
 import { environment } from "../../../environments/environment";
 import { FirebaseConfiguration } from "./notification-config.interface";
+import { Logging } from "app/core/logging/logging.service";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -20,15 +21,17 @@ class MockKeycloakAuthService {
   }
 }
 
-class MockAngularFireMessaging {
+class MockFirebaseMessagingService {
   getToken: Observable<any> = of("mock-token");
-  messages = new Subject<firebase.messaging.MessagePayload>();
+  messages = new Subject<MessagePayload>();
+  deleteToken = vi.fn(() => of(true));
+  isAvailable = () => true;
 }
 
 describe("NotificationService", () => {
   let service: NotificationService;
   let mockHttpClient: any;
-  let mockFireMessaging: MockAngularFireMessaging;
+  let mockFireMessaging: MockFirebaseMessagingService;
   let notificationPermission: NotificationPermission;
   let mockRegistration: { showNotification: Mock; update: Mock };
   let mockServiceWorker: { register: Mock };
@@ -36,7 +39,7 @@ describe("NotificationService", () => {
   const pushMessage = {
     notification: { title: "Update from Aam Digital", body: "Task assigned" },
     fcmOptions: { link: "https://app.example.com" },
-  } as firebase.messaging.MessagePayload;
+  } as MessagePayload;
 
   function login() {
     TestBed.inject(SessionSubject).next({
@@ -67,7 +70,7 @@ describe("NotificationService", () => {
       register: vi.fn().mockResolvedValue(mockRegistration),
     };
 
-    mockFireMessaging = new MockAngularFireMessaging();
+    mockFireMessaging = new MockFirebaseMessagingService();
     mockHttpClient = {
       get: vi.fn(),
       post: vi.fn(),
@@ -77,14 +80,14 @@ describe("NotificationService", () => {
       providers: [
         NotificationService,
         { provide: KeycloakAuthService, useClass: MockKeycloakAuthService },
-        { provide: AngularFireMessaging, useValue: mockFireMessaging },
+        { provide: FirebaseMessagingService, useValue: mockFireMessaging },
         { provide: HttpClient, useValue: mockHttpClient },
         {
           provide: FirebaseMessagingServiceWorker,
           useValue: mockServiceWorker,
         },
+        { provide: AlertService, useValue: { addInfo: vi.fn() } },
         // only constructed, not used by the functionality under test
-        { provide: AlertService, useValue: {} },
         { provide: EntityMapperService, useValue: {} },
         {
           provide: DatabaseResolverService,
@@ -98,6 +101,7 @@ describe("NotificationService", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
     environment.notificationsConfig = originalFirebaseConfig;
   });
 
@@ -157,6 +161,22 @@ describe("NotificationService", () => {
       expect(mockRegistration.showNotification).toHaveBeenCalled(),
     );
     expect(mockRegistration.showNotification).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a device without token as already unregistered (e.g. after the browser permission was revoked)", async () => {
+    mockFireMessaging.getToken = of(null);
+    const errorSpy = vi.spyOn(Logging, "error");
+
+    service.unregisterDevice();
+
+    await vi.waitFor(() =>
+      expect(TestBed.inject(AlertService).addInfo).toHaveBeenCalledWith(
+        expect.stringContaining("un-registered"),
+      ),
+    );
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(mockFireMessaging.deleteToken).not.toHaveBeenCalled();
+    expect(mockHttpClient.delete).not.toHaveBeenCalled();
   });
 
   it("reflects a notification permission granted after the service was created", () => {
