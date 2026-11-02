@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, vi } from "vitest";
 import type * as Sentry from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { resetReportedEvents } from "./report-once";
