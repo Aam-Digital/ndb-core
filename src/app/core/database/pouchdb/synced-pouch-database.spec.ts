@@ -11,6 +11,7 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
+import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { environment } from "../../../../environments/environment";
@@ -37,7 +38,9 @@ describe("SyncedPouchDatabase", () => {
       addDanger: vi.fn(),
     };
     mockCorruptionRecovery = {
-      handleKnownMultiTabCorruption: vi.fn(),
+      handleKnownMultiTabCorruption: vi.fn((err) =>
+        isKnownMultiTabDatabaseCorruption(err),
+      ),
     };
 
     service = new SyncedPouchDatabase(
@@ -177,6 +180,35 @@ describe("SyncedPouchDatabase", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should report a broken local database during sync as a sync failure, not as a document write error", async () => {
+    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+    const { mockLocalDb } = mockPouchDatabaseService();
+    mockLocalDb.sync.mockReturnValue(
+      mockSyncHandler(
+        Object.assign(
+          new Error(
+            "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
+          ),
+          { name: "InvalidStateError" },
+        ),
+        true,
+      ),
+    );
+
+    await expect(service.sync()).rejects.toBeTruthy();
+
+    expect(Logging.warn).toHaveBeenCalledWith(
+      "sync failed",
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(Logging.warn).not.toHaveBeenCalledWith(
+      expect.stringContaining("document write error"),
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it("should not show fallback popup for known multi-tab IndexedDB sync errors", async () => {

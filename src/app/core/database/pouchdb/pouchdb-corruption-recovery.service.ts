@@ -97,19 +97,21 @@ This can happen after using multiple tabs in parallel.` +
    *   occurrences of the problem in one issue (see `core/logging/README.md`)
    * @param context which database and other varying details, reported as
    *   structured data alongside the message rather than interpolated into it
+   * @returns whether it was a known corruption (and so is reported)
    */
   handleKnownMultiTabCorruption(
     err: unknown,
     logMessage: string,
     context?: Record<string, unknown>,
-  ): void {
+  ): boolean {
     if (!isKnownMultiTabDatabaseCorruption(err)) {
-      return;
+      return false;
     }
     Logging.warn(logMessage, err, ...(context ? [context] : []));
     this.promptResetApplicationDialog().catch((callbackError) =>
       Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
     );
+    return true;
   }
 }
 

@@ -5,7 +5,12 @@ import {
   causeChain,
   ErrorClassification,
 } from "./error-classification";
-import { groupSentryEvent, truncateTag } from "./sentry-grouping";
+import {
+  classifyException,
+  groupSentryEvent,
+  isUnhandled,
+  truncateTag,
+} from "./sentry-grouping";
 import { LoggedError, NamedError } from "./reported-errors";
 import { reportOnce } from "./report-once";
 
@@ -25,7 +30,7 @@ export function processSentryEvent(
 
   const classification = classifySentryEvent(event, hint);
   const policy = classification ? REPORTING_POLICY[classification] : undefined;
-  if (policy?.drop(hint, event)) {
+  if (policy?.drop?.(hint, event)) {
     return null;
   }
   if (classification) {
@@ -47,7 +52,7 @@ const REPORTING_POLICY: Record<
   ErrorClassification,
   {
     /** whether nobody can act on it: not reported at all */
-    drop: (hint: Sentry.EventHint, event: Sentry.ErrorEvent) => boolean;
+    drop?: (hint: Sentry.EventHint, event: Sentry.ErrorEvent) => boolean;
     /** changes to the event after grouping */
     adjust?: (event: Sentry.ErrorEvent) => void;
   }
@@ -70,9 +75,11 @@ const REPORTING_POLICY: Record<
   // counted in usage analytics instead
   "write-conflict": { drop: () => true },
   // one incident per page load (see `report-once.ts`)
-  "local-storage": { drop: () => false },
+  "local-storage": {
+    adjust: (event) => (event.tags = { ...event.tags, incident: "local-db" }),
+  },
   // a fault of our backend, whoever logged it: at the level it was logged with
-  "server-error": { drop: () => false, adjust: reportServerError },
+  "server-error": { adjust: reportServerError },
 };
 
 /**
@@ -90,17 +97,9 @@ function classifySentryEvent(
   }
   return (
     classifyErrorChain(original) ??
-    event.exception?.values
-      ?.map((exception) =>
-        classifyError({ name: exception.type, message: exception.value ?? "" }),
-      )
-      .find(Boolean) ??
+    event.exception?.values?.map(classifyException).find(Boolean) ??
     classifyError(event.message)
   );
-}
-
-function isUnhandled(event: Sentry.ErrorEvent): boolean {
-  return event.exception?.values?.at(-1)?.mechanism?.handled === false;
 }
 
 /** A failure logged with a message by a component, or wrapped in one of our named errors. */
@@ -133,11 +132,10 @@ function reportServerError(event: Sentry.ErrorEvent) {
  * Our own code is always loaded from `.js` files, so nobody here can act on such an error.
  */
 function isUnhandledErrorInPageScript(event: Sentry.ErrorEvent): boolean {
-  const exception = event.exception?.values?.at(-1);
-  if (exception?.mechanism?.handled !== false) {
+  if (!isUnhandled(event)) {
     return false;
   }
-  const frames = exception.stacktrace?.frames ?? [];
+  const frames = event.exception.values.at(-1).stacktrace?.frames ?? [];
   return (
     frames.length > 0 &&
     frames.every(

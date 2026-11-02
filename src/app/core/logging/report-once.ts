@@ -1,7 +1,11 @@
 import * as Sentry from "@sentry/angular";
 import type { ErrorClassification } from "./reported-errors";
 import { causeChain } from "./error-classification";
-import { fingerprintKey, NETWORK_ERROR_FINGERPRINT } from "./sentry-grouping";
+import {
+  fingerprintKey,
+  isUnhandled,
+  NETWORK_ERROR_FINGERPRINT,
+} from "./sentry-grouping";
 
 /**
  * Report each failure once per page load: an event repeating one already reported
@@ -18,8 +22,11 @@ export const MAX_REPEATED_SENTRY_EVENTS = 5;
 /**
  * The connectivity issue only once per page load: when the connection drops,
  * every pending request fails at the same moment.
+ * The same for a broken local database: once the device's IndexedDB is broken
+ * (the `local-storage` classification), every later database access of the page
+ * load fails as well - loading the config, the permission rules, the sync, each view.
  */
-export const MAX_NETWORK_ERROR_EVENTS = 1;
+export const MAX_INCIDENT_EVENTS = 1;
 
 /** Error objects (and their causes) already part of an event of this page load. */
 let reportedErrors = new WeakSet<object>();
@@ -29,7 +36,6 @@ const sentryEventCounts = new Map<string, number>();
 export function resetReportedEvents() {
   reportedErrors = new WeakSet<object>();
   sentryEventCounts.clear();
-  localDbIncidentReported = false;
 }
 
 /**
@@ -44,9 +50,7 @@ export function reportOnce(
   const original = hint?.originalException;
   const suppressedAs =
     (isAlreadyReported(event, original) && "already reported") ||
-    (isFollowUpOfLocalDbIncident(event, classification) &&
-      "follow-up of a local database failure") ||
-    (isExcessiveRepeat(event) && "repeated too often");
+    (isExcessiveRepeat(event, classification) && "repeated too often");
 
   for (const error of causeChain(original)) {
     if (typeof error === "object") {
@@ -85,20 +89,31 @@ function isAlreadyReported(
   if (reportedErrors.has(chain[0])) {
     return true;
   }
-  const unhandled =
-    event.exception?.values?.at(-1)?.mechanism?.handled === false;
-  return unhandled && reportedErrors.has(chain[chain.length - 1]);
+  return isUnhandled(event) && reportedErrors.has(chain[chain.length - 1]);
 }
 
-function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
-  const key = repeatKey(event);
+function isExcessiveRepeat(
+  event: Sentry.ErrorEvent,
+  classification: ErrorClassification | undefined,
+): boolean {
+  const [key, max] = repeatLimit(event, classification);
   const count = (sentryEventCounts.get(key) ?? 0) + 1;
   sentryEventCounts.set(key, count);
-  const max =
-    event.fingerprint?.[0] === NETWORK_ERROR_FINGERPRINT
-      ? MAX_NETWORK_ERROR_EVENTS
-      : MAX_REPEATED_SENTRY_EVENTS;
   return count > max;
+}
+
+/** What counts as a repeat of the event, and how often that is reported. */
+function repeatLimit(
+  event: Sentry.ErrorEvent,
+  classification: ErrorClassification | undefined,
+): [key: string, max: number] {
+  if (classification === "local-storage") {
+    return ["incident:local-db", MAX_INCIDENT_EVENTS];
+  }
+  if (event.fingerprint?.[0] === NETWORK_ERROR_FINGERPRINT) {
+    return ["incident:network", MAX_INCIDENT_EVENTS];
+  }
+  return [repeatKey(event), MAX_REPEATED_SENTRY_EVENTS];
 }
 
 /**
@@ -120,37 +135,4 @@ function repeatKey(event: Sentry.ErrorEvent): string {
 function describe(event: Sentry.ErrorEvent): string {
   const thrown = event.exception?.values?.at(-1);
   return thrown ? `${thrown.type}: ${thrown.value}` : (event.message ?? "");
-}
-
-/**
- * A broken local database is one incident per page load, not one issue per
- * component that runs into it.
- *
- * Once the device's IndexedDB is broken (the `local-storage` classification:
- * `indexed_db_went_bad`, "database connection is closing", "object store was not
- * found", an "Incorrect adapter" - the list is in
- * `error-classification.ts`), every later database access of the page load fails
- * as well: loading the config, the permission rules, the sync, each view.
- * The first such event is reported, tagged `incident: local-db`; the others only
- * as breadcrumbs of later events.
- */
-let localDbIncidentReported = false;
-
-/**
- * Whether the event only follows up on a local database failure already reported
- * in this page load. Tags the event if it is the first one.
- */
-function isFollowUpOfLocalDbIncident(
-  event: Sentry.ErrorEvent,
-  classification: ErrorClassification | undefined,
-): boolean {
-  if (classification !== "local-storage") {
-    return false;
-  }
-  if (localDbIncidentReported) {
-    return true;
-  }
-  localDbIncidentReported = true;
-  event.tags = { ...event.tags, incident: "local-db" };
-  return false;
 }

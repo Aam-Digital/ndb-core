@@ -21,10 +21,8 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
-import {
-  PouchdbCorruptionRecoveryService,
-  isKnownMultiTabDatabaseCorruption,
-} from "./pouchdb-corruption-recovery.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import { classifyError } from "../../logging/error-classification";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
@@ -331,12 +329,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
         { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
         err,
       );
-    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+    } else if (
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
         { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-      );
+      )
+    ) {
+      // reported (with the offer to reset the local data) by the recovery service
     } else if (isReplicationConnectivityError(err)) {
       Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
     } else if (isReplicationUnauthorizedError(err)) {
@@ -375,6 +375,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   private isDocumentWriteError(err: any): boolean {
+    if (classifyError(err)) {
+      // e.g. "Failed to execute 'transaction' on 'IDBDatabase': The database
+      // connection is closing" is a broken local database, not a document
+      return false;
+    }
     const message = err?.message || err?.reason || String(err);
     return (
       message.includes("Maximum call stack size exceeded") ||

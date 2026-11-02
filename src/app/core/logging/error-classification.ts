@@ -195,7 +195,6 @@ type ErrorLike = {
   error?: unknown;
   message?: unknown;
   name?: unknown;
-  originalName?: unknown;
 };
 
 function classifyByStatus(
@@ -242,15 +241,11 @@ function classifyByStatus(
 function classifyByName(
   error: object | string,
 ): ErrorClassification | undefined {
-  const err = error as ErrorLike;
-  // `originalName`: a DatabaseException keeps its own `name` for grouping
-  const names = [err.name, err.originalName];
-  if (names.some((name) => CONNECTIVITY_ERROR_NAMES.includes(name as string))) {
+  const name = (error as ErrorLike).name as string;
+  if (CONNECTIVITY_ERROR_NAMES.includes(name)) {
     return "connectivity";
   }
-  if (
-    names.some((name) => LOCAL_STORAGE_ERROR_NAMES.includes(name as string))
-  ) {
+  if (LOCAL_STORAGE_ERROR_NAMES.includes(name)) {
     return "local-storage";
   }
   return undefined;

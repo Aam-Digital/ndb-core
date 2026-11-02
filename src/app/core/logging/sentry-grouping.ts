@@ -24,16 +24,26 @@ export function groupSentryEvent(
 
   const thrown = values[values.length - 1];
   const original = hint?.originalException;
-  const links = classifyExceptions(values, original);
-  const ours =
+  const chainClassifications = classifyExceptions(values, original);
+  const reportedError =
     original instanceof NamedError || original instanceof LoggedError
       ? thrown
       : rewrappedNamedError(values, original);
 
-  if (ours) {
-    const failedRequest = failedRequestPassedOn(ours, values, links, original);
+  if (reportedError) {
+    const failedRequest = failedRequestPassedOn(
+      reportedError,
+      values,
+      chainClassifications,
+      original,
+    );
     if (!failedRequest) {
-      return groupByRootCause(event, values, links, ours);
+      return groupByRootCause(
+        event,
+        values,
+        chainClassifications,
+        reportedError,
+      );
     }
     if (original instanceof LoggedError) {
       event.tags = {
@@ -77,9 +87,22 @@ function classifyExceptions(
   if (errors.length === values.length && !(errors[0]?.cause instanceof Error)) {
     return errors.map((error) => classifyError(error));
   }
-  return values.map((exception) =>
-    classifyError({ name: exception.type, message: exception.value ?? "" }),
-  );
+  return values.map(classifyException);
+}
+
+/** The classification of an exception as Sentry serialized it, without the error object. */
+export function classifyException(
+  exception: Sentry.Exception,
+): ErrorClassification | undefined {
+  return classifyError({
+    name: exception.type,
+    message: exception.value ?? "",
+  });
+}
+
+/** Whether nothing caught the reported error: it reached Angular's `ErrorHandler` or the window. */
+export function isUnhandled(event: Sentry.ErrorEvent): boolean {
+  return event.exception?.values?.at(-1)?.mechanism?.handled === false;
 }
 
 /**
@@ -88,18 +111,18 @@ function classifyExceptions(
  * with a message (whatever component logged it, it is the same dropped connection).
  */
 function failedRequestPassedOn(
-  ours: Sentry.Exception,
+  reportedError: Sentry.Exception,
   values: Sentry.Exception[],
-  links: (ErrorClassification | undefined)[],
+  chainClassifications: (ErrorClassification | undefined)[],
   original: unknown,
 ): Sentry.Exception | undefined {
-  if (links[values.indexOf(ours)] === "connectivity") {
-    return ours;
+  if (chainClassifications[values.indexOf(reportedError)] === "connectivity") {
+    return reportedError;
   }
   const causeIndex = values.length - 2;
   return original instanceof LoggedError &&
     causeIndex >= 0 &&
-    links[causeIndex] === "connectivity"
+    chainClassifications[causeIndex] === "connectivity"
     ? values[causeIndex]
     : undefined;
 }
@@ -143,40 +166,44 @@ function rewrappedNamedError(
 function groupByRootCause(
   event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
-  links: (ErrorClassification | undefined)[],
-  ours: Sentry.Exception,
+  chainClassifications: (ErrorClassification | undefined)[],
+  reportedError: Sentry.Exception,
 ): Sentry.ErrorEvent {
-  const oursIndex = values.indexOf(ours);
-  const oursKey = [ours.type ?? "", groupingValue(ours, links[oursIndex])];
+  const reportedIndex = values.indexOf(reportedError);
+  const reportedKey = [
+    reportedError.type ?? "",
+    groupingValue(reportedError, chainClassifications[reportedIndex]),
+  ];
   const rootCause = values[0];
-  const rootKey = [rootCause.type ?? "", groupingValue(rootCause, links[0])];
+  const rootClassification = chainClassifications[0];
+  const rootKey = [
+    rootCause.type ?? "",
+    groupingValue(rootCause, rootClassification),
+  ];
   // Sentry titles an event by its thrown error
   const thrown = values[values.length - 1];
 
   // a wrapper repeating its cause's type and message is one failure, not two
-  if (rootCause === ours || rootKey.join() === oursKey.join()) {
-    event.fingerprint = oursKey;
-    thrown.type = ours.type;
-    thrown.value = ours.value;
+  if (rootCause === reportedError || rootKey.join() === reportedKey.join()) {
+    event.fingerprint = reportedKey;
+    thrown.type = reportedError.type;
+    thrown.value = reportedError.value;
     return event;
   }
 
-  if (links[0] === "connectivity") {
-    event.fingerprint = [...oursKey, ...rootKey];
-    thrown.type = ours.type;
-    thrown.value = `${ours.value} (caused by ${rootCause.type ?? "Error"}: ${NETWORK_FAILURE})`;
-    return event;
-  }
-
-  if (!links[0]) {
-    event.fingerprint = [...oursKey, ...rootKey];
-    thrown.type = ours.type;
-    thrown.value = `${ours.value} (caused by ${rootCause.type ?? "Error"}: ${normalizeErrorValue(rootCause.value)})`;
+  if (!rootClassification || rootClassification === "connectivity") {
+    const rootText =
+      rootClassification === "connectivity"
+        ? NETWORK_FAILURE
+        : normalizeErrorValue(rootCause.value);
+    event.fingerprint = [...reportedKey, ...rootKey];
+    thrown.type = reportedError.type;
+    thrown.value = `${reportedError.value} (caused by ${rootCause.type ?? "Error"}: ${rootText})`;
     return event;
   }
 
   event.fingerprint = rootKey;
-  const reportedBy = `${ours.type ?? "Error"}: ${normalizeErrorValue(ours.value)}`;
+  const reportedBy = `${reportedError.type ?? "Error"}: ${normalizeErrorValue(reportedError.value)}`;
   event.tags = { ...event.tags, reported_by: truncateTag(reportedBy) };
   event.extra = { ...event.extra, reported_by: reportedBy };
   thrown.type = rootCause.type;
