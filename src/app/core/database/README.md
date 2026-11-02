@@ -89,7 +89,10 @@ The legacy databases are not deleted yet.
 
 Users whose token has no `username` claim (accounts not linked to a user entity) have the Keycloak UUID as session name,
 so their legacy and new app database names are identical, i.e. both are the same IndexedDB database.
-An existing `idb` database cannot be opened with the `indexeddb` adapter, so for them the migration is skipped and they keep the legacy adapter.
+An existing `idb` database cannot be opened with the `indexeddb` adapter, so the new database cannot be prepared in the background for them.
+Instead, once the old database has synced, they are asked to upgrade; after the same final sync, the old database is deleted on the next start
+(before it is opened) and the new one is downloaded from the server like on a fresh login.
+This is not offered while the app is open in other tabs, whose unsynced changes would be lost.
 
 ## Key files
 

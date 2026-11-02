@@ -11,9 +11,12 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
 import { mockConfirmationDialog } from "../../utils/test-utils/dialog-mocks";
+import { MultiTabDetectionService } from "./multi-tab-detection.service";
 
 // names derived from the test session (name "testuser", id "abc-123-uuid")
 const MIGRATED_FLAG = "DB_MIGRATED_abc-123-uuid";
+const LEGACY_DELETION_PENDING_FLAG = "DB_LEGACY_DELETION_PENDING_abc-123-uuid";
+const NEW_APP_DB_LAST_SYNC = "LAST_SYNC_abc-123-uuid-app";
 const LEGACY_APP_DB = "_pouch_testuser-app";
 const LEGACY_NOTIFICATIONS_DB = "_pouch_notifications_abc-123-uuid";
 const NEW_APP_DB = "_pouch_abc-123-uuid-app";
@@ -43,6 +46,7 @@ describe("IndexeddbMigrationService", () => {
   let mockNavigator: {
     onLine: boolean;
   };
+  let multiTabDetection: { isMultipleTabsOpen: boolean };
 
   const session: SessionInfo = {
     id: "abc-123-uuid",
@@ -101,6 +105,7 @@ describe("IndexeddbMigrationService", () => {
       },
     };
     mockNavigator = { onLine: true };
+    multiTabDetection = { isMultipleTabsOpen: false };
 
     TestBed.configureTestingModule({
       providers: [
@@ -112,6 +117,7 @@ describe("IndexeddbMigrationService", () => {
         { provide: AlertService, useValue: alertServiceSpy },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
+        { provide: MultiTabDetectionService, useValue: multiTabDetection },
       ],
     });
     service = TestBed.inject(IndexeddbMigrationService);
@@ -126,8 +132,13 @@ describe("IndexeddbMigrationService", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     environment.use_indexeddb_adapter = originalUseIndexeddbAdapter;
-    localStorage.removeItem(MIGRATED_FLAG);
+    [MIGRATED_FLAG, LEGACY_DELETION_PENDING_FLAG, NEW_APP_DB_LAST_SYNC].forEach(
+      (key) => localStorage.removeItem(key),
+    );
   });
+
+  /** let pending promise callbacks (dialog, final sync, analytics) run */
+  const flushPromises = () => new Promise((resolve) => setTimeout(resolve));
 
   describe("resolveDbConfig", () => {
     it.each([
@@ -212,41 +223,9 @@ describe("IndexeddbMigrationService", () => {
         });
       },
     );
-
-    it("never opens the legacy database with the other adapter if legacy and new name are identical", async () => {
-      // token without "username" claim: the session name falls back to the id
-      const collidingSession: SessionInfo = { ...session, name: session.id };
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: NEW_APP_DB, version: 5 },
-      ]);
-      const { mockDb, localSyncState, createPouchDbSpy } =
-        mockPouchDbCreation();
-      localSyncState.next(SyncState.COMPLETED);
-
-      const config = await service.resolveDbConfig(collidingSession);
-      service.runBackgroundMigration(collidingSession, mockDb);
-
-      expect(config).toEqual({
-        adapter: "idb",
-        dbNames: {
-          app: NEW_DB_NAMES.app,
-          notifications: LEGACY_DB_NAMES.notifications,
-        },
-      });
-      expect(service.migrationPending).toBe(false);
-      expect(createPouchDbSpy).not.toHaveBeenCalled();
-      expect(localStorage.getItem(MIGRATED_FLAG)).toBeNull();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "idb_migration-skipped-same-db-name",
-        { category: "indexeddb_adapter_migration" },
-      );
-    });
   });
 
   describe("runBackgroundMigration", () => {
-    /** let pending promise callbacks (dialog, final sync, analytics) run */
-    const flushPromises = () => new Promise((resolve) => setTimeout(resolve));
-
     it("should skip migration when migrationPending is false", () => {
       service.migrationPending = false;
       const mockDb = {} as any;
@@ -422,6 +401,116 @@ describe("IndexeddbMigrationService", () => {
       expect(alertServiceSpy.addWarning).toHaveBeenCalledTimes(1);
       expect(errorSpy).not.toHaveBeenCalled();
     });
+  });
+
+  describe("legacy db with the name of the new db (token without username)", () => {
+    // the session name falls back to the id
+    const collidingSession: SessionInfo = { ...session, name: session.id };
+
+    const mockDeleteDatabase = (fails: boolean) =>
+      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
+        const req = {
+          error: new DOMException("deletion failed"),
+        } as IDBOpenDBRequest;
+        setTimeout(() =>
+          fails
+            ? req.onerror?.(new Event("error"))
+            : req.onsuccess?.(new Event("success")),
+        );
+        return req;
+      });
+
+    it.each([
+      { scenario: "app open in a single tab", multipleTabs: false },
+      { scenario: "app open in multiple tabs", multipleTabs: true },
+    ])(
+      "never opens the db in use with the other adapter, but marks it for deletion after a final sync: $scenario",
+      async ({ multipleTabs }) => {
+        multiTabDetection.isMultipleTabsOpen = multipleTabs;
+        mockWindow.indexedDB.databases.mockResolvedValue([
+          { name: NEW_APP_DB, version: 5 },
+        ]);
+        confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
+        const { mockDb, localSyncState, createPouchDbSpy } =
+          mockPouchDbCreation();
+        const ensureSynced = vi
+          .spyOn(mockDb, "ensureSynced")
+          .mockResolvedValue(undefined);
+
+        const config = await service.resolveDbConfig(collidingSession);
+        service.runBackgroundMigration(collidingSession, mockDb);
+        await flushPromises();
+        // offered only after a completed sync of the old db
+        expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
+        localSyncState.next(SyncState.COMPLETED);
+        await flushPromises();
+
+        expect(config).toEqual({
+          adapter: "idb",
+          dbNames: {
+            app: NEW_DB_NAMES.app,
+            notifications: LEGACY_DB_NAMES.notifications,
+          },
+        });
+        expect(createPouchDbSpy).not.toHaveBeenCalled();
+        expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalled();
+        // unsynced changes of another tab would be lost with the deleted db
+        expect(ensureSynced).toHaveBeenCalledTimes(multipleTabs ? 0 : 1);
+        expect(localStorage.getItem(LEGACY_DELETION_PENDING_FLAG)).toBe(
+          multipleTabs ? null : "true",
+        );
+        expect(localStorage.getItem(MIGRATED_FLAG)).toBeNull();
+        expect(mockWindow.location.reload).toHaveBeenCalledTimes(
+          multipleTabs ? 0 : 1,
+        );
+      },
+    );
+
+    it.each([
+      {
+        scenario: "deletion succeeds",
+        deletionFails: false,
+        adapter: "indexeddb",
+        dbNames: NEW_DB_NAMES,
+      },
+      {
+        // e.g. a broken IndexedDB on the device: retried on next start
+        scenario: "deletion fails",
+        deletionFails: true,
+        adapter: "idb",
+        dbNames: {
+          app: NEW_DB_NAMES.app,
+          notifications: LEGACY_DB_NAMES.notifications,
+        },
+      },
+    ])(
+      "deletes the marked legacy db on the next start before it is opened: $scenario",
+      async ({ deletionFails, adapter, dbNames }) => {
+        localStorage.setItem(LEGACY_DELETION_PENDING_FLAG, "true");
+        localStorage.setItem(NEW_APP_DB_LAST_SYNC, "2026-11-01T10:00:00Z");
+        mockDeleteDatabase(deletionFails);
+        mockWindow.indexedDB.databases.mockImplementation(async () =>
+          mockWindow.indexedDB.deleteDatabase.mock.calls.length > 0 &&
+          !deletionFails
+            ? []
+            : [{ name: NEW_APP_DB, version: 5 }],
+        );
+
+        const config = await service.resolveDbConfig(collidingSession);
+
+        expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
+          NEW_APP_DB,
+        );
+        expect(config).toEqual({ adapter, dbNames });
+        expect(localStorage.getItem(LEGACY_DELETION_PENDING_FLAG)).toBe(
+          deletionFails ? "true" : null,
+        );
+        // the download into the recreated db is no lost local database
+        expect(localStorage.getItem(NEW_APP_DB_LAST_SYNC)).toBe(
+          deletionFails ? "2026-11-01T10:00:00Z" : null,
+        );
+      },
+    );
   });
 
   describe("cleanupLegacyDatabases", () => {
