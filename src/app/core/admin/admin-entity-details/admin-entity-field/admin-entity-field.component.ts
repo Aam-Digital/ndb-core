@@ -3,9 +3,7 @@ import {
   computed,
   DestroyRef,
   inject,
-  Injector,
   OnInit,
-  Signal,
   signal,
   viewChild,
   WritableSignal,
@@ -55,14 +53,8 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  pairwise,
-  startWith,
-} from "rxjs/operators";
-import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -143,7 +135,6 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly injector = inject(Injector);
   private readonly entityConfigService = inject(EntityConfigService);
   private readonly labelValue = signal<TranslatableText | undefined>(undefined);
 
@@ -291,7 +282,6 @@ export class AdminEntityFieldComponent implements OnInit {
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
       displayCondition: [this.data.entitySchemaField.displayCondition],
-      selectionCondition: [this.data.entitySchemaField.selectionCondition],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
@@ -345,29 +335,24 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /**
    * The record type this field references, if a `selectionCondition` can be applied to the field
-   * (and the admin can therefore configure one).
+   * (and the admin can therefore configure one in the Validation tab).
    */
-  selectionConditionTargetType: Signal<EntityConstructor | undefined>;
+  readonly selectionConditionTargetType = signal<EntityConstructor | undefined>(
+    undefined,
+  );
 
   private initSelectionConditionTarget() {
-    const targetType$ = merge(
+    merge(
       this.additionalForm.valueChanges,
       this.schemaFieldsForm.get("dataType").valueChanges,
-    ).pipe(
-      startWith(null),
-      map(() => this.getSelectionConditionTargetType()),
-      distinctUntilChanged(),
-    );
-    this.selectionConditionTargetType = toSignal(targetType$, {
-      injector: this.injector,
-    });
-
-    // a condition refers to fields of the previous target and would otherwise stay (invisible) in the config
-    targetType$
-      .pipe(pairwise(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() =>
-        this.schemaFieldsForm.get("selectionCondition").setValue(null),
-      );
+    )
+      .pipe(
+        startWith(null),
+        map(() => this.getSelectionConditionTargetType()),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((type) => this.selectionConditionTargetType.set(type));
   }
 
   private updateSchemaFieldFromForm(formValues) {
@@ -630,18 +615,25 @@ export class AdminEntityFieldComponent implements OnInit {
       typeof previous === "object" && !Array.isArray(previous)
         ? previous
         : undefined;
-    const { selectionCondition, ...participant } = base?.participant ?? {};
+    const { validators, ...participant } = base?.participant ?? {};
+    const { selectionCondition, ...otherValidators } = validators ?? {};
     const sameTypes =
       JSON.stringify(asArray(participant.additional ?? [])) ===
       JSON.stringify(types);
+    const keptValidators = {
+      ...otherValidators,
+      // a selection filter refers to fields of the previous participant types
+      ...(sameTypes && selectionCondition ? { selectionCondition } : {}),
+    };
     return {
       ...base,
       participant: {
         ...participant,
         dataType: "entity",
         additional: types,
-        // a selection filter refers to fields of the previous participant types
-        ...(sameTypes && selectionCondition ? { selectionCondition } : {}),
+        ...(Object.keys(keptValidators).length > 0
+          ? { validators: keptValidators }
+          : {}),
       },
     };
   }

@@ -183,7 +183,9 @@ describe("EditAttendanceComponent", () => {
         participant: {
           dataType: "entity",
           additional: "TestEntity",
-          selectionCondition: { other: { $in: ["$current_record.other"] } },
+          validators: {
+            selectionCondition: { other: { $in: ["$current_record.other"] } },
+          },
         },
       },
     });

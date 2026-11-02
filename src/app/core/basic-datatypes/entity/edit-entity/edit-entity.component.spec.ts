@@ -422,7 +422,7 @@ describe("EditEntityComponent", () => {
       fixture.componentRef.setInput("formFieldConfig", {
         id: "testProperty",
         additional: entityType,
-        selectionCondition,
+        validators: { selectionCondition },
       });
       fixture.detectChanges();
     }

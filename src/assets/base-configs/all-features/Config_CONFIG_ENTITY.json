@@ -1263,11 +1263,13 @@
           "isArray": true,
           "additional": "Child",
           "description": "Filtered to show only participants from the same center",
-          "selectionCondition": {
-            "center": {
-              "$in": [
-                "$current_record.center"
-              ]
+          "validators": {
+            "selectionCondition": {
+              "center": {
+                "$in": [
+                  "$current_record.center"
+                ]
+              }
             }
           }
         },

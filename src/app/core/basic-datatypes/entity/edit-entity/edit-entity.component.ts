@@ -214,7 +214,7 @@ export class EditEntityComponent<
    * Only followed while the field has such a condition.
    */
   private readonly currentRecord = currentRecordSignal(
-    () => !!this.formFieldConfig()?.selectionCondition,
+    () => !!this.formFieldConfig()?.validators?.selectionCondition,
   );
 
   /**
@@ -224,7 +224,8 @@ export class EditEntityComponent<
   private readonly selectionFilter: Signal<DataFilter<E> | undefined> =
     computed(
       () => {
-        const condition = this.formFieldConfig()?.selectionCondition;
+        const condition =
+          this.formFieldConfig()?.validators?.selectionCondition;
         // a condition cannot be applied to records of different types with different fields
         if (
           !condition ||

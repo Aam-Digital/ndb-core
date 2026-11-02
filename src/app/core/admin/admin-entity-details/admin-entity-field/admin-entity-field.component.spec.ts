@@ -28,6 +28,7 @@ import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { MatButtonHarness } from "@angular/material/button/testing";
+import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { By } from "@angular/platform-browser";
 import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { EntityConfigService } from "../../../entity/entity-config.service";
@@ -417,7 +418,7 @@ describe("AdminEntityFieldComponent", () => {
       participant: {
         dataType: "entity",
         additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-        selectionCondition: { other: { $in: ["X"] } },
+        validators: { selectionCondition: { other: { $in: ["X"] } } },
       },
       remarks: { label: "Comments" },
     };
@@ -480,7 +481,10 @@ describe("AdminEntityFieldComponent", () => {
         participant: {
           dataType: "entity",
           additional: [TestEntity.ENTITY_TYPE],
-          selectionCondition: { other: { $in: ["X"] } },
+          validators: {
+            required: true,
+            selectionCondition: { other: { $in: ["X"] } },
+          },
           label: "Child",
         },
         remarks: { label: "Comments" },
@@ -496,6 +500,7 @@ describe("AdminEntityFieldComponent", () => {
       participant: {
         dataType: "entity",
         additional: [Note.ENTITY_TYPE],
+        validators: { required: true },
         label: "Child",
       },
       remarks: { label: "Comments" },
@@ -690,10 +695,18 @@ describe("AdminEntityFieldComponent", () => {
   });
 
   describe("selection filter", () => {
-    const findSelectionFilterButton = () =>
-      loader.getHarnessOrNull(
+    /** the filter is configured in the Validation tab, whose content is only displayed while it is open */
+    async function openValidationTab() {
+      const tabs = await loader.getHarness(MatTabGroupHarness);
+      await tabs.selectTab({ label: "Validation" });
+    }
+
+    async function findSelectionFilterButton() {
+      await openValidationTab();
+      return loader.getHarnessOrNull(
         MatButtonHarness.with({ text: /Selection Filter/ }),
       );
+    }
 
     const entityRef: EntitySchemaField = {
       dataType: EntityDatatype.dataType,
@@ -758,17 +771,14 @@ describe("AdminEntityFieldComponent", () => {
           label: "ref",
           dataType: EntityDatatype.dataType,
           additional,
-          selectionCondition: condition,
+          validators: { selectionCondition: condition },
         } as EntitySchemaField);
         await new Promise((resolve) => setTimeout(resolve));
         await fixture.whenStable();
 
-        expect(
-          component.schemaFieldsForm.get("selectionCondition").value,
-        ).toEqual(condition);
-        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
-          condition,
-        );
+        expect(dialogData.entitySchemaField.validators).toEqual({
+          selectionCondition: condition,
+        });
       },
     );
 
@@ -780,7 +790,7 @@ describe("AdminEntityFieldComponent", () => {
           label: "ref",
           dataType: EntityDatatype.dataType,
           additional: TestEntity.ENTITY_TYPE,
-          selectionCondition: condition,
+          validators: { required: true, selectionCondition: condition },
         } as EntitySchemaField);
       });
 
@@ -809,15 +819,17 @@ describe("AdminEntityFieldComponent", () => {
               .get("dataType")
               .setValue(StringDatatype.dataType),
         ],
-      ])("clears the condition when switching %s", async (_, change) => {
-        change(component);
-        await settle();
+      ])(
+        "clears the condition, but not the other validators, when switching %s",
+        async (_, change) => {
+          change(component);
+          await settle();
 
-        expect(
-          component.schemaFieldsForm.get("selectionCondition").value,
-        ).toBeNull();
-        expect(dialogData.entitySchemaField.selectionCondition).toBeUndefined();
-      });
+          expect(dialogData.entitySchemaField.validators).toEqual({
+            required: true,
+          });
+        },
+      );
 
       it("keeps the condition when only switching between single and multi mode of the same record type", async () => {
         await component.onEntityAdditionalSelectionModeChange({
@@ -829,9 +841,10 @@ describe("AdminEntityFieldComponent", () => {
         expect(component.additionalForm.value).toEqual([
           TestEntity.ENTITY_TYPE,
         ]);
-        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
-          condition,
-        );
+        expect(dialogData.entitySchemaField.validators).toEqual({
+          required: true,
+          selectionCondition: condition,
+        });
       });
     });
 
@@ -844,6 +857,7 @@ describe("AdminEntityFieldComponent", () => {
         } as EntitySchemaField,
         Note,
       );
+      await openValidationTab();
       const button = fixture.debugElement
         .queryAll(By.directive(AdminDisplayConditionButtonComponent))
         .map(
@@ -857,9 +871,9 @@ describe("AdminEntityFieldComponent", () => {
       const condition = { other: { $in: ["$current_record.other"] } };
       button.conditionChange.emit(condition);
 
-      expect(dialogData.entitySchemaField.selectionCondition).toEqual(
-        condition,
-      );
+      expect(dialogData.entitySchemaField.validators).toEqual({
+        selectionCondition: condition,
+      });
     });
   });
   describe("multi-lingual config", () => {

@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   computed,
+  untracked,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
@@ -35,6 +36,7 @@ import {
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
+import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 /** an option of the date ranges a date range field can be checked against */
 interface ParentRangeOption {
@@ -55,6 +57,7 @@ interface ParentRangeOption {
     EditDateComponent,
     EditMonthComponent,
     MatSelectModule,
+    AdminDisplayConditionButtonComponent,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
@@ -80,6 +83,15 @@ export class ConfigureEntityFieldValidatorComponent {
   private readonly fieldDataType = computed(
     () => this.dataType() ?? this.entitySchemaField()?.dataType,
   );
+
+  /**
+   * the record type a link field links to, if it is exactly one (as needed for a `selectionCondition`);
+   * it can change while editing the field
+   */
+  linkedEntityType = input<EntityConstructor>();
+
+  /** the linked record type the `selectionCondition` refers to (`null` until the input is first read) */
+  private conditionLinkedType: EntityConstructor | undefined | null = null;
 
   /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
@@ -167,6 +179,7 @@ export class ConfigureEntityFieldValidatorComponent {
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
       withinParent: [v?.withinParent ?? null],
+      selectionCondition: [v?.selectionCondition ?? null],
     });
   });
 
@@ -205,6 +218,22 @@ export class ConfigureEntityFieldValidatorComponent {
       ) {
         withinParent.setValue(null);
       }
+    });
+
+    effect(() => {
+      const linkedType = this.linkedEntityType();
+      const selectionCondition = this.validatorForm().get("selectionCondition");
+      untracked(() => {
+        // a condition refers to fields of the linked record type, so it would stay (invisible) in the config
+        if (
+          this.conditionLinkedType !== null &&
+          linkedType !== this.conditionLinkedType &&
+          selectionCondition.value
+        ) {
+          selectionCondition.setValue(null);
+        }
+        this.conditionLinkedType = linkedType;
+      });
     });
 
     effect((onCleanup) => {

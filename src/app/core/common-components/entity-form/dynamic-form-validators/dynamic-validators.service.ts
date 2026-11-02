@@ -134,6 +134,9 @@ export class DynamicValidatorsService {
               ),
             }
           : null;
+      case "selectionCondition":
+        // applied by the entity dropdown, which offers only the matching records
+        return null;
       default:
         // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
         Logging.debug("Trying to generate a validator that does not exist", {
