@@ -35,6 +35,7 @@ describe("DatabaseResolverService", () => {
   const testDbConfig: DbConfig = {
     dbNames: { app: "test-uuid-app", notifications: "test-uuid-notifications" },
     adapter: "indexeddb",
+    migrationPending: false,
   };
 
   beforeEach(() => {
@@ -43,9 +44,9 @@ describe("DatabaseResolverService", () => {
       resolveDbConfig: vi
         .fn()
         .mockName("IndexeddbMigrationService.resolveDbConfig"),
-      runBackgroundMigration: vi
+      startMigrationIfPending: vi
         .fn()
-        .mockName("IndexeddbMigrationService.runBackgroundMigration"),
+        .mockName("IndexeddbMigrationService.startMigrationIfPending"),
     };
     migrationServiceSpy.resolveDbConfig.mockResolvedValue(testDbConfig);
 
@@ -159,6 +160,7 @@ describe("DatabaseResolverService", () => {
         notifications: "notifications_test-uuid",
       },
       adapter: "idb",
+      migrationPending: true,
     });
 
     const defaultDb = service.getDatabase();

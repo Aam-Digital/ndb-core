@@ -273,7 +273,7 @@ export class DatabaseResolverService {
 
     db.init(this.dbConfig.dbNames.app);
 
-    this.migrationService.runBackgroundMigration(user, db);
+    this.migrationService.startMigrationIfPending(user, db, this.dbConfig);
   }
 
   /**

@@ -1,6 +1,9 @@
 import type { Mock } from "vitest";
 import { TestBed } from "@angular/core/testing";
-import { IndexeddbMigrationService } from "./indexeddb-migration.service";
+import {
+  DbConfig,
+  IndexeddbMigrationService,
+} from "./indexeddb-migration.service";
 import { SessionInfo } from "../session/auth/session-info";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
@@ -16,11 +19,16 @@ import { MultiTabDetectionService } from "./multi-tab-detection.service";
 // names derived from the test session (name "testuser", id "abc-123-uuid")
 const MIGRATED_FLAG = "DB_MIGRATED_abc-123-uuid";
 const LEGACY_APP_DB = "_pouch_testuser-app";
-const LEGACY_NOTIFICATIONS_DB = "_pouch_notifications_abc-123-uuid";
 const NEW_APP_DB = "_pouch_abc-123-uuid-app";
 const LEGACY_DB_NAMES = {
   app: "testuser-app",
   notifications: "notifications_abc-123-uuid",
+};
+/** the config of a session on the legacy db, with the migration pending */
+const PENDING_CONFIG: DbConfig = {
+  adapter: "idb",
+  dbNames: LEGACY_DB_NAMES,
+  migrationPending: true,
 };
 const NEW_DB_NAMES = {
   app: "abc-123-uuid-app",
@@ -38,7 +46,6 @@ describe("IndexeddbMigrationService", () => {
     };
     indexedDB: {
       databases: Mock;
-      deleteDatabase: Mock;
     };
   };
   let mockNavigator: {
@@ -99,7 +106,6 @@ describe("IndexeddbMigrationService", () => {
       location: { reload: vi.fn() },
       indexedDB: {
         databases: vi.fn().mockResolvedValue([]),
-        deleteDatabase: vi.fn(),
       },
     };
     mockNavigator = { onLine: true };
@@ -211,8 +217,11 @@ describe("IndexeddbMigrationService", () => {
 
         const config = await service.resolveDbConfig(session);
 
-        expect(config).toEqual({ adapter: c.adapter, dbNames: c.dbNames });
-        expect(service.migrationPending).toBe(c.migrationPending);
+        expect(config).toEqual({
+          adapter: c.adapter,
+          dbNames: c.dbNames,
+          migrationPending: c.migrationPending,
+        });
         expect(localStorage.getItem(MIGRATED_FLAG)).toBe(c.migratedAfter);
         expect(eventTrackSpy).toHaveBeenCalledWith(c.trackedEvent, {
           category: "indexeddb_adapter_migration",
@@ -221,21 +230,22 @@ describe("IndexeddbMigrationService", () => {
     );
   });
 
-  describe("runBackgroundMigration", () => {
-    it("should skip migration when migrationPending is false", () => {
-      service.migrationPending = false;
-      const mockDb = {} as any;
+  describe("startMigrationIfPending", () => {
+    it("should skip migration when it is not pending", () => {
+      const { mockDb } = createSyncedDbMock();
 
-      service.runBackgroundMigration(session, mockDb);
+      service.startMigrationIfPending(session, mockDb, {
+        ...PENDING_CONFIG,
+        migrationPending: false,
+      });
 
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
     });
 
     it("should skip migration when offline", () => {
-      service.migrationPending = true;
       mockNavigator.onLine = false;
       const { mockDb } = createSyncedDbMock();
-      service.runBackgroundMigration(session, mockDb);
+      service.startMigrationIfPending(session, mockDb, PENDING_CONFIG);
 
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
       // no connection to the server is opened (and left open)
@@ -243,7 +253,6 @@ describe("IndexeddbMigrationService", () => {
     });
 
     it("offers to switch only after both the replication into the new db and the sync of the old db completed", async () => {
-      service.migrationPending = true;
       const {
         mockDb,
         localSyncState,
@@ -252,7 +261,7 @@ describe("IndexeddbMigrationService", () => {
         createPouchDbSpy,
       } = mockPouchDbCreation();
 
-      service.runBackgroundMigration(session, mockDb);
+      service.startMigrationIfPending(session, mockDb, PENDING_CONFIG);
       await flushPromises();
       expect(createPouchDbSpy).toHaveBeenCalledWith(NEW_DB_NAMES.app);
       // a connection of its own, so that the old db's sync does not purge what it reports as not permitted
@@ -290,7 +299,6 @@ describe("IndexeddbMigrationService", () => {
     ])(
       "switches to the new db only once all local changes of the old db are synced: $scenario",
       async ({ confirmed, finalSyncFails, switched }) => {
-        service.migrationPending = true;
         confirmationDialogSpy.getConfirmation.mockResolvedValue(confirmed);
         const { mockDb, localSyncState } = mockPouchDbCreation();
         localSyncState.next(SyncState.COMPLETED);
@@ -313,7 +321,7 @@ describe("IndexeddbMigrationService", () => {
             }
           });
 
-        service.runBackgroundMigration(session, mockDb);
+        service.startMigrationIfPending(session, mockDb, PENDING_CONFIG);
         await flushPromises();
 
         expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
@@ -357,7 +365,6 @@ describe("IndexeddbMigrationService", () => {
     ])(
       "keeps the old db if the replication into the new db fails: $scenario",
       async ({ error, reported }) => {
-        service.migrationPending = true;
         const { mockDb, localSyncState, remoteSource, mockNewDb } =
           mockPouchDbCreation();
         mockNewDb.replicate.from.mockRejectedValue(error);
@@ -365,7 +372,7 @@ describe("IndexeddbMigrationService", () => {
           .spyOn(Logging, "warn")
           .mockImplementation(() => undefined);
 
-        service.runBackgroundMigration(session, mockDb);
+        service.startMigrationIfPending(session, mockDb, PENDING_CONFIG);
         localSyncState.next(SyncState.COMPLETED);
         await flushPromises();
 
@@ -381,7 +388,6 @@ describe("IndexeddbMigrationService", () => {
     );
 
     it("warns the user about a failed final sync even if usage analytics fails", async () => {
-      service.migrationPending = true;
       confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
       const { mockDb, localSyncState } = mockPouchDbCreation();
       localSyncState.next(SyncState.COMPLETED);
@@ -391,7 +397,7 @@ describe("IndexeddbMigrationService", () => {
       });
       const errorSpy = vi.spyOn(Logging, "error");
 
-      service.runBackgroundMigration(session, mockDb);
+      service.startMigrationIfPending(session, mockDb, PENDING_CONFIG);
       await flushPromises();
 
       expect(alertServiceSpy.addWarning).toHaveBeenCalledTimes(1);
@@ -427,7 +433,7 @@ describe("IndexeddbMigrationService", () => {
         });
 
       const config = await service.resolveDbConfig(collidingSession);
-      service.runBackgroundMigration(collidingSession, mocks.mockDb);
+      service.startMigrationIfPending(collidingSession, mocks.mockDb, config);
       return { ...mocks, config, calls, ensureSynced, destroy };
     };
 
@@ -444,6 +450,7 @@ describe("IndexeddbMigrationService", () => {
       expect(config).toEqual({
         adapter: "idb",
         dbNames: COLLIDING_LEGACY_DB_NAMES,
+        migrationPending: true,
       });
       expect(createPouchDbSpy).not.toHaveBeenCalled();
       expect(calls).toEqual(["final sync", "delete"]);
@@ -514,103 +521,12 @@ describe("IndexeddbMigrationService", () => {
 
       const config = await service.resolveDbConfig(collidingSession);
 
-      expect(config).toEqual({ adapter: "indexeddb", dbNames: NEW_DB_NAMES });
-      expect(service.migrationPending).toBe(false);
+      expect(config).toEqual({
+        adapter: "indexeddb",
+        dbNames: NEW_DB_NAMES,
+        migrationPending: false,
+      });
       expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
-    });
-  });
-
-  describe("cleanupLegacyDatabases", () => {
-    it("should skip cleanup when not migrated", async () => {
-      localStorage.removeItem(MIGRATED_FLAG);
-
-      await service.cleanupLegacyDatabases(session);
-
-      expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalled();
-    });
-
-    it("should delete legacy databases when migrated", async () => {
-      localStorage.setItem(MIGRATED_FLAG, "true");
-      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
-        const req = {
-          onsuccess: null as any,
-          onerror: null as any,
-        } as IDBOpenDBRequest;
-        setTimeout(() => req.onsuccess?.(new Event("success")));
-        return req;
-      });
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: LEGACY_APP_DB, version: 1 },
-        { name: "_pouch_testuser-app_mrview123", version: 1 },
-        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
-        { name: NEW_APP_DB, version: 1 },
-        { name: "_pouch_abc-123-uuid-notifications", version: 1 },
-      ]);
-
-      await service.cleanupLegacyDatabases(session);
-
-      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
-        LEGACY_APP_DB,
-      );
-      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
-        "_pouch_testuser-app_mrview123",
-      );
-      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
-        LEGACY_NOTIFICATIONS_DB,
-      );
-      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledTimes(3);
-
-      expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalledWith(
-        NEW_APP_DB,
-      );
-    });
-
-    it("should continue if one database deletion fails", async () => {
-      localStorage.setItem(MIGRATED_FLAG, "true");
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: LEGACY_APP_DB, version: 1 },
-        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
-      ]);
-      let callCount = 0;
-      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
-        callCount++;
-        const req = {
-          onsuccess: null as any,
-          onerror: null as any,
-          error: new DOMException("deletion failed"),
-        } as IDBOpenDBRequest;
-        if (callCount === 1) {
-          setTimeout(() => req.onerror?.(new Event("error")));
-        } else {
-          setTimeout(() => req.onsuccess?.(new Event("success")));
-        }
-        return req;
-      });
-
-      await expect(
-        service.cleanupLegacyDatabases(session),
-      ).resolves.not.toThrow();
-      expect(callCount).toBe(2);
-    });
-
-    it("keeps the app database in use if its legacy name is identical to the new one", async () => {
-      const collidingSession: SessionInfo = { ...session, name: session.id };
-      localStorage.setItem(MIGRATED_FLAG, "true");
-      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
-        const req = { onsuccess: null as any } as IDBOpenDBRequest;
-        setTimeout(() => req.onsuccess?.(new Event("success")));
-        return req;
-      });
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: NEW_APP_DB, version: 1 },
-        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
-      ]);
-
-      await service.cleanupLegacyDatabases(collidingSession);
-
-      expect(
-        mockWindow.indexedDB.deleteDatabase,
-      ).toHaveBeenCalledExactlyOnceWith(LEGACY_NOTIFICATIONS_DB);
     });
   });
 });
