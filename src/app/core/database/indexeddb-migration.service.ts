@@ -409,11 +409,14 @@ export class IndexeddbMigrationService {
             `IndexeddbMigration: deleted legacy ${key} database "${dbInfo.name}"`,
           );
         } catch (e) {
-          Logging.warn("IndexeddbMigration: failed to delete legacy database", {
-            key,
-            database: dbInfo.name,
-            error: e,
-          });
+          Logging.warn(
+            "IndexeddbMigration: failed to delete legacy database",
+            e,
+            {
+              key,
+              database: dbInfo.name,
+            },
+          );
         }
       }
     }

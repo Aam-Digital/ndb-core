@@ -260,10 +260,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
             ),
           );
         } catch (e) {
-          Logging.warn("SiteSettingsService: invalid color value", {
+          Logging.warn("SiteSettingsService: invalid color value", e, {
             property,
             color,
-            error: e,
           });
         }
       }

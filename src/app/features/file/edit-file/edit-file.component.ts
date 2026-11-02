@@ -172,10 +172,7 @@ export class EditFileComponent
     } else {
       // a failed sync before the upload is already logged by the sync itself
       if (!(err instanceof SyncFailedError)) {
-        Logging.error("Failed to update file", {
-          status: err?.status,
-          message: err?.message,
-        });
+        Logging.error("Failed to update file", err);
       }
       errorMessage = $localize`:File Upload Error Message:Failed to update file attachment. Please try again.`;
     }
