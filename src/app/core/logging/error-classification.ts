@@ -280,40 +280,9 @@ function classifyByMessage(
   );
   if (
     !isProgrammingError &&
-    (LOCAL_STORAGE_ERROR_PATTERNS.some((pattern) => text.includes(pattern)) ||
-      isKnownMultiTabDatabaseCorruption(error))
+    LOCAL_STORAGE_ERROR_PATTERNS.some((pattern) => text.includes(pattern))
   ) {
     return "local-storage";
   }
   return undefined;
-}
-
-/**
- * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
- * is used in multiple tabs with concurrent writes (a kind of `local-storage` failure).
- *
- * We intentionally match on `transaction was aborted` because this is the
- * reliable signal present on the actual error object propagated to app code
- * after IndexedDB global-failure cases. The `unknown_error` label is too
- * generic and may appear for unrelated failures.
- */
-export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
-  const text = errorToText(error).toLowerCase();
-  return (
-    text.includes("transaction was aborted") ||
-    text.includes("database has a global failure") ||
-    (text.includes("constrainterror") && text.includes("seq"))
-  );
-}
-
-function errorToText(error: unknown): string {
-  if (typeof error === "string") return error;
-  const prefix =
-    error instanceof Error ? `${error.name} ${error.message} ` : "";
-  try {
-    return prefix + JSON.stringify(error ?? "");
-  } catch {
-    // e.g. a circular structure: classified without its extra properties
-    return prefix;
-  }
 }

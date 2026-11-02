@@ -207,14 +207,14 @@ once, where the error enters the app, by type and HTTP status (`error-classifica
 The helpers `isConnectivityError()`, `isExpiredSessionError()` and `isNotPermittedError()` in
 `src/app/utils/` are thin wrappers around `classifyError()`.
 
-| Classification    | What it is                                                                                                                                | Reported                                                                  |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `connectivity`    | no response, status 0, 502-504, timeout/abort, failed chunk load                                                                          | shared `network-error` issue, warning, 1 per page load; not while offline |
-| `session-expired` | 401 with an expired token the app could not renew                                                                                         | no                                                                        |
-| `not-permitted`   | 403, or 401 "User is not permitted"                                                                                                       | as a warning if a component logged it with a message, or if unhandled     |
-| `write-conflict`  | 409 / "Document update conflict"                                                                                                          | no                                                                        |
-| `local-storage`   | the device's IndexedDB is broken (`indexed_db_went_bad`, connection closing, object store not found, wrong adapter, multi-tab corruption) | first event of the page load, tagged `incident: local-db`                 |
-| `server-error`    | our backend answered with another 5xx                                                                                                     | at the logged level, with the status in the title and `http_status` tag   |
+| Classification    | What it is                                                                                                          | Reported                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `connectivity`    | no response, status 0, 502-504, timeout/abort, failed chunk load                                                    | shared `network-error` issue, warning, 1 per page load; not while offline |
+| `session-expired` | 401 with an expired token the app could not renew                                                                   | no                                                                        |
+| `not-permitted`   | 403, or 401 "User is not permitted"                                                                                 | as a warning if a component logged it with a message, or if unhandled     |
+| `write-conflict`  | 409 / "Document update conflict"                                                                                    | no                                                                        |
+| `local-storage`   | the device's IndexedDB is broken (`indexed_db_went_bad`, connection closing, object store not found, wrong adapter) | first event of the page load, tagged `incident: local-db`                 |
+| `server-error`    | our backend answered with another 5xx                                                                               | at the logged level, with the status in the title and `http_status` tag   |
 
 The table is `REPORTING_POLICY` in `sentry-event-processing.ts`. Every classified event carries the
 `error_class` tag.

@@ -128,7 +128,7 @@ function describe(event: Sentry.ErrorEvent): string {
  *
  * Once the device's IndexedDB is broken (the `local-storage` classification:
  * `indexed_db_went_bad`, "database connection is closing", "object store was not
- * found", an "Incorrect adapter", multi-tab corruption - the list is in
+ * found", an "Incorrect adapter" - the list is in
  * `error-classification.ts`), every later database access of the page load fails
  * as well: loading the config, the permission rules, the sync, each view.
  * The first such event is reported, tagged `incident: local-db`; the others only

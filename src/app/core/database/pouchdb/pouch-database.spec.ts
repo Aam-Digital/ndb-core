@@ -617,7 +617,8 @@ describe("DatabaseException", () => {
         message: "Database encountered an unknown error",
         reason: "transaction was aborted",
       },
-      "local-storage",
+      // recognised and reported by the PouchdbCorruptionRecoveryService instead
+      undefined,
     ],
     ["a missing document", { status: 404, message: "missing" }, undefined],
   ])("records what kind of failure it wraps: %s", (_, error, expected) => {

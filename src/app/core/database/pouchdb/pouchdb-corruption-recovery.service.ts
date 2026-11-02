@@ -8,7 +8,6 @@ import { LocalDeviceResetService } from "../local-device-reset.service";
 import { Logging } from "../../logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
-import { isKnownMultiTabDatabaseCorruption } from "../../logging/error-classification";
 
 /**
  * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
@@ -111,5 +110,35 @@ This can happen after using multiple tabs in parallel.` +
     this.promptResetApplicationDialog().catch((callbackError) =>
       Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
     );
+  }
+}
+
+/**
+ * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
+ * is used in multiple tabs with concurrent writes.
+ *
+ * We intentionally match on `transaction was aborted` because this is the
+ * reliable signal present on the actual error object propagated to app code
+ * after IndexedDB global-failure cases. The `unknown_error` label is too
+ * generic and may appear for unrelated failures.
+ */
+export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
+  const text = errorToText(error).toLowerCase();
+  return (
+    text.includes("transaction was aborted") ||
+    text.includes("database has a global failure") ||
+    (text.includes("constrainterror") && text.includes("seq"))
+  );
+}
+
+function errorToText(error: unknown): string {
+  if (typeof error === "string") return error;
+  const prefix =
+    error instanceof Error ? `${error.name} ${error.message} ` : "";
+  try {
+    return prefix + JSON.stringify(error ?? "");
+  } catch {
+    // e.g. a circular structure: classified without its extra properties
+    return prefix;
   }
 }

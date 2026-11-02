@@ -705,26 +705,16 @@ describe("processSentryEvent", () => {
       expect(process(new Error("Another failure"))).not.toBeNull();
     });
 
-    it("should count multi-tab corruption as a local database failure, but not a programming error in a database call", () => {
-      // AAM-DIGITAL-74Z and 7CV, one page load
+    it("should not count a programming error in a database call as a local database failure", () => {
+      // AAM-DIGITAL-74Z
       const rangeError = browserError(
         "RangeError",
         "Failed to execute 'put' on 'IDBObjectStore': Maximum call stack size exceeded",
-      );
-      const corruption = new LoggedError(
-        "sync failed: likely multi-tab IndexedDB corruption",
-        Object.assign(new Error("Database encountered an unknown error"), {
-          name: "unknown_error",
-          status: 500,
-          reason: "transaction was aborted",
-        }),
       );
 
       expect(process(rangeError, { unhandled: true }).tags?.incident).toBe(
         undefined,
       );
-      expect(process(corruption).tags).toMatchObject({ incident: "local-db" });
-      expect(process(corruption)).toBeNull();
     });
 
     it("should report the network issue once per page load", () => {
