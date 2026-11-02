@@ -135,7 +135,7 @@ export function createTypedError(
   return new TYPED_ERRORS[classification](message, options);
 }
 
-/** Whether the error is one of the typed errors, or wraps one, keeping its message. */
+/** The classification of a typed error, by its class. */
 function typedClassification(error: unknown): ErrorClassification | undefined {
   for (const [classification, type] of Object.entries(TYPED_ERRORS)) {
     if (error instanceof type) {
