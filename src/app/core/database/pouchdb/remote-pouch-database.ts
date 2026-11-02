@@ -38,6 +38,8 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.Unauthorized,
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
+  // an outdated revision: resolved by the caller (PouchDatabase.resolveConflict) or retried by PouchDB
+  HttpStatusCode.Conflict,
 ];
 
 const MAX_RESPONSE_BODY_LENGTH = 500;
@@ -237,8 +239,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
       fetchError = err;
-      Logging.debug("Failed initial fetch from DB", err);
-      Logging.debug("navigator.onLine", navigator.onLine);
+      Logging.debug("Failed initial fetch from DB", err, {
+        online: navigator.onLine,
+      });
       this.showConnectionIssueAlert();
     }
 
@@ -260,8 +263,9 @@ export class RemotePouchDatabase extends PouchDatabase {
     const method = requestMethod(opts);
 
     if (!result || result.status >= 500) {
-      Logging.debug("Actual DB Fetch response", result);
-      Logging.debug("navigator.onLine", navigator.onLine);
+      Logging.debug("Actual DB Fetch response", result, {
+        online: navigator.onLine,
+      });
       throw await failedResponseError(result, method, remoteUrl, fetchError);
     }
 
@@ -291,25 +295,8 @@ export class RemotePouchDatabase extends PouchDatabase {
     remoteUrl: string,
   ): void {
     const response = describeResponse(result, method);
-    if (this.isNotificationsDatabase() && result.status === 404) {
-      Logging.debug("Notifications database not found (404) - may be expected");
-    } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
-      // expired session (401), permission-filtered doc (403) and missing doc (404)
-      // are part of normal operation and handled by callers
+    if (EXPECTED_4XX_STATUSES.includes(result.status)) {
       Logging.debug("Expected 4XX response from DB", response);
-    } else if (result.status === HttpStatusCode.Conflict) {
-      // A 409 is CouchDB rejecting a write whose revision is out of date. This
-      // layer cannot tell whether that cost anyone anything, but whoever made
-      // the request always can:
-      //  - remote-only session: the write came from PouchDatabase.put(), and
-      //    PouchDatabase.resolveConflict() decides between merging,
-      //    overwriting and failing - and counts the outcome it chose.
-      //  - synced session: writes go to the local database, so the only 409s
-      //    reaching here are replication's own `PUT /_local/<checkpoint>`
-      //    races between concurrent tabs, which PouchDB retries internally.
-      // Reporting it here would therefore be an alert nobody can act on, and
-      // it is what buried the genuinely unexpected statuses in the same issue.
-      Logging.debug("Document update conflict from DB", response);
     } else {
       Logging.warn(unexpectedResponseMessage(result.status), {
         ...response,
