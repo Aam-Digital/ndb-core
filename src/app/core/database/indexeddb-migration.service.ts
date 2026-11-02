@@ -29,8 +29,12 @@ export interface DbConfig {
 }
 
 const DB_MIGRATED_PREFIX = "DB_MIGRATED_";
-/** The legacy "idb" DB has the name of the new DB and is deleted on the next start (see {@link hasIdenticalLegacyAppDbName}) */
-const DB_LEGACY_DELETION_PENDING_PREFIX = "DB_LEGACY_DELETION_PENDING_";
+
+/**
+ * The "indexeddb" adapter opens its IndexedDB databases with a version of at least 10^13
+ * (see pouchdb-adapter-indexeddb), the legacy "idb" adapter with version 5.
+ */
+const MIN_INDEXEDDB_ADAPTER_VERSION = 10 ** 13;
 
 /**
  * Whether the legacy and the new app database have the same name and therefore are the same IndexedDB database.
@@ -52,9 +56,8 @@ function hasIdenticalLegacyAppDbName(session: SessionInfo): boolean {
  * into the new DB - so that no unsynced change is left behind in the old DB.
  *
  * If the legacy and the new DB have the same name (see {@link hasIdenticalLegacyAppDbName}),
- * the new DB cannot be prepared in the background. Instead, after the same final sync,
- * the legacy DB is deleted on the next start, before it is opened, and the new DB is downloaded
- * from the server like on a fresh login.
+ * the new DB cannot be prepared in the background. Instead, right after the same final sync,
+ * the legacy DB is deleted and the new DB is downloaded from the server after the reload, like on a fresh login.
  */
 @Injectable({ providedIn: "root" })
 export class IndexeddbMigrationService {
@@ -76,11 +79,10 @@ export class IndexeddbMigrationService {
    * Determine the database configuration (names + adapter) for the current session.
    *
    * Decision logic:
-   * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration; resets the migration flags)
-   * 2. Deletion of the legacy DB pending (legacy and new name are identical) → delete it, then continue with 3.
-   * 3. Migration flag set → new names + "indexeddb"
-   * 4. No old DB exists (fresh install) → new names + "indexeddb"
-   * 5. Old DB exists, no flag → legacy names + "idb" (migration pending)
+   * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration; resets the migration flag)
+   * 2. Migration flag set → new names + "indexeddb"
+   * 3. No old DB exists (fresh install) → new names + "indexeddb"
+   * 4. Old DB exists, no flag → legacy names + "idb" (migration pending)
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
@@ -90,9 +92,6 @@ export class IndexeddbMigrationService {
       // (continuing from its checkpoint) and its final sync have to run again before switching back,
       // otherwise changes made on the legacy DB in the meantime and not yet synced would be left behind.
       this.localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
-      this.localStorage.removeItem(
-        DB_LEGACY_DELETION_PENDING_PREFIX + session.id,
-      );
       await this.trackMigrationEvent("idb_indexeddb-disabled-config");
       Logging.debug(
         "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
@@ -101,14 +100,6 @@ export class IndexeddbMigrationService {
         dbNames: computeLegacyDbNames(session),
         adapter: "idb",
       };
-    }
-
-    if (
-      this.localStorage.getItem(
-        DB_LEGACY_DELETION_PENDING_PREFIX + session.id,
-      ) === "true"
-    ) {
-      await this.deleteLegacyDbWithIdenticalName(session);
     }
 
     const oldDbExists = await this.legacyDbExists(session);
@@ -291,7 +282,7 @@ export class IndexeddbMigrationService {
    * would be left behind in the old DB, which is no longer synced after the switch.
    *
    * @param deleteLegacyDb the new DB has the name of the old one (see {@link hasIdenticalLegacyAppDbName}),
-   *                       so the old DB is deleted on the next start and the new DB downloaded from the server then
+   *                       so the old DB is deleted after the final sync and the new DB downloaded from the server after the reload
    */
   private switchToNewDb(
     session: SessionInfo,
@@ -311,22 +302,14 @@ export class IndexeddbMigrationService {
     oldDb: SyncedPouchDatabase,
     deleteLegacyDb: boolean,
   ): Promise<void> {
-    if (
-      deleteLegacyDb &&
-      this.injector.get(MultiTabDetectionService, null)?.isMultipleTabsOpen
-    ) {
-      // unsynced changes of another tab would be lost with the deleted DB
-      Logging.debug(
-        "IndexeddbMigration: switch to new db skipped while the app is open in other tabs; will be offered again on next app start",
-      );
-      await this.trackMigrationEvent("migration_skipped-multiple-tabs");
+    if (deleteLegacyDb && (await this.isOpenInOtherTabs())) {
       return;
     }
 
     const confirmed = deleteLegacyDb
       ? await this.confirmationDialog.getConfirmation(
-          $localize`:Migration dialog title (data downloaded again):Database Upgrade Available`,
-          $localize`:Migration dialog text (data downloaded again):To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while. Reload now to upgrade?`,
+          $localize`Database Upgrade Available`,
+          $localize`To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while. Reload now to upgrade?`,
         )
       : await this.confirmationDialog.getConfirmation(
           $localize`:Migration dialog title:Database Upgrade Ready`,
@@ -346,6 +329,29 @@ export class IndexeddbMigrationService {
         $localize`:Migration final sync progress:Syncing your latest changes before the upgrade ...`,
       ),
     );
+    let readyToSwitch: boolean;
+    try {
+      readyToSwitch = await this.prepareSwitch(session, oldDb, deleteLegacyDb);
+    } finally {
+      progressRef.close();
+    }
+    if (!readyToSwitch) {
+      return;
+    }
+
+    this.setMigrated(session);
+    this.window?.location.reload();
+  }
+
+  /**
+   * Push all local changes of the old DB to the server and, if the new DB has its name, delete it.
+   * @return whether the app can switch to the new DB
+   */
+  private async prepareSwitch(
+    session: SessionInfo,
+    oldDb: SyncedPouchDatabase,
+    deleteLegacyDb: boolean,
+  ): Promise<boolean> {
     try {
       await oldDb.ensureSynced();
     } catch (err) {
@@ -358,58 +364,47 @@ export class IndexeddbMigrationService {
         $localize`:Migration failed alert:The database upgrade could not be completed because your latest changes could not be synced to the server. Please check your internet connection. The upgrade will be tried again the next time you open the app.`,
       );
       await this.trackMigrationEvent("migration_final-sync-failed");
-      return;
-    } finally {
-      progressRef.close();
+      return false;
     }
 
-    if (deleteLegacyDb) {
-      // deleted on the next start, before it is opened (see resolveDbConfig)
-      this.localStorage.setItem(
-        DB_LEGACY_DELETION_PENDING_PREFIX + session.id,
-        "true",
-      );
-    } else {
-      this.setMigrated(session);
+    if (!deleteLegacyDb) {
+      return true;
     }
-    this.window?.location.reload();
-  }
-
-  /**
-   * Delete the legacy "idb" DB that has the name of the new DB, before it is opened,
-   * and set the migration flag, so that the new DB is created and synced from the server.
-   * Only called after a final sync pushed all local changes of the legacy DB (see confirmAndSwitchToNewDb).
-   * If the deletion fails, the legacy DB is kept and the deletion is retried on the next start.
-   */
-  private async deleteLegacyDbWithIdenticalName(
-    session: SessionInfo,
-  ): Promise<void> {
-    const indexedDBApi = this.window?.indexedDB;
-    if (!indexedDBApi) {
-      return;
+    // checked again: another tab may have been opened while the dialogs were shown
+    if (await this.isOpenInOtherTabs()) {
+      return false;
     }
-    // the name of the new DB, which the marked legacy DB has
-    const dbName = computeDbNames(session).app;
     try {
-      // PouchDB prefixes IndexedDB database names with "_pouch_"
-      await this.deleteIndexedDb(indexedDBApi, `_pouch_${dbName}`);
+      // also deletes the DBs of its indices, which have the names of the new DB's indices as well
+      await oldDb.destroy();
     } catch (err) {
-      // e.g. a broken IndexedDB on the device: retried on next start
-      Logging.debug("IndexeddbMigration: failed to delete legacy db", err);
+      // e.g. a broken IndexedDB on the device: the upgrade is offered again on next app start
+      Logging.debug("IndexeddbMigration: failed to delete the old db", err);
       await this.trackMigrationEvent("migration_legacy-db-deletion-failed");
-      return;
+      // the old db cannot be used anymore after its destroy() was started: reopen it
+      this.window?.location.reload();
+      return false;
     }
-
     // the new DB has the same name: its download is not a lost local database (see DatabaseResolverService)
-    this.localStorage.removeItem(LAST_SYNC_KEY_PREFIX + dbName);
-    this.setMigrated(session);
     this.localStorage.removeItem(
-      DB_LEGACY_DELETION_PENDING_PREFIX + session.id,
-    );
-    Logging.debug(
-      `IndexeddbMigration: deleted legacy db "${dbName}" to recreate it with the new adapter`,
+      LAST_SYNC_KEY_PREFIX + computeLegacyDbNames(session).app,
     );
     await this.trackMigrationEvent("migration_legacy-db-deleted");
+    return true;
+  }
+
+  /** The old DB is not deleted while other tabs are open, which would lose their unsynced changes. */
+  private async isOpenInOtherTabs(): Promise<boolean> {
+    if (
+      !this.injector.get(MultiTabDetectionService, null)?.isMultipleTabsOpen
+    ) {
+      return false;
+    }
+    Logging.debug(
+      "IndexeddbMigration: switch to new db skipped while the app is open in other tabs; will be offered again on next app start",
+    );
+    await this.trackMigrationEvent("migration_skipped-multiple-tabs");
+    return true;
   }
 
   private isMigrated(session: SessionInfo): boolean {
@@ -474,7 +469,12 @@ export class IndexeddbMigrationService {
     try {
       if (typeof indexedDBApi.databases === "function") {
         const dbs = await indexedDBApi.databases();
-        return dbs.some((db) => db.name === expectedName);
+        // if the legacy and the new DB have the same name, it may already be the new DB
+        return dbs.some(
+          (db) =>
+            db.name === expectedName &&
+            (db.version ?? 0) < MIN_INDEXEDDB_ADAPTER_VERSION,
+        );
       }
     } catch (e) {
       Logging.debug(
