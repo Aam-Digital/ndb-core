@@ -10,10 +10,14 @@ export class NamedError extends Error {
   /** Context for the report, kept out of the message so that it does not split the issue. */
   readonly details?: Record<string, unknown>;
 
+  /** The HTTP status of the failed request the error is about, if any. */
+  readonly status?: number;
+
   constructor(
     name: string,
     message: string,
     options?: {
+      status?: number;
       cause?: unknown;
       details?: Record<string, unknown>;
     },
@@ -24,6 +28,7 @@ export class NamedError extends Error {
     );
     this.name = name;
     this.details = options?.details;
+    this.status = options?.status;
   }
 }
 

@@ -27,6 +27,7 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   ConnectivityError,
   ServerError,
+  SessionExpiredError,
 } from "../../logging/error-classification";
 
 /**
@@ -63,7 +64,7 @@ async function failedResponseError(
       MAX_RESPONSE_BODY_LENGTH,
     ),
   };
-  if (!result || CONNECTIVITY_ERROR_STATUS.includes(result.status)) {
+  if (!result || CONNECTIVITY_ERROR_STATUS.has(result.status)) {
     return new ConnectivityError("Failed to fetch from DB", {
       status: result?.status,
       cause: fetchError,
@@ -246,6 +247,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     // This will redirect to Keycloak if the token is expired or missing,
     // which is intentional — it ensures users re-authenticate online
     // when connectivity is available (including after an offline login).
+    // If the session cannot be renewed, this fails with a SessionExpiredError.
     if (
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
@@ -397,9 +399,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   /**
    * Renew the session and repeat a request that the server rejected as unauthorized.
    *
-   * @returns the repeated request's response; the original `unauthorized`
-   *   response if the session could not be renewed; or `undefined` if the
+   * @returns the repeated request's response; or `undefined` if the
    *   repeated request did not get a response at all (like a failed initial fetch)
+   * @throws SessionExpiredError if the session could not be renewed: the server
+   *   then keeps rejecting the request, whatever reason it gives (the replication
+   *   backend answers an expired session with a bare 401)
    */
   private async retryWithRenewedSession(
     remoteUrl: string,
@@ -419,7 +423,13 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else {
         Logging.warn("Could not renew session after 401", err);
       }
-      return unauthorized;
+      throw new SessionExpiredError("Session could not be renewed", {
+        status: unauthorized.status,
+        cause: err,
+        details: {
+          actualResponse: describeResponse(unauthorized, requestMethod(opts)),
+        },
+      });
     }
 
     this.authService.addAuthHeader(opts.headers);

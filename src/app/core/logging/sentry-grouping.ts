@@ -1,5 +1,9 @@
 import type * as Sentry from "@sentry/angular";
-import { classifyError, ErrorClassification } from "./error-classification";
+import {
+  classifyError,
+  ErrorClassification,
+  isTypedError,
+} from "./error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
@@ -24,7 +28,10 @@ export function groupSentryEvent(
 
   const thrown = values[values.length - 1];
   const original = hint?.originalException;
-  const chainClassifications = classifyExceptions(values, original);
+  const errors = errorsOfExceptions(values, original);
+  const chainClassifications = errors
+    ? errors.map((error) => classifyError(error))
+    : values.map(classifyException);
   const reportedError =
     original instanceof NamedError || original instanceof LoggedError
       ? thrown
@@ -43,6 +50,7 @@ export function groupSentryEvent(
         values,
         chainClassifications,
         reportedError,
+        rootCauseIndex(values, errors),
       );
     }
     if (original instanceof LoggedError) {
@@ -67,15 +75,14 @@ export function groupSentryEvent(
 }
 
 /**
- * The classification of each exception of the event (innermost first, like `values`).
- *
- * Taken from the error objects where Sentry's exceptions are their `cause` chain;
- * else (e.g. an event without the original error) from the serialized exception.
+ * The error objects of the event's exceptions (innermost first, like `values`),
+ * if Sentry's exceptions are their `cause` chain; else (e.g. an event without
+ * the original error) `undefined`, to judge by the serialized exceptions.
  */
-function classifyExceptions(
+function errorsOfExceptions(
   values: Sentry.Exception[],
   original: unknown,
-): (ErrorClassification | undefined)[] {
+): Error[] | undefined {
   const errors: Error[] = [];
   for (
     let error = original;
@@ -84,10 +91,24 @@ function classifyExceptions(
   ) {
     errors.unshift(error);
   }
-  if (errors.length === values.length && !(errors[0]?.cause instanceof Error)) {
-    return errors.map((error) => classifyError(error));
-  }
-  return values.map(classifyException);
+  return errors.length === values.length && !(errors[0]?.cause instanceof Error)
+    ? errors
+    : undefined;
+}
+
+/**
+ * The index of the root cause: the innermost of our typed errors, as the foreign
+ * error a boundary converted into it (its `cause`) only details it; else the
+ * innermost exception.
+ */
+function rootCauseIndex(
+  values: Sentry.Exception[],
+  errors: Error[] | undefined,
+): number {
+  const index = errors
+    ? errors.findIndex(isTypedError)
+    : values.findIndex((value) => isTypedError({ name: value.type }));
+  return Math.max(index, 0);
 }
 
 /** The classification of an exception as Sentry serialized it, without the error object. */
@@ -168,14 +189,16 @@ function groupByRootCause(
   values: Sentry.Exception[],
   chainClassifications: (ErrorClassification | undefined)[],
   reportedError: Sentry.Exception,
+  rootIndex: number,
 ): Sentry.ErrorEvent {
   const reportedIndex = values.indexOf(reportedError);
   const reportedKey = [
     reportedError.type ?? "",
     groupingValue(reportedError, chainClassifications[reportedIndex]),
   ];
-  const rootCause = values[0];
-  const rootClassification = chainClassifications[0];
+  const rootPosition = Math.min(rootIndex, reportedIndex);
+  const rootCause = values[rootPosition];
+  const rootClassification = chainClassifications[rootPosition];
   const rootKey = [
     rootCause.type ?? "",
     groupingValue(rootCause, rootClassification),
@@ -188,6 +211,13 @@ function groupByRootCause(
     event.fingerprint = reportedKey;
     thrown.type = reportedError.type;
     thrown.value = reportedError.value;
+    return event;
+  }
+  // as is one passing on the typed error it wraps (e.g. a DatabaseException)
+  if (rootClassification && rootKey[1] === reportedKey[1]) {
+    event.fingerprint = rootKey;
+    thrown.type = rootCause.type;
+    thrown.value = normalizeErrorValue(rootCause.value);
     return event;
   }
 

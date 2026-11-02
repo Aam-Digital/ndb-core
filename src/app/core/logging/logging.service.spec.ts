@@ -253,6 +253,24 @@ describe("processSentryEvent", () => {
         reportedBy: "ConfigLoadError: Failed to load configuration.",
       },
       {
+        case: "a classified database failure, by the typed error rather than the raw error it was converted from",
+        error: new LoggedError(
+          "Could not load school",
+          new DatabaseException(brokenIndexedDb()),
+        ),
+        fingerprint: ["LocalStorageError", "unknown"],
+        title: "LocalStorageError: unknown",
+        reportedBy: "Error: Could not load school",
+      },
+      {
+        case: "a DatabaseException passing on a typed error, like that error",
+        error: new DatabaseException(
+          new ServerError("Server error response from DB", { status: 500 }),
+        ),
+        fingerprint: ["ServerError", "server error response from db", "500"],
+        title: "ServerError: Server error response from DB (HTTP 500)",
+      },
+      {
         case: "a named error caused by a network failure, in an issue of its own",
         error: new NamedError(
           "AppBootstrapError",
@@ -612,7 +630,7 @@ describe("processSentryEvent", () => {
         new DatabaseException({ status: 403, message: "forbidden" }),
       ),
       level: "warning",
-      title: "DatabaseException: forbidden",
+      title: "NotPermittedError: forbidden",
       tags: { error_class: "not-permitted" },
     },
   ] as {

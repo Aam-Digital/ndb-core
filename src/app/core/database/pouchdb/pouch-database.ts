@@ -1,6 +1,6 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException } from "./database-exception";
+import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -322,7 +322,7 @@ export class PouchDatabase extends Database {
       if (err.status === 404) {
         return false;
       }
-      throw err;
+      throw new DatabaseException(err, id);
     }
 
     // Purge the winning revision and any conflicting leaf revisions
@@ -331,8 +331,12 @@ export class PouchDatabase extends Database {
       localDoc._rev,
       ...((localDoc as any)._conflicts ?? []),
     ];
-    for (const rev of revsToPurge) {
-      await (db as any).purge(id, rev);
+    try {
+      for (const rev of revsToPurge) {
+        await (db as any).purge(id, rev);
+      }
+    } catch (err) {
+      throw new DatabaseException(err, id);
     }
 
     // PouchDB purge() does not emit change events, so manually notify
@@ -356,7 +360,10 @@ export class PouchDatabase extends Database {
   isEmpty(): Promise<boolean> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.info())
-      .then((res) => res.doc_count === 0);
+      .then((res) => res.doc_count === 0)
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -398,7 +405,7 @@ export class PouchDatabase extends Database {
             // expired session or a gateway timeout: transient, retried below
             Logging.debug("changes feed failed (unauthorized or timeout)", err);
           } else {
-            Logging.error(err);
+            Logging.error(toTypedDatabaseError(err));
           }
 
           // retry

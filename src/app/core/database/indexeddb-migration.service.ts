@@ -14,6 +14,7 @@ import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
+import { toTypedDatabaseError } from "./pouchdb/database-exception";
 import {
   isReplicationConnectivityError,
   isReplicationUnauthorizedError,
@@ -200,8 +201,9 @@ export class IndexeddbMigrationService {
         replicationDone = true;
         checkBothComplete();
       })
-      .catch(async (err) => {
+      .catch(async (replicationError) => {
         this.closePouchDb(remotePouchDB);
+        const err = toTypedDatabaseError(replicationError);
         if (
           isReplicationConnectivityError(err) ||
           isReplicationUnauthorizedError(err)
