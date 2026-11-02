@@ -118,9 +118,6 @@ export class UserAdminApiError extends Error {
   constructor(status: number, message?: string) {
     super(message);
     this.name = "UserAdminApiError";
-    // Set the prototype explicitly to maintain the correct prototype chain (see https://medium.com/@Nelsonalfonso/understanding-custom-errors-in-typescript-a-complete-guide-f47a1df9354c)
-    Object.setPrototypeOf(this, UserAdminApiError.prototype);
-
     this.status = status;
     if (!message) {
       this.message = this.generateDefaultMessage(status);

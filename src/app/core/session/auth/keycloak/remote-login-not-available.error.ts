@@ -9,6 +9,5 @@
 export class RemoteLoginNotAvailableError extends Error {
   constructor(public override readonly cause?: unknown) {
     super("Remote login currently unavailable.");
-    Object.setPrototypeOf(this, RemoteLoginNotAvailableError.prototype);
   }
 }

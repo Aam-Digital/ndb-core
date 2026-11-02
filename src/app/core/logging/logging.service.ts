@@ -176,23 +176,7 @@ export class LoggingService {
   }
 
   private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        console.debug(message, ...context);
-        break;
-      case LogLevel.INFO:
-        console.info(message, ...context);
-        break;
-      case LogLevel.WARN:
-        console.warn(message, ...context);
-        break;
-      case LogLevel.ERROR:
-        console.error(message, ...context);
-        break;
-      default:
-        console.log(message, ...context);
-        break;
-    }
+    console[CONSOLE_METHODS[logLevel] ?? "log"](message, ...context);
   }
 
   private logToRemoteMonitoring(
@@ -211,7 +195,7 @@ export class LoggingService {
     }
     const scope = {
       extra: Object.keys(extra).length > 0 ? extra : undefined,
-      level: this.translateLogLevel(logLevel),
+      level: SENTRY_LEVELS[logLevel],
     };
 
     const error = toReportedError(message, context, logLevel);
@@ -221,22 +205,20 @@ export class LoggingService {
       Sentry.captureMessage(messageText(message), scope);
     }
   }
-
-  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        return "debug";
-      case LogLevel.INFO:
-        return "info";
-      case LogLevel.WARN:
-        return "warning";
-      case LogLevel.ERROR:
-        return "error";
-      default:
-        return "info";
-    }
-  }
 }
+
+const CONSOLE_METHODS: Record<LogLevel, "debug" | "info" | "warn" | "error"> = {
+  [LogLevel.DEBUG]: "debug",
+  [LogLevel.INFO]: "info",
+  [LogLevel.WARN]: "warn",
+  [LogLevel.ERROR]: "error",
+};
+
+/** Only `warn` and `error` are reported (see {@link LoggingService.log}). */
+const SENTRY_LEVELS: Partial<Record<LogLevel, Sentry.SeverityLevel>> = {
+  [LogLevel.WARN]: "warning",
+  [LogLevel.ERROR]: "error",
+};
 
 /**
  * Add more human-readable descriptions to Sentry breadcrumbs for debugging.

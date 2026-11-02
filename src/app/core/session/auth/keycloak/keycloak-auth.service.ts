@@ -11,14 +11,7 @@ import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
 import { isConnectivityError } from "#src/app/core/logging/error-classification";
-import {
-  defer,
-  firstValueFrom,
-  Subscription,
-  throwError,
-  timer,
-  TimeoutError,
-} from "rxjs";
+import { defer, firstValueFrom, Subscription, throwError, timer } from "rxjs";
 import { retry, timeout } from "rxjs/operators";
 import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
 
@@ -127,7 +120,6 @@ async function readResponseBody(
  */
 function isRetryableNetworkError(err: any): boolean {
   if (isConnectivityError(err)) return true;
-  if (err instanceof TimeoutError) return true;
   const message = `${err?.message ?? ""} ${err?.toString?.() ?? ""}`;
   return message.includes(
     "Timeout when waiting for 3rd party check iframe message.",
