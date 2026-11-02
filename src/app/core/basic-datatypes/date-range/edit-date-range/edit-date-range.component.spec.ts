@@ -1,11 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { By } from "@angular/platform-browser";
+import { MatTooltip } from "@angular/material/tooltip";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Subject } from "rxjs";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
+import { DatabaseField } from "../../../entity/database-field.decorator";
+import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "../../../entity/model/entity";
+import { DateRangeValue } from "../date-range.datatype";
 import {
   MatDialogMock,
   mockMatDialog,
@@ -13,10 +25,17 @@ import {
 } from "../../../../utils/test-utils/dialog-mocks";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { periodRangeOptions } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
-import {
-  EditDateRangeComponent,
-  endNotBeforeStart,
-} from "./edit-date-range.component";
+import { EditDateRangeComponent } from "./edit-date-range.component";
+
+@DatabaseEntity("EditDateRangeTestAction")
+class EditDateRangeTestAction extends Entity {
+  static override readonly toStringAttributes = ["name"];
+
+  @DatabaseField() name: string;
+  @DatabaseField() parent: string;
+  @DatabaseField({ dataType: "date-range" }) period: DateRangeValue;
+  @DatabaseField({ dataType: "date-range" }) plannedPeriod: DateRangeValue;
+}
 
 describe("EditDateRangeComponent", () => {
   let component: EditDateRangeComponent;
@@ -25,6 +44,14 @@ describe("EditDateRangeComponent", () => {
 
   const start = new Date(2026, 2, 1);
   const end = new Date(2026, 4, 31);
+  const parentAction = Object.assign(new EditDateRangeTestAction("1"), {
+    name: "Training",
+    plannedPeriod: { start, end },
+  });
+  const ongoingParentAction = Object.assign(new EditDateRangeTestAction("2"), {
+    name: "Ongoing",
+    plannedPeriod: { start },
+  });
 
   beforeEach(async () => {
     dialog = mockMatDialog();
@@ -33,6 +60,8 @@ describe("EditDateRangeComponent", () => {
       providers: [
         provideNativeDateAdapter(),
         { provide: MatDialog, useValue: dialog },
+        ...mockEntityMapperProvider([parentAction, ongoingParentAction]),
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
@@ -210,20 +239,218 @@ describe("EditDateRangeComponent", () => {
     },
   );
 
-  it("should mark the field as invalid if the end date is before the start date", () => {
-    component.range.setValue({ start: end, end: start });
+  describe("period of a linked parent record", () => {
+    const outside = {
+      start: new Date(2026, 4, 20),
+      end: new Date(2026, 5, 15),
+    };
+    const withinParent = {
+      parentReferenceField: "parent",
+      parentValueField: "plannedPeriod",
+    };
+    const within = {
+      start: new Date(2026, 2, 10),
+      end: new Date(2026, 2, 20),
+    };
 
-    expect(component.formControl.errors?.dateRange.errorMessage).toBeTruthy();
-  });
+    /**
+     * @param parentInForm the parent link entered in the form; undefined if the form has no such field
+     * @param parentOfRecord the parent link saved for the record
+     * @param editing false for the view mode (a disabled form)
+     */
+    async function render(
+      period: DateRangeValue,
+      parentInForm: string | null | undefined,
+      parentOfRecord?: string,
+      anonymized = false,
+      editing = false,
+    ) {
+      const parentFixture = TestBed.createComponent(EditDateRangeComponent);
+      const form = setupCustomFormControlEditComponent(
+        parentFixture.componentInstance,
+        "period",
+        { validators: { withinParent } },
+        parentFixture,
+      );
+      if (parentInForm !== undefined) {
+        form.addControl("parent", new FormControl(parentInForm));
+      }
+      parentFixture.componentRef.setInput(
+        "entity",
+        Object.assign(new EditDateRangeTestAction(), {
+          parent: parentOfRecord,
+          anonymized,
+        }),
+      );
+      form.get("period").setValue(period);
+      if (!editing) {
+        form.get("period").disable();
+      }
+      parentFixture.detectChanges();
 
-  it.each([
-    ["no value", null, true],
-    ["only a start date", { start }, true],
-    ["only an end date", { end }, true],
-    ["the end date after the start date", { start, end }, true],
-    ["the same day", { start, end: start }, true],
-    ["the end date before the start date", { start: end, end: start }, false],
-  ])("validator: %s", (_, value, valid) => {
-    expect(endNotBeforeStart(new FormControl(value)) === null).toBe(valid);
+      const warning = async () => {
+        parentFixture.detectChanges();
+        await parentFixture.whenStable();
+        parentFixture.detectChanges();
+        return parentFixture.debugElement
+          .query(By.directive(MatTooltip))
+          ?.injector.get(MatTooltip).message;
+      };
+      return { form, warning, component: parentFixture.componentInstance };
+    }
+
+    it.each<{
+      period: DateRangeValue;
+      parentInForm: string | null | undefined;
+      parentOfRecord?: string;
+      warns: boolean;
+    }>([
+      { period: outside, parentInForm: parentAction.getId(), warns: true },
+      { period: within, parentInForm: parentAction.getId(), warns: false },
+      {
+        period: outside,
+        parentInForm: null,
+        parentOfRecord: parentAction.getId(),
+        warns: false,
+      },
+      {
+        period: outside,
+        parentInForm: undefined,
+        parentOfRecord: parentAction.getId(),
+        warns: true,
+      },
+    ])(
+      "uses the parent link of the form, or of the record if the form has no such field (in form: $parentInForm, saved: $parentOfRecord, warns: $warns)",
+      async ({ period, parentInForm, parentOfRecord, warns }) => {
+        const { warning } = await render(period, parentInForm, parentOfRecord);
+
+        expect(await warning()).toBe(
+          warns ? "Outside the period of Training" : undefined,
+        );
+      },
+    );
+
+    it("shows no warning on an anonymized record, whose dates are moved to 1 July", async () => {
+      const { warning } = await render(
+        { start: new Date(2026, 6, 1), end: new Date(2026, 6, 1) },
+        parentAction.getId(),
+        undefined,
+        true,
+      );
+
+      expect(await warning()).toBeUndefined();
+    });
+
+    it("shows no warning icon while editing, as the validator's error shows below the field", async () => {
+      const { warning } = await render(
+        outside,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+
+      expect(await warning()).toBeUndefined();
+    });
+
+    it("offers the parent's period as the first predefined period", async () => {
+      const { form, warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+      dialog.open.mockReturnValue(
+        mockMatDialogRef({ selectedOptionValues: ["0"] }),
+      );
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions[0].label).toBe(
+        "Period of Training",
+      );
+      expect(form.get("period").value).toEqual({ start, end });
+    });
+
+    it("sets the predefined period selected in the panel, even if the parent's period loads while the panel is open", async () => {
+      const { form, warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      const panelClosed = new Subject<{ selectedOptionValues: string[] }>();
+      dialog.open.mockReturnValue({
+        ...mockMatDialogRef(),
+        afterClosed: vi.fn().mockReturnValue(panelClosed),
+      });
+
+      component.openPanel(new Event("click"));
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions).toEqual(
+        periodRangeOptions,
+      );
+      await warning();
+      panelClosed.next({ selectedOptionValues: ["0"] });
+
+      expect(form.get("period").value).toEqual({
+        start: new Date(today.getFullYear(), today.getMonth(), 1),
+        end: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+      });
+    });
+
+    it("shades the parent's period in the calendar", async () => {
+      const { warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.highlightRange).toEqual(
+        new DateRange(start, end),
+      );
+    });
+
+    it("does not offer an ongoing parent period (without end) as a predefined period", async () => {
+      const { warning, component } = await render(
+        within,
+        ongoingParentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions).toEqual(
+        periodRangeOptions,
+      );
+    });
+
+    it("follows a parent link entered in the form", async () => {
+      const { form, warning } = await render(outside, null);
+      expect(await warning()).toBeUndefined();
+
+      form.get("parent").setValue(parentAction.getId());
+
+      expect(await warning()).toBe("Outside the period of Training");
+    });
+
+    it("follows the dates entered in the form", async () => {
+      const { form, warning } = await render(within, parentAction.getId());
+      expect(await warning()).toBeUndefined();
+
+      form.get("period").setValue(outside);
+
+      expect(await warning()).toBe("Outside the period of Training");
+    });
   });
 });

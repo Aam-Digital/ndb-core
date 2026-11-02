@@ -5,6 +5,7 @@
       class="calendar"
       (selectedChange)="selectedRangeChange($event)"
       [selected]="selectedRangeValue()"
+      [startAt]="startAt"
       [comparisonStart]="comparisonRange().start"
       [comparisonEnd]="comparisonRange().end"
     >

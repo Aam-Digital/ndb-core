@@ -11,7 +11,6 @@ import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/ed
 @Component({
   selector: "app-edit-text",
   templateUrl: "./edit-text.component.html",
-  styleUrls: ["./edit-text.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatInputModule, FormsModule, ReactiveFormsModule],
   providers: [{ provide: MatFormFieldControl, useExisting: EditTextComponent }],

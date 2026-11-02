@@ -21,6 +21,7 @@ import {
 } from "../../skill-api/skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
+import { isConnectivityError } from "../../../../utils/connectivity-error";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -137,7 +138,12 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         this.skillApiService.getExternalProfiles(this.searchParams, page),
       );
     } catch (e) {
-      Logging.warn("SkillModule: Failed to load external profiles", e);
+      if (isConnectivityError(e)) {
+        // offline or the external system unavailable: the error is shown in the dialog
+        Logging.debug("SkillModule: Failed to load external profiles", e);
+      } else {
+        Logging.warn("SkillModule: Failed to load external profiles", e);
+      }
       this.error = e;
       return;
     } finally {

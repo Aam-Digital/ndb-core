@@ -1,4 +1,13 @@
 <div class="flex-row">
+  @if (!enabled() && outsideParent(); as parentName) {
+    <!-- before the inputs: the date picker button after them overlaps its neighbours (negative margin) -->
+    <app-fa-dynamic-icon
+      class="margin-end-small input-tooltip-icon"
+      icon="warning"
+      matTooltip="Outside the period of {{ parentName }}"
+      i18n-matTooltip
+    ></app-fa-dynamic-icon>
+  }
   <mat-date-range-input [formGroup]="range">
     <input
       matStartDate

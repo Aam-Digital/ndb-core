@@ -19,6 +19,7 @@ import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { getSchemaEmbedDatatype } from "#src/app/core/entity/schema/embedded-schema-field.util";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
+import moment from "moment";
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
@@ -296,7 +297,7 @@ export class PaginatedDataSource<
       } else if (operator === "$not") {
         result[operator] = this.toDbCondition(value, field);
       } else {
-        result[operator] = value;
+        result[operator] = toDbDateBound(operator, value, field?.dataType);
       }
     }
     return result;
@@ -322,6 +323,45 @@ interface SchemaContext {
 function isOperatorObject(condition: unknown): condition is object {
   return (
     !!condition && typeof condition === "object" && !Array.isArray(condition)
+  );
+}
+
+/**
+ * Date filters compare with a day ("YYYY-MM-DD"), which records in memory match at day precision.
+ * For a field stored in another format, rewrite the day into that format, keeping this meaning:
+ * a "date" is a UTC timestamp, so the day becomes its first or last moment in local time;
+ * a "month" is "YYYY-MM" and counts as its first day.
+ */
+function toDbDateBound(
+  operator: string,
+  value: unknown,
+  dataType: string | undefined,
+): unknown {
+  if (
+    (dataType !== "date" && dataType !== "month") ||
+    !["$gte", "$gt", "$lte", "$lt"].includes(operator) ||
+    typeof value !== "string"
+  ) {
+    return value;
+  }
+  const day = moment(value, "YYYY-MM-DD", true);
+  if (!day.isValid()) {
+    return value;
+  }
+
+  // `$lte` and `$gt` compare with the end of the day, `$gte` and `$lt` with its start
+  const atEndOfDay = operator === "$lte" || operator === "$gt";
+  if (dataType === "date") {
+    if (atEndOfDay) {
+      return day.endOf("day").toISOString();
+    }
+    // a date stored without time ("YYYY-MM-DD") counts as midnight UTC but sorts right before that timestamp,
+    // so where the day starts at midnight UTC, only the day itself as bound treats it like in memory
+    const startOfDay = day.startOf("day").toISOString();
+    return startOfDay === `${value}T00:00:00.000Z` ? value : startOfDay;
+  }
+  return (atEndOfDay || day.date() === 1 ? day : day.add(1, "month")).format(
+    "YYYY-MM",
   );
 }
 

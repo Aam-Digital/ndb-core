@@ -42,7 +42,7 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="mergeForm?.formGroup.invalid"
+    [disabled]="hasBlockingErrors"
     (click)="confirmAndMergeRecords()"
     i18n
   >
@@ -54,7 +54,7 @@
   >
     <span i18n>Only show fields with differences</span>
   </mat-slide-toggle>
-  @if (mergeForm?.formGroup.invalid) {
+  @if (hasBlockingErrors) {
     <mat-error i18n>
       The data you selected to merge is invalid, please check the fields in the
       "Merge Preview" above.

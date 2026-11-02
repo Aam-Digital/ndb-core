@@ -56,6 +56,22 @@
     }
   }
 
+  @if (parentRangeOptions().length) {
+    <mat-form-field floatLabel="always">
+      <mat-label i18n>Must lie within the period of a linked record</mat-label>
+      <mat-select
+        formControlName="withinParent"
+        [compareWith]="isSameParentRange"
+      >
+        <mat-option [value]="null" i18n>none</mat-option>
+        @for (option of parentRangeOptions(); track option.label) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-hint i18n>Only a warning: users can still save.</mat-hint>
+    </mat-form-field>
+  }
+
   @if (isStringType()) {
     <div class="flex-row flex-wrap gap-small">
       <mat-form-field floatLabel="always" class="flex-grow">
