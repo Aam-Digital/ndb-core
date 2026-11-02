@@ -26,6 +26,7 @@ import {
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
+import { toTypedHttpError } from "#src/app/core/logging/typed-http-error.interceptor";
 import {
   entityRegistry,
   EntityRegistry,
@@ -367,23 +368,42 @@ describe("ReportingComponent", () => {
     );
   });
 
+  /** A failed request as it reaches the caller (see typedHttpErrorInterceptor). */
+  const failedRequest = (response: HttpErrorResponse) =>
+    toTypedHttpError(response) as Error;
+
   it.each<[string, Error, string]>([
     ["an unexpected error", new Error("foo"), "foo"],
     [
       "a request rejected with a backend message",
-      new HttpErrorResponse({
-        status: 400,
-        url: "/report-calculation",
-        error: {
-          errorCode: "BAD_REQUEST",
-          errorMessage: 'reportDefinition[1] needs a non-empty "query"',
-        },
-      }),
+      failedRequest(
+        new HttpErrorResponse({
+          status: 400,
+          url: "/report-calculation",
+          error: {
+            errorCode: "BAD_REQUEST",
+            errorMessage: 'reportDefinition[1] needs a non-empty "query"',
+          },
+        }),
+      ),
       'reportDefinition[1] needs a non-empty "query"',
     ],
     [
+      "a server error with a backend message",
+      failedRequest(
+        new HttpErrorResponse({
+          status: 500,
+          url: "/report-calculation",
+          error: { errorMessage: "query timed out" },
+        }),
+      ),
+      "query timed out",
+    ],
+    [
       "a request failed without a backend message",
-      new HttpErrorResponse({ status: 502, url: "/report-calculation" }),
+      failedRequest(
+        new HttpErrorResponse({ status: 502, url: "/report-calculation" }),
+      ),
       "Http failure response for /report-calculation: 502",
     ],
     [

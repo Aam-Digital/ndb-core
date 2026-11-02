@@ -4,6 +4,7 @@ import { Observable, of, throwError } from "rxjs";
 import type { Mock } from "vitest";
 import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { toTypedHttpError } from "#src/app/core/logging/typed-http-error.interceptor";
 import {
   ApiClientService,
   errorMessageOf,
@@ -109,7 +110,8 @@ describe("ApiClientService", () => {
       "contact support",
     ],
   ])("explains %s to the user", (_, error, expectedMessage) => {
-    expect(errorMessageOf(error)).toContain(expectedMessage);
+    // as the backend's response reaches the caller (see typedHttpErrorInterceptor)
+    expect(errorMessageOf(toTypedHttpError(error))).toContain(expectedMessage);
   });
 
   it.each<[number, "debug" | "warn"]>([
@@ -122,7 +124,10 @@ describe("ApiClientService", () => {
     const debug = vi.spyOn(Logging, "debug").mockImplementation(() => {});
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
 
-    logRequestError("failed", new HttpErrorResponse({ status }));
+    logRequestError(
+      "failed",
+      toTypedHttpError(new HttpErrorResponse({ status })),
+    );
 
     expect(debug).toHaveBeenCalledTimes(expectedLevel === "debug" ? 1 : 0);
     expect(warn).toHaveBeenCalledTimes(expectedLevel === "warn" ? 1 : 0);

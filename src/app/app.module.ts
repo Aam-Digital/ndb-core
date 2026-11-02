@@ -25,9 +25,11 @@ import {
 } from "@angular/core";
 import {
   provideHttpClient,
+  withInterceptors,
   withInterceptorsFromDi,
   withXhr,
 } from "@angular/common/http";
+import { typedHttpErrorInterceptor } from "./core/logging/typed-http-error.interceptor";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -196,7 +198,11 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
       deps: [LoginStateSubject],
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
-    provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideHttpClient(
+      withXhr(),
+      withInterceptorsFromDi(),
+      withInterceptors([typedHttpErrorInterceptor]),
+    ),
     NotificationService,
     ...defaultValueStrategyProviders,
     {

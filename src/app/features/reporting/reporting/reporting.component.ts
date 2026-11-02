@@ -46,6 +46,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { failedHttpResponse } from "#src/app/core/logging/typed-http-error.interceptor";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { RouterLink } from "@angular/router";
@@ -251,9 +252,7 @@ export class ReportingComponent {
     reason: ReportCalculationError | HttpErrorResponse | Error,
   ): string {
     const backendMessage: string | undefined =
-      reason instanceof HttpErrorResponse
-        ? reason.error?.errorMessage
-        : undefined;
+      failedHttpResponse(reason)?.error?.errorMessage;
     const calculationDetails =
       reason instanceof ReportCalculationError
         ? reason.reportCalculation?.errorDetails
