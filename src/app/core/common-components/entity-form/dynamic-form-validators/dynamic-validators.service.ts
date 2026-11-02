@@ -199,6 +199,18 @@ export class DynamicValidatorsService {
     return formControlOptions;
   }
 
+  /**
+   * The other fields of the record that the configured validators of a field read
+   * (e.g. the parent link of `withinParent`), so that the field is validated again when one of them changes.
+   */
+  getDependencies(config: FormValidatorConfig | undefined): string[] {
+    const dependencies = new Set<string>();
+    if (config?.withinParent?.parentReferenceField) {
+      dependencies.add(config.withinParent.parentReferenceField);
+    }
+    return [...dependencies];
+  }
+
   private addHumanReadableError(
     validatorType: string,
     validationResult: ValidationErrors | null,

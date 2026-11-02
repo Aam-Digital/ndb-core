@@ -17,8 +17,9 @@ import { PermissionConditionValidatorsService } from "./dynamic-form-validators/
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
-import { filter, map, startWith } from "rxjs/operators";
-import { firstValueFrom } from "rxjs";
+import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
+import { firstValueFrom, merge } from "rxjs";
+import { isEqual } from "lodash-es";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { CustomYesNoButtons } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -32,7 +33,6 @@ import {
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
 import { resolveLocaleText } from "../../language/active-locale";
-import { revalidateOnParentLinkChange } from "../../basic-datatypes/date-range/within-parent-validator";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -238,7 +238,7 @@ export class EntityFormService {
       this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
-    revalidateOnParentLinkChange(group, formFields, destroyRef);
+    this.revalidateOnDependencyChange(group, formFields, destroyRef);
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -298,6 +298,37 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
+  }
+
+  /**
+   * Validate a field again whenever one of the other fields that its validators read changes in the same form
+   * (see `DynamicValidatorsService.getDependencies`), e.g. a date range when its parent link changes.
+   */
+  private revalidateOnDependencyChange(
+    form: FormGroup,
+    formFields: ColumnConfig[],
+    destroyRef: DestroyRef,
+  ) {
+    for (const field of formFields.map(toFormFieldConfig)) {
+      const control = form.get(field.id);
+      const dependencies = this.dynamicValidator
+        .getDependencies(field.validators)
+        .map((id) => form.get(id))
+        .filter((dependency): dependency is AbstractControl => !!dependency);
+      if (!control || dependencies.length === 0) {
+        continue;
+      }
+      merge(
+        ...dependencies.map((dependency) =>
+          dependency.valueChanges.pipe(
+            // validating a field emits its value again: without this, two fields depending on each other would loop
+            distinctUntilChanged(isEqual),
+          ),
+        ),
+      )
+        .pipe(takeUntilDestroyed(destroyRef))
+        .subscribe(() => control.updateValueAndValidity());
+    }
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
