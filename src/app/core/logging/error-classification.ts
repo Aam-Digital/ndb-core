@@ -1,26 +1,40 @@
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
-import {
-  ErrorClassification,
-  LoggedError,
-  NamedError,
-} from "./reported-errors";
-
-export type { ErrorClassification } from "./reported-errors";
+import { LoggedError, NamedError } from "./reported-errors";
 
 /**
- * Classify failures once, where they enter the app, by type and HTTP status.
+ * What kind of failure an error is, for reporting it.
  *
- * A boundary that knows what went wrong creates a typed error (e.g. the remote
- * database's fetch wrapper throws a {@link ConnectivityError} or a {@link ServerError}),
- * and `DatabaseException` records the classification of the PouchDB error it wraps.
- * {@link classifyError} reads that classification first; only an error that did not
- * pass through such a boundary (a raw browser or PouchDB error) is classified by
- * its status, name and - as a last resort - by the message patterns below, which
+ * Our own errors say it by their type: a boundary that knows what went wrong
+ * throws a typed error (e.g. the remote database's fetch wrapper throws a
+ * {@link ConnectivityError} or a {@link ServerError}); for a new kind of error,
+ * extend one of these classes. Errors not created by us (raw browser, PouchDB or
+ * HTTP errors, also wrapped in a `DatabaseException`) are classified by their
+ * status, name and - as a last resort - by the message patterns below, which
  * are kept in this one file.
  *
  * What remote monitoring does with each classification is in
  * `sentry-event-processing.ts` (`REPORTING_POLICY`).
  */
+
+/**
+ * What kind of failure an error is, as far as reporting it is concerned:
+ * derived by {@link classifyError} from the error's type
+ * or, for errors not created by us, its status, name and message. Mapped to what
+ * remote monitoring does with it in `sentry-event-processing.ts`.
+ */
+export type ErrorClassification =
+  /** the request never reached our backend: no response, status 0, 502-504 */
+  | "connectivity"
+  /** 401 for an expired token that could not be renewed */
+  | "session-expired"
+  /** 403, or 401 "User is not permitted": the permission rules exclude the user */
+  | "not-permitted"
+  /** the device's local database (IndexedDB / PouchDB) is broken */
+  | "local-storage"
+  /** our backend answered with a 5xx other than a gateway status */
+  | "server-error"
+  /** a rejected write with an outdated revision (409) */
+  | "write-conflict";
 
 /** A request that never reached our backend (no response at all, or a gateway status). */
 export class ConnectivityError extends NamedError {
@@ -34,10 +48,7 @@ export class ConnectivityError extends NamedError {
       details?: Record<string, unknown>;
     },
   ) {
-    super("ConnectivityError", message, {
-      ...options,
-      classification: "connectivity",
-    });
+    super("ConnectivityError", message, options);
     this.status = options?.status;
   }
 }
@@ -54,10 +65,7 @@ export class ServerError extends NamedError {
       details?: Record<string, unknown>;
     },
   ) {
-    super("ServerError", message, {
-      ...options,
-      classification: "server-error",
-    });
+    super("ServerError", message, options);
     this.status = options.status;
   }
 }
@@ -135,18 +143,19 @@ const WRITE_CONFLICT_TEXT = "document update conflict";
 
 /**
  * What kind of failure the given error is, judged by this one error (not its `cause`s):
- * by the classification a boundary gave it, else by its status, name and message.
+ * by its type if it is one of ours, else by its status, name and message.
  *
- * A {@link LoggedError} is a log message of ours, never classified by its text.
+ * A {@link LoggedError} or another error of ours is never classified by its text.
  */
 export function classifyError(error: unknown): ErrorClassification | undefined {
   if (!error || (typeof error !== "object" && typeof error !== "string")) {
     return undefined;
   }
-  const explicit = (error as { classification?: ErrorClassification })
-    .classification;
-  if (explicit) {
-    return explicit;
+  if (error instanceof ConnectivityError) {
+    return "connectivity";
+  }
+  if (error instanceof ServerError) {
+    return "server-error";
   }
   if (error instanceof LoggedError) {
     return undefined;
@@ -195,6 +204,7 @@ type ErrorLike = {
   error?: unknown;
   message?: unknown;
   name?: unknown;
+  originalName?: unknown;
 };
 
 function classifyByStatus(
@@ -241,11 +251,13 @@ function classifyByStatus(
 function classifyByName(
   error: object | string,
 ): ErrorClassification | undefined {
-  const name = (error as ErrorLike).name as string;
-  if (CONNECTIVITY_ERROR_NAMES.includes(name)) {
+  const err = error as ErrorLike;
+  // `originalName`: the name of the error a DatabaseException wraps
+  const names = [err.name, err.originalName] as string[];
+  if (names.some((name) => CONNECTIVITY_ERROR_NAMES.includes(name))) {
     return "connectivity";
   }
-  if (LOCAL_STORAGE_ERROR_NAMES.includes(name)) {
+  if (names.some((name) => LOCAL_STORAGE_ERROR_NAMES.includes(name))) {
     return "local-storage";
   }
   return undefined;

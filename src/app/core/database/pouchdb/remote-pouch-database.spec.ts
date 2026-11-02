@@ -1,3 +1,7 @@
+import {
+  ConnectivityError,
+  ServerError,
+} from "../../logging/error-classification";
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";
@@ -359,18 +363,18 @@ describe("RemotePouchDatabase tests", () => {
     {
       response: "no response",
       fetch: () => Promise.reject(new TypeError("Failed to fetch")),
+      errorClass: ConnectivityError,
       expected: {
         name: "ConnectivityError",
-        classification: "connectivity",
         cause: expect.objectContaining({ message: "Failed to fetch" }),
       },
     },
     {
       response: "a gateway timeout of the proxy",
       fetch: async () => new Response("", { status: 504 }),
+      errorClass: ConnectivityError,
       expected: {
         name: "ConnectivityError",
-        classification: "connectivity",
         status: 504,
       },
     },
@@ -379,22 +383,24 @@ describe("RemotePouchDatabase tests", () => {
       response: "a server error",
       // e.g. a proxy's whole HTML error page
       fetch: async () => new Response("x".repeat(5000), { status: 500 }),
+      errorClass: ServerError,
       expected: {
         name: "ServerError",
-        classification: "server-error",
         status: 500,
         details: { actualResponseBody: "x".repeat(500) },
       },
     },
   ])(
     "should classify a request with $response where it fails",
-    async ({ fetch, expected }) => {
+    async ({ fetch, errorClass, expected }) => {
       database.init("");
       (PouchDB.fetch as Mock).mockImplementationOnce(fetch);
 
-      await expect(
-        (database as any).defaultFetch(READ_URL, { headers: {} }),
-      ).rejects.toMatchObject(expected);
+      const failure = (database as any)
+        .defaultFetch(READ_URL, { headers: {} })
+        .catch((err) => err);
+      await expect(failure).resolves.toBeInstanceOf(errorClass);
+      await expect(failure).resolves.toMatchObject(expected);
     },
   );
 

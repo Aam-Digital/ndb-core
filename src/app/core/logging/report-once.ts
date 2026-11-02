@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/angular";
-import type { ErrorClassification } from "./reported-errors";
+import type { ErrorClassification } from "./error-classification";
 import { causeChain } from "./error-classification";
 import {
   fingerprintKey,

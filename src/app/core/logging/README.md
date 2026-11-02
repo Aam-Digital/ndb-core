@@ -194,15 +194,17 @@ one issue per call site (and per build, as releases without source maps report m
 
 ### Classifying failures where they enter the app
 
-What remote monitoring does with a failure depends on what kind of failure it is. That is decided
-once, where the error enters the app, by type and HTTP status (`error-classification.ts`):
+What remote monitoring does with a failure depends on what kind of failure it is
+(`classifyError()` in `error-classification.ts`):
 
-- The remote database's fetch wrapper throws a `ConnectivityError` for a request without response or
+- **Our errors say it by their type.** Where the app knows what went wrong, it throws a typed error:
+  the remote database's fetch wrapper throws a `ConnectivityError` for a request without response or
   with a gateway status (0, 502, 503, 504), and a `ServerError` carrying the status for any other 5xx.
-- `DatabaseException` records the `classification` of the PouchDB error it wraps (local or remote).
-- `classifyError()` reads that classification first; only an error that did not pass such a boundary
-  (a raw browser or PouchDB error, an `HttpErrorResponse`) is classified by its status and name, and
-  as a last resort by its wording. These message patterns are all in `error-classification.ts`.
+  For a new kind of error, extend one of these classes; errors carry no separate classification flag.
+- **Other errors by their data.** A raw browser or PouchDB error, an `HttpErrorResponse`, or one
+  wrapped in a `DatabaseException` (which takes over its `status`, `reason` and keeps its name as
+  `originalName`) is classified by its status and name, and as a last resort by its wording.
+  These message patterns are all in `error-classification.ts`.
 
 The helpers `isConnectivityError()`, `isExpiredSessionError()` and `isNotPermittedError()` in
 `src/app/utils/` are thin wrappers around `classifyError()`.
