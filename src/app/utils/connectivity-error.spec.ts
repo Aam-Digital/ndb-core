@@ -56,7 +56,7 @@ describe("isConnectivityError", () => {
     expect(isConnectivityError(new TypeError("Load failed"))).toBe(true);
   });
 
-  it("classifies a DatabaseException that wraps an AbortError (via originalName)", () => {
+  it("classifies a DatabaseException that wraps an AbortError (via its classification)", () => {
     // the abort's name would otherwise be clobbered to "DatabaseException"
     const wrapped = new DatabaseException(
       new DOMException("The operation was aborted.", "AbortError"),

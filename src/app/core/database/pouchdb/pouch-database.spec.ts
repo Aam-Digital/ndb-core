@@ -561,28 +561,6 @@ describe("DatabaseException", () => {
     expect(ex.message).toBe("missing");
   });
 
-  it("preserves the wrapped error's name in originalName", () => {
-    const abortError = new DOMException(
-      "The operation was aborted.",
-      "AbortError",
-    );
-
-    const ex = new DatabaseException(abortError, "Config:CONFIG_ENTITY");
-
-    // name stays stable for grouping, but the underlying name is retained
-    expect(ex.name).toBe("DatabaseException");
-    expect(ex.originalName).toBe("AbortError");
-    expect(ex.message).toBe("The operation was aborted.");
-  });
-
-  it("does not set originalName when wrapping another DatabaseException", () => {
-    const inner = new DatabaseException({ message: "Failed to fetch from DB" });
-
-    const outer = new DatabaseException(inner, "Entity:1");
-
-    expect(outer.originalName).toBeUndefined();
-  });
-
   it.each([
     [
       "an expired session",
