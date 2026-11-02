@@ -605,6 +605,66 @@ describe("EditEntityComponent", () => {
       );
     });
   });
+
+  describe("in a link to the record's own type", () => {
+    const ownRecord = () => test1Entities[0];
+
+    /** @param currentRecord the record the form edits, `undefined` for several records (bulk edit) */
+    function editOwnRecord(currentRecord: Entity | undefined) {
+      fixture.componentRef.setInput("entity", ownRecord());
+      fixture.componentRef.setInput("formFieldConfig", {
+        id: "testProperty",
+        additional: TestEntity.ENTITY_TYPE,
+      });
+      recordState.next(currentRecord);
+      fixture.detectChanges();
+    }
+
+    it.each<[string, boolean, boolean, boolean]>([
+      ["does not offer the record being edited", false, false, false],
+      [
+        "still shows the record if it already links to itself",
+        true,
+        false,
+        true,
+      ],
+      [
+        "offers all records if the form edits several records at once (bulk edit)",
+        false,
+        true,
+        true,
+      ],
+    ])("%s", async (_, linksToItself, severalRecords, ownRecordOffered) => {
+      if (linksToItself) {
+        formControl.setValue(ownRecord().getId());
+      }
+      editOwnRecord(severalRecords ? undefined : ownRecord());
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        const offered = component.availableEntitiesResource
+          .value()
+          .map((e) => e.getId());
+        expect(offered).toHaveLength(
+          ownRecordOffered ? test1Entities.length : test1Entities.length - 1,
+        );
+        expect(offered.includes(ownRecord().getId())).toBe(ownRecordOffered);
+      });
+    });
+
+    it("does not count the record being edited for the toggle showing inactive records", async () => {
+      ownRecord().inactive = true;
+      editOwnRecord(ownRecord());
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(component.availableEntitiesResource.value()).toHaveLength(
+          test1Entities.length - 1,
+        );
+      });
+      expect(component.currentlyMatchingInactive()).toBe(0);
+    });
+  });
 });
 
 function sortedNames(entities: Entity[]): string[] {

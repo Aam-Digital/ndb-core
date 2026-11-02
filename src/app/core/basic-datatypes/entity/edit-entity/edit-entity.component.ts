@@ -214,12 +214,28 @@ export class EditEntityComponent<
 
   /**
    * The record being edited, with the current, possibly unsaved values of its form,
-   * to resolve placeholders in the `selectionCondition` referring to that record.
-   * Only followed while the field has such a condition.
+   * to resolve placeholders in the `selectionCondition` referring to that record
+   * and to not offer the record itself in a link to its own type.
+   * Only followed while the field has such a condition or links to the record's own type.
    */
   private readonly currentRecord = currentRecordSignal(
-    () => !!this.formFieldConfig()?.validators?.selectionCondition,
+    () =>
+      !!this.formFieldConfig()?.validators?.selectionCondition ||
+      this.entityType().includes(this.entity()?.getType()),
   );
+
+  /** the id of the record being edited, `undefined` if the form does not edit one single record (like in bulk edit) */
+  private readonly ownId = computed(() => this.currentRecord()?.getId());
+
+  /**
+   * The records that can be offered: all except the record being edited,
+   * which is not offered as a link to itself (if it already links to itself, that link is still shown).
+   */
+  private readonly offerableEntities: Signal<E[]> = computed(() => {
+    const ownId = this.ownId();
+    const entities = this.allEntities.value();
+    return ownId ? entities.filter((e) => e.getId() !== ownId) : entities;
+  });
 
   /**
    * The configured `selectionCondition` with placeholders resolved,
@@ -248,15 +264,13 @@ export class EditEntityComponent<
   currentlyMatchingInactive: Signal<number> = computed(() => {
     const isEligible = this.isEligible();
     const selected = this.values();
-    return this.allEntities
-      .value()
-      .filter(
-        (e) =>
-          e.inactive &&
-          !selected.includes(e.getId()) &&
-          (this.includeIneligible() || isEligible(e)) &&
-          this.autocompleteFilter()(e),
-      ).length;
+    return this.offerableEntities().filter(
+      (e) =>
+        e.inactive &&
+        !selected.includes(e.getId()) &&
+        (this.includeIneligible() || isEligible(e)) &&
+        this.autocompleteFilter()(e),
+    ).length;
   });
 
   /**
@@ -266,15 +280,13 @@ export class EditEntityComponent<
   currentlyMatchingIneligible: Signal<number> = computed(() => {
     const isEligible = this.isEligible();
     const selected = this.values();
-    return this.allEntities
-      .value()
-      .filter(
-        (e) =>
-          !isEligible(e) &&
-          !selected.includes(e.getId()) &&
-          (this.includeInactive() || !e.inactive) &&
-          this.autocompleteFilter()(e),
-      ).length;
+    return this.offerableEntities().filter(
+      (e) =>
+        !isEligible(e) &&
+        !selected.includes(e.getId()) &&
+        (this.includeInactive() || !e.inactive) &&
+        this.autocompleteFilter()(e),
+    ).length;
   });
 
   readonly isCreateDisabled = computed(() => {
@@ -327,7 +339,7 @@ export class EditEntityComponent<
   readonly availableEntitiesResource: Resource<E[]> = resourceWithRetention({
     defaultValue: [],
     params: () => ({
-      allEntities: this.allEntities.value(),
+      offerableEntities: this.offerableEntities(),
       values: this.values(),
       includeInactive: this.includeInactive(),
       includeIneligible: this.includeIneligible(),
@@ -335,7 +347,7 @@ export class EditEntityComponent<
       getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
-      const availableEntities = params.allEntities.filter(
+      const availableEntities = params.offerableEntities.filter(
         (e) =>
           params.values.includes(e.getId()) ||
           ((params.includeInactive || !e.inactive) &&
