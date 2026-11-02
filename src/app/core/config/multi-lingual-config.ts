@@ -36,7 +36,7 @@ export type RawConfig<T> = 0 extends 1 & T
 type RawText<V> = V extends string ? TranslatableText : RawConfig<V>;
 
 /** Reduce a locale id to its language subtag, e.g. `en-US` -> `en`. */
-function baseLanguage(locale: string): string {
+export function baseLanguage(locale: string): string {
   return locale.split("-")[0].toLowerCase();
 }
 

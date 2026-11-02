@@ -42,6 +42,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { DateFilter } from "../filters/dateFilter";
 import { StringFilter } from "../filters/stringFilter";
+import { TranslatableTextFilter } from "../filters/translatableTextFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
@@ -481,6 +482,28 @@ describe("FilterGeneratorService", () => {
     expect(filter).toBeInstanceOf(StringFilter);
 
     TestEntity.schema.delete("customEditField");
+  });
+
+  it("should create a text filter searching all languages for 'translatable-text' fields", async () => {
+    @DatabaseEntity("TranslatableTextFilterTestEntity")
+    class TranslatableTextFilterTestEntity extends Entity {}
+    TranslatableTextFilterTestEntity.schema.set("title", {
+      dataType: "translatable-text",
+      label: "Title",
+    });
+    const entity = new TranslatableTextFilterTestEntity();
+    entity["title"] = { "en-US": "Monthly report", de: "Monatsbericht" };
+
+    const filter = (
+      await service.generate(
+        [{ id: "title" }],
+        TranslatableTextFilterTestEntity,
+        [entity],
+      )
+    )[0];
+
+    expect(filter).toBeInstanceOf(TranslatableTextFilter);
+    expect(filter.label).toBe("Title");
   });
 
   it("should not create a string filter for string fields with a special edit component", async () => {

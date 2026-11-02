@@ -179,10 +179,10 @@ An internal entity's own texts (e.g. `ReportConfig.title`,
 title: TranslatableText;
 ```
 
-That one line gives the field a translations editor, sorting and filtering by the
-displayed text, and resolved CSV exports. The datatype's transforms are the
-identity on purpose: the entity holds the raw value, because resolving on save
-would drop the other languages.
+That one line gives the field a translations editor, sorting by the displayed
+text, a text filter matching the text in any language, and resolved CSV
+exports. The datatype's transforms are the identity on purpose: the entity
+holds the raw value, because resolving on save would drop the other languages.
 
 Admins edit these through `TranslatableTextInputComponent`, which shows the active
 language inline and opens `ConfigureTranslationsPopupComponent` for the full
@@ -590,8 +590,11 @@ env:
 
 ### 4) Add language to the UI
 
-Add the language to the `availableLocales` list in `src/app/core/language/languages.ts`.
+Add the language to `AVAILABLE_LOCALES` in `src/app/core/language/available-locales.ts`.
 This allows the app to show the language in the language select component.
+
+A right-to-left language needs nothing beyond this: `isRtlLocale` already knows them
+(see `language-statics.ts`), so the document direction and the RTL styles follow.
 
 ### 5) Register Angular locale data
 

@@ -33,7 +33,8 @@
           "label": {
             "en-US": "Dashboard",
             "de": "Dashboard",
-            "fr": "Tableau de bord"
+            "fr": "Tableau de bord",
+            "es": "Panel de control"
           },
           "icon": "home",
           "link": "/"
@@ -45,7 +46,8 @@
           "label": {
             "en-US": "Attendance",
             "de": "Anwesenheit",
-            "fr": "Présence"
+            "fr": "Présence",
+            "es": "Asistencia"
           },
           "icon": "calendar-check",
           "link": "/attendance",
@@ -68,7 +70,8 @@
           "label": {
             "en-US": "More ...",
             "de": "Mehr ...",
-            "fr": "Plus ..."
+            "fr": "Plus ...",
+            "es": "Más ..."
           },
           "subMenu": [
             {
@@ -81,7 +84,8 @@
               "label": {
                 "en-US": "Reports",
                 "de": "Berichte",
-                "fr": "Rapports"
+                "fr": "Rapports",
+                "es": "Informes"
               },
               "icon": "line-chart",
               "link": "/report"
@@ -102,7 +106,8 @@
                   "label": {
                     "en-US": "Record Attendance",
                     "de": "Anwesenheiten aufnehmen",
-                    "fr": "Faire l'appel"
+                    "fr": "Faire l'appel",
+                    "es": "Registrar asistencia"
                   },
                   "icon": "calendar-check",
                   "link": "/attendance/add-day"
@@ -111,7 +116,8 @@
                   "label": {
                     "en-US": "Add Child",
                     "de": "Kind hinzufügen",
-                    "fr": "Ajouter un enfant"
+                    "fr": "Ajouter un enfant",
+                    "es": "Añadir niño/a"
                   },
                   "icon": "plus",
                   "link": "/c/child/new"
@@ -120,7 +126,8 @@
                   "label": {
                     "en-US": "Public Registration Form",
                     "de": "Öffentliches Anmelde-Formular",
-                    "fr": "Formulaire d'inscription publique"
+                    "fr": "Formulaire d'inscription publique",
+                    "es": "Formulario de registro público"
                   },
                   "icon": "file-circle-check",
                   "link": "/public-form/form/example"
@@ -129,7 +136,8 @@
                   "label": {
                     "en-US": "Import from file",
                     "de": "Import aus Datei",
-                    "fr": "Importer des données"
+                    "fr": "Importer des données",
+                    "es": "Importar desde archivo"
                   },
                   "icon": "file-upload",
                   "link": "/import"
@@ -158,7 +166,8 @@
               "periodLabel": {
                 "en-US": "this week",
                 "de": "diese Woche",
-                "fr": "cette semaine"
+                "fr": "cette semaine",
+                "es": "esta semana"
               }
             }
           },
@@ -169,7 +178,8 @@
               "periodLabel": {
                 "en-US": "last week",
                 "de": "letzte Woche",
-                "fr": "la semaine dernière"
+                "fr": "la semaine dernière",
+                "es": "la semana pasada"
               }
             }
           },
@@ -198,12 +208,14 @@
       "label": {
         "en-US": "Note",
         "de": "Notiz",
-        "fr": "Observation"
+        "fr": "Observation",
+        "es": "Nota"
       },
       "labelPlural": {
         "en-US": "Notes",
         "de": "Notizen",
-        "fr": "Observations"
+        "fr": "Observations",
+        "es": "Notas"
       },
       "hasPII": true,
       "attributes": {
@@ -211,7 +223,8 @@
           "label": {
             "en-US": "Date",
             "de": "Datum",
-            "fr": "Date"
+            "fr": "Date",
+            "es": "Fecha"
           },
           "dataType": "date-only",
           "defaultValue": {
@@ -227,7 +240,8 @@
           "label": {
             "en-US": "Subject",
             "de": "Betreff",
-            "fr": "Sujet"
+            "fr": "Sujet",
+            "es": "Asunto"
           }
         },
         "text": {
@@ -235,14 +249,16 @@
           "label": {
             "en-US": "Notes",
             "de": "Notizen",
-            "fr": "Observations"
+            "fr": "Observations",
+            "es": "Notas"
           }
         },
         "authors": {
           "label": {
             "en-US": "Team involved",
             "de": "Beteiligtes Team",
-            "fr": "Équipe impliquée"
+            "fr": "Équipe impliquée",
+            "es": "Equipo implicado"
           },
           "dataType": "entity",
           "isArray": true,
@@ -259,7 +275,8 @@
           "label": {
             "en-US": "Category",
             "de": "Kategorie",
-            "fr": "Catégorie"
+            "fr": "Catégorie",
+            "es": "Categoría"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
@@ -269,7 +286,8 @@
           "label": {
             "en-US": "Attachment",
             "de": "Anhang",
-            "fr": "Pièce jointe"
+            "fr": "Pièce jointe",
+            "es": "Adjunto"
           },
           "dataType": "file"
         },
@@ -277,7 +295,8 @@
           "label": {
             "en-US": "Related Records",
             "de": "Verknüpfte Datensätze",
-            "fr": "Enregistrements associés"
+            "fr": "Enregistrements associés",
+            "es": "Registros relacionados"
           },
           "dataType": "entity",
           "additional": [
@@ -292,7 +311,8 @@
           "label": {
             "en-US": "Status",
             "de": "Status im Projekt",
-            "fr": "Statut"
+            "fr": "Statut",
+            "es": "Estado"
           },
           "dataType": "configurable-enum",
           "additional": "warning-levels",
@@ -308,7 +328,8 @@
         "title": {
           "en-US": "Notes & Reports",
           "de": "Notizen",
-          "fr": "Observations & Rapports"
+          "fr": "Observations & Rapports",
+          "es": "Notas e informes"
         },
         "columnGroups": {
           "groups": [
@@ -326,7 +347,8 @@
               "name": {
                 "en-US": "Mobile",
                 "de": "Mobil",
-                "fr": "Mobile"
+                "fr": "Mobile",
+                "es": "Móvil"
               },
               "columns": [
                 "date",
@@ -348,7 +370,8 @@
                 "label": {
                   "en-US": "Today",
                   "de": "Heute",
-                  "fr": "Aujourd'hui"
+                  "fr": "Aujourd'hui",
+                  "es": "Hoy"
                 }
               },
               {
@@ -367,7 +390,8 @@
                 "label": {
                   "en-US": "This week",
                   "de": "Diese Woche",
-                  "fr": "Cette semaine"
+                  "fr": "Cette semaine",
+                  "es": "Esta semana"
                 }
               },
               {
@@ -380,7 +404,8 @@
                 "label": {
                   "en-US": "Since last week",
                   "de": "Seit letzter Woche",
-                  "fr": "Depuis la semaine dernière"
+                  "fr": "Depuis la semaine dernière",
+                  "es": "Desde la semana pasada"
                 }
               },
               {
@@ -399,7 +424,8 @@
                 "label": {
                   "en-US": "This month",
                   "de": "Diesen Monat",
-                  "fr": "Ce mois-ci"
+                  "fr": "Ce mois-ci",
+                  "es": "Este mes"
                 }
               },
               {
@@ -418,7 +444,8 @@
                 "label": {
                   "en-US": "Last month",
                   "de": "Letzten Monat",
-                  "fr": "Mois dernier"
+                  "fr": "Mois dernier",
+                  "es": "El mes pasado"
                 }
               }
             ]
@@ -460,7 +487,8 @@
             "label": {
               "en-US": "Name",
               "de": "Name",
-              "fr": "Nom"
+              "fr": "Nom",
+              "es": "Nombre"
             },
             "id": "name"
           },
@@ -469,7 +497,8 @@
             "label": {
               "en-US": "Age",
               "de": "Alter",
-              "fr": "Âge"
+              "fr": "Âge",
+              "es": "Edad"
             },
             "id": "age",
             "additional": "dateOfBirth"
@@ -479,7 +508,8 @@
             "label": {
               "en-US": "Class",
               "de": "Klasse",
-              "fr": "Classe"
+              "fr": "Classe",
+              "es": "Clase"
             },
             "id": "schoolClass"
           },
@@ -488,7 +518,8 @@
             "label": {
               "en-US": "School",
               "de": "Schule",
-              "fr": "École"
+              "fr": "École",
+              "es": "Escuela"
             },
             "id": "schoolId",
             "additional": "School",
@@ -501,7 +532,8 @@
               "name": {
                 "en-US": "Basic Info",
                 "de": "Übersicht",
-                "fr": "Informations de base"
+                "fr": "Informations de base",
+                "es": "Información básica"
               },
               "columns": [
                 "projectNumber",
@@ -516,7 +548,8 @@
               "name": {
                 "en-US": "Status",
                 "de": "Status im Projekt",
-                "fr": "Statut"
+                "fr": "Statut",
+                "es": "Estado"
               },
               "columns": [
                 "projectNumber",
@@ -531,7 +564,8 @@
               "name": {
                 "en-US": "Short Overview (mobile)",
                 "de": "Kurzübersicht (mobil)",
-                "fr": "Aperçu rapide (mobile)"
+                "fr": "Aperçu rapide (mobile)",
+                "es": "Vista breve (móvil)"
               },
               "columns": [
                 "projectNumber",
@@ -551,7 +585,8 @@
             "label": {
               "en-US": "School",
               "de": "Schule",
-              "fr": "École"
+              "fr": "École",
+              "es": "Escuela"
             }
           }
         ],
@@ -568,7 +603,8 @@
             "title": {
               "en-US": "Basic Information",
               "de": "Übersicht",
-              "fr": "Informations de base"
+              "fr": "Informations de base",
+              "es": "Información básica"
             },
             "components": [
               {
@@ -591,7 +627,8 @@
                       "header": {
                         "en-US": "Personal Information",
                         "de": "Persönlich",
-                        "fr": "Renseignements personnels"
+                        "fr": "Renseignements personnels",
+                        "es": "Información personal"
                       }
                     },
                     {
@@ -603,7 +640,8 @@
                       "header": {
                         "en-US": "Contact Details",
                         "de": "Kontaktdaten",
-                        "fr": "Coordonnées"
+                        "fr": "Coordonnées",
+                        "es": "Datos de contacto"
                       }
                     },
                     {
@@ -616,7 +654,8 @@
                       "header": {
                         "en-US": "Demographics",
                         "de": "Demografische Angaben",
-                        "fr": "Données démographiques"
+                        "fr": "Données démographiques",
+                        "es": "Datos demográficos"
                       }
                     }
                   ]
@@ -628,7 +667,8 @@
             "title": {
               "en-US": "Education",
               "de": "Bildung",
-              "fr": "Éducation"
+              "fr": "Éducation",
+              "es": "Educación"
             },
             "components": [
               {
@@ -657,7 +697,8 @@
                 "title": {
                   "en-US": "Literacy Test Results",
                   "de": "Abschneiden beim Lese-Tests",
-                  "fr": "Résultats du test d'alphabétisation"
+                  "fr": "Résultats du test d'alphabétisation",
+                  "es": "Resultados de la prueba de alfabetización"
                 },
                 "component": "RelatedEntities",
                 "config": {
@@ -697,7 +738,8 @@
             "title": {
               "en-US": "Attendance",
               "de": "Anwesenheit",
-              "fr": "Présence"
+              "fr": "Présence",
+              "es": "Asistencia"
             },
             "components": [
               {
@@ -711,7 +753,8 @@
             "title": {
               "en-US": "Notes & Tasks",
               "de": "Notizen & Aufgaben",
-              "fr": "Notes et tâches"
+              "fr": "Notes et tâches",
+              "es": "Notas y tareas"
             },
             "components": [
               {
@@ -786,7 +829,8 @@
             "title": {
               "en-US": "Educational Materials",
               "de": "Schulmaterialien",
-              "fr": "Matériels scolaires"
+              "fr": "Matériels scolaires",
+              "es": "Materiales educativos"
             },
             "components": [
               {
@@ -827,7 +871,8 @@
             "title": {
               "en-US": "Exit & Dropout",
               "de": "Ausscheiden aus dem Projekt",
-              "fr": "Fin de scolarité"
+              "fr": "Fin de scolarité",
+              "es": "Salida y abandono"
             },
             "components": [
               {
@@ -863,12 +908,14 @@
       "label": {
         "en-US": "Educational Material",
         "de": "Schulmaterial",
-        "fr": "Matériel éducatif"
+        "fr": "Matériel éducatif",
+        "es": "Material educativo"
       },
       "labelPlural": {
         "en-US": "Educational Materials",
         "de": "Schulmaterialien",
-        "fr": "Matériels éducatifs"
+        "fr": "Matériels éducatifs",
+        "es": "Materiales educativos"
       },
       "attributes": {
         "child": {
@@ -881,7 +928,8 @@
           "label": {
             "en-US": "Date",
             "de": "Datum",
-            "fr": "Date"
+            "fr": "Date",
+            "es": "Fecha"
           },
           "defaultValue": {
             "mode": "dynamic",
@@ -894,7 +942,8 @@
           "label": {
             "en-US": "Material",
             "de": "Material",
-            "fr": "Matériel"
+            "fr": "Matériel",
+            "es": "Material"
           },
           "dataType": "configurable-enum",
           "additional": "materials",
@@ -907,7 +956,8 @@
           "label": {
             "en-US": "Amount",
             "de": "Anzahl",
-            "fr": "Quantité"
+            "fr": "Quantité",
+            "es": "Cantidad"
           },
           "defaultValue": {
             "mode": "static",
@@ -924,7 +974,8 @@
           "label": {
             "en-US": "Description",
             "de": "Beschreibung",
-            "fr": "Description"
+            "fr": "Description",
+            "es": "Descripción"
           }
         }
       }
@@ -936,12 +987,14 @@
       "label": {
         "en-US": "Activity",
         "de": "Aktivität",
-        "fr": "Activité"
+        "fr": "Activité",
+        "es": "Actividad"
       },
       "labelPlural": {
         "en-US": "Activities",
         "de": "Aktivitäten",
-        "fr": "Activités"
+        "fr": "Activités",
+        "es": "Actividades"
       },
       "icon": "calendar-days",
       "color": "#00838F",
@@ -952,7 +1005,8 @@
           "label": {
             "en-US": "Title",
             "de": "Titel",
-            "fr": "Titre"
+            "fr": "Titre",
+            "es": "Título"
           },
           "validators": {
             "required": true
@@ -962,7 +1016,8 @@
           "label": {
             "en-US": "Type",
             "de": "Typ",
-            "fr": "Type"
+            "fr": "Type",
+            "es": "Tipo"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type"
@@ -971,12 +1026,14 @@
           "label": {
             "en-US": "Status of activity",
             "de": "Status der Aktivität",
-            "fr": "Statut de l'activité"
+            "fr": "Statut de l'activité",
+            "es": "Estado de la actividad"
           },
           "description": {
             "en-US": "This status can be used to automatically update participants' status also.",
             "de": "Dieser Status kann genutzt werden, um automatisch den Status der Teilnehmer:innen mit zu aktualisieren.",
-            "fr": "Ce statut peut également être utilisé pour mettre à jour automatiquement le statut des participants."
+            "fr": "Ce statut peut également être utilisé pour mettre à jour automatiquement le statut des participants.",
+            "es": "Este estado también puede utilizarse para actualizar automáticamente el estado de los participantes."
           },
           "dataType": "configurable-enum",
           "additional": "activity-status"
@@ -985,7 +1042,8 @@
           "label": {
             "en-US": "Participants",
             "de": "Teilnehmer:innen",
-            "fr": "Participants"
+            "fr": "Participants",
+            "es": "Participantes"
           },
           "dataType": "entity",
           "isArray": true,
@@ -995,7 +1053,8 @@
           "label": {
             "en-US": "Assigned user(s)",
             "de": "Verantwortliche:r",
-            "fr": "Utilisateur(s) affecté(e)(s)"
+            "fr": "Utilisateur(s) affecté(e)(s)",
+            "es": "Usuario(s) asignado(s)"
           },
           "dataType": "entity",
           "isArray": true,
@@ -1025,7 +1084,8 @@
             "title": {
               "en-US": "Basic Information",
               "de": "Übersicht",
-              "fr": "Informations de base"
+              "fr": "Informations de base",
+              "es": "Información básica"
             },
             "components": [
               {
@@ -1057,7 +1117,8 @@
             "title": {
               "en-US": "Participants",
               "de": "Teilnehmer:innen",
-              "fr": "Participants"
+              "fr": "Participants",
+              "es": "Participantes"
             },
             "components": [
               {
@@ -1078,7 +1139,8 @@
             "title": {
               "en-US": "Events & Attendance",
               "de": "Aktivitäten & Anwesenheit",
-              "fr": "Évènements & présence"
+              "fr": "Évènements & présence",
+              "es": "Eventos y asistencia"
             },
             "components": [
               {
@@ -1095,12 +1157,14 @@
       "label": {
         "en-US": "Student",
         "de": "Schüler:in",
-        "fr": "Élève"
+        "fr": "Élève",
+        "es": "Estudiante"
       },
       "labelPlural": {
         "en-US": "Students",
         "de": "Schüler:innen",
-        "fr": "Élèves"
+        "fr": "Élèves",
+        "es": "Estudiantes"
       },
       "toStringAttributes": [
         "name"
@@ -1123,7 +1187,8 @@
           "label": {
             "en-US": "Name",
             "de": "Name",
-            "fr": "Nom"
+            "fr": "Nom",
+            "es": "Nombre"
           },
           "validators": {
             "required": true
@@ -1134,13 +1199,15 @@
           "label": {
             "en-US": "Student ID",
             "de": "Schüler-ID",
-            "fr": "ID de l'étudiante"
+            "fr": "ID de l'étudiante",
+            "es": "ID de estudiante"
           },
           "labelShort": "ID",
           "description": {
             "en-US": "A unique ID for internal use of the organization",
             "de": "Eine eindeutige Kennnummer für die interne Nutzung",
-            "fr": "Un identifiant unique à usage interne à l'organisation"
+            "fr": "Un identifiant unique à usage interne à l'organisation",
+            "es": "Un identificador único para uso interno de la organización"
           },
           "searchable": true,
           "anonymize": "retain"
@@ -1150,12 +1217,14 @@
           "label": {
             "en-US": "Date of birth",
             "de": "Geburtsdatum",
-            "fr": "Date de naissance"
+            "fr": "Date de naissance",
+            "es": "Fecha de nacimiento"
           },
           "labelShort": {
             "en-US": "DoB",
             "de": "Geburtsdatum",
-            "fr": "DDN"
+            "fr": "DDN",
+            "es": "F. nac."
           },
           "anonymize": "retain-anonymized"
         },
@@ -1164,7 +1233,8 @@
           "label": {
             "en-US": "Gender",
             "de": "Geschlecht",
-            "fr": "Genre"
+            "fr": "Genre",
+            "es": "Género"
           },
           "additional": "genders",
           "anonymize": "retain"
@@ -1174,7 +1244,8 @@
           "label": {
             "en-US": "Admission",
             "de": "Aufnahmedatum",
-            "fr": "Admission"
+            "fr": "Admission",
+            "es": "Admisión"
           },
           "anonymize": "retain-anonymized"
         },
@@ -1183,7 +1254,8 @@
           "label": {
             "en-US": "Risk Status",
             "de": "Risiko-Status",
-            "fr": "Statut de risque"
+            "fr": "Statut de risque",
+            "es": "Estado de riesgo"
           },
           "additional": "riskStatus"
         },
@@ -1192,7 +1264,8 @@
           "label": {
             "en-US": "Dropout Date",
             "de": "Datum des Ausscheidens",
-            "fr": "Date de fin de scolarité"
+            "fr": "Date de fin de scolarité",
+            "es": "Fecha de abandono"
           },
           "anonymize": "retain-anonymized"
         },
@@ -1201,7 +1274,8 @@
           "label": {
             "en-US": "Dropout Type",
             "de": "Grund des Ausscheidens",
-            "fr": "Type de fin de scolarité"
+            "fr": "Type de fin de scolarité",
+            "es": "Tipo de abandono"
           },
           "anonymize": "retain"
         },
@@ -1210,7 +1284,8 @@
           "label": {
             "en-US": "Dropout remarks",
             "de": "Bemerkungen zum Ausscheiden",
-            "fr": "Commentaires sur la fin de scolarité"
+            "fr": "Commentaires sur la fin de scolarité",
+            "es": "Observaciones sobre el abandono"
           }
         },
         "photo": {
@@ -1218,7 +1293,8 @@
           "label": {
             "en-US": "Photo",
             "de": "Foto",
-            "fr": "Photo"
+            "fr": "Photo",
+            "es": "Foto"
           }
         },
         "phone": {
@@ -1226,7 +1302,8 @@
           "label": {
             "en-US": "Phone Number",
             "de": "Telefonnummer",
-            "fr": "Numéro de téléphone"
+            "fr": "Numéro de téléphone",
+            "es": "Número de teléfono"
           }
         },
         "address": {
@@ -1234,7 +1311,8 @@
           "label": {
             "en-US": "Address",
             "de": "Adresse",
-            "fr": "Adresse"
+            "fr": "Adresse",
+            "es": "Dirección"
           }
         },
         "health_bloodGroup": {
@@ -1242,7 +1320,8 @@
           "label": {
             "en-US": "Blood Group",
             "de": "Blutgruppe",
-            "fr": "Groupe sanguin"
+            "fr": "Groupe sanguin",
+            "es": "Grupo sanguíneo"
           }
         },
         "motherTongue": {
@@ -1250,12 +1329,14 @@
           "label": {
             "en-US": "Mother Tongue",
             "de": "Muttersprache",
-            "fr": "Langue maternelle"
+            "fr": "Langue maternelle",
+            "es": "Lengua materna"
           },
           "description": {
             "en-US": "The primary language spoken at home",
             "de": "Die hauptsächlich zu Hause gesprochene Sprache",
-            "fr": "La langue principale parlée à la maison"
+            "fr": "La langue principale parlée à la maison",
+            "es": "El idioma principal que se habla en casa"
           }
         },
         "birth_certificate": {
@@ -1263,7 +1344,8 @@
           "label": {
             "en-US": "Birth certificate",
             "de": "Geburtsurkunde",
-            "fr": "Acte de naissance"
+            "fr": "Acte de naissance",
+            "es": "Certificado de nacimiento"
           },
           "additional": {
             "acceptedFileTypes": ".pdf"
@@ -1274,7 +1356,8 @@
           "label": {
             "en-US": "Email",
             "de": "E-Mail",
-            "fr": "Email"
+            "fr": "Email",
+            "es": "Correo electrónico"
           }
         }
       }
@@ -1287,12 +1370,14 @@
       "label": {
         "en-US": "Partner",
         "de": "Partner",
-        "fr": "Partenaire"
+        "fr": "Partenaire",
+        "es": "Socio"
       },
       "labelPlural": {
         "en-US": "Partners",
         "de": "Partner",
-        "fr": "Partenaires"
+        "fr": "Partenaires",
+        "es": "Socios"
       },
       "color": "#9E9D24",
       "attributes": {
@@ -1301,7 +1386,8 @@
           "label": {
             "en-US": "Name",
             "de": "Name",
-            "fr": "Nom"
+            "fr": "Nom",
+            "es": "Nombre"
           },
           "validators": {
             "required": true
@@ -1312,7 +1398,8 @@
           "label": {
             "en-US": "Private School",
             "de": "Privatschule",
-            "fr": "École privée"
+            "fr": "École privée",
+            "es": "Escuela privada"
           }
         },
         "language": {
@@ -1320,7 +1407,8 @@
           "label": {
             "en-US": "Language",
             "de": "Sprache",
-            "fr": "Langue"
+            "fr": "Langue",
+            "es": "Idioma"
           }
         },
         "address": {
@@ -1328,7 +1416,8 @@
           "label": {
             "en-US": "Address",
             "de": "Adresse",
-            "fr": "Adresse"
+            "fr": "Adresse",
+            "es": "Dirección"
           }
         },
         "phone": {
@@ -1336,7 +1425,8 @@
           "label": {
             "en-US": "Phone Number",
             "de": "Telefonnummer",
-            "fr": "Numéro de téléphone"
+            "fr": "Numéro de téléphone",
+            "es": "Número de teléfono"
           }
         },
         "timing": {
@@ -1344,7 +1434,8 @@
           "label": {
             "en-US": "School Timing",
             "de": "Unterrichtszeiten",
-            "fr": "Horaires scolaires"
+            "fr": "Horaires scolaires",
+            "es": "Horario escolar"
           }
         },
         "remarks": {
@@ -1352,7 +1443,8 @@
           "label": {
             "en-US": "Remarks",
             "de": "Vermerk",
-            "fr": "Observations"
+            "fr": "Observations",
+            "es": "Observaciones"
           }
         },
         "website": {
@@ -1360,7 +1452,8 @@
           "label": {
             "en-US": "Website",
             "de": "Webseite",
-            "fr": "Site web"
+            "fr": "Site web",
+            "es": "Sitio web"
           }
         },
         "contactPerson": {
@@ -1369,7 +1462,8 @@
           "label": {
             "en-US": "Contact Person",
             "de": "Kontaktperson",
-            "fr": "Personne de contact"
+            "fr": "Personne de contact",
+            "es": "Persona de contacto"
           }
         }
       }
@@ -1386,7 +1480,8 @@
             "label": {
               "en-US": "Children",
               "de": "Schüler:innen",
-              "fr": "Enfants"
+              "fr": "Enfants",
+              "es": "Niños"
             }
           },
           "privateSchool",
@@ -1413,7 +1508,8 @@
             "title": {
               "en-US": "Basic Information",
               "de": "Übersicht",
-              "fr": "Informations de base"
+              "fr": "Informations de base",
+              "es": "Información básica"
             },
             "components": [
               {
@@ -1455,7 +1551,8 @@
             "title": {
               "en-US": "Students",
               "de": "Schüler:innen",
-              "fr": "Élèves"
+              "fr": "Élèves",
+              "es": "Estudiantes"
             },
             "components": [
               {
@@ -1490,7 +1587,8 @@
             "title": {
               "en-US": "Activities",
               "de": "Aktivitäten",
-              "fr": "Activités"
+              "fr": "Activités",
+              "es": "Actividades"
             },
             "components": [
               {
@@ -1513,12 +1611,14 @@
       "label": {
         "en-US": "Staff Member",
         "de": "Mitarbeiter:in",
-        "fr": "Personnel"
+        "fr": "Personnel",
+        "es": "Miembro del personal"
       },
       "labelPlural": {
         "en-US": "Staff Members",
         "de": "Mitarbeiter:innen",
-        "fr": "Personnel"
+        "fr": "Personnel",
+        "es": "Miembros del personal"
       },
       "hasPII": true,
       "attributes": {
@@ -1527,7 +1627,8 @@
           "label": {
             "en-US": "First Name",
             "de": "Vorname",
-            "fr": "Prénom"
+            "fr": "Prénom",
+            "es": "Nombre"
           }
         },
         "lastname": {
@@ -1535,7 +1636,8 @@
           "label": {
             "en-US": "Last Name",
             "de": "Nachname",
-            "fr": "Nom de famille"
+            "fr": "Nom de famille",
+            "es": "Apellidos"
           }
         },
         "phone": {
@@ -1543,7 +1645,8 @@
           "label": {
             "en-US": "Contact Number",
             "de": "Telefonnummer",
-            "fr": "Numéro de contact"
+            "fr": "Numéro de contact",
+            "es": "Número de contacto"
           }
         },
         "role": {
@@ -1551,12 +1654,14 @@
           "label": {
             "en-US": "Role",
             "de": "Rolle",
-            "fr": "Rôle"
+            "fr": "Rôle",
+            "es": "Rol"
           },
           "description": {
             "en-US": "Current role in the organisation",
             "de": "Aktuelle Rolle in der Organisation",
-            "fr": "Rôle actuel au sein de l'organisation"
+            "fr": "Rôle actuel au sein de l'organisation",
+            "es": "Cargo actual en la organización"
           }
         },
         "dateOfJoining": {
@@ -1564,7 +1669,8 @@
           "label": {
             "en-US": "Date of Joining",
             "de": "Eintrittsdatum",
-            "fr": "Date d'entrée"
+            "fr": "Date d'entrée",
+            "es": "Fecha de incorporación"
           }
         }
       },
@@ -1600,7 +1706,8 @@
             "title": {
               "en-US": "User Information",
               "de": "Übersicht",
-              "fr": "Informations sur l'utilisateur"
+              "fr": "Informations sur l'utilisateur",
+              "es": "Información del usuario"
             },
             "components": [
               {
@@ -1634,14 +1741,16 @@
             "title": {
               "en-US": "Responsible for",
               "de": "Verantwortlich für",
-              "fr": "Responsable de"
+              "fr": "Responsable de",
+              "es": "Responsable de"
             },
             "components": [
               {
                 "title": {
                   "en-US": "Contact Person for Partners",
                   "de": "Kontaktperson für Partner",
-                  "fr": "Personne de contact pour les partenaires"
+                  "fr": "Personne de contact pour les partenaires",
+                  "es": "Persona de contacto para socios"
                 },
                 "component": "RelatedEntities",
                 "config": {
@@ -1663,7 +1772,8 @@
                 "title": {
                   "en-US": "Managing Activities ",
                   "de": "Verantwortete Aktivitäten",
-                  "fr": "Gestion des activités"
+                  "fr": "Gestion des activités",
+                  "es": "Gestión de actividades "
                 },
                 "component": "RelatedEntities",
                 "config": {
@@ -1691,12 +1801,14 @@
       "label": {
         "en-US": "Literacy Test",
         "de": "Lese-Test",
-        "fr": "Test d'alphabétisation"
+        "fr": "Test d'alphabétisation",
+        "es": "Prueba de alfabetización"
       },
       "labelPlural": {
         "en-US": "Literacy Tests",
         "de": "Lese-Tests",
-        "fr": "Tests d'alphabétisation"
+        "fr": "Tests d'alphabétisation",
+        "es": "Pruebas de alfabetización"
       },
       "hasPII": true,
       "attributes": {
@@ -1710,7 +1822,8 @@
           "label": {
             "en-US": "Date",
             "de": "Datum",
-            "fr": "Date"
+            "fr": "Date",
+            "es": "Fecha"
           },
           "defaultValue": {
             "mode": "dynamic",
@@ -1734,7 +1847,8 @@
           "label": {
             "en-US": "English",
             "de": "Englisch",
-            "fr": "Anglais"
+            "fr": "Anglais",
+            "es": "Inglés"
           },
           "dataType": "configurable-enum",
           "additional": "reading-levels"
@@ -1743,7 +1857,8 @@
           "label": {
             "en-US": "Math",
             "de": "Mathe",
-            "fr": "Mathématiques"
+            "fr": "Mathématiques",
+            "es": "Matemáticas"
           },
           "dataType": "configurable-enum",
           "additional": "math-levels"
@@ -1753,7 +1868,8 @@
           "label": {
             "en-US": "Remarks",
             "de": "Vermerk",
-            "fr": "Observations"
+            "fr": "Observations",
+            "es": "Observaciones"
           }
         }
       }
@@ -1772,7 +1888,8 @@
           "label": {
             "en-US": "Child",
             "de": "Kind",
-            "fr": "Enfant"
+            "fr": "Enfant",
+            "es": "Niño/a"
           }
         },
         "schoolId": {
@@ -1786,7 +1903,8 @@
           "label": {
             "en-US": "School",
             "de": "Schule",
-            "fr": "École"
+            "fr": "École",
+            "es": "Escuela"
           }
         },
         "schoolClass": {
@@ -1794,7 +1912,8 @@
           "label": {
             "en-US": "Class",
             "de": "Klasse",
-            "fr": "Classe"
+            "fr": "Classe",
+            "es": "Clase"
           },
           "anonymize": "retain"
         },
@@ -1803,12 +1922,14 @@
           "label": {
             "en-US": "Start date",
             "de": "Anfang",
-            "fr": "Date de début"
+            "fr": "Date de début",
+            "es": "Fecha de inicio"
           },
           "description": {
             "en-US": "The date a child joins a school",
             "de": "Das Datum, an dem das Kind der Schule beigetreten ist",
-            "fr": "Date où l'enfant rejoint une école"
+            "fr": "Date où l'enfant rejoint une école",
+            "es": "La fecha en que un niño ingresa a una escuela"
           },
           "anonymize": "retain"
         },
@@ -1817,12 +1938,14 @@
           "label": {
             "en-US": "End date",
             "de": "Ende",
-            "fr": "Date de fin"
+            "fr": "Date de fin",
+            "es": "Fecha de finalización"
           },
           "description": {
             "en-US": "The date of a child leaving the school",
             "de": "Das Datum, an dem das Kind die Schule verlassen hat",
-            "fr": "Date de départ d'un enfant de l'école"
+            "fr": "Date de départ d'un enfant de l'école",
+            "es": "La fecha en que un niño deja la escuela"
           },
           "anonymize": "retain"
         },
@@ -1831,7 +1954,8 @@
           "label": {
             "en-US": "Result",
             "de": "Ergebnis",
-            "fr": "Résultat"
+            "fr": "Résultat",
+            "es": "Resultado"
           },
           "validators": {
             "min": 0,
@@ -1847,12 +1971,14 @@
       "label": {
         "en-US": "Event",
         "de": "Veranstaltung",
-        "fr": "Évènement"
+        "fr": "Évènement",
+        "es": "Evento"
       },
       "labelPlural": {
         "en-US": "Events",
         "de": "Veranstaltungen",
-        "fr": "Évènements"
+        "fr": "Évènements",
+        "es": "Eventos"
       },
       "icon": "calendar-day",
       "hasPII": true,
@@ -1861,7 +1987,8 @@
           "label": {
             "en-US": "Date",
             "de": "Datum",
-            "fr": "Date"
+            "fr": "Date",
+            "es": "Fecha"
           },
           "dataType": "date-only",
           "defaultValue": {
@@ -1876,7 +2003,8 @@
           "label": {
             "en-US": "Participants",
             "de": "Teilnehmer:innen",
-            "fr": "Participants"
+            "fr": "Participants",
+            "es": "Participantes"
           },
           "dataType": "attendance",
           "isArray": true,
@@ -1896,7 +2024,8 @@
           "label": {
             "en-US": "Title",
             "de": "Titel",
-            "fr": "Sujet"
+            "fr": "Sujet",
+            "es": "Título"
           }
         },
         "text": {
@@ -1904,14 +2033,16 @@
           "label": {
             "en-US": "Notes",
             "de": "Notizen",
-            "fr": "Observations"
+            "fr": "Observations",
+            "es": "Notas"
           }
         },
         "authors": {
           "label": {
             "en-US": "Team involved",
             "de": "Beteiligtes Team",
-            "fr": "Équipe impliquée"
+            "fr": "Équipe impliquée",
+            "es": "Equipo implicado"
           },
           "dataType": "entity",
           "isArray": true,
@@ -1928,7 +2059,8 @@
           "label": {
             "en-US": "Category",
             "de": "Kategorie",
-            "fr": "Catégorie"
+            "fr": "Catégorie",
+            "es": "Categoría"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
@@ -1938,7 +2070,8 @@
           "label": {
             "en-US": "Attachment",
             "de": "Anhang",
-            "fr": "Pièce jointe"
+            "fr": "Pièce jointe",
+            "es": "Adjunto"
           },
           "dataType": "file"
         },
@@ -1946,7 +2079,8 @@
           "label": {
             "en-US": "Parent Activity",
             "de": "Übergeordnete Aktivität",
-            "fr": "Activité parente"
+            "fr": "Activité parente",
+            "es": "Actividad principal"
           },
           "dataType": "entity",
           "additional": "RecurringActivity",
@@ -1982,7 +2116,8 @@
             "title": {
               "en-US": "Details",
               "de": "Details",
-              "fr": "Détails"
+              "fr": "Détails",
+              "es": "Detalles"
             },
             "components": [
               {

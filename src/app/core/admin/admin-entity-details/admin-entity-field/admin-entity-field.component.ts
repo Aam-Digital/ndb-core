@@ -170,6 +170,11 @@ export class AdminEntityFieldComponent implements OnInit {
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
   attendanceParticipantTypesForm = new FormControl<string[]>([]);
 
+  /** the data type selected in the form, for the validator settings that depend on it */
+  readonly selectedDataType = signal<string>(
+    this.data.entitySchemaField.dataType,
+  );
+
   /** whether a "date-range" field offers predefined periods (`additional` is not an empty list) */
   datePresetsOffered: WritableSignal<boolean> = signal(true);
   /** the periods that were configured for the field, to offer them again after they were switched off */
@@ -332,6 +337,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .subscribe((v) => {
         this.updateDataTypeAdditional(v);
         this.resetIsArrayIfUnsupported(v);
+        this.selectedDataType.set(v);
       });
     this.updateForNewOrExistingField();
     this.initSelectionConditionTarget();

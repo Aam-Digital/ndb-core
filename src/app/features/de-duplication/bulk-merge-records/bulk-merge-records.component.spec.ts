@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
@@ -81,7 +81,15 @@ describe("BulkMergeRecordsComponent account warning", () => {
       formGroup: new FormGroup({}),
     }),
     extendFormFieldConfig: vi.fn(),
+    confirmValidity: vi.fn().mockResolvedValue(true),
   };
+
+  beforeEach(() => {
+    mockFormSetup.createEntityForm.mockResolvedValue({
+      formGroup: new FormGroup({}),
+    });
+    mockFormSetup.confirmValidity.mockResolvedValue(true);
+  });
 
   async function setupModule(
     options: {
@@ -174,6 +182,28 @@ describe("BulkMergeRecordsComponent account warning", () => {
 
     expect(mockDialogRef.close).toHaveBeenCalledWith(expect.any(Object));
   });
+
+  it.each([true, false])(
+    "merges a record with warnings only if the form service accepts the form, after asking to confirm them (accepted: %s)",
+    async (accepted) => {
+      mockFormSetup.createEntityForm.mockResolvedValue({
+        formGroup: new FormGroup({
+          period: new FormControl(null, () => ({
+            withinParent: {
+              warning: true,
+              errorMessage: "Outside the period of Training",
+            },
+          })),
+        }),
+      });
+      mockFormSetup.confirmValidity.mockResolvedValue(accepted);
+      await setupModule();
+
+      await fixture.componentInstance.confirmAndMergeRecords();
+
+      expect(mockDialogRef.close).toHaveBeenCalledTimes(accepted ? 1 : 0);
+    },
+  );
 
   it("should NOT show account warning when no accounts exist", async () => {
     await setupModule();

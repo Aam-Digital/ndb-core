@@ -17,18 +17,26 @@
   color: colors.$hint-text;
 }
 
-.hidden {
-  padding: 0;
-  box-shadow: none;
-  visibility: hidden;
-  height: 0;
-}
-
 .greyed-out {
   opacity: 0.5;
+}
+
+.option-language-tag {
+  margin-inline-start: 8px;
+  font-size: 0.75em;
+  color: colors.$hint-text;
 }
 
 .min-width {
   min-width: 240px;
   margin-bottom: 0;
+}
+
+.use-case-options {
+  padding-inline-start: 12px;
+  min-width: 0;
+
+  ::ng-deep .mat-mdc-slide-toggle label {
+    white-space: normal;
+  }
 }

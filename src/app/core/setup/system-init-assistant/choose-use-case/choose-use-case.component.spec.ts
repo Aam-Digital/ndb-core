@@ -65,8 +65,66 @@ describe("ChooseUseCaseComponent", () => {
         useCase("Start from scratch"),
       ]);
 
-      expect(names()).toEqual(["French", "German", "Start from scratch"]);
+      expect(names()).toEqual(["Start from scratch", "French", "German"]);
       expect(component.hasNoUseCaseInCurrentLocale()).toBe(true);
+    });
+
+    it("should offer the use cases of other languages only once asked for", () => {
+      given("en", [useCase("English", "en"), useCase("German", "de")]);
+
+      expect(names()).toEqual(["English"]);
+      expect(component.hasUseCasesInOtherLanguages()).toBe(true);
+
+      component.onShowOtherLanguagesChange(true);
+
+      expect(names()).toEqual(["English", "German"]);
+    });
+
+    it("should drop a use case of another language when hiding them again", () => {
+      const emitted: (BaseConfig | null)[] = [];
+      component.selectionChanged.subscribe((c) => emitted.push(c));
+      given("en", [useCase("English", "en"), useCase("German", "de")]);
+      component.onShowOtherLanguagesChange(true);
+      component.selectedUseCase.set(
+        component.availableUseCases().find((uc) => uc.name === "German"),
+      );
+
+      component.onShowOtherLanguagesChange(false);
+
+      // no longer offered, so leaving it selected would show a blank dropdown
+      expect(component.selectedUseCase()).toBeUndefined();
+      expect(emitted).toEqual([null]);
+    });
+
+    it("should clear the selection when starting from scratch", () => {
+      given("en", [useCase("English", "en")]);
+      component.selectedUseCase.set(component.availableUseCases()[0]);
+
+      component.onStartFromScratchChange(true);
+
+      expect(component.selectedUseCase()).toBeUndefined();
+    });
+
+    it("should fix the toggle on when nothing matches the current language", () => {
+      given("ar", [useCase("French", "fr"), useCase("German", "de")]);
+
+      // shown and on, so the greyed-out options are explained rather than unexplained
+      expect(component.hasUseCasesInOtherLanguages()).toBe(true);
+      expect(component.revealOtherLanguages()).toBe(true);
+      expect(component.hasNoUseCaseInCurrentLocale()).toBe(true);
+    });
+
+    it("should still match the selection after the option list is rebuilt", () => {
+      given("en", [useCase("English", "en"), useCase("German", "de")]);
+      const picked = component.availableUseCases()[0];
+
+      component.onShowOtherLanguagesChange(true);
+      const rebuilt = component
+        .availableUseCases()
+        .find((o) => o.name === picked.name);
+
+      expect(rebuilt).not.toBe(picked);
+      expect(component.compareUseCases(picked, rebuilt)).toBe(true);
     });
 
     it("should never switch the language on the user's behalf", () => {

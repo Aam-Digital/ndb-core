@@ -1,8 +1,14 @@
 [
   {
     "id": "basic",
-    "name": "Basic Setup",
-    "description": "A basic setup with minimal configuration to get started quickly.",
+    "name": {
+      "en-US": "Basic Setup",
+      "ar": "إعداد أساسي"
+    },
+    "description": {
+      "en-US": "A basic setup with minimal configuration to get started quickly.",
+      "ar": "إعداد أساسي بأقل قدر من الضبط للبدء بسرعة."
+    },
     "entitiesToImport": [
       "basic/Config_CONFIG_ENTITY.json",
       "basic/configurable-enums.json",
@@ -15,19 +21,24 @@
       "basic/MarkdownContent_help.json",
       "basic/SiteSettings_global.json"
     ],
-    "locale": "en-US"
+    "locale": [
+      "en-US",
+      "ar"
+    ]
   },
   {
     "id": "education",
     "name": {
       "en-US": "Education Project",
       "de": "Bildungsprojekt",
-      "fr": "Projet d'éducation"
+      "fr": "Projet d'éducation",
+      "es": "Proyecto educativo"
     },
     "description": {
       "en-US": "Manage students, attendance, personal development and counselling activities.\n\nThis example was designed for school or after-school support programs.",
       "de": "Verwalten Sie Schüler:innen, Anwesenheit, persönliche Entwicklung und Beratungsaktivitäten.\n\nDieses Beispiel wurde für schulische oder außerschulische Förderprogramme entworfen.",
-      "fr": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire."
+      "fr": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire.",
+      "es": "Gestione estudiantes, asistencia, desarrollo personal y actividades de orientación.\n\nEste ejemplo se diseñó para programas escolares o extraescolares."
     },
     "entitiesToImport": [
       "education/ProgressDashboardConfig_examples.json",
@@ -49,7 +60,8 @@
     "locale": [
       "en-US",
       "de",
-      "fr"
+      "fr",
+      "es"
     ]
   },
   {

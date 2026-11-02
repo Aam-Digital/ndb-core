@@ -26,6 +26,7 @@ import {
 } from "../api-client.service";
 import { getScopeLabel } from "../api-client-scopes";
 import { CreateApiClientDialogComponent } from "../create-api-client-dialog/create-api-client-dialog.component";
+import { EditApiClientScopesDialogComponent } from "../edit-api-client-scopes-dialog/edit-api-client-scopes-dialog.component";
 import {
   ApiClientCredentialsDialogComponent,
   ApiClientCredentialsDialogData,
@@ -92,6 +93,17 @@ export class ApiClientListComponent {
     const result = await firstValueFrom(dialogRef.afterClosed());
     if (result) {
       this.showCredentials(result);
+      this.apiClients.reload();
+    }
+  }
+
+  async editScopes(apiClient: ApiClient) {
+    const dialogRef = this.dialog.open<
+      EditApiClientScopesDialogComponent,
+      ApiClient,
+      ApiClient
+    >(EditApiClientScopesDialogComponent, { data: apiClient, width: "600px" });
+    if (await firstValueFrom(dialogRef.afterClosed())) {
       this.apiClients.reload();
     }
   }

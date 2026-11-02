@@ -3,12 +3,14 @@
   "subject": {
     "en-US": "Happy Birthday!",
     "de": "Happy Birthday!",
-    "fr": "Joyeux anniversaire !"
+    "fr": "Joyeux anniversaire !",
+    "es": "¡Feliz cumpleaños!"
   },
   "body": {
     "en-US": "Wishing you a wonderful birthday filled with joy and happiness. Have a fantastic year ahead!",
     "de": "Wir wünschen alles Gute zum Geburtstag, einen Tag voller Freude und ein fantastisches neues Lebensjahr!",
-    "fr": "Nous vous souhaitons un merveilleux anniversaire rempli de joie et de bonheur. Passez une année fantastique à venir !"
+    "fr": "Nous vous souhaitons un merveilleux anniversaire rempli de joie et de bonheur. Passez une année fantastique à venir !",
+    "es": "Le deseamos un cumpleaños maravilloso lleno de alegría y felicidad. ¡Que tenga un año fantástico!"
   },
   "category": "NOTE"
 }

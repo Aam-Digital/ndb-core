@@ -7,7 +7,8 @@
         "label": {
           "en-US": "Home Visit",
           "de": "Hausbesuch",
-          "fr": "Visite à domicile"
+          "fr": "Visite à domicile",
+          "es": "Visita domiciliaria"
         }
       },
       {
@@ -15,7 +16,8 @@
         "label": {
           "en-US": "Talk with Guardians",
           "de": "Elterngespräch",
-          "fr": "Entretien avec les parents"
+          "fr": "Entretien avec les parents",
+          "es": "Conversación con los tutores"
         }
       },
       {
@@ -23,7 +25,8 @@
         "label": {
           "en-US": "Incident",
           "de": "Vorfall",
-          "fr": "Incident"
+          "fr": "Incident",
+          "es": "Incidente"
         }
       },
       {
@@ -31,7 +34,8 @@
         "label": {
           "en-US": "General Note",
           "de": "Allgemeine Notiz",
-          "fr": "Remarque générale"
+          "fr": "Remarque générale",
+          "es": "Nota general"
         }
       },
       {
@@ -39,7 +43,8 @@
         "label": {
           "en-US": "Guardians' Meeting",
           "de": "Elternabend",
-          "fr": "Réunion de parents"
+          "fr": "Réunion de parents",
+          "es": "Reunión de tutores"
         },
         "color": "#E1F5FE",
         "isMeeting": true
@@ -49,7 +54,8 @@
         "label": {
           "en-US": "Coaching Class",
           "de": "Nachhilfe-Unterricht",
-          "fr": "Cours de soutien"
+          "fr": "Cours de soutien",
+          "es": "Clase de refuerzo"
         },
         "color": "#EEEEEE",
         "isMeeting": true
@@ -59,7 +65,8 @@
         "label": {
           "en-US": "School Class",
           "de": "Schul-Unterricht",
-          "fr": "Cours scolaire"
+          "fr": "Cours scolaire",
+          "es": "Clase escolar"
         },
         "color": "#EEEEEE",
         "isMeeting": true
@@ -78,7 +85,8 @@
         "label": {
           "en-US": "pencil",
           "de": "Bleistift",
-          "fr": "crayon à papier"
+          "fr": "crayon à papier",
+          "es": "lápiz"
         }
       },
       {
@@ -86,7 +94,8 @@
         "label": {
           "en-US": "eraser",
           "de": "Radiergummi",
-          "fr": "gomme"
+          "fr": "gomme",
+          "es": "goma de borrar"
         }
       },
       {
@@ -94,7 +103,8 @@
         "label": {
           "en-US": "pen (black)",
           "de": "Stift (schwarz)",
-          "fr": "stylo (noir)"
+          "fr": "stylo (noir)",
+          "es": "bolígrafo (negro)"
         }
       },
       {
@@ -102,7 +112,8 @@
         "label": {
           "en-US": "crayons",
           "de": "Farbstifte",
-          "fr": "crayons de couleur"
+          "fr": "crayons de couleur",
+          "es": "lápices de colores"
         }
       },
       {
@@ -110,7 +121,8 @@
         "label": {
           "en-US": "copy (plain)",
           "de": "Heft",
-          "fr": "cahier"
+          "fr": "cahier",
+          "es": "cuaderno (liso)"
         }
       },
       {
@@ -118,7 +130,8 @@
         "label": {
           "en-US": "School Uniform",
           "de": "Schuluniform",
-          "fr": "Uniforme scolaire"
+          "fr": "Uniforme scolaire",
+          "es": "Uniforme escolar"
         },
         "color": "#B3E5FC"
       },
@@ -127,7 +140,8 @@
         "label": {
           "en-US": "School Shoes",
           "de": "Sportschuhe",
-          "fr": "Chaussures scolaires"
+          "fr": "Chaussures scolaires",
+          "es": "Zapatos escolares"
         },
         "color": "#B3E5FC"
       }
@@ -141,7 +155,8 @@
         "label": {
           "en-US": "Nothing",
           "de": "nichts",
-          "fr": "Aucune compétence"
+          "fr": "Aucune compétence",
+          "es": "Ninguno"
         },
         "_ordinal": 0,
         "color": "#fd7272"
@@ -151,7 +166,8 @@
         "label": {
           "en-US": "Numbers 1-9",
           "de": "Zahlen 1-9",
-          "fr": "Chiffres 1-9"
+          "fr": "Chiffres 1-9",
+          "es": "Números 1-9"
         },
         "_ordinal": 1,
         "color": "#ff8153"
@@ -161,7 +177,8 @@
         "label": {
           "en-US": "Numbers 10-99",
           "de": "Zahlen 10-99",
-          "fr": "Chiffres 10-99"
+          "fr": "Chiffres 10-99",
+          "es": "Números 10-99"
         },
         "_ordinal": 2,
         "color": "#ff982a"
@@ -171,7 +188,8 @@
         "label": {
           "en-US": "Subtraction",
           "de": "Subtraktion",
-          "fr": "Soustraction"
+          "fr": "Soustraction",
+          "es": "Resta"
         },
         "_ordinal": 3,
         "color": "#d2c92e"
@@ -193,7 +211,8 @@
         "label": {
           "en-US": "Nothing",
           "de": "nichts",
-          "fr": "Aucune compétence"
+          "fr": "Aucune compétence",
+          "es": "Ninguno"
         },
         "_ordinal": 0,
         "color": "#fd7272"
@@ -203,7 +222,8 @@
         "label": {
           "en-US": "Read Letters",
           "de": "Buchstaben",
-          "fr": "Lecture de lettres uniques"
+          "fr": "Lecture de lettres uniques",
+          "es": "Leer letras"
         },
         "_ordinal": 1,
         "color": "#ff8153"
@@ -213,7 +233,8 @@
         "label": {
           "en-US": "Read Words",
           "de": "Wörter",
-          "fr": "Lecture de mots"
+          "fr": "Lecture de mots",
+          "es": "Leer palabras"
         },
         "_ordinal": 2,
         "color": "#ff982a"
@@ -223,7 +244,8 @@
         "label": {
           "en-US": "Read Sentence",
           "de": "Sätze",
-          "fr": "Lecture de phrases"
+          "fr": "Lecture de phrases",
+          "es": "Leer una oración"
         },
         "_ordinal": 3,
         "color": "#d2c92e"
@@ -233,7 +255,8 @@
         "label": {
           "en-US": "Read Paragraph",
           "de": "Texte",
-          "fr": "Lecture de paragraphes"
+          "fr": "Lecture de paragraphes",
+          "es": "Leer un párrafo"
         },
         "_ordinal": 4,
         "passed": true,
@@ -249,7 +272,8 @@
         "label": {
           "en-US": "Planned",
           "de": "geplant",
-          "fr": "Prévu"
+          "fr": "Prévu",
+          "es": "Planificado"
         }
       },
       {
@@ -257,7 +281,8 @@
         "label": {
           "en-US": "Ongoing",
           "de": "läuft",
-          "fr": "En cours"
+          "fr": "En cours",
+          "es": "En curso"
         }
       },
       {
@@ -265,7 +290,8 @@
         "label": {
           "en-US": "Completed",
           "de": "abgeschlossen",
-          "fr": "Complété"
+          "fr": "Complété",
+          "es": "Completado"
         }
       }
     ]
@@ -278,7 +304,8 @@
         "label": {
           "en-US": "Dropout Risk",
           "de": "Schulabbruch-Risiko",
-          "fr": "Risque d'abandon scolaire"
+          "fr": "Risque d'abandon scolaire",
+          "es": "Riesgo de abandono"
         }
       },
       {
@@ -286,7 +313,8 @@
         "label": {
           "en-US": "Learning Challenges",
           "de": "Lernschwierigkeiten",
-          "fr": "Difficultés d'apprentissage"
+          "fr": "Difficultés d'apprentissage",
+          "es": "Dificultades de aprendizaje"
         }
       }
     ]

@@ -76,3 +76,11 @@ mat-form-field {
   --letter-spacing-wide: 0;
   --line-height-scale: 1.3;
 }
+
+/**
+ * The range label is one string ("1 - 5 of 37") that comes out reversed in RTL.
+ * `plaintext` takes the direction from the text, so each language reads correctly.
+ */
+.mat-mdc-paginator-range-label {
+  unicode-bidi: plaintext;
+}

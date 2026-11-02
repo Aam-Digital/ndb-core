@@ -35,7 +35,8 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 
 ## Code conventions
 
-- **Components:** standalone (the default, do not set `standalone: true`), `changeDetection: ChangeDetectionStrategy.OnPush`, `input()` and `output()` functions, `inject()` instead of constructor injection, host bindings in the `host` object (no `@HostBinding` or `@HostListener`). Keep them small, prefer inline templates for small ones, use reactive forms, lazy-load feature routes.
+- **Components:** standalone (the default, do not set `standalone: true`), `OnPush` change detection (the default since Angular 22, do not set `changeDetection`), `input()` and `output()` functions, host bindings in the `host` object (no `@HostBinding` or `@HostListener`). Keep them small, prefer inline templates for small ones, use reactive forms, lazy-load feature routes.
+- **Dependency injection:** `inject()` into a `private readonly` field (`private readonly entityMapper = inject(EntityMapperService)`), in components, services, directives and pipes alike; no constructor injection.
 - **State:** signals for local state, `computed()` for derived state, `update` or `set` (never `mutate`).
 - **Templates:** keep them simple. Use `@if`, `@for` and `@switch`, class and style bindings instead of `ngClass` and `ngStyle`, the `async` pipe for observables, the `customDate` pipe for dates, `NgOptimizedImage` for static images. Use `<app-fa-dynamic-icon>` for icons, never `<fa-icon>` directly.
 - **Services:** `providedIn: 'root'` for singletons, one responsibility each.
@@ -67,7 +68,7 @@ This repository is public. Never include customer/project-identifying informatio
 
 ## Skills
 
-Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`.
+Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`. Outside that flow, `translate-base-configs` adds a language to the base configs in `src/assets/base-configs/`.
 
 ## Common commands
 

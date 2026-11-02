@@ -73,16 +73,6 @@ name = "dockerfmt"
 [[plugin]]
 name = "eslint"
 package_file = "package.json"
-package_filters = [
-  "eslint",
-  "prettier",
-  "eslint-plugin-prettier",
-  "eslint-plugin-storybook",
-  "typescript-eslint",
-  "@angular-eslint/schematics",
-  "@typescript-eslint/eslint-plugin",
-  "@typescript-eslint/parser",
-]
 
 [[plugin]]
 name = "hadolint"
