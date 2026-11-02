@@ -68,7 +68,7 @@ describe("processSentryEvent", () => {
         dropped: false,
       },
       {
-        case: "a record the permission rules exclude, reaching the error handler",
+        case: "a record the permission rules exclude, reported without a message of its own",
         error: new DatabaseException({ status: 403, message: "forbidden" }),
         dropped: true,
       },

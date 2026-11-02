@@ -21,7 +21,8 @@ export class DatabaseException extends NamedError {
 
     this.entityId = entityId;
     Object.assign(this, error);
-    // Restore class name after Object.assign overwrites it with PouchDB's name (e.g. "not_found")
+    // Restore class name after Object.assign overwrites it with PouchDB's name (e.g. "not_found"),
+    // keeping it stable for grouping; the wrapped error's kind is kept in `classification`
     this.name = "DatabaseException";
   }
 }
