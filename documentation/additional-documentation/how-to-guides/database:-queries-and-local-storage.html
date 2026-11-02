@@ -180,9 +180,7 @@ resultEntities = result.rows.map(loadedRow =&gt; {
 <p>In synced mode, each user&#39;s data is stored in a local PouchDB.
 By default it uses PouchDB&#39;s <code>indexeddb</code> adapter, with database names based on the user&#39;s Keycloak UUID (<code>&lt;uuid&gt;-app</code>).
 Older installations used the legacy <code>idb</code> adapter with username-based names.
-A deployment can keep the legacy adapter with <code>&quot;use_indexeddb_adapter&quot;: false</code> in its <code>assets/config.json</code>.
-Local databases keep only the latest <code>LOCAL_DB_REVS_LIMIT</code> (100) revisions of a document&#39;s history (PouchDB <code>revs_limit</code>):
-the <code>indexeddb</code> adapter cannot store the revision tree of a document with many hundred revisions (#4631).</p>
+A deployment can keep the legacy adapter with <code>&quot;use_indexeddb_adapter&quot;: false</code> in its <code>assets/config.json</code>.</p>
 <p>Existing users are migrated automatically (<code>IndexeddbMigrationService</code>):
 the data is downloaded from the server into the new database in the background, then the user is asked to reload.
 The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;

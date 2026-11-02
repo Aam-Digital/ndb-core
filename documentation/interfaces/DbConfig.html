@@ -223,7 +223,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:26</a></div>
                                 </td>
                             </tr>
 
@@ -279,7 +279,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,6 @@ import { filter, first } from &quot;rxjs/operators&quot;;
 import PouchDB from &quot;pouchdb-browser&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { Database } from &quot;./database&quot;;
-import { LOCAL_DB_REVS_LIMIT } from &quot;./pouchdb/pouch-database&quot;;
 import {
   isReplicationConnectivityError,
   isReplicationUnauthorizedError,
@@ -534,10 +533,7 @@ export class IndexeddbMigrationService {
   }
 
   private createPouchDb(newDbName: string): PouchDB.Database {
-    return new PouchDB(newDbName, {
-      adapter: &quot;indexeddb&quot;,
-      revs_limit: LOCAL_DB_REVS_LIMIT,
-    });
+    return new PouchDB(newDbName, { adapter: &quot;indexeddb&quot; });
   }
 
   private closePouchDb(db: PouchDB.Database): void {
