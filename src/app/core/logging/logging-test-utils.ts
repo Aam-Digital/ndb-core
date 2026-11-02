@@ -45,7 +45,7 @@ export const withStack = { frames: [{ filename: "app.ts" }] };
 /** How Sentry titles an event: by its thrown error. */
 export function title(event: Sentry.ErrorEvent): string {
   const values = event.exception.values;
-  const thrown = values[values.length - 1];
+  const thrown = values.at(-1);
   return `${thrown.type}: ${thrown.value}`;
 }
 

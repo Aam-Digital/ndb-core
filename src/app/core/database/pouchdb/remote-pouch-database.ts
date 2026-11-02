@@ -34,13 +34,13 @@ import {
  * (and are handled by callers or the auth layer),
  * so they are not reported to remote logging.
  */
-const EXPECTED_4XX_STATUSES: number[] = [
+const EXPECTED_4XX_STATUSES = new Set<number>([
   HttpStatusCode.Unauthorized,
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
   // an outdated revision: resolved by the caller (PouchDatabase.resolveConflict) or retried by PouchDB
   HttpStatusCode.Conflict,
-];
+]);
 
 const MAX_RESPONSE_BODY_LENGTH = 500;
 
@@ -295,7 +295,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     remoteUrl: string,
   ): void {
     const response = describeResponse(result, method);
-    if (EXPECTED_4XX_STATUSES.includes(result.status)) {
+    if (EXPECTED_4XX_STATUSES.has(result.status)) {
       Logging.debug("Expected 4XX response from DB", response);
     } else {
       Logging.warn(unexpectedResponseMessage(result.status), {

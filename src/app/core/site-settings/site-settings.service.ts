@@ -21,6 +21,10 @@ import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
  */
+
+/** Statuses with which pre-login access to the site settings is unavailable by design. */
+const PRE_LOGIN_UNAVAILABLE_STATUSES = new Set([401, 403, 404]);
+
 @Injectable({
   providedIn: "root",
 })
@@ -138,7 +142,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     if (!response.ok) {
       // Pre-login access may be unavailable by design. Keep this best-effort only.
-      if (![401, 403, 404].includes(response.status)) {
+      if (!PRE_LOGIN_UNAVAILABLE_STATUSES.has(response.status)) {
         // e.g. a gateway error during a deployment is only logged for debugging
         Logging.warnUnlessExpected(
           "SiteSettingsService: anonymous fetch failed",
