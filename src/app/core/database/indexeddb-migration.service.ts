@@ -1,25 +1,16 @@
 import { inject, Injectable, Injector, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { filter } from "rxjs/operators";
-import PouchDB from "pouchdb-browser";
 import { SessionInfo } from "../session/auth/session-info";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
-import {
-  LOCAL_STORAGE_TOKEN,
-  NAVIGATOR_TOKEN,
-  WINDOW_TOKEN,
-} from "../../utils/di-tokens";
+import { LOCAL_STORAGE_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
-import {
-  isReplicationConnectivityError,
-  isReplicationUnauthorizedError,
-  SyncedPouchDatabase,
-} from "./pouchdb/synced-pouch-database";
+import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
 import { MultiTabDetectionService } from "./multi-tab-detection.service";
 
@@ -56,30 +47,19 @@ function migratedFlagKey(session: SessionInfo): string {
   return "DB_MIGRATED_" + session.id;
 }
 
-/** The case if the token has no "username" claim: the session name then falls back to the id */
-function legacyDbHasNewName(session: SessionInfo): boolean {
-  return computeLegacyDbNames(session).app === computeDbNames(session).app;
-}
-
 /**
  * Migrates the local DB from the legacy PouchDB "idb" adapter and username-based name
  * to the "indexeddb" adapter and Keycloak-UUID-based name.
  *
- * The app keeps working on the legacy DB while the new DB is downloaded in the background.
- * It only switches after a final sync pushed all local changes of the legacy DB, so that none is left behind.
- * If anything fails, it keeps the legacy DB and retries on the next app start.
- *
- * A legacy DB with the name of the new DB cannot be opened with the other adapter:
- * it is deleted after the final sync instead, and the new DB downloaded after the reload.
+ * After a final sync pushed all local changes of the legacy DB, so that none is left behind,
+ * the legacy DB is deleted and the new DB downloaded from the server after a reload, like on a fresh login.
+ * If anything fails, the app keeps the legacy DB and retries on the next app start.
  */
 @Injectable({ providedIn: "root" })
 export class IndexeddbMigrationService {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly alertService = inject(AlertService);
-  private readonly navigator = inject<Navigator>(NAVIGATOR_TOKEN, {
-    optional: true,
-  });
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
   private readonly injector = inject(Injector);
   private analyticsServicePromise?: Promise<AnalyticsService | null>;
@@ -138,27 +118,18 @@ export class IndexeddbMigrationService {
     session: SessionInfo,
     legacyDb: SyncedPouchDatabase,
   ): Promise<void> {
-    // only the "app" DB is migrated: the others start empty after the switch and are synced from the server
-    const deleteLegacyDb = legacyDbHasNewName(session);
-
-    const [newDbReady] = await Promise.all([
-      deleteLegacyDb || this.downloadIntoNewDb(session, legacyDb),
-      firstValueFrom(
-        legacyDb.localSyncState.pipe(
-          filter((state) => state === SyncState.COMPLETED),
-        ),
+    await firstValueFrom(
+      legacyDb.localSyncState.pipe(
+        filter((state) => state === SyncState.COMPLETED),
       ),
-    ]);
-    if (!newDbReady) {
-      return;
-    }
-    if (deleteLegacyDb && this.isOpenInOtherTabs()) {
+    );
+    if (this.isOpenInOtherTabs()) {
       return this.logStep(
         "migration_skipped-multiple-tabs",
         "switch skipped while the app is open in other tabs; offered again on next app start",
       );
     }
-    if (!(await this.userConfirmsSwitch(deleteLegacyDb))) {
+    if (!(await this.userConfirmsSwitch())) {
       return this.logStep(
         "migration_reload-postponed",
         "switch postponed by user; offered again on next app start",
@@ -175,85 +146,23 @@ export class IndexeddbMigrationService {
       if (!(await this.syncLastChanges(legacyDb))) {
         return;
       }
-      if (deleteLegacyDb && !(await this.deleteLegacyDb(legacyDb))) {
+      if (!(await this.deleteLegacyDb(legacyDb))) {
         return;
       }
     } finally {
       progressDialog.close();
     }
 
+    // only the "app" DB is migrated: all new DBs are downloaded from the server after the reload
     this.setMigrated(session);
     this.window?.location.reload();
   }
 
-  /**
-   * Through a connection of its own: the download from scratch reports all docs the user may not read
-   * as lost permissions, which the legacy DB's sync would purge.
-   * @return whether it completed (otherwise continued from its checkpoint on the next app start)
-   */
-  private async downloadIntoNewDb(
-    session: SessionInfo,
-    legacyDb: SyncedPouchDatabase,
-  ): Promise<boolean> {
-    // checked first, so that no connection is opened (and left open) when offline
-    const remoteDb = this.navigator?.onLine
-      ? legacyDb.openRemoteReplicationSource()
-      : undefined;
-    if (!remoteDb) {
-      Logging.debug(
-        "IndexeddbMigration: download into new DB skipped (offline or no remote)",
-      );
-      return false;
-    }
-
-    const newDbName = computeDbNames(session).app;
-    const newDb = this.createPouchDb(newDbName);
-    try {
-      await newDb.replicate.from(remoteDb, { batch_size: 500 });
-      Logging.debug(`IndexeddbMigration: download into "${newDbName}" done`);
-      return true;
-    } catch (err) {
-      if (
-        !isReplicationConnectivityError(err) &&
-        !isReplicationUnauthorizedError(err)
-      ) {
-        // e.g. storage quota exceeded on the device: reported to keep track of failing migrations
-        Logging.warn(
-          "IndexeddbMigration: download into new DB failed",
-          { newDbName },
-          err,
-        );
-      }
-      await this.logStep(
-        "migration_replication-failed",
-        "download into new DB failed",
-        err,
-      );
-      return false;
-    } finally {
-      for (const db of [remoteDb, newDb]) {
-        db.close().catch((err) =>
-          Logging.debug("IndexeddbMigration: failed to close db", err),
-        );
-      }
-    }
-  }
-
-  /** replaced in tests */
-  private createPouchDb(name: string): PouchDB.Database {
-    return new PouchDB(name, { adapter: "indexeddb" });
-  }
-
-  private async userConfirmsSwitch(deleteLegacyDb: boolean): Promise<boolean> {
-    const answer = await (deleteLegacyDb
-      ? this.confirmationDialog.getConfirmation(
-          $localize`Database Upgrade Available`,
-          $localize`To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while. Reload now to upgrade?`,
-        )
-      : this.confirmationDialog.getConfirmation(
-          $localize`:Migration dialog title:Database Upgrade Ready`,
-          $localize`:Migration dialog text:Your database has been upgraded for improved performance. Reload now to start using it?`,
-        ));
+  private async userConfirmsSwitch(): Promise<boolean> {
+    const answer = await this.confirmationDialog.getConfirmation(
+      $localize`Database Upgrade Available`,
+      $localize`To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while. Reload now to upgrade?`,
+    );
     // closing the dialog (undefined) postpones the switch as well
     return answer === true;
   }
@@ -291,7 +200,7 @@ export class IndexeddbMigrationService {
       return false;
     }
     try {
-      // also deletes the DBs of its indices, which have the names of the new DB's indices as well
+      // also deletes the DBs of its indices (which can have the names of the new DB's indices)
       await legacyDb.destroy();
     } catch (err) {
       // e.g. a broken IndexedDB on the device: the upgrade is offered again on next app start
@@ -325,7 +234,7 @@ export class IndexeddbMigrationService {
     if (!dbs) {
       return true;
     }
-    // if the legacy DB has the name of the new DB, it may already be the new DB
+    // without a "username" claim in the token, the legacy DB has the name of the new DB and may already be it
     return dbs.some(
       (db) =>
         db.name === name && (db.version ?? 0) < MIN_INDEXEDDB_ADAPTER_VERSION,

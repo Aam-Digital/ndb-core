@@ -91,27 +91,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return this.syncState;
   }
 
-  /**
-   * Open a separate connection to this database's remote database,
-   * as the replication source of the background migration (see `IndexeddbMigrationService`).
-   *
-   * Unlike the connection this database syncs through, it does not collect the documents
-   * the server reports as no longer permitted: a replication from scratch gets all documents
-   * the user may not read reported, and this database's next sync would purge each of them
-   * before completing.
-   *
-   * The caller has to close it with `close()` once done (never `destroy()`,
-   * which would delete the database on the server).
-   *
-   * @returns undefined if the database is not initialized yet
-   */
-  openRemoteReplicationSource(): PouchDB.Database | undefined {
-    if (!this.remoteDatabase.isInitialized()) {
-      return undefined;
-    }
-    return this.remoteDatabase.openSeparateConnection();
-  }
-
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
