@@ -124,11 +124,24 @@ describe("FirebaseMessagingService", () => {
       expect(service.isAvailable()).toBe(available);
       await expect(firstValueFrom(service.getToken)).resolves.toBeNull();
       await expect(firstValueFrom(service.requestToken)).resolves.toBeNull();
+      await expect(firstValueFrom(service.deleteToken())).resolves.toBe(false);
       expect(registerServiceWorker).not.toHaveBeenCalled();
       expect(sdk.getToken).not.toHaveBeenCalled();
+      expect(sdk.deleteToken).not.toHaveBeenCalled();
       expect(loadSdk).toHaveBeenCalledTimes(downloadsSdk ? 1 : 0);
     },
   );
+
+  it("deletes the token only after passing our service worker registration, so Firebase does not register its default one without the config", async () => {
+    await expect(firstValueFrom(service.deleteToken())).resolves.toBe(true);
+
+    expect(sdk.getToken).toHaveBeenCalledWith(messaging, {
+      serviceWorkerRegistration: registration,
+    });
+    expect(sdk.getToken.mock.invocationCallOrder[0]).toBeLessThan(
+      sdk.deleteToken.mock.invocationCallOrder[0],
+    );
+  });
 
   it("loads Firebase again after a failed attempt (e.g. offline)", async () => {
     loadSdk.mockRejectedValueOnce(new Error("chunk could not be loaded"));

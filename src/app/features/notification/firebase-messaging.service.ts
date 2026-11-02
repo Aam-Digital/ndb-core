@@ -101,11 +101,18 @@ export class FirebaseMessagingService {
 
   /**
    * Delete the token of this device, which stops push messages to it.
+   * Resolves `false` if this device has no token.
    */
   deleteToken(): Observable<boolean> {
     return defer(async () => {
+      // Firebase's deleteToken has no option for the service worker registration:
+      // without getting the token first (which passes our registration), Firebase would register its default one,
+      // which replaces ours and has no Firebase config, so push messages in the background would fail
+      if (!(await this.loadToken())) {
+        return false;
+      }
       const firebase = await this.loadFirebase();
-      return firebase ? firebase.sdk.deleteToken(firebase.messaging) : false;
+      return firebase.sdk.deleteToken(firebase.messaging);
     });
   }
 
