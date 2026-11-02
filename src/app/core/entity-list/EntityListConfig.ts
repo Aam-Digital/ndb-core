@@ -1,3 +1,4 @@
+import { DataSourceConfig } from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
 import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { Sort } from "@angular/material/sort";
@@ -19,11 +20,12 @@ export interface EntityListConfig {
   /**
    * Select what kind of data source is used for the table:
    * the name of a data source in the `DataSourceRegistry`
-   * ("in-memory", "paginated" or one registered by a feature module).
+   * ("in-memory", "paginated" or one registered by a feature module),
+   * or such a name with options for the data source: `{ "name": "...", "config": { ... } }`.
    * (optional) default is "paginated" in online-only session and "in-memory" otherwise,
    * see `resolveDataSource` in `data-source-resolver.ts`
    */
-  dataSource?: string;
+  dataSource?: string | DataSourceConfig;
 
   /**
    * Custom overwrites or additional columns to be displayed in the table.

@@ -154,6 +154,27 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
+  it("should pass the configured options to the named data source only", () => {
+    environment.session_type = SessionType.synced;
+    TestBed.inject(DataSourceRegistry).add("feature", FeatureDataSource);
+    const config = { someOption: ["a"] };
+
+    const feature = resolveDataSource<Entity>(injector, {
+      name: "feature",
+      config,
+    });
+    const fallback = resolveDataSource<Entity>(injector, {
+      name: "paginated",
+      config,
+    });
+
+    expect(feature).toBeInstanceOf(FeatureDataSource);
+    expect(feature.config()).toEqual(config);
+    // outside of online mode an in-memory data source replaces "paginated" and gets no options meant for it
+    expect(fallback).toBeInstanceOf(InMemoryDataSource);
+    expect(fallback.config()).toEqual({});
+  });
+
   it.each([
     {
       scenario: "list an internal entity type with translated texts in memory",

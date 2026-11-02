@@ -1,5 +1,6 @@
 import { Injector, runInInjectionContext, untracked } from "@angular/core";
 import {
+  DataSourceConfig,
   DataSourceConstructor,
   DataSourceRegistry,
 } from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
@@ -23,27 +24,35 @@ import { Logging } from "#src/app/core/logging/logging.service";
  * Create the data source for a table.
  *
  * @param injector the injection context the data source lives in (and is destroyed with)
- * @param dataSource name of a data source in the {@link DataSourceRegistry}, as configured for the list
+ * @param dataSource name of a data source in the {@link DataSourceRegistry}, or its name with options,
+ *   as configured for the list
  * @param loaderMethod special loader the records come from, if any
  * @param entityType type of the listed records
  */
 export function resolveDataSource<T extends Entity>(
   injector: Injector,
-  dataSource?: string,
+  dataSource?: string | DataSourceConfig,
   loaderMethod?: LoaderMethod,
   entityType?: EntityConstructor,
 ): EntitiesTableDataSource<T> {
-  let DataSourceClass = getDataSource(
-    injector.get(DataSourceRegistry),
-    dataSource,
-    loaderMethod,
-    entityType,
-  );
+  const { name, config }: Partial<DataSourceConfig> =
+    typeof dataSource === "string" ? { name: dataSource } : (dataSource ?? {});
+  const registry = injector.get(DataSourceRegistry);
+  let DataSourceClass = getDataSource(registry, name, loaderMethod, entityType);
   if (pagesOnServer(DataSourceClass) && !supportsPagination(injector)) {
     DataSourceClass = InMemoryDataSource;
   }
+  // options belong to the configured data source, not to a default or fallback
+  const isConfiguredClass =
+    !!name && registry.has(name) && registry.get(name) === DataSourceClass;
   return runInInjectionContext(injector, () =>
-    untracked(() => new DataSourceClass<T>()),
+    untracked(() => {
+      const instance = new DataSourceClass<T>();
+      if (config && isConfiguredClass) {
+        instance.config.set(config);
+      }
+      return instance;
+    }),
   );
 }
 

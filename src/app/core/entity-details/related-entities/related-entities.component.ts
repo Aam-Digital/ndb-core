@@ -31,6 +31,7 @@ import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
+import { DataSourceConfig } from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -78,8 +79,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
    */
   columns = input<ColumnConfig[]>([]);
 
-  /** name of a data source in the {@link DataSourceRegistry} (default: chosen by session type and loader) */
-  dataSource = input<string>();
+  /**
+   * name of a data source in the {@link DataSourceRegistry}, or its name with options
+   * (default: chosen by session type and loader)
+   */
+  dataSource = input<string | DataSourceConfig>();
   recordsDataSource = computed(() =>
     resolveDataSource<E>(
       this.injector,

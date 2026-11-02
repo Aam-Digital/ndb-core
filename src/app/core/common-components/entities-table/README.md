@@ -47,12 +47,14 @@ Feature modules can extend lists without feature-specific code in core:
 they subclass a data source, override the hooks below and register it.
 All hooks have defaults, so existing data sources do not need to set them.
 
-| Hook              | Default   | Purpose                                                                               |
-| ----------------- | --------- | ------------------------------------------------------------------------------------- |
-| `usesPagination`  | `true`    | `false`: the table shows all rows and no paginator                                    |
-| `rowDecorations`  | empty map | optional extras per row, by record id (see below)                                     |
-| `toolbarControls` | `[]`      | `DynamicComponentConfig`s that a host shows in the list's filter row, in this order   |
-| `searchText`      | `""`      | free-text search; only data sources that apply it offer a toolbar control to enter it |
+| Hook                   | Default        | Purpose                                                                                |
+| ---------------------- | -------------- | -------------------------------------------------------------------------------------- |
+| `config`               | `{}`           | options of the data source from the list or section config (see below)                 |
+| `usesPagination`       | `true`         | signal; `false`: the table shows all rows and no paginator (may change at any time)    |
+| `rowDecorations`       | empty map      | optional extras per row, by record id (see below)                                      |
+| `toolbarControls`      | `[]`           | `DynamicComponentConfig`s that a host shows in the list's filter row, in this order    |
+| `searchText`           | `""`           | free-text search; only data sources that apply it offer a toolbar control to enter it  |
+| `getFilterPredicate()` | filter service | (`InMemoryDataSource` only) whether a record passes the filter, e.g. to reinterpret it |
 
 A `RowDecoration` can have:
 
@@ -62,6 +64,9 @@ A `RowDecoration` can have:
 - `cssClass`: an extra CSS class for the row;
 - `selectable: false`: the row cannot be selected for bulk actions
   (disabled checkbox, skipped by "select all" and Shift-click ranges).
+
+The table unselects a selected record as soon as its decoration makes it not selectable
+(e.g. a row the data source hides), so a bulk action never applies to it.
 
 Decorations are display state of one table, so they live in the data source rather than on the records.
 They are looked up by `entity.getId()` rather than by record object,
@@ -88,6 +93,16 @@ export class MyFeatureModule {
 ```json
 { "component": "EntityList", "config": { "entityType": "Child", "dataSource": "my-feature" } }
 ```
+
+A data source that needs options gets them from the same entry, as `config` next to its `name`.
+`resolveDataSource` sets them as the data source's `config` signal
+(only for the named data source, not for a default or fallback that replaces it):
+
+```json
+"dataSource": { "name": "my-feature", "config": { "someOption": ["a", "b"] } }
+```
+
+This keeps options of feature data sources out of the inputs of the core list and section components.
 
 ## State in the URL
 

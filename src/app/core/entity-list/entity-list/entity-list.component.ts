@@ -62,6 +62,7 @@ import {
 } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
 import { PermissionsConfigService } from "../../permissions/permissions-config.service";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
+import { DataSourceConfig } from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 /**
@@ -169,8 +170,11 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
-  /** name of a data source in the {@link DataSourceRegistry} (default: chosen by session type and loader) */
-  dataSource = input<string>();
+  /**
+   * name of a data source in the {@link DataSourceRegistry}, or its name with options
+   * (default: chosen by session type and loader)
+   */
+  dataSource = input<string | DataSourceConfig>();
   recordsDataSource = computed(() =>
     resolveDataSource<T>(
       this.injector,

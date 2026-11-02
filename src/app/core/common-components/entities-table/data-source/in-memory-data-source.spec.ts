@@ -7,6 +7,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
 
 describe("InMemoryDataSource", () => {
@@ -215,6 +216,26 @@ describe("InMemoryDataSource", () => {
       // filter ("Two" in its name); e1 is excluded by the free-text filter,
       // e3 is excluded by the structured filter.
       expect(result).toEqual([e2]);
+    });
+
+    it("lets a subclass reinterpret the filter, together with the free-text search", async () => {
+      /** treats the filter as a filter on `name` */
+      class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
+        protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
+          return (record: TestEntity) => record.name === filter["other"];
+        }
+      }
+      const custom = TestBed.runInInjectionContext(
+        () => new FilterOnNameDataSource(),
+      );
+      custom.allRecords.set([e1, e2, e3]);
+      custom.dataFilter.set({ other: e3.name });
+      TestBed.tick();
+      expect(custom.filteredRecords()).toEqual([e3]);
+
+      custom.searchText.set("no match");
+      TestBed.tick();
+      expect(custom.filteredRecords()).toEqual([]);
     });
   });
 });

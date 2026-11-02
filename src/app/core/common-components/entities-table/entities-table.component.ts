@@ -282,6 +282,14 @@ export class EntitiesTableComponent<T extends Entity>
         this.selectedRecords.set([]);
       }
     });
+    effect(() => {
+      // e.g. a row hidden by the data source: it must not stay selected for a bulk action
+      const isSelectable = this.isSelectable();
+      const selected = untracked(this.selectedRecords) ?? [];
+      if (!selected.every(isSelectable)) {
+        this.selectedRecords.set(selected.filter(isSelectable));
+      }
+    });
   }
 
   ngOnInit() {

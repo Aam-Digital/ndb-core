@@ -1,4 +1,4 @@
-import { effect, inject, signal } from "@angular/core";
+import { effect, inject, Signal, signal } from "@angular/core";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
 import { tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
@@ -9,6 +9,7 @@ import {
 } from "#src/app/core/entity/model/entity-update";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 
 /**
@@ -23,8 +24,14 @@ export class InMemoryDataSource<
     optional: true,
   });
 
-  override readonly toolbarControls = signal<DynamicComponentConfig[]>([
-    { component: "FreeTextFilter", config: { dataSource: this } },
+  /** the "Filter" field to enter the {@link searchText}, for subclasses that offer further toolbar controls */
+  protected readonly freeTextFilterControl: DynamicComponentConfig = {
+    component: "FreeTextFilter",
+    config: { dataSource: this },
+  };
+
+  override readonly toolbarControls: Signal<DynamicComponentConfig[]> = signal([
+    this.freeTextFilterControl,
   ]);
 
   override sortData = (data, sort) =>
@@ -38,9 +45,7 @@ export class InMemoryDataSource<
     super();
     effect(() => {
       const records = this.allRecords();
-      const predicate = this.filterService.getFilterPredicate(
-        this.dataFilter(),
-      );
+      const predicate = this.getFilterPredicate(this.dataFilter());
       const searchText = this.searchText().trim().toLowerCase();
       this.filteredRecords.set(
         records.filter(
@@ -50,6 +55,15 @@ export class InMemoryDataSource<
         ),
       );
     });
+  }
+
+  /**
+   * Whether a record passes the given filter (the free-text search is applied on top of it).
+   * Data sources of feature modules can override this to narrow or reinterpret the filter;
+   * signals read here are tracked, so a change of them filters the records again.
+   */
+  protected getFilterPredicate(filter: DataFilter<T>): (record: T) => boolean {
+    return this.filterService.getFilterPredicate(filter);
   }
 
   protected override loadRecords(): Promise<any> {

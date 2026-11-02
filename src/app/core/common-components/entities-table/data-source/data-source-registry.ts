@@ -11,6 +11,18 @@ export type DataSourceConstructor = new <
 >() => EntitiesTableDataSource<T>;
 
 /**
+ * A data source named in a list or section config together with options for it:
+ * `"dataSource": { "name": "my-feature", "config": { "someOption": true } }`.
+ * (A plain name, `"dataSource": "my-feature"`, is the same without options.)
+ */
+export interface DataSourceConfig<C extends object = Record<string, unknown>> {
+  /** name of the data source in the {@link DataSourceRegistry} */
+  name: string;
+  /** options that the data source reads itself (see `EntitiesTableDataSource.config`) */
+  config?: C;
+}
+
+/**
  * The data sources that the `dataSource` of a list or related-entities config can name.
  *
  * Core registers "in-memory" and "paginated" here,

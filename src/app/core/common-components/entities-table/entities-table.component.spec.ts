@@ -682,7 +682,7 @@ describe("EntitiesTableComponent", () => {
       ).toBe(true);
     });
 
-    it("shows all rows and no paginator if the data source does not use pagination", () => {
+    it("shows all rows and no paginator while the data source does not use pagination", () => {
       const unpaged = TestBed.runInInjectionContext(
         () => new UnpagedTestDataSource(),
       );
@@ -696,6 +696,36 @@ describe("EntitiesTableComponent", () => {
       expect(
         fixture.nativeElement.querySelectorAll("tr[mat-row]"),
       ).toHaveLength(12);
+
+      unpaged.usesPagination.set(true);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement.querySelector("mat-paginator"),
+      ).not.toBeNull();
+      expect(
+        fixture.nativeElement.querySelectorAll("tr[mat-row]"),
+      ).toHaveLength(10);
+
+      // the removed paginator does not keep paging the data source
+      unpaged.usesPagination.set(false);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement.querySelectorAll("tr[mat-row]"),
+      ).toHaveLength(12);
+    });
+
+    it("unselects a selected record once its decoration makes it not selectable", () => {
+      const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
+      dataSource.allRecords.set([a, b]);
+      fixture.detectChanges();
+      component.selectedRecords.set([a, b]);
+
+      dataSource.rowDecorations.set(
+        new Map([[b.getId(), { selectable: false }]]),
+      );
+      fixture.detectChanges();
+
+      expect(component.selectedRecords()).toEqual([a]);
     });
   });
 });
@@ -707,7 +737,7 @@ class ExtendedTestDataSource extends InMemoryDataSource<TestEntity> {
 
 /** a data source of a feature module that shows all rows at once */
 class UnpagedTestDataSource extends InMemoryDataSource<TestEntity> {
-  override readonly usesPagination = false;
+  override readonly usesPagination = signal(false);
 }
 
 @Component({ selector: "app-test-row-prefix", template: "&gt;" })

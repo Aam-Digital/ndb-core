@@ -109,8 +109,15 @@ export abstract class EntitiesTableDataSource<
 
   // --- Extension points for data sources of feature modules (all with defaults) ---
 
-  /** false: the table shows all rows and no paginator */
-  readonly usesPagination: boolean = true;
+  /**
+   * Options for this data source from the list or section config
+   * (the `config` of a `dataSource: { name, config }` entry), set by `resolveDataSource`.
+   * Data sources of feature modules read their own options from it; core data sources have none.
+   */
+  readonly config = signal<Readonly<Record<string, unknown>>>({});
+
+  /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
+  readonly usesPagination: Signal<boolean> = signal(true);
 
   /** optional extras per row (default: none) */
   readonly rowDecorations: Signal<RowDecorations> = signal(new Map());

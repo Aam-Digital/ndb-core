@@ -107,7 +107,7 @@
   <!--
   PAGINATION
   -->
-  @if (recordsDataSource().usesPagination) {
+  @if (recordsDataSource().usesPagination()) {
     <app-list-paginator
       class="table-footer"
       [dataSource]="recordsDataSource()"

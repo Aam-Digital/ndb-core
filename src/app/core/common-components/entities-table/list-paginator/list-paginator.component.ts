@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -72,6 +73,8 @@ export class ListPaginatorComponent<E> {
       this.paginatorReady();
       this.bindPaginator(this.dataSource());
     });
+    // a data source may stop using pagination while it lives on (see `usesPagination`)
+    inject(DestroyRef).onDestroy(() => this.unbindPaginator());
 
     effect(() => {
       const dataSource = this.dataSource();
@@ -118,5 +121,13 @@ export class ListPaginatorComponent<E> {
   private bindPaginator(dataSource: MatTableDataSource<E> | undefined) {
     if (!dataSource || !this.paginator) return;
     dataSource.paginator = this.paginator;
+  }
+
+  /** Stop paging the data source when this paginator is removed, unless it got another one in the meantime. */
+  private unbindPaginator() {
+    const dataSource = this.dataSource();
+    if (dataSource && dataSource.paginator === this.paginator) {
+      dataSource.paginator = null;
+    }
   }
 }
