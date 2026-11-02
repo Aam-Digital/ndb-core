@@ -50,7 +50,7 @@ describe("IndexeddbMigrationService", () => {
       deleteDatabase: Mock;
     };
   };
-  let multiTabDetection: { isMultipleTabsOpen: boolean };
+  let multiTabDetection: { isMultipleTabsOpen: boolean; reloadOtherTabs: Mock };
 
   const session: SessionInfo = {
     id: "abc-123-uuid",
@@ -110,7 +110,7 @@ describe("IndexeddbMigrationService", () => {
         deleteDatabase: mockDeleteDatabase(false),
       },
     };
-    multiTabDetection = { isMultipleTabsOpen: false };
+    multiTabDetection = { isMultipleTabsOpen: false, reloadOtherTabs: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -143,12 +143,26 @@ describe("IndexeddbMigrationService", () => {
   const flushPromises = () => new Promise((resolve) => setTimeout(resolve));
 
   describe("resolveDbConfig", () => {
+    /** a DB as listed by indexedDB.databases(), created by the "idb" adapter */
+    const idbAdapterDb = (name: string) => ({ name, version: 5 });
+    /** a DB as listed by indexedDB.databases(), created by the "indexeddb" adapter */
+    const indexeddbAdapterDb = (name: string) => ({
+      name,
+      version: 2 * 10 ** 13 + Date.now(),
+    });
+    /** the legacy app db of an account without "username" claim has the name of the new one */
+    const LEGACY_DB_NAMES_WITH_NEW_APP_NAME = {
+      app: NEW_DB_NAMES.app,
+      notifications: LEGACY_DB_NAMES.notifications,
+    };
+
     it.each([
       {
         scenario: "flag disabled (deployment opted out)",
         useIndexeddbAdapter: false,
+        withoutUsername: false,
         migrated: false,
-        existingDbs: [LEGACY_APP_DB],
+        existingDbs: [idbAdapterDb(LEGACY_APP_DB)],
         adapter: "idb",
         dbNames: LEGACY_DB_NAMES,
         migrationPending: false,
@@ -160,8 +174,9 @@ describe("IndexeddbMigrationService", () => {
         // instead of leaving unsynced changes made on the legacy db in the meantime behind
         scenario: "flag disabled after a completed migration (rollback)",
         useIndexeddbAdapter: false,
+        withoutUsername: false,
         migrated: true,
-        existingDbs: [LEGACY_APP_DB, NEW_APP_DB],
+        existingDbs: [indexeddbAdapterDb(NEW_APP_DB)],
         adapter: "idb",
         dbNames: LEGACY_DB_NAMES,
         migrationPending: false,
@@ -169,10 +184,25 @@ describe("IndexeddbMigrationService", () => {
         migratedAfter: null,
       },
       {
+        // that db cannot be opened with the "idb" adapter anymore
+        scenario:
+          "flag disabled after a completed migration of an account without username",
+        useIndexeddbAdapter: false,
+        withoutUsername: true,
+        migrated: true,
+        existingDbs: [indexeddbAdapterDb(NEW_APP_DB)],
+        adapter: "indexeddb",
+        dbNames: NEW_DB_NAMES,
+        migrationPending: false,
+        trackedEvent: "indexeddb_disabled-config-ignored",
+        migratedAfter: null,
+      },
+      {
         scenario: "already migrated",
         useIndexeddbAdapter: true,
+        withoutUsername: false,
         migrated: true,
-        existingDbs: [LEGACY_APP_DB, NEW_APP_DB],
+        existingDbs: [indexeddbAdapterDb(NEW_APP_DB)],
         adapter: "indexeddb",
         dbNames: NEW_DB_NAMES,
         migrationPending: false,
@@ -182,11 +212,26 @@ describe("IndexeddbMigrationService", () => {
       {
         scenario: "fresh install (only another user's old DB)",
         useIndexeddbAdapter: true,
+        withoutUsername: false,
         migrated: false,
         existingDbs: [
-          "_pouch_otheruser-app",
-          "_pouch_notifications_other-user-id",
+          idbAdapterDb("_pouch_otheruser-app"),
+          idbAdapterDb("_pouch_notifications_other-user-id"),
         ],
+        adapter: "indexeddb",
+        dbNames: NEW_DB_NAMES,
+        migrationPending: false,
+        trackedEvent: "indexeddb_fresh-install",
+        migratedAfter: "true",
+      },
+      {
+        // e.g. after localStorage was cleared
+        scenario:
+          "db already migrated, of an account without username, without the migration flag",
+        useIndexeddbAdapter: true,
+        withoutUsername: true,
+        migrated: false,
+        existingDbs: [indexeddbAdapterDb(NEW_APP_DB)],
         adapter: "indexeddb",
         dbNames: NEW_DB_NAMES,
         migrationPending: false,
@@ -196,8 +241,49 @@ describe("IndexeddbMigrationService", () => {
       {
         scenario: "existing user on the old adapter",
         useIndexeddbAdapter: true,
+        withoutUsername: false,
         migrated: false,
-        existingDbs: [LEGACY_APP_DB],
+        existingDbs: [idbAdapterDb(LEGACY_APP_DB)],
+        adapter: "idb",
+        dbNames: LEGACY_DB_NAMES,
+        migrationPending: true,
+        trackedEvent: "idb_migration-pending",
+        migratedAfter: null,
+      },
+      {
+        scenario: "existing user on the old adapter, without username",
+        useIndexeddbAdapter: true,
+        withoutUsername: true,
+        migrated: false,
+        existingDbs: [idbAdapterDb(NEW_APP_DB)],
+        adapter: "idb",
+        dbNames: LEGACY_DB_NAMES_WITH_NEW_APP_NAME,
+        migrationPending: true,
+        trackedEvent: "idb_migration-pending",
+        migratedAfter: null,
+      },
+      {
+        // the account got a username claim (linked to a user entity) after its db was created,
+        // and the migration flag was set by an earlier version that took it for a fresh install
+        scenario:
+          "old adapter db created without username, the account has one now",
+        useIndexeddbAdapter: true,
+        withoutUsername: false,
+        migrated: true,
+        existingDbs: [idbAdapterDb(NEW_APP_DB)],
+        adapter: "idb",
+        dbNames: LEGACY_DB_NAMES_WITH_NEW_APP_NAME,
+        migrationPending: true,
+        trackedEvent: "idb_migration-pending",
+        migratedAfter: "true",
+      },
+      {
+        // the safe default: a legacy db may exist
+        scenario: "existing dbs cannot be listed",
+        useIndexeddbAdapter: true,
+        withoutUsername: false,
+        migrated: false,
+        existingDbs: undefined,
         adapter: "idb",
         dbNames: LEGACY_DB_NAMES,
         migrationPending: true,
@@ -211,11 +297,19 @@ describe("IndexeddbMigrationService", () => {
         if (c.migrated) {
           localStorage.setItem(MIGRATED_FLAG, "true");
         }
-        mockWindow.indexedDB.databases.mockResolvedValue(
-          c.existingDbs.map((name) => ({ name, version: 1 })),
-        );
+        if (c.existingDbs) {
+          mockWindow.indexedDB.databases.mockResolvedValue(c.existingDbs);
+        } else {
+          mockWindow.indexedDB.databases.mockRejectedValue(
+            new Error("not supported"),
+          );
+        }
+        // without a "username" claim in the token, the session name falls back to the id
+        const testSession: SessionInfo = c.withoutUsername
+          ? { ...session, name: session.id }
+          : session;
 
-        const config = await service.resolveDbConfig(session);
+        const config = await service.resolveDbConfig(testSession);
 
         expect(config).toEqual({
           adapter: c.adapter,
@@ -228,26 +322,6 @@ describe("IndexeddbMigrationService", () => {
         });
       },
     );
-  });
-
-  it("treats a db of the indexeddb adapter with the legacy name as the new db, even without the migration flag", async () => {
-    // without a "username" claim in the token, the session name falls back to the id
-    const sessionWithoutUsername: SessionInfo = {
-      ...session,
-      name: session.id,
-    };
-    mockWindow.indexedDB.databases.mockResolvedValue([
-      { name: NEW_APP_DB, version: 10 ** 13 + Date.now() },
-    ]);
-
-    const config = await service.resolveDbConfig(sessionWithoutUsername);
-
-    expect(config).toEqual({
-      adapter: "indexeddb",
-      dbNames: NEW_DB_NAMES,
-      migrationPending: false,
-    });
-    expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
   });
 
   describe("startMigrationIfPending", () => {
@@ -307,6 +381,8 @@ describe("IndexeddbMigrationService", () => {
         expect(progressDialog.close).toHaveBeenCalled();
         expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
         expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
+        // also tabs the multi-tab check missed, which would keep using the deleted db
+        expect(multiTabDetection.reloadOtherTabs).toHaveBeenCalled();
       },
     );
 
@@ -352,7 +428,8 @@ describe("IndexeddbMigrationService", () => {
         finalSyncFails: false,
         deletionFails: false,
         expectedCalls: ["final sync"],
-        warned: false,
+        // asked to close the other tabs
+        warned: true,
         reloaded: false,
       },
       {

@@ -24,6 +24,26 @@ export interface DbConfig {
 /** The IndexedDB version of DBs of the "indexeddb" adapter (the "idb" adapter uses 5) */
 const MIN_INDEXEDDB_ADAPTER_VERSION = 10 ** 13;
 
+/** The PouchDB DBs in IndexedDB, by the adapter that created them */
+class ExistingDbs {
+  constructor(private readonly dbs: IDBDatabaseInfo[]) {}
+
+  isIdbAdapterDb(name: string): boolean {
+    const db = this.find(name);
+    return !!db && (db.version ?? 0) < MIN_INDEXEDDB_ADAPTER_VERSION;
+  }
+
+  isIndexeddbAdapterDb(name: string): boolean {
+    const db = this.find(name);
+    return !!db && (db.version ?? 0) >= MIN_INDEXEDDB_ADAPTER_VERSION;
+  }
+
+  private find(name: string): IDBDatabaseInfo | undefined {
+    // PouchDB prefixes IndexedDB database names with "_pouch_"
+    return this.dbs.find((db) => db.name === `_pouch_${name}`);
+  }
+}
+
 function legacyDbConfig(
   session: SessionInfo,
   migrationPending: boolean,
@@ -66,14 +86,38 @@ export class IndexeddbMigrationService {
 
   /** Determine the names and the adapter of the current session's local DB. */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
+    const legacyAppDb = computeLegacyDbNames(session).app;
+    const newAppDb = computeDbNames(session).app;
+    const existingDbs = await this.findExistingDbs();
+
     if (!environment.use_indexeddb_adapter) {
       // if enabled again, the migration has to run again, so that changes made on the legacy DB meanwhile are synced
       this.localStorage.removeItem(migratedFlagKey(session));
+      if (existingDbs?.isIndexeddbAdapterDb(legacyAppDb)) {
+        // without "username" claim, the legacy name is the new one: this DB cannot be opened with "idb" anymore
+        await this.logStep(
+          "indexeddb_disabled-config-ignored",
+          "use_indexeddb_adapter disabled, but the DB was already migrated; using new DB",
+        );
+        return newDbConfig(session);
+      }
       await this.logStep(
         "idb_indexeddb-disabled-config",
         "use_indexeddb_adapter disabled; using legacy DB",
       );
       return legacyDbConfig(session, false);
+    }
+
+    if (existingDbs?.isIdbAdapterDb(newAppDb)) {
+      // the account had no "username" claim when the DB was created (even if the migration flag is set)
+      await this.logStep(
+        "idb_migration-pending",
+        "using legacy DB with the name of the new DB (migration pending)",
+      );
+      return {
+        ...legacyDbConfig(session, true),
+        dbNames: { ...computeLegacyDbNames(session), app: newAppDb },
+      };
     }
 
     if (this.isMigrated(session)) {
@@ -84,7 +128,8 @@ export class IndexeddbMigrationService {
       return newDbConfig(session);
     }
 
-    if (!(await this.legacyDbExists(session))) {
+    // if the existing DBs cannot be checked, assume a legacy DB exists (the safe default)
+    if (existingDbs && !existingDbs.isIdbAdapterDb(legacyAppDb)) {
       this.setMigrated(session);
       await this.logStep(
         "indexeddb_fresh-install",
@@ -146,7 +191,19 @@ export class IndexeddbMigrationService {
       if (!(await this.syncLastChanges(legacyDb))) {
         return;
       }
-      if (!(await this.deleteLegacyDb(session, legacyDb))) {
+      // checked again: another tab may have been opened while the dialogs were shown
+      if (this.isOpenInOtherTabs()) {
+        this.alertService.addWarning(
+          $localize`The database upgrade was postponed because the app is open in another tab. Close the other tabs to upgrade the next time you open the app.`,
+        );
+        return this.logStep(
+          "migration_skipped-multiple-tabs-after-confirmation",
+          "legacy DB not deleted while the app is open in other tabs; offered again on next app start",
+        );
+      }
+      if (!(await this.deleteLegacyDbs(session, legacyDb))) {
+        // the legacy DB cannot be used anymore after its deletion was started: reopen it
+        this.window?.location.reload();
         return;
       }
     } finally {
@@ -155,13 +212,15 @@ export class IndexeddbMigrationService {
 
     // only the "app" DB is migrated: all new DBs are downloaded from the server after the reload
     this.setMigrated(session);
+    // tabs the multi-tab check missed (e.g. long in the background) would keep using the deleted DB
+    this.injector.get(MultiTabDetectionService, null)?.reloadOtherTabs();
     this.window?.location.reload();
   }
 
   private async userConfirmsSwitch(): Promise<boolean> {
     const answer = await this.confirmationDialog.getConfirmation(
       $localize`Database Upgrade Available`,
-      $localize`To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while. Reload now to upgrade?`,
+      $localize`To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while: please stay online until all data is loaded. Reload now to upgrade?`,
     );
     // closing the dialog (undefined) postpones the switch as well
     return answer === true;
@@ -188,30 +247,21 @@ export class IndexeddbMigrationService {
     }
   }
 
-  private async deleteLegacyDb(
+  /** @return whether the legacy app DB was deleted */
+  private async deleteLegacyDbs(
     session: SessionInfo,
     legacyDb: SyncedPouchDatabase,
   ): Promise<boolean> {
-    // checked again: another tab may have been opened while the dialogs were shown
-    if (this.isOpenInOtherTabs()) {
-      await this.logStep(
-        "migration_skipped-multiple-tabs",
-        "legacy DB not deleted while the app is open in other tabs; offered again on next app start",
-      );
-      return false;
-    }
     try {
       // also deletes the DBs of its indices (which can have the names of the new DB's indices)
       await legacyDb.destroy();
     } catch (err) {
-      // e.g. a broken IndexedDB on the device: the upgrade is offered again on next app start
+      // reported: unless the device's IndexedDB is broken, this is a bug that makes the upgrade fail on every app start
+      Logging.warn("IndexeddbMigration: failed to delete legacy DB", err);
       await this.logStep(
         "migration_legacy-db-deletion-failed",
-        "failed to delete legacy DB",
-        err,
+        "failed to delete legacy DB; offered again on next app start",
       );
-      // the legacy DB cannot be used anymore after its deletion was started: reopen it
-      this.window?.location.reload();
       return false;
     }
     await this.logStep("migration_legacy-db-deleted", "legacy DB deleted");
@@ -251,22 +301,15 @@ export class IndexeddbMigrationService {
       ?.isMultipleTabsOpen;
   }
 
-  /** If this cannot be checked, assume it does (the safe default). */
-  private async legacyDbExists(session: SessionInfo): Promise<boolean> {
-    // PouchDB prefixes IndexedDB database names with "_pouch_"
-    const name = `_pouch_${computeLegacyDbNames(session).app}`;
-    // indexedDB.databases() is not available in all browsers
-    const dbs = await this.window?.indexedDB
-      ?.databases?.()
-      .catch(() => undefined);
-    if (!dbs) {
-      return true;
+  /** @return the PouchDB DBs in IndexedDB, or undefined if they cannot be listed (not available in all browsers) */
+  private async findExistingDbs(): Promise<ExistingDbs | undefined> {
+    try {
+      const dbs = await this.window?.indexedDB?.databases?.();
+      return dbs && new ExistingDbs(dbs);
+    } catch (err) {
+      Logging.debug("IndexeddbMigration: cannot list IndexedDB DBs", err);
+      return undefined;
     }
-    // without a "username" claim in the token, the legacy DB has the name of the new DB and may already be it
-    return dbs.some(
-      (db) =>
-        db.name === name && (db.version ?? 0) < MIN_INDEXEDDB_ADAPTER_VERSION,
-    );
   }
 
   private isMigrated(session: SessionInfo): boolean {
