@@ -5,6 +5,10 @@ import {
   isNotPermittedError,
 } from "./error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
+import { HttpErrorResponse } from "@angular/common/http";
+import { ServerError } from "./error-classification";
+import { LoggedError } from "./reported-errors";
+import { browserError } from "./logging-test-utils";
 
 /** The error PouchDB's http adapter builds from CouchDB's 401 response. */
 const couchDbUnauthorized = (reason: string) => ({
@@ -116,5 +120,50 @@ describe("classification helpers", () => {
     expect(classifyError(error)).toBe(expected);
     expect(isConnectivityError(error)).toBe(expected === "connectivity");
     expect(isNotPermittedError(error)).toBe(expected === "not-permitted");
+  });
+});
+
+describe("classifyError", () => {
+  it.each([
+    [
+      "a response that never arrived",
+      new HttpErrorResponse({ status: 0 }),
+      "connectivity",
+    ],
+    [
+      "a gateway status",
+      new HttpErrorResponse({ status: 503 }),
+      "connectivity",
+    ],
+    ["a server error", new HttpErrorResponse({ status: 500 }), "server-error"],
+    ["a 403", new HttpErrorResponse({ status: 403 }), "not-permitted"],
+    [
+      "a typed error, by its type rather than its wording",
+      new ServerError("Failed to fetch from DB", { status: 500 }),
+      "server-error",
+    ],
+    [
+      "a raw browser error, by its wording",
+      browserError(
+        "InvalidStateError",
+        "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
+      ),
+      "local-storage",
+    ],
+    [
+      "a programming error in a database call, not as a broken database",
+      browserError(
+        "RangeError",
+        "Failed to execute 'put' on 'IDBObjectStore': Maximum call stack size exceeded",
+      ),
+      undefined,
+    ],
+    [
+      "a logged message, never by its wording",
+      new LoggedError("Failed to fetch notifications"),
+      undefined,
+    ],
+  ])("should classify %s", (_, error, expected) => {
+    expect(classifyError(error)).toBe(expected);
   });
 });
