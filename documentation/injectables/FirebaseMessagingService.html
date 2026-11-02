@@ -1,0 +1,732 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >FirebaseMessagingService</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/notification/firebase-messaging.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Access to Firebase Cloud Messaging in the app window.</p>
+<p>The Firebase SDK is only loaded (as a separate chunk) once a token or messages are requested.
+Without a Firebase config for this deployment, or in browsers without push support,
+there is no token and no messages.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-metadata">
+            <h3>Metadata</h3>
+            <table class="table table-sm table-hover metadata">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3">providedIn</td>
+                        <td class="col-md-9"><code>root</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#getToken" >getToken</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#messages" >messages</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#requestToken" >requestToken</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#deleteToken" >deleteToken</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#isAvailable" >isAvailable</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteToken"></a>
+                    <span class="name">
+                        <span ><b>deleteToken</b></span>
+                        <a href="#deleteToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>deleteToken()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/features/notification/firebase-messaging.service.ts:106</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Delete the token of this device, which stops push messages to it.
+Resolves <code>false</code> if this device has no token.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;boolean&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isAvailable"></a>
+                    <span class="name">
+                        <span ><b>isAvailable</b></span>
+                        <a href="#isAvailable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isAvailable()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/app/features/notification/firebase-messaging.service.ts:98</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether push notifications can work here at all:
+the browser has the push APIs and this deployment has a Firebase config.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getToken"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>getToken</b></span>
+                        <a href="#getToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Observable&lt;string | null&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>defer(() &#x3D;&gt; this.loadToken())</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/notification/firebase-messaging.service.ts:61</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The token of this device, or <code>null</code> if the user has not granted the notification permission.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="messages"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>messages</b></span>
+                        <a href="#messages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Observable&lt;MessagingSdk.MessagePayload&gt;(
+    (subscriber) &#x3D;&gt; {
+      let unsubscribe: (() &#x3D;&gt; void) | undefined;
+      this.loadFirebase()
+        .then((firebase) &#x3D;&gt; {
+          if (firebase &amp;&amp; !subscriber.closed) {
+            unsubscribe &#x3D; firebase.sdk.onMessage(
+              firebase.messaging,
+              (payload) &#x3D;&gt; subscriber.next(payload),
+            );
+          }
+        })
+        .catch((err) &#x3D;&gt; subscriber.error(err));
+      return () &#x3D;&gt; unsubscribe?.();
+    },
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/notification/firebase-messaging.service.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Push messages received while the app is in the foreground
+(otherwise the service worker receives them).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="requestToken"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>requestToken</b></span>
+                        <a href="#requestToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Observable&lt;string | null&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>defer(async () &#x3D;&gt; {
+    if (this.isAvailable()) {
+      await Notification.requestPermission();
+    }
+    return this.loadToken();
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/notification/firebase-messaging.service.ts:66</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Ask the user for the notification permission (if not decided yet), then get the token of this device.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, InjectionToken } from &quot;@angular/core&quot;;
+import { defer, Observable } from &quot;rxjs&quot;;
+import type * as AppSdk from &quot;firebase/app&quot;;
+import type * as MessagingSdk from &quot;firebase/messaging&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { FirebaseMessagingServiceWorker } from &quot;./firebase-messaging-service-worker&quot;;
+
+type FirebaseSdk &#x3D; Pick&lt;typeof AppSdk, &quot;initializeApp&quot;&gt; &amp;
+  Pick&lt;
+    typeof MessagingSdk,
+    &quot;isSupported&quot; | &quot;getMessaging&quot; | &quot;getToken&quot; | &quot;deleteToken&quot; | &quot;onMessage&quot;
+  &gt;;
+
+/**
+ * Loads the parts of the Firebase SDK used here (as a separate chunk).
+ */
+export const FIREBASE_SDK &#x3D; new InjectionToken&lt;() &#x3D;&gt; Promise&lt;FirebaseSdk&gt;&gt;(
+  &quot;FIREBASE_SDK&quot;,
+  {
+    providedIn: &quot;root&quot;,
+    factory: () &#x3D;&gt; async () &#x3D;&gt; {
+      const [app, messaging] &#x3D; await Promise.all([
+        import(&quot;firebase/app&quot;),
+        import(&quot;firebase/messaging&quot;),
+      ]);
+      return { ...messaging, initializeApp: app.initializeApp };
+    },
+  },
+);
+
+interface LoadedFirebase {
+  sdk: FirebaseSdk;
+  messaging: MessagingSdk.Messaging;
+}
+
+/**
+ * Quick check of the browser APIs, so the SDK (which checks support in detail) is not downloaded without them.
+ */
+function hasPushApis(): boolean {
+  return (
+    typeof Notification !&#x3D;&#x3D; &quot;undefined&quot; &amp;&amp; typeof PushManager !&#x3D;&#x3D; &quot;undefined&quot;
+  );
+}
+
+/**
+ * Access to Firebase Cloud Messaging in the app window.
+ *
+ * The Firebase SDK is only loaded (as a separate chunk) once a token or messages are requested.
+ * Without a Firebase config for this deployment, or in browsers without push support,
+ * there is no token and no messages.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class FirebaseMessagingService {
+  private readonly serviceWorker &#x3D; inject(FirebaseMessagingServiceWorker);
+  private readonly loadSdk &#x3D; inject(FIREBASE_SDK);
+  private firebase: Promise&lt;LoadedFirebase | undefined&gt; | undefined;
+
+  /**
+   * The token of this device, or &#x60;null&#x60; if the user has not granted the notification permission.
+   */
+  readonly getToken: Observable&lt;string | null&gt; &#x3D; defer(() &#x3D;&gt; this.loadToken());
+
+  /**
+   * Ask the user for the notification permission (if not decided yet), then get the token of this device.
+   */
+  readonly requestToken: Observable&lt;string | null&gt; &#x3D; defer(async () &#x3D;&gt; {
+    if (this.isAvailable()) {
+      await Notification.requestPermission();
+    }
+    return this.loadToken();
+  });
+
+  /**
+   * Push messages received while the app is in the foreground
+   * (otherwise the service worker receives them).
+   */
+  readonly messages &#x3D; new Observable&lt;MessagingSdk.MessagePayload&gt;(
+    (subscriber) &#x3D;&gt; {
+      let unsubscribe: (() &#x3D;&gt; void) | undefined;
+      this.loadFirebase()
+        .then((firebase) &#x3D;&gt; {
+          if (firebase &amp;&amp; !subscriber.closed) {
+            unsubscribe &#x3D; firebase.sdk.onMessage(
+              firebase.messaging,
+              (payload) &#x3D;&gt; subscriber.next(payload),
+            );
+          }
+        })
+        .catch((err) &#x3D;&gt; subscriber.error(err));
+      return () &#x3D;&gt; unsubscribe?.();
+    },
+  );
+
+  /**
+   * Whether push notifications can work here at all:
+   * the browser has the push APIs and this deployment has a Firebase config.
+   */
+  isAvailable(): boolean {
+    return hasPushApis() &amp;&amp; !!environment.notificationsConfig;
+  }
+
+  /**
+   * Delete the token of this device, which stops push messages to it.
+   * Resolves &#x60;false&#x60; if this device has no token.
+   */
+  deleteToken(): Observable&lt;boolean&gt; {
+    return defer(async () &#x3D;&gt; {
+      // Firebase&#x27;s deleteToken has no option for the service worker registration:
+      // without getting the token first (which passes our registration), Firebase would register its default one,
+      // which replaces ours and has no Firebase config, so push messages in the background would fail
+      if (!(await this.loadToken())) {
+        return false;
+      }
+      const firebase &#x3D; await this.loadFirebase();
+      return firebase.sdk.deleteToken(firebase.messaging);
+    });
+  }
+
+  private async loadToken(): Promise&lt;string | null&gt; {
+    if (!this.isAvailable() || Notification.permission !&#x3D;&#x3D; &quot;granted&quot;) {
+      return null;
+    }
+    const firebase &#x3D; await this.loadFirebase();
+    if (!firebase) {
+      return null;
+    }
+
+    // our registration passes the Firebase config to the service worker, Firebase&#x27;s default one does not
+    const serviceWorkerRegistration &#x3D; await this.serviceWorker.register();
+    return firebase.sdk.getToken(firebase.messaging, {
+      serviceWorkerRegistration,
+    });
+  }
+
+  private loadFirebase(): Promise&lt;LoadedFirebase | undefined&gt; {
+    this.firebase ??&#x3D; this.initFirebase().catch((err) &#x3D;&gt; {
+      // e.g. the chunk could not be loaded while offline: try again next time
+      this.firebase &#x3D; undefined;
+      throw err;
+    });
+    return this.firebase;
+  }
+
+  private async initFirebase(): Promise&lt;LoadedFirebase | undefined&gt; {
+    const config &#x3D; environment.notificationsConfig;
+    if (!config || !hasPushApis()) {
+      return undefined;
+    }
+
+    const sdk &#x3D; await this.loadSdk();
+    if (!(await sdk.isSupported())) {
+      return undefined;
+    }
+    return { sdk, messaging: sdk.getMessaging(sdk.initializeApp(config)) };
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'FirebaseMessagingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

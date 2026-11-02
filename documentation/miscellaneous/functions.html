@@ -677,6 +677,9 @@
                             <a href="#hasOrdinalValue" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasOrdinalValue</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#hasPushApis" title="src/app/features/notification/firebase-messaging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasPushApis</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#hasRemoteSession" title="src/app/core/session/session-type.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasRemoteSession</b>&nbsp;&nbsp;&nbsp;(src/.../session-type.ts)</span></a>
                         </li>
                         <li>
@@ -1026,9 +1029,6 @@
                         </li>
                         <li>
                             <a href="#processSentryEvent" title="src/app/core/logging/sentry-event-processing.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>processSentryEvent</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-event-processing.ts)</span></a>
-                        </li>
-                        <li>
-                            <a href="#provideFirebaseMessagingServiceWorker" title="src/app/features/notification/firebase-messaging-service-worker.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>provideFirebaseMessagingServiceWorker</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging-service-worker.ts)</span></a>
                         </li>
                         <li>
                             <a href="#provideTestingConfigService" title="src/app/core/config/testing-config-service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>provideTestingConfigService</b>&nbsp;&nbsp;&nbsp;(src/.../testing-config-service.ts)</span></a>
@@ -22323,6 +22323,42 @@ ordering of values is <em>not</em> the natural order of these values.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/notification/firebase-messaging.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasPushApis"></a>
+                    <span class="name">
+                        <span ><b>hasPushApis</b></span>
+                        <a href="#hasPushApis"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasPushApis()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Quick check of the browser APIs, so the SDK (which checks support in detail) is not downloaded without them.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/session/session-type.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -26250,99 +26286,6 @@ message</p>
         </tbody>
     </table>
 </section>
-    <h3>src/app/features/notification/firebase-messaging-service-worker.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="provideFirebaseMessagingServiceWorker"></a>
-                    <span class="name">
-                        <span ><b>provideFirebaseMessagingServiceWorker</b></span>
-                        <a href="#provideFirebaseMessagingServiceWorker"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>provideFirebaseMessagingServiceWorker()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Let AngularFire use our registration of the service worker instead of the Firebase default
-(which would not pass the Firebase config to it).</p>
-<p>The registration is only done once AngularFire awaits it (i.e. when requesting a device token)
-and repeated on every request, so a failed attempt (e.g. while offline) can succeed later.</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://angular.dev/api/core/Provider" target="_blank" >Provider</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="waitUntilActive"></a>
-                    <span class="name">
-                        <span ><b>waitUntilActive</b></span>
-                        <a href="#waitUntilActive"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>waitUntilActive(registration: ServiceWorkerRegistration)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>registration</td>
-                                            <td>
-                                                        <code>ServiceWorkerRegistration</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
     <h3>src/app/utils/retry-on-server-error.rxjs-pipe.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -28184,6 +28127,63 @@ otherwise continues to emit values from the source observable</p>
                         </div>
                             <div class="io-description">
                                 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/notification/firebase-messaging-service-worker.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="waitUntilActive"></a>
+                    <span class="name">
+                        <span ><b>waitUntilActive</b></span>
+                        <a href="#waitUntilActive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>waitUntilActive(registration: ServiceWorkerRegistration)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>registration</td>
+                                            <td>
+                                                        <code>ServiceWorkerRegistration</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                 </td>
             </tr>

@@ -240,8 +240,7 @@
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import { KeycloakAuthService } from &quot;app/core/session/auth/keycloak/keycloak-auth.service&quot;;
-import { AngularFireMessaging } from &quot;@angular/fire/compat/messaging&quot;;
-import { filter, firstValueFrom, mergeMap, Subscription, take } from &quot;rxjs&quot;;
+import { filter, firstValueFrom, mergeMap, of, Subscription, take } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { AlertService } from &quot;../../core/alerts/alert.service&quot;;
 import { catchError, map } from &quot;rxjs/operators&quot;;
@@ -252,7 +251,8 @@ import { SyncedPouchDatabase } from &quot;../../core/database/pouchdb/synced-pou
 import { NotificationEvent } from &quot;./model/notification-event&quot;;
 import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
 import { FirebaseMessagingServiceWorker } from &quot;./firebase-messaging-service-worker&quot;;
-import type firebase from &quot;firebase/compat/app&quot;;
+import { FirebaseMessagingService } from &quot;./firebase-messaging.service&quot;;
+import type { MessagePayload } from &quot;firebase/messaging&quot;;
 
 /**
  * Status of a backend feature, as reported by the &#x60;/actuator/features&#x60; endpoint.
@@ -279,7 +279,7 @@ type FeatureFlags &#x3D; Record&lt;string, FeatureFlag&gt; &amp; {
   providedIn: &quot;root&quot;,
 })
 export class NotificationService {
-  private readonly firebaseMessaging &#x3D; inject(AngularFireMessaging);
+  private readonly firebaseMessaging &#x3D; inject(FirebaseMessagingService);
   private readonly httpClient &#x3D; inject(HttpClient);
   private readonly authService &#x3D; inject(KeycloakAuthService);
   private readonly alertService &#x3D; inject(AlertService);
@@ -370,7 +370,8 @@ export class NotificationService {
     this.tokenSubscription &#x3D; this.firebaseMessaging.requestToken.subscribe({
       next: (token) &#x3D;&gt; {
         if (!token) {
-          Logging.error(&quot;Could not get token for device.&quot;);
+          // permission denied or browser not supported: nothing a developer can fix
+          Logging.debug(&quot;Could not get token for device.&quot;);
           this.alertService.addInfo(
             $localize&#x60;Please enable notification permissions to receive important updates.&#x60;,
           );
@@ -448,7 +449,8 @@ export class NotificationService {
       .pipe(
         mergeMap((token) &#x3D;&gt; {
           tempToken &#x3D; token;
-          return this.firebaseMessaging.deleteToken(token);
+          // without a token (e.g. the browser permission was revoked) the device is not registered anyway
+          return token ? this.firebaseMessaging.deleteToken() : of(true);
         }),
       )
       .subscribe({
@@ -461,9 +463,16 @@ export class NotificationService {
             return;
           }
 
-          this.unRegisterNotificationToken(tempToken).catch((err) &#x3D;&gt; {
-            Logging.error(&quot;Could not unregister device from aam-backend.&quot;, err);
-          });
+          if (tempToken) {
+            this.unRegisterNotificationToken(tempToken).catch((err) &#x3D;&gt; {
+              Logging.error(
+                &quot;Could not unregister device from aam-backend.&quot;,
+                err,
+              );
+            });
+          } else {
+            Logging.debug(&quot;No push notification token to unregister&quot;);
+          }
 
           this.alertService.addInfo(
             $localize&#x60;Device un-registered for push notifications.&#x60;,
@@ -581,7 +590,7 @@ export class NotificationService {
    * The payload is attached the same way Firebase does for notifications it shows itself,
    * so that Firebase&#x27;s click handler in the service worker also handles clicks on these (focus or open the app).
    */
-  private async showNotification(payload: firebase.messaging.MessagePayload) {
+  private async showNotification(payload: MessagePayload) {
     if (!payload.notification) {
       // data-only message, not meant to be displayed (Firebase also doesn&#x27;t show these while in background)
       return;
@@ -603,7 +612,12 @@ export class NotificationService {
     });
   }
 
-  readonly isPushNotificationSupported &#x3D; signal(&quot;Notification&quot; in window);
+  /**
+   * Whether this browser and deployment can use push notifications at all.
+   */
+  readonly isPushNotificationSupported &#x3D; signal(
+    this.firebaseMessaging.isAvailable(),
+  );
 
   /**
    * Whether the user has given this app the browser permission to show notifications.

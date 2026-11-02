@@ -1056,9 +1056,6 @@ import { BulkEditModule } from &quot;./features/bulk-edit/bulk-edit.module&quot;
 import { ChangeHistoryModule } from &quot;./features/change-history/change-history.module&quot;;
 import { ApplicationLoadingComponent } from &quot;./core/config/dynamic-routing/empty/application-loading.component&quot;;
 import { NotificationService } from &quot;./features/notification/notification.service&quot;;
-import { provideFirebaseMessagingServiceWorker } from &quot;./features/notification/firebase-messaging-service-worker&quot;;
-import { AngularFireModule } from &quot;@angular/fire/compat&quot;;
-import { FirebaseConfiguration } from &quot;./features/notification/notification-config.interface&quot;;
 import { UserAdminService } from &quot;./core/user/user-admin-service/user-admin.service&quot;;
 import { KeycloakAdminService } from &quot;./core/user/user-admin-service/keycloak-admin.service&quot;;
 import { defaultValueStrategyProviders } from &quot;./core/default-values/standard-default-value-strategies&quot;;
@@ -1123,9 +1120,6 @@ import { DeDuplicationModule } from &quot;./features/de-duplication/de-duplicati
     MatSnackBarModule,
     MatDialogModule,
     ApplicationLoadingComponent,
-    AngularFireModule.initializeApp(
-      environment.notificationsConfig as FirebaseConfiguration,
-    ),
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
@@ -1160,7 +1154,6 @@ import { DeDuplicationModule } from &quot;./features/de-duplication/de-duplicati
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     NotificationService,
-    provideFirebaseMessagingServiceWorker(),
     ...defaultValueStrategyProviders,
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

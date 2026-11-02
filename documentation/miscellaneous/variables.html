@@ -449,6 +449,9 @@
                             <a href="#FILTERABLE_OPERATIONS" title="src/app/features/change-history/change-history.types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FILTERABLE_OPERATIONS</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#FIREBASE_SDK" title="src/app/features/notification/firebase-messaging.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FIREBASE_SDK</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#FULL_LOAD_PAGE_SIZE" title="src/app/core/entity/entity-mapper/entity-mapper.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FULL_LOAD_PAGE_SIZE</b>&nbsp;&nbsp;&nbsp;(src/.../entity-mapper.service.ts)</span></a>
                         </li>
                         <li>
@@ -6799,6 +6802,53 @@ so they are not reported to remote logging.</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/notification/firebase-messaging.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FIREBASE_SDK"></a>
+                    <span class="name">
+                        <span ><b>FIREBASE_SDK</b></span>
+                        <a href="#FIREBASE_SDK"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new InjectionToken&lt;() &#x3D;&gt; Promise&lt;FirebaseSdk&gt;&gt;(
+  &quot;FIREBASE_SDK&quot;,
+  {
+    providedIn: &quot;root&quot;,
+    factory: () &#x3D;&gt; async () &#x3D;&gt; {
+      const [app, messaging] &#x3D; await Promise.all([
+        import(&quot;firebase/app&quot;),
+        import(&quot;firebase/messaging&quot;),
+      ]);
+      return { ...messaging, initializeApp: app.initializeApp };
+    },
+  },
+)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Loads the parts of the Firebase SDK used here (as a separate chunk).</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
