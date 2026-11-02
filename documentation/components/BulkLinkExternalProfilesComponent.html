@@ -454,7 +454,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:95</a></div>
                             </td>
                         </tr>
 
@@ -480,7 +480,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:82</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:83</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -501,7 +501,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:81</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:82</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -542,8 +542,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="243"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:243</a></div>
                         </td>
                     </tr>
 
@@ -611,8 +611,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="261"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:261</a></div>
                         </td>
                     </tr>
 
@@ -648,8 +648,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="296"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:296</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="302"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:302</a></div>
                         </td>
                     </tr>
 
@@ -726,7 +726,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:88</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -757,7 +757,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -787,7 +787,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:90</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:91</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -869,6 +869,7 @@ import {
 import { EntitySchema } from &quot;../../../core/entity/schema/entity-schema&quot;;
 import { FormFieldConfig } from &quot;../../../core/common-components/entity-form/FormConfig&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
+import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
 import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
 import { finalize, firstValueFrom, from, mergeMap } from &quot;rxjs&quot;;
 import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
@@ -1016,7 +1017,12 @@ export class BulkLinkExternalProfilesComponent {
         };
       }
     } catch (err) {
-      Logging.warn(&quot;Could not load external profiles (bulk action)&quot;, err);
+      if (isConnectivityError(err)) {
+        // offline or the external system unavailable: the warning is shown for the record
+        Logging.debug(&quot;Could not load external profiles (bulk action)&quot;, err);
+      } else {
+        Logging.warn(&quot;Could not load external profiles (bulk action)&quot;, err);
+      }
       record.warning &#x3D; {
         ...(record.warning ?? {}),
         possibleMatches: $localize&#x60;:bulk-link external profile error:Error while fetching possible matches. Please try to manually search and select a profile to see details.&#x60;,

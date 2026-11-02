@@ -979,7 +979,8 @@ export class IndexeddbMigrationService {
       req.onsuccess &#x3D; () &#x3D;&gt; resolve();
       req.onerror &#x3D; () &#x3D;&gt; reject(req.error);
       req.onblocked &#x3D; () &#x3D;&gt; {
-        Logging.warn(
+        // e.g. the app is still open in another tab: informational only
+        Logging.debug(
           &quot;IndexeddbMigration: deletion is blocked by open connections; resolving anyway&quot;,
           { database: name },
         );

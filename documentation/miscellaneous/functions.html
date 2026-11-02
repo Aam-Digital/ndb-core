@@ -350,6 +350,9 @@
                             <a href="#describeSingleOperator" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeSingleOperator</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#describeValue" title="src/app/core/language/language.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeValue</b>&nbsp;&nbsp;&nbsp;(src/.../language.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#descriptionForAgeValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/age-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>descriptionForAgeValidator</b>&nbsp;&nbsp;&nbsp;(src/.../age-validators.ts)</span></a>
                         </li>
                         <li>
@@ -753,6 +756,9 @@
                         </li>
                         <li>
                             <a href="#isExcessiveRepeat" title="src/app/core/logging/sentry-event-processing.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isExcessiveRepeat</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-event-processing.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isExpectedLocationFailure" title="src/app/features/location/address-gps-location/address-gps-location.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isExpectedLocationFailure</b>&nbsp;&nbsp;&nbsp;(src/.../address-gps-location.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isExpiredSessionError" title="src/app/utils/expired-session-error.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isExpiredSessionError</b>&nbsp;&nbsp;&nbsp;(src/.../expired-session-error.ts)</span></a>
@@ -13350,6 +13356,68 @@ the write stopped partway. Any other rejection means nothing was stored.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/language/language.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="describeValue"></a>
+                    <span class="name">
+                        <span ><b>describeValue</b></span>
+                        <a href="#describeValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>describeValue(value)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A readable description of a value for logs, instead of &quot;[Object]&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -23126,6 +23194,71 @@ in <code>logging.service.ts</code>), and both must classify a failure the same w
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/location/address-gps-location/address-gps-location.component.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isExpectedLocationFailure"></a>
+                    <span class="name">
+                        <span ><b>isExpectedLocationFailure</b></span>
+                        <a href="#isExpectedLocationFailure"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isExpectedLocationFailure(error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Failures caused by the device rather than a defect: a denied or blocked location
+permission, no position available or a timeout. The user is told in any case.
+(A failed address lookup does not get here: <code>GeoService.reverseLookup</code> falls back
+to the plain coordinates.)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
 
                                             <td>
                                                     No

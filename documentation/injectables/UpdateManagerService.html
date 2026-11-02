@@ -225,7 +225,7 @@ and can click that to reload the app with the new version.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:29</a></div>
                             </td>
                         </tr>
 
@@ -260,8 +260,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="117"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:117</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -301,8 +301,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -374,6 +374,7 @@ import { filter, first } from &quot;rxjs/operators&quot;;
 import { concat, interval } from &quot;rxjs&quot;;
 import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
 import { LatestChangesDialogService } from &quot;./latest-changes-dialog.service&quot;;
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
@@ -399,7 +400,8 @@ export class UpdateManagerService {
 
   constructor() {
     this.updates.unrecoverable.subscribe((err) &#x3D;&gt; {
-      Logging.error(&quot;App is in unrecoverable state&quot;, { reason: err.reason });
+      // usually the browser evicted cached app files; reloading fetches them again
+      Logging.debug(&quot;App is in unrecoverable state&quot;, { reason: err.reason });
       this.location.reload();
     });
     const currentVersion &#x3D; this.localStorage.getItem(
@@ -444,7 +446,14 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ &#x3D; concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() &#x3D;&gt;
-      this.updates.checkForUpdate().catch((err) &#x3D;&gt; Logging.error(err)),
+      this.updates.checkForUpdate().catch((err) &#x3D;&gt; {
+        if (isConnectivityError(err)) {
+          // offline: checked again in an hour
+          Logging.debug(&quot;Could not check for app updates (connectivity)&quot;, err);
+        } else {
+          Logging.error(&quot;Could not check for app updates&quot;, err);
+        }
+      }),
     );
   }
 
@@ -490,7 +499,8 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) &#x3D;&gt; {
-      Logging.warn(&quot;SW in unrecoverable state&quot;, { reason });
+      // already logged by the subscription in the constructor
+      Logging.debug(&quot;SW in unrecoverable state&quot;, { reason });
       this.snackBar
         .open(
           $localize&#x60;The app is in a unrecoverable state, please reload.&#x60;,

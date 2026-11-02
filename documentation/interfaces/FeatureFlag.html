@@ -404,7 +404,15 @@ export class NotificationService {
           this.alertService.addInfo(
             $localize&#x60;User has rejected the authorisation request.&#x60;,
           );
-          Logging.error(&quot;User has rejected the authorisation request.&quot;, err);
+          if (this.hasNotificationPermissionGranted()) {
+            Logging.error(
+              &quot;Could not request a token for push notifications&quot;,
+              err,
+            );
+          } else {
+            // the user denied or dismissed the browser&#x27;s permission prompt
+            Logging.debug(&quot;User has rejected the authorisation request.&quot;, err);
+          }
         }
       },
     });

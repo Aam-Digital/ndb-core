@@ -231,8 +231,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -321,8 +321,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -400,11 +400,12 @@ on request or automatically on the first visit of a new version after update.</p
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { catchError, map } from &quot;rxjs/operators&quot;;
 import { Injectable, inject } from &quot;@angular/core&quot;;
-import { Observable, throwError } from &quot;rxjs&quot;;
+import { Observable, of } from &quot;rxjs&quot;;
 import { Changelog } from &quot;./changelog&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Manage the changelog information and display it to the user
@@ -500,10 +501,13 @@ export class LatestChangesService {
           relevantReleases.map((r) &#x3D;&gt; this.parseGithubApiRelease(r)),
         ),
         catchError((error) &#x3D;&gt; {
+          // the GitHub API is an external service that may be unreachable or rate-limiting:
+          // the user is told, and nobody subscribing could handle a rethrown error
+          Logging.debug(&quot;Could not load latest changes&quot;, error);
           this.alertService.addWarning(
             $localize&#x60;Could not load latest changes: ${error}&#x60;,
           );
-          return throwError(() &#x3D;&gt; new Error(&quot;Could not load latest changes.&quot;));
+          return of([]);
         }),
       );
 

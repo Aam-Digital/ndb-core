@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="242" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:242</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="251" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:251</a></div>
                                 </td>
                             </tr>
 
@@ -287,7 +287,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="241" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:241</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="250" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:250</a></div>
                                 </td>
                             </tr>
 
@@ -331,7 +331,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="243" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:243</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="252" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:252</a></div>
                                 </td>
                             </tr>
 
@@ -353,6 +353,7 @@ import { ExternalProfileLinkConfig } from &quot;../external-profile-link-config&
 import { retryOnServerError } from &quot;../../../utils/retry-on-server-error.rxjs-pipe&quot;;
 import { FormGroup } from &quot;@angular/forms&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
+import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
 import { AlertService } from &quot;../../../core/alerts/alert.service&quot;;
 import { Skill } from &quot;../skill&quot;;
 import { environment } from &quot;#src/environments/environment&quot;;
@@ -478,10 +479,18 @@ export class SkillApiService {
         ? await firstValueFrom(
             this.getExternalProfileById(externalProfile),
           ).catch((e) &#x3D;&gt; {
-            Logging.warn(
-              &quot;SkillApiService error getting external profile for applying data&quot;,
-              e,
-            );
+            if (isConnectivityError(e)) {
+              // offline or the external system unavailable: the user is alerted below
+              Logging.debug(
+                &quot;SkillApiService error getting external profile for applying data&quot;,
+                e,
+              );
+            } else {
+              Logging.warn(
+                &quot;SkillApiService error getting external profile for applying data&quot;,
+                e,
+              );
+            }
             this.alertService.addWarning(messageFailedToLoad);
             return {};
           })

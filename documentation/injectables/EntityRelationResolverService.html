@@ -604,9 +604,9 @@ export class EntityRelationResolverService {
       return match ? this.copySchemaFieldsShallow(match) : { _id: id };
     } catch (err) {
       Logging.warn(
-        &#x60;EntityRelationResolverService: failed to load entities of type &quot;${entityType}&quot; &#x60; +
-          &#x60;to resolve relation field &quot;${fieldSchema.id}&quot;&#x60;,
+        &quot;EntityRelationResolverService: failed to load entities to resolve a relation field&quot;,
         err,
+        { entityType, field: fieldSchema.id },
       );
       return { _id: id };
     }

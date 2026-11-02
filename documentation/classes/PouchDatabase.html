@@ -897,7 +897,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:419</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:420</a></code>
 </div>
                         </td>
                     </tr>
@@ -944,7 +944,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:454</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:455</a></code>
 </div>
                         </td>
                     </tr>
@@ -1073,8 +1073,8 @@ as well: last for &quot;asc&quot;, first for &quot;desc&quot; (see <a href="../m
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="487"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:487</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="488"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:488</a></div>
                         </td>
                     </tr>
 
@@ -1562,8 +1562,8 @@ Returns true if there are no documents in the database</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="722"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:722</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="723"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:723</a></div>
                         </td>
                     </tr>
 
@@ -1913,7 +1913,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:558</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:559</a></code>
 </div>
                         </td>
                     </tr>
@@ -2095,7 +2095,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:431</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:432</a></code>
 </div>
                         </td>
                     </tr>
@@ -2140,7 +2140,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:580</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:581</a></code>
 </div>
                         </td>
                     </tr>
@@ -2218,8 +2218,8 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="626"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:626</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="627"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:627</a></div>
                         </td>
                     </tr>
 
@@ -3032,7 +3032,8 @@ export class PouchDatabase extends Database {
             err.statusCode &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
             err.statusCode &#x3D;&#x3D;&#x3D; HttpStatusCode.GatewayTimeout
           ) {
-            Logging.warn(err);
+            // expired session or a gateway timeout: transient, retried below
+            Logging.debug(&quot;changes feed failed (unauthorized or timeout)&quot;, err);
           } else {
             Logging.error(err);
           }

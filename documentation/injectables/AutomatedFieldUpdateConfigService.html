@@ -1209,8 +1209,8 @@ If any of them cannot be loaded (e.g. the user has no permission to read it), no
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="498"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:498</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="499"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:499</a></div>
                         </td>
                     </tr>
 
@@ -1497,8 +1497,8 @@ all records of the type are loaded and checked instead.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="467"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:467</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="468"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:468</a></div>
                         </td>
                     </tr>
 
@@ -2099,7 +2099,8 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         entityId,
       );
     } catch (error) {
-      Logging.warn(
+      // the expected fallback described above, which still finds all linked records
+      Logging.debug(
         &quot;AutomatedFieldUpdateConfigService: Could not use the index of linked records, loading all records of the type instead&quot;,
         { entityType: ctor.ENTITY_TYPE, referenceField },
         error,

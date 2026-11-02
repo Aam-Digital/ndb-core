@@ -157,10 +157,13 @@ report it with <code>Logging.warn</code>, including the response, and tell the u
 <li><strong>User or device environment</strong> (e.g. offline or flaky connection, expired session, a record the
 user may not read, a browser permission the user denied such as clipboard or notifications):
 do not report it (<code>Logging.debug</code>); tell the user what happened and what they can do.</li>
-<li><strong>Instance configuration or data</strong> (e.g. an unknown <code>dataType</code>, icon or validator in the config;
-a permission rule variable for an account without a linked profile; a file field pointing to a
-missing file; an optional feature not set up for the instance): do not report it
-(<code>Logging.debug</code>); make it visible to admins in the UI, and validate the config when it is saved.</li>
+<li><strong>Instance configuration or data problem</strong> (e.g. an unknown <code>dataType</code>, icon or validator in the
+config; a permission rule variable for an account without a linked profile; a file field pointing
+to a missing file): report it with <code>Logging.warn</code>, with a static message and the offending value
+in the context. If it would recur on every page load, report it once per session. Also make it
+visible to admins in the UI where possible, and validate the config when it is saved.</li>
+<li><strong>Optional feature not set up for the instance</strong> (e.g. push notifications without a Firebase
+config): this is not a problem, do not report it (<code>Logging.debug</code>).</li>
 </ul>
 <p>Rules that keep one root cause in one Sentry issue (see also &quot;Log an error together with a message&quot;
 and &quot;Log a failure once&quot; below):</p>
@@ -169,8 +172,9 @@ and &quot;Log a failure once&quot; below):</p>
 handler needs <code>await</code> or <code>.catch()</code>. Otherwise an expected failure reaches Angular&#39;s
 <code>ErrorHandler</code> and is reported as a separate, unhandled issue.</li>
 <li><strong>Classify failures with the shared helpers</strong>, not with ad-hoc status checks per component:
-<code>isConnectivityError()</code> (<code>src/app/utils/connectivity-error.ts</code>) and <code>isExpiredSessionError()</code>
-(<code>src/app/utils/expired-session-error.ts</code>). A component that only treats <code>404</code> as expected
+<code>isConnectivityError()</code> (<code>src/app/utils/connectivity-error.ts</code>), <code>isExpiredSessionError()</code>
+(<code>src/app/utils/expired-session-error.ts</code>) and <code>isNotPermittedError()</code>
+(<code>src/app/utils/not-permitted-error.ts</code>). A component that only treats <code>404</code> as expected
 logs every dropped connection as a warning of its own, and cannot tell the user what happened.</li>
 <li><strong>Check whether an optional feature is configured before using it</strong> (e.g. push notifications
 without a Firebase config) instead of logging its failure on every page load.</li>
@@ -178,6 +182,31 @@ without a Firebase config) instead of logging its failure on every page load.</l
 reason (e.g. <code>purge()</code> on the legacy <code>idb</code> adapter), check the capability up front.</li>
 <li><strong>Expect config values of the wrong type.</strong> The config is plain JSON edited by admins; a template
 or <code>computed()</code> must not crash because a value is not of the type its interface declares.</li>
+</ul>
+<h3>Which level to use</h3>
+<p><code>warn</code> and <code>error</code> go to Sentry, <code>debug</code> and <code>info</code> only to the browser console. Decide per call site:</p>
+<ul>
+<li><strong>Keep <code>warn</code></strong> for an unexpected but handled situation that a developer or support has to act on:<ul>
+<li>a code defect, or a data or config inconsistency (if it would recur on every page load, report
+it once per session, e.g. an invalid locale);</li>
+<li>a risk of data loss: the local database lost or evicted, user data that could not be saved for a
+reason other than permissions or connectivity;</li>
+<li>a permission inconsistency that indicates a bug (e.g. the server refusing docs the client let the
+user change);</li>
+<li>a deliberate audit event the team relies on (e.g. a user-confirmed reset of application data),
+with a static message.</li>
+</ul>
+</li>
+<li><strong>Use <code>debug</code></strong> for expected operational conditions: offline or connectivity failures, an expired
+session, a record the user may not read, an external service being unavailable (e.g. the address
+lookup, the GitHub releases API for &quot;latest changes&quot;), a normal fallback path (e.g. loading all
+records when an index cannot be used), a known limitation (e.g. <code>purge()</code> on the <code>idb</code> adapter),
+purely informational traces, and anything the UI already tells the user with nothing for
+developers to fix.</li>
+<li><strong>Do not downgrade a whole catch block</strong> that mixes both: classify the error with the helpers above
+and log only the expected cases at <code>debug</code>, keeping <code>warn</code> for the rest.</li>
+<li><strong>Do not rethrow</strong> an error after telling the user about it, unless the caller handles it: it is
+reported again as an unhandled error.</li>
 </ul>
 <h2>Remote Logging</h2>
 <p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.</p>
@@ -247,8 +276,8 @@ reported as extra data, without splitting the issue.</li>
 telling two unrelated bugs apart.</li>
 <li>A failure that is only logged, not thrown, needs no name: <code>Logging.error(message, err)</code> is grouped
 the same way. Name it only where a network failure must keep an issue of its own instead of going
-into the shared network issue, because the app cannot continue (<code>ConfigLoadError</code>,
-<code>AppBootstrapError</code>).</li>
+into the shared network issue, because the app cannot continue (<code>AppBootstrapError</code>;
+<code>ConfigLoadError</code>, which is not reported at all when the device is simply offline).</li>
 </ul>
 <h3>How events are grouped</h3>
 <p>Sentry groups errors by their stack trace whenever one is available, so rewording an error&#39;s message
