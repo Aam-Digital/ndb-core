@@ -212,6 +212,35 @@ describe("IndexeddbMigrationService", () => {
         });
       },
     );
+
+    it("never opens the legacy database with the other adapter if legacy and new name are identical", async () => {
+      // token without "username" claim: the session name falls back to the id
+      const collidingSession: SessionInfo = { ...session, name: session.id };
+      mockWindow.indexedDB.databases.mockResolvedValue([
+        { name: NEW_APP_DB, version: 5 },
+      ]);
+      const { mockDb, localSyncState, createPouchDbSpy } =
+        mockPouchDbCreation();
+      localSyncState.next(SyncState.COMPLETED);
+
+      const config = await service.resolveDbConfig(collidingSession);
+      service.runBackgroundMigration(collidingSession, mockDb);
+
+      expect(config).toEqual({
+        adapter: "idb",
+        dbNames: {
+          app: NEW_DB_NAMES.app,
+          notifications: LEGACY_DB_NAMES.notifications,
+        },
+      });
+      expect(service.migrationPending).toBe(false);
+      expect(createPouchDbSpy).not.toHaveBeenCalled();
+      expect(localStorage.getItem(MIGRATED_FLAG)).toBeNull();
+      expect(eventTrackSpy).toHaveBeenCalledWith(
+        "idb_migration-skipped-same-db-name",
+        { category: "indexeddb_adapter_migration" },
+      );
+    });
   });
 
   describe("runBackgroundMigration", () => {
@@ -466,6 +495,26 @@ describe("IndexeddbMigrationService", () => {
         service.cleanupLegacyDatabases(session),
       ).resolves.not.toThrow();
       expect(callCount).toBe(2);
+    });
+
+    it("keeps the app database in use if its legacy name is identical to the new one", async () => {
+      const collidingSession: SessionInfo = { ...session, name: session.id };
+      localStorage.setItem(MIGRATED_FLAG, "true");
+      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
+        const req = { onsuccess: null as any } as IDBOpenDBRequest;
+        setTimeout(() => req.onsuccess?.(new Event("success")));
+        return req;
+      });
+      mockWindow.indexedDB.databases.mockResolvedValue([
+        { name: NEW_APP_DB, version: 1 },
+        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
+      ]);
+
+      await service.cleanupLegacyDatabases(collidingSession);
+
+      expect(
+        mockWindow.indexedDB.deleteDatabase,
+      ).toHaveBeenCalledExactlyOnceWith(LEGACY_NOTIFICATIONS_DB);
     });
   });
 });

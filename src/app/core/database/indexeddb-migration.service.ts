@@ -1,7 +1,11 @@
 import { inject, Injectable, Injector, signal } from "@angular/core";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
+import {
+  computeDbNames,
+  computeLegacyDbNames,
+  hasIdenticalLegacyAppDbName,
+} from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
@@ -61,7 +65,9 @@ export class IndexeddbMigrationService {
    * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration; resets the migration flag)
    * 2. Migration flag set → new names + "indexeddb"
    * 3. No old DB exists (fresh install) → new names + "indexeddb"
-   * 4. Old DB exists, no flag → legacy names + "idb" (migration pending)
+   * 4. Old DB exists, no flag, but legacy and new name are identical → legacy names + "idb" (migration skipped,
+   *    as the new DB with the "indexeddb" adapter cannot have the name of the existing "idb" DB)
+   * 5. Old DB exists, no flag → legacy names + "idb" (migration pending)
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
@@ -107,6 +113,18 @@ export class IndexeddbMigrationService {
       };
     }
 
+    if (hasIdenticalLegacyAppDbName(session)) {
+      // opening the existing "idb" DB with the "indexeddb" adapter breaks the open connection and every later access
+      await this.trackMigrationEvent("idb_migration-skipped-same-db-name");
+      Logging.debug(
+        "IndexeddbMigration: using legacy DB config (migration skipped, legacy and new DB name are identical)",
+      );
+      return {
+        dbNames: computeLegacyDbNames(session),
+        adapter: "idb",
+      };
+    }
+
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending = true;
     await this.trackMigrationEvent("idb_migration-pending");
@@ -137,6 +155,10 @@ export class IndexeddbMigrationService {
       return;
     }
     if (!(db instanceof SyncedPouchDatabase)) {
+      return;
+    }
+    if (hasIdenticalLegacyAppDbName(session)) {
+      // safeguard: the database in use must never be opened with the other adapter
       return;
     }
     // check for connectivity first, so that no remote connection is opened (and left open) when offline
@@ -399,8 +421,13 @@ export class IndexeddbMigrationService {
     }
 
     const legacyNames = computeLegacyDbNames(session);
+    const newNames = computeDbNames(session);
     const dbs = await indexedDBApi.databases();
     for (const [key, dbName] of Object.entries(legacyNames)) {
+      if (dbName === newNames[key as keyof typeof newNames]) {
+        // the "legacy" database is the one in use
+        continue;
+      }
       // PouchDB prefixes IndexedDB database names with "_pouch_"
       const idbName = `_pouch_${dbName}`;
       // delete any related DB (PouchDB adds some views as separate DBs with suffixes)

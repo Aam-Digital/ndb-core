@@ -87,6 +87,10 @@ otherwise it keeps the old database and retries on the next start.
 The migration is tracked as usage analytics events (category `indexeddb_adapter_migration`).
 The legacy databases are not deleted yet.
 
+Users whose token has no `username` claim (accounts not linked to a user entity) have the Keycloak UUID as session name,
+so their legacy and new app database names are identical, i.e. both are the same IndexedDB database.
+An existing `idb` database cannot be opened with the `indexeddb` adapter, so for them the migration is skipped and they keep the legacy adapter.
+
 ## Key files
 
 - `database.ts` — the abstract `Database` service, including `query()` and `saveDatabaseIndex()`

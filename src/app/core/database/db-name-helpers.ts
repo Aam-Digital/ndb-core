@@ -29,3 +29,12 @@ export function computeLegacyDbNames(session: SessionInfo): {
     notifications: `${NotificationEvent.DATABASE}_${session.id}`,
   };
 }
+
+/**
+ * Whether the legacy and the new app database have the same name and therefore are the same IndexedDB database.
+ * This is the case if the user's token has no "username" claim, so that the session name falls back to the id.
+ * Such a database cannot be migrated to another adapter, because it would have to be opened with both adapters.
+ */
+export function hasIdenticalLegacyAppDbName(session: SessionInfo): boolean {
+  return computeLegacyDbNames(session).app === computeDbNames(session).app;
+}
