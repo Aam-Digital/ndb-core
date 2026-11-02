@@ -6,6 +6,7 @@ import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dyn
 import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
 import {
   findParentOutside,
   getParentIds,
@@ -26,8 +27,7 @@ export function withinParentValidator(
   return async (control) => {
     const parentIds = getParentIds(
       config,
-      record,
-      control.parent?.get(config.parentReferenceField),
+      getCurrentRecordOfControl(control, record),
     );
     if (!parentIds.length) {
       return null;

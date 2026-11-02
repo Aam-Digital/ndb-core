@@ -1,5 +1,7 @@
-import { FormGroup } from "@angular/forms";
-import { Observable } from "rxjs";
+import { computed, inject, Signal } from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { AbstractControl, FormGroup } from "@angular/forms";
+import { Observable, of, switchMap } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 
 /**
@@ -29,4 +31,37 @@ export function createCurrentRecordState<T extends Entity>(
   const state = entity.copy();
   Object.assign(state, form.getRawValue());
   return state;
+}
+
+/**
+ * The record with the current values of the form the given control belongs to
+ * (for validators, which only get their control),
+ * or the record itself if the control is not part of a form.
+ */
+export function getCurrentRecordOfControl<T extends Entity>(
+  control: AbstractControl,
+  record: T | undefined,
+): T | undefined {
+  return record && control.parent instanceof FormGroup
+    ? createCurrentRecordState(record, control.parent)
+    : record;
+}
+
+/**
+ * The current state of the record a field belongs to (see {@link CurrentRecordContext}),
+ * followed only while `follow()` is true, otherwise `undefined`.
+ * Must be called in an injection context (e.g. as a field initializer of a component).
+ */
+export function currentRecordSignal<T extends Entity = Entity>(
+  follow: () => boolean,
+): Signal<T | undefined> {
+  const context = inject(CurrentRecordContext, { optional: true });
+  return toSignal(
+    toObservable(computed(follow)).pipe(
+      switchMap((active) =>
+        active && context ? context.currentRecordState() : of(undefined),
+      ),
+    ),
+    { initialValue: undefined },
+  ) as Signal<T | undefined>;
 }

@@ -25,13 +25,13 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { asArray } from "app/utils/asArray";
-import { lastValueFrom, map, of, startWith, switchMap } from "rxjs";
+import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import {
   BasicAutocompleteComponent,
   CreateOptionConfig,
 } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
-import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
+import { currentRecordSignal } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -208,26 +208,13 @@ export class EditEntityComponent<
     },
   });
 
-  private readonly recordContext = inject(CurrentRecordContext, {
-    optional: true,
-  });
-
   /**
    * The record being edited, with the current, possibly unsaved values of its form,
    * to resolve placeholders in the `selectionCondition` referring to that record.
    * Only followed while the field has such a condition.
    */
-  private readonly currentRecord: Signal<Entity | undefined> = toSignal(
-    toObservable(
-      computed(() => !!this.formFieldConfig()?.selectionCondition),
-    ).pipe(
-      switchMap((hasCondition) =>
-        hasCondition && this.recordContext
-          ? this.recordContext.currentRecordState()
-          : of(undefined),
-      ),
-    ),
-    { initialValue: undefined },
+  private readonly currentRecord = currentRecordSignal(
+    () => !!this.formFieldConfig()?.selectionCondition,
   );
 
   /**

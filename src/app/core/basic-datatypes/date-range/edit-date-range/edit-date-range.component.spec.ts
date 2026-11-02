@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { MatTooltip } from "@angular/material/tooltip";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Subject } from "rxjs";
+import { BehaviorSubject, map, of, startWith, Subject, switchMap } from "rxjs";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import {
@@ -25,6 +25,10 @@ import {
 } from "../../../../utils/test-utils/dialog-mocks";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { periodRangeOptions } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
+import {
+  createCurrentRecordState,
+  CurrentRecordContext,
+} from "../../../common-components/entity-form/current-record-state";
 import { EditDateRangeComponent } from "./edit-date-range.component";
 
 @DatabaseEntity("EditDateRangeTestAction")
@@ -53,8 +57,14 @@ describe("EditDateRangeComponent", () => {
     plannedPeriod: { start },
   });
 
+  /** the record and form of the field rendered by `render()`, whose current state the field follows */
+  let recordInForm: BehaviorSubject<
+    { record: Entity; form: FormGroup } | undefined
+  >;
+
   beforeEach(async () => {
     dialog = mockMatDialog();
+    recordInForm = new BehaviorSubject(undefined);
     await TestBed.configureTestingModule({
       imports: [EditDateRangeComponent, NoopAnimationsModule],
       providers: [
@@ -62,6 +72,27 @@ describe("EditDateRangeComponent", () => {
         { provide: MatDialog, useValue: dialog },
         ...mockEntityMapperProvider([parentAction, ongoingParentAction]),
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: CurrentRecordContext,
+          useValue: {
+            currentRecordState: () =>
+              recordInForm.pipe(
+                switchMap((current) =>
+                  current
+                    ? current.form.valueChanges.pipe(
+                        startWith(null),
+                        map(() =>
+                          createCurrentRecordState(
+                            current.record,
+                            current.form,
+                          ),
+                        ),
+                      )
+                    : of(undefined),
+                ),
+              ),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -275,13 +306,12 @@ describe("EditDateRangeComponent", () => {
       if (parentInForm !== undefined) {
         form.addControl("parent", new FormControl(parentInForm));
       }
-      parentFixture.componentRef.setInput(
-        "entity",
-        Object.assign(new EditDateRangeTestAction(), {
-          parent: parentOfRecord,
-          anonymized,
-        }),
-      );
+      const record = Object.assign(new EditDateRangeTestAction(), {
+        parent: parentOfRecord,
+        anonymized,
+      });
+      parentFixture.componentRef.setInput("entity", record);
+      recordInForm.next({ record, form });
       form.get("period").setValue(period);
       if (!editing) {
         form.get("period").disable();

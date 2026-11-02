@@ -7,7 +7,6 @@ import {
   inject,
   input,
   OnInit,
-  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
@@ -37,11 +36,8 @@ import {
   periodRangeOptions,
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeValue } from "../date-range.datatype";
-import {
-  findParentOutside,
-  ParentLinkInForm,
-  parentRangesResource,
-} from "../parent-ranges";
+import { findParentOutside, parentRangesResource } from "../parent-ranges";
+import { currentRecordSignal } from "../../../common-components/entity-form/current-record-state";
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
@@ -111,18 +107,17 @@ export class EditDateRangeComponent
   });
 
   /**
-   * the parent link as entered in the form, if the form has that field (otherwise the record's saved link is used),
+   * the record with the current values of its form,
    * so that the parent's period offered and shaded while editing follows a changed link before it is saved
    */
-  private readonly parentReferenceInForm = signal<ParentLinkInForm | undefined>(
-    undefined,
+  private readonly currentRecord = currentRecordSignal(
+    () => !!this.formFieldConfig()?.validators?.withinParent,
   );
 
   private readonly parents = parentRangesResource(() => ({
-    record: this.entity(),
+    record: this.currentRecord() ?? this.entity(),
     fieldId: this.formFieldConfig()?.id,
     config: this.formFieldConfig()?.validators?.withinParent,
-    linkInForm: this.parentReferenceInForm(),
   }));
 
   /** name of the first linked parent record whose range the entered range goes beyond */
@@ -176,7 +171,6 @@ export class EditDateRangeComponent
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((value) => this.showValue(value));
-    this.followParentReferenceInForm();
     this.range.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.formControl.updateValueAndValidity());
@@ -190,19 +184,6 @@ export class EditDateRangeComponent
         );
         this.formControl.markAsDirty();
       });
-  }
-
-  private followParentReferenceInForm() {
-    const field =
-      this.formFieldConfig()?.validators?.withinParent?.parentReferenceField;
-    const control = field && this.formControl.parent?.get(field);
-    if (!control) {
-      return;
-    }
-    this.parentReferenceInForm.set({ value: control.value });
-    control.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.parentReferenceInForm.set({ value }));
   }
 
   /** Show a value that was set from outside, without resetting what the user is just typing. */
