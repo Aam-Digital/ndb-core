@@ -40,6 +40,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
+  /**
+   * Destroy the local database.
+   * Its last completed sync is forgotten, so that a new database with the same name
+   * is not taken for local data that was lost (see DatabaseResolverService).
+   */
+  override async destroy(): Promise<any> {
+    const lastSyncKey = this.LAST_SYNC_KEY;
+    const result = await super.destroy();
+    if (lastSyncKey) {
+      localStorage.removeItem(lastSyncKey);
+    }
+    return result;
+  }
+
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 

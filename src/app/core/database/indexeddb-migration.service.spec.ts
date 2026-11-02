@@ -15,7 +15,6 @@ import { MultiTabDetectionService } from "./multi-tab-detection.service";
 
 // names derived from the test session (name "testuser", id "abc-123-uuid")
 const MIGRATED_FLAG = "DB_MIGRATED_abc-123-uuid";
-const NEW_APP_DB_LAST_SYNC = "LAST_SYNC_abc-123-uuid-app";
 const LEGACY_APP_DB = "_pouch_testuser-app";
 const LEGACY_NOTIFICATIONS_DB = "_pouch_notifications_abc-123-uuid";
 const NEW_APP_DB = "_pouch_abc-123-uuid-app";
@@ -131,9 +130,7 @@ describe("IndexeddbMigrationService", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     environment.use_indexeddb_adapter = originalUseIndexeddbAdapter;
-    [MIGRATED_FLAG, NEW_APP_DB_LAST_SYNC].forEach((key) =>
-      localStorage.removeItem(key),
-    );
+    localStorage.removeItem(MIGRATED_FLAG);
   });
 
   /** let pending promise callbacks (dialog, final sync, analytics) run */
@@ -415,7 +412,6 @@ describe("IndexeddbMigrationService", () => {
       mockWindow.indexedDB.databases.mockResolvedValue([
         { name: NEW_APP_DB, version: 5 },
       ]);
-      localStorage.setItem(NEW_APP_DB_LAST_SYNC, "2026-11-01T10:00:00Z");
       confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
       const mocks = mockPouchDbCreation();
       const calls: string[] = [];
@@ -452,8 +448,6 @@ describe("IndexeddbMigrationService", () => {
       expect(createPouchDbSpy).not.toHaveBeenCalled();
       expect(calls).toEqual(["final sync", "delete"]);
       expect(localStorage.getItem(MIGRATED_FLAG)).toBe("true");
-      // the download into the recreated db is no lost local database
-      expect(localStorage.getItem(NEW_APP_DB_LAST_SYNC)).toBeNull();
       expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
     });
 
@@ -507,7 +501,6 @@ describe("IndexeddbMigrationService", () => {
         );
         expect(destroy).toHaveBeenCalledTimes(c.deleted ? 1 : 0);
         expect(localStorage.getItem(MIGRATED_FLAG)).toBeNull();
-        expect(localStorage.getItem(NEW_APP_DB_LAST_SYNC)).not.toBeNull();
         expect(mockWindow.location.reload).toHaveBeenCalledTimes(
           c.reloaded ? 1 : 0,
         );

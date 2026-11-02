@@ -471,6 +471,34 @@ describe("SyncedPouchDatabase", () => {
     expect(JSON.stringify(warnSpy.mock.calls)).not.toContain("Note:1");
   });
 
+  describe("destroy", () => {
+    const LAST_SYNC_KEY = "LAST_SYNC_unit-test-db";
+
+    afterEach(() => localStorage.removeItem(LAST_SYNC_KEY));
+
+    it.each([
+      { scenario: "local db deleted", destroyFails: false, forgotten: true },
+      { scenario: "deletion failed", destroyFails: true, forgotten: false },
+    ])(
+      "forgets the last completed sync only once the local db is deleted: $scenario",
+      async ({ destroyFails, forgotten }) => {
+        service["pouchDB"] = {
+          name: "unit-test-db",
+          destroy: destroyFails
+            ? vi.fn().mockRejectedValue(new Error("deletion failed"))
+            : vi.fn().mockResolvedValue({ ok: true }),
+        } as any;
+        localStorage.setItem(LAST_SYNC_KEY, "2026-11-01T10:00:00Z");
+
+        await service.destroy().catch(() => undefined);
+
+        expect(localStorage.getItem(LAST_SYNC_KEY)).toBe(
+          forgotten ? null : "2026-11-01T10:00:00Z",
+        );
+      },
+    );
+  });
+
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
     let warnSpy: Mock;

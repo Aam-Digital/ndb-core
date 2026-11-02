@@ -20,7 +20,6 @@ import {
   SyncedPouchDatabase,
 } from "./pouchdb/synced-pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
-import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 import { MultiTabDetectionService } from "./multi-tab-detection.service";
 
 export interface DbConfig {
@@ -375,7 +374,8 @@ export class IndexeddbMigrationService {
       return false;
     }
     try {
-      // also deletes the DBs of its indices, which have the names of the new DB's indices as well
+      // also deletes the DBs of its indices, which have the names of the new DB's indices as well,
+      // and its last sync, so that the download into the new DB is not taken for lost local data
       await oldDb.destroy();
     } catch (err) {
       // e.g. a broken IndexedDB on the device: the upgrade is offered again on next app start
@@ -385,10 +385,6 @@ export class IndexeddbMigrationService {
       this.window?.location.reload();
       return false;
     }
-    // the new DB has the same name: its download is not a lost local database (see DatabaseResolverService)
-    this.localStorage.removeItem(
-      LAST_SYNC_KEY_PREFIX + computeLegacyDbNames(session).app,
-    );
     await this.trackMigrationEvent("migration_legacy-db-deleted");
     return true;
   }
