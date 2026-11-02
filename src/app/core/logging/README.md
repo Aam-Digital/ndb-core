@@ -270,8 +270,9 @@ it replaces once the release carrying it is rolled out.
   offline-first app, the user is told and it is counted in usage analytics;
 - an expired session that could not be renewed (also when wrapped): the user is told, and the code
   waiting for the data is not at fault. Other `401` reasons are still reported;
-- a record the permission rules exclude (403, or 401 "User is not permitted") that reaches the error
-  handler unhandled;
+- a record the permission rules exclude (403, or 401 "User is not permitted") that a component
+  reports without a message of its own (e.g. `Logging.error(err)`). Logged with a message, or
+  unhandled, it is reported as a warning;
 - an unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser).
 
 The `status`, `reason`, `entityId` etc. of the error, or of the failed request in its `cause` chain, are

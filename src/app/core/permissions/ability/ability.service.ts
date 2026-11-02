@@ -149,7 +149,8 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
    * - 401/403: the session may not read the rules config. Anonymous visitors of
    *   a public form never can, and an expired session is already handled by the
    *   database layer (which triggers re-login).
-   * - connectivity: offline, a request timeout or a 5xx from the server.
+   * - connectivity: offline, a request timeout or a gateway status (502-504).
+   *   A server error (other 5xx) is reported: the backend has a fault to fix.
    *
    * Both are transient or by design and would otherwise drown out the failures
    * that do indicate a problem.
