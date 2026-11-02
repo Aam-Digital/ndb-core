@@ -27,9 +27,6 @@ export class InMemoryDataSource<
     { component: "FreeTextFilter", config: { dataSource: this } },
   ]);
 
-  override filterPredicate = (data: T, filter: string) =>
-    entityFilterPredicate(data, filter);
-
   override sortData = (data, sort) =>
     tableSort<T, keyof T>(data, {
       active: (sort.active as keyof T) ?? "",
@@ -41,12 +38,17 @@ export class InMemoryDataSource<
     super();
     effect(() => {
       const records = this.allRecords();
-      const filter = this.dataFilter();
-      const predicate = this.filterService.getFilterPredicate(filter);
-      this.filteredRecords.set(records.filter(predicate));
-    });
-    effect(() => {
-      this.filter = this.searchText().trim().toLowerCase();
+      const predicate = this.filterService.getFilterPredicate(
+        this.dataFilter(),
+      );
+      const searchText = this.searchText().trim().toLowerCase();
+      this.filteredRecords.set(
+        records.filter(
+          (record) =>
+            predicate(record) &&
+            (!searchText || entityFilterPredicate(record, searchText)),
+        ),
+      );
     });
   }
 
@@ -59,8 +61,8 @@ export class InMemoryDataSource<
       return this.allRecords();
     }
 
-    // including free-text filter and filter predicate
-    return [...this.filteredData];
+    // including the free-text search
+    return [...this.filteredRecords()];
   }
 
   private getRecords() {
@@ -97,14 +99,5 @@ export class InMemoryDataSource<
       );
     }
     this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
-  }
-
-  override _filterData(data: T[]): T[] {
-    const filtered = super._filterData(data);
-    // Aligning displayed data with the freetext filter.
-    // Making a safe call (...?.), because the method is already called in the
-    // constructor before `this.displayedData` is initialized
-    this.displayedData?.set(filtered);
-    return filtered;
   }
 }

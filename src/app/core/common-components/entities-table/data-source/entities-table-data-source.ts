@@ -84,13 +84,14 @@ export abstract class EntitiesTableDataSource<
 
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
+  /** All loaded records (only filled by data sources that hold all records in memory). */
   allRecords = signal<T[]>([]);
-  filteredRecords = signal<T[]>([]);
   /**
-   * The records handed to the table as input data, in the order they were loaded.
-   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   * The records passing all filters (including the free-text {@link searchText}), across all pages,
+   * in the order they were loaded. They are the input data of the table:
+   * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
    */
-  displayedData = signal<T[]>([]);
+  filteredRecords = signal<T[]>([]);
   /**
    * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
@@ -119,18 +120,6 @@ export abstract class EntitiesTableDataSource<
    * Keep the config objects stable: a new object reloads the control.
    */
   readonly toolbarControls: Signal<DynamicComponentConfig[]> = signal([]);
-
-  // NOTE: overriding only the setter would hide the inherited `get data`,
-  // so `dataSource.data` would return `undefined`. Provide both accessors.
-  override get data(): T[] {
-    return super.data;
-  }
-
-  override set data(data: T[]) {
-    // expose signal containing current data
-    this.displayedData.set(data);
-    super.data = data;
-  }
 
   // Make sure only one update subscription is active
   private updateSubscription: Subscription;
