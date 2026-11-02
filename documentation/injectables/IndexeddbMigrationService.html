@@ -261,8 +261,8 @@ into the new DB - so that no unsynced change is left behind in the old DB.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="386"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:386</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="390"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:390</a></div>
                         </td>
                     </tr>
 
@@ -338,8 +338,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -414,8 +414,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -521,7 +521,7 @@ the migration is retried (continuing from its checkpoint) on the next app start.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -556,6 +556,7 @@ import { filter, first } from &quot;rxjs/operators&quot;;
 import PouchDB from &quot;pouchdb-browser&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { Database } from &quot;./database&quot;;
+import { LOCAL_DB_REVS_LIMIT } from &quot;./pouchdb/pouch-database&quot;;
 import {
   isReplicationConnectivityError,
   isReplicationUnauthorizedError,
@@ -783,7 +784,10 @@ export class IndexeddbMigrationService {
   }
 
   private createPouchDb(newDbName: string): PouchDB.Database {
-    return new PouchDB(newDbName, { adapter: &quot;indexeddb&quot; });
+    return new PouchDB(newDbName, {
+      adapter: &quot;indexeddb&quot;,
+      revs_limit: LOCAL_DB_REVS_LIMIT,
+    });
   }
 
   private closePouchDb(db: PouchDB.Database): void {
