@@ -25,6 +25,18 @@ import {
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
 
+/**
+ * How many revisions of a document's history a local database keeps
+ * (PouchDB's `revs_limit`, default 1000).
+ *
+ * The `indexeddb` adapter stores the revision tree as a nested object, and the
+ * browser overflows its stack writing one with many hundred revisions (#4631).
+ * Documents synced from the server are stemmed to this limit on write.
+ * A local document edited more often than this between two syncs comes back
+ * as a conflict on the server, which this limit makes very unlikely.
+ */
+export const LOCAL_DB_REVS_LIMIT = 100;
+
 /** Marks a bookmark of the second query (see {@link PouchDatabase.find}). */
 const SECOND_QUERY_BOOKMARK = "q2:";
 
@@ -113,6 +125,7 @@ export class PouchDatabase extends Database {
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, {
       adapter: this.adapter,
+      revs_limit: LOCAL_DB_REVS_LIMIT,
       ...options,
     });
     this.databaseInitialized.complete();

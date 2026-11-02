@@ -222,6 +222,33 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
+  it("keeps Generate File disabled until the selected template has loaded", async () => {
+    let resolveLoad: (t: TemplateExport) => void;
+    mockEntityMapperLoad.mockReturnValue(
+      new Promise<TemplateExport>((resolve) => (resolveLoad = resolve)),
+    );
+    const generateButton = (): HTMLButtonElement =>
+      Array.from<HTMLButtonElement>(
+        fixture.nativeElement.querySelectorAll("button"),
+      ).find((b) => b.textContent?.includes("Generate File"));
+
+    component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+
+    expect(generateButton().disabled).toBe(true);
+    await component.requestFile();
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).not.toHaveBeenCalled();
+    expect(component.phase()).toBe("select");
+
+    resolveLoad(loadedTemplate);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(generateButton().disabled).toBe(false);
+  });
+
   it("should not trigger download for a failed API request and record the failure", async () => {
     mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
       throwError(() => new Error("boom")),

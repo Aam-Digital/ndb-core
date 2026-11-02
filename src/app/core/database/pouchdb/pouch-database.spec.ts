@@ -17,7 +17,11 @@ import { classifyError } from "../../logging/error-classification";
  */
 
 import type { Mock } from "vitest";
-import { DatabaseException, PouchDatabase } from "./pouch-database";
+import {
+  DatabaseException,
+  LOCAL_DB_REVS_LIMIT,
+  PouchDatabase,
+} from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { Logging } from "../../logging/logging.service";
@@ -455,6 +459,39 @@ describe("PouchDatabase tests", () => {
     await expect(database.find("Test", {})).resolves.toEqual(
       expect.objectContaining({ docs: [] }),
     );
+  });
+
+  it("keeps only a limited revision history of documents written into the local database", async () => {
+    // a document updated very often on the server: storing its full revision tree
+    // overflows the browser's stack in the indexeddb adapter (#4631)
+    const serverRevisionCount = 1000;
+    const localDatabase = new PouchDatabase(
+      "unit-test-local-db",
+      syncStateSubject,
+    );
+    localDatabase.init("unit-test-local-db", { adapter: "memory" });
+    const pouchDB = localDatabase.getPouchDB();
+
+    // written like replication does: with the server's revision history
+    await pouchDB.bulkDocs(
+      [
+        {
+          _id: "Config:CONFIG_ENTITY",
+          _rev: `${serverRevisionCount}-r0`,
+          _revisions: {
+            start: serverRevisionCount,
+            ids: Array.from({ length: serverRevisionCount }, (_, i) => `r${i}`),
+          },
+        },
+      ],
+      { new_edits: false },
+    );
+
+    const doc = await pouchDB.get("Config:CONFIG_ENTITY", { revs: true });
+    expect(doc._revisions.ids).toHaveLength(LOCAL_DB_REVS_LIMIT);
+    expect(doc._rev).toBe(`${serverRevisionCount}-r0`);
+
+    await localDatabase.destroy();
   });
 
   it("rejects a find before creating any index, if it cannot page through query results", async () => {
