@@ -1,3 +1,4 @@
+import { classifyError } from "../../logging/error-classification";
 /*
  *     This file is part of ndb-core.
  *
@@ -599,7 +600,10 @@ describe("DatabaseException", () => {
       undefined,
     ],
     ["a missing document", { status: 404, message: "missing" }, undefined],
-  ])("records what kind of failure it wraps: %s", (_, error, expected) => {
-    expect(new DatabaseException(error).classification).toBe(expected);
-  });
+  ])(
+    "is classified as the kind of failure it wraps: %s",
+    (_, error, expected) => {
+      expect(classifyError(new DatabaseException(error))).toBe(expected);
+    },
+  );
 });

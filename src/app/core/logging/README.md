@@ -120,15 +120,18 @@ cause instead of by stack trace (which opens one issue per call site and per bui
 
 ### Classifying failures where they enter the app
 
-What remote monitoring does with a failure depends on its kind, decided once where the error enters the
-app (`error-classification.ts`):
+What remote monitoring does with a failure depends on what kind of failure it is
+(`classifyError()` in `error-classification.ts`):
 
-- The remote database's fetch wrapper throws a `ConnectivityError` for a request without response or with
-  a gateway status (0, 502, 503, 504), and a `ServerError` carrying the status for any other 5xx.
-- `DatabaseException` records the `classification` of the PouchDB error it wraps; other `NamedError`s
-  can be given one (e.g. `EntityPermissionError`, `SyncStalledError`).
-- `classifyError()` reads that classification first; any other error is classified by its status and
-  name, and as a last resort by its wording (the patterns in `error-classification.ts`).
+- **Our errors say it by their type.** Where the app knows what went wrong, it throws a typed error:
+  the remote database's fetch wrapper throws a `ConnectivityError` for a request without response or
+  with a gateway status (0, 502, 503, 504), and a `ServerError` carrying the status for any other 5xx.
+  For a new kind of error, extend one of these classes (e.g. `SyncStalledError extends ConnectivityError`,
+  `EntityPermissionError extends NotPermittedError`); errors carry no separate classification flag.
+- **Other errors by their data.** A raw browser or PouchDB error, an `HttpErrorResponse`, or one
+  wrapped in a `DatabaseException` (which takes over its `status`, `reason` and keeps its name as
+  `originalName`) is classified by its status and name, and as a last resort by its wording.
+  These message patterns are all in `error-classification.ts`.
 
 `isConnectivityError()`, `isNotPermittedError()` and `isExpectedFailure()` are built on it. A few checks
 of one module match on wording as well, without classifying the error: `isDocumentWriteError()` and the

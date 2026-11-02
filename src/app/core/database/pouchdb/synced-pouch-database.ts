@@ -24,6 +24,7 @@ import { QueryOptions } from "../database";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
 import {
   classifyError,
+  ConnectivityError,
   isConnectivityError,
 } from "../../logging/error-classification";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
@@ -591,12 +592,11 @@ export class SyncFailedError extends NamedError {
   }
 }
 
-/** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends NamedError {
+/** Thrown internally when a sync is cancelled for making no progress (a stalled connection). */
+class SyncStalledError extends ConnectivityError {
   constructor() {
-    super("SyncStalledError", "Sync cancelled after making no progress", {
-      classification: "connectivity",
-    });
+    super("Sync cancelled after making no progress");
+    this.name = "SyncStalledError";
   }
 }
 

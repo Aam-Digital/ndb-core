@@ -155,7 +155,7 @@ describe("processSentryEvent", () => {
         ),
       ),
       level: "error",
-      title: "DatabaseException: Server error response from DB (HTTP 500)",
+      title: "ServerError: Server error response from DB (HTTP 500)",
       tags: { http_status: "500", error_class: "server-error" },
     },
     {
@@ -168,7 +168,7 @@ describe("processSentryEvent", () => {
       ),
       loggedLevel: "warning",
       level: "warning",
-      title: "DatabaseException: Server error response from DB (HTTP 500)",
+      title: "ServerError: Server error response from DB (HTTP 500)",
       tags: { http_status: "500", error_class: "server-error" },
     },
     {

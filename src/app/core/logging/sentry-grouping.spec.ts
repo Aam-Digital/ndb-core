@@ -72,12 +72,8 @@ describe("processSentryEvent", () => {
             ),
           },
         ),
-        fingerprint: [
-          "DatabaseException",
-          "server error response from db",
-          "500",
-        ],
-        title: "DatabaseException: Server error response from DB (HTTP 500)",
+        fingerprint: ["ServerError", "server error response from db", "500"],
+        title: "ServerError: Server error response from DB (HTTP 500)",
         reportedBy: "ConfigLoadError: Failed to load configuration.",
       },
       {
