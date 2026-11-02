@@ -118,6 +118,16 @@ describe("isKnownMultiTabDatabaseCorruption", () => {
     expect(isKnownMultiTabDatabaseCorruption("unknown_error")).toBe(false);
   });
 
+  it("should not detect an aborted transaction, which other failures cause too", () => {
+    // e.g. a RangeError writing a deeply nested document aborts the transaction
+    const error = {
+      name: "unknown_error",
+      message: "Database encountered an unknown error",
+      reason: "transaction was aborted",
+    };
+    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
+  });
+
   it("should not classify unrelated validation errors", () => {
     const error = new Error("validation error: invalid field value");
     expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);

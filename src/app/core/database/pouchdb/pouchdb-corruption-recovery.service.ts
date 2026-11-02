@@ -119,15 +119,13 @@ This can happen after using multiple tabs in parallel.` +
  * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
  * is used in multiple tabs with concurrent writes.
  *
- * We intentionally match on `transaction was aborted` because this is the
- * reliable signal present on the actual error object propagated to app code
- * after IndexedDB global-failure cases. The `unknown_error` label is too
- * generic and may appear for unrelated failures.
+ * Only signals specific to this corruption are matched, as it leads to offering
+ * a reset of the local data: a "transaction was aborted" or an `unknown_error`
+ * also follows other failures, e.g. a document too deeply nested to store.
  */
 export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   const text = errorToText(error).toLowerCase();
   return (
-    text.includes("transaction was aborted") ||
     text.includes("database has a global failure") ||
     (text.includes("constrainterror") && text.includes("seq"))
   );
