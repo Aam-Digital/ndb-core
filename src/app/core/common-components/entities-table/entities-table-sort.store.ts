@@ -106,6 +106,8 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
   });
 
   constructor() {
+    this.tableStateUrl.registerNonFilterKeys("sortBy", "sortOrder");
+
     // Sync default sort when no manual override and no URL state
     effect(() => {
       if (!this.context) return;

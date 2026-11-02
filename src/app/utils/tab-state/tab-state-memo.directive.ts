@@ -1,4 +1,4 @@
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
 import {
   ChangeDetectorRef,
@@ -10,6 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
 import { filter, startWith } from "rxjs/operators";
+import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -27,6 +28,9 @@ import { filter, startWith } from "rxjs/operators";
  * group containing a component that itself uses a tab group), each must use a
  * distinct `tabIndexKey`. Otherwise they share the same query param and reset
  * each other on every navigation.
+ *
+ * The key is registered with the {@link TableStateUrlService} as state that is not a filter,
+ * so a list on the same page does not treat the selected tab as a filter value.
  */
 @UntilDestroy()
 @Directive({
@@ -36,7 +40,7 @@ import { filter, startWith } from "rxjs/operators";
 })
 export class TabStateMemoDirective implements OnInit {
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly urlState = inject(TableStateUrlService);
   private tab = inject(MatTabGroup);
   private cdr = inject(ChangeDetectorRef);
   private viewContext = inject(ViewComponentContext, { optional: true });
@@ -49,6 +53,8 @@ export class TabStateMemoDirective implements OnInit {
   @Input() tabIndexKey = "tabIndex";
 
   ngOnInit() {
+    this.urlState.registerNonFilterKeys(this.tabIndexKey);
+
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
       return;
@@ -65,7 +71,7 @@ export class TabStateMemoDirective implements OnInit {
       )
       .subscribe((navigationEvent) => {
         const potentialNextTabIndex = parseInt(
-          this.route.snapshot.queryParamMap.get(this.tabIndexKey),
+          this.urlState.getUrlParam(this.tabIndexKey),
           10,
         );
         if (
@@ -104,23 +110,16 @@ export class TabStateMemoDirective implements OnInit {
   }
 
   // Update the URL
-  private async updateURLQueryParams(value: number) {
+  private updateURLQueryParams(value: number) {
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
       return;
     }
-    if (
-      this.route.snapshot.queryParamMap.get(this.tabIndexKey) === String(value)
-    ) {
+    if (this.urlState.getUrlParam(this.tabIndexKey) === String(value)) {
       // URL already holds this state (e.g. the index was just restored from it)
       return;
     }
 
-    await this.router.navigate(["."], {
-      relativeTo: this.route,
-      queryParams: { [this.tabIndexKey]: value },
-      replaceUrl: true,
-      queryParamsHandling: "merge",
-    });
+    this.urlState.updateUrlParams({ [this.tabIndexKey]: String(value) });
   }
 }

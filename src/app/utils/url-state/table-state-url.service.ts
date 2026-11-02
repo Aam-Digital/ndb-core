@@ -2,12 +2,31 @@ import { Injectable, inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /**
- * Service to persist and restore table sort and filter state via URL query params.
+ * Service to persist and restore view state (filters, sort, selected tab, ...) via URL query params.
+ *
+ * All query params count as filter values, except the keys that their owners register
+ * through {@link registerNonFilterKeys} (e.g. the sort of a table or the selected tab of a tab group).
  */
 @Injectable({ providedIn: "root" })
 export class TableStateUrlService {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  /**
+   * Query param keys that hold view state other than filters.
+   * They stay registered for the whole session: a key is the name of a kind of state
+   * (like "sortBy"), so it never becomes a filter name later on.
+   */
+  private readonly nonFilterKeys = new Set<string>();
+
+  /**
+   * Declare query param keys that hold view state other than filter values,
+   * so that filters neither read nor clear them.
+   * Every owner of such state (sort, tab group, ...) registers its keys before it writes them.
+   */
+  registerNonFilterKeys(...keys: string[]) {
+    keys.forEach((key) => this.nonFilterKeys.add(key));
+  }
 
   /**
    * Update a query param in the URL (without reloading the page).
@@ -95,13 +114,13 @@ export class TableStateUrlService {
   }
 
   /**
-   * Get all filter params from the URL (excluding sortBy/sortOrder).
+   * Get all filter params from the URL (excluding the keys registered through {@link registerNonFilterKeys}).
    */
   getFilterParams(): Record<string, string> {
     const params = this.getAllUrlParams();
-    // Remove sortBy and sortOrder, keep only filter params
-    delete params["sortBy"];
-    delete params["sortOrder"];
+    for (const key of this.nonFilterKeys) {
+      delete params[key];
+    }
     return params;
   }
 

@@ -4,7 +4,7 @@ import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import { of, Subject } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
@@ -251,6 +251,30 @@ describe("EntityListComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("keeps the default filters when the URL only holds the selected column-group tab", async () => {
+    // e.g. reloading the page after switching to the second column group
+    mockActivatedRoute.snapshot = {
+      queryParams: { tabIndex: "1" },
+      queryParamMap: convertToParamMap({ tabIndex: "1" }),
+    } as any;
+
+    createComponent();
+    component.isDesktop = true;
+    initComponentInputs();
+    for (let i = 0; i < 3; i++) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    expect(component.filterObj()).toEqual({
+      $or: [
+        { inactive: false },
+        { inactive: { $exists: false } },
+        { inactive: { $eq: null } },
+      ],
+    });
   });
 
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {

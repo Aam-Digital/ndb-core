@@ -110,11 +110,14 @@ describe("TableStateUrlService", () => {
     );
   });
 
-  it("should exclude sortBy and sortOrder in getFilterParams", () => {
+  it("should exclude the registered non-filter keys in getFilterParams", () => {
+    service.registerNonFilterKeys("sortBy", "sortOrder");
+    service.registerNonFilterKeys("tabIndex");
     activatedRouteStub.snapshot.queryParams = {
       foo: "bar",
       sortBy: "name",
       sortOrder: "asc",
+      tabIndex: "1",
       filter: "val",
     };
     expect(service.getFilterParams()).toEqual({ foo: "bar", filter: "val" });
