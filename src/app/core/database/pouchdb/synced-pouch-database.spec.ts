@@ -557,13 +557,17 @@ describe("SyncedPouchDatabase", () => {
       expect(warnedMessages()).toEqual([]);
     });
 
-    it("should warn with the number of docs actually purged, not the number reported", async () => {
+    it("should log the number of docs actually purged, not the number reported, without reporting it", async () => {
+      const debugSpy = vi
+        .spyOn(Logging, "debug")
+        .mockImplementation(() => {}) as unknown as Mock;
+      debugSpy.mockClear();
       purgeSpy.mockImplementation(async (id: string) => id === "Child:1");
       mockLostPermissions(["Child:1", "School:2", "Note:3"]);
 
       await service.sync();
 
-      expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      expect(debugSpy).toHaveBeenCalledWith(
         expect.stringContaining("purged local docs"),
         expect.objectContaining({
           purged: 1,
@@ -573,11 +577,11 @@ describe("SyncedPouchDatabase", () => {
           sampleIds: ["Child:1"],
         }),
       );
+      expect(warnedMessages()).toEqual([]);
     });
 
     it("should report failed purges as a single, separate warning", async () => {
-      // e.g. the legacy "idb" adapter, which does not implement purge at all
-      const error = new Error("Purge is not implemented in the idb adapter.");
+      const error = new Error("unexpected");
       purgeSpy.mockRejectedValue(error);
       mockLostPermissions(["Child:1", "School:2", "Note:3"]);
 
@@ -588,6 +592,16 @@ describe("SyncedPouchDatabase", () => {
         expect.objectContaining({ purged: 0, failed: 3, reportedByServer: 3 }),
         error,
       );
+    });
+
+    it("should not try to purge on the legacy idb adapter, which does not implement purge", async () => {
+      service.adapter = "idb";
+      mockLostPermissions(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+      expect(warnedMessages()).toEqual([]);
     });
 
     it("should skip purge and lost-permission tracking on first sync", async () => {

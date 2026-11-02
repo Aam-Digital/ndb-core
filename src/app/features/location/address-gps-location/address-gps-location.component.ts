@@ -6,6 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
+import { isConnectivityError } from "app/utils/connectivity-error";
 import { GpsService } from "../gps.service";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -51,11 +52,8 @@ export class AddressGpsLocationComponent {
         );
       }
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === "USER_DENIED_PERMISSION"
-      ) {
-        Logging.debug("User denied location permission");
+      if (isExpectedLocationFailure(error)) {
+        Logging.debug("Could not access device location", error);
       } else {
         Logging.warn("Failed to access device location", error);
       }
@@ -67,4 +65,28 @@ export class AddressGpsLocationComponent {
       this.gpsLoading.set(false);
     }
   }
+}
+
+/**
+ * Failures caused by the device or the external address lookup rather than a defect:
+ * a denied or blocked location permission, no position available or a timeout,
+ * or the lookup service being unreachable. The user is told in any case.
+ */
+function isExpectedLocationFailure(error: unknown): boolean {
+  if (
+    error instanceof Error &&
+    (error.message === "USER_DENIED_PERMISSION" ||
+      error.message.startsWith("GPS permission denied"))
+  ) {
+    return true;
+  }
+  if (
+    typeof GeolocationPositionError !== "undefined" &&
+    error instanceof GeolocationPositionError
+  ) {
+    return true;
+  }
+  return (
+    isConnectivityError(error) || (error as { status?: number })?.status >= 500
+  );
 }

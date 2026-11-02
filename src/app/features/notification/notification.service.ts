@@ -132,7 +132,8 @@ export class NotificationService {
     this.tokenSubscription = this.firebaseMessaging.requestToken.subscribe({
       next: (token) => {
         if (!token) {
-          Logging.error("Could not get token for device.");
+          // the user has not granted the notification permission (and is told so below)
+          Logging.debug("Could not get token for device.");
           this.alertService.addInfo(
             $localize`Please enable notification permissions to receive important updates.`,
           );
@@ -165,7 +166,15 @@ export class NotificationService {
           this.alertService.addInfo(
             $localize`User has rejected the authorisation request.`,
           );
-          Logging.error("User has rejected the authorisation request.", err);
+          if (this.hasNotificationPermissionGranted()) {
+            Logging.error(
+              "Could not request a token for push notifications",
+              err,
+            );
+          } else {
+            // the user denied or dismissed the browser's permission prompt
+            Logging.debug("User has rejected the authorisation request.", err);
+          }
         }
       },
     });

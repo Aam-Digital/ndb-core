@@ -109,8 +109,8 @@ export class PublicFormsService {
     try {
       await navigator.clipboard.writeText(url);
     } catch {
-      // Clipboard access might fail in tests or unsupported browsers
-      Logging.warn(
+      // Clipboard access might fail in tests, unsupported browsers or if the user denied it
+      Logging.debug(
         "PublicFormsService.copyPublicFormLinkFromConfig write to clipboard failed.",
       );
     }

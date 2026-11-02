@@ -4,6 +4,7 @@ import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Logging } from "../../logging/logging.service";
+import { isConnectivityError } from "../../../utils/connectivity-error";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
@@ -74,7 +75,14 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() =>
-      this.updates.checkForUpdate().catch((err) => Logging.error(err)),
+      this.updates.checkForUpdate().catch((err) => {
+        if (isConnectivityError(err)) {
+          // offline: checked again in an hour
+          Logging.debug("Could not check for app updates (connectivity)", err);
+        } else {
+          Logging.error("Could not check for app updates", err);
+        }
+      }),
     );
   }
 
@@ -120,7 +128,8 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) => {
-      Logging.warn("SW in unrecoverable state", { reason });
+      // already reported by the subscription in the constructor
+      Logging.debug("SW in unrecoverable state", { reason });
       this.snackBar
         .open(
           $localize`The app is in a unrecoverable state, please reload.`,

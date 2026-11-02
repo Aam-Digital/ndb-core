@@ -9,6 +9,7 @@ import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 import { FormGroup } from "@angular/forms";
 import { Logging } from "../../../core/logging/logging.service";
+import { isConnectivityError } from "../../../utils/connectivity-error";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
 import { environment } from "#src/environments/environment";
@@ -134,10 +135,18 @@ export class SkillApiService {
         ? await firstValueFrom(
             this.getExternalProfileById(externalProfile),
           ).catch((e) => {
-            Logging.warn(
-              "SkillApiService error getting external profile for applying data",
-              e,
-            );
+            if (isConnectivityError(e)) {
+              // offline or the external system unavailable: the user is alerted below
+              Logging.debug(
+                "SkillApiService error getting external profile for applying data",
+                e,
+              );
+            } else {
+              Logging.warn(
+                "SkillApiService error getting external profile for applying data",
+                e,
+              );
+            }
             this.alertService.addWarning(messageFailedToLoad);
             return {};
           })
