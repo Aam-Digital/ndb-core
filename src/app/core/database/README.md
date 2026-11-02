@@ -79,6 +79,8 @@ In synced mode, each user's data is stored in a local PouchDB.
 By default it uses PouchDB's `indexeddb` adapter, with database names based on the user's Keycloak UUID (`<uuid>-app`).
 Older installations used the legacy `idb` adapter with username-based names.
 A deployment can keep the legacy adapter with `"use_indexeddb_adapter": false` in its `assets/config.json`.
+Local databases keep only the latest `LOCAL_DB_REVS_LIMIT` (100) revisions of a document's history (PouchDB `revs_limit`):
+the `indexeddb` adapter cannot store the revision tree of a document with many hundred revisions (#4631).
 
 Existing users are migrated automatically (`IndexeddbMigrationService`):
 once their old database has synced, they are asked to upgrade.

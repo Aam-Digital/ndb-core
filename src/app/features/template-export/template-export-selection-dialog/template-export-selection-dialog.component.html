@@ -99,7 +99,7 @@
       <button
         mat-raised-button
         color="accent"
-        [disabled]="!templateSelectionForm.value"
+        [disabled]="!canGenerate()"
         (click)="requestFile()"
       >
         <span i18n>Generate File</span>
