@@ -129,7 +129,7 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) => {
-      // already reported by the subscription in the constructor
+      // already logged by the subscription in the constructor
       Logging.debug("SW in unrecoverable state", { reason });
       this.snackBar
         .open(
