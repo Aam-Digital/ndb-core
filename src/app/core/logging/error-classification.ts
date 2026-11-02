@@ -157,6 +157,23 @@ export function classifyError(error: unknown): ErrorClassification | undefined {
 }
 
 /**
+ * A request that never reached our backend: no response, a gateway status
+ * (0, 502-504), a timeout or abort. A 5xx other than these is a `ServerError`:
+ * the server was reached and failed.
+ */
+export function isConnectivityError(err: unknown): boolean {
+  return classifyError(err) === "connectivity";
+}
+
+/**
+ * The permission rules exclude the record or type for the current user:
+ * a 403, or a 401 the server explicitly calls "not permitted".
+ */
+export function isNotPermittedError(err: unknown): boolean {
+  return classifyError(err) === "not-permitted";
+}
+
+/**
  * The classification of the first error in the `cause` chain that has one,
  * outermost first: a boundary's typed error wins over the raw error it wraps.
  */

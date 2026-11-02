@@ -9,7 +9,7 @@ import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 import { FormGroup } from "@angular/forms";
 import { Logging } from "../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
 import { environment } from "#src/environments/environment";

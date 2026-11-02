@@ -18,7 +18,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { filter, firstValueFrom, merge, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**

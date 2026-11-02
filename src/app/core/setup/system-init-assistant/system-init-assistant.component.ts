@@ -26,7 +26,7 @@ import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-set
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 
 /**
  * UI for initial system setup and use case selection,

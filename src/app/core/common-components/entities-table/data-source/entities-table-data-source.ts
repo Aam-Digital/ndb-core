@@ -12,8 +12,10 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import {
+  classifyError,
+  isNotPermittedError,
+} from "#src/app/core/logging/error-classification";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -180,7 +182,7 @@ export abstract class EntitiesTableDataSource<
             err,
           );
         } else {
-          if (isExpiredSessionError(err)) {
+          if (classifyError(err) === "session-expired") {
             cause = "sessionExpired";
           }
           Logging.error(

@@ -17,7 +17,7 @@ import { EntityConfigReadyService } from "../entity/entity-config-ready.service"
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
-import { isConnectivityError } from "../../utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.

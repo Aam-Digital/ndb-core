@@ -21,8 +21,10 @@ import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import {
+  isConnectivityError,
+  isNotPermittedError,
+} from "#src/app/core/logging/error-classification";
 import { HttpStatusCode } from "@angular/common/http";
 import { sortByAttribute } from "#src/app/utils/utils";
 import { EventWithAttendance } from "../../model/event-with-attendance";

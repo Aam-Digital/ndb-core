@@ -22,8 +22,10 @@ import { NotAvailableOfflineError } from "../../session/not-available-offline.er
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
-import { classifyError } from "../../logging/error-classification";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import {
+  classifyError,
+  isConnectivityError,
+} from "../../logging/error-classification";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 /**

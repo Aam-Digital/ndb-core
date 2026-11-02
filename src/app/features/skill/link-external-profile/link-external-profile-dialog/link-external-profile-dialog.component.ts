@@ -21,7 +21,7 @@ import {
 } from "../../skill-api/skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../../utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";

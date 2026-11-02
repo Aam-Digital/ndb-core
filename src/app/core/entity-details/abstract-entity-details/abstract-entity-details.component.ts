@@ -18,7 +18,7 @@ import { Logging } from "../../logging/logging.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
 import { AlertService } from "../../alerts/alert.service";
-import { isNotPermittedError } from "../../../utils/not-permitted-error";
+import { isNotPermittedError } from "#src/app/core/logging/error-classification";
 
 /**
  * This component can be used to display an entity in more detail.

@@ -17,7 +17,6 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { FindPage } from "./find-queries";
 import {
   describeResponse,
@@ -26,6 +25,7 @@ import {
 import {
   CONNECTIVITY_ERROR_STATUS,
   ConnectivityError,
+  isConnectivityError,
   ServerError,
 } from "../../logging/error-classification";
 

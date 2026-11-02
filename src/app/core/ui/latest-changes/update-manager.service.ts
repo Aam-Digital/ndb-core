@@ -4,7 +4,7 @@ import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Logging } from "../../logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
