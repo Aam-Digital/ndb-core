@@ -1,9 +1,11 @@
-import { Injectable, inject } from "@angular/core";
+import { DestroyRef, Injectable, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
 import {
   AbstractControl,
   FormControl,
   FormControlOptions,
+  FormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -24,6 +26,10 @@ import {
   getCurrentRecordOfForm,
 } from "../current-record-state";
 import { asArray } from "app/utils/asArray";
+import { merge } from "rxjs";
+import { distinctUntilChanged } from "rxjs/operators";
+import { isEqual } from "lodash-es";
+import { ColumnConfig, toFormFieldConfig } from "../FormConfig";
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -68,6 +74,15 @@ export function patternWithMessage(
   };
 }
 
+/** the field (of a record) that validators are built for */
+interface ValidatorContext {
+  /** the record that the form is editing */
+  entity: Entity;
+  fieldId?: string;
+  /** the current state of the record in its form, for validators comparing with other fields */
+  currentRecord?: CurrentRecordSource;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -83,11 +98,8 @@ export class DynamicValidatorsService {
    */
   private getValidator(
     key: DynamicValidator,
-    value: any,
-    entity: Entity,
-    fieldId?: string,
-    config?: FormValidatorConfig,
-    currentRecord?: CurrentRecordSource,
+    config: FormValidatorConfig,
+    { entity, fieldId, currentRecord }: ValidatorContext,
   ):
     | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
@@ -98,6 +110,7 @@ export class DynamicValidatorsService {
         updateOnChange?: boolean;
       }
     | null {
+    const value = config[key];
     switch (key) {
       case "min":
         return { fn: Validators.min(value as number) };
@@ -159,9 +172,11 @@ export class DynamicValidatorsService {
                 asArray(entity.getSchema().get(fieldId)?.additional ?? []),
                 (control) =>
                   getCurrentRecordOfForm(control, entity, currentRecord),
-                this.entityMapper,
-                this.placeholderService,
-                this.filterService,
+                {
+                  entityMapper: this.entityMapper,
+                  placeholderService: this.placeholderService,
+                  filterService: this.filterService,
+                },
               ),
             }
           : null;
@@ -199,15 +214,13 @@ export class DynamicValidatorsService {
       asyncValidators: [],
     };
     let updateOnBlur = false;
+    const context: ValidatorContext = { entity, fieldId, currentRecord };
 
     for (const key of Object.keys(config)) {
       const validatorFn = this.getValidator(
         key as DynamicValidator,
-        config[key],
-        entity,
-        fieldId,
         config,
-        currentRecord,
+        context,
       );
 
       if (validatorFn?.async) {
@@ -250,6 +263,36 @@ export class DynamicValidatorsService {
       dependencies.add(config.withinParent.parentReferenceField);
     }
     return [...dependencies];
+  }
+
+  /**
+   * Validate a field again whenever one of the other fields that its validators read changes in the same form
+   * (see {@link getDependencies}), e.g. a date range when its parent link changes.
+   */
+  revalidateOnDependencyChange(
+    form: FormGroup,
+    formFields: ColumnConfig[],
+    destroyRef: DestroyRef,
+  ) {
+    for (const field of formFields.map(toFormFieldConfig)) {
+      const control = form.get(field.id);
+      const dependencies = this.getDependencies(field.validators)
+        .map((id) => form.get(id))
+        .filter((dependency): dependency is AbstractControl => !!dependency);
+      if (!control || dependencies.length === 0) {
+        continue;
+      }
+      merge(
+        ...dependencies.map((dependency) =>
+          dependency.valueChanges.pipe(
+            // validating a field emits its value again: without this, two fields depending on each other would loop
+            distinctUntilChanged(isEqual),
+          ),
+        ),
+      )
+        .pipe(takeUntilDestroyed(destroyRef))
+        .subscribe(() => control.updateValueAndValidity());
+    }
   }
 
   private addHumanReadableError(

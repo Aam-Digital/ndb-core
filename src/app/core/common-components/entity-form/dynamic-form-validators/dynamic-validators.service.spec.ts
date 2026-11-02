@@ -377,7 +377,9 @@ describe("DynamicValidatorsService", () => {
         },
       });
 
-      expect(dependencies.sort()).toEqual(["category", "other", "ref"]);
+      expect(new Set(dependencies)).toEqual(
+        new Set(["category", "other", "ref"]),
+      );
     });
   });
 

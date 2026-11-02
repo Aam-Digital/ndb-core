@@ -68,12 +68,17 @@ export function isCurrentRecordPlaceholder(value: unknown): value is string {
   );
 }
 
+/** the id of the field that a `$current_record.<fieldId>` placeholder refers to */
+function placeholderFieldId(placeholder: string): string {
+  return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+}
+
 /** the ids of the fields that the `$current_record.<fieldId>` placeholders in a condition refer to */
 export function getCurrentRecordPlaceholderFields(
   condition: unknown,
 ): string[] {
   if (isCurrentRecordPlaceholder(condition)) {
-    return [condition.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length)];
+    return [placeholderFieldId(condition)];
   }
   if (condition && typeof condition === "object") {
     return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
@@ -86,6 +91,9 @@ const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
 
 /** marks a value that cannot be resolved, because it references an empty field */
 const UNRESOLVED = Symbol("unresolved");
+
+/** returns the value of the given field of the current record (in database format) */
+type FieldValueGetter = (fieldId: string) => unknown;
 
 /**
  * Replace all `$current_record.<fieldId>` placeholders in the given condition
@@ -101,69 +109,81 @@ const UNRESOLVED = Symbol("unresolved");
  */
 export function resolveCurrentRecordPlaceholders<T>(
   condition: DataFilter<T>,
-  getValue: (fieldId: string) => unknown,
+  getValue: FieldValueGetter,
 ): DataFilter<T> {
-  const resolveValue = (value: unknown): unknown => {
-    if (isCurrentRecordPlaceholder(value)) {
-      const fieldValue = getValue(
-        value.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length),
-      );
-      return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
-    }
-    if (Array.isArray(value)) {
-      const items = value.map((item) => [item, resolveValue(item)]);
-      if (items.some(([, resolved]) => resolved === UNRESOLVED)) {
-        return UNRESOLVED;
-      }
-      return items.flatMap(([item, resolved]) =>
-        isCurrentRecordPlaceholder(item) && Array.isArray(resolved)
-          ? resolved
-          : [resolved],
-      );
-    }
-    if (value && typeof value === "object") {
-      const entries = Object.entries(value).map(([key, v]) => [
-        key,
-        resolveValue(v),
-      ]);
-      return entries.some(([, resolved]) => resolved === UNRESOLVED)
-        ? UNRESOLVED
-        : Object.fromEntries(entries);
-    }
-    return value;
-  };
+  return resolveCondition(condition ?? {}, getValue) as DataFilter<T>;
+}
 
-  const resolveCondition = (cond: object): object => {
-    const resolved = {};
-    for (const [key, value] of Object.entries(cond)) {
-      if (CONDITION_LIST_OPERATORS.includes(key) && Array.isArray(value)) {
-        const alternatives = value
-          .map((alternative) => ({
-            alternative,
-            resolved: resolveCondition(alternative),
-          }))
-          // an alternative is left out if none of its rows can be applied
-          .filter(
-            ({ alternative, resolved: r }) =>
-              Object.keys(r).length > 0 ||
-              Object.keys(alternative).length === 0,
-          )
-          .map(({ resolved: r }) => r);
-        if (alternatives.length > 0) {
-          resolved[key] = alternatives;
-        }
-        continue;
-      }
-
-      const resolvedValue = resolveValue(value);
-      if (resolvedValue !== UNRESOLVED) {
-        resolved[key] = resolvedValue;
-      }
+/** the rows of a condition that can be applied, with their placeholders resolved */
+function resolveCondition(condition: object, getValue: FieldValueGetter) {
+  const resolved = {};
+  for (const [key, value] of Object.entries(condition)) {
+    const resolvedValue =
+      CONDITION_LIST_OPERATORS.includes(key) && Array.isArray(value)
+        ? resolveAlternatives(value, getValue)
+        : resolveValue(value, getValue);
+    if (resolvedValue !== UNRESOLVED) {
+      resolved[key] = resolvedValue;
     }
-    return resolved;
-  };
+  }
+  return resolved;
+}
 
-  return resolveCondition(condition ?? {}) as DataFilter<T>;
+/** the alternatives (e.g. of `$or`) of which at least one row can be applied (`UNRESOLVED` if none) */
+function resolveAlternatives(
+  alternatives: object[],
+  getValue: FieldValueGetter,
+) {
+  const applicable = alternatives
+    .map((alternative) => ({
+      alternative,
+      resolved: resolveCondition(alternative, getValue),
+    }))
+    .filter(
+      ({ alternative, resolved }) =>
+        Object.keys(resolved).length > 0 ||
+        Object.keys(alternative).length === 0,
+    )
+    .map(({ resolved }) => resolved);
+  return applicable.length > 0 ? applicable : UNRESOLVED;
+}
+
+/** the value with its placeholders resolved (`UNRESOLVED` if one of them references an empty field) */
+function resolveValue(value: unknown, getValue: FieldValueGetter): unknown {
+  if (isCurrentRecordPlaceholder(value)) {
+    const fieldValue = getValue(placeholderFieldId(value));
+    return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
+  }
+  if (Array.isArray(value)) {
+    return resolveList(value, getValue);
+  }
+  if (value && typeof value === "object") {
+    return resolveObject(value, getValue);
+  }
+  return value;
+}
+
+/** a placeholder inside a list is replaced by all values of a multi-value field */
+function resolveList(list: unknown[], getValue: FieldValueGetter): unknown {
+  const items = list.map((item) => [item, resolveValue(item, getValue)]);
+  if (items.some(([, resolved]) => resolved === UNRESOLVED)) {
+    return UNRESOLVED;
+  }
+  return items.flatMap(([item, resolved]) =>
+    isCurrentRecordPlaceholder(item) && Array.isArray(resolved)
+      ? resolved
+      : [resolved],
+  );
+}
+
+function resolveObject(value: object, getValue: FieldValueGetter): unknown {
+  const entries = Object.entries(value).map(([key, v]) => [
+    key,
+    resolveValue(v, getValue),
+  ]);
+  return entries.some(([, resolved]) => resolved === UNRESOLVED)
+    ? UNRESOLVED
+    : Object.fromEntries(entries);
 }
 
 function isEmptyValue(value: unknown): boolean {

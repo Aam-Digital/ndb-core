@@ -193,20 +193,18 @@ describe("EditAttendanceComponent", () => {
       fixture.debugElement.query(
         By.directive(EditEntityComponent),
       ).componentInstance;
-    const expectOffered = (ids: string[]) =>
+    const expectOffered = (participants: Entity[]) =>
       vi.waitFor(() => {
         fixture.detectChanges();
         expect(
-          addParticipantDropdown.availableEntitiesResource
-            .value()
-            .map((e) => e.getId()),
-        ).toEqual(ids);
+          addParticipantDropdown.availableEntitiesResource.value(),
+        ).toEqual(participants);
       });
 
-    await expectOffered([childrenEntities[0].getId()]);
+    await expectOffered([childrenEntities[0]]);
 
     editRecord("HAMBURG");
 
-    await expectOffered([childrenEntities[1].getId()]);
+    await expectOffered([childrenEntities[1]]);
   });
 });

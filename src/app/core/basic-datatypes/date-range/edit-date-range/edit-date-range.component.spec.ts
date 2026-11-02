@@ -6,7 +6,15 @@ import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { BehaviorSubject, map, of, startWith, Subject, switchMap } from "rxjs";
+import {
+  BehaviorSubject,
+  map,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+} from "rxjs";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import {
@@ -39,6 +47,18 @@ class EditDateRangeTestAction extends Entity {
   @DatabaseField() parent: string;
   @DatabaseField({ dataType: "date-range" }) period: DateRangeValue;
   @DatabaseField({ dataType: "date-range" }) plannedPeriod: DateRangeValue;
+}
+
+/** the current state of the record in its form, as `EntityFieldEditComponent` provides it */
+function followRecordInForm(
+  current: { record: Entity; form: FormGroup } | undefined,
+): Observable<Entity | undefined> {
+  return current
+    ? current.form.valueChanges.pipe(
+        startWith(null),
+        map(() => createCurrentRecordState(current.record, current.form)),
+      )
+    : of(undefined);
 }
 
 describe("EditDateRangeComponent", () => {
@@ -76,21 +96,7 @@ describe("EditDateRangeComponent", () => {
           provide: CurrentRecordContext,
           useValue: {
             currentRecordState: () =>
-              recordInForm.pipe(
-                switchMap((current) =>
-                  current
-                    ? current.form.valueChanges.pipe(
-                        startWith(null),
-                        map(() =>
-                          createCurrentRecordState(
-                            current.record,
-                            current.form,
-                          ),
-                        ),
-                      )
-                    : of(undefined),
-                ),
-              ),
+              recordInForm.pipe(switchMap(followRecordInForm)),
           },
         },
       ],

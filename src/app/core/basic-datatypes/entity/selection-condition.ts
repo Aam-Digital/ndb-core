@@ -52,6 +52,13 @@ export function matchesSelectionCondition<E extends Entity>(
   }
 }
 
+/** the services the `selectionCondition` validator uses */
+export interface SelectionConditionServices {
+  entityMapper: EntityMapperService;
+  placeholderService: DynamicPlaceholderValueService;
+  filterService: FilterService;
+}
+
 /**
  * Validator for a field linking to other records, for selected records that do not match the field's `selectionCondition`.
  * Its error is only a warning (`warning: true`): the record can still be saved after confirming it.
@@ -64,9 +71,11 @@ export function selectionConditionValidator(
   condition: DataFilter<Entity>,
   entityTypes: string[],
   getCurrentRecord: (control: AbstractControl) => Promise<Entity | undefined>,
-  entityMapper: EntityMapperService,
-  placeholderService: DynamicPlaceholderValueService,
-  filterService: FilterService,
+  {
+    entityMapper,
+    placeholderService,
+    filterService,
+  }: SelectionConditionServices,
 ): AsyncPromiseValidatorFn {
   return async (control) => {
     const selectedIds = asArray<string>(control.value ?? []).filter(

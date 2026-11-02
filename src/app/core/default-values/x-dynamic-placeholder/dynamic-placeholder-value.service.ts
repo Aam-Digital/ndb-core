@@ -28,7 +28,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   override readonly mode = "dynamic";
 
   private currentUser = inject(CurrentUserSubject);
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
