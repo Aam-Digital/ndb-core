@@ -1,11 +1,7 @@
 import { inject, Injectable, Injector, signal } from "@angular/core";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import {
-  computeDbNames,
-  computeLegacyDbNames,
-  hasIdenticalLegacyAppDbName,
-} from "./db-name-helpers";
+import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
@@ -35,6 +31,15 @@ export interface DbConfig {
 const DB_MIGRATED_PREFIX = "DB_MIGRATED_";
 /** The legacy "idb" DB has the name of the new DB and is deleted on the next start (see {@link hasIdenticalLegacyAppDbName}) */
 const DB_LEGACY_DELETION_PENDING_PREFIX = "DB_LEGACY_DELETION_PENDING_";
+
+/**
+ * Whether the legacy and the new app database have the same name and therefore are the same IndexedDB database.
+ * This is the case if the user's token has no "username" claim, so that the session name falls back to the id.
+ * Such a database cannot be migrated to another adapter in the background, because it would have to be opened with both adapters.
+ */
+function hasIdenticalLegacyAppDbName(session: SessionInfo): boolean {
+  return computeLegacyDbNames(session).app === computeDbNames(session).app;
+}
 
 /**
  * Manages the migration from the legacy PouchDB "idb" adapter to the newer "indexeddb" adapter,
