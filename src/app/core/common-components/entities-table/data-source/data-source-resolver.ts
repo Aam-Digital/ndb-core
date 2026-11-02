@@ -1,8 +1,9 @@
 import { Injector, runInInjectionContext, untracked } from "@angular/core";
 import {
-  availableDataSources,
-  DataSourceType,
-} from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
+  DataSourceConstructor,
+  DataSourceRegistry,
+} from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
@@ -18,17 +19,42 @@ import {
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 
+/**
+ * Create the data source for a table.
+ *
+ * @param injector the injection context the data source lives in (and is destroyed with)
+ * @param dataSource name of a data source in the {@link DataSourceRegistry}, as configured for the list
+ * @param loaderMethod special loader the records come from, if any
+ * @param entityType type of the listed records
+ */
 export function resolveDataSource<T extends Entity>(
   injector: Injector,
-  dataSource?: DataSourceType,
+  dataSource?: string,
   loaderMethod?: LoaderMethod,
   entityType?: EntityConstructor,
 ): EntitiesTableDataSource<T> {
-  const DataSourceClass = supportsPagination(injector)
-    ? getDataSource(dataSource, loaderMethod, entityType)
-    : InMemoryDataSource;
+  let DataSourceClass = getDataSource(
+    injector.get(DataSourceRegistry),
+    dataSource,
+    loaderMethod,
+    entityType,
+  );
+  if (pagesOnServer(DataSourceClass) && !supportsPagination(injector)) {
+    DataSourceClass = InMemoryDataSource;
+  }
   return runInInjectionContext(injector, () =>
     untracked(() => new DataSourceClass<T>()),
+  );
+}
+
+/**
+ * Whether the data source loads its pages from the server, which only works in some sessions
+ * (other data sources, e.g. registered by feature modules, work in every session).
+ */
+function pagesOnServer(DataSourceClass: DataSourceConstructor): boolean {
+  return (
+    DataSourceClass === PaginatedDataSource ||
+    DataSourceClass.prototype instanceof PaginatedDataSource
   );
 }
 
@@ -51,13 +77,14 @@ function supportsPagination(injector: Injector): boolean {
 }
 
 function getDataSource(
-  dataSource?: DataSourceType,
+  registry: DataSourceRegistry,
+  dataSource?: string,
   loaderMethod?: LoaderMethod,
   entityType?: EntityConstructor,
-) {
-  if (dataSource && availableDataSources[dataSource]) {
+): DataSourceConstructor {
+  if (dataSource && registry.has(dataSource)) {
     // an explicit config for this list takes precedence over any default
-    return availableDataSources[dataSource];
+    return registry.get(dataSource);
   }
 
   if (loaderMethod && !loaderSupportsPagination(loaderMethod)) {
@@ -81,8 +108,8 @@ function getDataSource(
     return InMemoryDataSource;
   }
 
-  return (
-    availableDataSources[environment.default_data_source] ??
-    availableDataSources.paginated
-  );
+  const defaultDataSource = environment.default_data_source;
+  return defaultDataSource && registry.has(defaultDataSource)
+    ? registry.get(defaultDataSource)
+    : PaginatedDataSource;
 }

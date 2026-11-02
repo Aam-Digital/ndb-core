@@ -185,7 +185,7 @@ describe("InMemoryDataSource", () => {
 
     it("should return all records, ignoring any filter, when filtered=false", async () => {
       dataSource.dataFilter.set({ other: "group-a" });
-      dataSource.filter = "two";
+      dataSource.searchText.set("two");
       TestBed.tick();
 
       const result = await dataSource.getAllData(false);
@@ -205,8 +205,8 @@ describe("InMemoryDataSource", () => {
 
     it("should also apply the free-text filter (as currently displayed by the table) when filtered=true", async () => {
       dataSource.dataFilter.set({ other: "group-a" });
-      // simulates the free-text search box, which lower-cases+trims before assigning
-      dataSource.filter = "two";
+      // as typed into the "Filter" field, independent of case and surrounding spaces
+      dataSource.searchText.set(" TWO ");
       TestBed.tick();
 
       const result = await dataSource.getAllData(true);

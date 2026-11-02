@@ -33,9 +33,6 @@ import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
 import { FilterComponent } from "../../filter/filter/filter.component";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
@@ -64,9 +61,8 @@ import {
   FeaturePermissionDialogData,
 } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
 import { PermissionsConfigService } from "../../permissions/permissions-config.service";
-import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 /**
  * The column group shown on small screens: the one with the fewest columns
@@ -94,7 +90,6 @@ function indexOfGroupWithFewestColumns(groups: GroupConfig[]): number {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
-  styleUrls: ["./entity-list.component.scss"],
   providers: [DuplicateRecordService],
   imports: [
     NgStyle,
@@ -104,10 +99,7 @@ function indexOfGroupWithFewestColumns(groups: GroupConfig[]): number {
     MatMenuModule,
     NgTemplateOutlet,
     MatTabsModule,
-    MatFormFieldModule,
-    MatInputModule,
     EntitiesTableComponent,
-    FormsModule,
     FilterComponent,
     TabStateModule,
     ViewTitleComponent,
@@ -118,6 +110,7 @@ function indexOfGroupWithFewestColumns(groups: GroupConfig[]): number {
     AblePipe,
     ViewActionsComponent,
     EntityBulkActionsComponent,
+    DynamicComponentDirective,
   ],
 })
 @UntilDestroy()
@@ -176,7 +169,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
-  dataSource = input<DataSourceType>();
+  /** name of a data source in the {@link DataSourceRegistry} (default: chosen by session type and loader) */
+  dataSource = input<string>();
   recordsDataSource = computed(() =>
     resolveDataSource<T>(
       this.injector,
@@ -184,9 +178,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.loaderMethod(),
       this.entityConstructor(),
     ),
-  );
-  showFreetextFilter = computed(
-    () => this.recordsDataSource() instanceof InMemoryDataSource,
   );
 
   /**
@@ -232,7 +223,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   columnsToDisplay: string[];
 
   filterObj = model<DataFilter<T>>({});
-  filterString = "";
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -369,10 +359,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       ...group,
       name: resolveLocaleText(group.name) ?? "",
     }));
-  }
-
-  applyFilter(filterValue: string) {
-    this.recordsDataSource().filter = filterValue.trim().toLowerCase();
   }
 
   /**

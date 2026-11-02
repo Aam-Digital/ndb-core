@@ -339,4 +339,11 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.EditJsonComponent,
       ),
   ],
+  [
+    "FreeTextFilter",
+    () =>
+      import("./common-components/entities-table/free-text-filter/free-text-filter.component").then(
+        (c) => c.FreeTextFilterComponent,
+      ),
+  ],
 ];

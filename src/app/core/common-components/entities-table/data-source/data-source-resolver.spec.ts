@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { resolveDataSource } from "./data-source-resolver";
 import { InMemoryDataSource } from "./in-memory-data-source";
 import { PaginatedDataSource } from "./paginated-data-source";
+import { DataSourceRegistry } from "./data-source-registry";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
@@ -18,6 +19,14 @@ import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 class InternalTestEntity extends Entity {
   static override readonly isInternalEntity = true;
 }
+
+/** a data source of a feature module that works on all records in memory */
+class FeatureDataSource<T extends Entity> extends InMemoryDataSource<T> {}
+
+/** a data source of a feature module that pages through the server */
+class FeaturePaginatedDataSource<
+  T extends Entity,
+> extends PaginatedDataSource<T> {}
 
 class InternalTranslatedTestEntity extends Entity {
   static override readonly isInternalEntity = true;
@@ -199,5 +208,46 @@ describe("resolveDataSource", () => {
     );
 
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
+  });
+
+  it.each([
+    {
+      session: SessionType.online,
+      registered: FeatureDataSource,
+      expected: FeatureDataSource,
+    },
+    {
+      session: SessionType.synced,
+      registered: FeatureDataSource,
+      expected: FeatureDataSource,
+    },
+    {
+      session: SessionType.online,
+      registered: FeaturePaginatedDataSource,
+      expected: FeaturePaginatedDataSource,
+    },
+    {
+      session: SessionType.synced,
+      registered: FeaturePaginatedDataSource,
+      expected: InMemoryDataSource,
+    },
+  ])(
+    "uses a data source registered by a feature module unless it pages on the server outside online mode ($session, $registered.name)",
+    ({ session, registered, expected }) => {
+      environment.session_type = session;
+      TestBed.inject(DataSourceRegistry).add("feature", registered);
+
+      const dataSource = resolveDataSource<Entity>(injector, "feature");
+
+      expect(dataSource.constructor).toBe(expected);
+    },
+  );
+
+  it("falls back to the default for a data source name that is not registered", () => {
+    environment.session_type = SessionType.online;
+
+    const dataSource = resolveDataSource<Entity>(injector, "unknown");
+
+    expect(dataSource).toBeInstanceOf(PaginatedDataSource);
   });
 });

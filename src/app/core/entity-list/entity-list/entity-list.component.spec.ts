@@ -18,6 +18,7 @@ import { FeaturePermissionDialogComponent } from "../../permissions/feature-perm
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Database } from "#src/app/core/database/database";
 import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
@@ -450,20 +451,41 @@ describe("EntityListComponent", () => {
     }
   });
 
-  it("should use the PaginatedDataSource and disable the freetext filter in online mode", () => {
-    const tmpSessionType = environment.session_type;
-    try {
-      environment.session_type = SessionType.online;
-      vi.spyOn(
-        TestBed.inject(DatabaseResolverService),
-        "getDatabase",
-      ).mockReturnValue({ supportsFind: () => true } as Database);
-      createComponent();
+  it.each([
+    {
+      session: SessionType.synced,
+      dataSourceType: InMemoryDataSource,
+      showsFilterField: true,
+    },
+    {
+      session: SessionType.online,
+      dataSourceType: PaginatedDataSource,
+      showsFilterField: false,
+    },
+  ])(
+    "shows the free-text Filter field only if the data source offers it ($session session)",
+    async ({ session, dataSourceType, showsFilterField }) => {
+      const tmpSessionType = environment.session_type;
+      try {
+        environment.session_type = session;
+        vi.spyOn(
+          TestBed.inject(DatabaseResolverService),
+          "getDatabase",
+        ).mockReturnValue({ supportsFind: () => true } as Database);
+        createComponent();
+        component.isDesktop = true;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
 
-      expect(component.showFreetextFilter()).toBe(false);
-      expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
-    } finally {
-      environment.session_type = tmpSessionType;
-    }
-  });
+        expect(component.recordsDataSource()).toBeInstanceOf(dataSourceType);
+        const filterField = fixture.nativeElement.querySelector(
+          "app-free-text-filter input",
+        );
+        expect(!!filterField).toBe(showsFilterField);
+      } finally {
+        environment.session_type = tmpSessionType;
+      }
+    },
+  );
 });

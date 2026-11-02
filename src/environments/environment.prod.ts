@@ -1,5 +1,4 @@
 import { SessionType } from "../app/core/session/session-type";
-import type { DataSourceType } from "../app/core/common-components/entities-table/data-source/available-data-sources";
 
 /**
  * see environment.ts for explanations
@@ -25,7 +24,7 @@ export const environment = {
   use_indexeddb_adapter: true,
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
-  default_data_source: undefined as DataSourceType | undefined,
+  default_data_source: undefined as string | undefined,
 
   session_type_choice: true,
 

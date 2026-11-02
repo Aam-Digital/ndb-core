@@ -29,10 +29,22 @@
           ></app-entity-field-label>
         </th>
         <td mat-cell *matCellDef="let row">
-          <app-entity-field-view
-            [field]="col"
-            [entity]="row"
-          ></app-entity-field-view>
+          @let prefix =
+            col.id === firstDataColumn() ? rowDecoration()(row)?.prefix : null;
+          @if (prefix) {
+            <div class="flex-row align-center">
+              <ng-container [appDynamicComponent]="prefix"></ng-container>
+              <app-entity-field-view
+                [field]="col"
+                [entity]="row"
+              ></app-entity-field-view>
+            </div>
+          } @else {
+            <app-entity-field-view
+              [field]="col"
+              [entity]="row"
+            ></app-entity-field-view>
+          }
         </td>
       </ng-container>
     }
@@ -53,6 +65,7 @@
         <mat-checkbox
           (change)="selectionStore.selectRow(row, $event.checked)"
           [checked]="selectedRecords().includes(row)"
+          [disabled]="!isSelectable()(row)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
@@ -82,6 +95,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
+      [class]="rowDecoration()(row)?.cssClass ?? ''"
       [class.inactive-row]="row.inactive"
       [style.background-color]="effectiveBackgroundColor()(row)"
       class="table-row"
@@ -93,11 +107,13 @@
   <!--
   PAGINATION
   -->
-  <app-list-paginator
-    class="table-footer"
-    [dataSource]="recordsDataSource()"
-    [idForSavingPagination]="idForSavingPagination()"
-  ></app-list-paginator>
+  @if (recordsDataSource().usesPagination) {
+    <app-list-paginator
+      class="table-footer"
+      [dataSource]="recordsDataSource()"
+      [idForSavingPagination]="idForSavingPagination()"
+    ></app-list-paginator>
+  }
 
   <!--
   SHOW ARCHIVED TOGGLE

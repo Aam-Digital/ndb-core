@@ -21,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
 import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 import { Logging } from "../../logging/logging.service";
+import { EntitiesTableDataSource } from "../../common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -65,10 +66,10 @@ export class FilterComponent<T extends Entity = Entity> {
    */
   onlyShowRelevantFilterOptions = input(false);
   /**
-   * A string representation of the current filter state.
-   * This can be used to display the active filters as a single string.
+   * The data source of the filtered table, if any.
+   * "Clear" also resets its free-text search.
    */
-  filterString = input("");
+  dataSource = input<EntitiesTableDataSource<T>>();
   /**
    * The filter query which is build by combining all selected filters.
    * This can be used as two-way-binding or through the `filterObjChange` output.
@@ -78,10 +79,6 @@ export class FilterComponent<T extends Entity = Entity> {
    * An event emitter that notifies about updates of the filter.
    */
   filterObjChange = output<DataFilter<T>>();
-  /**
-   * An event emitter that notifies about updates to the filter string.
-   */
-  filterStringChange = output<string>();
 
   filterSelections = linkedSignal<Filter<T>[]>(
     () => this.generatedFilterSelections.value() ?? [],
@@ -92,7 +89,7 @@ export class FilterComponent<T extends Entity = Entity> {
   );
 
   readonly showClearButton = computed(
-    () => this.hasActiveFilters() || !!this.filterString(),
+    () => this.hasActiveFilters() || !!this.dataSource()?.searchText(),
   );
 
   private readonly generatedFilterSelections = resource({
@@ -279,7 +276,7 @@ export class FilterComponent<T extends Entity = Entity> {
     });
 
     this.filterObjChange.emit({});
-    this.filterStringChange.emit("");
+    this.dataSource()?.searchText.set("");
 
     if (this.useUrlQueryParams()) {
       const filterKeys = this.filterSelections().map((f) => f.name);

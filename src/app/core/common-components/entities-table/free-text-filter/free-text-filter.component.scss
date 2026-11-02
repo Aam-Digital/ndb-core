@@ -1,0 +1,12 @@
+@use "variables/breakpoints";
+
+:host {
+  display: block;
+}
+
+.filter-field {
+  @media screen and (min-width: breakpoints.$md) {
+    /* restricts the width so that the field does not feel too big */
+    max-width: 412px;
+  }
+}

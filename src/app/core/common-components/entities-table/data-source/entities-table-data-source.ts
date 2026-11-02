@@ -1,6 +1,6 @@
 import { MatTableDataSource } from "@angular/material/table";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
-import { DestroyRef, effect, inject, signal } from "@angular/core";
+import { DestroyRef, effect, inject, Signal, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { SortValueFns } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
@@ -18,6 +18,7 @@ import {
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
+import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -41,6 +42,27 @@ export interface LoadRecordConfig<T extends Entity> {
    */
   loaderMethod?: LoaderMethod;
 }
+
+/**
+ * Optional extras for one row of the table, provided by the data source.
+ */
+export interface RowDecoration {
+  /** component shown before the content of the first data cell */
+  prefix?: DynamicComponentConfig;
+  /** extra CSS class for the row */
+  cssClass?: string;
+  /** whether the row can be selected for bulk actions (default: true) */
+  selectable?: boolean;
+}
+
+/**
+ * The {@link RowDecoration}s of a table, by the id of the record (`entity.getId()`).
+ *
+ * Looked up by id rather than by record object (WeakMap):
+ * a live update replaces the record object, and the row keeps its decoration
+ * (e.g. not being selectable) until the data source has computed new decorations.
+ */
+export type RowDecorations = ReadonlyMap<string, RowDecoration>;
 
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
@@ -76,6 +98,27 @@ export abstract class EntitiesTableDataSource<
   readonly renderedRows = toSignal(this.connect(), { requireSync: true });
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
   isLoading = signal(false);
+
+  /**
+   * Free-text search for the records.
+   * Only data sources that support it apply it (see {@link toolbarControls} for the field to enter it);
+   * "Clear filters" resets it.
+   */
+  readonly searchText = signal("");
+
+  // --- Extension points for data sources of feature modules (all with defaults) ---
+
+  /** false: the table shows all rows and no paginator */
+  readonly usesPagination: boolean = true;
+
+  /** optional extras per row (default: none) */
+  readonly rowDecorations: Signal<RowDecorations> = signal(new Map());
+
+  /**
+   * controls a host may show in the list's filter row, in this order (default: none).
+   * Keep the config objects stable: a new object reloads the control.
+   */
+  readonly toolbarControls: Signal<DynamicComponentConfig[]> = signal([]);
 
   // NOTE: overriding only the setter would hide the inherited `get data`,
   // so `dataSource.data` would return `undefined`. Provide both accessors.

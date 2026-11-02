@@ -16,8 +16,6 @@
  */
 
 import { SessionType } from "../app/core/session/session-type";
-// type-only, so that the data source classes do not enter the module graph here
-import type { DataSourceType } from "../app/core/common-components/entities-table/data-source/available-data-sources";
 
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
@@ -84,7 +82,8 @@ export const environment = {
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
   /**
-   * Default data source used for all lists in online-only mode (see session_type).
+   * Default data source used for all lists in online-only mode (see session_type),
+   * as the name of a data source in the `DataSourceRegistry`.
    * Set to "in-memory" via config.json to load all records of a list upfront,
    * instead of the default of paging through the database query.
    * ("paginated" is therefore redundant - it is already the online-only default.)
@@ -93,7 +92,7 @@ export const environment = {
    * This has no effect outside of online-only mode: the paginated data source
    * cannot query the local database, so synced sessions always load records upfront.
    */
-  default_data_source: undefined as DataSourceType | undefined,
+  default_data_source: undefined as string | undefined,
 
   /**
    * Whether the system is multi-language: admins can configure texts in several

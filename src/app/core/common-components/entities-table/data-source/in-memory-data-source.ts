@@ -1,4 +1,4 @@
-import { effect, inject } from "@angular/core";
+import { effect, inject, signal } from "@angular/core";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
 import { tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
@@ -9,9 +9,11 @@ import {
 } from "#src/app/core/entity/model/entity-update";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 
 /**
- * A data source that loads all data at once and sort/filters/paginates fully in-memory
+ * A data source that loads all data at once and sort/filters/paginates fully in-memory.
+ * It also applies the free-text {@link searchText} and offers the field to enter it as toolbar control.
  */
 export class InMemoryDataSource<
   T extends Entity,
@@ -20,6 +22,10 @@ export class InMemoryDataSource<
   private readonly entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
+
+  override readonly toolbarControls = signal<DynamicComponentConfig[]>([
+    { component: "FreeTextFilter", config: { dataSource: this } },
+  ]);
 
   override filterPredicate = (data: T, filter: string) =>
     entityFilterPredicate(data, filter);
@@ -38,6 +44,9 @@ export class InMemoryDataSource<
       const filter = this.dataFilter();
       const predicate = this.filterService.getFilterPredicate(filter);
       this.filteredRecords.set(records.filter(predicate));
+    });
+    effect(() => {
+      this.filter = this.searchText().trim().toLowerCase();
     });
   }
 

@@ -44,7 +44,11 @@ import {
   isClickableTarget,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import {
+  EntitiesTableDataSource,
+  RowDecoration,
+} from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -63,6 +67,7 @@ import { EntitiesTableDataSource } from "#src/app/core/common-components/entitie
     MatSortModule,
     MatTableModule,
     EntityCreateButtonComponent,
+    DynamicComponentDirective,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -202,6 +207,29 @@ export class EntitiesTableComponent<T extends Entity>
     }
     return columns;
   });
+  /** The column whose cells show the prefix of a row decoration: the first one that holds record data. */
+  readonly firstDataColumn = computed(() =>
+    this._columnsToDisplay().find(
+      (column) =>
+        column !== this.ACTIONCOLUMN_SELECT &&
+        column !== this.ACTIONCOLUMN_CREATE,
+    ),
+  );
+
+  /** Look up the row decoration of a record, as provided by the data source. */
+  readonly rowDecoration = computed<(record: T) => RowDecoration | undefined>(
+    () => {
+      const decorations = this.recordsDataSource().rowDecorations();
+      return (record) => decorations.get(record.getId());
+    },
+  );
+
+  /** Whether a record can be selected for bulk actions. */
+  readonly isSelectable = computed<(record: T) => boolean>(() => {
+    const rowDecoration = this.rowDecoration();
+    return (record) => rowDecoration(record)?.selectable !== false;
+  });
+
   /** Columns with sorting rules applied (managed by the sort store). */
   readonly _columns = this.sortStore.columns;
   readonly idForSavingPagination = computed(() =>
@@ -267,8 +295,10 @@ export class EntitiesTableComponent<T extends Entity>
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      selectableRows: this.recordsDataSource().displayedData,
-      currentPageRows: this.recordsDataSource().renderedRows,
+      // read through the input, which may switch to another data source later on
+      filteredRows: computed(() => this.recordsDataSource().displayedData()),
+      currentPageRows: computed(() => this.recordsDataSource().renderedRows()),
+      isSelectable: this.isSelectable,
     });
   }
 

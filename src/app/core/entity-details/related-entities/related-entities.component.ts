@@ -29,7 +29,6 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
 
@@ -79,7 +78,8 @@ export class RelatedEntitiesComponent<E extends Entity> {
    */
   columns = input<ColumnConfig[]>([]);
 
-  dataSource = input<DataSourceType>();
+  /** name of a data source in the {@link DataSourceRegistry} (default: chosen by session type and loader) */
+  dataSource = input<string>();
   recordsDataSource = computed(() =>
     resolveDataSource<E>(
       this.injector,
