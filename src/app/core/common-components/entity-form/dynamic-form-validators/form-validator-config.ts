@@ -42,6 +42,8 @@ export const DYNAMIC_VALIDATORS = [
    *
    * Records that do not match can still be shown by the user on request,
    * and already selected records are kept even if they do not match (anymore).
+   * A selected record that does not match is only a warning: users can still save after confirming it
+   * (not checked for an embedded field like the participants of `attendance`).
    */
   "selectionCondition",
 ] as const;

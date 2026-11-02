@@ -13,6 +13,10 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { DataFilter } from "../../../filter/filters/filters";
+import { CurrentRecordSource } from "../current-record-state";
+import { of } from "rxjs";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -20,16 +24,10 @@ describe("DynamicValidatorsService", () => {
   let mockedEntityMapper: any;
 
   beforeEach(() => {
-    mockedEntityMapper = {
-      loadType: vi.fn().mockName("EntityMapperService.loadType"),
-      load: vi.fn().mockName("EntityMapperService.load"),
-    };
-
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityMapperService, useValue: mockedEntityMapper },
-      ],
-    });
+    TestBed.configureTestingModule({ imports: [CoreTestingModule] });
+    mockedEntityMapper = TestBed.inject(EntityMapperService);
+    vi.spyOn(mockedEntityMapper, "loadType");
+    vi.spyOn(mockedEntityMapper, "load");
     service = TestBed.inject(DynamicValidatorsService);
   });
 
@@ -268,6 +266,118 @@ describe("DynamicValidatorsService", () => {
       expect(await validate(outside, undefined, parent.getId())).toEqual({
         withinParent: expect.objectContaining({ warning: true }),
       });
+    });
+  });
+
+  describe("selectionCondition", () => {
+    const anna = TestEntity.create({ name: "Anna", other: "BERLIN" });
+    const ben = TestEntity.create({ name: "Ben", other: "HAMBURG" });
+    const sameLocation = { other: { $in: ["$current_record.other"] } };
+
+    /**
+     * @param recordInForm values of the record being edited, entered in other fields of the form
+     * @param currentRecord the `currentRecord` of the form, e.g. none in bulk edit
+     */
+    function validate(
+      selected: string | string[],
+      condition: DataFilter<TestEntity>,
+      recordInForm: Partial<TestEntity> = {},
+      currentRecord?: CurrentRecordSource,
+    ) {
+      const { asyncValidators } = service.buildValidators(
+        { selectionCondition: condition },
+        new TestEntity(),
+        "ref",
+        currentRecord,
+      );
+      const form = new UntypedFormGroup({
+        ref: new UntypedFormControl(selected),
+        ...Object.fromEntries(
+          Object.entries(recordInForm).map(([id, value]) => [
+            id,
+            new UntypedFormControl(value),
+          ]),
+        ),
+      });
+      return (asyncValidators as AsyncValidatorFn[])[0](form.get("ref"));
+    }
+
+    beforeEach(() => mockedEntityMapper.addAll([anna, ben]));
+
+    it("returns a warning naming the selected records that do not match, compared with the record being edited", async () => {
+      expect(
+        await validate([anna.getId(), ben.getId()], sameLocation, {
+          other: "BERLIN",
+        }),
+      ).toEqual({
+        selectionCondition: {
+          warning: true,
+          errorMessage: "Not matching the filter of this field: Ben",
+        },
+      });
+    });
+
+    it.each<
+      [
+        string,
+        string | string[],
+        DataFilter<TestEntity>,
+        Partial<TestEntity>?,
+        CurrentRecordSource?,
+      ]
+    >([
+      ["matching records", [anna.getId()], { other: { $in: ["BERLIN"] } }],
+      ["no selection", [], { other: { $in: ["BERLIN"] } }],
+      [
+        "a selected record that cannot be loaded",
+        `${TestEntity.ENTITY_TYPE}:deleted`,
+        { other: { $in: ["BERLIN"] } },
+      ],
+      [
+        "a condition referring to an empty field of the record",
+        ben.getId(),
+        sameLocation,
+        { other: null },
+      ],
+      [
+        "a form without one single record (bulk edit)",
+        ben.getId(),
+        sameLocation,
+        { other: "BERLIN" },
+        () => of(undefined),
+      ],
+    ])(
+      "returns nothing for %s",
+      async (_, selected, condition, recordInForm, currentRecord) => {
+        expect(
+          await validate(selected, condition, recordInForm, currentRecord),
+        ).toBeNull();
+      },
+    );
+
+    it("checks a selection right away, other async checks only when leaving the field", () => {
+      const entity = new TestEntity();
+      expect(
+        service.buildValidators(
+          { selectionCondition: { other: "BERLIN" } },
+          entity,
+          "ref",
+        ).updateOn,
+      ).toBeUndefined();
+      expect(
+        service.buildValidators({ uniqueId: true }, entity, "name").updateOn,
+      ).toBe("blur");
+    });
+
+    it("names the fields of the record that the condition refers to as dependencies", () => {
+      const dependencies = service.getDependencies({
+        withinParent: { parentReferenceField: "ref" },
+        selectionCondition: {
+          $or: [sameLocation, { category: "$current_record.category" }],
+        },
+      });
+
+      expect(dependencies.sort()).toEqual(["category", "other", "ref"]);
     });
   });
 

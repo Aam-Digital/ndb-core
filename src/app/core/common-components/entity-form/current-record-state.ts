@@ -1,7 +1,7 @@
 import { computed, inject, Signal } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { AbstractControl, FormGroup } from "@angular/forms";
-import { Observable, of, switchMap } from "rxjs";
+import { firstValueFrom, Observable, of, switchMap } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 
 /**
@@ -45,6 +45,29 @@ export function getCurrentRecordOfControl<T extends Entity>(
   return record && control.parent instanceof FormGroup
     ? createCurrentRecordState(record, control.parent)
     : record;
+}
+
+/**
+ * Getter for the `currentRecord` of the form a field belongs to (see `EntityForm.currentRecord`),
+ * `undefined` while the form is still being created.
+ */
+export type CurrentRecordSource = () =>
+  Observable<Entity | undefined> | undefined;
+
+/**
+ * The record being edited, with the current values of the form a control belongs to (for validators):
+ * the `currentRecord` of the form once it exists (`undefined` if the form does not edit one single record, like in bulk edit),
+ * before that the record with the values of the control's form.
+ */
+export async function getCurrentRecordOfForm(
+  control: AbstractControl,
+  record: Entity | undefined,
+  source: CurrentRecordSource | undefined,
+): Promise<Entity | undefined> {
+  const currentRecord = source?.();
+  return currentRecord
+    ? firstValueFrom(currentRecord)
+    : getCurrentRecordOfControl(control, record);
 }
 
 /**

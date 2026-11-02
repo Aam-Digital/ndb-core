@@ -48,6 +48,10 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
+import {
+  matchesSelectionCondition,
+  resolveSelectionCondition,
+} from "../selection-condition";
 
 /**
  * A form field to select among the entities of the given type(s).
@@ -223,41 +227,20 @@ export class EditEntityComponent<
    */
   private readonly selectionFilter: Signal<DataFilter<E> | undefined> =
     computed(
-      () => {
-        const condition =
-          this.formFieldConfig()?.validators?.selectionCondition;
-        // a condition cannot be applied to records of different types with different fields
-        if (
-          !condition ||
-          Object.keys(condition).length === 0 ||
-          this.entityType().length !== 1
-        ) {
-          return undefined;
-        }
-
-        const resolved = this.placeholderService.resolveRecordPlaceholders(
-          condition,
+      () =>
+        resolveSelectionCondition(
+          this.formFieldConfig()?.validators?.selectionCondition,
+          this.entityType(),
           this.currentRecord(),
-        );
-        return Object.keys(resolved).length > 0 ? resolved : undefined;
-      },
+          this.placeholderService,
+        ),
       // only notify of an actual change, not of every change of other fields in the form
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
     );
 
-  private readonly isEligible: Signal<(e: E) => boolean> = computed(() => {
-    const filter = this.selectionFilter();
-    if (!filter) {
-      return () => true;
-    }
-    try {
-      return this.filterService.getFilterPredicate(filter);
-    } catch (err) {
-      // an instance config problem and the resolved condition contains record data: not for remote monitoring
-      Logging.debug("[ENTITY_SELECT] Invalid selectionCondition.", err);
-      return () => true;
-    }
-  });
+  private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
+    matchesSelectionCondition(this.selectionFilter(), this.filterService),
+  );
 
   /**
    * Number of inactive records that would additionally be shown when including inactive records.

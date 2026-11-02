@@ -68,6 +68,19 @@ export function isCurrentRecordPlaceholder(value: unknown): value is string {
   );
 }
 
+/** the ids of the fields that the `$current_record.<fieldId>` placeholders in a condition refer to */
+export function getCurrentRecordPlaceholderFields(
+  condition: unknown,
+): string[] {
+  if (isCurrentRecordPlaceholder(condition)) {
+    return [condition.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length)];
+  }
+  if (condition && typeof condition === "object") {
+    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
+  }
+  return [];
+}
+
 /** operators combining a list of conditions, each of which is a condition on its own */
 const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
 

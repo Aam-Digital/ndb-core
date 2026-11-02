@@ -6,6 +6,7 @@ import {
   EntityFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
+  AbstractControl,
   FormControl,
   UntypedFormControl,
   UntypedFormGroup,
@@ -40,6 +41,7 @@ import {
 } from "../../../utils/test-utils/dialog-mocks";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
+import { of } from "rxjs";
 
 @DatabaseEntity("EntityFormServiceTestAction")
 class EntityFormServiceTestAction extends Entity {
@@ -56,6 +58,16 @@ class EntityFormServiceTestAction extends Entity {
     validators: { withinParent: { parentReferenceField: "parent" } },
   })
   period: DateRangeValue;
+  @DatabaseField() center: string;
+  @DatabaseField({
+    dataType: "entity",
+    additional: "EntityFormServiceTestAction",
+    isArray: true,
+    validators: {
+      selectionCondition: { center: { $in: ["$current_record.center"] } },
+    },
+  })
+  participants: string[];
 }
 
 describe("EntityFormService", () => {
@@ -343,6 +355,53 @@ describe("EntityFormService", () => {
       await vi.waitFor(() =>
         expect(period.errors?.withinParent?.warning).toBe(true),
       );
+    });
+  });
+
+  describe("link fields with a selectionCondition", () => {
+    const fromBerlin = Object.assign(
+      new EntityFormServiceTestAction("berlin"),
+      { name: "Anna", center: "BERLIN" },
+    );
+    const recordInHamburg = () =>
+      Object.assign(new EntityFormServiceTestAction(), { center: "HAMBURG" });
+
+    beforeEach(() =>
+      (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(
+        fromBerlin,
+      ),
+    );
+
+    it("warns about a selected record not matching the condition, and checks again when the field it compares with changes", async () => {
+      const form = await createForm(
+        [{ id: "center" }, { id: "participants" }],
+        recordInHamburg(),
+      );
+      // the value of a multi-select field is one array, not a FormArray as typed
+      const participants: AbstractControl = form.formGroup.get("participants");
+
+      participants.setValue([fromBerlin.getId()]);
+      await vi.waitFor(() =>
+        expect(participants.errors?.selectionCondition?.warning).toBe(true),
+      );
+
+      form.formGroup.get("center").setValue("BERLIN");
+      await vi.waitFor(() => expect(participants.errors).toBeNull());
+    });
+
+    it("does not compare with a record if the form edits several records at once (bulk edit)", async () => {
+      const form = await createForm(
+        [{ id: "participants" }],
+        recordInHamburg(),
+      );
+      form.currentRecord = of(undefined);
+      // the value of a multi-select field is one array, not a FormArray as typed
+      const participants: AbstractControl = form.formGroup.get("participants");
+
+      participants.setValue([fromBerlin.getId()]);
+      await vi.waitFor(() => expect(participants.pending).toBe(false));
+
+      expect(participants.errors).toBeNull();
     });
   });
 

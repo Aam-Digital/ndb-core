@@ -301,8 +301,22 @@ test("Edit participants of a recurring activity", async ({ page }) => {
     page.getByRole("option", { name: childInOtherCenter.name }),
   ).toBeVisible();
 
-  // When I discard these changes
+  // But when I select one of them and save, I am asked to confirm it
+  await page.getByRole("option", { name: childInOtherCenter.name }).click();
   await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(
+    page
+      .getByRole("dialog")
+      .getByText(
+        new RegExp(
+          `Not matching the filter of this field: .*${childInOtherCenter.name}`,
+        ),
+      ),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Keep editing" }).click();
+
+  // When I discard these changes
   await page.getByRole("button", { name: "Cancel" }).click();
 
   // When I navigate to the Record Attendance screen

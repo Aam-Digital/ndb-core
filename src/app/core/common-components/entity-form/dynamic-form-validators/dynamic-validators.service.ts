@@ -15,6 +15,15 @@ import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
 import { withinParentValidator } from "../../../basic-datatypes/date-range/within-parent-validator";
+import { selectionConditionValidator } from "../../../basic-datatypes/entity/selection-condition";
+import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { FilterService } from "../../../filter/filter.service";
+import { getCurrentRecordPlaceholderFields } from "../../../filter/filters/filters";
+import {
+  CurrentRecordSource,
+  getCurrentRecordOfForm,
+} from "../current-record-state";
+import { asArray } from "app/utils/asArray";
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -64,6 +73,8 @@ export function patternWithMessage(
 })
 export class DynamicValidatorsService {
   private entityMapper = inject(EntityMapperService);
+  private readonly placeholderService = inject(DynamicPlaceholderValueService);
+  private readonly filterService = inject(FilterService);
 
   /**
    * A map of all validators along with a factory that generates the validator function
@@ -76,12 +87,15 @@ export class DynamicValidatorsService {
     entity: Entity,
     fieldId?: string,
     config?: FormValidatorConfig,
+    currentRecord?: CurrentRecordSource,
   ):
     | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
         async: true;
         fn: AsyncPromiseValidatorFn;
         errorName?: string;
+        /** run on every change of the value, not only when leaving the field (see `buildValidators`) */
+        updateOnChange?: boolean;
       }
     | null {
     switch (key) {
@@ -135,8 +149,22 @@ export class DynamicValidatorsService {
             }
           : null;
       case "selectionCondition":
-        // applied by the entity dropdown, which offers only the matching records
-        return null;
+        return value && fieldId
+          ? {
+              async: true,
+              // selecting a record is a single change (unlike typing a text)
+              updateOnChange: true,
+              fn: selectionConditionValidator(
+                value,
+                asArray(entity.getSchema().get(fieldId)?.additional ?? []),
+                (control) =>
+                  getCurrentRecordOfForm(control, entity, currentRecord),
+                this.entityMapper,
+                this.placeholderService,
+                this.filterService,
+              ),
+            }
+          : null;
       default:
         // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
         Logging.debug("Trying to generate a validator that does not exist", {
@@ -153,6 +181,8 @@ export class DynamicValidatorsService {
    * If there is no Validator by a given name, issues a warning.
    * @param config The raw configuration object
    * @param entity The entity that the form is editing
+   * @param fieldId The field the validators are for
+   * @param currentRecord The current state of the record in its form, for validators comparing with other fields
    * @example
    * >>> buildValidators({ required: true, max: 5 })
    * [ Validators.required, Validators.max(5) ]
@@ -162,11 +192,13 @@ export class DynamicValidatorsService {
     config: FormValidatorConfig,
     entity: Entity,
     fieldId?: string,
+    currentRecord?: CurrentRecordSource,
   ): FormControlOptions {
     const formControlOptions = {
       validators: [],
       asyncValidators: [],
     };
+    let updateOnBlur = false;
 
     for (const key of Object.keys(config)) {
       const validatorFn = this.getValidator(
@@ -175,6 +207,7 @@ export class DynamicValidatorsService {
         entity,
         fieldId,
         config,
+        currentRecord,
       );
 
       if (validatorFn?.async) {
@@ -184,6 +217,7 @@ export class DynamicValidatorsService {
             .fn(control)
             .then((res) => this.addHumanReadableError(effectiveName, res));
         formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
+        updateOnBlur ||= !validatorFn.updateOnChange;
       } else if (validatorFn) {
         const effectiveName = validatorFn.errorName || key;
         const validatorFnWithReadableErrors = (control: FormControl) =>
@@ -195,7 +229,8 @@ export class DynamicValidatorsService {
       // For example `{ required : false }` produces a `null` validator function
     }
 
-    if (formControlOptions.asyncValidators.length > 0) {
+    // async checks (e.g. loading other records) are not repeated for every keystroke
+    if (updateOnBlur) {
       (formControlOptions as FormControlOptions).updateOn = "blur";
     }
 
@@ -204,10 +239,13 @@ export class DynamicValidatorsService {
 
   /**
    * The other fields of the record that the configured validators of a field read
-   * (e.g. the parent link of `withinParent`), so that the field is validated again when one of them changes.
+   * (e.g. the parent link of `withinParent`, the fields a `selectionCondition` refers to),
+   * so that the field is validated again when one of them changes.
    */
   getDependencies(config: FormValidatorConfig | undefined): string[] {
-    const dependencies = new Set<string>();
+    const dependencies = new Set<string>(
+      getCurrentRecordPlaceholderFields(config?.selectionCondition),
+    );
     if (config?.withinParent?.parentReferenceField) {
       dependencies.add(config.withinParent.parentReferenceField);
     }
@@ -281,6 +319,7 @@ export class DynamicValidatorsService {
       case "isNumber":
         return $localize`Please enter a valid number`;
       case "withinParent":
+      case "selectionCondition":
         return validationValue?.errorMessage;
       case "uniqueId":
         if (typeof validationValue === "string") {

@@ -30,7 +30,7 @@ export interface EntityForm<T extends Entity> {
 
   /**
    * The record with the current, possibly unsaved values of this form, updated with every change,
-   * for fields that depend on the values of other fields of the record
+   * for fields and validators that depend on the values of other fields of the record
    * (like the `selectionCondition` of an entity field).
    *
    * `undefined` if the form does not edit one single record (e.g. in bulk edit).

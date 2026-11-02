@@ -8,7 +8,10 @@ import {
   FormGroup,
 } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
-import { createCurrentRecordState } from "./current-record-state";
+import {
+  createCurrentRecordState,
+  CurrentRecordSource,
+} from "./current-record-state";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -165,11 +168,14 @@ export class EntityFormService {
       }
     }
 
+    // set below: validators read the form's `currentRecord`, but already run while the controls are created
+    const created: { form?: EntityForm<T> } = {};
     const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
       fields,
       entity,
       destroyRef,
       withPermissionCheck,
+      () => created.form?.currentRecord,
     );
 
     const entityForm: EntityForm<T> = {
@@ -183,6 +189,7 @@ export class EntityFormService {
         map(() => createCurrentRecordState(entity, typedFormGroup)),
       ),
     };
+    created.form = entityForm;
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.
     // Both the subscription and the final cleanup are tied to the caller's lifecycle.
@@ -226,6 +233,7 @@ export class EntityFormService {
     entity: T,
     destroyRef: DestroyRef,
     withPermissionCheck = true,
+    currentRecord?: CurrentRecordSource,
   ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -235,7 +243,13 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
+      this.addFormControlConfig(
+        formConfig,
+        f,
+        copy,
+        withPermissionCheck,
+        currentRecord,
+      );
     }
     const group = this.fb.group<Partial<T>>(formConfig);
     this.revalidateOnDependencyChange(group, formFields, destroyRef);
@@ -265,6 +279,7 @@ export class EntityFormService {
     field: FormFieldConfig,
     entity: Entity,
     withPermissionCheck: boolean,
+    currentRecord?: CurrentRecordSource,
   ) {
     let value = entity[field.id];
 
@@ -274,6 +289,7 @@ export class EntityFormService {
         field.validators,
         entity,
         field.id,
+        currentRecord,
       );
       Object.assign(controlOptions, validators);
     }
