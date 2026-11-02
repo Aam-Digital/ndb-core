@@ -126,27 +126,17 @@ function rewrappedNamedError(
 }
 
 /**
- * Errors whose message does not tell where the bug is ("x is undefined"):
- * as a root cause, they are told apart by the function that threw them.
- */
-const PROGRAMMING_ERROR_TYPES = [
-  "TypeError",
-  "RangeError",
-  "ReferenceError",
-  "SyntaxError",
-  "EvalError",
-  "URIError",
-];
-
-/**
- * Group one failure into one issue, whichever component wrapped and logged it:
- * by its root cause, with the component's message as the `reported_by` tag.
+ * Group one failure into one issue.
  *
- * Exceptions to grouping by the root cause alone:
- * - a programming error (`TypeError`, ...) also by the function that threw it,
- *   or by the wrapper if that is unknown, as its message is not specific to one bug;
- * - a network failure (e.g. `AppBootstrapError` caused by a failed request) by the
- *   wrapper as well, as the wrapper says what could not be done.
+ * A wrapped error chain is grouped by its root cause alone (with the component's
+ * message as the `reported_by` tag) only if the root cause is a classified failure
+ * that means the same whichever component ran into it: a broken local database,
+ * a server fault, a missing permission. All other chains are grouped by the wrapper
+ * and the root cause: a generic root cause (e.g. a `missing` document or a
+ * `TypeError`) in another component is likely a different bug and gets an issue
+ * (and new-issue alert) of its own.
+ * A network failure is grouped by the wrapper as well, as the wrapper says what
+ * could not be done (e.g. `AppBootstrapError` caused by a failed request).
  *
  * `values` are ordered innermost-first: `values[0]` is the root cause.
  */
@@ -178,34 +168,20 @@ function groupByRootCause(
     return event;
   }
 
-  event.fingerprint = rootKey;
-  if (PROGRAMMING_ERROR_TYPES.includes(rootCause.type ?? "")) {
-    const location = throwingFunction(rootCause);
-    event.fingerprint.push(...(location ? [location] : oursKey));
+  if (!links[0]) {
+    event.fingerprint = [...oursKey, ...rootKey];
+    thrown.type = ours.type;
+    thrown.value = `${ours.value} (caused by ${rootCause.type ?? "Error"}: ${normalizeErrorValue(rootCause.value)})`;
+    return event;
   }
 
+  event.fingerprint = rootKey;
   const reportedBy = `${ours.type ?? "Error"}: ${normalizeErrorValue(ours.value)}`;
   event.tags = { ...event.tags, reported_by: truncateTag(reportedBy) };
   event.extra = { ...event.extra, reported_by: reportedBy };
   thrown.type = rootCause.type;
   thrown.value = normalizeErrorValue(rootCause.value);
   return event;
-}
-
-/**
- * The name of the function that threw the error: the innermost stack frame
- * with a name that survives minification (a method name, not `t` or `<anonymous>`),
- * so that it is the same in every release.
- */
-function throwingFunction(exception: Sentry.Exception): string | undefined {
-  const frames = exception.stacktrace?.frames ?? [];
-  for (let i = frames.length - 1; i >= 0; i--) {
-    const name = frames[i].function?.split(".").pop();
-    if (name && name.length > 2 && !name.includes("<anonymous>")) {
-      return name;
-    }
-  }
-  return undefined;
 }
 
 /**

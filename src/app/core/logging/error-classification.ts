@@ -256,14 +256,19 @@ function classifyByName(
   return undefined;
 }
 
+function textOf(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
 function classifyByMessage(
   error: object | string,
 ): ErrorClassification | undefined {
   const err = error as ErrorLike;
+  // `name: message` like `Error.toString()`, which PouchDB errors (plain objects) lack
   const text =
     typeof error === "string"
       ? error
-      : `${err.message ?? ""} ${err.reason ?? ""} ${error.toString?.() ?? ""}`;
+      : `${textOf(err.name)}: ${textOf(err.message)} ${textOf(err.reason)}`;
   if (CONNECTIVITY_ERROR_PATTERNS.some((pattern) => text.includes(pattern))) {
     return "connectivity";
   }

@@ -151,9 +151,10 @@ Logging.error("Could not download file", err);
 
 `Logging.error(message, err)` reports the message as the error (wrapped in a `LoggedError`) and keeps
 the original as its `cause`. Sentry links a `cause` into the reported exception chain, so the original
-error and its stack trace are still in the event. The event is grouped by that root cause, so every
-component logging the same failure adds to one issue, and the message is reported as the `reported_by`
-tag: it says which component ran into the failure (see "How events are grouped"). Logged without an
+error and its stack trace are still in the event. The event is grouped by the message and the root
+cause; if the root cause is a classified failure (a broken local database, a server fault, a missing
+permission), by that root cause only, so every component running into it adds to one issue and the
+message is reported as the `reported_by` tag (see "How events are grouped"). Logged without an
 error, the message itself is the title and the grouping key, so keep it stable across releases.
 
 `Logging.warn(message, err)` is reported the same way, only at level `warning`. As a plain message
@@ -178,7 +179,7 @@ a failure and only returns a result flag, the component receiving it must not lo
 Extend `NamedError` (or create one) for an error whose name and message identify the problem on their
 own, no matter which component ran into it — e.g. `ConfigLoadError`, `SyncStalledError`,
 `DatabaseException`, `RegistryLookupError`. Remote monitoring groups these by name and message
-(or, if they wrap another error, by its root cause) instead of by stack trace, which otherwise opens
+(and, if they wrap another error, by its root cause) instead of by stack trace, which otherwise opens
 one issue per call site (and per build, as releases without source maps report minified frames).
 
 - Pass the name as a literal: the class name is minified in production builds.
@@ -210,10 +211,10 @@ The helpers `isConnectivityError()`, `isExpiredSessionError()` and `isNotPermitt
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `connectivity`    | no response, status 0, 502-504, timeout/abort, failed chunk load                                                                          | shared `network-error` issue, warning, 1 per page load; not while offline |
 | `session-expired` | 401 with an expired token the app could not renew                                                                                         | no                                                                        |
-| `not-permitted`   | 403, or 401 "User is not permitted"                                                                                                       | only if a component logged it with a message, as a warning                |
+| `not-permitted`   | 403, or 401 "User is not permitted"                                                                                                       | as a warning if a component logged it with a message, or if unhandled     |
 | `write-conflict`  | 409 / "Document update conflict"                                                                                                          | no                                                                        |
 | `local-storage`   | the device's IndexedDB is broken (`indexed_db_went_bad`, connection closing, object store not found, wrong adapter, multi-tab corruption) | first event of the page load, tagged `incident: local-db`                 |
-| `server-error`    | our backend answered with another 5xx                                                                                                     | as an error, with the status in the title and the `http_status` tag       |
+| `server-error`    | our backend answered with another 5xx                                                                                                     | at the logged level, with the status in the title and `http_status` tag   |
 
 The table is `REPORTING_POLICY` in `sentry-event-processing.ts`. Every classified event carries the
 `error_class` tag.
@@ -224,17 +225,19 @@ Sentry groups errors by their stack trace whenever one is available, so rewordin
 changes the issue title, but never splits or merges issues; only a fingerprint does. The `beforeSend`
 hook (`processSentryEvent`) therefore sets one where the stack is the wrong key:
 
-1. **Our errors, by root cause** — a `NamedError` or a logged message (`LoggedError`) that wraps
-   another error is grouped by the root cause of its `cause` chain only, so one failure is one issue,
-   whichever components ran into it. The issue is titled by the root cause (e.g. "DatabaseException:
-   Unknown kid"); the wrapper's message is kept as the `reported_by` tag (and extra), so the issue's
-   tag breakdown shows which components were affected. Two exceptions keep the wrapper in the key:
-   - a programming error (`TypeError`, `RangeError`, ...) as root cause is also grouped by the function
-     that threw it (the innermost stack frame with a name that survives minification), or by the
-     wrapper if there is none: its message alone does not tell two bugs apart;
-   - a network failure as root cause of a named error (`ConfigLoadError`, `AppBootstrapError`): the
-     wrapper says what failed, so it keeps an issue of its own, titled e.g. "AppBootstrapError:
-     Application Bootstrap failed (caused by TypeError: network failure)".
+1. **Our errors, by wrapper and root cause** — a `NamedError` or a logged message (`LoggedError`)
+   that wraps another error is grouped by the wrapper and the root cause of its `cause` chain, titled
+   e.g. "Error: Could not load school (caused by DatabaseException: missing)". A generic root cause
+   (a `missing` document, a `TypeError`, ...) in another component is likely a different bug, so it
+   gets an issue (and a new-issue alert) of its own. Exceptions:
+   - a **classified** root cause that means the same whichever component ran into it (`local-storage`,
+     `server-error`, `not-permitted`, see the table above) is grouped by the root cause only, so one
+     failure is one issue. The issue is titled by the root cause (e.g. "DatabaseException: Unknown
+     kid"); the wrapper's message is kept as the `reported_by` tag (and extra), so the issue's tag
+     breakdown shows which components were affected;
+   - a network failure as root cause of a named error (`ConfigLoadError`, `AppBootstrapError`) is
+     titled e.g. "AppBootstrapError: Application Bootstrap failed (caused by TypeError: network
+     failure)", without the browser's wording.
 
    An error without a cause is grouped by its name and message. A framework wrapper that only repeats
    the message of one of our errors (Angular does that for an error raised in a `resource()` loader)
@@ -281,7 +284,8 @@ load into a breadcrumb (category `sentry.suppressed`), so it still shows in the 
 
 - **The same error object** — an error that was already part of an event (e.g. logged by a component,
   then re-thrown and reaching Angular's `ErrorHandler`), or an unhandled error whose root cause was.
-  Two components logging the same root cause are both reported, into one issue (see above).
+  Two components logging the same root cause are both reported (into one issue if the root cause is
+  classified, see above).
 - **A broken local database** (`local-db-incident.ts`) — once the IndexedDB is broken, every later
   database access fails too (config, permission rules, sync, each view). Only the first
   `local-storage` event of the page load is reported, tagged `incident: local-db`.

@@ -25,7 +25,7 @@ export function processSentryEvent(
 
   const classification = classifySentryEvent(event, hint);
   const policy = classification ? REPORTING_POLICY[classification] : undefined;
-  if (policy?.drop(hint)) {
+  if (policy?.drop(hint, event)) {
     return null;
   }
   if (classification) {
@@ -47,7 +47,7 @@ const REPORTING_POLICY: Record<
   ErrorClassification,
   {
     /** whether nobody can act on it: not reported at all */
-    drop: (hint: Sentry.EventHint) => boolean;
+    drop: (hint: Sentry.EventHint, event: Sentry.ErrorEvent) => boolean;
     /** changes to the event after grouping */
     adjust?: (event: Sentry.ErrorEvent) => void;
   }
@@ -57,10 +57,13 @@ const REPORTING_POLICY: Record<
   connectivity: { drop: () => !navigator.onLine },
   // the user is told; the code waiting for the data is not at fault
   "session-expired": { drop: () => true },
-  // a permission-configuration state, not a bug: reported (as a warning) only
-  // where a component deliberately logged it with a message of its own
+  // usually a permission-configuration state, not a bug: reported (as a warning)
+  // where a component deliberately logged it with a message of its own, or where
+  // nothing handled it (e.g. a public form failing on every submission because
+  // the public role may not create the record)
   "not-permitted": {
-    drop: (hint) => !isDeliberatelyLogged(hint?.originalException),
+    drop: (hint, event) =>
+      !isUnhandled(event) && !isDeliberatelyLogged(hint?.originalException),
     adjust: (event) => (event.level = "warning"),
   },
   // normal for an offline-first app: the user is told by the form and it is
@@ -68,7 +71,7 @@ const REPORTING_POLICY: Record<
   "write-conflict": { drop: () => true },
   // one incident per page load (see `local-db-incident.ts`)
   "local-storage": { drop: () => false },
-  // a fault of our backend, whoever logged it and at which level
+  // a fault of our backend, whoever logged it: at the level it was logged with
   "server-error": { drop: () => false, adjust: reportServerError },
 };
 
@@ -97,6 +100,10 @@ function classifySentryEvent(
   );
 }
 
+function isUnhandled(event: Sentry.ErrorEvent): boolean {
+  return event.exception?.values?.at(-1)?.mechanism?.handled === false;
+}
+
 /** A failure logged with a message by a component, or wrapped in one of our named errors. */
 function isDeliberatelyLogged(error: unknown): boolean {
   return (
@@ -105,9 +112,8 @@ function isDeliberatelyLogged(error: unknown): boolean {
   );
 }
 
-/** Report a server fault as an error, with an issue per status. */
+/** Report a server fault with an issue per status. */
 function reportServerError(event: Sentry.ErrorEvent) {
-  event.level = "error";
   const status = event.extra?.status;
   if (typeof status !== "number") {
     return;

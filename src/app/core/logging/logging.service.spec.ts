@@ -218,14 +218,38 @@ describe("processSentryEvent", () => {
   describe("grouping", () => {
     it.each([
       {
-        case: "a named error, by its root cause",
+        case: "a named error with a generic root cause, by the error and its root cause",
         error: new NamedError(
           "ConfigLoadError",
           "Failed to load configuration.",
           { cause: new DatabaseException({ message: "Unknown kid" }) },
         ),
-        fingerprint: ["DatabaseException", "unknown kid"],
-        title: "DatabaseException: Unknown kid",
+        fingerprint: [
+          "ConfigLoadError",
+          "failed to load configuration",
+          "DatabaseException",
+          "unknown kid",
+        ],
+        title:
+          "ConfigLoadError: Failed to load configuration. (caused by DatabaseException: Unknown kid)",
+      },
+      {
+        case: "a named error with a classified root cause, by its root cause",
+        error: new NamedError(
+          "ConfigLoadError",
+          "Failed to load configuration.",
+          {
+            cause: new DatabaseException(
+              new ServerError("Server error response from DB", { status: 500 }),
+            ),
+          },
+        ),
+        fingerprint: [
+          "DatabaseException",
+          "server error response from db",
+          "500",
+        ],
+        title: "DatabaseException: Server error response from DB (HTTP 500)",
         reportedBy: "ConfigLoadError: Failed to load configuration.",
       },
       {
@@ -270,29 +294,33 @@ describe("processSentryEvent", () => {
         title: "NetworkError: Failed to reach the server",
       },
       {
-        case: "a logged other failure, by its root cause",
+        case: "a logged other failure, by the message and its root cause",
         error: new LoggedError(
           "Could not load notes",
           new DatabaseException({ message: "Unauthorized" }),
         ),
-        fingerprint: ["DatabaseException", "unauthorized"],
-        title: "DatabaseException: Unauthorized",
-        reportedBy: "Error: Could not load notes",
+        fingerprint: [
+          "Error",
+          "could not load notes",
+          "DatabaseException",
+          "unauthorized",
+        ],
+        title:
+          "Error: Could not load notes (caused by DatabaseException: Unauthorized)",
       },
       {
-        case: "a programming error without a stack, by its root cause and the wrapper",
+        case: "a logged programming error, by the message and its root cause",
         error: new LoggedError(
           "Could not render",
           new TypeError("x is undefined"),
         ),
         fingerprint: [
-          "TypeError",
-          "x is undefined",
           "Error",
           "could not render",
+          "TypeError",
+          "x is undefined",
         ],
-        title: "TypeError: x is undefined",
-        reportedBy: "Error: Could not render",
+        title: "Error: Could not render (caused by TypeError: x is undefined)",
       },
       {
         // Angular re-throws an error raised in a `resource()` loader as its own
@@ -326,16 +354,20 @@ describe("processSentryEvent", () => {
       },
     );
 
-    it("should group one root cause logged by different components into one issue, telling the components apart by tag", () => {
-      // like AAM-DIGITAL-7CQ, 7CR, 77R: one failure, one issue per component
-      const root = new DatabaseException({
-        status: 401,
-        reason: "Unknown kid",
-        message: "unauthorized",
-      });
-      const bySync = process(new LoggedError("sync failed", root));
+    it("should group one classified root cause logged by different components into one issue, telling the components apart by tag", () => {
+      // like AAM-DIGITAL-7CQ, 7CR, 77R: one broken local database, one issue
+      const bySync = process(
+        new LoggedError(
+          "sync failed",
+          new DatabaseException(brokenIndexedDb()),
+        ),
+      );
+      resetReportedEvents(); // the next page load
       const byPermissions = process(
-        new LoggedError("Failed to load permission rules", root),
+        new LoggedError(
+          "Failed to load permission rules",
+          new DatabaseException(brokenIndexedDb()),
+        ),
       );
 
       expect(bySync.fingerprint).toEqual(byPermissions.fingerprint);
@@ -345,31 +377,32 @@ describe("processSentryEvent", () => {
       );
     });
 
-    it("should keep programming errors thrown in different functions apart, even with the same message", () => {
-      const thrownIn = (fn: string) => {
-        const error = new LoggedError(
-          "Failed to load dynamic component",
-          new TypeError("Cannot read properties of undefined (reading 'id')"),
-        );
-        const event = eventFor(error);
-        event.exception.values[0].stacktrace = {
-          frames: [
-            { function: "t.<anonymous>" },
-            { function: `_EntityDetails.${fn}` },
-            { function: "t" },
-          ],
-        };
-        return processSentryEvent(event, { originalException: error })
-          .fingerprint;
-      };
+    it.each([
+      [
+        "a missing document",
+        () => new DatabaseException({ status: 404, message: "missing" }),
+      ],
+      [
+        "a programming error",
+        () =>
+          new TypeError(
+            "Cannot read properties of undefined (reading 'length')",
+          ),
+      ],
+    ])(
+      "should keep %s logged by different components in issues of their own, whatever library function threw it",
+      (_, rootCause) => {
+        const loggedBy = (message: string) =>
+          process(new LoggedError(message, rootCause()), {
+            // e.g. thrown in a callback of `Array.map`
+            frames: [{ function: "Array.map", filename: "<anonymous>" }],
+          }).fingerprint;
 
-      expect(thrownIn("loadRelated")).toEqual([
-        "TypeError",
-        "cannot read properties of undefined (reading 'id')",
-        "loadRelated",
-      ]);
-      expect(thrownIn("initPanels")).not.toEqual(thrownIn("loadRelated"));
-    });
+        expect(loggedBy("Could not load school")).not.toEqual(
+          loggedBy("Failed to load config"),
+        );
+      },
+    );
 
     it.each([
       ["a failed request", new TypeError("Load failed"), ["network-error"]],
@@ -549,6 +582,30 @@ describe("processSentryEvent", () => {
       tags: { http_status: "500", error_class: "server-error" },
     },
     {
+      case: "a server error logged as a warning, at the level it was logged with",
+      error: new LoggedError(
+        "Could not load notes",
+        new DatabaseException(
+          new ServerError("Server error response from DB", { status: 500 }),
+        ),
+      ),
+      loggedLevel: "warning",
+      level: "warning",
+      title: "DatabaseException: Server error response from DB (HTTP 500)",
+      tags: { http_status: "500", error_class: "server-error" },
+    },
+    {
+      case: "an unhandled not-permitted failure, as a warning",
+      // e.g. a public form re-throwing the failed save of a record the public role may not create
+      error: new Error("Could not save Note: forbidden", {
+        cause: new DatabaseException({ status: 403, message: "forbidden" }),
+      }),
+      unhandled: true,
+      level: "warning",
+      title: "Error: Could not save Note: forbidden",
+      tags: { error_class: "not-permitted" },
+    },
+    {
       case: "a logged not-permitted failure, as a warning",
       error: new LoggedError(
         "Could not load record",
@@ -558,16 +615,27 @@ describe("processSentryEvent", () => {
       title: "DatabaseException: forbidden",
       tags: { error_class: "not-permitted" },
     },
-  ])("should report $case", ({ error, level, title: expected, tags }) => {
-    const event = processSentryEvent(
-      { ...eventFor(error), level: "error" },
-      { originalException: error },
-    );
+  ] as {
+    case: string;
+    error: Error;
+    loggedLevel?: Sentry.SeverityLevel;
+    unhandled?: boolean;
+    level: Sentry.SeverityLevel;
+    title: string;
+    tags: Record<string, string>;
+  }[])(
+    "should report $case",
+    ({ error, loggedLevel, unhandled, level, title: expected, tags }) => {
+      const event = processSentryEvent(
+        { ...eventFor(error, { unhandled }), level: loggedLevel ?? "error" },
+        { originalException: error },
+      );
 
-    expect(event.level).toBe(level);
-    expect(title(event)).toBe(expected);
-    expect(event.tags).toMatchObject(tags);
-  });
+      expect(event.level).toBe(level);
+      expect(title(event)).toBe(expected);
+      expect(event.tags).toMatchObject(tags);
+    },
+  );
 
   it("should cap the events of one issue per session, without silencing other issues", () => {
     const repeated = () => process(new Error("Repeated failure"));
@@ -581,7 +649,10 @@ describe("processSentryEvent", () => {
 
   describe("reporting each failure once per page load", () => {
     it("should report an error once when it is logged by a component and then reaches the error handler unhandled", () => {
-      const failure = brokenIndexedDb();
+      const failure = new DatabaseException({
+        status: 404,
+        message: "missing",
+      });
 
       expect(process(new LoggedError("sync failed", failure))).not.toBeNull();
       expect(process(failure, { unhandled: true })).toBeNull();
