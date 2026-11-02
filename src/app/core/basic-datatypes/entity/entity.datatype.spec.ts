@@ -79,6 +79,17 @@ describe("Schema data type: entity", () => {
           ),
       ],
       [
+        "no permission (401 not permitted)",
+        () =>
+          Promise.reject(
+            new DatabaseException({
+              message: "unauthorized",
+              reason: "User is not permitted",
+              status: 401,
+            }),
+          ),
+      ],
+      [
         "unknown entity type",
         () => Promise.reject(new RegistryLookupError("EntityRegistry", "X")),
       ],
@@ -103,7 +114,11 @@ describe("Schema data type: entity", () => {
       ["connection error", new TypeError("Failed to fetch")],
       [
         "expired session (401)",
-        new DatabaseException({ message: "unauthorized", status: 401 }),
+        new DatabaseException({
+          message: "unauthorized",
+          reason: "exp not in future",
+          status: 401,
+        }),
       ],
       [
         "server error (500)",
