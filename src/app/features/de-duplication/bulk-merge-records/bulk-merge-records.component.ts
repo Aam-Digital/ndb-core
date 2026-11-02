@@ -110,7 +110,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge(),
       this.mergedEntity,
       this.destroyRef,
-      false,
       true,
       false,
     );
