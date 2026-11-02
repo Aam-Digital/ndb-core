@@ -75,7 +75,7 @@ export class ExportDialogComponent {
   isLoading = signal<boolean>(false);
   downloadError = signal<string | null>(null);
 
-  /** All available export column options (deduped, excludes internal fields). */
+  /** All available export column options, as offered by the caller (deduped). */
   availableColumns: ExportColumnConfig[] = this.buildAvailableColumns();
 
   /** Selected export column keys in the order chosen by the user (undefined = use default passed config). */
@@ -145,7 +145,6 @@ export class ExportDialogComponent {
     const seen = new Set<string>();
     for (const c of configs) {
       const key = normalizeQueryKey(c.query);
-      if (key.startsWith("_")) continue;
       if (!seen.has(key)) {
         seen.add(key);
         out.push(c);
