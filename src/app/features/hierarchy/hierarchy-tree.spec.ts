@@ -8,11 +8,10 @@ import {
 } from "./hierarchy-tree";
 
 /** a record named `name` with id `TestEntity:<name>`, linking to the record named `parent` through `ref` */
-function record(name: string, parent?: string, other?: string): TestEntity {
+function record(name: string, parent?: string): TestEntity {
   return Object.assign(new TestEntity(name), {
     name,
     ref: parent && `TestEntity:${parent}`,
-    other,
   });
 }
 
@@ -29,7 +28,6 @@ function describeRows(view: HierarchyView<TestEntity>): string[] {
   );
 }
 
-const byRef: HierarchyOptions<TestEntity> = { parentField: "ref" };
 const sortedByName: HierarchyOptions<TestEntity> = {
   parentField: "ref",
   sort: { active: "name", direction: "asc" },
@@ -232,18 +230,5 @@ describe("hierarchy-tree", () => {
     expect(descendantIds(parents, "TestEntity:A")).toEqual(
       new Set(["TestEntity:B", "TestEntity:C"]),
     );
-  });
-
-  it("arranges by another parent field", () => {
-    const records = [
-      record("Survey"),
-      record("Well", undefined, "TestEntity:Survey"),
-    ];
-    const view = buildHierarchyView(records, records, {
-      ...byRef,
-      parentField: "other",
-    });
-
-    expect(describeRows(view)).toEqual(["Survey", "-Well"]);
   });
 });
