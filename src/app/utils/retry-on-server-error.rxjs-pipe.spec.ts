@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { defer, firstValueFrom, throwError } from "rxjs";
 import { retryOnServerError } from "./retry-on-server-error.rxjs-pipe";
-import { toTypedHttpError } from "#src/app/core/logging/typed-http-error.interceptor";
+import { toTypedHttpError } from "./typed-http-error.interceptor";
 
 describe("retryOnServerError", () => {
   afterEach(() => vi.useRealTimers());

@@ -4,7 +4,7 @@ import { Observable, of, throwError } from "rxjs";
 import type { Mock } from "vitest";
 import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { toTypedHttpError } from "#src/app/core/logging/typed-http-error.interceptor";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   ApiClientService,
   errorMessageOf,

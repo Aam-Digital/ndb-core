@@ -26,7 +26,7 @@ import {
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
-import { toTypedHttpError } from "#src/app/core/logging/typed-http-error.interceptor";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   entityRegistry,
   EntityRegistry,

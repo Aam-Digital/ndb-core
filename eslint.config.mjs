@@ -47,7 +47,7 @@ export default defineConfig([
     files: ["src/**/*.ts"],
     ignores: [
       "src/**/*.spec.ts",
-      "src/app/core/logging/typed-http-error.interceptor.ts",
+      "src/app/utils/typed-http-error.interceptor.ts",
       "src/app/utils/failed-http-response.ts",
     ],
     rules: {

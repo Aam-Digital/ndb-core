@@ -1,9 +1,9 @@
 import { NamedError } from "../../logging/reported-errors";
 import {
   classifyByPattern,
-  classifyResponseStatus,
   createTypedError,
 } from "../../logging/error-classification";
+import { classifyResponseStatus } from "#src/app/utils/backend-response";
 
 /**
  * Own properties of PouchDB's errors (and of the copies its `createError()` makes)

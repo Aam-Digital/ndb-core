@@ -7,7 +7,7 @@ import { LoggedError, NamedError } from "./reported-errors";
 import { processSentryEvent } from "./sentry-event-processing";
 import { MAX_REPEATED_SENTRY_EVENTS, resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
-import { toTypedHttpError } from "./typed-http-error.interceptor";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   classifyError,
   ConnectivityError,

@@ -1,7 +1,7 @@
 import { DatabaseException } from "../core/database/pouchdb/database-exception";
 import { isNotPermittedError } from "./not-permitted-error";
 import { HttpErrorResponse } from "@angular/common/http";
-import { toTypedHttpError } from "../core/logging/typed-http-error.interceptor";
+import { toTypedHttpError } from "./typed-http-error.interceptor";
 import { LoggedError } from "../core/logging/reported-errors";
 import { isConnectivityError } from "./connectivity-error";
 import { isExpiredSessionError } from "./expired-session-error";

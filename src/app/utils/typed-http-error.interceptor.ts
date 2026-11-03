@@ -6,11 +6,11 @@ import {
 import { catchError, throwError } from "rxjs";
 import { environment } from "#src/environments/environment";
 import {
-  classifyResponseStatus,
   createTypedError,
   ErrorClassification,
-} from "./error-classification";
-import { normalizeRequestPath } from "./sentry-grouping";
+} from "#src/app/core/logging/error-classification";
+import { normalizeRequestPath } from "#src/app/core/logging/sentry-grouping";
+import { classifyResponseStatus } from "./backend-response";
 
 /**
  * Where failed responses of our own backend (the database and API proxies)
@@ -21,8 +21,7 @@ import { normalizeRequestPath } from "./sentry-grouping";
  * Other failures (e.g. a 400 or 404 the caller handles) stay an `HttpErrorResponse`,
  * as do responses of other services (Keycloak, the address lookup, ...),
  * whose statuses mean something else and which their callers handle themselves.
- * Callers read the response (e.g. its body) of either with `failedHttpResponse()`
- * (`src/app/utils/failed-http-response.ts`).
+ * Callers read the response (e.g. its body) of either with `failedHttpResponse()`.
  */
 export const typedHttpErrorInterceptor: HttpInterceptorFn = (request, next) =>
   isBackendRequest(request.url)

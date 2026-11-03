@@ -24,11 +24,11 @@ import {
   unexpectedResponseMessage,
 } from "../../logging/http-response-logging";
 import {
-  CONNECTIVITY_ERROR_STATUS,
   ConnectivityError,
   ServerError,
   SessionExpiredError,
 } from "../../logging/error-classification";
+import { CONNECTIVITY_ERROR_STATUS } from "#src/app/utils/backend-response";
 import { normalizeRequestPath } from "../../logging/sentry-grouping";
 
 /**

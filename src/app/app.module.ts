@@ -29,7 +29,7 @@ import {
   withInterceptorsFromDi,
   withXhr,
 } from "@angular/common/http";
-import { typedHttpErrorInterceptor } from "./core/logging/typed-http-error.interceptor";
+import { typedHttpErrorInterceptor } from "./utils/typed-http-error.interceptor";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";

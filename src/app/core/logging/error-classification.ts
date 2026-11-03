@@ -1,5 +1,5 @@
-import { HttpStatusCode } from "@angular/common/http";
 import { LoggedError, NamedError } from "./reported-errors";
+import { CONNECTIVITY_ERROR_STATUS } from "#src/app/utils/backend-response";
 
 /**
  * What kind of failure an error is, for reporting it: derived by
@@ -10,7 +10,7 @@ import { LoggedError, NamedError } from "./reported-errors";
  * Errors are converted into typed errors where they enter the app: the database
  * layer (`DatabaseException` / `toTypedDatabaseError`, the remote database's
  * fetch wrapper) and the HTTP interceptor (`typedHttpErrorInterceptor`), using
- * {@link classifyResponseStatus} and {@link classifyByPattern}. For a new kind of
+ * `classifyResponseStatus` (`backend-response.ts`) and {@link classifyByPattern}. For a new kind of
  * error, extend one of the typed classes.
  */
 export type ErrorClassification =
@@ -173,13 +173,6 @@ export function isTypedErrorName(name: unknown): boolean {
 }
 
 /**
- * HTTP statuses of a request that never reached the application's backend:
- * `0` for one that got no response at all, the others reported by an
- * infrastructure component in front of it.
- */
-export const CONNECTIVITY_ERROR_STATUS = new Set([0, 502, 503, 504]);
-
-/**
  * Error `name`s that browsers use for requests that were cut off before
  * completing, rather than answered with an error.
  */
@@ -234,52 +227,8 @@ const PROGRAMMING_ERROR_NAMES = new Set([
   "SyntaxError",
 ]);
 
-/** CouchDB's `reason` for rejecting a request whose JWT `exp` claim has passed. */
-const EXPIRED_TOKEN_REASON = "exp not in future";
-
-/** Text the permission backend uses when the current user may not access a document or type. */
-const NOT_PERMITTED_TEXT = "not permitted";
-
 /** PouchDB's wording of a rejected write, for errors that lost their 409 status. */
 const WRITE_CONFLICT_TEXT = "document update conflict";
-
-/**
- * The classification of a failed response of our backend (the database or the
- * API), by its status and the texts the backend gave as reason. For the
- * boundaries where these responses enter the app and are converted into typed
- * errors (see {@link createTypedError}).
- *
- * `undefined` for a status the caller handles itself (e.g. 400, 404) and for a
- * 5xx: whether it is the server failing is for the boundary to judge (PouchDB
- * uses 500 for failures of the local database as well).
- */
-export function classifyResponseStatus(
-  status: unknown,
-  reasons: unknown[],
-): Exclude<ErrorClassification, "local-storage" | "server-error"> | undefined {
-  if (CONNECTIVITY_ERROR_STATUS.has(status as number)) {
-    return "connectivity";
-  }
-  const texts = reasons
-    .filter((text): text is string => typeof text === "string")
-    .map((text) => text.toLowerCase());
-  switch (status) {
-    case HttpStatusCode.Unauthorized:
-      if (texts.some((text) => text.includes(EXPIRED_TOKEN_REASON))) {
-        return "session-expired";
-      }
-      // other 401 reasons (e.g. an invalid token signature) are misconfigurations
-      return texts.some((text) => text.includes(NOT_PERMITTED_TEXT))
-        ? "not-permitted"
-        : undefined;
-    case HttpStatusCode.Forbidden:
-      return "not-permitted";
-    case HttpStatusCode.Conflict:
-      return "write-conflict";
-    default:
-      return undefined;
-  }
-}
 
 /**
  * What kind of failure the given error is, judged by this one error (not its `cause`s):
