@@ -2,6 +2,7 @@ import type * as Sentry from "@sentry/angular";
 import { ErrorClassification, isTypedErrorName } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
+import { errorText, textOf } from "#src/app/utils/backend-response";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
@@ -138,12 +139,34 @@ function failedRequestPassedOn(
   if (chainClassifications[values.indexOf(reportedError)] === "connectivity") {
     return reportedError;
   }
+  if (!(original instanceof LoggedError)) {
+    return undefined;
+  }
+  if (!(original.cause instanceof Error)) {
+    return loggedForeignFailedRequest(original.cause);
+  }
   const causeIndex = values.length - 2;
-  return original instanceof LoggedError &&
-    causeIndex >= 0 &&
-    chainClassifications[causeIndex] === "connectivity"
+  return causeIndex >= 0 && chainClassifications[causeIndex] === "connectivity"
     ? values[causeIndex]
     : undefined;
+}
+
+/**
+ * A logged failure that is not an `Error` (e.g. an `HttpErrorResponse` of a request
+ * to another service without response), which Sentry does not serialize as an
+ * exception of the event: as the exception it would be, if it is a failed request.
+ */
+function loggedForeignFailedRequest(
+  cause: unknown,
+): Sentry.Exception | undefined {
+  if (classifyReportedError(cause) !== "connectivity") {
+    return undefined;
+  }
+  const { name, message } = (cause ?? {}) as Record<string, unknown>;
+  return {
+    type: textOf(name) || "Error",
+    value: textOf(message) || errorText(cause),
+  };
 }
 
 /**

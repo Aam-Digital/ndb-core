@@ -153,7 +153,8 @@ Logging.error("Could not download file", err);
 `LoggedError`) with the original as its `cause`, so the original error and its stack trace stay in the
 event, and the grouping and filtering below apply to it. Logged without an error, the message is
 reported as a plain message event, grouped by its text. An `HttpErrorResponse` is not an `Error` and
-counts as "no error" here. So do not drop the error before logging (a `catchError(() => of(null))`
+counts as "no error" here, unless it is a request to another service that got no response (status 0 or a
+gateway status): that is reported as the `cause`, so that it goes into the network issue. So do not drop the error before logging (a `catchError(() => of(null))`
 followed by a log call without it leaves the report impossible to diagnose), and do not pass the same
 error object twice.
 

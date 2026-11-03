@@ -79,6 +79,9 @@ const brokenIndexedDb = () =>
 const browserError = (name: string, message: string) =>
   Object.assign(new Error(message), { name });
 
+/** A request to another service (not converted by the HTTP interceptor) without response. */
+const offlineResponse = new HttpErrorResponse({ status: 0 });
+
 describe("LoggingService", () => {
   const failure = new Error("Failed to fetch");
 
@@ -113,6 +116,13 @@ describe("LoggingService", () => {
       level: LogLevel.WARN,
       context: [new HttpErrorResponse({ status: 404 })],
       expected: undefined,
+    },
+    {
+      // grouped and filtered like that failure (into the network issue)
+      call: "a warning with a request to another service without response",
+      level: LogLevel.WARN,
+      context: [offlineResponse],
+      expected: { message: "Could not load X", cause: offlineResponse },
     },
   ])(
     "should report $call as the logged message caused by the error (or as a plain message if undefined)",
@@ -363,6 +373,15 @@ describe("processSentryEvent", () => {
       {
         case: "a logged failed request, in the network issue whoever logged it",
         error: new LoggedError("Could not load notes", failedFetch()),
+        fingerprint: ["network-error"],
+        title: "NetworkError: Failed to reach the server",
+      },
+      {
+        case: "a logged failed request to another service (not an Error), in the network issue",
+        error: new LoggedError(
+          "Failed to load config descriptor",
+          offlineResponse,
+        ),
         fingerprint: ["network-error"],
         title: "NetworkError: Failed to reach the server",
       },
