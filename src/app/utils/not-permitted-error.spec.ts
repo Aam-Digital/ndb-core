@@ -5,11 +5,9 @@ import { toTypedHttpError } from "./typed-http-error.interceptor";
 import { LoggedError } from "../core/logging/reported-errors";
 import { isConnectivityError } from "./connectivity-error";
 import { isExpiredSessionError } from "./expired-session-error";
-import {
-  ConnectivityError,
-  NotPermittedError,
-  SessionExpiredError,
-} from "../core/logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 
 describe("isNotPermittedError", () => {
   it("should detect the permission backend refusing a record (wrapped in a DatabaseException)", () => {

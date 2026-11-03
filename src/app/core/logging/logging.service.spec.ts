@@ -8,12 +8,9 @@ import { processSentryEvent } from "./sentry-event-processing";
 import { MAX_REPEATED_SENTRY_EVENTS, resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
-import {
-  classifyError,
-  ConnectivityError,
-  NotPermittedError,
-  ServerError,
-} from "./error-classification";
+import { classifyError } from "./error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";

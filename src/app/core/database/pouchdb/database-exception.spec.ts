@@ -1,11 +1,10 @@
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import {
-  ConnectivityError,
   LocalStorageError,
-  NotPermittedError,
-  ServerError,
-  SessionExpiredError,
   WriteConflictError,
-} from "../../logging/error-classification";
+} from "#src/app/core/database/pouchdb/database-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 
 /** A copy of an error like PouchDB's `createError()` makes: all own properties, without the class. */

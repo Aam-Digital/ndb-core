@@ -4,13 +4,10 @@ import {
   HttpRequest,
 } from "@angular/common/http";
 import { firstValueFrom, throwError } from "rxjs";
-import {
-  ConnectivityError,
-  NotPermittedError,
-  ServerError,
-  SessionExpiredError,
-  WriteConflictError,
-} from "#src/app/core/logging/error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
+import { WriteConflictError } from "#src/app/core/database/pouchdb/database-errors";
 import { typedHttpErrorInterceptor } from "./typed-http-error.interceptor";
 import { failedHttpResponse } from "./failed-http-response";
 

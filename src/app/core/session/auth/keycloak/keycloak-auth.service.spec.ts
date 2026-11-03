@@ -10,7 +10,7 @@ import { ActivatedRoute } from "@angular/router";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import type { Mock } from "vitest";
 import { Logging } from "../../../logging/logging.service";
-import { ConnectivityError } from "../../../logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 
 type HttpClientMock = {
   get: Mock;

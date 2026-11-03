@@ -6,16 +6,21 @@ import {
 import { catchError, throwError } from "rxjs";
 import { environment } from "#src/environments/environment";
 import {
-  createTypedError,
   ErrorClassification,
+  TypedError,
+  TypedErrorOptions,
 } from "#src/app/core/logging/error-classification";
 import { normalizeRequestPath } from "#src/app/core/logging/sentry-grouping";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
+import { WriteConflictError } from "#src/app/core/database/pouchdb/database-errors";
 import { classifyResponseStatus } from "./backend-response";
+import { ConnectivityError, ServerError } from "./backend-errors";
 
 /**
  * Where failed responses of our own backend (the database and API proxies)
  * enter the app through `HttpClient`: a classified failure is converted into
- * its typed error (see `error-classification.ts`), with the `HttpErrorResponse`
+ * its typed error (see {@link TYPED_HTTP_ERRORS}), with the `HttpErrorResponse`
  * as its `cause` and its `status` kept.
  *
  * Other failures (e.g. a 400 or 404 the caller handles) stay an `HttpErrorResponse`,
@@ -39,18 +44,33 @@ function isBackendRequest(url: string): boolean {
 type HttpErrorClassification = Exclude<ErrorClassification, "local-storage">;
 
 /**
- * The message of the typed error of each classification. Static, as the
+ * The typed error of each classification, and its message. Static, as the
  * message of a classified error is its issue title and grouping key: the url
  * (with ids and query parameters, which may hold personal data) goes into the
  * error's `details`, without the query (and as `requestPath` with ids masked,
  * which tells server errors of different endpoints apart).
  */
-const TYPED_HTTP_ERROR_MESSAGES: Record<HttpErrorClassification, string> = {
-  connectivity: "Failed to fetch from",
-  "server-error": "Server error response from",
-  "not-permitted": "Request not permitted by",
-  "session-expired": "Session expired for request to",
-  "write-conflict": "Write conflict response from",
+const TYPED_HTTP_ERRORS: Record<
+  HttpErrorClassification,
+  {
+    type: new (message: string, options: TypedErrorOptions) => TypedError;
+    message: string;
+  }
+> = {
+  connectivity: { type: ConnectivityError, message: "Failed to fetch from" },
+  "server-error": { type: ServerError, message: "Server error response from" },
+  "not-permitted": {
+    type: NotPermittedError,
+    message: "Request not permitted by",
+  },
+  "session-expired": {
+    type: SessionExpiredError,
+    message: "Session expired for request to",
+  },
+  "write-conflict": {
+    type: WriteConflictError,
+    message: "Write conflict response from",
+  },
 };
 
 /** The typed error of a failed response of our backend (see {@link typedHttpErrorInterceptor}). */
@@ -67,20 +87,17 @@ export function toTypedHttpError(
   }
   const url = request.url.split(/[?#]/)[0];
   const target = url.startsWith(environment.DB_PROXY_PREFIX) ? "DB" : "API";
-  return createTypedError(
-    classification,
-    `${TYPED_HTTP_ERROR_MESSAGES[classification]} ${target}`,
-    {
-      status: error.status,
-      cause: error,
-      details: {
-        url,
-        requestPath: normalizeRequestPath(url),
-        method: request.method,
-        statusText: error.statusText,
-      },
+  const { type, message } = TYPED_HTTP_ERRORS[classification];
+  return new type(`${message} ${target}`, {
+    status: error.status,
+    cause: error,
+    details: {
+      url,
+      requestPath: normalizeRequestPath(url),
+      method: request.method,
+      statusText: error.statusText,
     },
-  );
+  });
 }
 
 function classifyHttpError(

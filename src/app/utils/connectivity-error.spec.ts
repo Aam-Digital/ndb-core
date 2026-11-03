@@ -1,6 +1,6 @@
 import { isConnectivityError } from "./connectivity-error";
 import { DatabaseException } from "../core/database/pouchdb/pouch-database";
-import { ConnectivityError } from "../core/logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { SyncFailedError } from "../core/database/pouchdb/synced-pouch-database";
 
 describe("isConnectivityError", () => {
