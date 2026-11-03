@@ -10,7 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
 import { filter, startWith } from "rxjs/operators";
-import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -29,7 +29,7 @@ import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.s
  * distinct `tabIndexKey`. Otherwise they share the same query param and reset
  * each other on every navigation.
  *
- * The key is registered with the {@link TableStateUrlService} as state that is not a filter,
+ * The key is registered with the {@link UrlStateService} as state that is not a filter,
  * so a list on the same page does not treat the selected tab as a filter value.
  */
 @UntilDestroy()
@@ -40,7 +40,7 @@ import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.s
 })
 export class TabStateMemoDirective implements OnInit {
   private router = inject(Router);
-  private readonly urlState = inject(TableStateUrlService);
+  private readonly urlState = inject(UrlStateService);
   private tab = inject(MatTabGroup);
   private cdr = inject(ChangeDetectorRef);
   private viewContext = inject(ViewComponentContext, { optional: true });

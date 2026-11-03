@@ -107,7 +107,7 @@ This keeps options of feature data sources out of the inputs of the core list an
 ## State in the URL
 
 The entity list keeps its filters, sort and column-group tab in the URL query params, so that reloading
-or going back restores the view. All of this goes through `TableStateUrlService` (`src/app/utils/url-state/`).
+or going back restores the view. All of this goes through `UrlStateService` (`src/app/utils/url-state/`).
 Every query param counts as a filter value, except the keys that their owners register with
 `registerNonFilterKeys()` before writing them: the sort store registers `sortBy` and `sortOrder`,
 `TabStateMemoDirective` its tab key (`tabIndex` by default).

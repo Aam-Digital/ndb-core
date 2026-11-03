@@ -12,7 +12,7 @@ import {
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { NgComponentOutlet } from "@angular/common";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
@@ -41,7 +41,7 @@ import { EntitiesTableDataSource } from "../../common-components/entities-table/
 export class FilterComponent<T extends Entity = Entity> {
   private filterGenerator = inject(FilterGeneratorService);
   private filterService = inject(FilterService);
-  private readonly tableStateUrl = inject(TableStateUrlService);
+  private readonly urlState = inject(UrlStateService);
 
   /**
    * The filter configuration from the config
@@ -155,7 +155,7 @@ export class FilterComponent<T extends Entity = Entity> {
     );
     this.applyFilterSelections(updatedSelections);
     if (this.useUrlQueryParams()) {
-      this.tableStateUrl.updateFilterParam(
+      this.urlState.updateFilterParam(
         filter.name,
         selectedOptions.map((value) => encodeURIComponent(value)).join(","),
         false,
@@ -190,7 +190,7 @@ export class FilterComponent<T extends Entity = Entity> {
       return this.filterConfig() ?? [];
     }
 
-    const params = this.tableStateUrl.getFilterParams();
+    const params = this.urlState.getFilterParams();
     const configuredIds = new Set((this.filterConfig() ?? []).map((f) => f.id));
     const extraConfigs: FilterConfig[] = Object.keys(params)
       .filter((k) => !configuredIds.has(k) && this.entityType().schema.has(k))
@@ -219,7 +219,7 @@ export class FilterComponent<T extends Entity = Entity> {
       return filterSelections;
     }
 
-    const params = this.tableStateUrl.getFilterParams();
+    const params = this.urlState.getFilterParams();
     const hasUrlParams = Object.keys(params).length > 0;
     let hasChanges = false;
 
@@ -280,7 +280,7 @@ export class FilterComponent<T extends Entity = Entity> {
 
     if (this.useUrlQueryParams()) {
       const filterKeys = this.filterSelections().map((f) => f.name);
-      this.tableStateUrl.clearFilterParams(filterKeys, false);
+      this.urlState.clearFilterParams(filterKeys, false);
     }
   }
 

@@ -168,8 +168,8 @@ describe("FilterComponent", () => {
   });
 
   it("should encode filter values containing commas before storing them in the url", () => {
-    const tableStateUrl = (component as any).tableStateUrl;
-    const updateFilterParamSpy = vi.spyOn(tableStateUrl, "updateFilterParam");
+    const urlState = (component as any).urlState;
+    const updateFilterParamSpy = vi.spyOn(urlState, "updateFilterParam");
     fixture.componentRef.setInput("useUrlQueryParams", true);
     fixture.detectChanges();
 

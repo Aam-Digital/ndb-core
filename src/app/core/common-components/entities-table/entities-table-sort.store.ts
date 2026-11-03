@@ -15,7 +15,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
 import { SortValueFns } from "./table-sort/table-sort";
-import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 type ReadSignal<T> = () => T;
 
@@ -37,7 +37,7 @@ export interface EntitiesTableSortContext {
  */
 @Injectable()
 export class EntitiesTableSortStore<T extends Entity = Entity> {
-  private readonly tableStateUrl = inject(TableStateUrlService);
+  private readonly urlState = inject(UrlStateService);
   private readonly schemaService = inject(EntitySchemaService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -106,15 +106,12 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
   });
 
   constructor() {
-    this.tableStateUrl.registerNonFilterKeys("sortBy", "sortOrder");
+    this.urlState.registerNonFilterKeys("sortBy", "sortOrder");
 
     // Sync default sort when no manual override and no URL state
     effect(() => {
       if (!this.context) return;
-      if (
-        !this.sortManuallySet() &&
-        !this.tableStateUrl.getUrlParam("sortBy")
-      ) {
+      if (!this.sortManuallySet() && !this.urlState.getUrlParam("sortBy")) {
         this.sortState.set(this.defaultSort());
       }
     });
@@ -126,7 +123,7 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
       if (!externalSort) return;
       this.sortState.set(externalSort);
       if (externalSort.active) {
-        this.tableStateUrl.updateUrlParams({
+        this.urlState.updateUrlParams({
           sortBy: externalSort.active,
           sortOrder: externalSort.direction ?? "asc",
         });
@@ -145,8 +142,8 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
     if (!sort || this.attachedSort === sort) return;
     this.attachedSort = sort;
 
-    const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-    const urlSortOrder = this.tableStateUrl.getUrlParam(
+    const urlSortBy = this.urlState.getUrlParam("sortBy");
+    const urlSortOrder = this.urlState.getUrlParam(
       "sortOrder",
     ) as SortDirection;
     if (urlSortBy) {
@@ -167,7 +164,7 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
 
   private updateSortUrlParams(active: string, direction: SortDirection) {
     if (!direction) {
-      this.tableStateUrl.updateUrlParams({
+      this.urlState.updateUrlParams({
         sortBy: null,
         sortOrder: null,
       });
@@ -175,14 +172,14 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
     }
 
     if (direction === "desc") {
-      this.tableStateUrl.updateUrlParams({
+      this.urlState.updateUrlParams({
         sortBy: active,
         sortOrder: "desc",
       });
       return;
     }
 
-    this.tableStateUrl.updateUrlParams({
+    this.urlState.updateUrlParams({
       sortBy: active,
       sortOrder: null,
     });

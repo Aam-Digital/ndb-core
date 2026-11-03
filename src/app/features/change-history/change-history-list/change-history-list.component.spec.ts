@@ -14,7 +14,7 @@ import { AuditRecord } from "../model/audit-record";
 import { Entity } from "../../../core/entity/model/entity";
 import { By } from "@angular/platform-browser";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { TableStateUrlService } from "#src/app/utils/url-state/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 /** the built selector, which is an untyped Mango object at the database edge */
 function selector(): Record<string, any> {
@@ -159,8 +159,8 @@ it("should drop the filters it stops offering from the URL too", async () => {
   // entity, so a left-over one would come back as an unconfigured filter -
   // narrowing a query the related-record view does not apply it to
   await setup();
-  const tableStateUrl = TestBed.inject(TableStateUrlService);
-  const clearFilterParams = vi.spyOn(tableStateUrl, "clearFilterParams");
+  const urlState = TestBed.inject(UrlStateService);
+  const clearFilterParams = vi.spyOn(urlState, "clearFilterParams");
 
   component.setRelatedEntityFilter("User:1");
 

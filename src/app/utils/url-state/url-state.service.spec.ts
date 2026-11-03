@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { Router, ActivatedRoute } from "@angular/router";
-import { TableStateUrlService } from "./table-state-url.service";
+import { UrlStateService } from "./url-state.service";
 import type { Mock } from "vitest";
 
 type RouterMock = {
@@ -25,8 +25,8 @@ type ActivatedRouteSnapshotStub = {
   readonly queryParamMap: QueryParamMapMock;
 };
 
-describe("TableStateUrlService", () => {
-  let service: TableStateUrlService;
+describe("UrlStateService", () => {
+  let service: UrlStateService;
   let routerSpy: RouterMock;
   let activatedRouteStub: { snapshot: ActivatedRouteSnapshotStub };
   let queryParamMapMock: QueryParamMapMock;
@@ -56,7 +56,7 @@ describe("TableStateUrlService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        TableStateUrlService,
+        UrlStateService,
         { provide: Router, useValue: routerSpy },
         {
           provide: ActivatedRoute,
@@ -64,7 +64,7 @@ describe("TableStateUrlService", () => {
         },
       ],
     });
-    service = TestBed.inject(TableStateUrlService);
+    service = TestBed.inject(UrlStateService);
   });
 
   it("should add/update query params and call router.navigate", () => {

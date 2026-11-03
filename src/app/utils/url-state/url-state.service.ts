@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from "@angular/router";
  * through {@link registerNonFilterKeys} (e.g. the sort of a table or the selected tab of a tab group).
  */
 @Injectable({ providedIn: "root" })
-export class TableStateUrlService {
+export class UrlStateService {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
