@@ -48,24 +48,22 @@ describe("TableSort", () => {
   });
 
   it("should return input array if not sort direction is defined", () => {
-    const values = ["3", 1, 2, undefined, "ten"].map((val) => ({
-      record: new E(val),
-    }));
+    const values = ["3", 1, 2, undefined, "ten"].map((val) => new E(val));
     const result = tableSort([...values], { direction: "", active: "key" });
     expect(result).toEqual(values);
   });
 
   it("should return input array if no active property is defined", () => {
-    const values = [2, 1, 3].map((val) => ({ record: new E(val) }));
+    const values = [2, 1, 3].map((val) => new E(val));
     const result = tableSort([...values], { direction: "asc", active: "" });
     expect(result).toEqual(values);
   });
 
   it("should sort by sortValueFns result when provided for the active column", () => {
     const rows = [
-      { record: new E([{ p: 1 }, { p: 2 }, { p: 3 }]) },
-      { record: new E([{ p: 1 }]) },
-      { record: new E([{ p: 1 }, { p: 2 }]) },
+      new E([{ p: 1 }, { p: 2 }, { p: 3 }]),
+      new E([{ p: 1 }]),
+      new E([{ p: 1 }, { p: 2 }]),
     ];
     const sortValueFns = { key: (v: any[]) => v.length };
     const result = tableSort([...rows], {
@@ -73,13 +71,13 @@ describe("TableSort", () => {
       active: "key",
       sortValueFns,
     });
-    expect(result.map((r) => r.record.key.length)).toEqual([1, 2, 3]);
+    expect(result.map((r) => r.key.length)).toEqual([1, 2, 3]);
   });
 
   it("should pass the record to sortValueFns for virtual columns", () => {
-    const rows = [3, 1, 2].map((age) => ({
-      record: Object.assign(new E(undefined), { dateOfBirth: { age } }),
-    }));
+    const rows = [3, 1, 2].map((age) =>
+      Object.assign(new E(undefined), { dateOfBirth: { age } }),
+    );
     const sortValueFns = {
       virtualAge: (
         _value: unknown,
@@ -93,18 +91,18 @@ describe("TableSort", () => {
       sortValueFns,
     });
 
-    expect(result.map((r) => r.record.dateOfBirth.age)).toEqual([1, 2, 3]);
+    expect(result.map((r) => r.dateOfBirth.age)).toEqual([1, 2, 3]);
   });
 
   function testSort(
     sortedArray: any[],
     direction: "asc" | "desc" | "" = "asc",
   ) {
-    const objectArray = sortedArray.map((val) => ({ record: new E(val) }));
+    const objectArray = sortedArray.map((val) => new E(val));
     for (let i = 0; i < sortedArray.length; i++) {
       const shuffled = shuffle(objectArray);
       const result = tableSort(shuffled, { direction, active: "key" });
-      const resultValues = result.map((row) => row.record.key);
+      const resultValues = result.map((row) => row.key);
       expect(resultValues).toEqual(sortedArray);
     }
   }
