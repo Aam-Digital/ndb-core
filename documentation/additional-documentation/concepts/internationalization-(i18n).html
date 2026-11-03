@@ -452,6 +452,17 @@ padding-inline-end: 8px; // not padding-right
 inset-inline-start: 0; // not left: 0
 text-align: start; // not text-align: left
 border-start-end-radius: 4px; // not border-top-right-radius</code></pre></div><p>Block directions (<code>top</code>, <code>bottom</code>) stay physical - only the inline axis flips. <code>left</code> / <code>right</code> are still correct for anything that is genuinely geometric, such as centring with <code>left: 50%</code> and a transform.</p>
+<p>Stylelint enforces this for <code>.scss</code> and <code>.css</code> files (rule <code>csstools/use-logical</code> in <code>stylelint.config.mjs</code>, run by <code>npm run lint</code> and in CI; <code>npm run lint:fix</code> rewrites most cases automatically). Where a physical value is intended, disable the rule for that line and say why:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-scss">// stylelint-disable-next-line csstools/use-logical -- centred with the transform below
+left: 50%;</code></pre></div><p>The rule reads one declaration at a time and does not see styles outside stylesheets,
+so check these by hand:</p>
+<ul>
+<li>shorthands that set all four sides at once: <code>margin: 0 0 0 8px</code>, <code>padding</code>,
+<code>border-radius: 4px 0 0 4px</code>, <code>inset</code> and <code>background-position: left</code> all pass the rule</li>
+<li>inline <code>styles</code> in a component&#39;s <code>.ts</code> file and <code>[style.margin-left]</code>-like bindings in templates</li>
+<li>Angular Material position inputs: <code>matTooltipPosition=&quot;before&quot;</code> / <code>&quot;after&quot;</code> instead of <code>&quot;left&quot;</code> / <code>&quot;right&quot;</code>, <code>xPosition=&quot;before&quot;</code> / <code>&quot;after&quot;</code> on menus, <code>position=&quot;start&quot;</code> / <code>&quot;end&quot;</code> on sidenavs</li>
+<li>coordinates and offsets computed in TypeScript (see <a href="#reading-the-direction-from-typescript">Reading the direction from TypeScript</a>) and <code>translateX()</code> in stylesheets (see <code>--text-x-direction</code>)</li>
+</ul>
 <h3>Scoping styles to RTL inside a component</h3>
 <p>A plain <code>[dir=&quot;rtl&quot;]</code> selector in a component stylesheet <strong>silently does nothing</strong>. View encapsulation rewrites it to <code>[dir=&quot;rtl&quot;][_ngcontent-xyz]</code>, which can never match <code>&lt;html dir=&quot;rtl&quot;&gt;</code>. Use <code>:host-context()</code>:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-scss">.panel {

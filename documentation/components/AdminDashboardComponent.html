@@ -1278,6 +1278,7 @@ export class AdminDashboardComponent {
   // physical &#x60;left&#x60; on purpose: this centers the element geometrically together with the
   // transform below, so it must not mirror - &#x60;inset-inline-start&#x60; would offset it by its
   // own width in RTL, because the transform pulls towards the same edge in both directions.
+  // stylelint-disable-next-line csstools/use-logical -- see comment above
   left: 50%;
   transform: translate(-50%, -50%);
 
