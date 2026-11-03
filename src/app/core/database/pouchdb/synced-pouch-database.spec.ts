@@ -10,7 +10,7 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
-import { ConnectivityError } from "../../logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { Logging } from "../../logging/logging.service";
 import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
 import PouchDB from "pouchdb-browser";

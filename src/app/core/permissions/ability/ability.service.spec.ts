@@ -24,10 +24,8 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import {
-  ConnectivityError,
-  NotPermittedError,
-} from "../../logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "../not-permitted.error";
 
 describe("AbilityService", () => {
   let service: AbilityService;

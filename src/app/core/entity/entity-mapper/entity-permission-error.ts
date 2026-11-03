@@ -1,4 +1,4 @@
-import { NotPermittedError } from "#src/app/core/logging/error-classification";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 
 /**
  * The current user's permission rules do not allow the action on the entity.

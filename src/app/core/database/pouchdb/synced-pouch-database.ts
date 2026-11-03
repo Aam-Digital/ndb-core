@@ -25,9 +25,9 @@ import { QueryOptions } from "../database";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
 import {
   classifyError,
-  ConnectivityError,
   isConnectivityError,
 } from "../../logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 /**

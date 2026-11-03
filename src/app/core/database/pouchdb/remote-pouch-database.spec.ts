@@ -1,9 +1,6 @@
-import {
-  classifyErrorChain,
-  ConnectivityError,
-  ServerError,
-  SessionExpiredError,
-} from "../../logging/error-classification";
+import { classifyErrorChain } from "../../logging/error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";

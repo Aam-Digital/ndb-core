@@ -1,7 +1,7 @@
 import type * as Sentry from "@sentry/angular";
 import { LoggedError, NamedError } from "./reported-errors";
 import { processSentryEvent } from "./sentry-event-processing";
-import { ServerError } from "./error-classification";
+import { ServerError } from "#src/app/utils/backend-errors";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 import {

@@ -120,14 +120,17 @@ cause instead of by stack trace (which opens one issue per call site and per bui
 
 ### Typed errors: classifying failures where they enter the app
 
-Foreign errors are converted into typed errors (`TypedError` in `error-classification.ts`, one class per
-kind of failure: connectivity, server error, not permitted, expired session, write conflict, broken
-local database) where they enter the app, by the knowledge of the module they belong to: the database
-layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor` for requests to our backend
-(`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's responses mean
-(`src/app/utils/backend-response.ts`). Everything else judges an error by its type (`classifyError()`).
-Only remote monitoring also recognizes the few foreign errors that reach it uncaught, e.g. a failed chunk
-load (`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
+Foreign errors are converted into typed errors where they enter the app, by the knowledge of the module
+they belong to: the database layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor`
+for requests to our backend (`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's
+responses mean (`src/app/utils/backend-response.ts`). Each typed class extends `TypedError`
+(`error-classification.ts`), declares its kind of failure as `static classification` and lives in the
+module that creates it: `ConnectivityError` and `ServerError` in `src/app/utils/backend-errors.ts`,
+`NotPermittedError` in `core/permissions/`, `SessionExpiredError` in `core/session/`,
+`WriteConflictError` and `LocalStorageError` in `core/database/pouchdb/database-errors.ts`.
+Everything else judges an error by its type (`classifyError()`). Only remote monitoring also recognizes
+the few foreign errors that reach it uncaught, e.g. a failed chunk load
+(`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
 (e.g. `SyncStalledError extends ConnectivityError`, `EntityPermissionError extends NotPermittedError`).
 
 - **Check for a kind of failure** with `isExpectedFailure()` (or `Logging.warnUnlessExpected()`),
@@ -197,7 +200,7 @@ users, as events deliberately carry no user identity (data minimization under th
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `error-classification.ts` — the typed errors, `classifyError()` and its helpers (`isExpectedFailure()`, ...)
+- `error-classification.ts` — `TypedError`, the base of the typed errors, `classifyError()` and its helpers (`isExpectedFailure()`, ...)
 - `uncaught-error-classification.ts` — the foreign errors recognized only when they reach remote monitoring uncaught
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization

@@ -1,10 +1,19 @@
 import { NamedError } from "../../logging/reported-errors";
 import {
   classifyError,
-  createTypedError,
+  ErrorClassification,
+  TypedError,
+  TypedErrorOptions,
 } from "../../logging/error-classification";
-import { classifyResponseStatus } from "#src/app/utils/backend-response";
+import {
+  classifyResponseStatus,
+  textOf,
+} from "#src/app/utils/backend-response";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "../../permissions/not-permitted.error";
+import { SessionExpiredError } from "../../session/session-expired.error";
 import { classifyPouchDbError } from "./pouchdb-errors";
+import { LocalStorageError, WriteConflictError } from "./database-errors";
 
 /**
  * Own properties of PouchDB's errors (and of the copies its `createError()` makes)
@@ -50,6 +59,19 @@ export class DatabaseException extends NamedError {
   }
 }
 
+/** The typed error that a raw error of the database of each classification is converted into. */
+const DATABASE_ERRORS: Record<
+  ErrorClassification,
+  new (message: string, options: TypedErrorOptions) => TypedError
+> = {
+  connectivity: ConnectivityError,
+  "server-error": ServerError,
+  "not-permitted": NotPermittedError,
+  "session-expired": SessionExpiredError,
+  "write-conflict": WriteConflictError,
+  "local-storage": LocalStorageError,
+};
+
 type RawDatabaseError = {
   status?: unknown;
   name?: unknown;
@@ -59,12 +81,13 @@ type RawDatabaseError = {
 };
 
 /**
- * The typed error (see `error-classification.ts`) for an error of PouchDB or of the
+ * The typed error (see {@link DATABASE_ERRORS}) for an error of PouchDB or of the
  * IndexedDB underneath it, keeping the raw error as its `cause` and its `status`:
  * - by its status and the reason the server gave (no response or a gateway status,
  *   401 expired / not permitted, 403, 409), the same mapping as the HTTP
  *   interceptor's (`classifyResponseStatus`);
- * - a typed error of ours that PouchDB's replication copied, losing its class;
+ * - a typed error of ours that PouchDB's replication copied, losing its class
+ *   (recognized by its name): re-created, with the copy as `cause`;
  * - else by the name and wording of PouchDB's and IndexedDB's errors
  *   (`classifyPouchDbError`): a broken IndexedDB, an aborted request, a conflict.
  *
@@ -83,16 +106,11 @@ export function toTypedDatabaseError(error: unknown): unknown {
   if (!classification) {
     return error;
   }
-  return createTypedError(
-    classification,
+  return new DATABASE_ERRORS[classification](
     textOf(raw.message) || textOf(raw.reason) || "Database error",
     {
       status: typeof raw.status === "number" ? raw.status : undefined,
       cause: error,
     },
   );
-}
-
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value : "";
 }

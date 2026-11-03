@@ -23,12 +23,9 @@ import {
   describeResponse,
   unexpectedResponseMessage,
 } from "../../logging/http-response-logging";
-import {
-  ConnectivityError,
-  isConnectivityError,
-  ServerError,
-  SessionExpiredError,
-} from "../../logging/error-classification";
+import { isConnectivityError } from "../../logging/error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "../../session/session-expired.error";
 import { CONNECTIVITY_ERROR_STATUS } from "#src/app/utils/backend-response";
 import { normalizeRequestPath } from "../../logging/sentry-grouping";
 

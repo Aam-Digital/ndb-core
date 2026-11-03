@@ -3,7 +3,8 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { LogLevel } from "./log-level";
 import { LoggingService, toReportedError } from "./logging.service";
 import { LoggedError, NamedError } from "./reported-errors";
-import { ConnectivityError, NotPermittedError } from "./error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 
 describe("LoggingService", () => {

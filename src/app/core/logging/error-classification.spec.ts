@@ -1,14 +1,13 @@
 import {
   classifyError,
   classifyErrorChain,
-  ConnectivityError,
   ErrorClassification,
   isConnectivityError,
   isNotPermittedError,
-  NotPermittedError,
-  ServerError,
-  SessionExpiredError,
 } from "./error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { SyncFailedError } from "../database/pouchdb/synced-pouch-database";

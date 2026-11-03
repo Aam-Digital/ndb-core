@@ -86,6 +86,7 @@ export function errorText(error: unknown): string {
   return `${textOf(err.name)}: ${textOf(err.message)} ${textOf(err.reason)}`;
 }
 
-function textOf(value: unknown): string {
+/** The value if it is a string (e.g. a property of an error that may be anything), else "". */
+export function textOf(value: unknown): string {
   return typeof value === "string" ? value : "";
 }

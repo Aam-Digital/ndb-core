@@ -2,7 +2,7 @@ import { afterEach, beforeEach, vi } from "vitest";
 import type * as Sentry from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { resetReportedEvents } from "./report-once";
-import { ConnectivityError } from "./error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 
 /** Fixtures for the specs of the remote monitoring (Sentry) processing. */

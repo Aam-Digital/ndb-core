@@ -14,10 +14,8 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isFailedFetch,
 } from "#src/app/utils/backend-response";
-import {
-  ConnectivityError,
-  isConnectivityError,
-} from "../../../logging/error-classification";
+import { isConnectivityError } from "../../../logging/error-classification";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import {
   defer,
   firstValueFrom,
