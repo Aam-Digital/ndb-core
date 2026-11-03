@@ -113,7 +113,18 @@ export class TemplateExportSelectionDialogComponent {
         : Promise.resolve(undefined),
   });
   readonly selectedTemplateIsArrayReport = computed(
-    () => this.selectedTemplate.value()?.arrayReport ?? false,
+    () =>
+      this.selectedTemplate.hasValue() &&
+      !!this.selectedTemplate.value().arrayReport,
+  );
+  /**
+   * Generating requires the full template entity, so this stays false while the selected template is still loading.
+   */
+  readonly canGenerate = computed(
+    () =>
+      !!this.selectedTemplateId() &&
+      !this.selectedTemplate.isLoading() &&
+      this.selectedTemplate.hasValue(),
   );
 
   readonly phase = signal<"select" | "running" | "done">("select");
@@ -148,14 +159,17 @@ export class TemplateExportSelectionDialogComponent {
       );
       return;
     }
+    if (!this.canGenerate()) {
+      // the button is disabled in this state; guard against a click racing the template load
+      return;
+    }
+    const template = this.selectedTemplate.value();
 
     this.phase.set("running");
     this.totalRecords.set(entities.length);
     this.failures.set([]);
 
     try {
-      const template = this.selectedTemplate.value();
-
       if (template.arrayReport) {
         const result = await firstValueFrom(
           this.templateExportApi.generatePdfFromTemplate(template, entities),

@@ -1,4 +1,3 @@
-import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { effect, inject } from "@angular/core";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
@@ -22,8 +21,8 @@ export class InMemoryDataSource<
     optional: true,
   });
 
-  override filterPredicate = (data: TableRow<T>, filter: string) =>
-    entityFilterPredicate(data.record, filter);
+  override filterPredicate = (data: T, filter: string) =>
+    entityFilterPredicate(data, filter);
 
   override sortData = (data, sort) =>
     tableSort<T, keyof T>(data, {
@@ -52,7 +51,7 @@ export class InMemoryDataSource<
     }
 
     // including free-text filter and filter predicate
-    return this.filteredData.map((row) => row.record);
+    return [...this.filteredData];
   }
 
   private getRecords() {
@@ -91,7 +90,7 @@ export class InMemoryDataSource<
     this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
   }
 
-  override _filterData(data: TableRow<T>[]): TableRow<T>[] {
+  override _filterData(data: T[]): T[] {
     const filtered = super._filterData(data);
     // Aligning displayed data with the freetext filter.
     // Making a safe call (...?.), because the method is already called in the

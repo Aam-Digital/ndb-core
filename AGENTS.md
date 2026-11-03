@@ -50,7 +50,7 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 - **Config:** the platform is configured through JSON ([config](src/app/core/config/README.md)). Use the existing config patterns for new features, create interfaces for config objects, and validate configs.
 - **UX and styling:** follow the [UX guidelines](doc/compodoc_sources/concepts/ux-guidelines.md): Angular Material, SCSS with the global variables and classes in `src/styles/`, no inline styles. For mockups in Figma, use the `figma-mockups` skill.
 - **i18n:** all user-facing strings are translatable (Angular i18n markers or `$localize`); no context labels unless the string is truly ambiguous ([i18n](src/app/core/language/README.md)).
-- **Accessibility:** follow WCAG and use the Angular Material accessibility features.
+- **Accessibility:** follow WCAG and use the Angular Material accessibility features. Keyboard navigation is not supported across the app yet ([#4644](https://github.com/Aam-Digital/ndb-core/issues/4644)), so leave keyboard interaction out of use cases and feature designs until that general support exists.
 
 ## Errors and logging
 

@@ -214,12 +214,10 @@ export class EntitySchemaService {
    *
    * @param formField the field config to extend; it is not changed
    * @param propertySchema the schema of the property displayed by the field
-   * @param forTable whether the field is displayed in a table (hiding its description)
    */
   addSchemaToFormField(
     formField: FormFieldConfig,
     propertySchema: EntitySchemaField | undefined,
-    forTable = false,
   ): FormFieldConfig {
     // formField config has precedence over schema
     const fullField: FormFieldConfig = Object.assign(
@@ -233,10 +231,6 @@ export class EntitySchemaService {
     fullField.viewComponent =
       fullField.viewComponent || this.getComponent(propertySchema, "view");
     fullField.label = fullField.label || fullField.labelShort;
-    fullField.forTable = forTable;
-    if (forTable) {
-      delete fullField.description;
-    }
 
     resolveTranslatableLabels(fullField);
     return fullField;

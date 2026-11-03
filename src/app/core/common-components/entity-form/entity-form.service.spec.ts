@@ -67,7 +67,6 @@ describe("EntityFormService", () => {
   const createForm = <T extends Entity>(
     formFields: Parameters<EntityFormService["createEntityForm"]>[0],
     entity: T,
-    forTable?: boolean,
     withPermissionCheck?: boolean,
     withDefaultValues?: boolean,
   ) =>
@@ -75,7 +74,6 @@ describe("EntityFormService", () => {
       formFields,
       entity,
       destroyRef,
-      forTable,
       withPermissionCheck,
       withDefaultValues,
     );
@@ -566,7 +564,6 @@ describe("EntityFormService", () => {
     const form = await createForm(
       [{ id: "test" }],
       new TestEntity(),
-      false,
       true,
       false,
     );
@@ -726,7 +723,6 @@ describe("EntityFormService", () => {
       editComponent: "EditComponent",
       viewComponent: "DisplayComponent",
       label: "Field with definition",
-      forTable: false,
       description: "Custom tooltip",
       additional: "additional",
     } as FormFieldConfig);
@@ -736,7 +732,6 @@ describe("EntityFormService", () => {
       editComponent: "PredefinedComponent",
       viewComponent: "PredefinedComponent",
       label: "Property",
-      forTable: false,
       description: "Property description",
       additional: "someAdditional",
     } as FormFieldConfig);

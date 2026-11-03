@@ -14,6 +14,7 @@ import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
+import { LOCAL_DB_REVS_LIMIT } from "./pouchdb/pouch-database";
 import {
   isReplicationConnectivityError,
   isReplicationUnauthorizedError,
@@ -241,7 +242,10 @@ export class IndexeddbMigrationService {
   }
 
   private createPouchDb(newDbName: string): PouchDB.Database {
-    return new PouchDB(newDbName, { adapter: "indexeddb" });
+    return new PouchDB(newDbName, {
+      adapter: "indexeddb",
+      revs_limit: LOCAL_DB_REVS_LIMIT,
+    });
   }
 
   private closePouchDb(db: PouchDB.Database): void {

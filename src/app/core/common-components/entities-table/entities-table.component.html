@@ -29,19 +29,10 @@
           ></app-entity-field-label>
         </th>
         <td mat-cell *matCellDef="let row">
-          @if (row.formGroup?.enabled) {
-            <app-entity-field-edit
-              [field]="col"
-              [entity]="row.record"
-              [fieldFormGroup]="row.formGroup"
-              [compactMode]="true"
-            ></app-entity-field-edit>
-          } @else {
-            <app-entity-field-view
-              [field]="col"
-              [entity]="row.record"
-            ></app-entity-field-view>
-          }
+          <app-entity-field-view
+            [field]="col"
+            [entity]="row"
+          ></app-entity-field-view>
         </td>
       </ng-container>
     }
@@ -61,16 +52,16 @@
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
           (change)="selectionStore.selectRow(row, $event.checked)"
-          [checked]="selectedRecords().includes(row.record)"
+          [checked]="selectedRecords().includes(row)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
     </ng-container>
 
     <!--
-    INLINE EDIT ACTIONS
+    CREATE NEW RECORD
     -->
-    <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT">
+    <ng-container [matColumnDef]="ACTIONCOLUMN_CREATE">
       <th mat-header-cell *matHeaderCellDef class="remove-padding-start">
         <app-entity-create-button
           [entityType]="entityType()"
@@ -80,10 +71,8 @@
         ></app-entity-create-button>
       </th>
 
-      <td mat-cell *matCellDef="let row">
-        <app-entity-inline-edit-actions [row]="row">
-        </app-entity-inline-edit-actions>
-      </td>
+      <!-- the column only holds the button in its header, every row needs a cell for it nonetheless -->
+      <td mat-cell *matCellDef="let row"></td>
     </ng-container>
 
     <!-- custom columns via content projection -->
@@ -93,8 +82,8 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
-      [class.inactive-row]="row.record.inactive"
-      [style.background-color]="effectiveBackgroundColor()(row.record)"
+      [class.inactive-row]="row.inactive"
+      [style.background-color]="effectiveBackgroundColor()(row)"
       class="table-row"
       (mousedown)="onRowMouseDown($event, row)"
       style="cursor: pointer"

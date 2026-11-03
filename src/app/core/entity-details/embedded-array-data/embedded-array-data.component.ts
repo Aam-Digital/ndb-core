@@ -118,7 +118,6 @@ export class EmbeddedArrayDataComponent {
       [property],
       entity,
       this.destroyRef,
-      /* forTable */ false,
       /* withPermissionCheck */ true,
       /* withDefaultValues */ false,
     );
