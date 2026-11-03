@@ -2,27 +2,16 @@ import { HttpStatusCode } from "@angular/common/http";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
- * What kind of failure an error is, for reporting it.
- *
- * Errors are converted into our typed errors where they enter the app: the
- * database layer (`DatabaseException` / `toTypedDatabaseError`, the remote
- * database's fetch wrapper) and the HTTP interceptor (`typedHttpErrorInterceptor`).
- * There, {@link classifyResponseStatus} and the name and message patterns below
- * tell what a raw error is. Everywhere else, errors are classified by their type;
- * for a new kind of error, extend one of the typed classes.
- *
- * {@link classifyError} only falls back to the patterns for foreign errors that
- * never pass such a boundary (see {@link classifyForeignError}).
- *
- * What remote monitoring does with each classification is in
+ * What kind of failure an error is, for reporting it: derived by
+ * {@link classifyError}, from the error's type (one {@link TypedError} class per
+ * classification). What remote monitoring does with each classification is in
  * `sentry-event-processing.ts` (`REPORTING_POLICY`).
- */
-
-/**
- * What kind of failure an error is, as far as reporting it is concerned:
- * derived by {@link classifyError}, mostly from the error's type (one typed
- * error class per classification). Mapped to what remote monitoring does with
- * it in `sentry-event-processing.ts`.
+ *
+ * Errors are converted into typed errors where they enter the app: the database
+ * layer (`DatabaseException` / `toTypedDatabaseError`, the remote database's
+ * fetch wrapper) and the HTTP interceptor (`typedHttpErrorInterceptor`), using
+ * {@link classifyResponseStatus} and {@link classifyByPattern}. For a new kind of
+ * error, extend one of the typed classes.
  */
 export type ErrorClassification =
   /** the request never reached our backend: no response, status 0, 502-504 */
@@ -47,57 +36,82 @@ export interface TypedErrorOptions {
   details?: Record<string, unknown>;
 }
 
+/**
+ * A failure of a known kind, converted from a foreign error where it entered
+ * the app: its class is its classification (see {@link ErrorClassification}).
+ */
+export abstract class TypedError extends NamedError {
+  /** The HTTP status of the failed request, if any. */
+  readonly status?: number;
+
+  protected constructor(
+    name: string,
+    message: string,
+    options?: TypedErrorOptions,
+  ) {
+    super(name, message, options);
+    this.status = options?.status;
+  }
+}
+
 /** A request that never reached our backend (no response at all, or a gateway status). */
-export class ConnectivityError extends NamedError {
+export class ConnectivityError extends TypedError {
+  static readonly errorName = "ConnectivityError";
   constructor(message: string, options?: TypedErrorOptions) {
-    super("ConnectivityError", message, options);
+    super(ConnectivityError.errorName, message, options);
   }
 }
 
 /** Our backend answered with a 5xx status other than a gateway status. */
-export class ServerError extends NamedError {
+export class ServerError extends TypedError {
+  static readonly errorName = "ServerError";
   declare readonly status: number;
 
   constructor(
     message: string,
     options: TypedErrorOptions & { status: number },
   ) {
-    super("ServerError", message, options);
+    super(ServerError.errorName, message, options);
   }
 }
 
 /** The permission rules do not allow the current user what was requested (403, or 401 "not permitted"). */
-export class NotPermittedError extends NamedError {
+export class NotPermittedError extends TypedError {
+  static readonly errorName = "NotPermittedError";
   constructor(message: string, options?: TypedErrorOptions) {
-    super("NotPermittedError", message, options);
+    super(NotPermittedError.errorName, message, options);
   }
 }
 
 /** The server rejected the session (401), and it could not be renewed. */
-export class SessionExpiredError extends NamedError {
+export class SessionExpiredError extends TypedError {
+  static readonly errorName = "SessionExpiredError";
   constructor(message: string, options?: TypedErrorOptions) {
-    super("SessionExpiredError", message, options);
+    super(SessionExpiredError.errorName, message, options);
   }
 }
 
 /** A write was rejected because the document has changed in the meantime (409). */
-export class WriteConflictError extends NamedError {
+export class WriteConflictError extends TypedError {
+  static readonly errorName = "WriteConflictError";
   constructor(message: string, options?: TypedErrorOptions) {
-    super("WriteConflictError", message, options);
+    super(WriteConflictError.errorName, message, options);
   }
 }
 
 /** The device's local database (IndexedDB underneath PouchDB) is broken. */
-export class LocalStorageError extends NamedError {
+export class LocalStorageError extends TypedError {
+  static readonly errorName = "LocalStorageError";
   constructor(message: string, options?: TypedErrorOptions) {
-    super("LocalStorageError", message, options);
+    super(LocalStorageError.errorName, message, options);
   }
 }
 
-type TypedErrorClass = new (
-  message: string,
-  options: TypedErrorOptions,
-) => NamedError;
+type TypedErrorClass = {
+  new (message: string, options: TypedErrorOptions): TypedError;
+  /** the error's `name`, as a literal: class names are minified */
+  readonly errorName: string;
+};
 
 /** The typed error of each classification. */
 const TYPED_ERRORS: Record<ErrorClassification, TypedErrorClass> = {
@@ -110,18 +124,16 @@ const TYPED_ERRORS: Record<ErrorClassification, TypedErrorClass> = {
 };
 
 /**
- * The names of the typed errors, for an error that lost its class: a copy that
- * PouchDB's replication makes of the error it failed with, or an exception of
- * a Sentry event without the original error object.
+ * The classifications by the names of the typed errors, for an error that lost
+ * its class: a copy that PouchDB's replication makes of the error it failed
+ * with, or an exception of a Sentry event without the original error object.
  */
-const TYPED_ERROR_NAMES = new Map<string, ErrorClassification>([
-  ["ConnectivityError", "connectivity"],
-  ["ServerError", "server-error"],
-  ["NotPermittedError", "not-permitted"],
-  ["SessionExpiredError", "session-expired"],
-  ["WriteConflictError", "write-conflict"],
-  ["LocalStorageError", "local-storage"],
-]);
+const TYPED_ERROR_NAMES = new Map<string, ErrorClassification>(
+  Object.entries(TYPED_ERRORS).map(([classification, type]) => [
+    type.errorName,
+    classification as ErrorClassification,
+  ]),
+);
 
 /**
  * Create the typed error of a classification, for a boundary converting a
@@ -131,52 +143,33 @@ export function createTypedError(
   classification: ErrorClassification,
   message: string,
   options: TypedErrorOptions,
-): NamedError {
+): TypedError {
   return new TYPED_ERRORS[classification](message, options);
 }
 
 /** The classification of a typed error, by its class. */
 function typedClassification(error: unknown): ErrorClassification | undefined {
-  for (const [classification, type] of Object.entries(TYPED_ERRORS)) {
-    if (error instanceof type) {
-      return classification as ErrorClassification;
-    }
+  if (!(error instanceof TypedError)) {
+    return undefined;
   }
-  return undefined;
+  return (Object.keys(TYPED_ERRORS) as ErrorClassification[]).find(
+    (classification) => error instanceof TYPED_ERRORS[classification],
+  );
 }
 
 /**
- * The classification of the typed error the given one only passes on, keeping
- * its message: a `DatabaseException` around the typed error of the database
- * layer (also wrapped again), or a framework re-throwing it.
+ * The name of `DatabaseException` (defined in `database-exception.ts`, which
+ * depends on this file): it wraps the typed error that the raw error of the
+ * database was converted into, and so has that error's classification.
  */
-function passedOnClassification(
-  error: unknown,
-): ErrorClassification | undefined {
-  let wrapper = error;
-  for (const cause of causeChain(error).slice(1)) {
-    if (
-      !(wrapper instanceof Error) ||
-      !(cause instanceof Error) ||
-      wrapper.message !== cause.message
-    ) {
-      return undefined;
-    }
-    const typed = typedClassification(cause);
-    if (typed) {
-      return typed;
-    }
-    wrapper = cause;
-  }
-  return undefined;
-}
+const DATABASE_EXCEPTION_NAME = "DatabaseException";
 
-/** Whether the error is one of the typed errors (by its class, else by its name). */
-export function isTypedError(error: unknown): boolean {
-  return (
-    !!typedClassification(error) ||
-    TYPED_ERROR_NAMES.has((error as { name?: string } | undefined)?.name)
-  );
+/**
+ * Whether the name is that of a typed error: also for an error that lost its
+ * class (see {@link TYPED_ERROR_NAMES}).
+ */
+export function isTypedErrorName(name: unknown): boolean {
+  return TYPED_ERROR_NAMES.has(name as string);
 }
 
 /**
@@ -290,9 +283,9 @@ export function classifyResponseStatus(
 
 /**
  * What kind of failure the given error is, judged by this one error (not its `cause`s):
- * by its type if it is one of our typed errors (also if it only passes one on,
- * keeping its message, see {@link passedOnClassification}); a foreign error by
- * its status, name and message (see {@link classifyForeignError}).
+ * - a typed error by its class;
+ * - a `DatabaseException` by the typed error it wraps as `cause`, if any;
+ * - a foreign error by its status, name and message (see {@link classifyByPattern}).
  *
  * A {@link LoggedError} or another error of ours is never classified by its text.
  */
@@ -300,11 +293,13 @@ export function classifyError(error: unknown): ErrorClassification | undefined {
   if (!error || (typeof error !== "object" && typeof error !== "string")) {
     return undefined;
   }
-  const typed = typedClassification(error) ?? passedOnClassification(error);
-  if (typed || error instanceof LoggedError || error instanceof NamedError) {
-    return typed;
+  if (error instanceof NamedError && error.name === DATABASE_EXCEPTION_NAME) {
+    return typedClassification(error.cause);
   }
-  return classifyForeignError(error);
+  if (error instanceof LoggedError || error instanceof NamedError) {
+    return typedClassification(error);
+  }
+  return classifyByPattern(error);
 }
 
 /**
@@ -348,19 +343,18 @@ type ErrorLike = {
 };
 
 /**
- * The fallback for foreign errors that never pass one of the boundaries
- * converting them into typed errors:
- * - unhandled browser errors, e.g. a failed `fetch` or chunk load;
- * - IndexedDB errors raised inside PouchDB's callbacks, outside our calls;
- * - errors of requests to other services than our backend: keycloak-js errors
- *   (with the whole `Response` attached) and `HttpErrorResponse`s of third-party
- *   services, as far as they did not reach the server (connectivity only);
- * - errors that lost their class: a Sentry event without the original error
- *   object, or a copy PouchDB's replication makes, by the name of our typed error.
- *
- * The boundaries use it as well, for the name and wording of a raw error.
+ * The classification of a foreign error by its connectivity status (0, 502-504),
+ * its name and its wording:
+ * - by the database boundary, for a raw error without a telling status
+ *   (see `toTypedDatabaseError`);
+ * - as fallback for foreign errors that never pass a boundary: unhandled browser
+ *   errors (e.g. a failed `fetch` or chunk load), IndexedDB errors raised inside
+ *   PouchDB's callbacks, keycloak-js errors (with the whole `Response` attached)
+ *   and `HttpErrorResponse`s of third-party services (connectivity only: their
+ *   other statuses mean something else);
+ * - for errors that lost their class (see {@link TYPED_ERROR_NAMES}), by name.
  */
-function classifyForeignError(
+export function classifyByPattern(
   error: object | string,
 ): ErrorClassification | undefined {
   const err = error as ErrorLike;

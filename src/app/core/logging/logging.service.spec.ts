@@ -187,7 +187,7 @@ describe("classifyError", () => {
     ],
     ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
     [
-      "a DatabaseException, by the typed error it passes on",
+      "a DatabaseException, by the typed error it wraps",
       new DatabaseException({ status: 409, message: "conflict" }),
       "write-conflict",
     ],

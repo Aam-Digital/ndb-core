@@ -2,7 +2,7 @@ import type * as Sentry from "@sentry/angular";
 import {
   classifyError,
   ErrorClassification,
-  isTypedError,
+  isTypedErrorName,
 } from "./error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
@@ -106,8 +106,8 @@ function rootCauseIndex(
   errors: Error[] | undefined,
 ): number {
   const index = errors
-    ? errors.findIndex(isTypedError)
-    : values.findIndex((value) => isTypedError({ name: value.type }));
+    ? errors.findIndex((error) => isTypedErrorName(error.name))
+    : values.findIndex((value) => isTypedErrorName(value.type));
   return Math.max(index, 0);
 }
 
@@ -213,8 +213,11 @@ function groupByRootCause(
     thrown.value = reportedError.value;
     return event;
   }
-  // as is one passing on the typed error it wraps (e.g. a DatabaseException)
-  if (rootClassification && rootKey[1] === reportedKey[1]) {
+  // as is one passing on the classification of the typed error it wraps (a DatabaseException)
+  if (
+    rootClassification &&
+    chainClassifications[reportedIndex] === rootClassification
+  ) {
     event.fingerprint = rootKey;
     thrown.type = rootCause.type;
     thrown.value = normalizeErrorValue(rootCause.value);

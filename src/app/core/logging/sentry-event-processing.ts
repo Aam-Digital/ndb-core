@@ -4,6 +4,7 @@ import {
   classifyErrorChain,
   causeChain,
   ErrorClassification,
+  isTypedErrorName,
 } from "./error-classification";
 import {
   classifyException,
@@ -176,7 +177,8 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
     if (typeof error.response?.status === "number") {
       details.status ??= error.response.status;
     }
-    if (error instanceof NamedError) {
+    // also of a typed error that lost its class (a copy made by PouchDB)
+    if (error instanceof NamedError || isTypedErrorName(error.name)) {
       Object.assign(details, error.details);
     }
   }

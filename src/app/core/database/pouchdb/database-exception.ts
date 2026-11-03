@@ -1,6 +1,6 @@
 import { NamedError } from "../../logging/reported-errors";
 import {
-  classifyError,
+  classifyByPattern,
   classifyResponseStatus,
   createTypedError,
 } from "../../logging/error-classification";
@@ -60,9 +60,11 @@ type RawDatabaseError = {
 /**
  * The typed error (see `error-classification.ts`) for an error of PouchDB or of the
  * IndexedDB underneath it, keeping the raw error as its `cause` and its `status`:
- * - by its status and the reason the server gave (401 expired / not permitted, 403, 409);
- * - by its name and wording (a broken IndexedDB, an aborted request, a conflict);
- * - an error of ours that PouchDB's replication copied, losing its class, by its name.
+ * - by its status and the reason the server gave (401 expired / not permitted, 403, 409),
+ *   the same mapping as the HTTP interceptor's (`classifyResponseStatus`);
+ * - else by the name and wording patterns that also serve as fallback for foreign
+ *   errors (`classifyByPattern`): a broken IndexedDB, an aborted request, a conflict,
+ *   or an error of ours that PouchDB's replication copied, losing its class.
  *
  * Any other error is returned unchanged (e.g. a `404 missing`), as is one of our
  * errors (e.g. a `ConnectivityError` of the remote database's fetch).
@@ -74,7 +76,7 @@ export function toTypedDatabaseError(error: unknown): unknown {
   const raw = error as RawDatabaseError;
   const classification =
     classifyResponseStatus(raw.status, [raw.reason, raw.error, raw.message]) ??
-    classifyError(error);
+    classifyByPattern(error);
   if (!classification) {
     return error;
   }
