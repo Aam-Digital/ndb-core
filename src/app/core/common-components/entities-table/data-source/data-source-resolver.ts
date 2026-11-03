@@ -39,31 +39,20 @@ export function resolveDataSource<T extends Entity>(
     typeof dataSource === "string" ? { name: dataSource } : (dataSource ?? {});
   const registry = injector.get(DataSourceRegistry);
   let DataSourceClass = getDataSource(registry, name, loaderMethod, entityType);
-  if (pagesOnServer(DataSourceClass) && !supportsPagination(injector)) {
+  if (
+    DataSourceClass === PaginatedDataSource &&
+    !supportsPagination(injector)
+  ) {
     DataSourceClass = InMemoryDataSource;
   }
-  // options belong to the configured data source, not to a default or fallback
-  const isConfiguredClass =
-    !!name && registry.has(name) && registry.get(name) === DataSourceClass;
   return runInInjectionContext(injector, () =>
     untracked(() => {
       const instance = new DataSourceClass<T>();
-      if (config && isConfiguredClass) {
+      if (config) {
         instance.config.set(config);
       }
       return instance;
     }),
-  );
-}
-
-/**
- * Whether the data source loads its pages from the server, which only works in some sessions
- * (other data sources, e.g. registered by feature modules, work in every session).
- */
-function pagesOnServer(DataSourceClass: DataSourceConstructor): boolean {
-  return (
-    DataSourceClass === PaginatedDataSource ||
-    DataSourceClass.prototype instanceof PaginatedDataSource
   );
 }
 

@@ -23,11 +23,6 @@ class InternalTestEntity extends Entity {
 /** a data source of a feature module that works on all records in memory */
 class FeatureDataSource<T extends Entity> extends InMemoryDataSource<T> {}
 
-/** a data source of a feature module that pages through the server */
-class FeaturePaginatedDataSource<
-  T extends Entity,
-> extends PaginatedDataSource<T> {}
-
 class InternalTranslatedTestEntity extends Entity {
   static override readonly isInternalEntity = true;
 
@@ -154,8 +149,7 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it("should pass the configured options to the named data source only", () => {
-    environment.session_type = SessionType.synced;
+  it("should pass the configured options to the named data source", () => {
     TestBed.inject(DataSourceRegistry).add("feature", FeatureDataSource);
     const config = { someOption: ["a"] };
 
@@ -163,16 +157,9 @@ describe("resolveDataSource", () => {
       name: "feature",
       config,
     });
-    const fallback = resolveDataSource<Entity>(injector, {
-      name: "paginated",
-      config,
-    });
 
     expect(feature).toBeInstanceOf(FeatureDataSource);
     expect(feature.config()).toEqual(config);
-    // outside of online mode an in-memory data source replaces "paginated" and gets no options meant for it
-    expect(fallback).toBeInstanceOf(InMemoryDataSource);
-    expect(fallback.config()).toEqual({});
   });
 
   it.each([
@@ -231,36 +218,15 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it.each([
-    {
-      session: SessionType.online,
-      registered: FeatureDataSource,
-      expected: FeatureDataSource,
-    },
-    {
-      session: SessionType.synced,
-      registered: FeatureDataSource,
-      expected: FeatureDataSource,
-    },
-    {
-      session: SessionType.online,
-      registered: FeaturePaginatedDataSource,
-      expected: FeaturePaginatedDataSource,
-    },
-    {
-      session: SessionType.synced,
-      registered: FeaturePaginatedDataSource,
-      expected: InMemoryDataSource,
-    },
-  ])(
-    "uses a data source registered by a feature module unless it pages on the server outside online mode ($session, $registered.name)",
-    ({ session, registered, expected }) => {
+  it.each([SessionType.online, SessionType.synced])(
+    "uses a data source registered by a feature module in every session (%s)",
+    (session) => {
       environment.session_type = session;
-      TestBed.inject(DataSourceRegistry).add("feature", registered);
+      TestBed.inject(DataSourceRegistry).add("feature", FeatureDataSource);
 
       const dataSource = resolveDataSource<Entity>(injector, "feature");
 
-      expect(dataSource.constructor).toBe(expected);
+      expect(dataSource.constructor).toBe(FeatureDataSource);
     },
   );
 

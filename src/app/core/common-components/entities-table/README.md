@@ -29,7 +29,7 @@ Hosts usually create it with `resolveDataSource(injector, dataSource, loaderMeth
 - an explicit `dataSource` of the list or section config wins (a name in the `DataSourceRegistry`);
 - otherwise `"paginated"` in online-only sessions, `"in-memory"` for loaders that do not page
   and for small internal types with translated texts, or `environment.default_data_source`;
-- a data source that pages on the server (`PaginatedDataSource` or a subclass) falls back to
+- `PaginatedDataSource`, which pages on the server, falls back to
   `InMemoryDataSource` outside of online-only sessions, because the local database cannot page.
 
 The records a data source holds:
@@ -95,8 +95,7 @@ export class MyFeatureModule {
 ```
 
 A data source that needs options gets them from the same entry, as `config` next to its `name`.
-`resolveDataSource` sets them as the data source's `config` signal
-(only for the named data source, not for a default or fallback that replaces it):
+`resolveDataSource` sets them as the data source's `config` signal:
 
 ```json
 "dataSource": { "name": "my-feature", "config": { "someOption": ["a", "b"] } }
