@@ -210,6 +210,6 @@ users, as events deliberately carry no user identity (data minimization under th
 - `sentry-grouping.ts` — the grouping rules and message normalization
 - `report-once.ts` — turning repeated reports of one failure into breadcrumbs
 - `log-level.ts` — the `LogLevel` definitions
-- `http-response-logging.ts` — messages and details for an unexpected HTTP response
+- `http-response-logging.ts` — the details of a failed HTTP response for the logs
 - `src/app/utils/failed-http-response.ts` — reading a failed HTTP response, also one converted into a typed error
 - `src/app/utils/typed-http-error.interceptor.ts`, `src/app/utils/backend-response.ts` — the HTTP boundary and what our backend's responses mean

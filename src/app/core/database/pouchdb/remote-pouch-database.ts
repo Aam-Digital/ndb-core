@@ -19,10 +19,7 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { FindPage } from "./find-queries";
-import {
-  describeResponse,
-  unexpectedResponseMessage,
-} from "../../logging/http-response-logging";
+import { describeResponse } from "../../logging/http-response-logging";
 import { isConnectivityError } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "../../session/session-expired.error";
@@ -31,20 +28,6 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   normalizeRequestPath,
 } from "#src/app/utils/backend-response";
-
-/**
- * 4XX statuses that occur during normal operation
- * (and are handled by callers or the auth layer),
- * so they are not reported to remote logging.
- */
-const EXPECTED_4XX_STATUSES = new Set<number>([
-  HttpStatusCode.Unauthorized,
-  HttpStatusCode.Forbidden,
-  HttpStatusCode.NotFound,
-  // an outdated revision: resolved by the caller (PouchDatabase.resolveConflict) or retried by PouchDB;
-  // reported, it buried the unexpected statuses in one issue (AAM-DIGITAL-77H)
-  HttpStatusCode.Conflict,
-]);
 
 const MAX_RESPONSE_BODY_LENGTH = 500;
 
@@ -297,23 +280,19 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Log a 4XX response at the level it deserves:
-   * expected statuses only for debugging, unexpected ones as a warning.
+   * Log a 4XX response for debugging only: the request fails with it, and whoever
+   * made it reports the failure if it is unexpected (reported here as well, it
+   * opened a second issue for each failure).
    */
   private logErrorResponse(
     result: Response,
     method: string,
     remoteUrl: string,
   ): void {
-    const response = describeResponse(result, method);
-    if (EXPECTED_4XX_STATUSES.has(result.status)) {
-      Logging.debug("Expected 4XX response from DB", response);
-    } else {
-      Logging.warn(unexpectedResponseMessage(result.status), {
-        ...response,
-        requestedUrl: remoteUrl,
-      });
-    }
+    Logging.debug("4XX response from DB", {
+      ...describeResponse(result, method),
+      requestedUrl: remoteUrl,
+    });
   }
 
   /**
