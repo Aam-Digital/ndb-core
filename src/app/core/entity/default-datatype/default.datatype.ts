@@ -396,32 +396,6 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
-   * Mango conditions matching documents whose `fieldId` references the given entity id,
-   * used to query related entities instead of loading a whole entity type (see
-   * {@link EntityRelationsService.loadAllLinkingToEntity}).
-   *
-   * The conditions are matched against the *database* format, so only the datatype that
-   * writes that format can build them - which is why this lives here rather than in the
-   * calling service. Return every shape the value may have been stored in rather than
-   * branching on `schemaField.isArray`: existing documents may have been written while the
-   * field had the other setting (see {@link FilterService} and {@link EntityFilter}).
-   *
-   * The caller treats these as candidates only and still post-filters in memory, so
-   * matching too much is harmless - matching too little silently loses references.
-   *
-   * @returns the conditions to OR together, or `undefined` if this datatype's stored format
-   *          cannot be expressed as a query, which makes the caller load the whole type.
-   *          Never return an empty array: `{$or: []}` matches nothing.
-   */
-  getReferenceSelector(
-    fieldId: string,
-    schemaField: EntitySchemaField,
-    referencedId: string,
-  ): DataFilter<any>[] | undefined {
-    return undefined;
-  }
-
-  /**
    * (Partially) anonymize to "retain-anonymized" for reporting purposes without personal identifiable information.
    * @param value The original value to be anonymized
    */

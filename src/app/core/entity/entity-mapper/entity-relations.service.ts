@@ -6,7 +6,15 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { getEmbeddedEntityReferenceFields } from "../schema/embedded-schema-field.util";
+import {
+  getEmbeddedEntityReferenceFields,
+  getSchemaEmbedDatatype,
+  resolveEmbeddedField,
+} from "../schema/embedded-schema-field.util";
+import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields";
+import { referenceIdConditions } from "../default-datatype/default.datatype";
+import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
+import { toStoredFormatCondition } from "../../filter/stored-format";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
@@ -184,11 +192,8 @@ export class EntityRelationsService {
 
     const conditions: DataFilter<any>[] = [];
     for (const refProperty of refProperties) {
-      const datatype = this.schemaService.getDatatypeOrDefault(
-        refProperty.dataType,
-      );
-      const propertyConditions = datatype.getReferenceSelector(
-        refProperty.id,
+      const propertyConditions = this.referenceConditions(
+        refType,
         refProperty,
         primaryEntity.getId(),
       );
@@ -206,7 +211,49 @@ export class EntityRelationsService {
     if (conditions.length === 0) {
       return [];
     }
-    return this.entityMapper.findAllType(refType, { $or: conditions });
+    return this.entityMapper.findAllType(
+      refType,
+      toStoredFormatCondition(
+        { $or: conditions },
+        refType.schema,
+        this.schemaService,
+      ),
+    );
+  }
+
+  /**
+   * The conditions that the given field of a record references the id, in any of the shapes it may be stored in,
+   * also inside the entries of an embedded field.
+   * `undefined` if the field's datatype does not hold the reference in a way a query can match.
+   */
+  private referenceConditions(
+    refType: EntityConstructor,
+    refProperty: FormFieldConfig,
+    referencedId: string,
+  ): DataFilter<any>[] | undefined {
+    if (refProperty.dataType === EntityDatatype.dataType) {
+      return referenceIdConditions(refProperty.id, referencedId);
+    }
+
+    const container = getSchemaEmbedDatatype(this.schemaService, refProperty);
+    if (!container) {
+      return undefined;
+    }
+    return getInnerEntityReferenceFields(
+      container.getEffectiveSchema(refProperty),
+    ).flatMap(([innerProp]) => {
+      const fieldId = `${refProperty.id}.${innerProp}`;
+      const condition = { $or: referenceIdConditions(fieldId, referencedId) };
+      const embedded = resolveEmbeddedField(
+        this.schemaService,
+        refType,
+        fieldId,
+      );
+      const onEmbeddedField = embedded
+        ? conditionOnEmbeddedField(condition, fieldId, embedded)
+        : condition;
+      return onEmbeddedField["$or"] ?? [onEmbeddedField];
+    });
   }
 
   /**
