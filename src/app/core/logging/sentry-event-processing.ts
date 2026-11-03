@@ -3,7 +3,7 @@ import {
   classifyErrorChain,
   causeChain,
   ErrorClassification,
-  isTypedErrorName,
+  classifyError,
 } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import {
@@ -151,7 +151,7 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
       details.status ??= error.response.status;
     }
     // also of a typed error that lost its class (a copy made by PouchDB)
-    if (error instanceof NamedError || isTypedErrorName(error.name)) {
+    if (error instanceof NamedError || classifyError(error)) {
       Object.assign(details, error.details);
     }
   }

@@ -28,6 +28,13 @@ const couchDbUnauthorized = (reason: string) => ({
   message: reason,
 });
 
+/** A copy of an error as PouchDB's `createError()` makes it: its own properties, without its class. */
+function pouchCopy(error: Error): object {
+  return Object.fromEntries(
+    Object.getOwnPropertyNames(error).map((name) => [name, error[name]]),
+  );
+}
+
 describe("classification helpers", () => {
   it.each<[string, unknown, ErrorClassification | undefined]>([
     ["nothing", undefined, undefined],
@@ -48,8 +55,9 @@ describe("classification helpers", () => {
     ],
     ["a gateway status that passed no boundary", { status: 504 }, undefined],
     [
+      // PouchDB's `createError()` copies the own properties onto a new PouchError
       "a typed error that lost its class (a copy made by PouchDB)",
-      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      pouchCopy(new SessionExpiredError("Session could not be renewed")),
       "session-expired",
     ],
     ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
@@ -59,7 +67,7 @@ describe("classification helpers", () => {
       "session-expired",
     ],
     [
-      "a DatabaseException wrapping a typed error",
+      "a typed error of the database",
       databaseError(new ConnectivityError("Failed to fetch from DB")),
       "connectivity",
     ],
@@ -174,8 +182,8 @@ describe("classifyError", () => {
       "write-conflict",
     ],
     [
-      "a typed error that lost its class, by its name",
-      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      "a typed error that lost its class (a copy made by PouchDB)",
+      pouchCopy(new SessionExpiredError("Session could not be renewed")),
       "session-expired",
     ],
     [

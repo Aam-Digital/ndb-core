@@ -1,9 +1,5 @@
 import type * as Sentry from "@sentry/angular";
-import {
-  ErrorClassification,
-  isTypedErrorName,
-  TypedError,
-} from "./error-classification";
+import { classifyError, ErrorClassification } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
@@ -63,7 +59,7 @@ function groupByCause(
       values,
       chainClassifications,
       reportedError,
-      rootCauseIndex(values, errors),
+      rootCauseIndex(errors),
     );
   }
 
@@ -103,19 +99,11 @@ function errorsOfExceptions(
 
 /**
  * The index of the root cause: the innermost of our typed errors, as the foreign
- * error a boundary converted into it (its `cause`) only details it; else the
- * innermost exception.
+ * error a boundary converted into it (its `cause`) only details it; else (also
+ * without the error objects) the innermost exception.
  */
-function rootCauseIndex(
-  values: Sentry.Exception[],
-  errors: Error[] | undefined,
-): number {
-  const index = errors
-    ? errors.findIndex(
-        (error) => error instanceof TypedError || isTypedErrorName(error.name),
-      )
-    : values.findIndex((value) => isTypedErrorName(value.type));
-  return Math.max(index, 0);
+function rootCauseIndex(errors: Error[] | undefined): number {
+  return Math.max(errors?.findIndex((error) => classifyError(error)) ?? 0, 0);
 }
 
 /** The classification of an exception as Sentry serialized it, without the error object. */

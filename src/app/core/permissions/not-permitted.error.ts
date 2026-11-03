@@ -1,6 +1,4 @@
 import {
-  ErrorClassification,
-  registerTypedError,
   TypedError,
   TypedErrorOptions,
 } from "#src/app/core/logging/error-classification";
@@ -12,12 +10,7 @@ import {
  * without login (e.g. a public form, see `RemotePouchDatabase`).
  */
 export class NotPermittedError extends TypedError {
-  static readonly errorName = "NotPermittedError";
-  static override readonly classification: ErrorClassification =
-    "not-permitted";
-
   constructor(message: string, options?: TypedErrorOptions) {
-    super(NotPermittedError.errorName, message, options);
+    super("NotPermittedError", "not-permitted", message, options);
   }
 }
-registerTypedError(NotPermittedError);

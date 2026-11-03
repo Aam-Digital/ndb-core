@@ -125,7 +125,8 @@ Foreign errors are converted into typed errors where they enter the app, by the 
 they belong to: the database layer (`databaseError()`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor`
 for requests to our backend (`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's
 responses mean (`src/app/utils/backend-response.ts`). Each typed class extends `TypedError`
-(`error-classification.ts`), declares its kind of failure as `static classification` and lives in the
+(`error-classification.ts`), passes its name and kind of failure to its constructor (kept as properties, so
+that a copy PouchDB makes of the error is still recognized) and lives in the
 module that creates it: `ConnectivityError` and `ServerError` in `src/app/utils/backend-errors.ts`,
 `NotPermittedError` in `core/permissions/`, `SessionExpiredError` in `core/session/`,
 `WriteConflictError` and `LocalStorageError` in `core/database/pouchdb/database-errors.ts`.

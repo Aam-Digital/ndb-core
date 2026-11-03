@@ -7,13 +7,15 @@ import { LoggedError, NamedError } from "./reported-errors";
  * module they belong to, which also defines the typed classes it creates (each
  * documents what its kind of failure is).
  */
-export type ErrorClassification =
-  | "connectivity"
-  | "session-expired"
-  | "not-permitted"
-  | "local-storage"
-  | "server-error"
-  | "write-conflict";
+const ERROR_CLASSIFICATIONS = [
+  "connectivity",
+  "session-expired",
+  "not-permitted",
+  "local-storage",
+  "server-error",
+  "write-conflict",
+] as const;
+export type ErrorClassification = (typeof ERROR_CLASSIFICATIONS)[number];
 
 /** What a typed error keeps of the foreign failure it was converted from. */
 export interface TypedErrorOptions {
@@ -26,62 +28,40 @@ export interface TypedErrorOptions {
 
 /**
  * A failure of a known kind, converted from a foreign error where it entered the
- * app. Each subclass declares its kind once (`static classification`) and is
- * registered with {@link registerTypedError} next to its definition.
+ * app. Each subclass passes its name (a literal: class names are minified) and
+ * its kind of failure to this constructor.
  */
 export abstract class TypedError extends NamedError {
-  declare static readonly classification: ErrorClassification;
+  /**
+   * The kind of failure: an own property, so that a copy of the error that lost
+   * its class (as PouchDB's `createError()` makes) still has it.
+   */
+  readonly classification: ErrorClassification;
 
   /** The HTTP status of the failed request, if any. */
   readonly status?: number;
 
   protected constructor(
     name: string,
+    classification: ErrorClassification,
     message: string,
     options?: TypedErrorOptions,
   ) {
     super(name, message, options);
+    this.classification = classification;
     this.status = options?.status;
   }
 }
 
 /**
- * The classifications by the names of the typed errors, for one that lost its
- * class: a copy made by PouchDB's `createError()`, or an exception of a Sentry
- * event without the original error object.
- */
-const TYPED_ERROR_NAMES = new Map<string, ErrorClassification>();
-
-/** Recognize the errors of a typed class also by their name (a literal: class names are minified). */
-export function registerTypedError(type: {
-  errorName: string;
-  classification: ErrorClassification;
-}): void {
-  TYPED_ERROR_NAMES.set(type.errorName, type.classification);
-}
-
-/** Whether the name is that of a typed error, also of one that lost its class. */
-export function isTypedErrorName(name: unknown): boolean {
-  return TYPED_ERROR_NAMES.has(name as string);
-}
-
-/**
  * What kind of failure the given error is, judged by this one error (not its
- * `cause`s): a typed error by its class, or by its name if it lost its class.
- * Any other error is not classified: foreign errors are converted where they
- * enter the app.
+ * `cause`s): a typed error, also a copy of one that lost its class. Any other
+ * error is not classified: foreign errors are converted where they enter the app.
  */
 export function classifyError(error: unknown): ErrorClassification | undefined {
-  if (!error || typeof error !== "object") {
-    return undefined;
-  }
-  if (error instanceof TypedError) {
-    return (error.constructor as typeof TypedError).classification;
-  }
-  if (error instanceof LoggedError || error instanceof NamedError) {
-    return undefined;
-  }
-  return TYPED_ERROR_NAMES.get((error as { name?: unknown }).name as string);
+  const classification = (error as { classification?: unknown } | undefined)
+    ?.classification;
+  return ERROR_CLASSIFICATIONS.find((c) => c === classification);
 }
 
 /**
