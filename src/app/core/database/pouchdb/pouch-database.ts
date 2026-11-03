@@ -411,17 +411,11 @@ export class PouchDatabase extends Database {
           }
         })
         .catch((err) => {
-          if (err?.status === HttpStatusCode.Unauthorized) {
-            // a session that could not be renewed, which the replication
-            // backend answers with a plain 401: retried below
-            Logging.debug("changes feed failed (unauthorized)", err);
-          } else {
-            // offline or a session that could not be renewed: retried below
-            Logging.errorUnlessExpected(
-              "changes feed failed",
-              toTypedDatabaseError(err),
-            );
-          }
+          // only the local database: RemotePouchDatabase polls with its own loop
+          Logging.errorUnlessExpected(
+            "changes feed failed",
+            toTypedDatabaseError(err),
+          );
 
           // retry
           setTimeout(() => this.subscribeChanges(), 10000);
