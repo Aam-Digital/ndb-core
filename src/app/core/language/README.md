@@ -480,6 +480,22 @@ border-start-end-radius: 4px; // not border-top-right-radius
 
 Block directions (`top`, `bottom`) stay physical - only the inline axis flips. `left` / `right` are still correct for anything that is genuinely geometric, such as centring with `left: 50%` and a transform.
 
+Stylelint enforces this for `.scss` and `.css` files (rule `csstools/use-logical` in `stylelint.config.mjs`, run by `npm run lint` and in CI; `npm run lint:fix` rewrites most cases automatically). Where a physical value is intended, disable the rule for that line and say why:
+
+```scss
+// stylelint-disable-next-line csstools/use-logical -- centred with the transform below
+left: 50%;
+```
+
+The rule reads one declaration at a time and does not see styles outside stylesheets,
+so check these by hand:
+
+- shorthands that set all four sides at once: `margin: 0 0 0 8px`, `padding`,
+  `border-radius: 4px 0 0 4px`, `inset` and `background-position: left` all pass the rule
+- inline `styles` in a component's `.ts` file and `[style.margin-left]`-like bindings in templates
+- Angular Material position inputs: `matTooltipPosition="before"` / `"after"` instead of `"left"` / `"right"`, `xPosition="before"` / `"after"` on menus, `position="start"` / `"end"` on sidenavs
+- coordinates and offsets computed in TypeScript (see [Reading the direction from TypeScript](#reading-the-direction-from-typescript)) and `translateX()` in stylesheets (see `--text-x-direction`)
+
 ### Scoping styles to RTL inside a component
 
 A plain `[dir="rtl"]` selector in a component stylesheet **silently does nothing**. View encapsulation rewrites it to `[dir="rtl"][_ngcontent-xyz]`, which can never match `<html dir="rtl">`. Use `:host-context()`:
