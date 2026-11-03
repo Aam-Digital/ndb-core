@@ -248,8 +248,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:137</a></div>
                         </td>
                     </tr>
 
@@ -651,7 +651,8 @@ export class FormDialogService {
 
     const columnsToDisplay &#x3D; columns
       .filter((col) &#x3D;&gt; col.editComponent)
-      .map((col) &#x3D;&gt; Object.assign({}, col, { forTable: false }));
+      // copies, so the dialog cannot change the column configs of the caller (e.g. a table)
+      .map((col) &#x3D;&gt; ({ ...col }));
 
     return this.dialog.open(component, {
       ...FormDialogService.dialogSettings,

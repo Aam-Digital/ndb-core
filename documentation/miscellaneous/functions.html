@@ -1175,9 +1175,6 @@
                             <a href="#setupCustomFormControlEditComponent" title="src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>setupCustomFormControlEditComponent</b>&nbsp;&nbsp;&nbsp;(src/.../edit-component-test-utils.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#shouldSkipRowInteraction" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>shouldSkipRowInteraction</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
-                        </li>
-                        <li>
                             <a href="#showCloseOtherTabsNotice" title="src/bootstrap-reset.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>showCloseOtherTabsNotice</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-reset.ts)</span></a>
                         </li>
                         <li>
@@ -4516,7 +4513,7 @@ Please add assets/firebase-config.json with your own Firebase config</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>applyRangeSelection&lt;T extends Entity&gt;(selectedRecords, rows, range, shouldCheck: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+<code>applyRangeSelection&lt;T extends Entity&gt;(selectedRecords, records, range, shouldCheck: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
                 </td>
             </tr>
 
@@ -4560,7 +4557,7 @@ Please add assets/firebase-config.json with your own Firebase config</p>
 
                                         </tr>
                                         <tr>
-                                                <td>rows</td>
+                                                <td>records</td>
                                             <td>
                                             </td>
 
@@ -4704,88 +4701,6 @@ Please add assets/firebase-config.json with your own Firebase config</p>
                                     <tbody>
                                         <tr>
                                                 <td>target</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="shouldSkipRowInteraction"></a>
-                    <span class="name">
-                        <span ><b>shouldSkipRowInteraction</b></span>
-                        <a href="#shouldSkipRowInteraction"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>shouldSkipRowInteraction&lt;T extends Entity&gt;(target, row: <a href="../interfaces/TableRow.html" target="_self">TableRow</a>)</code>
-                </td>
-            </tr>
-
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <b>Type parameters :</b>
-                            <ul class="type-parameters">
-                                    <li>T extends Entity</li>
-                            </ul>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Determines whether row-click handling should be skipped for this interaction.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>target</td>
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>row</td>
-                                            <td>
-                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow</a></code>
-                                            </td>
 
                                             <td>
                                                     No
@@ -9554,7 +9469,7 @@ Used for filter evaluation and conditional color matching.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Custom sort implementation for a MatTableDataSource&lt;TableRow<T>&gt;</p>
+                        <div class="io-description"><p>Custom sort implementation for a MatTableDataSource<T> of entities</p>
 </div>
 
                             <div class="io-description">
@@ -9635,11 +9550,11 @@ Used for filter evaluation and conditional color matching.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow[]</a></code>
+                            <b>Returns : </b>    <code>OBJECT[]</code>
 
                         </div>
                             <div class="io-description">
-                                <p>the sorted table rows</p>
+                                <p>the sorted records</p>
 
                             </div>
                 </td>
@@ -24398,6 +24313,8 @@ so they have to be rejected before they are stored or used.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Whether the error means the referenced entity cannot be resolved at all
 (rather than a failure that may succeed on another attempt).</p>
+<p>&quot;No permission&quot; includes the server&#39;s <code>401 &quot;User is not permitted&quot;</code>,
+but not an expired session, which is a <code>401</code> as well (see <a href="../miscellaneous/functions.html#isNotPermittedError">isNotPermittedError</a>).</p>
 </div>
 
                             <div class="io-description">

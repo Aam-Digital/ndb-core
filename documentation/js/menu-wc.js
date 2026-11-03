@@ -1269,9 +1269,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/EntityImportConfigComponent.html" data-type="entity-link" >EntityImportConfigComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/EntityInlineEditActionsComponent.html" data-type="entity-link" >EntityInlineEditActionsComponent</a>
-                            </li>
-                            <li class="link">
                                 <a href="components/EntityListComponent.html" data-type="entity-link" >EntityListComponent</a>
                             </li>
                             <li class="link">
@@ -3169,9 +3166,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/SqlReportRow.html" data-type="entity-link" >SqlReportRow</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/TableRow.html" data-type="entity-link" >TableRow&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportComplement.html" data-type="entity-link" >TemplateExportComplement</a>
