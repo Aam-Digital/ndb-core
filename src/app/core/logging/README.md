@@ -141,7 +141,8 @@ the few foreign errors that reach it uncaught, e.g. a failed chunk load
   never with `instanceof HttpErrorResponse` (a lint rule enforces this): a failed request to our backend
   with a classified status (no response, 401 expired or not permitted, 403, 409, 5xx) arrives as a typed
   error, with the `HttpErrorResponse` as its `cause`. Other statuses (e.g. 400, 404) and other services
-  stay an `HttpErrorResponse`.
+  stay an `HttpErrorResponse`. For a session without login (a public form), the database layer
+  converts every `401` into a `NotPermittedError`: there is no session to renew.
 
 What remote monitoring does with each kind (`REPORTING_POLICY` in `sentry-event-processing.ts`):
 
