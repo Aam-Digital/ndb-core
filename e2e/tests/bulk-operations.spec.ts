@@ -120,7 +120,7 @@ test("Bulk actions on selected records", async ({ page }) => {
     enumMulti: [CENTER_TOLLYGUNGE],
   });
   for (const child of [c1, c2]) {
-    Object.assign(child, { schoolId: school.getId() });
+    Object.assign(child, { linkedSchool: school.getId() });
   }
 
   const childA = generateChild({ name: CHILD_A_NAME });

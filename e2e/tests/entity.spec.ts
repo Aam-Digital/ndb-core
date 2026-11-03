@@ -226,6 +226,10 @@ const ARCHIVED_NAMES = ["Match 15 Archived", "Match 16 Archived"];
  */
 const EMAIL_HOLDER_NAME = "Decoy Center 1";
 
+/**
+ * The child and, if it has a school, its current enrolment there
+ * (the "School" column and filter of the list show the school of the current enrolment).
+ */
 function createChildForList(opts: {
   name: string;
   /** doubles as the entity id; the list sorts by this column initially */
@@ -234,20 +238,29 @@ function createChildForList(opts: {
   school?: Entity;
   archived?: boolean;
   email?: string;
-}) {
+}): Entity[] {
   const child = generateChild({
     id: opts.projectNumber,
     name: opts.name,
     inactive: opts.archived,
   });
   assignCenter(child, opts.center);
-  if (opts.school) {
-    child["schoolId"] = opts.school.getId();
-  }
   if (opts.email) {
     child["email"] = opts.email;
   }
-  return child;
+  if (!opts.school) {
+    return [child];
+  }
+  const enrolment = createEntityOfType(
+    "ChildSchoolRelation",
+    `enrolment-${opts.projectNumber}`,
+  );
+  Object.assign(enrolment, {
+    childId: child.getId(),
+    schoolId: opts.school.getId(),
+    start: new Date(2024, 0, 1),
+  });
+  return [child, enrolment];
 }
 
 test("Combining filters keeps sorting consistent across paginated pages", async ({
@@ -262,7 +275,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   // Children matching both filters. Their projectNumber — the column the list
   // sorts by initially — runs opposite to the alphabetical name order, so
   // sorting by "Name" has to visibly reorder the rows.
-  const matchingChildren = MATCHING_NAMES.map((name, i) =>
+  const matchingChildren = MATCHING_NAMES.flatMap((name, i) =>
     createChildForList({
       name,
       projectNumber: `M${String(MATCHING_NAMES.length - i).padStart(2, "0")}`,
@@ -275,13 +288,13 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   // names sort before "Match ...", so they would surface on the first page if
   // either filter were dropped; PAGE_TWO_DECOY_NAME sorts into the second page.
   const decoyChildren = [
-    createChildForList({
+    ...createChildForList({
       name: PAGE_TWO_DECOY_NAME,
       projectNumber: "DP1",
       center: CENTER_TOLLYGUNGE,
       school: matchingSchool,
     }),
-    ...range(3).map((i) =>
+    ...range(3).flatMap((i) =>
       createChildForList({
         name: `Decoy Center ${i}`,
         projectNumber: `DC${i}`,
@@ -293,7 +306,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
             : undefined,
       }),
     ),
-    ...range(3).map((i) =>
+    ...range(3).flatMap((i) =>
       createChildForList({
         name: `Decoy School ${i}`,
         projectNumber: `DS${i}`,
@@ -301,7 +314,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
         school: matchingSchool,
       }),
     ),
-    ...range(2).map((i) =>
+    ...range(2).flatMap((i) =>
       createChildForList({
         name: `Decoy None ${i}`,
         projectNumber: `DN${i}`,
@@ -313,7 +326,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   // Archived records match both filters but are hidden until the list's
   // "Include archived records" toggle is switched on. Their names sort after
   // all the active matches, so they extend the second page.
-  const archivedChildren = ARCHIVED_NAMES.map((name, i) =>
+  const archivedChildren = ARCHIVED_NAMES.flatMap((name, i) =>
     createChildForList({
       name,
       projectNumber: `MA${i}`,
