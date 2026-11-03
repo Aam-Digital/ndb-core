@@ -2,7 +2,10 @@ import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry, ComponentTuple } from "../../dynamic-components";
 import { EntityActionsMenuService } from "../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
-import { EntityAction } from "../entity-details/entity-actions-menu/entity-action.interface";
+import {
+  EntityAction,
+  EntityActionGroup,
+} from "../entity-details/entity-actions-menu/entity-action.interface";
 import { Entity } from "../entity/model/entity";
 import { Router } from "@angular/router";
 
@@ -44,6 +47,9 @@ export class ImportModule {
       actions.push({
         action: JSON.stringify(importAction),
         label,
+        shortLabel:
+          this.importAdditionalService.createGroupedActionLabel(importAction),
+        group: IMPORT_ACTIONS_GROUP,
         icon: "file-import",
         execute: () =>
           this.router.navigate(["import"], {
@@ -59,6 +65,12 @@ export class ImportModule {
     return actions;
   }
 }
+
+const IMPORT_ACTIONS_GROUP: EntityActionGroup = {
+  id: "import-related",
+  label: $localize`:entity context menu:Import related`,
+  icon: "file-import",
+};
 
 const importComponents: ComponentTuple[] = [
   [

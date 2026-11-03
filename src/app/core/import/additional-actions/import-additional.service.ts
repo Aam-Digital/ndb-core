@@ -356,15 +356,8 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
-    const sourceType = this.entityRegistry.get(importAction.sourceType);
-    const targetTypes = importAction["targetType"]
-      ? asArray(importAction["targetType"]).map((type) =>
-          this.entityRegistry.get(type),
-        )
-      : [];
-    const relationshipType = importAction["relationshipEntityType"]
-      ? this.entityRegistry.get(importAction["relationshipEntityType"])
-      : null;
+    const { sourceType, targetTypes, relationshipType } =
+      this.resolveActionTypes(importAction);
 
     // normally just one type; join with " / " if several
     const targetTypeLabel = targetTypes.map((t) => t.toString()).join(" / ");
@@ -383,6 +376,34 @@ export class ImportAdditionalService {
     );
 
     return label;
+  }
+
+  createGroupedActionLabel(importAction: AdditionalImportAction): string {
+    const { sourceType, targetTypes, relationshipType } =
+      this.resolveActionTypes(importAction);
+
+    return (
+      sourceType.toString(true) +
+      this.getAdditionalContextDetailsForActionLabel(
+        importAction,
+        targetTypes,
+        relationshipType,
+      )
+    );
+  }
+
+  private resolveActionTypes(importAction: AdditionalImportAction) {
+    return {
+      sourceType: this.entityRegistry.get(importAction.sourceType),
+      targetTypes: importAction["targetType"]
+        ? asArray(importAction["targetType"]).map((type) =>
+            this.entityRegistry.get(type),
+          )
+        : [],
+      relationshipType: importAction["relationshipEntityType"]
+        ? this.entityRegistry.get(importAction["relationshipEntityType"])
+        : null,
+    };
   }
 
   private getAdditionalContextDetailsForActionLabel(
