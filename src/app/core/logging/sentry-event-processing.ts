@@ -86,23 +86,24 @@ const REPORTING_POLICY: Record<
 
 /**
  * The classification of the failure an event reports: of its error chain if the
- * error object is known, else (e.g. for an event of a captured message) by the
- * reported exceptions, status and message. Foreign errors that reached the
- * logging unconverted are recognized as well (see `uncaught-error-classification.ts`).
+ * error object is known, else by the reported exceptions. Foreign errors that
+ * reached the logging unconverted are recognized as well (see
+ * `uncaught-error-classification.ts`). An event of a logged message (or a thrown
+ * string) is not classified: a message is not classified by its wording.
  */
 function classifySentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): ErrorClassification | undefined {
   const original = hint?.originalException;
-  if (original instanceof Error) {
-    return classifyErrorChain(original, classifyReportedError);
+  if (typeof original === "string") {
+    return undefined;
   }
-  return (
-    classifyErrorChain(original, classifyReportedError) ??
-    event.exception?.values?.map(classifyException).find(Boolean) ??
-    classifyReportedError(event.message)
-  );
+  const classification = classifyErrorChain(original, classifyReportedError);
+  if (classification || original instanceof Error) {
+    return classification;
+  }
+  return event.exception?.values?.map(classifyException).find(Boolean);
 }
 
 /** A failure logged with a message by a component, or wrapped in one of our named errors. */

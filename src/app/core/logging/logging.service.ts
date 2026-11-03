@@ -268,6 +268,10 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
+  if (isClassifiedForeignFailure(message)) {
+    // e.g. an `HttpErrorResponse` logged as it is: grouped and filtered like that failure
+    return new LoggedError(messageText(message), message);
+  }
 
   const cause =
     context.find((c) => c instanceof Error) ??

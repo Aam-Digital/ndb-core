@@ -142,6 +142,16 @@ describe("LoggingService", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
   });
 
+  it("should report a failed request to another service logged as message as the cause of its message", () => {
+    const reported = toReportedError(offlineResponse, [], LogLevel.WARN);
+
+    expect(reported).toBeInstanceOf(LoggedError);
+    expect(reported).toMatchObject({
+      message: offlineResponse.message,
+      cause: offlineResponse,
+    });
+  });
+
   it.each([undefined, ""])(
     "should not set up remote logging without a DSN (%j)",
     (dsn) => {
@@ -223,9 +233,9 @@ describe("classifyReportedError", () => {
       "connectivity",
     ],
     [
-      "an HttpErrorResponse without response logged as message",
-      "Http failure response for /nominatim/search: 0 Unknown Error",
-      "connectivity",
+      "a message never by its wording",
+      "Failed to fetch roles for user",
+      undefined,
     ],
     [
       "a failed fetch (Chrome)",
@@ -658,6 +668,18 @@ describe("processSentryEvent", () => {
       vi.stubGlobal("navigator", { onLine: !offline });
 
       expect(process(error) === null).toBe(dropped);
+    });
+
+    it("should not drop a logged message while offline for its wording", () => {
+      vi.stubGlobal("navigator", { onLine: false });
+      const message = "Failed to fetch roles for user";
+
+      const event = processSentryEvent({ message } as Sentry.ErrorEvent, {
+        originalException: message,
+      });
+
+      expect(event).not.toBeNull();
+      expect(event.tags?.error_class).toBeUndefined();
     });
   });
 
