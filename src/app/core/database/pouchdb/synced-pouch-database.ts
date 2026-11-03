@@ -320,28 +320,42 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
   private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    this.logSyncFailure(err, lastSyncedDocIds);
+    this.syncState.next(SyncState.FAILED);
+  }
+
+  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    const context = {
+      db: this.dbName,
+      ...lastSyncedBatchContext(lastSyncedDocIds),
+    };
     if (this.isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
         err,
       );
-    } else if (
+      return;
+    }
+
+    // reported (with the offer to reset the local data) by the recovery service
+    const reportedAsCorruption =
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-      )
-    ) {
-      // reported (with the offer to reset the local data) by the recovery service
-    } else if (isReplicationConnectivityError(err)) {
+        context,
+      );
+    if (reportedAsCorruption) {
+      return;
+    }
+
+    if (isReplicationConnectivityError(err)) {
       Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
     } else if (isReplicationUnauthorizedError(err)) {
       Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
     } else {
       Logging.warn(`sync failed`, { db: this.dbName }, err);
     }
-    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
