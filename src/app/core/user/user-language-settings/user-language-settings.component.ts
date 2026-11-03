@@ -19,7 +19,7 @@ import { UserSettings } from "../../site-settings/user-settings";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "../../entity/entity-mapper/entity-permission-error";
 import { SessionSubject } from "../../session/auth/session-info";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import { isNotPermittedError } from "#src/app/utils/is-not-permitted-error";
 
 /**
  * Lets a user pick the language for their own account.

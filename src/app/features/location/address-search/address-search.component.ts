@@ -32,7 +32,7 @@ import {
   tap,
 } from "rxjs/operators";
 import { Logging } from "../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "../../../utils/is-connectivity-error";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";

@@ -54,9 +54,9 @@ and "Log a failure once" below):
   handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
   `ErrorHandler` and is reported as a separate, unhandled issue.
 - **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
-  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`), `isExpiredSessionError()`
-  (`src/app/utils/expired-session-error.ts`) and `isNotPermittedError()`
-  (`src/app/utils/not-permitted-error.ts`). A component that only treats `404` as expected
+  `isConnectivityError()` (`src/app/utils/is-connectivity-error.ts`), `isExpiredSessionError()`
+  (`src/app/utils/is-expired-session-error.ts`) and `isNotPermittedError()`
+  (`src/app/utils/is-not-permitted-error.ts`). A component that only treats `404` as expected
   logs every dropped connection as a warning of its own, and cannot tell the user what happened.
 - **Check whether an optional feature is configured before using it** (e.g. push notifications
   without a Firebase config) instead of logging its failure on every page load.
@@ -149,20 +149,14 @@ Logging.error(err);
 Logging.error("Could not download file", err);
 ```
 
-`Logging.error(message, err)` reports the message as the error (wrapped in a `LoggedError`) and keeps
-the original as its `cause`. Sentry links a `cause` into the reported exception chain, so the original
-error and its stack trace are still in the event — but the title and the grouping now come from the
-message, which is stable across releases and identical for every call site logging that same problem.
-
-`Logging.warn(message, err)` is reported the same way, only at level `warning`. As a plain message
-event, the error would only be extra data that none of the processing below looks at: a failed request
-would not count as a connectivity failure, an expired session would not be filtered, and the status
-would not be reported. Only a warning without any error is reported as a plain message, grouped by its
-message. Angular's `HttpErrorResponse` is not an `Error` and counts as "no error" here: whether a
-failed response is exceptional is for the code that made the request to decide.
-
-So do not drop the error before logging (a `catchError(() => of(null))` followed by a log call
-without it leaves the report impossible to diagnose), and do not pass the same error object twice.
+`Logging.error(message, err)` and `Logging.warn(message, err)` report the message as the error (a
+`LoggedError`) with the original as its `cause`, so the original error and its stack trace stay in the
+event, and the grouping and filtering below apply to it. Logged without an error, the message is
+reported as a plain message event, grouped by its text. An `HttpErrorResponse` is not an `Error` and
+counts as "no error" here, unless it is a request to another service that got no response (status 0 or a
+gateway status): that is reported as the `cause`, so that it goes into the network issue. So do not drop the error before logging (a `catchError(() => of(null))`
+followed by a log call without it leaves the report impossible to diagnose), and do not pass the same
+error object twice.
 
 ### Log a failure once
 
@@ -173,11 +167,10 @@ a failure and only returns a result flag, the component receiving it must not lo
 
 ### Our own errors: `NamedError`
 
-Extend `NamedError` (or create one) for an error whose name and message identify the problem on their
-own, no matter which component ran into it — e.g. `ConfigLoadError`, `SyncStalledError`,
+Extend `NamedError` (`reported-errors.ts`) for an error whose name and message identify the problem on
+their own, no matter which component ran into it — e.g. `ConfigLoadError`, `SyncStalledError`,
 `DatabaseException`, `RegistryLookupError`. Remote monitoring groups these by name, message and root
-cause instead of by stack trace, which otherwise opens one issue per call site (and per build, as
-releases without source maps report minified frames).
+cause instead of by stack trace, which would open one issue per call site (and per build).
 
 - Pass the name as a literal: the class name is minified in production builds.
 - Keep the message free of ids and other variable data, and pass them as `details` instead: they are
@@ -185,62 +178,73 @@ releases without source maps report minified frames).
 - Do not use it for generic errors (`TypeError`, ...): for those, the stack trace is the only thing
   telling two unrelated bugs apart.
 - A failure that is only logged, not thrown, needs no name: `Logging.error(message, err)` is grouped
-  the same way. Name it only where a network failure must keep an issue of its own instead of going
-  into the shared network issue, because the app cannot continue (`AppBootstrapError`;
-  `ConfigLoadError`, which is not reported at all when the device is simply offline).
+  the same way. Name it only where a network failure must keep an issue of its own because the app
+  cannot continue (`AppBootstrapError`, `ConfigLoadError`).
 
-### How events are grouped
+### Typed errors: classifying failures where they enter the app
 
-Sentry groups errors by their stack trace whenever one is available, so rewording an error's message
-changes the issue title, but never splits or merges issues; only a fingerprint does. The `beforeSend`
-hook (`processSentryEvent`) therefore sets one where the stack is the wrong key:
+Foreign errors are converted into typed errors where they enter the app, by the knowledge of the module
+they belong to: the database layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor`
+for requests to our backend (`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's
+responses mean (`src/app/utils/backend-response.ts`). Each typed class extends `TypedError`
+(`error-classification.ts`), declares its kind of failure as `static classification` and lives in the
+module that creates it: `ConnectivityError` and `ServerError` in `src/app/utils/backend-errors.ts`,
+`NotPermittedError` in `core/permissions/`, `SessionExpiredError` in `core/session/`,
+`WriteConflictError` and `LocalStorageError` in `core/database/pouchdb/database-errors.ts`.
+Everything else judges an error by its type (`classifyError()`). Only remote monitoring also recognizes
+the few foreign errors that reach it uncaught, e.g. a failed chunk load
+(`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes.
 
-1. **Our errors** — a `NamedError` or a logged message (`LoggedError`) is grouped by its name and
-   message plus the root cause of its `cause` chain. The root cause is appended to the title, so that
-   issues split by it can be told apart, e.g. "ConfigLoadError: Failed to load configuration. (caused
-   by DatabaseException: Unknown kid)". A framework wrapper that only repeats the message of one of our
-   errors (Angular does that for an error raised in a `resource()` loader) is grouped like the error it
-   wraps.
-2. **Network failures** — a request that never reached the server goes into a single `network-error`
-   issue, at level `warning`: a failed `DatabaseException`, a logged message whose direct cause is a
-   failed request (whichever component logged it — the message is kept as the `logged_message` tag),
-   and any other error with a connectivity failure in its chain or a gateway status (0, 502, 503,
-   504). A chunk that fails to load counts as well (offline, or a deployment replaced it). Every
-   browser words these differently, so the title is replaced by a stable one and the original kept as
-   the `network_error` tag. A named error caused by a network failure (`ConfigLoadError`,
-   `AppBootstrapError`) keeps its own issue: it says what failed.
-3. **Exceptions without a stack** (e.g. an `HttpErrorResponse`) and **message events** are grouped by
-   their normalized message — Sentry would otherwise group them by the raw message, one issue per id.
-   An exception is also reported under the normalized message, so that the issue list does not show
-   one row per id (or a whole HTML error page quoted into a message).
+- **Check for a kind of failure** with `isConnectivityError()`, `isNotPermittedError()` or
+  `isExpiredSessionError()` (`src/app/utils/`), which apply this classification to the whole `cause`
+  chain, never with ad-hoc status checks.
+- **Read a failed HTTP response** with `failedHttpResponse(err)` (`src/app/utils/failed-http-response.ts`),
+  never with `instanceof HttpErrorResponse` (a lint rule enforces this): a failed request to our backend
+  with a classified status (no response, 401 expired or not permitted, 403, 409, 5xx) arrives as a typed
+  error, with the `HttpErrorResponse` as its `cause`. Other statuses (e.g. 400, 404) and other services
+  stay an `HttpErrorResponse`.
 
-Everything else keeps Sentry's grouping by stack trace.
+What remote monitoring does with each kind (`REPORTING_POLICY` in `sentry-event-processing.ts`):
 
-Messages are normalized for grouping (`fingerprintKey`): ids, URLs and numbers are masked, punctuation
-and casing dropped, as libraries are inconsistent about them (PouchDB reports both `Unauthorized` and
-`unauthorized`). Changing the grouping does not re-group events already in Sentry: archive the issues
-it replaces once the release carrying it is rolled out.
+| Classification    | Reported                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `connectivity`    | one shared `network-error` issue, as warning; not while offline                       |
+| `server-error`    | at the logged level, one issue per status and endpoint                                |
+| `not-permitted`   | as a warning if logged with a message or unhandled; dropped if logged without message |
+| `local-storage`   | the first event of the page load, tagged `incident: local-db`                         |
+| `session-expired` | no: the user is told                                                                  |
+| `write-conflict`  | no: normal for an offline-first app, counted in usage analytics                       |
 
-### What is not reported
+### How events are grouped and filtered
 
-`processSentryEvent` drops events nobody can act on:
+Sentry groups errors by their stack trace, so rewording a message changes an issue's title but never
+splits or merges issues; only a fingerprint does. `processSentryEvent` (the `beforeSend` hook) sets one
+where the stack is the wrong key, see `sentry-grouping.ts` for the rules:
 
-- connectivity failures while the device is offline;
-- a rejected write with an outdated revision (409, "Document update conflict"): normal for an
-  offline-first app, the user is told and it is counted in usage analytics;
-- an expired session that could not be renewed (also when wrapped): the user is told, and the code
-  waiting for the data is not at fault. Other `401` reasons are still reported.
+- Our errors (a `NamedError` or a logged message) wrapping another error are grouped by the error and the
+  root cause of the `cause` chain, so a generic root cause (a `missing` document, a `TypeError`) in
+  another component gets an issue and alert of its own.
+- A classified root cause that means the same wherever it occurs (a broken local database, not
+  permitted, a server error, which also by its status and endpoint) is grouped by the root cause alone,
+  with the reporting component as the `reported_by` tag.
+- A request that never reached the server goes into the one network issue, unless a named error
+  wrapping it says the app could not continue (e.g. `AppBootstrapError`).
+- Errors without a stack and message events are grouped by their message, with ids, URLs and numbers
+  masked (`fingerprintKey`).
 
-The `status`, `reason`, `entityId` etc. of the error, or of the failed request in its `cause` chain, are
-reported as extra data, as are the `details` of a `NamedError`.
+It also adds the error's `status`, `reason`, `entityId` and `details` as extra data, and drops an
+unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser).
+Changing the grouping does not re-group events already in Sentry: archive the issues it replaces once
+the release carrying it is rolled out.
 
-### One report per issue per session
+### Each failure is reported once per page load
 
-An error thrown on every change detection cycle would send thousands of identical events, so each issue
-is capped at `MAX_REPEATED_SENTRY_EVENTS` per page load. An issue's **event count is therefore not a
-measure of how often a problem occurs**: weigh how many sessions, deployments (the `url` tag) and
-releases it affects instead. Not the number of affected _users_, which Sentry shows as 0: events
-deliberately carry no user identity, as data minimization under the GDPR.
+`reportOnce` (`report-once.ts`) turns a repeat of a failure already reported in this page load into a
+breadcrumb: the same error object (e.g. logged, then rethrown), a broken local database or the network
+issue after their first event, and any other issue after `MAX_REPEATED_SENTRY_EVENTS` events (against
+error loops). An issue's **event count is therefore not a measure of how often a problem occurs**: weigh
+how many sessions, deployments (the `url` tag) and releases it affects instead. Sentry shows 0 affected
+users, as events deliberately carry no user identity (data minimization under the GDPR).
 
 ### Investigating issues in Sentry
 
@@ -258,6 +262,11 @@ deliberately carry no user identity, as data minimization under the GDPR.
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `sentry-event-processing.ts` — the `beforeSend` hook: details, filters and the repeat cap
+- `error-classification.ts` — `TypedError`, the base of the typed errors, and `classifyError()`
+- `uncaught-error-classification.ts` — the foreign errors recognized only when they reach remote monitoring uncaught
+- `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
+- `report-once.ts` — turning repeated reports of one failure into breadcrumbs
 - `log-level.ts` — the `LogLevel` definitions
+- `src/app/utils/failed-http-response.ts`, `src/app/utils/*-error.ts` — helpers to read and classify failed requests
+- `src/app/utils/typed-http-error.interceptor.ts`, `src/app/utils/backend-response.ts` — the HTTP boundary and what our backend's responses mean

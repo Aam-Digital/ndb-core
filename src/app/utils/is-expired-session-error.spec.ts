@@ -1,5 +1,5 @@
 import { DatabaseException } from "../core/database/pouchdb/database-exception";
-import { isExpiredSessionError } from "./expired-session-error";
+import { isExpiredSessionError } from "./is-expired-session-error";
 
 describe("isExpiredSessionError", () => {
   /** The error PouchDB's http adapter builds from CouchDB's 401 response. */

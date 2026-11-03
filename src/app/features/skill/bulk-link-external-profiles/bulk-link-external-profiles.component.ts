@@ -35,7 +35,7 @@ import {
 import { EntitySchema } from "../../../core/entity/schema/entity-schema";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Logging } from "../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "../../../utils/is-connectivity-error";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { finalize, firstValueFrom, from, mergeMap } from "rxjs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
