@@ -1,11 +1,34 @@
-import { compare } from "@ucast/mongo2js";
+import {
+  allInterpreters,
+  allParsingInstructions,
+  compare,
+  createFactory,
+  Filter,
+} from "@ucast/mongo2js";
 import moment from "moment";
+import type { MongoQuery } from "@casl/ability";
+import type { DataFilter } from "../core/filter/filters/filters";
+
+const createPredicate = createFactory(allParsingInstructions, allInterpreters, {
+  compare: extendedCompare,
+}) as Filter;
+
+/**
+ * The in-memory engine for conditions (see the README of the filter module):
+ * a function telling whether a record matches the given condition.
+ * Throws if the condition cannot be parsed.
+ *
+ * Kept here, outside of `FilterService`, so that `Entity` can use it without a circular dependency.
+ */
+export function createFilterPredicate<T>(
+  condition: DataFilter<T> | undefined,
+): (record: T) => boolean {
+  return createPredicate<T>((condition ?? {}) as MongoQuery<T>);
+}
 
 /**
  * Handles special cases like ConfigurableEnum objects and Dates.
  * Used for filter evaluation and conditional color matching.
- *
- * This utility is kept separate to avoid circular dependencies between Entity and FilterService.
  *
  * @returns -1 if a < b, 0 if a === b, 1 if a > b
  */

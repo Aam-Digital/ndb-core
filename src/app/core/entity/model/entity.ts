@@ -28,12 +28,7 @@ import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
 import { DataFilter } from "../../filter/filters/filters";
-import {
-  allInterpreters,
-  allParsingInstructions,
-  createFactory,
-} from "@ucast/mongo2js";
-import { extendedCompare } from "../../../utils/filter-compare-utils";
+import { createFilterPredicate } from "../../../utils/filter-compare-utils";
 
 /**
  * This represents a static class of type <T>.
@@ -402,11 +397,6 @@ export class Entity {
     // Handle conditional colors array
     if (Array.isArray(colorConfig) && colorConfig.length > 0) {
       try {
-        const interpret = createFactory(
-          allParsingInstructions,
-          allInterpreters,
-          { compare: extendedCompare },
-        );
         let fallbackColor: string | null = null;
 
         for (const mapping of colorConfig) {
@@ -422,7 +412,7 @@ export class Entity {
           }
 
           try {
-            const test = interpret(mapping.condition as any);
+            const test = createFilterPredicate(mapping.condition);
             if (test(entity)) return mapping.color;
           } catch (e) {
             Logging.debug(

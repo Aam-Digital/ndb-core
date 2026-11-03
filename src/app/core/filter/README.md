@@ -49,16 +49,14 @@ see `DynamicPlaceholderValueService.resolveRecordPlaceholders`. A row referencin
 
 ## Engines
 
-| Engine                                                 | Used for                                                  | Pitfalls                                                                                                 |
-| ------------------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `FilterService.getFilterPredicate` (`@ucast/mongo2js`) | everything evaluated in memory, except conditional colors | a comparison with a missing value counts as equal (add `$exists: true`); no `$and`/`$or` in `$elemMatch` |
-| `Entity.getColorWithConditions` (`@ucast/mongo2js`)    | conditional colors                                        | an engine instance of its own                                                                            |
-| CouchDB Mango, via `PaginatedDataSource`               | lists of an online-only session                           | the query is translated to the stored format first (`processFilterForDB`)                                |
-| pouchdb-find                                           | `MemoryPouchDatabase` in tests                            | gets an `$and` of several `$or` wrong                                                                    |
-| CASL (`EntityAbility`, replication-backend)            | permissions                                               | matches the record converted to the stored format                                                        |
-| `MockEntityMapperService`                              | unit tests                                                | plain `@ucast/mongo2js`, without the comparisons for dropdown options and dates                          |
+| Engine                                                 | Used for                                                                                                                    | Pitfalls                                                                                                                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| in memory: `createFilterPredicate` (`@ucast/mongo2js`) | everything evaluated in memory (`FilterService.getFilterPredicate`, conditional colors, `MockEntityMapperService` in tests) | a comparison with a missing value counts as equal (add `$exists: true`); no `$and`/`$or` in `$elemMatch`                                                      |
+| CouchDB Mango, via `PaginatedDataSource`               | lists of an online-only session                                                                                             | the query is translated to the stored format first (`processFilterForDB`)                                                                                     |
+| pouchdb-find                                           | `MemoryPouchDatabase` in tests                                                                                              | gets an `$and` of several `$or` wrong                                                                                                                         |
+| CASL (`EntityAbility`, replication-backend)            | permissions                                                                                                                 | its own, stricter matcher on the record converted to the stored format; matches conditions in the stored format like in memory (see `entity-ability.spec.ts`) |
 
-The in-memory engine compares with `extendedCompare` (`utils/filter-compare-utils.ts`),
+The in-memory engine (`utils/filter-compare-utils.ts`) compares with `extendedCompare`,
 so that a dropdown option object matches its id and a `Date` matches a day string.
 
 ## Key files
