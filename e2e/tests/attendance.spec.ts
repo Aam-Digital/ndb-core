@@ -296,7 +296,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   ).not.toBeVisible();
 
   // And I can still show the children of other centers on request
-  await page.getByText(/not matching the filter/).click();
+  await page.getByText(/not matching the selection conditions/).click();
   await expect(
     page.getByRole("option", { name: childInOtherCenter.name }),
   ).toBeVisible();
@@ -310,7 +310,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
       .getByRole("dialog")
       .getByText(
         new RegExp(
-          `Not matching the filter of this field: .*${childInOtherCenter.name}`,
+          `Not matching the selection conditions of this field: .*${childInOtherCenter.name}`,
         ),
       ),
   ).toBeVisible();

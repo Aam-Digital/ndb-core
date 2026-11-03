@@ -312,7 +312,8 @@ describe("DynamicValidatorsService", () => {
       ).toEqual({
         selectionCondition: {
           warning: true,
-          errorMessage: "Not matching the filter of this field: Ben",
+          errorMessage:
+            "Not matching the selection conditions of this field: Ben",
         },
       });
     });

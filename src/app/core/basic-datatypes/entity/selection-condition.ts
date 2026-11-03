@@ -110,7 +110,7 @@ export function selectionConditionValidator(
     return {
       selectionCondition: {
         warning: true,
-        errorMessage: $localize`Not matching the filter of this field: ${names}`,
+        errorMessage: $localize`Not matching the selection conditions of this field: ${names}`,
       },
     };
   };
