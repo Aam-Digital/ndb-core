@@ -1,6 +1,6 @@
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
+import { isExpiredSessionError } from "#src/app/utils/is-expired-session-error";
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";

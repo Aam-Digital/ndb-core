@@ -26,7 +26,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { SyncFailedError } from "../../../core/database/pouchdb/synced-pouch-database";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "../../../utils/is-connectivity-error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileService } from "../file.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";

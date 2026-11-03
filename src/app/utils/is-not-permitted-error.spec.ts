@@ -1,10 +1,10 @@
 import { DatabaseException } from "../core/database/pouchdb/database-exception";
-import { isNotPermittedError } from "./not-permitted-error";
+import { isNotPermittedError } from "./is-not-permitted-error";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "./typed-http-error.interceptor";
 import { LoggedError } from "../core/logging/reported-errors";
-import { isConnectivityError } from "./connectivity-error";
-import { isExpiredSessionError } from "./expired-session-error";
+import { isConnectivityError } from "./is-connectivity-error";
+import { isExpiredSessionError } from "./is-expired-session-error";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";

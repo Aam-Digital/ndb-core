@@ -1,4 +1,4 @@
-import { isConnectivityError } from "./connectivity-error";
+import { isConnectivityError } from "./is-connectivity-error";
 import { DatabaseException } from "../core/database/pouchdb/pouch-database";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { SyncFailedError } from "../core/database/pouchdb/synced-pouch-database";

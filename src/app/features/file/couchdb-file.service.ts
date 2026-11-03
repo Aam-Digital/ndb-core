@@ -12,7 +12,7 @@ import { from, Observable, of, throwError } from "rxjs";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { FileService } from "./file.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { environment } from "#src/environments/environment";

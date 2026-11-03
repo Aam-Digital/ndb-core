@@ -54,9 +54,9 @@ and "Log a failure once" below):
   handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
   `ErrorHandler` and is reported as a separate, unhandled issue.
 - **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
-  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`), `isExpiredSessionError()`
-  (`src/app/utils/expired-session-error.ts`) and `isNotPermittedError()`
-  (`src/app/utils/not-permitted-error.ts`). A component that only treats `404` as expected
+  `isConnectivityError()` (`src/app/utils/is-connectivity-error.ts`), `isExpiredSessionError()`
+  (`src/app/utils/is-expired-session-error.ts`) and `isNotPermittedError()`
+  (`src/app/utils/is-not-permitted-error.ts`). A component that only treats `404` as expected
   logs every dropped connection as a warning of its own, and cannot tell the user what happened.
 - **Check whether an optional feature is configured before using it** (e.g. push notifications
   without a Firebase config) instead of logging its failure on every page load.

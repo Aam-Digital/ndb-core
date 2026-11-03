@@ -18,7 +18,7 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import { FindPage } from "./find-queries";
 import {
   describeResponse,
