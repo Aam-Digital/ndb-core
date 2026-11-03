@@ -6,7 +6,6 @@ import {
 import { catchError, throwError } from "rxjs";
 import { environment } from "#src/environments/environment";
 import {
-  causeChain,
   classifyResponseStatus,
   createTypedError,
   ErrorClassification,
@@ -21,7 +20,8 @@ import {
  * Other failures (e.g. a 400 or 404 the caller handles) stay an `HttpErrorResponse`,
  * as do responses of other services (Keycloak, the address lookup, ...),
  * whose statuses mean something else and which their callers handle themselves.
- * Use {@link failedHttpResponse} to read the response (e.g. its body) of either.
+ * Callers read the response (e.g. its body) of either with `failedHttpResponse()`
+ * (`src/app/utils/failed-http-response.ts`).
  */
 export const typedHttpErrorInterceptor: HttpInterceptorFn = (request, next) =>
   isBackendRequest(request.url)
@@ -88,17 +88,4 @@ function classifyHttpError(
     return classification;
   }
   return error.status >= 500 ? "server-error" : undefined;
-}
-
-/**
- * The failed response of an `HttpClient` request, whether the error is the
- * `HttpErrorResponse` itself or the typed error it was converted into
- * (see {@link typedHttpErrorInterceptor}).
- */
-export function failedHttpResponse(
-  error: unknown,
-): HttpErrorResponse | undefined {
-  return causeChain(error).find(
-    (link): link is HttpErrorResponse => link instanceof HttpErrorResponse,
-  );
 }

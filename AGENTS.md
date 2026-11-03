@@ -56,6 +56,8 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 
 Use `Logging` (from `#src/app/core/logging/logging.service`), never `console.log`. `Logging.warn()` / `Logging.error()` and every unhandled error go to Sentry, and a Sentry issue should mean "a developer has something to fix". Before adding a log call, decide who has to act on the failure: report bugs in our code and server faults, but not what the user's device or the instance's config causes. Read ["Deciding what to report"](src/app/core/logging/README.md) in the logging README before changing how something is logged or handled. Never leave a promise floating: an `async` call inside `subscribe()`, an effect or an event handler needs `await` or `.catch()`.
 
+Failed `HttpClient` requests to our backend may arrive as typed errors (e.g. `ServerError`, `NotPermittedError`) instead of an `HttpErrorResponse`: read the status or body with `failedHttpResponse(err)` (`src/app/utils/failed-http-response.ts`) instead of `instanceof HttpErrorResponse`.
+
 ## Testing
 
 - **Unit tests (Vitest):** test behaviour, not existence; write the failing test first for a bug fix; do not generate "too many" tests; use `it.each` tables for repeated shapes. The rules and examples are in [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md).

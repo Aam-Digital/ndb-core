@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, resource } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { failedHttpResponse } from "#src/app/core/logging/typed-http-error.interceptor";
+import { failedHttpResponse } from "#src/app/utils/failed-http-response";
 import { firstValueFrom } from "rxjs";
 import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";

@@ -11,10 +11,8 @@ import {
   SessionExpiredError,
   WriteConflictError,
 } from "./error-classification";
-import {
-  failedHttpResponse,
-  typedHttpErrorInterceptor,
-} from "./typed-http-error.interceptor";
+import { typedHttpErrorInterceptor } from "./typed-http-error.interceptor";
+import { failedHttpResponse } from "#src/app/utils/failed-http-response";
 
 /** The error a request to the url fails with through the interceptor. */
 function failureOf(url: string, response: HttpErrorResponse) {
