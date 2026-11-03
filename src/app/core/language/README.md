@@ -487,8 +487,11 @@ Stylelint enforces this for `.scss` and `.css` files (rule `csstools/use-logical
 left: 50%;
 ```
 
-The linter does not see styles outside stylesheets, so check these by hand:
+The rule reads one declaration at a time and does not see styles outside stylesheets,
+so check these by hand:
 
+- shorthands that set all four sides at once: `margin: 0 0 0 8px`, `padding`,
+  `border-radius: 4px 0 0 4px`, `inset` and `background-position: left` all pass the rule
 - inline `styles` in a component's `.ts` file and `[style.margin-left]`-like bindings in templates
 - Angular Material position inputs: `matTooltipPosition="before"` / `"after"` instead of `"left"` / `"right"`, `xPosition="before"` / `"after"` on menus, `position="start"` / `"end"` on sidenavs
 - coordinates and offsets computed in TypeScript (see [Reading the direction from TypeScript](#reading-the-direction-from-typescript)) and `translateX()` in stylesheets (see `--text-x-direction`)

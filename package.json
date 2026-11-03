@@ -10,7 +10,7 @@
     "test": "ng test",
     "test-ci": "ng test --configuration=ci",
     "lint": "eslint && npm run lint:styles",
-    "lint:fix": "eslint --fix && stylelint \"src/**/*.{css,scss}\" --fix",
+    "lint:fix": "eslint --fix && npm run lint:styles -- --fix",
     "lint:styles": "stylelint \"src/**/*.{css,scss}\"",
     "e2e": "cross-env PW_DISABLE_TS_ESM=1 playwright test",
     "e2e:debug": "cross-env PW_DISABLE_TS_ESM=1 playwright test --ui --timeout=0",
