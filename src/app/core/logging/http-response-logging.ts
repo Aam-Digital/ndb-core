@@ -3,7 +3,8 @@ import { HttpStatusCode } from "@angular/common/http";
 /**
  * Names for the unexpected response statuses of a database request: the message
  * text is grouped with numbers masked (see `fingerprintKey`), so a status
- * interpolated as a number would put every unexpected response into one issue.
+ * interpolated as a number would put every unexpected response into one issue
+ * (as in AAM-DIGITAL-77H, where rejected writes and bad queries could not be told apart).
  */
 const UNEXPECTED_STATUS_NAMES: Record<number, string> = {
   [HttpStatusCode.BadRequest]: "bad request",

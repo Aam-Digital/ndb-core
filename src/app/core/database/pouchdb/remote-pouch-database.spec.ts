@@ -403,6 +403,23 @@ describe("RemotePouchDatabase tests", () => {
     },
   );
 
+  it("should fail as not permitted without trying to log in if an anonymous session gets a 401", async () => {
+    (database as RemotePouchDatabase).init(undefined, {
+      unauthenticatedSession: true,
+    });
+    (PouchDB.fetch as Mock).mockImplementationOnce(
+      async () =>
+        new Response('{ "error": "unauthorized" }', {
+          status: HttpStatusCode.Unauthorized,
+        }),
+    );
+
+    const failure = await database.get("Entity:ABC").catch((err) => err);
+
+    expect(classifyErrorChain(failure)).toBe("not-permitted");
+    expect(mockAuthService.login).not.toHaveBeenCalled();
+  });
+
   describe("session renewal alert", () => {
     let mockAlertService: { addWarning: Mock };
 

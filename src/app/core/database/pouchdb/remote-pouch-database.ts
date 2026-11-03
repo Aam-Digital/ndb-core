@@ -26,6 +26,7 @@ import {
 import { isConnectivityError } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "../../session/session-expired.error";
+import { NotPermittedError } from "../../permissions/not-permitted.error";
 import {
   CONNECTIVITY_ERROR_STATUS,
   normalizeRequestPath,
@@ -40,7 +41,8 @@ const EXPECTED_4XX_STATUSES = new Set<number>([
   HttpStatusCode.Unauthorized,
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
-  // an outdated revision: resolved by the caller (PouchDatabase.resolveConflict) or retried by PouchDB
+  // an outdated revision: resolved by the caller (PouchDatabase.resolveConflict) or retried by PouchDB;
+  // reported, it buried the unexpected statuses in one issue (AAM-DIGITAL-77H)
   HttpStatusCode.Conflict,
 ]);
 
@@ -249,15 +251,19 @@ export class RemotePouchDatabase extends PouchDatabase {
       this.showConnectionIssueAlert();
     }
 
-    // Retry login if request failed with unauthorized.
-    // This will redirect to Keycloak if the token is expired or missing,
-    // which is intentional — it ensures users re-authenticate online
-    // when connectivity is available (including after an offline login).
-    // If the session cannot be renewed, this fails with a SessionExpiredError.
-    if (
-      result?.status === HttpStatusCode.Unauthorized &&
-      !this.unauthenticatedSession
-    ) {
+    if (result?.status === HttpStatusCode.Unauthorized) {
+      if (this.unauthenticatedSession) {
+        // without a login, the server answers what the public role may not do with a plain 401
+        throw new NotPermittedError("Not permitted without login", {
+          status: result.status,
+          details: { requestPath: normalizeRequestPath(remoteUrl) },
+        });
+      }
+      // Retry login if request failed with unauthorized.
+      // This will redirect to Keycloak if the token is expired or missing,
+      // which is intentional — it ensures users re-authenticate online
+      // when connectivity is available (including after an offline login).
+      // If the session cannot be renewed, this fails with a SessionExpiredError.
       result = await this.retryWithRenewedSession(remoteUrl, opts, result);
     }
     if (result && result.status !== HttpStatusCode.Unauthorized) {
