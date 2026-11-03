@@ -10,7 +10,6 @@ import {
   classifyException,
   groupSentryEvent,
   isUnhandled,
-  truncateTag,
 } from "./sentry-grouping";
 import { NamedError } from "./reported-errors";
 import { reportOnce } from "./report-once";
@@ -49,14 +48,16 @@ export function processSentryEvent(
  * (see `error-classification.ts`). Failures without a classification are
  * reported as they are, grouped as described in the README.
  */
-const REPORTING_POLICY: Record<
-  ErrorClassification,
-  {
-    /** whether nobody can act on it: not reported at all */
-    drop?: () => boolean;
-    /** changes to the event after grouping */
-    adjust?: (event: Sentry.ErrorEvent) => void;
-  }
+const REPORTING_POLICY: Partial<
+  Record<
+    ErrorClassification,
+    {
+      /** whether nobody can act on it: not reported at all */
+      drop?: () => boolean;
+      /** changes to the event after grouping */
+      adjust?: (event: Sentry.ErrorEvent) => void;
+    }
+  >
 > = {
   // into the shared `network-error` issue at level warning (see `groupSentryEvent`),
   // once per page load (see `reportOnce`); while offline it is expected
@@ -75,8 +76,6 @@ const REPORTING_POLICY: Record<
   "local-storage": {
     adjust: (event) => (event.tags = { ...event.tags, incident: "local-db" }),
   },
-  // a fault of our backend, whoever logged it: at the level it was logged with
-  "server-error": { adjust: reportServerError },
 };
 
 /**
@@ -99,32 +98,6 @@ function classifySentryEvent(
     return classification;
   }
   return event.exception?.values?.map(classifyException).find(Boolean);
-}
-
-/**
- * Report a server fault with an issue per status and endpoint: grouped by the
- * root cause alone, a new failing endpoint would otherwise not open an issue
- * of its own. The endpoint is the masked `requestPath` the boundaries add.
- */
-function reportServerError(event: Sentry.ErrorEvent) {
-  const status = event.extra?.status;
-  if (typeof status !== "number") {
-    return;
-  }
-  const requestPath = event.extra?.requestPath;
-  const key = [String(status)];
-  if (typeof requestPath === "string") {
-    key.push(requestPath);
-    event.tags = { ...event.tags, request_path: truncateTag(requestPath) };
-  }
-  event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
-  if (event.fingerprint?.length) {
-    event.fingerprint = [...event.fingerprint, ...key];
-  }
-  const thrown = event.exception?.values?.at(-1);
-  if (thrown) {
-    thrown.value = `${thrown.value} (HTTP ${key.join(" ")})`;
-  }
 }
 
 /**
