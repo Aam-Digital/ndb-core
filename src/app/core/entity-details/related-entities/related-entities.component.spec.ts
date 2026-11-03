@@ -9,6 +9,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity } from "../../entity/model/entity";
+import { FilterService } from "../../filter/filter.service";
 import { RelatedEntitiesComponent } from "./related-entities.component";
 
 describe("RelatedEntitiesComponent", () => {
@@ -59,9 +60,58 @@ describe("RelatedEntitiesComponent", () => {
     await initComponent();
 
     expect(component.filterObj()).toEqual({
-      ...filter,
-      ref: entity.getId(),
+      $and: [filter, { ref: entity.getId() }],
     });
+  });
+
+  it("keeps a configured filter with alternatives when filtering by several related properties", async () => {
+    @DatabaseEntity("ConfiguredOrTest")
+    class ConfiguredOrTest extends Entity {}
+    ConfiguredOrTest.schema.set("first", {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ConfiguredOrTest.schema.set("second", {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ConfiguredOrTest.schema.set("status", { dataType: "string" });
+
+    const entity = new TestEntity();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("entityType", ConfiguredOrTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("filter", {
+      $or: [{ status: "open" }, { status: "new" }],
+    });
+    await initComponent();
+
+    const matches = TestBed.inject(FilterService).getFilterPredicate(
+      component.filterObj(),
+    );
+    const open = Object.assign(new ConfiguredOrTest(), {
+      first: entity.getId(),
+      status: "open",
+    });
+    const closed = Object.assign(new ConfiguredOrTest(), {
+      second: entity.getId(),
+      status: "closed",
+    });
+    expect(matches(open)).toBe(true);
+    expect(matches(closed)).toBe(false);
+  });
+
+  it("pre-fills the relation of a new record also when a filter is configured", async () => {
+    const related = new TestEntity();
+    fixture.componentRef.setInput("entity", related);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("filter", { other: "A" });
+    await initComponent();
+
+    const newEntity = component.createNewRecordFactory()();
+
+    expect(newEntity["ref"]).toBe(related.getId());
+    expect(newEntity["other"]).toBe("A");
   });
 
   it("should create a new entity that references the related one", async () => {

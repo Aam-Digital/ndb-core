@@ -64,8 +64,8 @@ export class FilterService {
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
-      if (key === "$or" && Array.isArray(value)) {
-        // for $or filters, try each branch
+      if ((key === "$or" || key === "$and") && Array.isArray(value)) {
+        // apply each branch of the alternatives ($or) or required parts ($and)
         for (const branch of value) {
           this.alignEntityWithFilter(entity, branch);
         }

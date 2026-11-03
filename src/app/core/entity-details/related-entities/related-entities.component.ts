@@ -28,7 +28,13 @@ import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
-import { DataFilter } from "../../filter/filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "../../filter/filters/filters";
+import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
+import { resolveEmbeddedField } from "../../entity/schema/embedded-schema-field.util";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
@@ -48,6 +54,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
+  private readonly schemaService = inject(EntitySchemaService);
   private readonly injector = inject(Injector);
 
   /** currently viewed/main entity for which related entities are displayed in this component */
@@ -238,44 +245,41 @@ export class RelatedEntitiesComponent<E extends Entity> {
   }
 
   protected initFilter(): DataFilter<E> {
-    const filter: DataFilter<E> = { ...(this.filter() ?? {}) };
     const relationProperty = this.relationProperty();
-    if (relationProperty) {
-      // only show related entities
-      if (typeof relationProperty === "string") {
-        Object.assign(filter, this.getFilterForProperty(relationProperty));
-      } else if (relationProperty.length > 0) {
-        filter["$or"] = relationProperty.map((prop) =>
-          this.getFilterForProperty(prop),
-        );
-      }
+    let relationFilter: DataFilter<E> = {};
+    // only show related entities
+    if (typeof relationProperty === "string" && relationProperty) {
+      relationFilter = this.getFilterForProperty(relationProperty);
+    } else if (Array.isArray(relationProperty) && relationProperty.length > 0) {
+      relationFilter = {
+        $or: relationProperty.map((prop) => this.getFilterForProperty(prop)),
+      };
     }
 
-    return filter;
+    return combineFilterConditions(this.filter() ?? {}, relationFilter);
   }
 
-  private getFilterForProperty(property: string) {
+  private getFilterForProperty(property: string): DataFilter<E> {
     const relatedEntityId = this.entity()?.getId();
     const entityCtr = this.entityCtr();
     if (!relatedEntityId || !entityCtr) {
       return {};
     }
-    if (property.includes(".")) {
-      const [outerProp, innerProp] = property.split(".", 2);
-      const outerIsArray = entityCtr.schema.get(outerProp)?.isArray;
-      return outerIsArray
-        ? {
-            [outerProp]: { $elemMatch: { [innerProp]: relatedEntityId } },
-          }
-        : { [`${outerProp}.${innerProp}`]: relatedEntityId };
-    }
 
-    const isArray = entityCtr.schema.get(property)?.isArray;
-    return {
-      [property]: isArray
+    const embedded = resolveEmbeddedField(
+      this.schemaService,
+      entityCtr,
+      property,
+    );
+    const schema = embedded?.innerSchema ?? entityCtr.schema.get(property);
+    const condition = {
+      [property]: schema?.isArray
         ? { $elemMatch: { $eq: relatedEntityId } }
         : relatedEntityId,
-    };
+    } as DataFilter<E>;
+    return embedded
+      ? conditionOnEmbeddedField(condition, property, embedded)
+      : condition;
   }
 
   /** Check whether a schema field directly references the given entity type. */

@@ -66,6 +66,10 @@ so that a dropdown option object matches its id and a `Date` matches a day strin
 - `filters/filters.ts` — `DataFilter`, the `Filter` base class of the list filter UI, helpers to combine conditions,
   the "not defined" condition and the `$current_record` placeholder helpers
 - `filter-generator/filter-generator.service.ts` — builds the list filters from config, including those for embedded fields
+- `embedded-field-filter.ts` — turns a condition on a property of an embedded field into one on the embedding field,
+  and defines "not defined" for it; used by list filters and related entities
+- `../entity/default-datatype/default.datatype.ts` (`referenceIdConditions`) — "the field contains this id",
+  for both single-value and multi-value fields; used by list filters and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
 - `filter.service.ts` — the in-memory engine, and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
 - `../common-components/entities-table/data-source/paginated-data-source.ts` — translation of a query for the database

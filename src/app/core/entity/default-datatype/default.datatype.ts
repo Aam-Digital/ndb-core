@@ -71,10 +71,9 @@ export interface ExportColumnMapping<EntityType = any> {
 }
 
 /**
- * The Mango conditions matching the given document path against a reference id,
- * covering both shapes it may have been stored in: the id itself or an array containing it.
- *
- * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ * The conditions matching the given path against an id (of a referenced record or a dropdown option),
+ * covering both shapes it may have been stored in: the id itself or an array containing it
+ * (data saved while the field was a single-value or a multi-value field).
  */
 export function referenceIdConditions(
   path: string,
