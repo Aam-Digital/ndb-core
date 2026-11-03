@@ -1,0 +1,57 @@
+@use "variables/breakpoints";
+@use "variables/colors";
+@use "variables/sizes";
+
+:host {
+  /* indentation per level, smaller on phones so that deep titles still fit */
+  --hierarchy-indent: 24px;
+  /* deeper levels are not indented further */
+  --hierarchy-max-indented-level: 8;
+
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* logical property: indents from the right in right-to-left languages */
+  padding-inline-start: calc(
+    min(var(--hierarchy-level, 0), var(--hierarchy-max-indented-level)) *
+      var(--hierarchy-indent)
+  );
+
+  @media screen and (max-width: breakpoints.$md) {
+    --hierarchy-indent: 12px;
+  }
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 28px;
+  height: 28px;
+  margin-inline-end: sizes.$small;
+  padding: 0 4px;
+  border: none;
+  border-radius: 14px;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+button.toggle:hover {
+  background-color: colors.$grey-transparent;
+  /* overrides the underline of the global "clickable" class */
+  text-decoration: none;
+}
+
+button.toggle:focus-visible {
+  outline: 2px solid colors.$primary;
+}
+
+.child-count {
+  font-size: 0.85em;
+}
+
+.context-icon {
+  margin-inline-end: sizes.$small;
+}

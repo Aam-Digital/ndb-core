@@ -82,6 +82,7 @@ import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/prog
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
+import { HierarchyModule } from "./features/hierarchy/hierarchy.module";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES } from "./core/config/config.app-initializer";
@@ -149,6 +150,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,
+    HierarchyModule,
     AdminModule,
     TemplateExportModule,
     SkillModule,

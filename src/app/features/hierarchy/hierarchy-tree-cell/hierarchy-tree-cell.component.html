@@ -1,0 +1,60 @@
+@if (row(); as row) {
+  @if (row.childCount > 0) {
+    <!-- "clickable": the row does not open the record when this is clicked -->
+    <button
+      type="button"
+      class="clickable toggle"
+      [attr.aria-expanded]="!row.isCollapsed"
+      (click)="toggle()"
+    >
+      @if (row.isCollapsed) {
+        <app-fa-dynamic-icon
+          icon="chevron-right"
+          class="mirror-in-rtl"
+          aria-hidden="true"
+        ></app-fa-dynamic-icon>
+        <span class="child-count" aria-hidden="true">{{ row.childCount }}</span>
+      } @else {
+        <app-fa-dynamic-icon
+          icon="chevron-down"
+          aria-hidden="true"
+        ></app-fa-dynamic-icon>
+      }
+      <span
+        class="visually-hidden"
+        i18n="
+          hierarchy|Accessible name of the button to expand or collapse the
+          sub-records of a record in a list
+        "
+        >{row.childCount, plural,
+          =1 {1 sub-record}
+          other {{{ row.childCount }} sub-records}
+        }</span
+      >
+    </button>
+  } @else {
+    <!-- keeps the titles of records without sub-records aligned -->
+    <span class="toggle" aria-hidden="true"></span>
+  }
+
+  @if (row.isContext) {
+    <app-fa-dynamic-icon
+      icon="filter-circle-xmark"
+      class="context-icon"
+      aria-hidden="true"
+      matTooltip="Does not match the filters, shown because records below it do"
+      i18n-matTooltip="
+        hierarchy|Tooltip of a greyed record in a list that is only shown as the
+        parent of matching records
+      "
+    ></app-fa-dynamic-icon>
+    <span
+      class="visually-hidden"
+      i18n="
+        hierarchy|Screen reader text of a greyed record in a list that is only
+        shown as the parent of matching records
+      "
+      >Not matching the filters:</span
+    >
+  }
+}
