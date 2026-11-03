@@ -8,6 +8,15 @@ import {
 } from "../../logging/error-classification";
 import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 
+/** A copy of an error like PouchDB's `createError()` makes: all own properties, without the class. */
+function pouchCopyOf(error: Error): Error {
+  const copy = Object.create(Error.prototype);
+  for (const name of Object.getOwnPropertyNames(error)) {
+    copy[name] = error[name];
+  }
+  return copy;
+}
+
 /** The error PouchDB's http adapter builds from an error response of the server. */
 function serverResponse(status: number, body: Record<string, string>) {
   return { status, name: body.error, message: body.reason, ...body };
@@ -116,5 +125,20 @@ describe("DatabaseException", () => {
       reason: "Document update conflict",
       entityId: "Child:1",
     });
+  });
+
+  it("should keep the typed error as its cause when the wrapped copy has a cause of its own", () => {
+    const loginFailure = new Error("Login server not reachable");
+    const copy = pouchCopyOf(
+      new SessionExpiredError("Session could not be renewed", {
+        status: 401,
+        cause: loginFailure,
+      }),
+    );
+
+    const exception = new DatabaseException(copy);
+
+    expect(exception.cause).toBeInstanceOf(SessionExpiredError);
+    expect((exception.cause as Error).cause).toBe(copy);
   });
 });
