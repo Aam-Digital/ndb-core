@@ -70,6 +70,11 @@ describe("toTypedDatabaseError", () => {
       ConnectivityError,
     ],
     [
+      "a connection dropped while reading the response",
+      new TypeError("NetworkError when attempting to fetch resource."),
+      ConnectivityError,
+    ],
+    [
       "a typed error that the replication copied, losing its class",
       // PouchDB's `createError()` copies the own properties onto a new PouchError
       { name: "SessionExpiredError", status: 401, message: "Session expired" },

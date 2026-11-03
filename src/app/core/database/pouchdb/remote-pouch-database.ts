@@ -1,4 +1,5 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { toTypedDatabaseError } from "./database-exception";
 import {
   BulkWriteLimits,
   DEFAULT_BULK_WRITE_LIMITS,
@@ -344,8 +345,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       try {
         return await operation();
       } catch (err) {
+        // the raw error of PouchDB, not yet converted by a DatabaseException
         if (
-          !isConnectivityError(err) ||
+          !isConnectivityError(toTypedDatabaseError(err)) ||
           attempt >= this.TRANSIENT_ERROR_RETRIES
         ) {
           throw err;
