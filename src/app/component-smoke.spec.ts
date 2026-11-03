@@ -108,6 +108,7 @@ const REGISTERED: ComponentTuple[] = [
  * for registry resolution only and carry their own spec for their actual behaviour.
  */
 const NEEDS_BESPOKE_SETUP = new Set([
+  "AdminHierarchyFields",
   "AdminMatchingEntities",
   "AttendanceWeekDashboardSettings",
   "ConflictResolution",

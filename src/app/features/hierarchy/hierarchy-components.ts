@@ -1,6 +1,9 @@
 import { ComponentTuple } from "#src/app/dynamic-components";
 
-/** The components of the hierarchy feature that its data source names in row decorations and toolbar controls. */
+/**
+ * The components of the hierarchy feature that its data source names in row decorations and toolbar controls,
+ * and its admin setting of list views.
+ */
 export const hierarchyComponents: ComponentTuple[] = [
   [
     "HierarchyTreeCell",
@@ -21,6 +24,13 @@ export const hierarchyComponents: ComponentTuple[] = [
     () =>
       import("./hierarchy-expand-all/hierarchy-expand-all.component").then(
         (c) => c.HierarchyExpandAllComponent,
+      ),
+  ],
+  [
+    "AdminHierarchyFields",
+    () =>
+      import("./admin-hierarchy-fields/admin-hierarchy-fields.component").then(
+        (c) => c.AdminHierarchyFieldsComponent,
       ),
   ],
 ];
