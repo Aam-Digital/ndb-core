@@ -206,7 +206,7 @@ export class HierarchyDataSource<
   /** Arrange the records by another field (or none), as chosen by the user. */
   selectField(field: string | undefined) {
     this.activeField.set(field);
-    this.collapsedIds.set(new Set());
+    this.expandAll();
     const isDefault = field === this.hierarchyFields()[0];
     this.urlState.updateUrlParams(
       { [HIERARCHY_URL_PARAM]: isDefault ? null : (field ?? NO_HIERARCHY) },
