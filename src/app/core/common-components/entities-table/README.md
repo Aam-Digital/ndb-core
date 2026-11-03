@@ -40,6 +40,8 @@ The records a data source holds:
 
 The host sets `loadRecordConfig` to let the data source load and live-update the records itself,
 or sets `allRecords` directly for records it loads on its own.
+The table keeps the signals `dataFilter` (the filters), `effectiveSort` (the sorted column and direction)
+and `sortValueFns` (how each column sorts) of the data source up to date.
 
 ## Extension points for feature modules
 

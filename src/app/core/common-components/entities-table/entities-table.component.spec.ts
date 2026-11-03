@@ -108,6 +108,10 @@ describe("EntitiesTableComponent", () => {
 
     expect(component.recordsDataSource().sort.direction).toBe("desc");
     expect(component.recordsDataSource().sort.active).toBe("date");
+    expect(component.recordsDataSource().effectiveSort()).toEqual({
+      active: "date",
+      direction: "desc",
+    });
   });
 
   it("should use input defaultSort if defined", () => {

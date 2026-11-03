@@ -275,6 +275,11 @@ export class EntitiesTableComponent<T extends Entity>
       this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
     });
     effect(() => {
+      this.recordsDataSource().effectiveSort.set(
+        this.sortStore.effectiveSort(),
+      );
+    });
+    effect(() => {
       this.recordsDataSource().dataFilter();
       this.recordsDataSource().filteredRecords();
       if (untracked(this.selectedRecords)?.length > 0) {

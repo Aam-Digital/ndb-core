@@ -1,4 +1,5 @@
 import { MatTableDataSource } from "@angular/material/table";
+import { Sort } from "@angular/material/sort";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DestroyRef, effect, inject, Signal, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
@@ -84,6 +85,11 @@ export abstract class EntitiesTableDataSource<
 
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
+  /**
+   * The sort that the table applies (set by the table), as a signal:
+   * for data sources that arrange the rows themselves (the `sort` of the table only offers events).
+   */
+  readonly effectiveSort = signal<Sort | undefined>(undefined);
   /** All loaded records (only filled by data sources that hold all records in memory). */
   allRecords = signal<T[]>([]);
   /**
