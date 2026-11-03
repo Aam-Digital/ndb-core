@@ -147,15 +147,11 @@ export function buildHierarchyView<T extends Entity>(
   const { parentField, rootId, sort, collapsedIds = new Set() } = options;
   const parents = resolveParentIds(allRecords, parentField, rootId);
   const byId = new Map(allRecords.map((record) => [record.getId(), record]));
-  const inBranch = rootId ? descendantIds(parents, rootId) : undefined;
 
   const matchIds = new Set<string>();
   const visible = new Map<string, T>();
   for (const match of matches) {
     const id = match.getId();
-    if (inBranch && !inBranch.has(id)) {
-      continue;
-    }
     matchIds.add(id);
     visible.set(id, match);
     // add the parents as context, up to the top (or the root)
