@@ -20,6 +20,13 @@ export interface HierarchyRow<T extends Entity = Entity> {
   isContext: boolean;
   /** the record has sub-records that are currently hidden */
   isCollapsed: boolean;
+  /** the record is the last of the shown sub-records of its parent (or of the top level) */
+  isLastChild: boolean;
+  /**
+   * For each ancestor below the top level (levels 1 to `level - 1`): whether more sub-records of its parent follow it,
+   * i.e. whether the tree continues at that level below this row.
+   */
+  ancestorsContinue: readonly boolean[];
 }
 
 export interface HierarchyOptions<T extends Entity> {
@@ -175,14 +182,20 @@ export function buildHierarchyView<T extends Entity>(
   const rows: HierarchyRow<T>[] = [];
   const hiddenIds = new Set<string>();
   const expandableIds = new Set<string>();
-  const addRows = (records: T[], level: number, hidden: boolean) => {
-    for (const record of records) {
+  const addRows = (
+    records: T[],
+    level: number,
+    hidden: boolean,
+    ancestorsContinue: readonly boolean[],
+  ) => {
+    for (const [index, record] of records.entries()) {
       const id = record.getId();
       const subRecords = children.get(id) ?? [];
       if (subRecords.length > 0) {
         expandableIds.add(id);
       }
       const isCollapsed = subRecords.length > 0 && collapsedIds.has(id);
+      const isLastChild = index === records.length - 1;
       if (hidden) {
         hiddenIds.add(id);
       } else {
@@ -192,12 +205,16 @@ export function buildHierarchyView<T extends Entity>(
           childCount: subRecords.length,
           isContext: !matchIds.has(id),
           isCollapsed,
+          isLastChild,
+          ancestorsContinue,
         });
       }
-      addRows(subRecords, level + 1, hidden || isCollapsed);
+      // the top level has no line connecting its records
+      const continues = level > 0 ? [...ancestorsContinue, !isLastChild] : [];
+      addRows(subRecords, level + 1, hidden || isCollapsed, continues);
     }
   };
-  addRows(children.get(rootId) ?? [], 0, false);
+  addRows(children.get(rootId) ?? [], 0, false, []);
 
   return { rows, hiddenIds, expandableIds };
 }

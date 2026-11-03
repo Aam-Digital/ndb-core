@@ -18,6 +18,8 @@ import {
   HIERARCHY_URL_PARAM,
   HierarchyDataSource,
   NO_HIERARCHY,
+  PARENT_ROW_CLASS,
+  TOP_ROW_CLASS,
 } from "./hierarchy-data-source";
 
 @DatabaseEntity("HierarchyTestAction")
@@ -233,19 +235,24 @@ describe("HierarchyDataSource", () => {
     },
   );
 
-  it("decorates context rows with their CSS class, as not selectable", async () => {
+  it("decorates rows with CSS classes of their place in the tree, context rows as not selectable", async () => {
     await createDataSource();
     dataSource.dataFilter.set({ responsible: "Asha" });
     await settle();
 
-    expect(
-      dataSource.rowDecorations().get("HierarchyTestAction:Meetings"),
-    ).toEqual(
-      expect.objectContaining({
-        cssClass: CONTEXT_ROW_CLASS,
-        selectable: false,
-      }),
+    const decoration = (title: string) =>
+      dataSource.rowDecorations().get(`HierarchyTestAction:${title}`);
+    const classes = (title: string) =>
+      decoration(title)?.cssClass?.split(" ").sort() ?? [];
+    expect(classes("Clean Water")).toEqual(
+      [CONTEXT_ROW_CLASS, TOP_ROW_CLASS, PARENT_ROW_CLASS].sort(),
     );
+    expect(classes("Mobilisation")).toEqual([PARENT_ROW_CLASS]);
+    expect(classes("Meetings")).toEqual(
+      [CONTEXT_ROW_CLASS, PARENT_ROW_CLASS].sort(),
+    );
+    expect(classes("Sonpur")).toEqual([]);
+    expect(decoration("Meetings")?.selectable).toBe(false);
   });
 
   it("sorts each level on its own", async () => {

@@ -73,10 +73,3 @@
 .w-URGENT {
   background-color: color.adjust(colors.w-level(0), $alpha: -0.5) !important;
 }
-
-/* A table row only shown as context for other rows, e.g. the parent of a matching record
-   in a hierarchy (see features/hierarchy). Rows are styled globally because they belong to the table. */
-tr.hierarchy-context-row {
-  color: colors.$context;
-  font-style: italic;
-}

@@ -1,38 +1,104 @@
+@use "@angular/material" as mat;
 @use "variables/breakpoints";
 @use "variables/colors";
 @use "variables/sizes";
 
+$line-color: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 500);
+$toggle-size: 28px;
+
 :host {
   /* indentation per level, smaller on phones so that deep titles still fit */
-  --hierarchy-indent: 24px;
-  /* deeper levels are not indented further */
-  --hierarchy-max-indented-level: 8;
+  --hierarchy-indent: 32px;
 
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  /* the full height of the row, so that the lines connect the rows */
+  align-self: stretch;
   flex-shrink: 0;
-  /* logical property: indents from the right in right-to-left languages */
-  padding-inline-start: calc(
-    min(var(--hierarchy-level, 0), var(--hierarchy-max-indented-level)) *
-      var(--hierarchy-indent)
-  );
 
   @media screen and (max-width: breakpoints.$md) {
-    --hierarchy-indent: 12px;
+    --hierarchy-indent: 20px;
   }
+}
+
+/* one slot per level, its line runs below the expand button of the record's ancestor at that level */
+.slot,
+.toggle-slot {
+  position: relative;
+  flex: 0 0 var(--hierarchy-indent);
+}
+
+.slot::before,
+.slot::after,
+.toggle-slot::before,
+.toggle-slot::after {
+  position: absolute;
+  border: 0 solid $line-color;
+}
+
+/* vertical lines in the middle of a slot (logical properties: mirrored in right-to-left languages) */
+.slot::before,
+.toggle-slot::after {
+  inset-inline-start: 50%;
+  border-inline-start-width: 1px;
+}
+
+/* through the whole row, also over the row divider to meet the line of the next row */
+.slot.line::before {
+  content: "";
+  top: 0;
+  bottom: -1px;
+}
+
+/* before the record: from its parent down to the middle of the row ("└", or "├" if siblings follow) … */
+.elbow::before {
+  content: "";
+  top: 0;
+  bottom: 50%;
+}
+
+/* … and towards the record */
+.elbow::after {
+  content: "";
+  inset-inline: 50% 0;
+  top: 50%;
+  border-top-width: 1px;
+}
+
+/* from below the expand button of an expanded record down to its first sub-record */
+.toggle-slot.line-down::after {
+  content: "";
+  top: calc(50% + #{$toggle-size} / 2 - 4px);
+  bottom: -1px;
+}
+
+/* towards a record without sub-records, in place of the expand button */
+.toggle-slot.line-in::before {
+  content: "";
+  inset-inline: 0 40%;
+  top: 50%;
+  border-top-width: 1px;
+}
+
+.toggle-slot {
+  display: flex;
+  align-items: center;
+  margin-inline-end: sizes.$small;
 }
 
 .toggle {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-width: 28px;
-  height: 28px;
-  margin-inline-end: sizes.$small;
+  min-width: $toggle-size;
+  height: $toggle-size;
+  /* centered on the line to the sub-records, also where the slot is narrower than the button;
+     a wider button (with the number of sub-records) widens the slot at its end */
+  margin-inline: calc((var(--hierarchy-indent) - #{$toggle-size}) / 2);
   padding: 0 4px;
   border: none;
-  border-radius: 14px;
+  border-radius: calc(#{$toggle-size} / 2);
   background: none;
   color: inherit;
   font: inherit;
@@ -53,5 +119,6 @@ button.toggle:focus-visible {
 }
 
 .context-icon {
+  align-self: center;
   margin-inline-end: sizes.$small;
 }

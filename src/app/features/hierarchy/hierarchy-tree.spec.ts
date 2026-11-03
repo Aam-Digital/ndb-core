@@ -159,6 +159,78 @@ describe("hierarchy-tree", () => {
     );
   });
 
+  it.each([
+    {
+      scenario: "all records",
+      matches: plan,
+      options: sortedByName,
+      expected: [
+        "Clean Water",
+        "├Mobilisation",
+        "│├Meetings",
+        "││├Preparation",
+        "││└Rampur",
+        "│└Training",
+        "└Well",
+        "Garden",
+      ],
+    },
+    {
+      scenario: "another sort order",
+      matches: plan,
+      options: {
+        ...sortedByName,
+        sort: { active: "name", direction: "desc" as const },
+      },
+      expected: [
+        "Garden",
+        "Clean Water",
+        "├Well",
+        "└Mobilisation",
+        " ├Training",
+        " └Meetings",
+        "  ├Rampur",
+        "  └Preparation",
+      ],
+    },
+    {
+      scenario: "filtered records",
+      matches: named("Preparation", "Well", "Garden"),
+      options: sortedByName,
+      expected: [
+        "Clean Water",
+        "├Mobilisation",
+        "│└Meetings",
+        "│ └Preparation",
+        "└Well",
+        "Garden",
+      ],
+    },
+    {
+      scenario: "a collapsed record",
+      matches: plan,
+      options: {
+        ...sortedByName,
+        collapsedIds: new Set(["TestEntity:Mobilisation"]),
+      },
+      expected: ["Clean Water", "├Mobilisation", "└Well", "Garden"],
+    },
+  ])(
+    "tells which lines connect the shown rows, for $scenario",
+    ({ matches, options, expected }) => {
+      const view = buildHierarchyView(plan, matches, options);
+
+      // drawn like a file tree: "│" where an ancestor's level continues, "├" or "└" before the record
+      const lines = view.rows.map(
+        (row) =>
+          row.ancestorsContinue.map((line) => (line ? "│" : " ")).join("") +
+          (row.level > 0 ? (row.isLastChild ? "└" : "├") : "") +
+          row.record.name,
+      );
+      expect(lines).toEqual(expected);
+    },
+  );
+
   it("shows only the records below the root record, starting at level 0", () => {
     const view = buildHierarchyView(plan, plan, {
       ...sortedByName,

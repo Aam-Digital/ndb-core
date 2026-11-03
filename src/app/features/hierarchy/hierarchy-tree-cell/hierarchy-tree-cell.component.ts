@@ -7,14 +7,14 @@ import { HierarchyRow } from "../hierarchy-tree";
 
 /**
  * Shown before the first cell of a row in a hierarchy (a row decoration of the {@link HierarchyDataSource}):
- * the indentation of the record's level and the button to expand or collapse its sub-records.
+ * the indentation of the record's level with lines connecting it to its parent and siblings,
+ * and the button to expand or collapse its sub-records.
  */
 @Component({
   selector: "app-hierarchy-tree-cell",
   imports: [FaDynamicIconComponent, MatTooltipModule],
   templateUrl: "./hierarchy-tree-cell.component.html",
   styleUrl: "./hierarchy-tree-cell.component.scss",
-  host: { "[style.--hierarchy-level]": "row()?.level ?? 0" },
 })
 export class HierarchyTreeCellComponent {
   dataSource = input.required<HierarchyDataSource<Entity>>();
@@ -39,6 +39,8 @@ function isSameTreeCell(a?: HierarchyRow, b?: HierarchyRow): boolean {
     a?.level === b?.level &&
     a?.childCount === b?.childCount &&
     a?.isContext === b?.isContext &&
-    a?.isCollapsed === b?.isCollapsed
+    a?.isCollapsed === b?.isCollapsed &&
+    a?.isLastChild === b?.isLastChild &&
+    a?.ancestorsContinue.join() === b?.ancestorsContinue.join()
   );
 }

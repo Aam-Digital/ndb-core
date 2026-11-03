@@ -1,41 +1,58 @@
 @if (row(); as row) {
-  @if (row.childCount > 0) {
-    <!-- "clickable": the row does not open the record when this is clicked -->
-    <button
-      type="button"
-      class="clickable toggle"
-      [attr.aria-expanded]="!row.isCollapsed"
-      (click)="toggle()"
-    >
-      @if (row.isCollapsed) {
-        <app-fa-dynamic-icon
-          icon="chevron-right"
-          class="mirror-in-rtl"
-          aria-hidden="true"
-        ></app-fa-dynamic-icon>
-        <span class="child-count" aria-hidden="true">{{ row.childCount }}</span>
-      } @else {
-        <app-fa-dynamic-icon
-          icon="chevron-down"
-          aria-hidden="true"
-        ></app-fa-dynamic-icon>
-      }
-      <span
-        class="visually-hidden"
-        i18n="
-          hierarchy|Accessible name of the button to expand or collapse the
-          sub-records of a record in a list
-        "
-        >{row.childCount, plural,
-          =1 {1 sub-record}
-          other {{{ row.childCount }} sub-records}
-        }</span
-      >
-    </button>
-  } @else {
-    <!-- keeps the titles of records without sub-records aligned -->
-    <span class="toggle" aria-hidden="true"></span>
+  <!-- connector lines (decorative, the level is in the accessible text): one slot per level above the record's own -->
+  @for (continues of row.ancestorsContinue; track $index) {
+    <span class="slot" [class.line]="continues" aria-hidden="true"></span>
   }
+  @if (row.level > 0) {
+    <span
+      class="slot elbow"
+      [class.line]="!row.isLastChild"
+      aria-hidden="true"
+    ></span>
+  }
+
+  <span
+    class="toggle-slot"
+    [class.line-down]="row.childCount > 0 && !row.isCollapsed"
+    [class.line-in]="row.childCount === 0 && row.level > 0"
+  >
+    @if (row.childCount > 0) {
+      <!-- "clickable": the row does not open the record when this is clicked -->
+      <button
+        type="button"
+        class="clickable toggle"
+        [attr.aria-expanded]="!row.isCollapsed"
+        (click)="toggle()"
+      >
+        @if (row.isCollapsed) {
+          <app-fa-dynamic-icon
+            icon="chevron-right"
+            class="mirror-in-rtl"
+            aria-hidden="true"
+          ></app-fa-dynamic-icon>
+          <span class="child-count" aria-hidden="true">{{
+            row.childCount
+          }}</span>
+        } @else {
+          <app-fa-dynamic-icon
+            icon="chevron-down"
+            aria-hidden="true"
+          ></app-fa-dynamic-icon>
+        }
+        <span
+          class="visually-hidden"
+          i18n="
+            hierarchy|Accessible name of the button to expand or collapse the
+            sub-records of a record in a list
+          "
+          >{row.childCount, plural,
+            =1 {1 sub-record}
+            other {{{ row.childCount }} sub-records}
+          }</span
+        >
+      </button>
+    }
+  </span>
 
   @if (row.isContext) {
     <app-fa-dynamic-icon

@@ -10,17 +10,20 @@ test("Actions list shows sub-actions indented below their parent", async ({
 
   const row = (title: string) =>
     page.getByRole("row").filter({ hasText: title });
+  // the width of the tree cell before the title: indentation, lines and expand button
   const indentOf = (title: string) =>
     row(title)
       .locator("app-hierarchy-tree-cell")
-      .evaluate((cell) => getComputedStyle(cell).paddingInlineStart);
+      .evaluate((cell) => cell.getBoundingClientRect().width);
 
   // sub-actions are indented one step per level, all levels expanded
   await expect(row("Meeting in Sonpur")).toBeVisible();
-  expect(await indentOf("Village meetings")).not.toBe(
+  expect(await indentOf("Clean Water 2027")).toBeLessThan(
+    await indentOf("Village meetings"),
+  );
+  expect(await indentOf("Village meetings")).toBeLessThan(
     await indentOf("Meeting in Sonpur"),
   );
-  expect(await indentOf("Clean Water 2027")).toBe("0px");
   await argosScreenshot(page, "hierarchy-actions-list");
 
   // collapsing a row hides its sub-actions and shows how many there are
@@ -53,7 +56,9 @@ test("Actions list shows sub-actions indented below their parent", async ({
   await page.getByRole("option", { name: "Depends on" }).click();
   await expect(page).toHaveURL(/hierarchy=dependsOn/);
   await expect(page.getByRole("listbox")).toBeHidden();
-  expect(await indentOf("Well in Rampur")).not.toBe("0px");
+  expect(await indentOf("Site survey")).toBeLessThan(
+    await indentOf("Well in Rampur"),
+  );
 
   await page.getByRole("combobox", { name: "Hierarchy" }).click();
   await page.getByRole("option", { name: "None (flat list)" }).click();

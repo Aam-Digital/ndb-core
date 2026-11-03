@@ -1,0 +1,20 @@
+@use "variables/colors";
+
+/* Rows of a list arranged as a hierarchy (see hierarchy-data-source.ts).
+   They are styled globally because the rows belong to the table, not to the feature's components. */
+
+/* a row only shown as the parent of a matching record */
+tr.hierarchy-context-row {
+  color: colors.$context;
+  font-style: italic;
+}
+
+/* each branch of the tree is a block, separated by a line (2px, together with the row divider above) */
+tr.hierarchy-top-row:not(:first-child) > td {
+  border-top: 1px solid colors.$grey-darker;
+}
+
+/* the title of a record with sub-records (the field following the tree cell) */
+tr.hierarchy-parent-row app-hierarchy-tree-cell + * {
+  font-weight: 500;
+}

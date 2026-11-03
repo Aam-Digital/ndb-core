@@ -38,6 +38,10 @@ export const HIERARCHY_URL_PARAM = "hierarchy";
 export const NO_HIERARCHY = "none";
 /** CSS class of rows that are only shown as the parent of a matching record */
 export const CONTEXT_ROW_CLASS = "hierarchy-context-row";
+/** CSS class of rows at the top level, each starting a branch of the tree */
+export const TOP_ROW_CLASS = "hierarchy-top-row";
+/** CSS class of rows with sub-records */
+export const PARENT_ROW_CLASS = "hierarchy-parent-row";
 
 /**
  * Shows the records of a list indented below their parent records.
@@ -147,7 +151,7 @@ export class HierarchyDataSource<
       const id = row.record.getId();
       decorations.set(id, {
         prefix: this.treeCellConfig(id),
-        cssClass: row.isContext ? CONTEXT_ROW_CLASS : undefined,
+        cssClass: rowClasses(row),
         selectable: !row.isContext,
       });
     }
@@ -312,6 +316,16 @@ export class HierarchyDataSource<
     }
     return config;
   }
+}
+
+/** The CSS classes of a row, styled globally (`_hierarchy-rows.scss`) as rows belong to the table. */
+function rowClasses(row: HierarchyRow): string | undefined {
+  const classes = [
+    row.isContext && CONTEXT_ROW_CLASS,
+    row.level === 0 && TOP_ROW_CLASS,
+    row.childCount > 0 && PARENT_ROW_CLASS,
+  ].filter(Boolean);
+  return classes.length > 0 ? classes.join(" ") : undefined;
 }
 
 /**
