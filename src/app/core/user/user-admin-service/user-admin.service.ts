@@ -1,3 +1,4 @@
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { Role, UserAccount } from "./user-account";
@@ -106,17 +107,36 @@ export abstract class UserAdminService {
   abstract getAllUsers(): Observable<UserAccount[]>;
 }
 
+/**
+ * A failure of the user account server, with a message for the user.
+ * A 403 has a `NotPermittedError` as its `cause`, so that it is recognized as one
+ * (see `isNotPermittedError`) and only logged for debugging.
+ */
 export class UserAdminApiError extends Error {
   /**
    * The HTTP status code of the error.
+   * - 403: Forbidden (the account may not manage user accounts)
    * - 404: Not Found (e.g. user not found)
    * - 409: Conflict (e.g. email already exists)
    * - 500: Internal Server Error
    */
   status: number;
 
-  constructor(status: number, message?: string) {
-    super(message);
+  /**
+   * @param status
+   * @param message for the user; a default one by the status if not given
+   * @param cause the failed request
+   */
+  constructor(status: number, message?: string, cause?: unknown) {
+    super(message, {
+      cause:
+        status === 403
+          ? new NotPermittedError("Not permitted to manage user accounts", {
+              status,
+              cause,
+            })
+          : cause,
+    });
     this.name = "UserAdminApiError";
     this.status = status;
     if (!message) {
