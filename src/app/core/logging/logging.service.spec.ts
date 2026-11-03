@@ -115,6 +115,20 @@ describe("LoggingService", () => {
     },
   );
 
+  it("should keep reporting a named error saying the app could not continue, also if caused by a dropped connection", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    onTestFinished(() => error.mockRestore());
+    const bootstrapFailure = new NamedError(
+      "AppBootstrapError",
+      "Application Bootstrap failed",
+      { cause: new ConnectivityError("Failed to fetch from DB") },
+    );
+
+    new LoggingService().error(bootstrapFailure);
+
+    expect(error).toHaveBeenCalledWith(bootstrapFailure);
+  });
+
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
   });
