@@ -9,7 +9,8 @@ import { LoggedError, NamedError } from "./reported-errors";
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
  * grouping by stack trace would split one problem into many issues.
- * The rules are explained in the logging README ("How events are grouped").
+ * Summarized in the logging README ("How events are grouped and filtered");
+ * the rules are documented on the functions below.
  *
  * @param classification of the event's error chain (see `classifyErrorChain`)
  */
