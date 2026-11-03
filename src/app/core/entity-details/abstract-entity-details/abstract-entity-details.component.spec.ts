@@ -12,7 +12,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException } from "../../database/pouchdb/database-exception";
+import { databaseError } from "../../database/pouchdb/database-exception";
 
 type EntityActionsServiceMock = {
   remove: Mock;
@@ -146,7 +146,7 @@ describe("AbstractEntityDetailsComponent", () => {
     try {
       const entityMapper = TestBed.inject(EntityMapperService);
       vi.spyOn(entityMapper, "load").mockRejectedValue(
-        new DatabaseException({
+        databaseError({
           status: 401,
           message: "unauthorized",
           error: "User is not permitted",

@@ -2,7 +2,7 @@ import type * as Sentry from "@sentry/angular";
 import { LoggedError, NamedError } from "./reported-errors";
 import { processSentryEvent } from "./sentry-event-processing";
 import { ServerError } from "#src/app/utils/backend-errors";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 import {
   eventFor,
@@ -17,7 +17,7 @@ describe("processSentryEvent", () => {
 
   describe("dropping events nobody can act on", () => {
     const expiredSession = () =>
-      new DatabaseException({
+      databaseError({
         status: 401,
         reason: "exp not in future",
         message: "unauthorized",
@@ -42,7 +42,7 @@ describe("processSentryEvent", () => {
         case: "a rejected write, by its status",
         error: new LoggedError(
           "Could not save",
-          new DatabaseException({ message: "conflict", status: 409 }),
+          databaseError({ message: "conflict", status: 409 }),
         ),
         dropped: true,
       },
@@ -60,7 +60,7 @@ describe("processSentryEvent", () => {
       },
       {
         case: "another 401",
-        error: new DatabaseException({
+        error: databaseError({
           status: 401,
           reason: "Unknown kid",
           message: "unauthorized",
@@ -70,7 +70,7 @@ describe("processSentryEvent", () => {
       {
         // a caught one is logged at debug and never gets here
         case: "an unhandled record the permission rules exclude",
-        error: new DatabaseException({ status: 403, message: "forbidden" }),
+        error: databaseError({ status: 403, message: "forbidden" }),
         dropped: false,
       },
     ])("should drop $case: $dropped", ({ error, offline, dropped }) => {
@@ -127,7 +127,7 @@ describe("processSentryEvent", () => {
     {
       case: "of the failed request underneath a wrapper",
       error: new NamedError("ConfigLoadError", "Failed to load", {
-        cause: new DatabaseException({ status: 401, reason: "Unknown kid" }),
+        cause: databaseError({ status: 401, reason: "Unknown kid" }),
       }),
       extra: { name: "ConfigLoadError", status: 401, reason: "Unknown kid" },
     },
@@ -155,7 +155,7 @@ describe("processSentryEvent", () => {
       case: "a server error, as an error with its status",
       error: new LoggedError(
         "Could not load notes",
-        new DatabaseException(
+        databaseError(
           new ServerError("Server error response from DB", { status: 500 }),
         ),
       ),
@@ -167,7 +167,7 @@ describe("processSentryEvent", () => {
       case: "a server error logged as a warning, at the level it was logged with",
       error: new LoggedError(
         "Could not load notes",
-        new DatabaseException(
+        databaseError(
           new ServerError("Server error response from DB", { status: 500 }),
         ),
       ),
@@ -180,7 +180,7 @@ describe("processSentryEvent", () => {
       case: "an unhandled not-permitted failure, as a warning",
       // e.g. a public form re-throwing the failed save of a record the public role may not create
       error: new Error("Could not save Note: forbidden", {
-        cause: new DatabaseException({ status: 403, message: "forbidden" }),
+        cause: databaseError({ status: 403, message: "forbidden" }),
       }),
       unhandled: true,
       level: "warning",
@@ -191,7 +191,7 @@ describe("processSentryEvent", () => {
       case: "a logged not-permitted failure, as a warning",
       error: new LoggedError(
         "Could not load record",
-        new DatabaseException({ status: 403, message: "forbidden" }),
+        databaseError({ status: 403, message: "forbidden" }),
       ),
       level: "warning",
       title: "NotPermittedError: forbidden",

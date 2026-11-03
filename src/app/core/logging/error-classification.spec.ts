@@ -9,7 +9,10 @@ import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import { classifyReportedError } from "./uncaught-error-classification";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import {
+  databaseError,
+  DatabaseException,
+} from "../database/pouchdb/database-exception";
 import { SyncFailedError } from "../database/pouchdb/synced-pouch-database";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
@@ -57,20 +60,20 @@ describe("classification helpers", () => {
     ],
     [
       "a DatabaseException wrapping a typed error",
-      new DatabaseException(new ConnectivityError("Failed to fetch from DB")),
+      databaseError(new ConnectivityError("Failed to fetch from DB")),
       "connectivity",
     ],
     [
       "a connectivity failure wrapped by another error",
       new SyncFailedError(
-        new DatabaseException(new ConnectivityError("Failed to fetch from DB")),
+        databaseError(new ConnectivityError("Failed to fetch from DB")),
       ),
       "connectivity",
     ],
     [
       // the abort's name is replaced by "DatabaseException"
       "a DatabaseException wrapping an AbortError",
-      new DatabaseException(
+      databaseError(
         new DOMException("The operation was aborted.", "AbortError"),
         "Config:CONFIG_ENTITY",
       ),
@@ -78,7 +81,7 @@ describe("classification helpers", () => {
     ],
     [
       "an expired token wrapped in a DatabaseException",
-      new DatabaseException(
+      databaseError(
         couchDbUnauthorized("exp not in future"),
         "Config:CONFIG_ENTITY",
       ),
@@ -87,7 +90,7 @@ describe("classification helpers", () => {
     [
       // e.g. pouchdb-find reports the same response as "Database error"
       "an expired token whose message was replaced",
-      new DatabaseException({
+      databaseError({
         ...couchDbUnauthorized("exp not in future"),
         message: "Database error",
       }),
@@ -95,7 +98,7 @@ describe("classification helpers", () => {
     ],
     [
       "the expired token reason with another status",
-      new DatabaseException({
+      databaseError({
         ...couchDbUnauthorized("exp not in future"),
         status: 400,
       }),
@@ -104,7 +107,7 @@ describe("classification helpers", () => {
     [
       // the body of the replication backend's `UnauthorizedException('unauthorized', 'User is not permitted')`
       "a 401 the permission backend calls not permitted",
-      new DatabaseException(
+      databaseError(
         {
           status: 401,
           message: "unauthorized",
@@ -116,7 +119,7 @@ describe("classification helpers", () => {
     ],
     [
       "a 403 of the database",
-      new DatabaseException({ status: 403, message: "forbidden" }),
+      databaseError({ status: 403, message: "forbidden" }),
       "not-permitted",
     ],
     [
@@ -131,25 +134,23 @@ describe("classification helpers", () => {
       "a 403 wrapped by another error",
       new LoggedError(
         "Could not load record",
-        new DatabaseException({ status: 403, message: "forbidden" }),
+        databaseError({ status: 403, message: "forbidden" }),
       ),
       "not-permitted",
     ],
     [
       "a 401 without reason",
-      new DatabaseException({ status: 401, message: "Unauthorized" }),
+      databaseError({ status: 401, message: "Unauthorized" }),
       undefined,
     ],
     [
       "a 401 for an invalid token",
-      new DatabaseException(
-        couchDbUnauthorized("Token signature is not valid"),
-      ),
+      databaseError(couchDbUnauthorized("Token signature is not valid")),
       undefined,
     ],
     [
       "an unclassified database failure",
-      new DatabaseException({ status: 404, message: "missing" }),
+      databaseError({ status: 404, message: "missing" }),
       undefined,
     ],
   ])("classifies %s", (_, error, expected) => {
@@ -169,7 +170,7 @@ describe("classifyError", () => {
     ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
     [
       "a DatabaseException, by the typed error it wraps",
-      new DatabaseException({ status: 409, message: "conflict" }),
+      databaseError({ status: 409, message: "conflict" }),
       "write-conflict",
     ],
     [

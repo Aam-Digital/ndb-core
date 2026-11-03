@@ -3,7 +3,6 @@ import type * as Sentry from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { resetReportedEvents } from "./report-once";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
-import { DatabaseException } from "../database/pouchdb/database-exception";
 
 /** Fixtures for the specs of the remote monitoring (Sentry) processing. */
 
@@ -50,13 +49,11 @@ export function title(event: Sentry.ErrorEvent): string {
   return `${thrown.type}: ${thrown.value}`;
 }
 
-/** What the remote database throws (wrapped by PouchDatabase) for a request without response. */
+/** What the remote database throws for a request without response. */
 export const failedFetch = () =>
-  new DatabaseException(
-    new ConnectivityError("Failed to fetch from DB", {
-      cause: new TypeError("Failed to fetch"),
-    }),
-  );
+  new ConnectivityError("Failed to fetch from DB", {
+    cause: new TypeError("Failed to fetch"),
+  });
 
 /** PouchDB's error once the IndexedDB of the device is broken (AAM-DIGITAL-7CQ). */
 export const brokenIndexedDb = () =>

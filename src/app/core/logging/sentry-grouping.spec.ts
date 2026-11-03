@@ -4,7 +4,10 @@ import { processSentryEvent } from "./sentry-event-processing";
 import { resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
 import { ServerError } from "#src/app/utils/backend-errors";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import {
+  databaseError,
+  DatabaseException,
+} from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
@@ -51,7 +54,7 @@ describe("processSentryEvent", () => {
         error: new NamedError(
           "ConfigLoadError",
           "Failed to load configuration.",
-          { cause: new DatabaseException({ message: "Unknown kid" }) },
+          { cause: databaseError({ message: "Unknown kid" }) },
         ),
         fingerprint: [
           "ConfigLoadError",
@@ -68,7 +71,7 @@ describe("processSentryEvent", () => {
           "ConfigLoadError",
           "Failed to load configuration.",
           {
-            cause: new DatabaseException(
+            cause: databaseError(
               new ServerError("Server error response from DB", { status: 500 }),
             ),
           },
@@ -81,7 +84,7 @@ describe("processSentryEvent", () => {
         case: "a classified database failure, by the typed error rather than the raw error it was converted from",
         error: new LoggedError(
           "Could not load school",
-          new DatabaseException(brokenIndexedDb()),
+          databaseError(brokenIndexedDb()),
         ),
         fingerprint: ["LocalStorageError", "unknown"],
         title: "LocalStorageError: unknown",
@@ -89,7 +92,7 @@ describe("processSentryEvent", () => {
       },
       {
         case: "a DatabaseException passing on a typed error, like that error",
-        error: new DatabaseException(
+        error: databaseError(
           new ServerError("Server error response from DB", { status: 500 }),
         ),
         fingerprint: ["ServerError", "server error response from db", "500"],
@@ -117,7 +120,7 @@ describe("processSentryEvent", () => {
       },
       {
         case: "a failed database request, in the network issue",
-        error: new DatabaseException({ message: "Load failed" }),
+        error: databaseError({ message: "Load failed" }),
         fingerprint: ["network-error"],
         title: "NetworkError: Failed to reach the server",
       },
@@ -125,7 +128,7 @@ describe("processSentryEvent", () => {
         case: "a logged other failure, by the message and its root cause",
         error: new LoggedError(
           "Could not load notes",
-          new DatabaseException({ message: "Unauthorized" }),
+          databaseError({ message: "Unauthorized" }),
         ),
         fingerprint: [
           "Error",
@@ -235,16 +238,13 @@ describe("processSentryEvent", () => {
     it("should group one classified root cause logged by different components into one issue, telling the components apart by tag", () => {
       // like AAM-DIGITAL-7CQ, 7CR, 77R: one broken local database, one issue
       const bySync = processError(
-        new LoggedError(
-          "sync failed",
-          new DatabaseException(brokenIndexedDb()),
-        ),
+        new LoggedError("sync failed", databaseError(brokenIndexedDb())),
       );
       resetReportedEvents(); // the next page load
       const byPermissions = processError(
         new LoggedError(
           "Failed to load permission rules",
-          new DatabaseException(brokenIndexedDb()),
+          databaseError(brokenIndexedDb()),
         ),
       );
 
@@ -258,7 +258,7 @@ describe("processSentryEvent", () => {
     it.each([
       [
         "a missing document",
-        () => new DatabaseException({ status: 404, message: "missing" }),
+        () => databaseError({ status: 404, message: "missing" }),
       ],
       [
         "a programming error",

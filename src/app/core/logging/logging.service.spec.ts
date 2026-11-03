@@ -5,7 +5,7 @@ import { LoggingService, toReportedError } from "./logging.service";
 import { LoggedError, NamedError } from "./reported-errors";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 
 /** A request to another service (not converted by the HTTP interceptor) without response. */
 const offlineResponse = new HttpErrorResponse({ status: 0 });
@@ -71,7 +71,7 @@ describe("LoggingService", () => {
     ["a request to another service without response", offlineResponse, "debug"],
     [
       "an edit conflict",
-      new DatabaseException({ status: 409, message: "conflict" }),
+      databaseError({ status: 409, message: "conflict" }),
       "debug",
     ],
     [
@@ -83,7 +83,7 @@ describe("LoggingService", () => {
     ],
     [
       "a 401 for an invalid token",
-      new DatabaseException({
+      databaseError({
         status: 401,
         reason: "Token signature is not valid",
       }),

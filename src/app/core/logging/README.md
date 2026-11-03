@@ -122,7 +122,7 @@ cause instead of by stack trace (which opens one issue per call site and per bui
 ### Typed errors: classifying failures where they enter the app
 
 Foreign errors are converted into typed errors where they enter the app, by the knowledge of the module
-they belong to: the database layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor`
+they belong to: the database layer (`databaseError()`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor`
 for requests to our backend (`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's
 responses mean (`src/app/utils/backend-response.ts`). Each typed class extends `TypedError`
 (`error-classification.ts`), declares its kind of failure as `static classification` and lives in the

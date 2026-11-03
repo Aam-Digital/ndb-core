@@ -5,7 +5,7 @@ import {
 } from "#src/app/core/database/pouchdb/database-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
-import { DatabaseException, toTypedDatabaseError } from "./database-exception";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 
 /** A copy of an error like PouchDB's `createError()` makes: all own properties, without the class. */
 function pouchCopyOf(error: Error): Error {
@@ -112,26 +112,36 @@ describe("toTypedDatabaseError", () => {
   });
 });
 
-describe("DatabaseException", () => {
-  it("should keep the typed error as its cause and the raw error's properties for callers", () => {
+describe("databaseError", () => {
+  it("should be the typed error of a classified failure, with the document as extra data", () => {
     const raw = serverResponse(409, {
       error: "conflict",
       reason: "Document update conflict",
     });
 
-    const exception = new DatabaseException(raw, "Child:1");
+    const error = databaseError(raw, "Child:1");
 
-    expect(exception.cause).toBeInstanceOf(WriteConflictError);
-    expect(exception).toMatchObject({
-      name: "DatabaseException",
-      message: "Document update conflict",
+    expect(error).toBeInstanceOf(WriteConflictError);
+    expect(error).toMatchObject({
       status: 409,
-      reason: "Document update conflict",
+      cause: raw,
+      details: { entityId: "Child:1" },
+    });
+  });
+
+  it("should keep the properties of any other error for callers", () => {
+    const raw = serverResponse(404, { error: "not_found", reason: "missing" });
+
+    expect(databaseError(raw, "Child:1")).toMatchObject({
+      name: "DatabaseException",
+      message: "missing",
+      status: 404,
+      reason: "missing",
       entityId: "Child:1",
     });
   });
 
-  it("should keep the typed error as its cause when the wrapped copy has a cause of its own", () => {
+  it("should re-create a typed error that the replication copied, keeping the copy as its cause", () => {
     const loginFailure = new Error("Login server not reachable");
     const copy = pouchCopyOf(
       new SessionExpiredError("Session could not be renewed", {
@@ -140,9 +150,9 @@ describe("DatabaseException", () => {
       }),
     );
 
-    const exception = new DatabaseException(copy);
+    const error = databaseError(copy);
 
-    expect(exception.cause).toBeInstanceOf(SessionExpiredError);
-    expect((exception.cause as Error).cause).toBe(copy);
+    expect(error).toBeInstanceOf(SessionExpiredError);
+    expect(error.cause).toBe(copy);
   });
 });

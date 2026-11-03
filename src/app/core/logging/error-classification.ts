@@ -65,25 +65,18 @@ export function isTypedErrorName(name: unknown): boolean {
   return TYPED_ERROR_NAMES.has(name as string);
 }
 
-/** `DatabaseException` (which depends on this file) has the classification of the typed error it wraps. */
-const DATABASE_EXCEPTION_NAME = "DatabaseException";
-
 /**
  * What kind of failure the given error is, judged by this one error (not its
- * `cause`s): a typed error by its class, or by its name if it lost its class; a
- * `DatabaseException` by the typed error it wraps. Any other error is not
- * classified: foreign errors are converted where they enter the app.
+ * `cause`s): a typed error by its class, or by its name if it lost its class.
+ * Any other error is not classified: foreign errors are converted where they
+ * enter the app.
  */
 export function classifyError(error: unknown): ErrorClassification | undefined {
   if (!error || typeof error !== "object") {
     return undefined;
   }
-  const typed =
-    error instanceof NamedError && error.name === DATABASE_EXCEPTION_NAME
-      ? error.cause
-      : error;
-  if (typed instanceof TypedError) {
-    return (typed.constructor as typeof TypedError).classification;
+  if (error instanceof TypedError) {
+    return (error.constructor as typeof TypedError).classification;
   }
   if (error instanceof LoggedError || error instanceof NamedError) {
     return undefined;

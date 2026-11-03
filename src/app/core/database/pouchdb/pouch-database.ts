@@ -1,6 +1,6 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException, toTypedDatabaseError } from "./database-exception";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -192,7 +192,7 @@ export class PouchDatabase extends Database {
         }
       }
 
-      throw new DatabaseException(err, id);
+      throw databaseError(err, id);
     }
   }
 
@@ -213,10 +213,7 @@ export class PouchDatabase extends Database {
       );
       return result.rows.map((row) => row.doc);
     } catch (err) {
-      throw new DatabaseException(
-        err,
-        "allDocs; startkey: " + options?.["startkey"],
-      );
+      throw databaseError(err, "allDocs; startkey: " + options?.["startkey"]);
     }
   }
 
@@ -238,7 +235,7 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        throw new DatabaseException(err, object._id);
+        throw databaseError(err, object._id);
       }
     }
   }
@@ -281,7 +278,7 @@ export class PouchDatabase extends Database {
               ],
             });
           }
-          return new DatabaseException(e);
+          return databaseError(e);
         });
       }
     }
@@ -306,7 +303,7 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.remove(object))
       .catch((err) => {
-        throw new DatabaseException(err, object["_id"]);
+        throw databaseError(err, object["_id"]);
       });
   }
 
@@ -335,7 +332,7 @@ export class PouchDatabase extends Database {
       if (err.status === 404) {
         return false;
       }
-      throw new DatabaseException(err, id);
+      throw databaseError(err, id);
     }
 
     // Purge the winning revision and any conflicting leaf revisions
@@ -349,7 +346,7 @@ export class PouchDatabase extends Database {
         await (db as any).purge(id, rev);
       }
     } catch (err) {
-      throw new DatabaseException(err, id);
+      throw databaseError(err, id);
     }
 
     // PouchDB purge() does not emit change events, so manually notify
@@ -375,7 +372,7 @@ export class PouchDatabase extends Database {
       .then((pouchDB) => pouchDB.info())
       .then((res) => res.doc_count === 0)
       .catch((err) => {
-        throw new DatabaseException(err);
+        throw databaseError(err);
       });
   }
 
@@ -553,7 +550,7 @@ export class PouchDatabase extends Database {
     const created = await this.withReadRetry(() =>
       pouchDB.createIndex({ index }),
     ).catch((err) => {
-      throw new DatabaseException(err);
+      throw databaseError(err);
     });
     // the installed @types/pouchdb-find does not declare `id`
     return this.findPage({ ...findOptions, use_index: created["id"] }, page);
@@ -576,10 +573,7 @@ export class PouchDatabase extends Database {
     return this.withReadRetry(() =>
       this.getPouchDBOnceReady().then((pouchDB) => pouchDB.query(fun, options)),
     ).catch((err) => {
-      throw new DatabaseException(
-        err,
-        typeof fun === "string" ? fun : undefined,
-      );
+      throw databaseError(err, typeof fun === "string" ? fun : undefined);
     });
   }
 
@@ -684,7 +678,7 @@ export class PouchDatabase extends Database {
       // message: remote monitoring groups by message, so an ID in there would
       // fragment one recurring problem into a separate issue per document
       existingError.message = `${existingError.message} (unable to resolve)`;
-      throw new DatabaseException(existingError, newObject._id);
+      throw databaseError(existingError, newObject._id);
     }
   }
 

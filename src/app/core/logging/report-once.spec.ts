@@ -1,6 +1,6 @@
 import { LoggedError, NamedError } from "./reported-errors";
 import { MAX_REPEATED_SENTRY_EVENTS } from "./report-once";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 import {
   brokenIndexedDb,
   browserError,
@@ -24,7 +24,7 @@ describe("processSentryEvent", () => {
 
   describe("reporting each failure once per page load", () => {
     it("should report an error once when it is logged by a component and then reaches the error handler unhandled", () => {
-      const failure = new DatabaseException({
+      const failure = databaseError({
         status: 404,
         message: "missing",
       });
@@ -54,12 +54,12 @@ describe("processSentryEvent", () => {
       const followUps = [
         new LoggedError(
           "Failed to load permission rules",
-          new DatabaseException(brokenIndexedDb(), "Config:Permissions"),
+          databaseError(brokenIndexedDb(), "Config:Permissions"),
         ),
         new NamedError(
           "ConfigLoadError",
           "Failed to load configuration from the database.",
-          { cause: new DatabaseException(brokenIndexedDb()) },
+          { cause: databaseError(brokenIndexedDb()) },
         ),
         browserError(
           "InvalidStateError",

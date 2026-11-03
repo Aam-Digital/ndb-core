@@ -2,7 +2,7 @@ import { classifyErrorChain } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import type { Mock } from "vitest";
-import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
@@ -184,7 +184,7 @@ describe("RemotePouchDatabase tests", () => {
     expect(result._id).toBe("Entity:ABC");
   });
 
-  it("should surface a persistent transient read failure as a DatabaseException after exhausting retries", async () => {
+  it("should surface a persistent transient read failure as a connectivity failure after exhausting retries", async () => {
     (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
     database.init("");
     const pouchDB = (database as any).pouchDB;
@@ -195,7 +195,7 @@ describe("RemotePouchDatabase tests", () => {
       throw new DOMException("The operation was aborted.", "AbortError");
     });
 
-    await expect(database.get("Entity:ABC")).rejects.toThrow(DatabaseException);
+    await expect(database.get("Entity:ABC")).rejects.toThrow(ConnectivityError);
     // 1 initial + 2 retries = 3 total
     expect(calls).toBe(3);
   });
@@ -511,10 +511,8 @@ describe("RemotePouchDatabase tests", () => {
 
         const failure = await database.get("Entity:ABC").catch((err) => err);
 
-        expect(failure).toBeInstanceOf(DatabaseException);
+        expect(failure).toBeInstanceOf(SessionExpiredError);
         expect(failure.status).toBe(HttpStatusCode.Unauthorized);
-        expect(failure.cause).toBeInstanceOf(SessionExpiredError);
-        expect(classifyErrorChain(failure)).toBe("session-expired");
         warn.mockRestore();
       },
     );

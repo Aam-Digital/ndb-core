@@ -1,5 +1,5 @@
-import { DatabaseException, PouchDatabase } from "./pouch-database";
-import { toTypedDatabaseError } from "./database-exception";
+import { PouchDatabase } from "./pouch-database";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 import {
   BulkWriteLimits,
   DEFAULT_BULK_WRITE_LIMITS,
@@ -337,7 +337,7 @@ export class RemotePouchDatabase extends PouchDatabase {
       try {
         return await operation();
       } catch (err) {
-        // the raw error of PouchDB, not yet converted by a DatabaseException
+        // the raw error of PouchDB, not yet converted by `databaseError`
         if (
           !isConnectivityError(toTypedDatabaseError(err)) ||
           attempt >= this.TRANSIENT_ERROR_RETRIES
@@ -543,7 +543,7 @@ export class RemotePouchDatabase extends PouchDatabase {
           PouchDB.Find.FindResponse<any> & { bookmark?: string }
         >,
     ).catch((err) => {
-      throw new DatabaseException(err);
+      throw databaseError(err);
     });
     return { docs: res.docs, bookmark: res.bookmark };
   }

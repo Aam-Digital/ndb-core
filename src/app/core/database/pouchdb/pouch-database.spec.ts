@@ -1,3 +1,4 @@
+import { WriteConflictError } from "./database-errors";
 import { classifyError } from "../../logging/error-classification";
 /*
  *     This file is part of ndb-core.
@@ -18,10 +19,11 @@ import { classifyError } from "../../logging/error-classification";
 
 import type { Mock } from "vitest";
 import {
-  DatabaseException,
   LOCAL_DB_REVS_LIMIT,
   PouchDatabase,
+  DatabaseException,
 } from "./pouch-database";
+import { databaseError } from "./database-exception";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { Logging } from "../../logging/logging.service";
@@ -336,7 +338,7 @@ describe("PouchDatabase tests", () => {
 
     it("counts a conflict that could not be resolved, by entity type only", async () => {
       await expect(database.put({ ...STALE })).rejects.toBeInstanceOf(
-        DatabaseException,
+        WriteConflictError,
       );
 
       // the document ID must never be reported - see #4174
@@ -399,7 +401,7 @@ describe("PouchDatabase tests", () => {
       );
 
       await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
-        DatabaseException,
+        WriteConflictError,
       );
 
       await new Promise((resolve) => setTimeout(resolve));
@@ -616,16 +618,18 @@ describe("PouchDatabase tests", () => {
   });
 });
 
-describe("DatabaseException", () => {
+describe("databaseError", () => {
   it("keeps name as 'DatabaseException' for stable Sentry grouping", () => {
-    const ex = new DatabaseException(
+    const ex = databaseError(
       { status: 404, name: "not_found", message: "missing" },
       "Entity:1",
     );
 
-    expect(ex.name).toBe("DatabaseException");
-    expect(ex.entityId).toBe("Entity:1");
-    expect(ex.message).toBe("missing");
+    expect(ex).toMatchObject({
+      name: "DatabaseException",
+      entityId: "Entity:1",
+      message: "missing",
+    });
   });
 
   it.each([
@@ -666,10 +670,7 @@ describe("DatabaseException", () => {
       undefined,
     ],
     ["a missing document", { status: 404, message: "missing" }, undefined],
-  ])(
-    "is classified as the kind of failure it wraps: %s",
-    (_, error, expected) => {
-      expect(classifyError(new DatabaseException(error))).toBe(expected);
-    },
-  );
+  ])("is classified as the kind of failure: %s", (_, error, expected) => {
+    expect(classifyError(databaseError(error))).toBe(expected);
+  });
 });

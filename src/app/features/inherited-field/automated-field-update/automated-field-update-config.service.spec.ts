@@ -26,7 +26,7 @@ import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configur
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
-import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
+import { databaseError } from "#src/app/core/database/pouchdb/database-exception";
 import {
   SessionInfo,
   SessionSubject,
@@ -1404,12 +1404,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
       it.each([
         [
           "the user may not read it",
-          new DatabaseException({ status: 403, message: "forbidden" }),
+          databaseError({ status: 403, message: "forbidden" }),
           false,
         ],
         [
           "it is missing",
-          new DatabaseException({ status: 404, message: "missing" }),
+          databaseError({ status: 404, message: "missing" }),
           true,
         ],
       ])(

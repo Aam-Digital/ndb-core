@@ -180,16 +180,6 @@ function groupByRootCause(
     thrown.value = reportedError.value;
     return event;
   }
-  // as is one passing on the classification of the typed error it wraps (a DatabaseException)
-  if (
-    rootClassification &&
-    chainClassifications[reportedIndex] === rootClassification
-  ) {
-    event.fingerprint = rootKey;
-    thrown.type = rootCause.type;
-    thrown.value = normalizeErrorValue(rootCause.value);
-    return event;
-  }
 
   if (!rootClassification || rootClassification === "connectivity") {
     const rootText =
