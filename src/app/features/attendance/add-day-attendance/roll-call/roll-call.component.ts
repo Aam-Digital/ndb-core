@@ -21,6 +21,9 @@ import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import { HttpStatusCode } from "@angular/common/http";
 import { sortByAttribute } from "#src/app/utils/utils";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
@@ -232,7 +235,16 @@ export class RollCallComponent {
       const entity = await this.entityMapper.load(entityType, id);
       event = this.attendanceService.wrapEventEntity(entity);
     } catch (e) {
-      Logging.warn("Could not load event", { eventId: id, error: e });
+      if (
+        e?.status === HttpStatusCode.NotFound ||
+        isNotPermittedError(e) ||
+        isConnectivityError(e)
+      ) {
+        // e.g. an outdated link: the user is shown the "not found" page
+        Logging.debug("Could not load event", { eventId: id, error: e });
+      } else {
+        Logging.warn("Could not load event", { eventId: id, error: e });
+      }
       void this.router.navigate(["/404"]);
       return undefined;
     }

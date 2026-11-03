@@ -10,6 +10,7 @@ import { MatInputHarness } from "@angular/material/input/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";
+import { Logging } from "../../../core/logging/logging.service";
 import type { Mock } from "vitest";
 
 type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
@@ -151,25 +152,34 @@ describe("AddressSearchComponent", () => {
     }
   });
 
-  it("should handle service other types errors", async () => {
-    vi.useFakeTimers();
-    try {
-      const error = new HttpErrorResponse({
-        status: 504,
-      });
-      mockGeoService.lookup.mockReturnValue(throwError(() => error));
-      const inputElement = await loader.getHarness(MatInputHarness);
+  it.each([
+    [503, false], // the external lookup service is down
+    [429, false], // rate limited by the external lookup service
+    [400, true],
+  ])(
+    "shows the lookup service as unavailable after a %s response, reporting only unexpected ones",
+    async (status, reported) => {
+      vi.useFakeTimers();
+      const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+      warn.mockClear();
+      try {
+        const error = new HttpErrorResponse({ status });
+        mockGeoService.lookup.mockReturnValue(throwError(() => error));
+        const inputElement = await loader.getHarness(MatInputHarness);
 
-      await inputElement.setValue("test");
-      await vi.advanceTimersByTimeAsync(3000);
+        await inputElement.setValue("test");
+        await vi.advanceTimersByTimeAsync(3000);
 
-      expect(component.otherTypeError()).toBe(true);
-      expect(component.networkError()).toBe(false);
-      expect(component.nothingFound()).toBe(true);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
+        expect(component.otherTypeError()).toBe(true);
+        expect(component.networkError()).toBe(false);
+        expect(component.nothingFound()).toBe(true);
+        expect(warn).toHaveBeenCalledTimes(reported ? 1 : 0);
+      } finally {
+        vi.useRealTimers();
+        warn.mockRestore();
+      }
+    },
+  );
 
   async function expectLookup(
     searchTerm: string,

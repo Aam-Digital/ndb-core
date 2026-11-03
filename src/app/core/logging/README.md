@@ -39,10 +39,13 @@ who has to act on the failure:
 - **User or device environment** (e.g. offline or flaky connection, expired session, a record the
   user may not read, a browser permission the user denied such as clipboard or notifications):
   do not report it (`Logging.debug`); tell the user what happened and what they can do.
-- **Instance configuration or data** (e.g. an unknown `dataType`, icon or validator in the config;
-  a permission rule variable for an account without a linked profile; a file field pointing to a
-  missing file; an optional feature not set up for the instance): do not report it
-  (`Logging.debug`); make it visible to admins in the UI, and validate the config when it is saved.
+- **Instance configuration or data problem** (e.g. an unknown `dataType`, icon or validator in the
+  config; a permission rule variable for an account without a linked profile; a file field pointing
+  to a missing file): report it with `Logging.warn`, with a static message and the offending value
+  in the context. If it would recur on every page load, report it once per session. Also make it
+  visible to admins in the UI where possible, and validate the config when it is saved.
+- **Optional feature not set up for the instance** (e.g. push notifications without a Firebase
+  config): this is not a problem, do not report it (`Logging.debug`).
 
 Rules that keep one root cause in one Sentry issue (see also "Log an error together with a message"
 and "Log a failure once" below):
@@ -51,8 +54,9 @@ and "Log a failure once" below):
   handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
   `ErrorHandler` and is reported as a separate, unhandled issue.
 - **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
-  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
-  (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
+  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`), `isExpiredSessionError()`
+  (`src/app/utils/expired-session-error.ts`) and `isNotPermittedError()`
+  (`src/app/utils/not-permitted-error.ts`). A component that only treats `404` as expected
   logs every dropped connection as a warning of its own, and cannot tell the user what happened.
 - **Check whether an optional feature is configured before using it** (e.g. push notifications
   without a Firebase config) instead of logging its failure on every page load.
@@ -60,6 +64,30 @@ and "Log a failure once" below):
   reason (e.g. `purge()` on the legacy `idb` adapter), check the capability up front.
 - **Expect config values of the wrong type.** The config is plain JSON edited by admins; a template
   or `computed()` must not crash because a value is not of the type its interface declares.
+
+### Which level to use
+
+`warn` and `error` go to Sentry, `debug` and `info` only to the browser console. Decide per call site:
+
+- **Keep `warn`** for an unexpected but handled situation that a developer or support has to act on:
+  - a code defect, or a data or config inconsistency (if it would recur on every page load, report
+    it once per session, e.g. an invalid locale);
+  - a risk of data loss: the local database lost or evicted, user data that could not be saved for a
+    reason other than permissions or connectivity;
+  - a permission inconsistency that indicates a bug (e.g. the server refusing docs the client let the
+    user change);
+  - a deliberate audit event the team relies on (e.g. a user-confirmed reset of application data),
+    with a static message.
+- **Use `debug`** for expected operational conditions: offline or connectivity failures, an expired
+  session, a record the user may not read, an external service being unavailable (e.g. the address
+  lookup, the GitHub releases API for "latest changes"), a normal fallback path (e.g. loading all
+  records when an index cannot be used), a known limitation (e.g. `purge()` on the `idb` adapter),
+  purely informational traces, and anything the UI already tells the user with nothing for
+  developers to fix.
+- **Do not downgrade a whole catch block** that mixes both: classify the error with the helpers above
+  and log only the expected cases at `debug`, keeping `warn` for the rest.
+- **Do not rethrow** an error after telling the user about it, unless the caller handles it: it is
+  reported again as an unhandled error.
 
 ## Remote Logging
 
@@ -158,8 +186,8 @@ releases without source maps report minified frames).
   telling two unrelated bugs apart.
 - A failure that is only logged, not thrown, needs no name: `Logging.error(message, err)` is grouped
   the same way. Name it only where a network failure must keep an issue of its own instead of going
-  into the shared network issue, because the app cannot continue (`ConfigLoadError`,
-  `AppBootstrapError`).
+  into the shared network issue, because the app cannot continue (`AppBootstrapError`;
+  `ConfigLoadError`, which is not reported at all when the device is simply offline).
 
 ### How events are grouped
 

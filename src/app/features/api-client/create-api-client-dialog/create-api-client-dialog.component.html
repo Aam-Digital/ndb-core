@@ -42,32 +42,9 @@
     </mat-form-field>
 
     <h3 i18n>Access</h3>
-    @if (scopes.hasValue()) {
-      @let offeredScopes = scopes.value();
-      <mat-selection-list
-        formControlName="scopes"
-        aria-label="Access"
-        i18n-aria-label
-      >
-        @for (scope of offeredScopes; track scope.name) {
-          <mat-list-option [value]="scope.name">
-            <span matListItemTitle>{{ scope.label }}</span>
-          </mat-list-option>
-        }
-      </mat-selection-list>
-    } @else if (scopes.isLoading()) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
-
-    @if (singleSignOnSelected()) {
-      <app-hint-box type="warning" class="margin-top-small">
-        <span i18n>
-          With single sign-on, the external system can sign in to this system as
-          any of its users, including administrators, without their password.
-          Only give this access to systems you fully trust.
-        </span>
-      </app-hint-box>
-    }
+    <app-api-client-scope-selection
+      [control]="form.controls.scopes"
+    ></app-api-client-scope-selection>
 
     @if (error(); as error) {
       <p class="color-error" role="alert">{{ error }}</p>

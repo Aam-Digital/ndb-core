@@ -19,11 +19,28 @@ import {
 } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { EntityConstructor } from "app/core/entity/model/entity";
+import {
+  EntityRelationsService,
+  LinkedTypeFields,
+} from "app/core/entity/entity-mapper/entity-relations.service";
+import { DateRangeDatatype } from "app/core/basic-datatypes/date-range/date-range.datatype";
+import { resolveLocaleText } from "app/core/language/active-locale";
+import {
+  FormValidatorConfig,
+  WithinParentConfig,
+} from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
+
+/** an option of the date ranges a date range field can be checked against */
+interface ParentRangeOption {
+  label: string;
+  value: WithinParentConfig;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,17 +54,32 @@ import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month
     HelpButtonComponent,
     EditDateComponent,
     EditMonthComponent,
+    MatSelectModule,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
 export class ConfigureEntityFieldValidatorComponent {
   private fb = inject(FormBuilder);
+  private readonly entityRelations = inject(EntityRelationsService);
 
   /**
    * the field definition with the currently existing validator settings to be edited
    */
   entitySchemaField = input.required<EntitySchemaField>();
+
+  /** the record type of the field, to offer the date ranges of the records it links to */
+  entityType = input<EntityConstructor>();
+
+  /**
+   * the data type currently selected for the field, if it can change while editing
+   * (a change of `entitySchemaField.dataType` in place is not noticed)
+   */
+  dataType = input<string>();
+
+  private readonly fieldDataType = computed(
+    () => this.dataType() ?? this.entitySchemaField()?.dataType,
+  );
 
   /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
@@ -62,6 +94,59 @@ export class ConfigureEntityFieldValidatorComponent {
   trimControl = computed(
     () => new FormControl(this.entitySchemaField()?.trim !== false),
   );
+
+  /**
+   * The date ranges a date range field can be checked against:
+   * each date range field of the record types that this record links to ("link field › date range field").
+   */
+  readonly parentRangeOptions = computed(() => {
+    const field = this.entitySchemaField();
+    const entityType = this.entityType();
+    if (this.fieldDataType() !== DateRangeDatatype.dataType || !entityType) {
+      return [];
+    }
+
+    return this.entityRelations
+      .getFieldsOfLinkedTypes(entityType, DateRangeDatatype.dataType)
+      .flatMap((linked) =>
+        this.rangeOptionsOfLinkedType(linked, entityType, field),
+      );
+  });
+
+  /** the date range fields of a record type that the link field links to ("link field › date range field") */
+  private rangeOptionsOfLinkedType(
+    { linkId, link, linkedType, fields }: LinkedTypeFields,
+    entityType: EntityConstructor,
+    field: EntitySchemaField,
+  ): ParentRangeOption[] {
+    const linkLabel = resolveLocaleText(link.label) ?? linkId;
+    const isSameType = linkedType === entityType;
+    const options: ParentRangeOption[] = [];
+    if (isSameType) {
+      // the field itself (as the default), even if it is not saved to the schema yet
+      const thisField = resolveLocaleText(field.label) || $localize`this field`;
+      options.push({
+        label: `${linkLabel} › ${thisField}`,
+        value: { parentReferenceField: linkId },
+      });
+    }
+    for (const [valueId, parentField] of fields) {
+      if (!(isSameType && valueId === field.id)) {
+        options.push({
+          label: `${linkLabel} › ${resolveLocaleText(parentField.label) ?? valueId}`,
+          value: { parentReferenceField: linkId, parentValueField: valueId },
+        });
+      }
+    }
+    return options;
+  }
+
+  readonly isSameParentRange = (
+    a: WithinParentConfig | null,
+    b: WithinParentConfig | null,
+  ) =>
+    a?.parentReferenceField === b?.parentReferenceField &&
+    a?.parentValueField === b?.parentValueField;
 
   validatorForm = computed(() => {
     const v = this.entitySchemaField()?.validators;
@@ -81,6 +166,7 @@ export class ConfigureEntityFieldValidatorComponent {
       patternMessage: [(isObjectForm ? v.pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
+      withinParent: [v?.withinParent ?? null],
     });
   });
 
@@ -110,12 +196,15 @@ export class ConfigureEntityFieldValidatorComponent {
       });
     });
 
-    effect((onCleanup) => {
-      const ctrl = this.trimControl();
-      const sub = ctrl.valueChanges.subscribe((value: boolean) => {
-        this.entitySchemaFieldChanges.emit({ trim: value });
-      });
-      onCleanup(() => sub.unsubscribe());
+    effect(() => {
+      const withinParent = this.validatorForm().get("withinParent");
+      // only offered for date ranges, so it would stay in the config without being visible anywhere
+      if (
+        this.fieldDataType() !== DateRangeDatatype.dataType &&
+        withinParent.value
+      ) {
+        withinParent.setValue(null);
+      }
     });
 
     effect((onCleanup) => {

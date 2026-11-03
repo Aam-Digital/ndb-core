@@ -1,6 +1,5 @@
 import { computed, Injectable, signal } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { TableRow } from "./table-row";
 
 /**
  * Pure selection helpers for entities-table row interaction
@@ -13,7 +12,7 @@ import { TableRow } from "./table-row";
  */
 export interface MouseSelectionUpdate<T extends Entity> {
   selectedRecords: T[];
-  lastSelectedRow: TableRow<T> | null;
+  lastSelectedRecord: T | null;
   lastSelection: boolean | null;
 }
 
@@ -22,11 +21,12 @@ export interface MouseSelectionUpdate<T extends Entity> {
  */
 export interface MouseSelectionInput<T extends Entity> {
   selectedRecords: T[];
-  /** rows of the page the interaction happened on, in displayed order */
-  currentPageRows: TableRow<T>[];
-  row: TableRow<T>;
+  /** records of the page the interaction happened on, in displayed order */
+  currentPageRows: T[];
+  /** the record of the row the interaction happened on */
+  record: T;
   shiftKey: boolean;
-  lastSelectedRow: TableRow<T> | null;
+  lastSelectedRecord: T | null;
   lastSelection: boolean | null;
 }
 
@@ -45,16 +45,6 @@ export function isClickableTarget(target: EventTarget | null): boolean {
  */
 export function isCheckboxTarget(target: EventTarget | null): boolean {
   return target instanceof HTMLInputElement && target.type === "checkbox";
-}
-
-/**
- * Determines whether row-click handling should be skipped for this interaction.
- */
-export function shouldSkipRowInteraction<T extends Entity>(
-  target: EventTarget | null,
-  row: TableRow<T>,
-): boolean {
-  return isClickableTarget(target) || !!row.formGroup?.enabled;
 }
 
 /**
@@ -81,19 +71,19 @@ export function toggleRecordSelection<T extends Entity>(
  */
 export function applyRangeSelection<T extends Entity>(
   selectedRecords: T[],
-  rows: TableRow<T>[],
+  records: T[],
   range: { start: number; end: number },
   shouldCheck: boolean,
 ): T[] {
   const updatedSelection = [...selectedRecords];
   for (let index = range.start; index <= range.end; index++) {
-    const row = rows[index];
-    const isSelected = updatedSelection.includes(row.record);
+    const record = records[index];
+    const isSelected = updatedSelection.includes(record);
 
     if (shouldCheck && !isSelected) {
-      updatedSelection.push(row.record);
+      updatedSelection.push(record);
     } else if (!shouldCheck && isSelected) {
-      updatedSelection.splice(updatedSelection.indexOf(row.record), 1);
+      updatedSelection.splice(updatedSelection.indexOf(record), 1);
     }
   }
   return updatedSelection;
@@ -108,22 +98,20 @@ export function updateSelectionFromMouseDown<T extends Entity>(
   const {
     selectedRecords,
     currentPageRows,
-    row,
+    record,
     shiftKey,
-    lastSelectedRow,
+    lastSelectedRecord,
     lastSelection,
   } = input;
-  // match by record, as the row wrappers are re-created whenever filter or sorting change
-  const currentIndex = currentPageRows.findIndex(
-    (pageRow) => pageRow.record === row.record,
-  );
-  const anchorIndex = lastSelectedRow
-    ? currentPageRows.findIndex(
-        (pageRow) => pageRow.record === lastSelectedRow.record,
-      )
+  const currentIndex = currentPageRows.indexOf(record);
+  const anchorIndex = lastSelectedRecord
+    ? currentPageRows.indexOf(lastSelectedRecord)
     : -1;
   const canRangeSelect =
-    shiftKey && !!lastSelectedRow && anchorIndex !== -1 && currentIndex !== -1;
+    shiftKey &&
+    !!lastSelectedRecord &&
+    anchorIndex !== -1 &&
+    currentIndex !== -1;
 
   if (canRangeSelect) {
     const start = Math.min(anchorIndex, currentIndex);
@@ -131,7 +119,7 @@ export function updateSelectionFromMouseDown<T extends Entity>(
     const shouldCheck =
       lastSelection !== null
         ? !lastSelection
-        : !selectedRecords.includes(row.record);
+        : !selectedRecords.includes(record);
 
     return {
       selectedRecords: applyRangeSelection(
@@ -140,19 +128,19 @@ export function updateSelectionFromMouseDown<T extends Entity>(
         { start, end },
         shouldCheck,
       ),
-      lastSelectedRow: row,
+      lastSelectedRecord: record,
       lastSelection,
     };
   }
 
-  const wasSelected = selectedRecords.includes(row.record);
+  const wasSelected = selectedRecords.includes(record);
   return {
     selectedRecords: toggleRecordSelection(
       selectedRecords,
-      row.record,
+      record,
       !wasSelected,
     ),
-    lastSelectedRow: currentIndex !== -1 ? row : null,
+    lastSelectedRecord: currentIndex !== -1 ? record : null,
     lastSelection: wasSelected,
   };
 }
@@ -169,10 +157,10 @@ type ModelSignal<T> = ReadSignal<T> & { set(value: T): void };
  */
 export interface EntitiesTableSelectionContext<T extends Entity> {
   selectedRecords: ModelSignal<T[]>;
-  /** rows that "select all" applies to, i.e. all filtered rows across all pages */
-  selectableRows: ReadSignal<TableRow<T>[]>;
-  /** rows of the currently displayed page, in displayed order */
-  currentPageRows: ReadSignal<TableRow<T>[]>;
+  /** records that "select all" applies to, i.e. all filtered records across all pages */
+  selectableRows: ReadSignal<T[]>;
+  /** records of the currently displayed page, in displayed order */
+  currentPageRows: ReadSignal<T[]>;
 }
 
 /**
@@ -180,12 +168,12 @@ export interface EntitiesTableSelectionContext<T extends Entity> {
  *
  * Uses the pure helpers above for all stateless computations;
  * this store is responsible only for holding the mutable state
- * (lastSelectedRow, lastSelection) and coordinating updates.
+ * (lastSelectedRecord, lastSelection) and coordinating updates.
  */
 @Injectable()
 export class EntitiesTableSelectionStore<T extends Entity> {
   private context: EntitiesTableSelectionContext<T>;
-  private readonly lastSelectedRow = signal<TableRow<T> | null>(null);
+  private readonly lastSelectedRecord = signal<T | null>(null);
   private readonly lastSelection = signal<boolean | null>(null);
 
   readonly allRowsSelected = computed(() => {
@@ -205,21 +193,17 @@ export class EntitiesTableSelectionStore<T extends Entity> {
     this.context = context;
   }
 
-  /** Selects or unselects a single row record. */
-  selectRow(row: TableRow<T>, checked: boolean) {
+  /** Selects or unselects the record of a single row. */
+  selectRow(record: T, checked: boolean) {
     this.context.selectedRecords.set(
-      toggleRecordSelection(
-        this.context.selectedRecords(),
-        row.record,
-        checked,
-      ),
+      toggleRecordSelection(this.context.selectedRecords(), record, checked),
     );
   }
 
   /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
     this.context.selectedRecords.set(
-      checked ? this.context.selectableRows().map((r) => r.record) : [],
+      checked ? [...this.context.selectableRows()] : [],
     );
   }
 
@@ -227,17 +211,17 @@ export class EntitiesTableSelectionStore<T extends Entity> {
    * Applies row selection interaction for mouse-down in selectable mode.
    * Returns whether the event came from a checkbox target.
    */
-  handleSelectableRowMouseDown(event: MouseEvent, row: TableRow<T>): boolean {
+  handleSelectableRowMouseDown(event: MouseEvent, record: T): boolean {
     const nextState = updateSelectionFromMouseDown({
       selectedRecords: this.context.selectedRecords(),
       currentPageRows: this.context.currentPageRows(),
-      row,
+      record,
       shiftKey: event.shiftKey,
-      lastSelectedRow: this.lastSelectedRow(),
+      lastSelectedRecord: this.lastSelectedRecord(),
       lastSelection: this.lastSelection(),
     });
     this.context.selectedRecords.set(nextState.selectedRecords);
-    this.lastSelectedRow.set(nextState.lastSelectedRow);
+    this.lastSelectedRecord.set(nextState.lastSelectedRecord);
     this.lastSelection.set(nextState.lastSelection);
     return isCheckboxTarget(event.target);
   }

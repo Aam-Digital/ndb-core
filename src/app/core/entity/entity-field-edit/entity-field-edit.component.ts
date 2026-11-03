@@ -61,9 +61,6 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
   entity = input<T>();
   form = input<EntityForm<T>>();
 
-  /** Whether to display the field in a limited space, hiding details like the help description button. */
-  compactMode = input<boolean>();
-
   /** Whether to display the field label or not. */
   hideLabel = input<boolean>();
 

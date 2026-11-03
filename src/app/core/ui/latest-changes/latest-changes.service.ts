@@ -17,11 +17,12 @@
 
 import { catchError, map } from "rxjs/operators";
 import { Injectable, inject } from "@angular/core";
-import { Observable, throwError } from "rxjs";
+import { Observable, of } from "rxjs";
 import { Changelog } from "./changelog";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Manage the changelog information and display it to the user
@@ -117,10 +118,13 @@ export class LatestChangesService {
           relevantReleases.map((r) => this.parseGithubApiRelease(r)),
         ),
         catchError((error) => {
+          // the GitHub API is an external service that may be unreachable or rate-limiting:
+          // the user is told, and nobody subscribing could handle a rethrown error
+          Logging.debug("Could not load latest changes", error);
           this.alertService.addWarning(
             $localize`Could not load latest changes: ${error}`,
           );
-          return throwError(() => new Error("Could not load latest changes."));
+          return of([]);
         }),
       );
 

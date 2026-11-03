@@ -92,6 +92,21 @@ describe("ExportColumnsService", () => {
     expect(idColumn.label).toBe("School (internal id)");
   });
 
+  it("should offer the record's internal id for selection but not preselect it", () => {
+    const { allAvailableColumns, preselectedExportConfig } =
+      service.buildExportColumns({
+        schema: ExportColumnsTestEntity.schema,
+        visibleColIds: ["name"],
+        availableColumns: [],
+      });
+
+    expect(queryKeys(allAvailableColumns)).toContain("_id");
+    expect(queryKeys(preselectedExportConfig)).not.toContain("_id");
+    // the other internal fields have no label and stay hidden
+    expect(queryKeys(allAvailableColumns)).not.toContain("_rev");
+    expect(queryKeys(allAvailableColumns)).not.toContain("created");
+  });
+
   it("should preselect both the age and date columns for a virtual DisplayAge column", () => {
     const { preselectedExportConfig } = service.buildExportColumns({
       schema: ExportColumnsTestEntity.schema,

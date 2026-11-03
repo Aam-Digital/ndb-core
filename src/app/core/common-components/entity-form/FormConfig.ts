@@ -42,11 +42,6 @@ export interface FormFieldConfig extends EntitySchemaField {
    * so default values can be applied to such hidden fields.
    */
   hideFromForm?: boolean;
-
-  /**
-   * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
-   */
-  forTable?: boolean;
 }
 
 /**

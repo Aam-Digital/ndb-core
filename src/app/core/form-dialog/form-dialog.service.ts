@@ -103,7 +103,8 @@ export class FormDialogService {
 
     const columnsToDisplay = columns
       .filter((col) => col.editComponent)
-      .map((col) => Object.assign({}, col, { forTable: false }));
+      // copies, so the dialog cannot change the column configs of the caller (e.g. a table)
+      .map((col) => ({ ...col }));
 
     return this.dialog.open(component, {
       ...FormDialogService.dialogSettings,

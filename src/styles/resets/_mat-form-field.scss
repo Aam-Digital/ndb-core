@@ -6,7 +6,8 @@
 }
 
 /* Material blocks pointer events on disabled form fields, which we use as our default view */
-button.input-action-button {
+button.input-action-button,
+.input-tooltip-icon {
   pointer-events: auto;
 }
 

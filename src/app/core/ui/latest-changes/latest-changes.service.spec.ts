@@ -20,7 +20,7 @@ import { TestBed } from "@angular/core/testing";
 import { LatestChangesService } from "./latest-changes.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { of, throwError } from "rxjs";
+import { firstValueFrom, of, throwError } from "rxjs";
 import type { Mock } from "vitest";
 
 type AlertServiceMock = Pick<AlertService, "addWarning"> & {
@@ -115,19 +115,18 @@ describe("LatestChangesService", () => {
     });
   });
 
-  it("should add Alert on failing to get changelog", async () => {
+  it("should alert the user and return no changelogs if they cannot be loaded", async () => {
     vi.spyOn(http, "get").mockReturnValue(
       throwError(() => ({ status: 404, message: "not found" })),
     );
 
-    service.getChangelogsBetweenVersions("1.0").subscribe({
-      error: () => {
-        expect(
-          alertService.addWarning,
-          '"not found" error not defined',
-        ).toHaveBeenCalledTimes(1);
-      },
-    });
+    // not rethrown: nobody subscribing could handle it, so it would be reported as unhandled
+    const result = await firstValueFrom(
+      service.getChangelogsBetweenVersions("1.0"),
+    );
+
+    expect(result).toEqual([]);
+    expect(alertService.addWarning).toHaveBeenCalledTimes(1);
   });
 
   it("should not include prereleases", async () => {

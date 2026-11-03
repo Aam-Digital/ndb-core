@@ -50,7 +50,7 @@ describe("InMemoryDataSource", () => {
     // flush the signal effects (allRecords -> filteredRecords -> data)
     TestBed.tick();
 
-    expect(dataSource.data).toEqual([{ record: entity }]);
+    expect(dataSource.data).toEqual([entity]);
   });
 
   it("should remove an entity from the table when it has been deleted", async () => {
@@ -58,7 +58,7 @@ describe("InMemoryDataSource", () => {
     await entityMapper.save(entity);
     TestBed.tick();
 
-    expect(dataSource.data).toEqual([{ record: entity }]);
+    expect(dataSource.data).toEqual([entity]);
 
     await entityMapper.remove(entity);
     TestBed.tick();
