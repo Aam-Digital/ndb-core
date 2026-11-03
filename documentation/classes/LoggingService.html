@@ -257,8 +257,8 @@ that allows developers to monitor and analyse problems.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="75"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:75</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -374,8 +374,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -464,8 +464,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -545,8 +545,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -587,8 +587,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -656,8 +656,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="32"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:32</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -728,8 +728,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -844,8 +844,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="113"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:113</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:114</a></div>
                         </td>
                     </tr>
 
@@ -930,6 +930,7 @@ import { Router } from &quot;@angular/router&quot;;
 import { TraceService } from &quot;@sentry/angular&quot;;
 import { processSentryEvent } from &quot;./sentry-event-processing&quot;;
 import { LoggedError } from &quot;./reported-errors&quot;;
+import { classifyReportedError } from &quot;./uncaught-error-classification&quot;;
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -1185,12 +1186,32 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
+  if (isClassifiedForeignFailure(message)) {
+    // e.g. an &#x60;HttpErrorResponse&#x60; logged as it is: grouped and filtered like that failure
+    return new LoggedError(messageText(message), message);
+  }
 
-  const cause &#x3D; context.find((c) &#x3D;&gt; c instanceof Error);
+  const cause &#x3D;
+    context.find((c) &#x3D;&gt; c instanceof Error) ??
+    context.find((c) &#x3D;&gt; isClassifiedForeignFailure(c));
   if (!cause &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
+}
+
+/**
+ * A logged failure that is not an &#x60;Error&#x60; but that remote monitoring recognizes
+ * (e.g. an &#x60;HttpErrorResponse&#x60; of another service without response): reported as
+ * the cause, so that it is grouped and filtered like that failure. Other failed
+ * responses (e.g. a 404) stay data: whether they are exceptional is for the caller to decide.
+ */
+function isClassifiedForeignFailure(value: unknown): boolean {
+  return (
+    !!value &amp;&amp;
+    typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+    classifyReportedError(value) !&#x3D;&#x3D; undefined
+  );
 }
 </code></pre>
     </div>

@@ -232,7 +232,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="572" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:572</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="595" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:595</a></div>
                             </td>
                         </tr>
 
@@ -329,6 +329,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { PouchDatabase } from &quot;./pouch-database&quot;;
+import { toTypedDatabaseError } from &quot;./database-exception&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { NamedError } from &quot;../../logging/reported-errors&quot;;
 import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
@@ -351,11 +352,9 @@ import { LoginState } from &quot;../../session/session-states/login-state.enum&q
 import { NotAvailableOfflineError } from &quot;../../session/not-available-offline.error&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { QueryOptions } from &quot;../database&quot;;
-import {
-  PouchdbCorruptionRecoveryService,
-  isKnownMultiTabDatabaseCorruption,
-} from &quot;./pouchdb-corruption-recovery.service&quot;;
-import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
+import { PouchdbCorruptionRecoveryService } from &quot;./pouchdb-corruption-recovery.service&quot;;
+import { classifyError } from &quot;../../logging/error-classification&quot;;
+import { isConnectivityError } from &quot;#src/app/utils/is-connectivity-error&quot;;
 import { LAST_SYNC_KEY_PREFIX } from &quot;#src/bootstrap-reset&quot;;
 
 /**
@@ -523,8 +522,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       isFirstSync &#x3D; (await localDb.info()).doc_count &#x3D;&#x3D;&#x3D; 0;
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
-      this.handleSyncFailure(err, []);
-      throw err;
+      const failure &#x3D; toTypedDatabaseError(err);
+      this.handleSyncFailure(failure, []);
+      throw failure;
     }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
@@ -613,8 +613,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        this.handleSyncFailure(err, lastSyncedDocIds);
-        throw err;
+        // the replication fails with a copy of the error, which loses the class of a typed error
+        const failure &#x3D; toTypedDatabaseError(err);
+        this.handleSyncFailure(failure, lastSyncedDocIds);
+        throw failure;
       })
       .finally(() &#x3D;&gt; {
         clearTimeout(stallTimer);
@@ -648,26 +650,42 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
   private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    this.logSyncFailure(err, lastSyncedDocIds);
+    this.syncState.next(SyncState.FAILED);
+  }
+
+  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    const context &#x3D; {
+      db: this.dbName,
+      ...lastSyncedBatchContext(lastSyncedDocIds),
+    };
     if (this.isDocumentWriteError(err)) {
       Logging.warn(
         &#x60;sync failed: document write error (possible oversized document)&#x60;,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
         err,
       );
-    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      return;
+    }
+
+    // reported (with the offer to reset the local data) by the recovery service
+    const reportedAsCorruption &#x3D;
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
       );
-    } else if (isReplicationConnectivityError(err)) {
+    if (reportedAsCorruption) {
+      return;
+    }
+
+    if (isReplicationConnectivityError(err)) {
       Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
     } else if (isReplicationUnauthorizedError(err)) {
       Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
     } else {
       Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
     }
-    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
@@ -698,6 +716,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   private isDocumentWriteError(err: any): boolean {
+    if (classifyError(err)) {
+      // e.g. &quot;Failed to execute &#x27;transaction&#x27; on &#x27;IDBDatabase&#x27;: The database
+      // connection is closing&quot; is a broken local database, not a document
+      return false;
+    }
     const message &#x3D; err?.message || err?.reason || String(err);
     return (
       message.includes(&quot;Maximum call stack size exceeded&quot;) ||

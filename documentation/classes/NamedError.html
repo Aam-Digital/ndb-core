@@ -195,6 +195,9 @@ Pass the name as a literal: the class name is minified in production builds.</p>
                                 <li>
                                             <code><a href="../classes/SyncStalledError.html" target="_self" >SyncStalledError</a></code>
                                 </li>
+                                <li>
+                                            <code><a href="../classes/TypedError.html" target="_self" >TypedError</a></code>
+                                </li>
                         </ul>
                 </div>
 
@@ -371,7 +374,10 @@ Pass the name as a literal: the class name is minified in production builds.</p>
   constructor(
     name: string,
     message: string,
-    options?: { cause?: unknown; details?: Record&lt;string, unknown&gt; },
+    options?: {
+      cause?: unknown;
+      details?: Record&lt;string, unknown&gt;;
+    },
   ) {
     super(
       message,

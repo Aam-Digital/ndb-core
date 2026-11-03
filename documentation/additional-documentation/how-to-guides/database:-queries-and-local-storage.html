@@ -196,6 +196,7 @@ The migration is tracked as usage analytics events (category <code>indexeddb_ada
 <li><code>indexeddb-migration.service.ts</code> — chooses the local database&#39;s adapter and names, and migrates from the legacy <code>idb</code> adapter</li>
 <li><code>db-name-helpers.ts</code> — the new and the legacy names of the local databases</li>
 <li><code>pouchdb/pouch-database.ts</code> — <code>PouchDatabase</code>, the PouchDB-backed implementation</li>
+<li><code>pouchdb/database-exception.ts</code>, <code>pouchdb/pouchdb-errors.ts</code> — converting the errors of PouchDB and IndexedDB into typed errors (see the logging README); <code>pouchdb/database-errors.ts</code> — the typed errors of the database (<code>WriteConflictError</code>, <code>LocalStorageError</code>)</li>
 <li><code>query-data-source.ts</code> — data source that runs a query and exposes its results</li>
 <li><code>../entity/schema/entity-schema.service.ts</code> — <code>loadDataIntoEntity()</code> used to turn raw query rows into entity instances</li>
 </ul>

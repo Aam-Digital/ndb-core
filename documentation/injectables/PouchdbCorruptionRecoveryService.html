@@ -237,8 +237,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="101"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:101</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="102"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:102</a></div>
                         </td>
                     </tr>
 
@@ -316,11 +316,12 @@ structured data alongside the message rather than interpolated into it</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>whether it was a known corruption (and so is reported)</p>
+
                             </div>
                 </td>
             </tr>
@@ -510,19 +511,21 @@ This can happen after using multiple tabs in parallel.&#x60; +
    *   occurrences of the problem in one issue (see &#x60;core/logging/README.md&#x60;)
    * @param context which database and other varying details, reported as
    *   structured data alongside the message rather than interpolated into it
+   * @returns whether it was a known corruption (and so is reported)
    */
   handleKnownMultiTabCorruption(
     err: unknown,
     logMessage: string,
     context?: Record&lt;string, unknown&gt;,
-  ): void {
+  ): boolean {
     if (!isKnownMultiTabDatabaseCorruption(err)) {
-      return;
+      return false;
     }
     Logging.warn(logMessage, err, ...(context ? [context] : []));
     this.promptResetApplicationDialog().catch((callbackError) &#x3D;&gt;
       Logging.warn(&quot;onKnownMultiTabCorruption callback failed&quot;, callbackError),
     );
+    return true;
   }
 }
 
@@ -530,30 +533,33 @@ This can happen after using multiple tabs in parallel.&#x60; +
  * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
  * is used in multiple tabs with concurrent writes.
  *
- * We intentionally match on &#x60;transaction was aborted&#x60; because this is the
- * reliable signal present on the actual error object propagated to app code
- * after IndexedDB global-failure cases. The &#x60;unknown_error&#x60; label is too
- * generic and may appear for unrelated failures.
+ * Only signals specific to this corruption are matched, as it leads to offering
+ * a reset of the local data: a &quot;transaction was aborted&quot; or an &#x60;unknown_error&#x60;
+ * also follows other failures, e.g. a document too deeply nested to store.
  */
 export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   const text &#x3D; errorToText(error).toLowerCase();
-  const transactionAbortedMatch &#x3D; text.includes(&quot;transaction was aborted&quot;);
-  const globalFailureMatch &#x3D; text.includes(&quot;database has a global failure&quot;);
-  const constraintSeqMatch &#x3D;
-    text.includes(&quot;constrainterror&quot;) &amp;&amp; text.includes(&quot;seq&quot;);
-  const isKnownCorruption &#x3D;
-    transactionAbortedMatch || globalFailureMatch || constraintSeqMatch;
-
-  return isKnownCorruption;
+  return (
+    text.includes(&quot;database has a global failure&quot;) ||
+    (text.includes(&quot;constrainterror&quot;) &amp;&amp; text.includes(&quot;seq&quot;))
+  );
 }
 
+/**
+ * The whole error serialized, not only its name, message and reason (as
+ * &#x60;errorText&#x60; of &#x60;backend-response.ts&#x60;): the IndexedDB failure may be in nested
+ * properties, e.g. in the result array of a &#x60;bulkDocs&#x60;.
+ */
 function errorToText(error: unknown): string {
-  if (error instanceof Error) {
-    const errorWithExtras &#x3D; error as Error &amp; Record&lt;string, unknown&gt;;
-    return &#x60;${error.name} ${error.message} ${JSON.stringify(errorWithExtras)}&#x60;;
-  }
   if (typeof error &#x3D;&#x3D;&#x3D; &quot;string&quot;) return error;
-  return JSON.stringify(error ?? &quot;&quot;);
+  const prefix &#x3D;
+    error instanceof Error ? &#x60;${error.name} ${error.message} &#x60; : &quot;&quot;;
+  try {
+    return prefix + JSON.stringify(error ?? &quot;&quot;);
+  } catch {
+    // e.g. a circular structure: classified without its extra properties
+    return prefix;
+  }
 }
 </code></pre>
     </div>

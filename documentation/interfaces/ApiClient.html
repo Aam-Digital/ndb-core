@@ -247,7 +247,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/features/api-client/api-client.service.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/features/api-client/api-client.service.ts:13</a></div>
                                 </td>
                             </tr>
 
@@ -291,7 +291,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/features/api-client/api-client.service.ts:19</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/features/api-client/api-client.service.ts:20</a></div>
                                 </td>
                             </tr>
 
@@ -341,7 +341,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/features/api-client/api-client.service.ts:17</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/features/api-client/api-client.service.ts:18</a></div>
                                 </td>
                             </tr>
 
@@ -380,7 +380,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/features/api-client/api-client.service.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/features/api-client/api-client.service.ts:15</a></div>
                                 </td>
                             </tr>
 
@@ -425,7 +425,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/features/api-client/api-client.service.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/features/api-client/api-client.service.ts:17</a></div>
                                 </td>
                             </tr>
 
@@ -443,7 +443,8 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, Injectable, resource } from &quot;@angular/core&quot;;
-import { HttpClient, HttpErrorResponse } from &quot;@angular/common/http&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { failedHttpResponse } from &quot;#src/app/utils/failed-http-response&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { environment } from &quot;#src/environments/environment&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
@@ -639,10 +640,8 @@ export class ApiClientService {
  * so that they are not reported to the error monitoring; server errors (5xx) are logged as warning.
  */
 export function logRequestError(message: string, err: unknown) {
-  if (
-    err instanceof HttpErrorResponse &amp;&amp;
-    (err.status &#x3D;&#x3D;&#x3D; 0 || (err.status &gt;&#x3D; 400 &amp;&amp; err.status &lt; 500))
-  ) {
+  const status &#x3D; failedHttpResponse(err)?.status;
+  if (status &#x3D;&#x3D;&#x3D; 0 || (status &gt;&#x3D; 400 &amp;&amp; status &lt; 500)) {
     Logging.debug(message, err);
   } else {
     Logging.warn(message, err);
@@ -653,11 +652,11 @@ export function logRequestError(message: string, err: unknown) {
  * The message for the user of a failed request to the api-client module of the backend.
  */
 export function errorMessageOf(err: unknown): string {
-  if (err instanceof HttpErrorResponse &amp;&amp; err.status &#x3D;&#x3D;&#x3D; 0) {
+  const response &#x3D; failedHttpResponse(err);
+  if (response?.status &#x3D;&#x3D;&#x3D; 0) {
     return $localize&#x60;Could not connect to the server. Please check your network connection and try again.&#x60;;
   }
-  const backendMessage &#x3D;
-    err instanceof HttpErrorResponse ? err.error?.errorMessage : undefined;
+  const backendMessage &#x3D; response?.error?.errorMessage;
   return backendMessage
     ? $localize&#x60;Something went wrong: ${backendMessage}&#x60;
     : $localize&#x60;Something went wrong. Please try again later or contact support.&#x60;;

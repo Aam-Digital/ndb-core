@@ -206,7 +206,7 @@ recognizes it by class instead.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/logging/reported-errors.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/logging/reported-errors.ts:37</a></div>
                             </td>
                         </tr>
 
@@ -274,7 +274,10 @@ recognizes it by class instead.</p>
   constructor(
     name: string,
     message: string,
-    options?: { cause?: unknown; details?: Record&lt;string, unknown&gt; },
+    options?: {
+      cause?: unknown;
+      details?: Record&lt;string, unknown&gt;;
+    },
   ) {
     super(
       message,

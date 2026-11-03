@@ -236,8 +236,8 @@ for skills integration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -344,8 +344,8 @@ In case of errors or unavailability, the target fields are set to undefined.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -434,8 +434,8 @@ In case of errors or unavailability, the target fields are set to undefined.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -629,7 +629,7 @@ import { ExternalProfileLinkConfig } from &quot;../external-profile-link-config&
 import { retryOnServerError } from &quot;../../../utils/retry-on-server-error.rxjs-pipe&quot;;
 import { FormGroup } from &quot;@angular/forms&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
+import { isConnectivityError } from &quot;../../../utils/is-connectivity-error&quot;;
 import { AlertService } from &quot;../../../core/alerts/alert.service&quot;;
 import { Skill } from &quot;../skill&quot;;
 import { environment } from &quot;#src/environments/environment&quot;;
@@ -687,12 +687,6 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) &#x3D;&gt; value),
-        catchError((e) &#x3D;&gt; {
-          if (e.status &#x3D;&#x3D;&#x3D; 403) {
-            e.message &#x3D; $localize&#x60;:external profile matching dialog:Your user account does not have permission to access external profiles.&#x60;;
-          }
-          throw e;
-        }),
       );
   }
 

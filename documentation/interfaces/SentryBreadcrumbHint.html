@@ -260,7 +260,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="232" class="link-to-prism">src/app/core/logging/logging.service.ts:232</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="233" class="link-to-prism">src/app/core/logging/logging.service.ts:233</a></div>
                                 </td>
                             </tr>
 
@@ -311,7 +311,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="234" class="link-to-prism">src/app/core/logging/logging.service.ts:234</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="235" class="link-to-prism">src/app/core/logging/logging.service.ts:235</a></div>
                                 </td>
                             </tr>
 
@@ -350,7 +350,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="239" class="link-to-prism">src/app/core/logging/logging.service.ts:239</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="240" class="link-to-prism">src/app/core/logging/logging.service.ts:240</a></div>
                                 </td>
                             </tr>
 
@@ -400,7 +400,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="242" class="link-to-prism">src/app/core/logging/logging.service.ts:242</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="243" class="link-to-prism">src/app/core/logging/logging.service.ts:243</a></div>
                                 </td>
                             </tr>
 
@@ -444,7 +444,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="241" class="link-to-prism">src/app/core/logging/logging.service.ts:241</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="242" class="link-to-prism">src/app/core/logging/logging.service.ts:242</a></div>
                                 </td>
                             </tr>
 
@@ -488,7 +488,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="243" class="link-to-prism">src/app/core/logging/logging.service.ts:243</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="244" class="link-to-prism">src/app/core/logging/logging.service.ts:244</a></div>
                                 </td>
                             </tr>
 
@@ -513,6 +513,7 @@ import { Router } from &quot;@angular/router&quot;;
 import { TraceService } from &quot;@sentry/angular&quot;;
 import { processSentryEvent } from &quot;./sentry-event-processing&quot;;
 import { LoggedError } from &quot;./reported-errors&quot;;
+import { classifyReportedError } from &quot;./uncaught-error-classification&quot;;
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -768,12 +769,32 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
+  if (isClassifiedForeignFailure(message)) {
+    // e.g. an &#x60;HttpErrorResponse&#x60; logged as it is: grouped and filtered like that failure
+    return new LoggedError(messageText(message), message);
+  }
 
-  const cause &#x3D; context.find((c) &#x3D;&gt; c instanceof Error);
+  const cause &#x3D;
+    context.find((c) &#x3D;&gt; c instanceof Error) ??
+    context.find((c) &#x3D;&gt; isClassifiedForeignFailure(c));
   if (!cause &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
+}
+
+/**
+ * A logged failure that is not an &#x60;Error&#x60; but that remote monitoring recognizes
+ * (e.g. an &#x60;HttpErrorResponse&#x60; of another service without response): reported as
+ * the cause, so that it is grouped and filtered like that failure. Other failed
+ * responses (e.g. a 404) stay data: whether they are exceptional is for the caller to decide.
+ */
+function isClassifiedForeignFailure(value: unknown): boolean {
+  return (
+    !!value &amp;&amp;
+    typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+    classifyReportedError(value) !&#x3D;&#x3D; undefined
+  );
 }
 </code></pre>
     </div>

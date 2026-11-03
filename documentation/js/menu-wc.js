@@ -226,13 +226,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/AppModule.html" data-type="entity-link" >AppModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                            'data-bs-target="#components-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' : 'data-bs-target="#xs-components-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' }>
+                                            'data-bs-target="#components-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' : 'data-bs-target="#xs-components-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' :
-                                            'id="xs-components-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' :
+                                            'id="xs-components-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' }>
                                             <li class="link">
                                                 <a href="components/AppComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AppComponent</a>
                                             </li>
@@ -240,13 +240,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     </li>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' : 'data-bs-target="#xs-injectables-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' }>
+                                        'data-bs-target="#injectables-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' : 'data-bs-target="#xs-injectables-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' :
-                                        'id="xs-injectables-links-module-AppModule-94fa9ca68f76a9bc3f8e1b85dc8cc6bd9b516be5ffd3ceb8cb9e0b12800469aa05e86f9354f39e4596fae44bec6ad930160743f28930cabe9054ceb9239e20b4"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' :
+                                        'id="xs-injectables-links-module-AppModule-e6f5dbd15b5a0634dc011560222db5da596c74a72b156595d7c390eab01a55afceb9c25306ff75b0201629cdf7c7f29e20315422284a61bc16c81ceb6bf6432c"' }>
                                         <li class="link">
                                             <a href="injectables/AnalyticsService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AnalyticsService</a>
                                         </li>
@@ -1733,6 +1733,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ConfigurableEnumFilter.html" data-type="entity-link" >ConfigurableEnumFilter&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/ConnectivityError.html" data-type="entity-link" >ConnectivityError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/CustomFaker.html" data-type="entity-link" >CustomFaker</a>
                             </li>
                             <li class="link">
@@ -1847,6 +1850,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/LatestEntityLoader.html" data-type="entity-link" >LatestEntityLoader&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/LocalStorageError.html" data-type="entity-link" >LocalStorageError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/LoggedError.html" data-type="entity-link" >LoggedError</a>
                             </li>
                             <li class="link">
@@ -1887,6 +1893,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/NotificationRule.html" data-type="entity-link" >NotificationRule</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/NotPermittedError.html" data-type="entity-link" >NotPermittedError</a>
                             </li>
                             <li class="link">
                                 <a href="classes/ObservableQueue.html" data-type="entity-link" >ObservableQueue</a>
@@ -1937,6 +1946,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/SelectableFilter.html" data-type="entity-link" >SelectableFilter&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/ServerError.html" data-type="entity-link" >ServerError</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/SessionExpiredError.html" data-type="entity-link" >SessionExpiredError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/SiteSettings.html" data-type="entity-link" >SiteSettings</a>
                             </li>
                             <li class="link">
@@ -1982,6 +1997,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/TranslatableTextFilter.html" data-type="entity-link" >TranslatableTextFilter&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/TypedError.html" data-type="entity-link" >TypedError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/UnknownTotalPaginatorIntl.html" data-type="entity-link" >UnknownTotalPaginatorIntl</a>
                             </li>
                             <li class="link">
@@ -1998,6 +2016,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/ViewComponentContext.html" data-type="entity-link" >ViewComponentContext</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/WriteConflictError.html" data-type="entity-link" >WriteConflictError</a>
                             </li>
                         </ul>
                     </li>
@@ -3190,6 +3211,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/TriggerChange.html" data-type="entity-link" >TriggerChange</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/TypedErrorOptions.html" data-type="entity-link" >TypedErrorOptions</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UniquePropertyValidatorConfig.html" data-type="entity-link" >UniquePropertyValidatorConfig</a>

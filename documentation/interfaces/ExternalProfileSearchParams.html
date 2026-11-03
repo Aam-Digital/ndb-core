@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="251" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:251</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="245" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:245</a></div>
                                 </td>
                             </tr>
 
@@ -287,7 +287,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="250" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:250</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="244" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:244</a></div>
                                 </td>
                             </tr>
 
@@ -331,7 +331,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="252" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:252</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="246" class="link-to-prism">src/app/features/skill/skill-api/skill-api.service.ts:246</a></div>
                                 </td>
                             </tr>
 
@@ -353,7 +353,7 @@ import { ExternalProfileLinkConfig } from &quot;../external-profile-link-config&
 import { retryOnServerError } from &quot;../../../utils/retry-on-server-error.rxjs-pipe&quot;;
 import { FormGroup } from &quot;@angular/forms&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
+import { isConnectivityError } from &quot;../../../utils/is-connectivity-error&quot;;
 import { AlertService } from &quot;../../../core/alerts/alert.service&quot;;
 import { Skill } from &quot;../skill&quot;;
 import { environment } from &quot;#src/environments/environment&quot;;
@@ -411,12 +411,6 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) &#x3D;&gt; value),
-        catchError((e) &#x3D;&gt; {
-          if (e.status &#x3D;&#x3D;&#x3D; 403) {
-            e.message &#x3D; $localize&#x60;:external profile matching dialog:Your user account does not have permission to access external profiles.&#x60;;
-          }
-          throw e;
-        }),
       );
   }
 

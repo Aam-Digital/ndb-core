@@ -2471,7 +2471,7 @@ import { Entity } from &quot;../../../core/entity/model/entity&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 import { NotAvailableOfflineError } from &quot;../../../core/session/not-available-offline.error&quot;;
 import { SyncFailedError } from &quot;../../../core/database/pouchdb/synced-pouch-database&quot;;
-import { isConnectivityError } from &quot;../../../utils/connectivity-error&quot;;
+import { isConnectivityError } from &quot;../../../utils/is-connectivity-error&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { FileService } from &quot;../file.service&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
@@ -2609,7 +2609,7 @@ export class EditFileComponent
       errorMessage &#x3D; $localize&#x60;:File Upload Error Message:File too large. Usually files up to 5 MB are supported (or your system administrator&#x27;s custom limit).&#x60;;
     } else if (err instanceof NotAvailableOfflineError) {
       errorMessage &#x3D; $localize&#x60;:File Upload Error Message:Changes to file attachments are not available offline.&#x60;;
-    } else if (isConnectivityError(err) || isConnectivityError(err?.cause)) {
+    } else if (isConnectivityError(err)) {
       // a request that never reached the server (e.g. a mobile connection dropping
       // mid-upload) is a transient condition of the network, not a defect - it is
       // reported to the user but deliberately not to remote monitoring

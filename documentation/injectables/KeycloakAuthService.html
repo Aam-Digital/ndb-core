@@ -291,8 +291,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="405"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:405</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="443"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:443</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="441"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:441</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="479"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:479</a></div>
                         </td>
                     </tr>
 
@@ -402,8 +402,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="448"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:448</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="486"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:486</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="431"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:431</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="469"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:469</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +480,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="456"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:456</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="494"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:494</a></div>
                         </td>
                     </tr>
 
@@ -519,8 +519,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="422"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:422</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="460"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:460</a></div>
                         </td>
                     </tr>
 
@@ -567,7 +567,7 @@ previous session) and during recovery from a stuck init.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:144</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="183" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:183</a></div>
                         </td>
                     </tr>
 
@@ -598,9 +598,7 @@ previous session) and during recovery from a stuck init.</p>
 
     try {
       await firstValueFrom(
-        defer(() &#x3D;&gt; this.keycloak.updateToken()).pipe(
-          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
-        ),
+        keycloakOperation(() &#x3D;&gt; this.keycloak.updateToken()),
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
@@ -624,7 +622,7 @@ previous session) and during recovery from a stuck init.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="161" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:161</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:200</a></div>
                         </td>
                     </tr>
 
@@ -668,7 +666,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:143</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="182" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -723,7 +721,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="195" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:195</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="232" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:232</a></div>
                         </td>
                     </tr>
 
@@ -757,16 +755,22 @@ import { KeycloakUserDto } from &quot;../../../user/user-admin-service/keycloak-
 import { ActivatedRoute } from &quot;@angular/router&quot;;
 import { ThirdPartyAuthenticationService } from &quot;../../../../features/third-party-authentication/third-party-authentication.service&quot;;
 import { reuseFirstAsync } from &quot;#src/app/utils/reuse-first-async&quot;;
-import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
+import { isConnectivityError } from &quot;#src/app/utils/is-connectivity-error&quot;;
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  isFailedFetch,
+} from &quot;#src/app/utils/backend-response&quot;;
+import { ConnectivityError } from &quot;#src/app/utils/backend-errors&quot;;
 import {
   defer,
   firstValueFrom,
+  Observable,
   Subscription,
   throwError,
   timer,
   TimeoutError,
 } from &quot;rxjs&quot;;
-import { retry, timeout } from &quot;rxjs/operators&quot;;
+import { catchError, retry, timeout } from &quot;rxjs/operators&quot;;
 import { LOCAL_STORAGE_TOKEN } from &quot;../../../../utils/di-tokens&quot;;
 
 /**
@@ -815,7 +819,8 @@ const TOKEN_MIN_VALIDITY_SECONDS &#x3D; 30;
 async function keycloakFailureContext(
   err: any,
 ): Promise&lt;Record&lt;string, unknown&gt;&gt; {
-  const response &#x3D; err?.response;
+  // also of a failure converted into a ConnectivityError (see toTypedKeycloakError)
+  const response &#x3D; err?.response ?? err?.cause?.response;
   const status &#x3D; response?.status;
   if (typeof status !&#x3D;&#x3D; &quot;number&quot;) {
     // the library also rejects for reasons that never reached the server
@@ -869,12 +874,44 @@ async function readResponseBody(
 }
 
 /**
+ * Run a keycloak-js network operation, bounded by {@link KEYCLOAK_OPERATION_TIMEOUT_MS},
+ * and convert its failure where it enters the app (see {@link toTypedKeycloakError}).
+ */
+function keycloakOperation&lt;T&gt;(operation: () &#x3D;&gt; Promise&lt;T&gt;): Observable&lt;T&gt; {
+  return defer(operation).pipe(
+    timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+    catchError((err) &#x3D;&gt; throwError(() &#x3D;&gt; toTypedKeycloakError(err))),
+  );
+}
+
+/**
+ * The error of a failed keycloak-js operation: a {@link ConnectivityError} (with
+ * the original as &#x60;cause&#x60;) if Keycloak could not be reached - no response or a
+ * gateway status, a failed &#x60;fetch&#x60;, or our timeout for the operation.
+ * Any other error (e.g. a 400 for a login code no longer valid) is returned as it is.
+ */
+export function toTypedKeycloakError(err: any): unknown {
+  // keycloak-js hands on the whole &#x60;Response&#x60; instead of lifting the status out of it
+  const status &#x3D; err?.response?.status ?? err?.status;
+  if (
+    CONNECTIVITY_ERROR_STATUS.has(status) ||
+    err instanceof TimeoutError ||
+    isFailedFetch(err)
+  ) {
+    return new ConnectivityError(&quot;Failed to fetch from Keycloak&quot;, {
+      status: typeof status &#x3D;&#x3D;&#x3D; &quot;number&quot; ? status : undefined,
+      cause: err,
+    });
+  }
+  return err;
+}
+
+/**
  * Check whether an error is a retryable network/connectivity error,
  * including keycloak-specific transient failures.
  */
 function isRetryableNetworkError(err: any): boolean {
   if (isConnectivityError(err)) return true;
-  if (err instanceof TimeoutError) return true;
   const message &#x3D; &#x60;${err?.message ?? &quot;&quot;} ${err?.toString?.() ?? &quot;&quot;}&#x60;;
   return message.includes(
     &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
@@ -910,9 +947,7 @@ export class KeycloakAuthService {
 
     try {
       await firstValueFrom(
-        defer(() &#x3D;&gt; this.keycloak.updateToken()).pipe(
-          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
-        ),
+        keycloakOperation(() &#x3D;&gt; this.keycloak.updateToken()),
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
@@ -1044,7 +1079,7 @@ export class KeycloakAuthService {
 
   private runKeycloakInit(): Promise&lt;unknown&gt; {
     return firstValueFrom(
-      defer(() &#x3D;&gt;
+      keycloakOperation(() &#x3D;&gt;
         this.keycloak.init({
           config: window.location.origin + &quot;/assets/keycloak.json&quot;,
           initOptions: {
@@ -1055,7 +1090,7 @@ export class KeycloakAuthService {
           // GitHub API rejects if non GitHub bearer token is present
           shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
         }),
-      ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+      ),
     );
   }
 
@@ -1067,8 +1102,9 @@ export class KeycloakAuthService {
    */
   private refreshKeycloakToken(): Promise&lt;boolean&gt; {
     return firstValueFrom(
-      defer(() &#x3D;&gt; this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS)).pipe(
-        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+      keycloakOperation(() &#x3D;&gt;
+        this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS),
+      ).pipe(
         retry({
           count: TOKEN_REFRESH_RETRY_DELAYS_MS.length,
           delay: (err, retryCount) &#x3D;&gt; {
@@ -1098,9 +1134,9 @@ export class KeycloakAuthService {
   }
 
   private isOfflineOrUnavailableError(err: any): boolean {
-    // All retryable network errors (5xx / timeout / abort / fetch failures)
-    // also count as &quot;unavailable&quot; so they map to RemoteLoginNotAvailableError
-    // instead of spamming Sentry.
+    // All retryable network errors (gateway statuses / timeout / fetch failures,
+    // see toTypedKeycloakError) also count as &quot;unavailable&quot; so they map to
+    // RemoteLoginNotAvailableError instead of spamming Sentry.
     if (isRetryableNetworkError(err)) {
       return true;
     }
