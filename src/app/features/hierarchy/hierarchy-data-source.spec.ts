@@ -293,6 +293,12 @@ describe("HierarchyDataSource", () => {
       "Loop",
     ]);
     expect(selectableIds()).not.toContain("Rampur");
+    // the number of hidden sub-records follows the title of the collapsed row only
+    const suffix = (title: string) =>
+      dataSource.rowDecorations().get(`HierarchyTestAction:${title}`)?.suffix
+        ?.component;
+    expect(suffix("Mobilisation")).toBe("HierarchyChildCount");
+    expect(suffix("Clean Water")).toBeUndefined();
 
     dataSource.collapseAll();
     await settle();

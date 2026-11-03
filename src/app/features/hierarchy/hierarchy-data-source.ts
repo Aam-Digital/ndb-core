@@ -149,8 +149,11 @@ export class HierarchyDataSource<
     const decorations = new Map();
     for (const row of view?.rows ?? []) {
       const id = row.record.getId();
+      const { treeCell, childCount } = this.cellConfigs(id);
       decorations.set(id, {
-        prefix: this.treeCellConfig(id),
+        prefix: treeCell,
+        // after the title: "Village meetings (3)"
+        suffix: row.isCollapsed ? childCount : undefined,
         cssClass: rowClasses(row),
         selectable: !row.isContext,
       });
@@ -172,8 +175,8 @@ export class HierarchyDataSource<
       : [this.freeTextFilterControl],
   );
 
-  /** the prefix configs by record id, kept stable so that rows do not reload their tree cell */
-  private readonly treeCellConfigs = new Map<string, DynamicComponentConfig>();
+  /** the prefix and suffix configs by record id, kept stable so that rows do not reload their components */
+  private readonly cellConfigsById = new Map<string, CellConfigs>();
 
   /** All records below the root record (only in a section). */
   private readonly branchIds = computed<ReadonlySet<string> | undefined>(() => {
@@ -305,17 +308,24 @@ export class HierarchyDataSource<
     );
   }
 
-  private treeCellConfig(recordId: string): DynamicComponentConfig {
-    let config = this.treeCellConfigs.get(recordId);
-    if (!config) {
-      config = {
-        component: "HierarchyTreeCell",
-        config: { dataSource: this, recordId },
+  private cellConfigs(recordId: string): CellConfigs {
+    let configs = this.cellConfigsById.get(recordId);
+    if (!configs) {
+      const config = { dataSource: this, recordId };
+      configs = {
+        treeCell: { component: "HierarchyTreeCell", config },
+        childCount: { component: "HierarchyChildCount", config },
       };
-      this.treeCellConfigs.set(recordId, config);
+      this.cellConfigsById.set(recordId, configs);
     }
-    return config;
+    return configs;
   }
+}
+
+/** The components shown in the first cell of a row, before and after the title. */
+interface CellConfigs {
+  treeCell: DynamicComponentConfig;
+  childCount: DynamicComponentConfig;
 }
 
 /** The CSS classes of a row, styled globally (`_hierarchy-rows.scss`) as rows belong to the table. */

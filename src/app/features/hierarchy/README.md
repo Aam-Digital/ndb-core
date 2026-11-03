@@ -12,9 +12,10 @@ The feature plugs into the entities table through the generic extension points o
 - Every level is indented and sorted on its own (by the sorted column, with the same rules as a flat list).
   The list has no pages.
 - Lines connect each record to its parent and its siblings, like a tree of files and folders.
-  Each top-level record starts a block, separated from the one above by a line,
+  Each top-level record starts a block: its row has a very light background (grey 50)
+  and, except for the first, a separator line (2px, grey 400) and a little extra space above it,
   and the titles of records with sub-records are in medium weight (500).
-- Rows with sub-records can be collapsed; a collapsed row shows its number of direct sub-records.
+- Rows with sub-records can be collapsed; a collapsed row shows its number of direct sub-records after its title, e.g. "Village meetings (3)".
   Collapsed rows are not remembered: the list opens fully expanded, and a change of the filters
   or the search text expands everything again. A new or moved record expands its parents.
 - Filters and the "Filter" search apply on every level. Parents of a match that do not match themselves
@@ -55,6 +56,7 @@ Invalid fields (not a single link to the same type) are ignored without an error
 | `hierarchy-fields.ts`                        | which fields can define a hierarchy                                                         |
 | `hierarchy-data-source.ts`                   | `HierarchyDataSource` ("hierarchy"): tree order, row decorations, collapse state, URL param |
 | `hierarchy-tree-cell/`                       | row decoration prefix: indentation, connector lines, expand/collapse button, context icon   |
+| `hierarchy-child-count/`                     | row decoration suffix of a collapsed row: the number of its sub-records                     |
 | `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), included in `styles.scss`   |
 | `hierarchy-select/`                          | toolbar control: the "Hierarchy" dropdown                                                   |
 | `hierarchy-expand-all/`                      | toolbar control: "Collapse all" / "Expand all"                                              |
@@ -70,7 +72,7 @@ Invalid fields (not a single link to the same type) are ignored without an error
   instead of sorting a flat list. A change of the tree re-runs the pipeline.
 - In a section, `getFilterPredicate()` replaces the condition linking records to the page's record
   (which only covers direct sub-records) by "is in the branch below the page's record".
-- The prefix configs are cached per record id, so rows do not reload their tree cell when the tree changes.
+- The prefix and suffix configs are cached per record id, so rows do not reload their components when the tree changes.
 - Rows get global CSS classes from their decoration (context rows, top-level rows, rows with sub-records),
   styled in `_hierarchy-rows.scss`, as rows belong to the table component.
 - The tree cell stretches over the full height of its row (see the entities-table README),

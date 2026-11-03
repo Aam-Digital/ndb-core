@@ -136,6 +136,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EditUrl",
   "EntityList",
   "FreeTextFilter",
+  "HierarchyChildCount",
   "HierarchyExpandAll",
   "HierarchySelect",
   "HierarchyTreeCell",

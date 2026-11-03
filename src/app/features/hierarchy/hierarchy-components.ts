@@ -13,6 +13,13 @@ export const hierarchyComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "HierarchyChildCount",
+    () =>
+      import("./hierarchy-child-count/hierarchy-child-count.component").then(
+        (c) => c.HierarchyChildCountComponent,
+      ),
+  ],
+  [
     "HierarchySelect",
     () =>
       import("./hierarchy-select/hierarchy-select.component").then(

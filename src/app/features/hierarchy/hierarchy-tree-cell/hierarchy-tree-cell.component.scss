@@ -90,13 +90,11 @@ $toggle-size: 28px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  min-width: $toggle-size;
+  width: $toggle-size;
   height: $toggle-size;
-  /* centered on the line to the sub-records, also where the slot is narrower than the button;
-     a wider button (with the number of sub-records) widens the slot at its end */
+  /* centered on the line to the sub-records, also where the slot is narrower than the button (phones) */
   margin-inline: calc((var(--hierarchy-indent) - #{$toggle-size}) / 2);
-  padding: 0 4px;
+  padding: 0;
   border: none;
   border-radius: calc(#{$toggle-size} / 2);
   background: none;
@@ -112,10 +110,6 @@ button.toggle:hover {
 
 button.toggle:focus-visible {
   outline: 2px solid colors.$primary;
-}
-
-.child-count {
-  font-size: 0.85em;
 }
 
 .context-icon {

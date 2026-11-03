@@ -31,6 +31,9 @@ test("Actions list shows sub-actions indented below their parent", async ({
     .getByRole("button", { name: "3 sub-records" })
     .click();
   await expect(row("Meeting in Sonpur")).toBeHidden();
+  await expect(row("Village meetings")).toContainText(
+    /Village meetings\s*\(3\)/,
+  );
   await expect(
     row("Village meetings").getByRole("button", { name: "3 sub-records" }),
   ).toHaveAttribute("aria-expanded", "false");
