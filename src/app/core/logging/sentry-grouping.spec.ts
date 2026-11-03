@@ -6,6 +6,8 @@ import { normalizeErrorValue } from "./sentry-grouping";
 import { ServerError } from "./error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
+import { HttpErrorResponse } from "@angular/common/http";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   brokenIndexedDb,
   failedFetch,
@@ -75,6 +77,24 @@ describe("processSentryEvent", () => {
         fingerprint: ["ServerError", "server error response from db", "500"],
         title: "ServerError: Server error response from DB (HTTP 500)",
         reportedBy: "ConfigLoadError: Failed to load configuration.",
+      },
+      {
+        case: "a classified database failure, by the typed error rather than the raw error it was converted from",
+        error: new LoggedError(
+          "Could not load school",
+          new DatabaseException(brokenIndexedDb()),
+        ),
+        fingerprint: ["LocalStorageError", "unknown"],
+        title: "LocalStorageError: unknown",
+        reportedBy: "Error: Could not load school",
+      },
+      {
+        case: "a DatabaseException passing on a typed error, like that error",
+        error: new DatabaseException(
+          new ServerError("Server error response from DB", { status: 500 }),
+        ),
+        fingerprint: ["ServerError", "server error response from db", "500"],
+        title: "ServerError: Server error response from DB (HTTP 500)",
       },
       {
         case: "a named error caused by a network failure, in an issue of its own",
@@ -175,6 +195,56 @@ describe("processSentryEvent", () => {
         expect(event.fingerprint).toEqual(fingerprint);
         expect(title(event)).toBe(expected);
         expect(event.tags?.reported_by).toBe(reportedBy);
+      },
+    );
+
+    it.each([
+      [
+        "/api/v1/skill/user-profile?fullName=Jane+Doe",
+        "/api/v1/skill/user-profile?fullName=John+Roe",
+        "/api/v1/skill/user-profile",
+        "/api/v1/skill/user-profile",
+      ],
+      [
+        "/db/app/Child%3A1?rev=1-abc",
+        "/db/app/Child%3A2",
+        "/db/app/<id>",
+        "/db/app/<id>",
+      ],
+      [
+        "/api/v1/skill/user-profile",
+        "/api/v1/reporting/report-calculation",
+        "/api/v1/skill/user-profile",
+        "/api/v1/reporting/report-calculation",
+      ],
+    ])(
+      "should group server errors of %s and %s by their endpoint",
+      (urlA, urlB, pathA, pathB) => {
+        const [eventA, eventB] = [urlA, urlB].map((url) =>
+          processError(
+            new LoggedError(
+              "Could not load",
+              toTypedHttpError(new HttpErrorResponse({ status: 500, url }), {
+                method: "GET",
+                url,
+              }) as Error,
+            ),
+            withStack,
+          ),
+        );
+
+        expect(eventA.fingerprint.join() === eventB.fingerprint.join()).toBe(
+          pathA === pathB,
+        );
+        for (const [event, path] of [
+          [eventA, pathA],
+          [eventB, pathB],
+        ] as const) {
+          expect(title(event)).toMatch(new RegExp(`\\(HTTP 500 ${path}\\)$`));
+          expect(`${title(event)} ${event.fingerprint}`).not.toMatch(
+            /\?|Jane|John|Child|rev/,
+          );
+        }
       },
     );
 

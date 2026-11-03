@@ -13,7 +13,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import {
-  classifyError,
+  classifyErrorChain,
   ErrorClassification,
 } from "#src/app/core/logging/error-classification";
 import {
@@ -185,7 +185,8 @@ export abstract class EntitiesTableDataSource<
           err,
           this.loadRecordConfig(),
         );
-        const cause = LOAD_ERROR_CAUSES[classifyError(err)] ?? "connection";
+        const cause =
+          LOAD_ERROR_CAUSES[classifyErrorChain(err)] ?? "connection";
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself

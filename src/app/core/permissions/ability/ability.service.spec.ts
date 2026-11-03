@@ -24,6 +24,10 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import {
+  ConnectivityError,
+  NotPermittedError,
+} from "../../logging/error-classification";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -617,15 +621,11 @@ describe("AbilityService", () => {
 
     it.each([
       // anonymous visitors of a public form may not read the rules config
+      ["a permission denial", new NotPermittedError("User is not permitted")],
       [
-        "a permission denial",
-        {
-          status: 401,
-          message: "unauthorized",
-          error: "User is not permitted",
-        },
+        "a connectivity failure",
+        new ConnectivityError("Failed to fetch from DB"),
       ],
-      ["a connectivity failure", new Error("Failed to fetch from DB")],
     ])("should not report %s as an error", async (_, err) => {
       const errorSpy = vi.spyOn(Logging, "error");
 

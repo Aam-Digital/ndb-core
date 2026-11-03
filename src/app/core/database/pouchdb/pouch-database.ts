@@ -1,6 +1,6 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException } from "./database-exception";
+import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -24,6 +24,18 @@ import {
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
+
+/**
+ * How many revisions of a document's history a local database keeps
+ * (PouchDB's `revs_limit`, default 1000).
+ *
+ * The `indexeddb` adapter stores the revision tree as a nested object, and the
+ * browser overflows its stack writing one with many hundred revisions (#4631).
+ * Documents synced from the server are stemmed to this limit on write.
+ * A local document edited more often than this between two syncs comes back
+ * as a conflict on the server, which this limit makes very unlikely.
+ */
+export const LOCAL_DB_REVS_LIMIT = 100;
 
 /** Marks a bookmark of the second query (see {@link PouchDatabase.find}). */
 const SECOND_QUERY_BOOKMARK = "q2:";
@@ -113,6 +125,7 @@ export class PouchDatabase extends Database {
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, {
       adapter: this.adapter,
+      revs_limit: LOCAL_DB_REVS_LIMIT,
       ...options,
     });
     this.databaseInitialized.complete();
@@ -322,7 +335,7 @@ export class PouchDatabase extends Database {
       if (err.status === 404) {
         return false;
       }
-      throw err;
+      throw new DatabaseException(err, id);
     }
 
     // Purge the winning revision and any conflicting leaf revisions
@@ -331,8 +344,12 @@ export class PouchDatabase extends Database {
       localDoc._rev,
       ...((localDoc as any)._conflicts ?? []),
     ];
-    for (const rev of revsToPurge) {
-      await (db as any).purge(id, rev);
+    try {
+      for (const rev of revsToPurge) {
+        await (db as any).purge(id, rev);
+      }
+    } catch (err) {
+      throw new DatabaseException(err, id);
     }
 
     // PouchDB purge() does not emit change events, so manually notify
@@ -356,7 +373,10 @@ export class PouchDatabase extends Database {
   isEmpty(): Promise<boolean> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.info())
-      .then((res) => res.doc_count === 0);
+      .then((res) => res.doc_count === 0)
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -396,7 +416,10 @@ export class PouchDatabase extends Database {
             // backend answers with a plain 401: retried below
             Logging.debug("changes feed failed (unauthorized)", err);
           } else {
-            Logging.errorUnlessExpected("changes feed failed", err);
+            Logging.errorUnlessExpected(
+              "changes feed failed",
+              toTypedDatabaseError(err),
+            );
           }
 
           // retry

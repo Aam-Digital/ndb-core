@@ -1,40 +1,98 @@
 import { NamedError } from "../../logging/reported-errors";
+import {
+  classifyError,
+  createTypedError,
+} from "../../logging/error-classification";
+import { classifyResponseStatus } from "#src/app/utils/backend-response";
+import { classifyPouchDbError } from "./pouchdb-errors";
+
+/**
+ * Own properties of PouchDB's errors (and of the copies its `createError()` makes)
+ * that are not taken over, as they identify the `DatabaseException` itself:
+ * e.g. "not_found" as name, or the original `cause` of a copied typed error.
+ */
+const IDENTIFYING_PROPERTIES = new Set(["name", "message", "stack", "cause"]);
 
 /**
  * This overwrites PouchDB's error class which only logs limited information.
  *
- * It is where errors of the (local or remote) PouchDB enter the app. It takes
- * over the wrapped error's properties (`status`, `reason`, ...), by which it is
- * classified (see `classifyError`), but keeps its own name for stable grouping.
- * A wrapped error of ours is kept as its `cause` instead.
+ * It is where errors of the (local or remote) PouchDB enter the app: a raw
+ * error that is one of the classified failures is converted into its typed
+ * error (see {@link toTypedDatabaseError}), which is kept as the `cause`, as is
+ * a typed error thrown by our own code underneath (e.g. a `ServerError` of the
+ * remote database's fetch). It takes over the wrapped error's properties
+ * (`status`, `reason`, ...), so that callers can keep checking them, but keeps
+ * its own name, message and cause.
  */
 export class DatabaseException extends NamedError {
   entityId?: string;
-
-  /**
-   * The `name` of the wrapped error (e.g. "AbortError", "indexed_db_went_bad"),
-   * which tells what kind of failure it is, while {@link name} stays "DatabaseException".
-   */
-  originalName?: string;
 
   constructor(
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    // one of our typed errors (e.g. a ServerError of the remote database's fetch)
-    // stays the cause, so that it is still classified by its type
-    super("DatabaseException", error?.message || "Database error", {
-      cause: error instanceof NamedError ? error : undefined,
-    });
+    const typed = toTypedDatabaseError(error);
+    const cause = typed instanceof NamedError ? typed : undefined;
+    super(
+      "DatabaseException",
+      cause?.message || error?.message || "Database error",
+      {
+        cause,
+      },
+    );
 
     this.entityId = entityId;
-    // capture the wrapped error's name before Object.assign / `this.name` erase it
-    const originalName = (error as { name?: string })?.name;
-    Object.assign(this, error);
-    // restore the class name after Object.assign overwrote it with PouchDB's (e.g. "not_found")
-    this.name = "DatabaseException";
-    if (originalName && originalName !== "DatabaseException") {
-      this.originalName = originalName;
+    for (const [key, value] of Object.entries(error ?? {})) {
+      if (!IDENTIFYING_PROPERTIES.has(key)) {
+        (this as Record<string, unknown>)[key] = value;
+      }
     }
   }
+}
+
+type RawDatabaseError = {
+  status?: unknown;
+  name?: unknown;
+  message?: unknown;
+  reason?: unknown;
+  error?: unknown;
+};
+
+/**
+ * The typed error (see `error-classification.ts`) for an error of PouchDB or of the
+ * IndexedDB underneath it, keeping the raw error as its `cause` and its `status`:
+ * - by its status and the reason the server gave (no response or a gateway status,
+ *   401 expired / not permitted, 403, 409), the same mapping as the HTTP
+ *   interceptor's (`classifyResponseStatus`);
+ * - a typed error of ours that PouchDB's replication copied, losing its class;
+ * - else by the name and wording of PouchDB's and IndexedDB's errors
+ *   (`classifyPouchDbError`): a broken IndexedDB, an aborted request, a conflict.
+ *
+ * Any other error is returned unchanged (e.g. a `404 missing`), as is one of our
+ * errors (e.g. a `ConnectivityError` of the remote database's fetch).
+ */
+export function toTypedDatabaseError(error: unknown): unknown {
+  if (!error || typeof error !== "object" || error instanceof NamedError) {
+    return error;
+  }
+  const raw = error as RawDatabaseError;
+  const classification =
+    classifyResponseStatus(raw.status, [raw.reason, raw.error, raw.message]) ??
+    classifyError(error) ??
+    classifyPouchDbError(error);
+  if (!classification) {
+    return error;
+  }
+  return createTypedError(
+    classification,
+    textOf(raw.message) || textOf(raw.reason) || "Database error",
+    {
+      status: typeof raw.status === "number" ? raw.status : undefined,
+      cause: error,
+    },
+  );
+}
+
+function textOf(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }

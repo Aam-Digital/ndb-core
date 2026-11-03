@@ -12,6 +12,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
+import { DatabaseException } from "../../database/pouchdb/database-exception";
 
 type EntityActionsServiceMock = {
   remove: Mock;
@@ -145,10 +146,13 @@ describe("AbstractEntityDetailsComponent", () => {
     const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     try {
       const entityMapper = TestBed.inject(EntityMapperService);
-      vi.spyOn(entityMapper, "load").mockRejectedValue({
-        status: 401,
-        error: "User is not permitted",
-      });
+      vi.spyOn(entityMapper, "load").mockRejectedValue(
+        new DatabaseException({
+          status: 401,
+          message: "unauthorized",
+          error: "User is not permitted",
+        }),
+      );
       const alertService = TestBed.inject(AlertService);
       vi.spyOn(alertService, "addWarning");
       const router = fixture.debugElement.injector.get(Router);

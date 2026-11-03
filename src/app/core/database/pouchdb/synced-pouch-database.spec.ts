@@ -10,6 +10,7 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
+import { ConnectivityError } from "../../logging/error-classification";
 import { Logging } from "../../logging/logging.service";
 import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
 import PouchDB from "pouchdb-browser";
@@ -212,7 +213,13 @@ describe("SyncedPouchDatabase", () => {
   });
 
   it.each([
-    ["offline", new TypeError("Failed to fetch"), "debug"],
+    [
+      "offline",
+      new ConnectivityError("Failed to fetch from DB", {
+        cause: new TypeError("Failed to fetch"),
+      }),
+      "debug",
+    ],
     [
       "an expired session behind the replication backend",
       { status: 401, statusCode: 401, message: "Unauthorized" },

@@ -113,73 +113,73 @@ cause instead of by stack trace (which opens one issue per call site and per bui
 
 - Pass the name as a literal: the class name is minified in production builds.
 - Keep the message free of ids and other variable data; pass them as `details`, reported as extra data.
-- Pass a `classification` if the error is one of the classified failures below.
+- For a classified failure, extend one of the typed errors below instead.
 - Do not use it for generic errors (`TypeError`, ...): there, the stack trace tells two bugs apart.
 - A failure that is only logged, not thrown, needs no name: `Logging.error(message, err)` is grouped the
   same way.
 
-### Classifying failures where they enter the app
+### Typed errors: classifying failures where they enter the app
 
-What remote monitoring does with a failure depends on what kind of failure it is
-(`classifyError()` in `error-classification.ts`):
+Foreign errors are converted into typed errors (`TypedError` in `error-classification.ts`, one class per
+kind of failure: connectivity, server error, not permitted, expired session, write conflict, broken
+local database) where they enter the app, by the knowledge of the module they belong to: the database
+layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor` for requests to our backend
+(`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's responses mean
+(`src/app/utils/backend-response.ts`). Everything else judges an error by its type (`classifyError()`).
+Only remote monitoring also recognizes the few foreign errors that reach it uncaught, e.g. a failed chunk
+load (`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
+(e.g. `SyncStalledError extends ConnectivityError`, `EntityPermissionError extends NotPermittedError`).
 
-- **Our errors say it by their type.** Where the app knows what went wrong, it throws a typed error:
-  the remote database's fetch wrapper throws a `ConnectivityError` for a request without response or
-  with a gateway status (0, 502, 503, 504), and a `ServerError` carrying the status for any other 5xx.
-  For a new kind of error, extend one of these classes (e.g. `SyncStalledError extends ConnectivityError`,
-  `EntityPermissionError extends NotPermittedError`); errors carry no separate classification flag.
-- **Other errors by their data.** A raw browser or PouchDB error, an `HttpErrorResponse`, or one
-  wrapped in a `DatabaseException` (which takes over its `status`, `reason` and keeps its name as
-  `originalName`) is classified by its status and name, and as a last resort by its wording.
-  These message patterns are all in `error-classification.ts`.
+- **Check for a kind of failure** with `isExpectedFailure()` (or `Logging.warnUnlessExpected()`),
+  `isConnectivityError()`, `isNotPermittedError()` or `classifyErrorChain()` (`error-classification.ts`),
+  which apply this classification to the whole `cause` chain, never with ad-hoc status checks.
+- **Read a failed HTTP response** with `failedHttpResponse(err)` (`src/app/utils/failed-http-response.ts`),
+  never with `instanceof HttpErrorResponse` (a lint rule enforces this): a failed request to our backend
+  with a classified status (no response, 401 expired or not permitted, 403, 409, 5xx) arrives as a typed
+  error, with the `HttpErrorResponse` as its `cause`. Other statuses (e.g. 400, 404) and other services
+  stay an `HttpErrorResponse`.
 
-`isConnectivityError()`, `isNotPermittedError()` and `isExpectedFailure()` are built on it. A few checks
-of one module match on wording as well, without classifying the error: `isDocumentWriteError()` and the
-checkpoint check of `isTransientReplicationFailure()` (`synced-pouch-database.ts`), the multi-tab corruption
-check (`pouchdb-corruption-recovery.service.ts`) and keycloak's 3rd-party-check iframe timeout
-(`keycloak-auth.service.ts`).
+What remote monitoring does with each kind (`REPORTING_POLICY` in `sentry-event-processing.ts`):
 
-| Classification    | What it is                                                                                                          | Reported                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `connectivity`    | no response, status 0, 502-504, timeout/abort, failed chunk load, a stalled sync                                    | shared `network-error` issue, warning, 1 per page load; not while offline |
-| `session-expired` | 401 with an expired token the app could not renew                                                                   | no                                                                        |
-| `not-permitted`   | 403, 401 "User is not permitted", `EntityPermissionError`                                                           | as a warning if logged with a message at `warn`/`error`, or if unhandled  |
-| `write-conflict`  | 409 / "Document update conflict"                                                                                    | no                                                                        |
-| `local-storage`   | the device's IndexedDB is broken (`indexed_db_went_bad`, connection closing, object store not found, wrong adapter) | first event of the page load, tagged `incident: local-db`                 |
-| `server-error`    | our backend answered with another 5xx                                                                               | at the logged level, with the status in the title and `http_status` tag   |
+| Classification    | Reported                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `connectivity`    | one shared `network-error` issue, as warning; not while offline                       |
+| `server-error`    | at the logged level, one issue per status and endpoint                                |
+| `not-permitted`   | as a warning if logged with a message or unhandled; dropped if logged without message |
+| `local-storage`   | the first event of the page load, tagged `incident: local-db`                         |
+| `session-expired` | no: the user is told                                                                  |
+| `write-conflict`  | no: normal for an offline-first app, counted in usage analytics                       |
 
-The table is `REPORTING_POLICY` in `sentry-event-processing.ts`. Every classified event carries the
-`error_class` tag. The `status`, `reason`, `entityId` etc. of the error or of an error in its `cause`
-chain, and the `details` of a `NamedError`, are reported as extra data. An unhandled error raised only by
-a script inlined into the page (e.g. injected by an in-app browser) is not reported.
+### How events are grouped and filtered
 
-### How events are grouped
+Sentry groups errors by their stack trace, so rewording a message changes an issue's title but never
+splits or merges issues; only a fingerprint does. `processSentryEvent` (the `beforeSend` hook) sets one
+where the stack is the wrong key, see `sentry-grouping.ts` for the rules:
 
-Sentry groups by stack trace; `processSentryEvent` sets a fingerprint where that is the wrong key
-(`sentry-grouping.ts`):
+- Our errors (a `NamedError` or a logged message) wrapping another error are grouped by the error and the
+  root cause of the `cause` chain, so a generic root cause (a `missing` document, a `TypeError`) in
+  another component gets an issue and alert of its own.
+- A classified root cause that means the same wherever it occurs (a broken local database, not
+  permitted, a server error, which also by its status and endpoint) is grouped by the root cause alone,
+  with the reporting component as the `reported_by` tag.
+- A request that never reached the server goes into the one network issue, unless a named error
+  wrapping it says the app could not continue (e.g. `AppBootstrapError`).
+- Errors without a stack and message events are grouped by their message, with ids, URLs and numbers
+  masked (`fingerprintKey`).
 
-- **Our errors by wrapper and root cause**: a `NamedError` or logged message wrapping another error, e.g.
-  "Error: Could not load school (caused by DatabaseException: missing)". A classified root cause that
-  means the same in every component (`local-storage`, `server-error`, `not-permitted`) is grouped by the
-  root cause only, and the wrapper's message is kept as the `reported_by` tag.
-- **Network failures** (`connectivity`) go into the one `network-error` issue, with the browser's wording
-  as the `network_error` tag (and a logged message as the `logged_message` tag).
-- **Exceptions without a stack and message events** by their normalized message (`fingerprintKey`: ids,
-  URLs and numbers masked, punctuation and casing dropped).
-
-Everything else keeps Sentry's grouping by stack trace. A change of the grouping does not re-group events
-already in Sentry: archive the issues it replaces once the release carrying it is rolled out.
+It also adds the error's `status`, `reason`, `entityId` and `details` as extra data, and drops an
+unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser).
+Changing the grouping does not re-group events already in Sentry: archive the issues it replaces once
+the release carrying it is rolled out.
 
 ### Each failure is reported once per page load
 
-`reportOnce` (`report-once.ts`) turns an event that repeats a failure already reported in this page load
-into a breadcrumb (category `sentry.suppressed`): the same error object (or, for an unhandled error, the
-same root cause), any further `local-storage` or network event, and any event beyond
-`MAX_REPEATED_SENTRY_EVENTS` of one issue.
-
-An issue's **event count is therefore not a measure of how often a problem occurs**: weigh how many
-sessions, deployments (the `url` tag) and releases it affects instead. Sentry shows 0 affected _users_:
-events deliberately carry no user identity, as data minimization under the GDPR.
+`reportOnce` (`report-once.ts`) turns a repeat of a failure already reported in this page load into a
+breadcrumb: the same error object (e.g. logged, then rethrown), a broken local database or the network
+issue after their first event, and any other issue after `MAX_REPEATED_SENTRY_EVENTS` events (against
+error loops). An issue's **event count is therefore not a measure of how often a problem occurs**: weigh
+how many sessions, deployments (the `url` tag) and releases it affects instead. Sentry shows 0 affected
+users, as events deliberately carry no user identity (data minimization under the GDPR).
 
 ### Investigating issues in Sentry
 
@@ -197,9 +197,12 @@ events deliberately carry no user identity, as data minimization under the GDPR.
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `error-classification.ts` — the typed errors of the boundaries (`ConnectivityError`, `ServerError`), `classifyError()` and its helpers
+- `error-classification.ts` — the typed errors, `classifyError()` and its helpers (`isExpectedFailure()`, ...)
+- `uncaught-error-classification.ts` — the foreign errors recognized only when they reach remote monitoring uncaught
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
 - `report-once.ts` — turning repeated reports of one failure into breadcrumbs
-- `http-response-logging.ts` — messages and details for an unexpected HTTP response
 - `log-level.ts` — the `LogLevel` definitions
+- `http-response-logging.ts` — messages and details for an unexpected HTTP response
+- `src/app/utils/failed-http-response.ts` — reading a failed HTTP response, also one converted into a typed error
+- `src/app/utils/typed-http-error.interceptor.ts`, `src/app/utils/backend-response.ts` — the HTTP boundary and what our backend's responses mean

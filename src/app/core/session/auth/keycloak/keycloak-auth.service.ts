@@ -10,9 +10,24 @@ import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
-import { isConnectivityError } from "#src/app/core/logging/error-classification";
-import { defer, firstValueFrom, Subscription, throwError, timer } from "rxjs";
-import { retry, timeout } from "rxjs/operators";
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  isFailedFetch,
+} from "#src/app/utils/backend-response";
+import {
+  ConnectivityError,
+  isConnectivityError,
+} from "../../../logging/error-classification";
+import {
+  defer,
+  firstValueFrom,
+  Observable,
+  Subscription,
+  throwError,
+  timer,
+  TimeoutError,
+} from "rxjs";
+import { catchError, retry, timeout } from "rxjs/operators";
 import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
 
 /**
@@ -61,7 +76,8 @@ const TOKEN_MIN_VALIDITY_SECONDS = 30;
 async function keycloakFailureContext(
   err: any,
 ): Promise<Record<string, unknown>> {
-  const response = err?.response;
+  // also of a failure converted into a ConnectivityError (see toTypedKeycloakError)
+  const response = err?.response ?? err?.cause?.response;
   const status = response?.status;
   if (typeof status !== "number") {
     // the library also rejects for reasons that never reached the server
@@ -115,6 +131,39 @@ async function readResponseBody(
 }
 
 /**
+ * Run a keycloak-js network operation, bounded by {@link KEYCLOAK_OPERATION_TIMEOUT_MS},
+ * and convert its failure where it enters the app (see {@link toTypedKeycloakError}).
+ */
+function keycloakOperation<T>(operation: () => Promise<T>): Observable<T> {
+  return defer(operation).pipe(
+    timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+    catchError((err) => throwError(() => toTypedKeycloakError(err))),
+  );
+}
+
+/**
+ * The error of a failed keycloak-js operation: a {@link ConnectivityError} (with
+ * the original as `cause`) if Keycloak could not be reached - no response or a
+ * gateway status, a failed `fetch`, or our timeout for the operation.
+ * Any other error (e.g. a 400 for a login code no longer valid) is returned as it is.
+ */
+export function toTypedKeycloakError(err: any): unknown {
+  // keycloak-js hands on the whole `Response` instead of lifting the status out of it
+  const status = err?.response?.status ?? err?.status;
+  if (
+    CONNECTIVITY_ERROR_STATUS.has(status) ||
+    err instanceof TimeoutError ||
+    isFailedFetch(err)
+  ) {
+    return new ConnectivityError("Failed to fetch from Keycloak", {
+      status: typeof status === "number" ? status : undefined,
+      cause: err,
+    });
+  }
+  return err;
+}
+
+/**
  * Check whether an error is a retryable network/connectivity error,
  * including keycloak-specific transient failures.
  */
@@ -155,9 +204,7 @@ export class KeycloakAuthService {
 
     try {
       await firstValueFrom(
-        defer(() => this.keycloak.updateToken()).pipe(
-          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
-        ),
+        keycloakOperation(() => this.keycloak.updateToken()),
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
@@ -289,7 +336,7 @@ export class KeycloakAuthService {
 
   private runKeycloakInit(): Promise<unknown> {
     return firstValueFrom(
-      defer(() =>
+      keycloakOperation(() =>
         this.keycloak.init({
           config: window.location.origin + "/assets/keycloak.json",
           initOptions: {
@@ -300,7 +347,7 @@ export class KeycloakAuthService {
           // GitHub API rejects if non GitHub bearer token is present
           shouldAddToken: ({ url }) => !url.includes("api.github.com"),
         }),
-      ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+      ),
     );
   }
 
@@ -312,8 +359,9 @@ export class KeycloakAuthService {
    */
   private refreshKeycloakToken(): Promise<boolean> {
     return firstValueFrom(
-      defer(() => this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS)).pipe(
-        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+      keycloakOperation(() =>
+        this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS),
+      ).pipe(
         retry({
           count: TOKEN_REFRESH_RETRY_DELAYS_MS.length,
           delay: (err, retryCount) => {
@@ -343,9 +391,9 @@ export class KeycloakAuthService {
   }
 
   private isOfflineOrUnavailableError(err: any): boolean {
-    // All retryable network errors (5xx / timeout / abort / fetch failures)
-    // also count as "unavailable" so they map to RemoteLoginNotAvailableError
-    // instead of spamming Sentry.
+    // All retryable network errors (gateway statuses / timeout / fetch failures,
+    // see toTypedKeycloakError) also count as "unavailable" so they map to
+    // RemoteLoginNotAvailableError instead of spamming Sentry.
     if (isRetryableNetworkError(err)) {
       return true;
     }

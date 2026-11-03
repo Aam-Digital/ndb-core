@@ -3,6 +3,8 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { LogLevel } from "./log-level";
 import { LoggingService, toReportedError } from "./logging.service";
 import { LoggedError, NamedError } from "./reported-errors";
+import { ConnectivityError, NotPermittedError } from "./error-classification";
+import { DatabaseException } from "../database/pouchdb/database-exception";
 
 describe("LoggingService", () => {
   const failure = new Error("Failed to fetch");
@@ -54,18 +56,37 @@ describe("LoggingService", () => {
   );
 
   it.each([
-    ["offline", new TypeError("Failed to fetch"), "debug"],
     [
-      "a wrapped missing permission",
-      new NamedError("SomeError", "x", {
-        cause: new HttpErrorResponse({ status: 403 }),
+      "offline",
+      new ConnectivityError("Failed to fetch from DB", {
+        cause: new TypeError("Failed to fetch"),
       }),
       "debug",
     ],
-    ["an edit conflict", { status: 409 }, "debug"],
+    [
+      "a wrapped missing permission",
+      new NamedError("SomeError", "x", {
+        cause: new NotPermittedError("forbidden"),
+      }),
+      "debug",
+    ],
+    [
+      "an edit conflict",
+      new DatabaseException({ status: 409, message: "conflict" }),
+      "debug",
+    ],
     [
       "a 401 for an invalid token",
-      { status: 401, reason: "Token signature is not valid" },
+      new DatabaseException({
+        status: 401,
+        reason: "Token signature is not valid",
+      }),
+      "warn",
+    ],
+    // converted into a typed error where it enters the app, not judged here
+    [
+      "a failed fetch that passed no boundary",
+      new TypeError("Failed to fetch"),
       "warn",
     ],
     ["a server error", new HttpErrorResponse({ status: 500 }), "warn"],

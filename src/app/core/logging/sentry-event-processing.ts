@@ -4,7 +4,9 @@ import {
   classifyErrorChain,
   causeChain,
   ErrorClassification,
+  isTypedErrorName,
 } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import {
   classifyException,
   groupSentryEvent,
@@ -85,7 +87,8 @@ const REPORTING_POLICY: Record<
 /**
  * The classification of the failure an event reports: of its error chain if the
  * error object is known, else (e.g. for an event of a captured message) by the
- * reported exceptions, status and message.
+ * reported exceptions, status and message. Foreign errors that reached the
+ * logging unconverted are recognized as well (see `uncaught-error-classification.ts`).
  */
 function classifySentryEvent(
   event: Sentry.ErrorEvent,
@@ -93,12 +96,12 @@ function classifySentryEvent(
 ): ErrorClassification | undefined {
   const original = hint?.originalException;
   if (original instanceof Error) {
-    return classifyErrorChain(original);
+    return classifyErrorChain(original, classifyReportedError);
   }
   return (
-    classifyErrorChain(original) ??
+    classifyErrorChain(original, classifyReportedError) ??
     event.exception?.values?.map(classifyException).find(Boolean) ??
-    classifyError(event.message)
+    classifyReportedError(event.message)
   );
 }
 
@@ -110,19 +113,29 @@ function isDeliberatelyLogged(error: unknown): boolean {
   );
 }
 
-/** Report a server fault with an issue per status. */
+/**
+ * Report a server fault with an issue per status and endpoint: grouped by the
+ * root cause alone, a new failing endpoint would otherwise not open an issue
+ * of its own. The endpoint is the masked `requestPath` the boundaries add.
+ */
 function reportServerError(event: Sentry.ErrorEvent) {
   const status = event.extra?.status;
   if (typeof status !== "number") {
     return;
   }
+  const requestPath = event.extra?.requestPath;
+  const key = [String(status)];
+  if (typeof requestPath === "string") {
+    key.push(requestPath);
+    event.tags = { ...event.tags, request_path: truncateTag(requestPath) };
+  }
   event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
   if (event.fingerprint?.length) {
-    event.fingerprint = [...event.fingerprint, String(status)];
+    event.fingerprint = [...event.fingerprint, ...key];
   }
   const thrown = event.exception?.values?.at(-1);
   if (thrown) {
-    thrown.value = `${thrown.value} (HTTP ${status})`;
+    thrown.value = `${thrown.value} (HTTP ${key.join(" ")})`;
   }
 }
 
@@ -176,7 +189,8 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
     if (typeof error.response?.status === "number") {
       details.status ??= error.response.status;
     }
-    if (error instanceof NamedError) {
+    // also of a typed error that lost its class (a copy made by PouchDB)
+    if (error instanceof NamedError || isTypedErrorName(error.name)) {
       Object.assign(details, error.details);
     }
   }

@@ -1,12 +1,16 @@
 import { TestBed } from "@angular/core/testing";
-import { KeycloakAuthService } from "./keycloak-auth.service";
+import {
+  KeycloakAuthService,
+  toTypedKeycloakError,
+} from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
-import { Subject } from "rxjs";
+import { Subject, TimeoutError } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import type { Mock } from "vitest";
 import { Logging } from "../../../logging/logging.service";
+import { ConnectivityError } from "../../../logging/error-classification";
 
 type HttpClientMock = {
   get: Mock;
@@ -436,6 +440,50 @@ describe("KeycloakAuthService", () => {
     } finally {
       errorSpy.mockRestore();
     }
+  });
+
+  it.each([
+    [
+      "a gateway status keycloak-js nests in the Response",
+      Object.assign(new Error("Server responded with an invalid status."), {
+        response: new Response("", { status: 504 }),
+      }),
+      504,
+    ],
+    ["a request without a response", { status: 0 }, 0],
+    ["a failed fetch", new TypeError("Failed to fetch"), undefined],
+    ["the timeout of the operation", new TimeoutError(), undefined],
+  ])(
+    "converts %s into a ConnectivityError keeping the original as cause",
+    (_, failure, status) => {
+      const converted = toTypedKeycloakError(failure);
+
+      expect(converted).toBeInstanceOf(ConnectivityError);
+      expect(converted).toMatchObject({ status, cause: failure });
+    },
+  );
+
+  it.each([
+    [
+      "a response of Keycloak refusing the request",
+      Object.assign(new Error("Server responded with an invalid status."), {
+        response: new Response("", { status: 400 }),
+      }),
+    ],
+    ["any other error", new Error("Invalid realm configuration")],
+  ])("keeps %s as it is", (_, failure) => {
+    expect(toTypedKeycloakError(failure)).toBe(failure);
+  });
+
+  it("should pass on a converted failure as the cause of RemoteLoginNotAvailableError", async () => {
+    const fetchError = new TypeError("Failed to fetch");
+    mockKeycloak.init.mockRejectedValue(fetchError);
+
+    const failure = await service.checkSession().catch((err) => err);
+
+    expect(failure).toBeInstanceOf(RemoteLoginNotAvailableError);
+    expect(failure.cause).toBeInstanceOf(ConnectivityError);
+    expect(failure.cause.cause).toBe(fetchError);
   });
 
   it("should NOT retry login on a 4xx error", async () => {

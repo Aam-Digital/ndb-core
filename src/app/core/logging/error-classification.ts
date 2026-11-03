@@ -1,26 +1,15 @@
-import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
- * What kind of failure an error is, for reporting it.
- *
- * Our own errors say it by their type: a boundary that knows what went wrong
- * throws a typed error (e.g. the remote database's fetch wrapper throws a
- * {@link ConnectivityError} or a {@link ServerError}); for a new kind of error,
- * extend one of these classes. Errors not created by us (raw browser, PouchDB or
- * HTTP errors, also wrapped in a `DatabaseException`) are classified by their
- * status, name and - as a last resort - by the message patterns below, which
- * are kept in this one file.
- *
- * What remote monitoring does with each classification is in
+ * What kind of failure an error is, for reporting it: derived by
+ * {@link classifyError} from the error's type (one {@link TypedError} class per
+ * classification). What remote monitoring does with each classification is in
  * `sentry-event-processing.ts` (`REPORTING_POLICY`).
- */
-
-/**
- * What kind of failure an error is, as far as reporting it is concerned:
- * derived by {@link classifyError} from the error's type
- * or, for errors not created by us, its status, name and message. Mapped to what
- * remote monitoring does with it in `sentry-event-processing.ts`.
+ *
+ * Foreign errors are converted into typed errors where they enter the app (the
+ * database layer, the HTTP interceptor, the Keycloak service), by the knowledge
+ * of the module they belong to. For a new kind of error, extend one of the
+ * typed classes.
  */
 export type ErrorClassification =
   /** the request never reached our backend: no response, status 0, 502-504 */
@@ -36,163 +25,186 @@ export type ErrorClassification =
   /** a rejected write with an outdated revision (409) */
   | "write-conflict";
 
-/** A request that never reached our backend (no response at all, or a gateway status). */
-export class ConnectivityError extends NamedError {
+/** What a typed error of a boundary keeps of the failure it was converted from. */
+export interface TypedErrorOptions {
+  /** the HTTP status of the failed request */
+  status?: number;
+  /** the original (foreign) error */
+  cause?: unknown;
+  details?: Record<string, unknown>;
+}
+
+/**
+ * A failure of a known kind, converted from a foreign error where it entered
+ * the app: its class is its classification (see {@link ErrorClassification}).
+ */
+export abstract class TypedError extends NamedError {
+  /** The HTTP status of the failed request, if any. */
   readonly status?: number;
 
-  constructor(
+  protected constructor(
+    name: string,
     message: string,
-    options?: {
-      status?: number;
-      cause?: unknown;
-      details?: Record<string, unknown>;
-    },
+    options?: TypedErrorOptions,
   ) {
-    super("ConnectivityError", message, options);
+    super(name, message, options);
     this.status = options?.status;
   }
 }
 
+/** A request that never reached our backend (no response at all, or a gateway status). */
+export class ConnectivityError extends TypedError {
+  static readonly errorName = "ConnectivityError";
+  constructor(message: string, options?: TypedErrorOptions) {
+    super(ConnectivityError.errorName, message, options);
+  }
+}
+
 /** Our backend answered with a 5xx status other than a gateway status. */
-export class ServerError extends NamedError {
-  readonly status: number;
+export class ServerError extends TypedError {
+  static readonly errorName = "ServerError";
+  declare readonly status: number;
 
   constructor(
     message: string,
-    options: {
-      status: number;
-      cause?: unknown;
-      details?: Record<string, unknown>;
-    },
+    options: TypedErrorOptions & { status: number },
   ) {
-    super("ServerError", message, options);
-    this.status = options.status;
+    super(ServerError.errorName, message, options);
   }
 }
 
-/** The permission rules do not allow the current user what was requested. */
-export class NotPermittedError extends NamedError {
-  constructor(
-    message: string,
-    options?: { details?: Record<string, unknown> },
-  ) {
-    super("NotPermittedError", message, options);
+/** The permission rules do not allow the current user what was requested (403, or 401 "not permitted"). */
+export class NotPermittedError extends TypedError {
+  static readonly errorName = "NotPermittedError";
+  constructor(message: string, options?: TypedErrorOptions) {
+    super(NotPermittedError.errorName, message, options);
   }
 }
 
-/**
- * HTTP statuses of a request that never reached the application's backend:
- * `0` for one that got no response at all, the others reported by an
- * infrastructure component in front of it.
- */
-export const CONNECTIVITY_ERROR_STATUS = [0, 502, 503, 504];
+/** The server rejected the session (401), and it could not be renewed. */
+export class SessionExpiredError extends TypedError {
+  static readonly errorName = "SessionExpiredError";
+  constructor(message: string, options?: TypedErrorOptions) {
+    super(SessionExpiredError.errorName, message, options);
+  }
+}
+
+/** A write was rejected because the document has changed in the meantime (409). */
+export class WriteConflictError extends TypedError {
+  static readonly errorName = "WriteConflictError";
+  constructor(message: string, options?: TypedErrorOptions) {
+    super(WriteConflictError.errorName, message, options);
+  }
+}
+
+/** The device's local database (IndexedDB underneath PouchDB) is broken. */
+export class LocalStorageError extends TypedError {
+  static readonly errorName = "LocalStorageError";
+  constructor(message: string, options?: TypedErrorOptions) {
+    super(LocalStorageError.errorName, message, options);
+  }
+}
+
+type TypedErrorClass = {
+  new (message: string, options: TypedErrorOptions): TypedError;
+  /** the error's `name`, as a literal: class names are minified */
+  readonly errorName: string;
+};
+
+/** The typed error of each classification. */
+const TYPED_ERRORS: Record<ErrorClassification, TypedErrorClass> = {
+  connectivity: ConnectivityError,
+  "server-error": ServerError,
+  "not-permitted": NotPermittedError,
+  "session-expired": SessionExpiredError,
+  "write-conflict": WriteConflictError,
+  "local-storage": LocalStorageError,
+};
 
 /**
- * Error `name`s that browsers use for requests that were cut off before
- * completing, rather than answered with an error.
+ * The classifications by the names of the typed errors, for an error that lost
+ * its class: a copy that PouchDB's `createError()` makes of the error it failed
+ * with, or an exception of a Sentry event without the original error object.
  */
-const CONNECTIVITY_ERROR_NAMES = ["TimeoutError", "AbortError"];
+const TYPED_ERROR_NAMES = new Map<string, ErrorClassification>(
+  Object.entries(TYPED_ERRORS).map(([classification, type]) => [
+    type.errorName,
+    classification as ErrorClassification,
+  ]),
+);
 
 /**
- * Wordings of a request that did not arrive, for errors that carry neither a
- * status nor a telling name (every browser words a failed `fetch` differently).
+ * Create the typed error of a classification, for a boundary converting a
+ * foreign error (keep that one as `cause`, and its `status`).
  */
-const CONNECTIVITY_ERROR_PATTERNS = [
-  "Failed to fetch", // Chrome
-  "NetworkError", // Firefox ("NetworkError when attempting to fetch resource")
-  "Load failed", // Safari
-  "Network request failed",
-  "network timeout",
-  "0 Unknown Error", // Angular HttpErrorResponse for a request that never reached the server
-  // A lazily loaded application chunk that could not be fetched: the device is
-  // offline, or a new deployment replaced the chunk the running app asks for.
-  // Chrome/Edge: "Failed to fetch dynamically imported module: <url>"
-  // Firefox: "error loading dynamically imported module: <url>"
-  "dynamically imported module",
-  "Importing a module script failed", // Safari
-];
+export function createTypedError(
+  classification: ErrorClassification,
+  message: string,
+  options: TypedErrorOptions,
+): TypedError {
+  return new TYPED_ERRORS[classification](message, options);
+}
+
+/** Whether the name is that of a typed error, also of one that lost its class. */
+export function isTypedErrorName(name: unknown): boolean {
+  return TYPED_ERROR_NAMES.has(name as string);
+}
 
 /**
- * What counts as the device's local database being broken (`local-storage`):
- * nothing in our code to fix per occurrence, and once it happens every later
- * database access of the page load fails as well (see `report-once.ts`).
+ * The name of `DatabaseException` (defined in `database-exception.ts`, which
+ * depends on this file): it wraps the typed error that the raw error of the
+ * database was converted into, and so has that error's classification.
  */
-const LOCAL_STORAGE_ERROR_NAMES = [
-  // PouchDB's "idb" adapter could not open or use IndexedDB
-  "indexed_db_went_bad",
-];
-const LOCAL_STORAGE_ERROR_PATTERNS = [
-  // IndexedDB closed underneath PouchDB (e.g. by another tab upgrading it)
-  "database connection is closing",
-  // the IndexedDB has another schema than the adapter expects
-  "object store was not found",
-  'Incorrect adapter: you should specify the "idb" adapter',
-  // Chrome failing to open the IndexedDB files on disk
-  "Internal error opening backing store",
-];
-
-/**
- * Programming errors: in a local-storage call they still point to a bug (e.g. a
- * document too deeply nested to store), not to a broken database.
- */
-const PROGRAMMING_ERROR_NAMES = [
-  "TypeError",
-  "RangeError",
-  "ReferenceError",
-  "SyntaxError",
-];
-
-/** CouchDB's `reason` for rejecting a request whose JWT `exp` claim has passed. */
-const EXPIRED_TOKEN_REASON = "exp not in future";
-
-/** Text the permission backend uses when the current user may not access a document or type. */
-const NOT_PERMITTED_TEXT = "not permitted";
-
-/** PouchDB's wording of a rejected write, for errors that lost their 409 status. */
-const WRITE_CONFLICT_TEXT = "document update conflict";
+const DATABASE_EXCEPTION_NAME = "DatabaseException";
 
 /**
  * What kind of failure the given error is, judged by this one error (not its `cause`s):
- * by its type if it is one of ours, else by its status, name and message.
+ * - a typed error by its class, or by its name if it lost its class;
+ * - a `DatabaseException` by the typed error it wraps as `cause`, if any.
  *
- * A {@link LoggedError} or another error of ours is never classified by its text.
+ * Any other error is not classified: foreign errors are converted where they
+ * enter the app, never recognized by their wording here.
  */
 export function classifyError(error: unknown): ErrorClassification | undefined {
-  if (!error || (typeof error !== "object" && typeof error !== "string")) {
+  if (!error || typeof error !== "object") {
     return undefined;
   }
-  if (error instanceof ConnectivityError) {
-    return "connectivity";
+  if (error instanceof NamedError && error.name === DATABASE_EXCEPTION_NAME) {
+    return typedClassification(error.cause);
   }
-  if (error instanceof ServerError) {
-    return "server-error";
+  if (error instanceof LoggedError || error instanceof NamedError) {
+    return typedClassification(error);
   }
-  if (error instanceof NotPermittedError) {
-    return "not-permitted";
-  }
-  if (error instanceof LoggedError) {
+  return TYPED_ERROR_NAMES.get((error as { name?: unknown }).name as string);
+}
+
+/** The classification of a typed error, by its class. */
+function typedClassification(error: unknown): ErrorClassification | undefined {
+  if (!(error instanceof TypedError)) {
     return undefined;
   }
-  return (
-    classifyByStatus(error) ?? classifyByName(error) ?? classifyByMessage(error)
+  return (Object.keys(TYPED_ERRORS) as ErrorClassification[]).find(
+    (classification) => error instanceof TYPED_ERRORS[classification],
   );
 }
 
 /**
- * A request that never reached our backend: no response, a gateway status
- * (0, 502-504), a timeout or abort. A 5xx other than these is a `ServerError`:
- * the server was reached and failed.
+ * A request that never reached our backend or Keycloak: a `ConnectivityError`,
+ * also when wrapped (as `cause`). A failed request to another service stays an
+ * `HttpErrorResponse`: check its status (e.g. `0`) with `failedHttpResponse()`.
+ * A server error (500) is not a connectivity failure: the server was reached and failed.
  */
 export function isConnectivityError(err: unknown): boolean {
-  return classifyError(err) === "connectivity";
+  return classifyErrorChain(err) === "connectivity";
 }
 
 /**
  * The permission rules exclude the record or type for the current user:
- * a 403, or a 401 the server explicitly calls "not permitted".
+ * a `NotPermittedError`, also when wrapped (as `cause`). Not an expired session
+ * or another `401` (e.g. an invalid token signature), which must keep being reported.
  */
 export function isNotPermittedError(err: unknown): boolean {
-  return classifyError(err) === "not-permitted";
+  return classifyErrorChain(err) === "not-permitted";
 }
 
 const EXPECTED_FAILURES = new Set<ErrorClassification | undefined>([
@@ -213,12 +225,16 @@ export function isExpectedFailure(err: unknown): boolean {
 /**
  * The classification of the first error in the `cause` chain that has one,
  * outermost first: a boundary's typed error wins over the raw error it wraps.
+ *
+ * @param classify how to classify each error of the chain (remote monitoring
+ *   adds the foreign errors that reach it unconverted)
  */
 export function classifyErrorChain(
   error: unknown,
+  classify: (error: unknown) => ErrorClassification | undefined = classifyError,
 ): ErrorClassification | undefined {
   for (const link of causeChain(error)) {
-    const classification = classifyError(link);
+    const classification = classify(link);
     if (classification) {
       return classification;
     }
@@ -240,101 +256,4 @@ export function causeChain(error: unknown): unknown[] {
     current = (current as { cause?: unknown }).cause;
   }
   return chain;
-}
-
-type ErrorLike = {
-  status?: unknown;
-  response?: { status?: unknown };
-  reason?: unknown;
-  error?: unknown;
-  message?: unknown;
-  name?: unknown;
-  originalName?: unknown;
-};
-
-function classifyByStatus(
-  error: object | string,
-): ErrorClassification | undefined {
-  const err = error as ErrorLike;
-  // `err.response.status` as well: a library that wraps `fetch` may hand on the
-  // whole `Response` instead of lifting the status out of it (keycloak-js does)
-  if (
-    CONNECTIVITY_ERROR_STATUS.includes(err.status as number) ||
-    CONNECTIVITY_ERROR_STATUS.includes(err.response?.status as number)
-  ) {
-    return "connectivity";
-  }
-  if (err.status === HttpStatusCode.Unauthorized) {
-    if (
-      typeof err.reason === "string" &&
-      err.reason.includes(EXPIRED_TOKEN_REASON)
-    ) {
-      return "session-expired";
-    }
-    // other 401 reasons (e.g. an invalid token signature) are misconfigurations
-    return [err.error, err.reason, err.message].some(
-      (text) =>
-        typeof text === "string" &&
-        text.toLowerCase().includes(NOT_PERMITTED_TEXT),
-    )
-      ? "not-permitted"
-      : undefined;
-  }
-  if (err.status === HttpStatusCode.Forbidden) {
-    return "not-permitted";
-  }
-  if (err.status === HttpStatusCode.Conflict) {
-    return "write-conflict";
-  }
-  // only a response of our backend: PouchDB uses 500 for local failures as well
-  if (error instanceof HttpErrorResponse && error.status >= 500) {
-    return "server-error";
-  }
-  return undefined;
-}
-
-function classifyByName(
-  error: object | string,
-): ErrorClassification | undefined {
-  const err = error as ErrorLike;
-  // `originalName`: the name of the error a DatabaseException wraps
-  const names = [err.name, err.originalName] as string[];
-  if (names.some((name) => CONNECTIVITY_ERROR_NAMES.includes(name))) {
-    return "connectivity";
-  }
-  if (names.some((name) => LOCAL_STORAGE_ERROR_NAMES.includes(name))) {
-    return "local-storage";
-  }
-  return undefined;
-}
-
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
-function classifyByMessage(
-  error: object | string,
-): ErrorClassification | undefined {
-  const err = error as ErrorLike;
-  // `name: message` like `Error.toString()`, which PouchDB errors (plain objects) lack
-  const text =
-    typeof error === "string"
-      ? error
-      : `${textOf(err.name)}: ${textOf(err.message)} ${textOf(err.reason)}`;
-  if (CONNECTIVITY_ERROR_PATTERNS.some((pattern) => text.includes(pattern))) {
-    return "connectivity";
-  }
-  if (text.toLowerCase().includes(WRITE_CONFLICT_TEXT)) {
-    return "write-conflict";
-  }
-  const isProgrammingError = PROGRAMMING_ERROR_NAMES.includes(
-    err.name as string,
-  );
-  if (
-    !isProgrammingError &&
-    LOCAL_STORAGE_ERROR_PATTERNS.some((pattern) => text.includes(pattern))
-  ) {
-    return "local-storage";
-  }
-  return undefined;
 }

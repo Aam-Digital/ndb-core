@@ -13,7 +13,10 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ImportMetadata } from "../../import/import-metadata";
-import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import {
+  UserAdminApiError,
+  UserAdminService,
+} from "../../user/user-admin-service/user-admin.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../logging/logging.service";
@@ -237,11 +240,18 @@ Afterwards you have to set up the system from scratch. This step cannot be rever
       );
       return { linkedProfileIds, accountsVerified: true };
     } catch (err) {
-      // e.g. a missing account_manager role (403): an expected, common case
-      Logging.warnUnlessExpected(
-        "Could not look up user accounts before deleting records",
-        err,
-      );
+      if (err instanceof UserAdminApiError && err.status === 403) {
+        // a missing account_manager role: an expected, common case
+        Logging.debug(
+          "Could not look up user accounts before deleting records",
+          err,
+        );
+      } else {
+        Logging.warnUnlessExpected(
+          "Could not look up user accounts before deleting records",
+          err,
+        );
+      }
       return { linkedProfileIds: new Set(), accountsVerified: false };
     }
   }

@@ -14,6 +14,8 @@ import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
+import { toTypedDatabaseError } from "./pouchdb/database-exception";
+import { LOCAL_DB_REVS_LIMIT } from "./pouchdb/pouch-database";
 import {
   isTransientReplicationFailure,
   SyncedPouchDatabase,
@@ -199,8 +201,9 @@ export class IndexeddbMigrationService {
         replicationDone = true;
         checkBothComplete();
       })
-      .catch(async (err) => {
+      .catch(async (replicationError) => {
         this.closePouchDb(remotePouchDB);
+        const err = toTypedDatabaseError(replicationError);
         if (isTransientReplicationFailure(err)) {
           // offline or session expired: nothing to fix, retried on next app start
           Logging.debug(
@@ -237,7 +240,10 @@ export class IndexeddbMigrationService {
   }
 
   private createPouchDb(newDbName: string): PouchDB.Database {
-    return new PouchDB(newDbName, { adapter: "indexeddb" });
+    return new PouchDB(newDbName, {
+      adapter: "indexeddb",
+      revs_limit: LOCAL_DB_REVS_LIMIT,
+    });
   }
 
   private closePouchDb(db: PouchDB.Database): void {

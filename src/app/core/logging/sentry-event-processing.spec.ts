@@ -189,7 +189,7 @@ describe("processSentryEvent", () => {
         new DatabaseException({ status: 403, message: "forbidden" }),
       ),
       level: "warning",
-      title: "DatabaseException: forbidden",
+      title: "NotPermittedError: forbidden",
       tags: { error_class: "not-permitted" },
     },
   ] as {

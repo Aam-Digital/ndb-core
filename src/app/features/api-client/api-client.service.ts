@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, resource } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
+import { failedHttpResponse } from "#src/app/utils/failed-http-response";
 import { firstValueFrom } from "rxjs";
 import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
@@ -195,10 +196,8 @@ export class ApiClientService {
  * so that they are not reported to the error monitoring; server errors (5xx) are logged as warning.
  */
 export function logRequestError(message: string, err: unknown) {
-  if (
-    err instanceof HttpErrorResponse &&
-    (err.status === 0 || (err.status >= 400 && err.status < 500))
-  ) {
+  const status = failedHttpResponse(err)?.status;
+  if (status === 0 || (status >= 400 && status < 500)) {
     Logging.debug(message, err);
   } else {
     Logging.warn(message, err);
@@ -209,11 +208,11 @@ export function logRequestError(message: string, err: unknown) {
  * The message for the user of a failed request to the api-client module of the backend.
  */
 export function errorMessageOf(err: unknown): string {
-  if (err instanceof HttpErrorResponse && err.status === 0) {
+  const response = failedHttpResponse(err);
+  if (response?.status === 0) {
     return $localize`Could not connect to the server. Please check your network connection and try again.`;
   }
-  const backendMessage =
-    err instanceof HttpErrorResponse ? err.error?.errorMessage : undefined;
+  const backendMessage = response?.error?.errorMessage;
   return backendMessage
     ? $localize`Something went wrong: ${backendMessage}`
     : $localize`Something went wrong. Please try again later or contact support.`;

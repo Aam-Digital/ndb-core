@@ -1,11 +1,13 @@
 import type * as Sentry from "@sentry/angular";
-import { classifyError, ErrorClassification } from "./error-classification";
+import { ErrorClassification, isTypedErrorName } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
  * grouping by stack trace would split one problem into many issues.
- * The rules are explained in the logging README ("How events are grouped").
+ * Summarized in the logging README ("How events are grouped and filtered");
+ * the rules are documented on the functions below.
  *
  * @param classification of the event's error chain (see `classifyErrorChain`)
  */
@@ -24,7 +26,10 @@ export function groupSentryEvent(
 
   const thrown = values[values.length - 1];
   const original = hint?.originalException;
-  const chainClassifications = classifyExceptions(values, original);
+  const errors = errorsOfExceptions(values, original);
+  const chainClassifications = errors
+    ? errors.map((error) => classifyReportedError(error))
+    : values.map(classifyException);
   const reportedError =
     original instanceof NamedError || original instanceof LoggedError
       ? thrown
@@ -43,6 +48,7 @@ export function groupSentryEvent(
         values,
         chainClassifications,
         reportedError,
+        rootCauseIndex(values, errors),
       );
     }
     if (original instanceof LoggedError) {
@@ -67,15 +73,14 @@ export function groupSentryEvent(
 }
 
 /**
- * The classification of each exception of the event (innermost first, like `values`).
- *
- * Taken from the error objects where Sentry's exceptions are their `cause` chain;
- * else (e.g. an event without the original error) from the serialized exception.
+ * The error objects of the event's exceptions (innermost first, like `values`),
+ * if Sentry's exceptions are their `cause` chain; else (e.g. an event without
+ * the original error) `undefined`, to judge by the serialized exceptions.
  */
-function classifyExceptions(
+function errorsOfExceptions(
   values: Sentry.Exception[],
   original: unknown,
-): (ErrorClassification | undefined)[] {
+): Error[] | undefined {
   const errors: Error[] = [];
   for (
     let error = original;
@@ -84,17 +89,31 @@ function classifyExceptions(
   ) {
     errors.unshift(error);
   }
-  if (errors.length === values.length && !(errors[0]?.cause instanceof Error)) {
-    return errors.map((error) => classifyError(error));
-  }
-  return values.map(classifyException);
+  return errors.length === values.length && !(errors[0]?.cause instanceof Error)
+    ? errors
+    : undefined;
+}
+
+/**
+ * The index of the root cause: the innermost of our typed errors, as the foreign
+ * error a boundary converted into it (its `cause`) only details it; else the
+ * innermost exception.
+ */
+function rootCauseIndex(
+  values: Sentry.Exception[],
+  errors: Error[] | undefined,
+): number {
+  const index = errors
+    ? errors.findIndex((error) => isTypedErrorName(error.name))
+    : values.findIndex((value) => isTypedErrorName(value.type));
+  return Math.max(index, 0);
 }
 
 /** The classification of an exception as Sentry serialized it, without the error object. */
 export function classifyException(
   exception: Sentry.Exception,
 ): ErrorClassification | undefined {
-  return classifyError({
+  return classifyReportedError({
     name: exception.type,
     message: exception.value ?? "",
   });
@@ -168,14 +187,16 @@ function groupByRootCause(
   values: Sentry.Exception[],
   chainClassifications: (ErrorClassification | undefined)[],
   reportedError: Sentry.Exception,
+  rootIndex: number,
 ): Sentry.ErrorEvent {
   const reportedIndex = values.indexOf(reportedError);
   const reportedKey = [
     reportedError.type ?? "",
     groupingValue(reportedError, chainClassifications[reportedIndex]),
   ];
-  const rootCause = values[0];
-  const rootClassification = chainClassifications[0];
+  const rootPosition = Math.min(rootIndex, reportedIndex);
+  const rootCause = values[rootPosition];
+  const rootClassification = chainClassifications[rootPosition];
   const rootKey = [
     rootCause.type ?? "",
     groupingValue(rootCause, rootClassification),
@@ -188,6 +209,16 @@ function groupByRootCause(
     event.fingerprint = reportedKey;
     thrown.type = reportedError.type;
     thrown.value = reportedError.value;
+    return event;
+  }
+  // as is one passing on the classification of the typed error it wraps (a DatabaseException)
+  if (
+    rootClassification &&
+    chainClassifications[reportedIndex] === rootClassification
+  ) {
+    event.fingerprint = rootKey;
+    thrown.type = rootCause.type;
+    thrown.value = normalizeErrorValue(rootCause.value);
     return event;
   }
 
@@ -303,6 +334,25 @@ export function normalizeErrorValue(value: string | undefined): string {
       normalized.replace(pattern, placeholder),
     value,
   );
+}
+
+/** A path segment naming a route rather than a record: a word (e.g. `_bulk_docs`) or an API version. */
+const ROUTE_PATH_SEGMENT = /^(_?[a-z][a-z_-]*|v\d+)$/i;
+
+/**
+ * The path of a request as a grouping key: without host, query and fragment
+ * (which may hold personal data), and with every segment that is not a route
+ * name masked (document ids, uuids, numbers),
+ * e.g. "/db/app/Child%3A1?rev=1-a" → "/db/app/<id>".
+ */
+export function normalizeRequestPath(url: string): string {
+  const path = url.replace(/^[a-z]+:\/\/[^/]*/i, "").split(/[?#]/)[0];
+  return path
+    .split("/")
+    .map((segment) =>
+      segment === "" || ROUTE_PATH_SEGMENT.test(segment) ? segment : "<id>",
+    )
+    .join("/");
 }
 
 /**

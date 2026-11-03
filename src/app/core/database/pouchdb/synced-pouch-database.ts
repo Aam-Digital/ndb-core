@@ -1,4 +1,5 @@
 import { PouchDatabase } from "./pouch-database";
+import { toTypedDatabaseError } from "./database-exception";
 import { Logging } from "../../logging/logging.service";
 import { NamedError } from "../../logging/reported-errors";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
@@ -201,8 +202,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       isFirstSync = (await localDb.info()).doc_count === 0;
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
-      this.handleSyncFailure(err, []);
-      throw err;
+      const failure = toTypedDatabaseError(err);
+      this.handleSyncFailure(failure, []);
+      throw failure;
     }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
@@ -291,8 +293,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        this.handleSyncFailure(err, lastSyncedDocIds);
-        throw err;
+        // the replication fails with a copy of the error, which loses the class of a typed error
+        const failure = toTypedDatabaseError(err);
+        this.handleSyncFailure(failure, lastSyncedDocIds);
+        throw failure;
       })
       .finally(() => {
         clearTimeout(stallTimer);

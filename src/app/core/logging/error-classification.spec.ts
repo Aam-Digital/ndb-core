@@ -1,13 +1,20 @@
 import {
   classifyError,
+  classifyErrorChain,
+  ConnectivityError,
   ErrorClassification,
   isConnectivityError,
   isNotPermittedError,
+  NotPermittedError,
+  ServerError,
+  SessionExpiredError,
 } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
+import { SyncFailedError } from "../database/pouchdb/synced-pouch-database";
 import { HttpErrorResponse } from "@angular/common/http";
-import { ServerError } from "./error-classification";
-import { LoggedError } from "./reported-errors";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
+import { LoggedError, NamedError } from "./reported-errors";
 import { browserError } from "./logging-test-utils";
 
 /** The error PouchDB's http adapter builds from CouchDB's 401 response. */
@@ -19,43 +26,48 @@ const couchDbUnauthorized = (reason: string) => ({
   message: reason,
 });
 
-/** keycloak-js hands on the whole `Response` instead of lifting the status out of it. */
-const keycloakError = (status: number) =>
-  Object.assign(new Error("Server responded with an invalid status."), {
-    response: { status },
-  });
-
 describe("classification helpers", () => {
   it.each<[string, unknown, ErrorClassification | undefined]>([
     ["nothing", undefined, undefined],
+    ["null", null, undefined],
     ["a programming error", new Error("x is not a function"), undefined],
     ["a 404", { status: 404 }, undefined],
-    ...[0, 502, 503, 504].map(
-      (status): [string, unknown, ErrorClassification] => [
-        `status ${status}`,
-        { status },
-        "connectivity",
-      ],
-    ),
-    ["a gateway status in a Response", keycloakError(503), "connectivity"],
-    ["a client error status in a Response", keycloakError(400), undefined],
+    // foreign errors are converted into typed errors where they enter the app
+    // (database layer, HTTP interceptor, KeycloakAuthService), see their specs
     [
-      "an AbortError",
+      "a failed fetch that passed no boundary",
+      new TypeError("Failed to fetch"),
+      undefined,
+    ],
+    [
+      "an abort that passed no boundary",
       new DOMException("aborted", "AbortError"),
+      undefined,
+    ],
+    ["a gateway status that passed no boundary", { status: 504 }, undefined],
+    [
+      "a typed error that lost its class (a copy made by PouchDB)",
+      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      "session-expired",
+    ],
+    ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
+    [
+      "a typed error wrapped by a logged message",
+      new LoggedError("Could not load", new SessionExpiredError("expired")),
+      "session-expired",
+    ],
+    [
+      "a DatabaseException wrapping a typed error",
+      new DatabaseException(new ConnectivityError("Failed to fetch from DB")),
       "connectivity",
     ],
     [
-      "a TimeoutError",
-      new DOMException("timed out", "TimeoutError"),
+      "a connectivity failure wrapped by another error",
+      new SyncFailedError(
+        new DatabaseException(new ConnectivityError("Failed to fetch from DB")),
+      ),
       "connectivity",
     ],
-    ["Chrome's failed fetch", new TypeError("Failed to fetch"), "connectivity"],
-    [
-      "Firefox's failed fetch",
-      new TypeError("NetworkError when attempting to fetch resource"),
-      "connectivity",
-    ],
-    ["Safari's failed fetch", new TypeError("Load failed"), "connectivity"],
     [
       // the abort's name is replaced by "DatabaseException"
       "a DatabaseException wrapping an AbortError",
@@ -89,7 +101,10 @@ describe("classification helpers", () => {
     ],
     [
       "the expired token reason with another status",
-      { ...couchDbUnauthorized("exp not in future"), status: 400 },
+      new DatabaseException({
+        ...couchDbUnauthorized("exp not in future"),
+        status: 400,
+      }),
       undefined,
     ],
     [
@@ -105,19 +120,46 @@ describe("classification helpers", () => {
       ),
       "not-permitted",
     ],
-    ["a 403", { status: 403, message: "Forbidden" }, "not-permitted"],
+    [
+      "a 403 of the database",
+      new DatabaseException({ status: 403, message: "forbidden" }),
+      "not-permitted",
+    ],
+    [
+      "a 403 of the API",
+      toTypedHttpError(new HttpErrorResponse({ status: 403 }), {
+        method: "GET",
+        url: "/api/v1/x",
+      }),
+      "not-permitted",
+    ],
+    [
+      "a 403 wrapped by another error",
+      new LoggedError(
+        "Could not load record",
+        new DatabaseException({ status: 403, message: "forbidden" }),
+      ),
+      "not-permitted",
+    ],
     [
       "a 401 without reason",
-      { status: 401, message: "Unauthorized" },
+      new DatabaseException({ status: 401, message: "Unauthorized" }),
       undefined,
     ],
     [
       "a 401 for an invalid token",
-      couchDbUnauthorized("Token signature is not valid"),
+      new DatabaseException(
+        couchDbUnauthorized("Token signature is not valid"),
+      ),
+      undefined,
+    ],
+    [
+      "an unclassified database failure",
+      new DatabaseException({ status: 404, message: "missing" }),
       undefined,
     ],
   ])("classifies %s", (_, error, expected) => {
-    expect(classifyError(error)).toBe(expected);
+    expect(classifyErrorChain(error)).toBe(expected);
     expect(isConnectivityError(error)).toBe(expected === "connectivity");
     expect(isNotPermittedError(error)).toBe(expected === "not-permitted");
   });
@@ -126,24 +168,78 @@ describe("classification helpers", () => {
 describe("classifyError", () => {
   it.each([
     [
-      "a response that never arrived",
-      new HttpErrorResponse({ status: 0 }),
-      "connectivity",
-    ],
-    [
-      "a gateway status",
-      new HttpErrorResponse({ status: 503 }),
-      "connectivity",
-    ],
-    ["a server error", new HttpErrorResponse({ status: 500 }), "server-error"],
-    ["a 403", new HttpErrorResponse({ status: 403 }), "not-permitted"],
-    [
       "a typed error, by its type rather than its wording",
       new ServerError("Failed to fetch from DB", { status: 500 }),
       "server-error",
     ],
+    ["a typed error", new NotPermittedError("forbidden"), "not-permitted"],
     [
-      "a raw browser error, by its wording",
+      "a DatabaseException, by the typed error it wraps",
+      new DatabaseException({ status: 409, message: "conflict" }),
+      "write-conflict",
+    ],
+    [
+      "a typed error that lost its class, by its name",
+      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      "session-expired",
+    ],
+    [
+      "a failed response of our backend not by its status, as the HTTP interceptor converts it",
+      new HttpErrorResponse({ status: 403 }),
+      undefined,
+    ],
+    [
+      "a foreign error never by its wording, as the boundaries convert it",
+      new TypeError("Failed to fetch"),
+      undefined,
+    ],
+  ])("should classify %s", (_, error, expected) => {
+    expect(classifyError(error)).toBe(expected);
+  });
+});
+
+describe("classifyReportedError", () => {
+  it.each([
+    [
+      "a request of another service that never got a response",
+      new HttpErrorResponse({ status: 0 }),
+      "connectivity",
+    ],
+    [
+      "a gateway status of another service",
+      new HttpErrorResponse({ status: 503 }),
+      "connectivity",
+    ],
+    [
+      "an HttpErrorResponse without response logged as message",
+      "Http failure response for /nominatim/search: 0 Unknown Error",
+      "connectivity",
+    ],
+    [
+      "a failed fetch (Chrome)",
+      new TypeError("Failed to fetch"),
+      "connectivity",
+    ],
+    [
+      "a failed fetch (Firefox)",
+      new TypeError("NetworkError when attempting to fetch resource."),
+      "connectivity",
+    ],
+    ["a failed fetch (Safari)", new TypeError("Load failed"), "connectivity"],
+    [
+      "a failed chunk load (Chrome)",
+      new TypeError(
+        "Failed to fetch dynamically imported module: https://example.org/chunk-A1B2.js",
+      ),
+      "connectivity",
+    ],
+    [
+      "a failed chunk load (Safari)",
+      new TypeError("Importing a module script failed."),
+      "connectivity",
+    ],
+    [
+      "an IndexedDB error raised in PouchDB's callbacks",
       browserError(
         "InvalidStateError",
         "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
@@ -159,11 +255,21 @@ describe("classifyError", () => {
       undefined,
     ],
     [
+      "a typed error, by its type",
+      new ServerError("Failed to fetch from DB", { status: 500 }),
+      "server-error",
+    ],
+    [
       "a logged message, never by its wording",
       new LoggedError("Failed to fetch notifications"),
       undefined,
     ],
+    [
+      "a named error of ours, never by its wording",
+      new NamedError("AppBootstrapError", "Failed to fetch config"),
+      undefined,
+    ],
   ])("should classify %s", (_, error, expected) => {
-    expect(classifyError(error)).toBe(expected);
+    expect(classifyReportedError(error)).toBe(expected);
   });
 });

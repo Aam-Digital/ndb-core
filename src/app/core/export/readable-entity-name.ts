@@ -60,6 +60,9 @@ export function loadReadableEntityName(
 /**
  * Whether the error means the referenced entity cannot be resolved at all
  * (rather than a failure that may succeed on another attempt).
+ *
+ * "No permission" includes the server's `401 "User is not permitted"`,
+ * but not an expired session, which is a `401` as well (see {@link isNotPermittedError}).
  */
 function isUnresolvableReferenceError(err: any): boolean {
   return (
