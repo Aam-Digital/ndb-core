@@ -10,11 +10,13 @@ import {
   TypedError,
   TypedErrorOptions,
 } from "#src/app/core/logging/error-classification";
-import { normalizeRequestPath } from "#src/app/core/logging/sentry-grouping";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import { WriteConflictError } from "#src/app/core/database/pouchdb/database-errors";
-import { classifyResponseStatus } from "./backend-response";
+import {
+  classifyResponseStatus,
+  normalizeRequestPath,
+} from "./backend-response";
 import { ConnectivityError, ServerError } from "./backend-errors";
 
 /**

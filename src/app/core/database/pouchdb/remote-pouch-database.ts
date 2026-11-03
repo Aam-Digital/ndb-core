@@ -26,8 +26,10 @@ import {
 } from "../../logging/http-response-logging";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "../../session/session-expired.error";
-import { CONNECTIVITY_ERROR_STATUS } from "#src/app/utils/backend-response";
-import { normalizeRequestPath } from "../../logging/sentry-grouping";
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  normalizeRequestPath,
+} from "#src/app/utils/backend-response";
 
 /**
  * 4XX statuses that occur during normal operation
