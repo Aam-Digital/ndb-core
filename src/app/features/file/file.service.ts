@@ -5,7 +5,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { catchError, filter, map, shareReplay } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
-import { isConnectivityError } from "../../utils/connectivity-error";
+import { isConnectivityError } from "../../utils/is-connectivity-error";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
 import { waitForChangeTo } from "../../core/session/session-states/session-utils";

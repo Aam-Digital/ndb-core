@@ -1,6 +1,10 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException } from "./database-exception";
+import {
+  classifyErrorChain,
+  ErrorClassification,
+} from "../../logging/error-classification";
+import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -52,6 +56,14 @@ function markAsSecondQuery(res: FindPage): FindPage {
  * (see {@link PouchDatabase.resolveConflict}).
  */
 export type ConflictOutcome = "merged" | "overwritten" | "unresolved";
+
+/**
+ * Failures of the changes feed that it recovers from by retrying: the device is
+ * offline (or the server unreachable), or the session could not be renewed yet.
+ */
+const TRANSIENT_CHANGES_FEED_FAILURES = new Set<
+  ErrorClassification | undefined
+>(["connectivity", "session-expired"]);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -335,7 +347,7 @@ export class PouchDatabase extends Database {
       if (err.status === 404) {
         return false;
       }
-      throw err;
+      throw new DatabaseException(err, id);
     }
 
     // Purge the winning revision and any conflicting leaf revisions
@@ -344,8 +356,12 @@ export class PouchDatabase extends Database {
       localDoc._rev,
       ...((localDoc as any)._conflicts ?? []),
     ];
-    for (const rev of revsToPurge) {
-      await (db as any).purge(id, rev);
+    try {
+      for (const rev of revsToPurge) {
+        await (db as any).purge(id, rev);
+      }
+    } catch (err) {
+      throw new DatabaseException(err, id);
     }
 
     // PouchDB purge() does not emit change events, so manually notify
@@ -369,7 +385,10 @@ export class PouchDatabase extends Database {
   isEmpty(): Promise<boolean> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.info())
-      .then((res) => res.doc_count === 0);
+      .then((res) => res.doc_count === 0)
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -404,14 +423,12 @@ export class PouchDatabase extends Database {
           }
         })
         .catch((err) => {
-          if (
-            err.statusCode === HttpStatusCode.Unauthorized ||
-            err.statusCode === HttpStatusCode.GatewayTimeout
-          ) {
-            // expired session or a gateway timeout: transient, retried below
-            Logging.debug("changes feed failed (unauthorized or timeout)", err);
+          const error = toTypedDatabaseError(err);
+          if (TRANSIENT_CHANGES_FEED_FAILURES.has(classifyErrorChain(error))) {
+            // retried below until the connection or the session is back
+            Logging.debug("changes feed failed", error);
           } else {
-            Logging.error(err);
+            Logging.error(error);
           }
 
           // retry

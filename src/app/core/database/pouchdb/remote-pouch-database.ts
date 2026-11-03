@@ -1,4 +1,5 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { toTypedDatabaseError } from "./database-exception";
 import {
   BulkWriteLimits,
   DEFAULT_BULK_WRITE_LIMITS,
@@ -17,12 +18,18 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import { FindPage } from "./find-queries";
 import {
   describeResponse,
   unexpectedResponseMessage,
 } from "../../logging/http-response-logging";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "../../session/session-expired.error";
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  normalizeRequestPath,
+} from "#src/app/utils/backend-response";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -34,6 +41,44 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
 ];
+
+const MAX_RESPONSE_BODY_LENGTH = 500;
+
+/**
+ * The error for a request that got no usable response: a {@link ConnectivityError}
+ * if it never reached CouchDB (no response, or a gateway status of the proxy in
+ * front of it), else a {@link ServerError} carrying the status - a server that
+ * fails is a fault to fix, not a dropped connection.
+ */
+async function failedResponseError(
+  result: Response | undefined,
+  method: string,
+  remoteUrl: string,
+  fetchError?: unknown,
+): Promise<ConnectivityError | ServerError> {
+  const details = {
+    requestedUrl: remoteUrl,
+    // tells server errors of different endpoints apart (see `reportServerError`)
+    requestPath: normalizeRequestPath(remoteUrl),
+    actualResponse: describeResponse(result, method),
+    // e.g. a proxy's whole HTML error page: enough of it to tell what answered
+    actualResponseBody: (await result?.text())?.slice(
+      0,
+      MAX_RESPONSE_BODY_LENGTH,
+    ),
+  };
+  if (!result || CONNECTIVITY_ERROR_STATUS.has(result.status)) {
+    return new ConnectivityError("Failed to fetch from DB", {
+      status: result?.status,
+      cause: fetchError,
+      details,
+    });
+  }
+  return new ServerError("Server error response from DB", {
+    status: result.status,
+    details,
+  });
+}
 
 /** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
 function requestMethod(opts: RequestInit | undefined): string {
@@ -191,9 +236,11 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     let result: Response;
+    let fetchError: unknown;
     try {
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
+      fetchError = err;
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
       this.showConnectionIssueAlert();
@@ -203,6 +250,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     // This will redirect to Keycloak if the token is expired or missing,
     // which is intentional — it ensures users re-authenticate online
     // when connectivity is available (including after an offline login).
+    // If the session cannot be renewed, this fails with a SessionExpiredError.
     if (
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
@@ -219,12 +267,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
-      throw new DatabaseException({
-        message: "Failed to fetch from DB",
-        requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(describeResponse(result, method)),
-        actualResponseBody: await result?.text(),
-      });
+      throw await failedResponseError(result, method, remoteUrl, fetchError);
     }
 
     // additional output for debugging
@@ -301,8 +344,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       try {
         return await operation();
       } catch (err) {
+        // the raw error of PouchDB, not yet converted by a DatabaseException
         if (
-          !isConnectivityError(err) ||
+          !isConnectivityError(toTypedDatabaseError(err)) ||
           attempt >= this.TRANSIENT_ERROR_RETRIES
         ) {
           throw err;
@@ -359,9 +403,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   /**
    * Renew the session and repeat a request that the server rejected as unauthorized.
    *
-   * @returns the repeated request's response; the original `unauthorized`
-   *   response if the session could not be renewed; or `undefined` if the
+   * @returns the repeated request's response; or `undefined` if the
    *   repeated request did not get a response at all (like a failed initial fetch)
+   * @throws SessionExpiredError if the session could not be renewed: the server
+   *   then keeps rejecting the request, whatever reason it gives (the replication
+   *   backend answers an expired session with a bare 401)
    */
   private async retryWithRenewedSession(
     remoteUrl: string,
@@ -381,7 +427,13 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else {
         Logging.warn("Could not renew session after 401", err);
       }
-      return unauthorized;
+      throw new SessionExpiredError("Session could not be renewed", {
+        status: unauthorized.status,
+        cause: err,
+        details: {
+          actualResponse: describeResponse(unauthorized, requestMethod(opts)),
+        },
+      });
     }
 
     this.authService.addAuthHeader(opts.headers);

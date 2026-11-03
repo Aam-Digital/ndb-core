@@ -8,6 +8,7 @@ import { ExternalProfile } from "../../skill-api/external-profile";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";
+import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 
 describe("LinkExternalProfileDialogComponent", () => {
   let component: LinkExternalProfileDialogComponent;
@@ -122,12 +123,11 @@ describe("LinkExternalProfileDialogComponent", () => {
     }
   });
 
-  it("should show error message if API rejects for missing permissions (403)", async () => {
+  it("shows a translated permission message without changing the NotPermittedError", async () => {
     vi.useFakeTimers();
     try {
-      const mockError = new HttpErrorResponse({
+      const mockError = new NotPermittedError("Request not permitted by API", {
         status: 403,
-        statusText: "No permissions error",
       });
       mockSkillApi.getExternalProfiles.mockImplementation(() => {
         throw mockError;
@@ -140,6 +140,7 @@ describe("LinkExternalProfileDialogComponent", () => {
       expect(component.error.message).toEqual(
         expect.stringContaining("permission"),
       );
+      expect(mockError.message).toBe("Request not permitted by API");
     } finally {
       vi.useRealTimers();
     }

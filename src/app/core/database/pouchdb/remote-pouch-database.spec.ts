@@ -1,3 +1,6 @@
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
+import { isExpiredSessionError } from "#src/app/utils/is-expired-session-error";
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";
@@ -355,6 +358,51 @@ describe("RemotePouchDatabase tests", () => {
     expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
   });
 
+  it.each([
+    {
+      response: "no response",
+      fetch: () => Promise.reject(new TypeError("Failed to fetch")),
+      errorClass: ConnectivityError,
+      expected: {
+        name: "ConnectivityError",
+        cause: expect.objectContaining({ message: "Failed to fetch" }),
+      },
+    },
+    {
+      response: "a gateway timeout of the proxy",
+      fetch: async () => new Response("", { status: 504 }),
+      errorClass: ConnectivityError,
+      expected: {
+        name: "ConnectivityError",
+        status: 504,
+      },
+    },
+    {
+      // not a dropped connection: was reported in the shared network issue before
+      response: "a server error",
+      // e.g. a proxy's whole HTML error page
+      fetch: async () => new Response("x".repeat(5000), { status: 500 }),
+      errorClass: ServerError,
+      expected: {
+        name: "ServerError",
+        status: 500,
+        details: { actualResponseBody: "x".repeat(500) },
+      },
+    },
+  ])(
+    "should classify a request with $response where it fails",
+    async ({ fetch, errorClass, expected }) => {
+      database.init("");
+      (PouchDB.fetch as Mock).mockImplementationOnce(fetch);
+
+      const failure = (database as any)
+        .defaultFetch(READ_URL, { headers: {} })
+        .catch((err) => err);
+      await expect(failure).resolves.toBeInstanceOf(errorClass);
+      await expect(failure).resolves.toMatchObject(expected);
+    },
+  );
+
   describe("session renewal alert", () => {
     let mockAlertService: { addWarning: Mock };
 
@@ -386,10 +434,9 @@ describe("RemotePouchDatabase tests", () => {
         new RemoteLoginNotAvailableError(new Error("Timeout has occurred")),
       );
 
-      const result = await fetchDoc();
-      await fetchDoc();
+      await fetchDoc().catch(() => undefined);
+      await fetchDoc().catch(() => undefined);
 
-      expect(result.status).toBe(HttpStatusCode.Unauthorized);
       expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
       expect(mockAlertService.addWarning).toHaveBeenCalledWith(
         expect.stringContaining("could not be renewed"),
@@ -401,13 +448,13 @@ describe("RemotePouchDatabase tests", () => {
         new RemoteLoginNotAvailableError(),
       );
 
-      await fetchDoc();
+      await fetchDoc().catch(() => undefined);
       // e.g. another tab or database instance renewed the session meanwhile
       (PouchDB.fetch as Mock).mockImplementationOnce(
         async () => new Response("{}", { status: HttpStatusCode.Ok }),
       );
       await fetchDoc();
-      await fetchDoc();
+      await fetchDoc().catch(() => undefined);
 
       expect(mockAlertService.addWarning).toHaveBeenCalledTimes(2);
     });
@@ -416,9 +463,8 @@ describe("RemotePouchDatabase tests", () => {
       mockAuthService.login.mockRejectedValue(new Error("unexpected"));
       const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
 
-      const result = await fetchDoc();
+      await fetchDoc().catch(() => undefined);
 
-      expect(result.status).toBe(HttpStatusCode.Unauthorized);
       expect(mockAlertService.addWarning).not.toHaveBeenCalled();
       expect(warn).toHaveBeenCalledWith(
         "Could not renew session after 401",
@@ -426,6 +472,35 @@ describe("RemotePouchDatabase tests", () => {
       );
       warn.mockRestore();
     });
+
+    it.each([
+      [
+        "the login server cannot be reached",
+        new RemoteLoginNotAvailableError(),
+      ],
+      ["the re-login fails for another reason", new Error("unexpected")],
+    ])(
+      "should fail as an expired session if the session cannot be renewed because %s, whatever reason the server gives",
+      async (_, loginError) => {
+        const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+        mockAuthService.login.mockRejectedValue(loginError);
+        // the replication backend answers an expired session without a reason
+        (PouchDB.fetch as Mock).mockImplementation(
+          async () =>
+            new Response('{ "error": "unauthorized" }', {
+              status: HttpStatusCode.Unauthorized,
+            }),
+        );
+
+        const failure = await database.get("Entity:ABC").catch((err) => err);
+
+        expect(failure).toBeInstanceOf(DatabaseException);
+        expect(failure.status).toBe(HttpStatusCode.Unauthorized);
+        expect(failure.cause).toBeInstanceOf(SessionExpiredError);
+        expect(isExpiredSessionError(failure)).toBe(true);
+        warn.mockRestore();
+      },
+    );
 
     it("should fail like any unreachable server if the repeated request gets no response", async () => {
       mockAuthService.login.mockResolvedValue(undefined);

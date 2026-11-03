@@ -46,7 +46,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { failedHttpResponse } from "#src/app/utils/failed-http-response";
+import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { RouterLink } from "@angular/router";
 import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
@@ -245,21 +246,20 @@ export class ReportingComponent {
   /**
    * The details of a failed calculation for the user. For a failed request, this is the message
    * the backend sends (e.g. naming the invalid entry of a report definition), if any,
-   * rather than the generic "Http failure response for …".
+   * else the response's "Http failure response for …" rather than the static
+   * message of the typed error it was converted into.
    */
   private getErrorDetails(
     reason: ReportCalculationError | HttpErrorResponse | Error,
   ): string {
-    const backendMessage: string | undefined =
-      reason instanceof HttpErrorResponse
-        ? reason.error?.errorMessage
-        : undefined;
+    const response = failedHttpResponse(reason);
+    const backendMessage: string | undefined = response?.error?.errorMessage;
     const calculationDetails =
       reason instanceof ReportCalculationError
         ? reason.reportCalculation?.errorDetails
         : undefined;
     return [
-      backendMessage ?? reason.message ?? String(reason),
+      backendMessage ?? response?.message ?? reason.message ?? String(reason),
       calculationDetails,
     ]
       .filter((part) => !!part)

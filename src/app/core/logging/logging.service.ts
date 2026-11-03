@@ -12,6 +12,7 @@ import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { LoggedError } from "./reported-errors";
+import { classifyReportedError } from "./uncaught-error-classification";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -267,10 +268,30 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
+  if (isClassifiedForeignFailure(message)) {
+    // e.g. an `HttpErrorResponse` logged as it is: grouped and filtered like that failure
+    return new LoggedError(messageText(message), message);
+  }
 
-  const cause = context.find((c) => c instanceof Error);
+  const cause =
+    context.find((c) => c instanceof Error) ??
+    context.find((c) => isClassifiedForeignFailure(c));
   if (!cause && logLevel !== LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
+}
+
+/**
+ * A logged failure that is not an `Error` but that remote monitoring recognizes
+ * (e.g. an `HttpErrorResponse` of another service without response): reported as
+ * the cause, so that it is grouped and filtered like that failure. Other failed
+ * responses (e.g. a 404) stay data: whether they are exceptional is for the caller to decide.
+ */
+function isClassifiedForeignFailure(value: unknown): boolean {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    classifyReportedError(value) !== undefined
+  );
 }

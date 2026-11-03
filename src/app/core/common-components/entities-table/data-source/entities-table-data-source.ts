@@ -11,8 +11,8 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import { isExpiredSessionError } from "#src/app/utils/is-expired-session-error";
+import { isNotPermittedError } from "#src/app/utils/is-not-permitted-error";
 import {
   MatSnackBar,
   MatSnackBarRef,

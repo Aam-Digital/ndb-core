@@ -9,7 +9,7 @@ import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 import { FormGroup } from "@angular/forms";
 import { Logging } from "../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
+import { isConnectivityError } from "../../../utils/is-connectivity-error";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
 import { environment } from "#src/environments/environment";
@@ -67,12 +67,6 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) => value),
-        catchError((e) => {
-          if (e.status === 403) {
-            e.message = $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`;
-          }
-          throw e;
-        }),
       );
   }
 
