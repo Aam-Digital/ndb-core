@@ -12,6 +12,8 @@ import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -21,10 +23,12 @@ describe("FilterService", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnumValues: vi.fn(),
+      preLoadEnums: vi.fn(),
     };
     mockEnumService.getEnumValues.mockReturnValue(defaultInteractionTypes);
 
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
         { provide: ConfigurableEnumService, useValue: mockEnumService },
       ],
@@ -223,5 +227,39 @@ describe("FilterService", () => {
       service.combineFilters([asFilter({}), asFilter(selected)]),
       "one of two selected",
     ).toEqual(selected);
+  });
+
+  describe("matching records in the stored format", () => {
+    function testRecord() {
+      return TestEntity.create({
+        category: { id: "M", label: "male" },
+        dateOfBirth: new DateWithAge(moment().subtract(10, "years").toDate()),
+      });
+    }
+
+    it.each([
+      [{ category: "M" }, true],
+      [{ "category.id": "M" }, true],
+      [{ "dateOfBirth.age": { $gte: 9 } }, true],
+      [{ isNew: true }, true],
+      [{ other: { $exists: false } }, true],
+      [{ category: { $exists: false } }, false],
+    ])("matches %j like the database", (condition, expected) => {
+      const matches = service.getFilterPredicate(condition);
+
+      expect(matches(testRecord())).toBe(expected);
+    });
+
+    it("converts a saved record again once it has a new revision", () => {
+      const record = testRecord();
+      record._rev = "1-a";
+      const matches = service.getFilterPredicate({ category: "F" });
+      expect(matches(record)).toBe(false);
+
+      record.category = { id: "F", label: "female" };
+      record._rev = "2-b";
+
+      expect(matches(record)).toBe(true);
+    });
   });
 });

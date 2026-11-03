@@ -15,7 +15,7 @@ import {
   FULL_LOAD_PAGE_SIZE,
 } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { toStoredFormatCondition } from "#src/app/core/filter/stored-format-condition";
+import { toStoredFormatCondition } from "#src/app/core/filter/stored-format";
 
 export class PaginatedDataSource<
   T extends Entity,

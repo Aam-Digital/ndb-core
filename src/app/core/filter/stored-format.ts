@@ -1,4 +1,5 @@
 import moment from "moment";
+import { Entity } from "../entity/model/entity";
 import { EntitySchema } from "../entity/schema/entity-schema";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
@@ -9,6 +10,24 @@ import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embe
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
 
 /**
+ * datatypes whose value is an object in the entity (like a `Date` or a dropdown option)
+ * but a plain value (like a string) in the stored format, so that a path into the value only exists in the entity
+ */
+const PLAIN_STORED_DATATYPES = [
+  ...STORED_BY_ID_DATATYPES,
+  "date",
+  "date-only",
+  "date-with-age",
+  "month",
+];
+
+/**
+ * Key under which a record in the stored format (see {@link toStoredFormatRecord}) gives access to the entity itself,
+ * for conditions on values that only the entity has (like the `age` of a date of birth).
+ */
+const ENTITY_VALUES_KEY = "__entity__";
+
+/**
  * Normalize a condition so that it matches records in the stored format,
  * the format that the database and the in-memory matching both evaluate:
  * - old keys addressing the object of a dropdown option or a linked record (e.g. "gender.id") become the stored id path ("gender"),
@@ -17,13 +36,85 @@ const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
  *
  * The schema is walked alongside the condition, so that fields nested inside
  * embedded fields (in `$elemMatch` or as dotted paths) are resolved as well.
+ *
+ * @param inMemory whether the condition is matched in memory against a record from {@link toStoredFormatRecord},
+ *   which also gives access to values that only the entity has (like `dateOfBirth.age`)
  */
 export function toStoredFormatCondition(
   condition: unknown,
   schema: EntitySchema | undefined,
   schemaService: EntitySchemaService,
+  inMemory = false,
 ): any {
-  return toDbSelector(condition, { schema }, schemaService);
+  return toDbSelector(condition, { schema, inMemory }, schemaService);
+}
+
+/**
+ * The record as the database stores it, to match conditions in the stored format in memory:
+ * its schema fields have their stored values, any other property (like a value calculated by the entity class)
+ * is read from the entity itself.
+ *
+ * @throws if a value cannot be converted
+ */
+export function toStoredFormatRecord(
+  entity: Entity,
+  schemaService: EntitySchemaService,
+): object {
+  const schema = entity.getSchema();
+  const stored = {};
+  for (const [key, field] of schema) {
+    const value = entity[key];
+    if (value === undefined) {
+      continue;
+    }
+    // a value saved while the field allowed several values stays a list, like in the database
+    const storedAs =
+      Array.isArray(value) &&
+      !field.isArray &&
+      STORED_BY_ID_DATATYPES.includes(field.dataType)
+        ? { ...field, isArray: true }
+        : field;
+    const storedValue = schemaService.valueToDatabaseFormat(
+      value,
+      storedAs,
+      entity,
+    );
+    if (storedValue !== undefined) {
+      stored[key] = storedValue;
+    }
+  }
+  return withEntityProperties(stored, entity, schema);
+}
+
+/**
+ * The stored values of a record, extended by the properties of the entity that are not stored
+ * (like the getters of the entity class), which are read from the entity itself.
+ * The stored values are the record's own properties (as checked by `$exists`); a schema field without stored value is missing.
+ */
+function withEntityProperties(
+  stored: object,
+  entity: Entity,
+  schema: EntitySchema,
+): object {
+  const isEntityProperty = (key: string | symbol) =>
+    !Object.hasOwn(stored, key) && !schema.has(key as string);
+  return new Proxy(stored, {
+    get: (target, key) => {
+      if (key === ENTITY_VALUES_KEY) {
+        return entity;
+      }
+      return isEntityProperty(key) ? entity[key] : target[key];
+    },
+    has: (target, key) =>
+      key in target || (isEntityProperty(key) && key in entity),
+    getOwnPropertyDescriptor: (target, key) => {
+      const descriptor = isEntityProperty(key)
+        ? Object.getOwnPropertyDescriptor(entity, key)
+        : Object.getOwnPropertyDescriptor(target, key);
+      // a property reported in addition to those of the target has to be configurable
+      return descriptor && { ...descriptor, configurable: true };
+    },
+  });
 }
 
 function toDbSelector(
@@ -68,6 +159,10 @@ function toDbPath(
   ctx: SchemaContext,
   schemaService: EntitySchemaService,
 ): { dbPath: string; field?: EntitySchemaField } {
+  if (ctx.inMemory && isPathIntoEntityValue(key, ctx.schema)) {
+    return { dbPath: `${ENTITY_VALUES_KEY}.${key}` };
+  }
+
   const dbSegments: string[] = [];
   let current = ctx;
   let field: EntitySchemaField | undefined;
@@ -115,6 +210,23 @@ function toDbCondition(
   return result;
 }
 
+/** whether the path leads into a value that is an object only in the entity, like `dateOfBirth.age` (but not `gender.id`) */
+function isPathIntoEntityValue(
+  key: string,
+  schema: EntitySchema | undefined,
+): boolean {
+  const [fieldId, ...path] = key.split(".");
+  const field = schema?.get(fieldId);
+  if (path.length === 0 || !PLAIN_STORED_DATATYPES.includes(field?.dataType)) {
+    return false;
+  }
+  return !(
+    path.length === 1 &&
+    path[0] === "id" &&
+    STORED_BY_ID_DATATYPES.includes(field.dataType)
+  );
+}
+
 function getEmbeddedContext(
   field: EntitySchemaField | undefined,
   schemaService: EntitySchemaService,
@@ -130,6 +242,8 @@ interface SchemaContext {
   container?: SchemaEmbedDatatype;
   /** Whether the keys are the conditions on an array entry inside `$elemMatch`. */
   inElemMatch?: boolean;
+  /** Whether the condition is matched in memory, see {@link toStoredFormatCondition}. */
+  inMemory?: boolean;
 }
 
 function isOperatorObject(condition: unknown): condition is object {

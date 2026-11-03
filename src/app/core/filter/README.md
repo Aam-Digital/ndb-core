@@ -24,11 +24,13 @@ This module holds the filter UI of lists and the shared code to evaluate these q
 **Values in the stored format.** Compare a field with its value as it is saved in the database:
 the id of a dropdown option (`{ "gender": "F" }`), the id of a referenced record,
 `"YYYY-MM-DD"` for a `date-only` field and `"YYYY-MM"` for a `month` field.
+Records are matched in this format everywhere, also in memory (see [Engines](#engines)).
 Older configs address dropdown options by their object (`{ "gender.id": "F" }`), which still works.
+Values that only the entity has, like a getter of the entity class or the `age` of a date of birth
+(`{ "dateOfBirth.age": { "$gte": 18 } }`), can be used in memory, but not in a database query.
 
 **Dates are compared by day.** For a `date` field (a timestamp), compare with a day (`"YYYY-MM-DD"`):
-in memory, a date matches if it falls on that day in local time, and the database query is translated accordingly
-(see `toDbDateBound` in `PaginatedDataSource`). A `month` counts as its first day.
+a date matches if it falls on that day in local time (see `toStoredDateBound`). A `month` counts as its first day.
 
 **Multi-value fields** match if one of their values matches: `{ "category": { "$elemMatch": { "$eq": "A" } } }`
 or `{ "category": { "$elemMatch": { "$in": ["A", "B"] } } }`.
@@ -49,15 +51,20 @@ see `DynamicPlaceholderValueService.resolveRecordPlaceholders`. A row referencin
 
 ## Engines
 
-| Engine                                                 | Used for                                                                                                                    | Pitfalls                                                                                                                                                      |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| in memory: `createFilterPredicate` (`@ucast/mongo2js`) | everything evaluated in memory (`FilterService.getFilterPredicate`, conditional colors, `MockEntityMapperService` in tests) | a comparison with a missing value counts as equal (add `$exists: true`); no `$and`/`$or` in `$elemMatch`                                                      |
-| CouchDB Mango, via `PaginatedDataSource`               | lists of an online-only session                                                                                             | the query is translated to the stored format first (`processFilterForDB`)                                                                                     |
-| pouchdb-find                                           | `MemoryPouchDatabase` in tests                                                                                              | gets an `$and` of several `$or` wrong                                                                                                                         |
-| CASL (`EntityAbility`, replication-backend)            | permissions                                                                                                                 | its own, stricter matcher on the record converted to the stored format; matches conditions in the stored format like in memory (see `entity-ability.spec.ts`) |
+| Engine                                        | Used for                        | Pitfalls                                                                                                                                                      |
+| --------------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| in memory: `FilterService.getFilterPredicate` | everything evaluated in memory  | a comparison with a missing value counts as equal (add `$exists: true`); no `$and`/`$or` in `$elemMatch`                                                      |
+| CouchDB Mango, via `PaginatedDataSource`      | lists of an online-only session | case-insensitive `$regex` is rewritten to `(?i)` (`convertToCouchRegex`); values only the entity has cannot be queried                                        |
+| pouchdb-find                                  | `MemoryPouchDatabase` in tests  | gets an `$and` of several `$or` wrong                                                                                                                         |
+| CASL (`EntityAbility`, replication-backend)   | permissions                     | its own, stricter matcher on the record converted to the stored format; matches conditions in the stored format like in memory (see `entity-ability.spec.ts`) |
 
-The in-memory engine (`utils/filter-compare-utils.ts`) compares with `extendedCompare`,
-so that a dropdown option object matches its id and a `Date` matches a day string.
+Both the in-memory engine and the database query normalize a condition first (`toStoredFormatCondition` in `stored-format.ts`):
+old `.id` keys, the stored paths of embedded fields (like the tuples of an old attendance field) and the day bounds of date fields.
+In memory, `FilterService` then matches each record converted to the stored format (`toStoredFormatRecord`),
+once per saved revision of a record.
+Conditional colors (`Entity.getColorWithConditions`) and the `MockEntityMapperService` of the unit tests
+use the same engine (`createFilterPredicate` in `utils/filter-compare-utils.ts`), but on the entity as it is.
+The engine compares with `extendedCompare`, so that a `Date` matches a day string and a dropdown option object matches its id.
 
 ## Key files
 
@@ -70,4 +77,4 @@ so that a dropdown option object matches its id and a `Date` matches a day strin
   for both single-value and multi-value fields; used by list filters and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
 - `filter.service.ts` — the in-memory engine, and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
-- `../common-components/entities-table/data-source/paginated-data-source.ts` — translation of a query for the database
+- `stored-format.ts` — normalizes conditions and converts records to the stored format, for the in-memory engine and database queries

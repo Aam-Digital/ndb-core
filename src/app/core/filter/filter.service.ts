@@ -9,6 +9,10 @@ import {
   Filter as EntityFilter,
 } from "./filters/filters";
 import { createFilterPredicate } from "../../utils/filter-compare-utils";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { EntitySchema } from "../entity/schema/entity-schema";
+import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
+import { Logging } from "../logging/logging.service";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -18,6 +22,13 @@ import { createFilterPredicate } from "../../utils/filter-compare-utils";
 })
 export class FilterService {
   private enumService = inject(ConfigurableEnumService);
+  private readonly schemaService = inject(EntitySchemaService);
+
+  /** the records in the stored format, kept per saved revision (see {@link toStoredFormat}) */
+  private readonly storedFormatCache = new WeakMap<
+    Entity,
+    { rev: string; record: object }
+  >();
 
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],
@@ -36,10 +47,67 @@ export class FilterService {
    * const predicate = this.filterService.getFilterPredicate(filterObj);
    * const filtered = this.data.filter(predicate)
    * ```
+   *
+   * Records are matched in the stored format, like the database matches them
+   * (see the README of the filter module).
+   *
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
+   * @throws if the filter cannot be parsed
    */
-  getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return createFilterPredicate<T>(filter);
+  getFilterPredicate<T extends Entity>(
+    filter: DataFilter<T>,
+  ): (record: T) => boolean {
+    const matchesAsIs = createFilterPredicate<T>(filter);
+    const matchesPerSchema = new Map<
+      EntitySchema,
+      (record: object) => boolean
+    >();
+    return (record: T) => {
+      if (!(record instanceof Entity)) {
+        return matchesAsIs(record);
+      }
+      const schema = record.getSchema();
+      let matches = matchesPerSchema.get(schema);
+      if (!matches) {
+        matches = createFilterPredicate(
+          toStoredFormatCondition(filter, schema, this.schemaService, true),
+        );
+        matchesPerSchema.set(schema, matches);
+      }
+      return matches(this.toStoredFormat(record));
+    };
+  }
+
+  /**
+   * The record as the database stores it (see {@link toStoredFormatRecord}).
+   *
+   * Saved records are converted once per revision. A record without revision (e.g. a new record) is converted every time,
+   * as it may still change. A copy with unsaved changes (like the current state of a form) is a new object and converted anew.
+   */
+  private toStoredFormat(record: Entity): object {
+    const cached = this.storedFormatCache.get(record);
+    if (cached && record._rev && cached.rev === record._rev) {
+      return cached.record;
+    }
+
+    let storedRecord: object;
+    try {
+      storedRecord = toStoredFormatRecord(record, this.schemaService);
+    } catch (err) {
+      // a value that cannot be converted is a data problem of this record, not a reason to fail the whole list
+      Logging.debug(
+        "[FILTER] could not convert record to the stored format",
+        err,
+      );
+      return record;
+    }
+    if (record._rev) {
+      this.storedFormatCache.set(record, {
+        rev: record._rev,
+        record: storedRecord,
+      });
+    }
+    return storedRecord;
   }
 
   /**
