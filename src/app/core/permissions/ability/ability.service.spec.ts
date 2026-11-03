@@ -24,6 +24,7 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { ConnectivityError } from "../../logging/error-classification";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -627,7 +628,7 @@ describe("AbilityService", () => {
     it("should not report a connectivity failure as an error", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
 
-      await initWithLoadError(new Error("Failed to fetch from DB"));
+      await initWithLoadError(new ConnectivityError("Failed to fetch from DB"));
 
       expect(errorSpy).not.toHaveBeenCalled();
     });

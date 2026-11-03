@@ -14,6 +14,7 @@ import {
   NotPermittedError,
   ServerError,
 } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
@@ -172,16 +173,6 @@ describe("normalizeErrorValue", () => {
 describe("classifyError", () => {
   it.each([
     [
-      "a response that never arrived",
-      new HttpErrorResponse({ status: 0 }),
-      "connectivity",
-    ],
-    [
-      "a gateway status",
-      new HttpErrorResponse({ status: 503 }),
-      "connectivity",
-    ],
-    [
       "a typed error, by its type rather than its wording",
       new ServerError("Failed to fetch from DB", { status: 500 }),
       "server-error",
@@ -203,7 +194,57 @@ describe("classifyError", () => {
       undefined,
     ],
     [
-      "a raw browser error, by its wording",
+      "a foreign error never by its wording, as the boundaries convert it",
+      new TypeError("Failed to fetch"),
+      undefined,
+    ],
+  ])("should classify %s", (_, error, expected) => {
+    expect(classifyError(error)).toBe(expected);
+  });
+});
+
+describe("classifyReportedError", () => {
+  it.each([
+    [
+      "a request of another service that never got a response",
+      new HttpErrorResponse({ status: 0 }),
+      "connectivity",
+    ],
+    [
+      "a gateway status of another service",
+      new HttpErrorResponse({ status: 503 }),
+      "connectivity",
+    ],
+    [
+      "an HttpErrorResponse without response logged as message",
+      "Http failure response for /nominatim/search: 0 Unknown Error",
+      "connectivity",
+    ],
+    [
+      "a failed fetch (Chrome)",
+      new TypeError("Failed to fetch"),
+      "connectivity",
+    ],
+    [
+      "a failed fetch (Firefox)",
+      new TypeError("NetworkError when attempting to fetch resource."),
+      "connectivity",
+    ],
+    ["a failed fetch (Safari)", new TypeError("Load failed"), "connectivity"],
+    [
+      "a failed chunk load (Chrome)",
+      new TypeError(
+        "Failed to fetch dynamically imported module: https://example.org/chunk-A1B2.js",
+      ),
+      "connectivity",
+    ],
+    [
+      "a failed chunk load (Safari)",
+      new TypeError("Importing a module script failed."),
+      "connectivity",
+    ],
+    [
+      "an IndexedDB error raised in PouchDB's callbacks",
       browserError(
         "InvalidStateError",
         "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
@@ -219,12 +260,22 @@ describe("classifyError", () => {
       undefined,
     ],
     [
+      "a typed error, by its type",
+      new ServerError("Failed to fetch from DB", { status: 500 }),
+      "server-error",
+    ],
+    [
       "a logged message, never by its wording",
       new LoggedError("Failed to fetch notifications"),
       undefined,
     ],
+    [
+      "a named error of ours, never by its wording",
+      new NamedError("AppBootstrapError", "Failed to fetch config"),
+      undefined,
+    ],
   ])("should classify %s", (_, error, expected) => {
-    expect(classifyError(error)).toBe(expected);
+    expect(classifyReportedError(error)).toBe(expected);
   });
 });
 

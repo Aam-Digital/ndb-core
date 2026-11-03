@@ -11,52 +11,18 @@ describe("isConnectivityError", () => {
     expect(isConnectivityError({ status: 404 })).toBe(false);
   });
 
-  it("detects raw AbortError / TimeoutError by name", () => {
-    expect(isConnectivityError(new DOMException("aborted", "AbortError"))).toBe(
-      true,
-    );
-    expect(
-      isConnectivityError(new DOMException("timed out", "TimeoutError")),
-    ).toBe(true);
-  });
-
-  it("detects transient gateway/offline status codes", () => {
-    for (const status of [0, 502, 503, 504]) {
-      expect(isConnectivityError({ status })).toBe(true);
-    }
-  });
-
-  it("detects a gateway status a library nested inside a Response", () => {
-    // keycloak-js reports every rejected response as "Server responded with an
-    // invalid status." and hands on the whole Response instead of the status
-    for (const status of [0, 502, 503, 504]) {
-      expect(
-        isConnectivityError(
-          Object.assign(new Error("Server responded with an invalid status."), {
-            response: { status },
-          }),
-        ),
-      ).toBe(true);
-    }
-    // a status that is the server answering, not failing to be reached
-    expect(
-      isConnectivityError(
-        Object.assign(new Error("Server responded with an invalid status."), {
-          response: { status: 400 },
-        }),
-      ),
-    ).toBe(false);
-  });
-
-  it("detects browser fetch failures by message", () => {
-    expect(isConnectivityError(new TypeError("Failed to fetch"))).toBe(true);
-    expect(
-      isConnectivityError(
-        new TypeError("NetworkError when attempting to fetch resource"),
-      ),
-    ).toBe(true);
-    expect(isConnectivityError(new TypeError("Load failed"))).toBe(true);
-  });
+  it.each([
+    ["a failed fetch", new TypeError("Failed to fetch")],
+    ["an abort", new DOMException("aborted", "AbortError")],
+    ["a gateway status", { status: 504 }],
+  ])(
+    "does not judge %s that passed no boundary by its name, status or wording",
+    (_, error) => {
+      // converted into a ConnectivityError where it enters the app (database
+      // layer, HTTP interceptor, KeycloakAuthService), see their specs
+      expect(isConnectivityError(error)).toBe(false);
+    },
+  );
 
   it("classifies a DatabaseException that wraps an AbortError (by the wrapped name)", () => {
     // the abort's name would otherwise be clobbered to "DatabaseException"

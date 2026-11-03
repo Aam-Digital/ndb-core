@@ -1,9 +1,6 @@
 import type * as Sentry from "@sentry/angular";
-import {
-  classifyError,
-  ErrorClassification,
-  isTypedErrorName,
-} from "./error-classification";
+import { ErrorClassification, isTypedErrorName } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 
 /**
@@ -31,7 +28,7 @@ export function groupSentryEvent(
   const original = hint?.originalException;
   const errors = errorsOfExceptions(values, original);
   const chainClassifications = errors
-    ? errors.map((error) => classifyError(error))
+    ? errors.map((error) => classifyReportedError(error))
     : values.map(classifyException);
   const reportedError =
     original instanceof NamedError || original instanceof LoggedError
@@ -116,7 +113,7 @@ function rootCauseIndex(
 export function classifyException(
   exception: Sentry.Exception,
 ): ErrorClassification | undefined {
-  return classifyError({
+  return classifyReportedError({
     name: exception.type,
     message: exception.value ?? "",
   });

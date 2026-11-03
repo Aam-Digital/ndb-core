@@ -116,11 +116,6 @@ describe("the error classification helpers", () => {
       "isConnectivityError",
     ],
     [
-      "a foreign error that passed no boundary, by its wording",
-      new TypeError("Failed to fetch"),
-      "isConnectivityError",
-    ],
-    [
       "an unclassified failure",
       new DatabaseException({ status: 404, message: "missing" }),
       undefined,

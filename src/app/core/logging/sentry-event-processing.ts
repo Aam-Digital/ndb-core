@@ -6,6 +6,7 @@ import {
   ErrorClassification,
   isTypedErrorName,
 } from "./error-classification";
+import { classifyReportedError } from "./uncaught-error-classification";
 import {
   classifyException,
   groupSentryEvent,
@@ -86,7 +87,8 @@ const REPORTING_POLICY: Record<
 /**
  * The classification of the failure an event reports: of its error chain if the
  * error object is known, else (e.g. for an event of a captured message) by the
- * reported exceptions, status and message.
+ * reported exceptions, status and message. Foreign errors that reached the
+ * logging unconverted are recognized as well (see `uncaught-error-classification.ts`).
  */
 function classifySentryEvent(
   event: Sentry.ErrorEvent,
@@ -94,12 +96,12 @@ function classifySentryEvent(
 ): ErrorClassification | undefined {
   const original = hint?.originalException;
   if (original instanceof Error) {
-    return classifyErrorChain(original);
+    return classifyErrorChain(original, classifyReportedError);
   }
   return (
-    classifyErrorChain(original) ??
+    classifyErrorChain(original, classifyReportedError) ??
     event.exception?.values?.map(classifyException).find(Boolean) ??
-    classifyError(event.message)
+    classifyReportedError(event.message)
   );
 }
 

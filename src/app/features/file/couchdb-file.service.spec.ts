@@ -43,6 +43,7 @@ import { NotAvailableOfflineError } from "../../core/session/not-available-offli
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 import { AlertService } from "../../core/alerts/alert.service";
+import { toTypedHttpError } from "../../utils/typed-http-error.interceptor";
 
 /** a record type whose only attachment field uses the "photo" datatype extending "file" */
 @DatabaseEntity("PhotoOnlyFileTestEntity")
@@ -225,9 +226,12 @@ describe("CouchdbFileService", () => {
   ])(
     "reports a file that fails to load with status %s only if the failure is unexpected",
     async (status, reported) => {
-      mockHttp.get.mockReturnValue(
-        throwError(() => new HttpErrorResponse({ status })),
-      );
+      // as the HTTP interceptor delivers a failed request to the database
+      const failure = toTypedHttpError(new HttpErrorResponse({ status }), {
+        method: "GET",
+        url: `${environment.DB_PROXY_PREFIX}/app-attachments/failing/logo`,
+      });
+      mockHttp.get.mockReturnValue(throwError(() => failure));
       vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
       const warn = vi
         .spyOn(Logging, "warn")
