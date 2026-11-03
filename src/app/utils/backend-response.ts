@@ -2,9 +2,9 @@ import { HttpStatusCode } from "@angular/common/http";
 import type { ErrorClassification } from "#src/app/core/logging/error-classification";
 
 /**
- * What a failed request to our backend (CouchDB, the API) means, for the
- * boundaries converting it into a typed error (see `error-classification.ts`):
- * the HTTP interceptor and the database layer.
+ * What a failed request to our backend (CouchDB, the API, Keycloak) means, for
+ * the boundaries converting it into a typed error (see `error-classification.ts`):
+ * the HTTP interceptor, the database layer and the Keycloak service.
  */
 
 /**
@@ -54,4 +54,38 @@ export function classifyResponseStatus(
     default:
       return undefined;
   }
+}
+
+/**
+ * The browsers' wordings of a `fetch` that got no response at all, for an error
+ * that carries neither a status nor a telling name.
+ */
+const FAILED_FETCH_PATTERNS = [
+  "Failed to fetch", // Chrome
+  "NetworkError", // Firefox ("NetworkError when attempting to fetch resource")
+  "Load failed", // Safari
+  "Network request failed",
+  "network timeout",
+];
+
+/** Whether the error is the browser's failure of a `fetch` that got no response. */
+export function isFailedFetch(error: unknown): boolean {
+  const text = errorText(error);
+  return FAILED_FETCH_PATTERNS.some((pattern) => text.includes(pattern));
+}
+
+/**
+ * The text of an error to match wordings against: `name: message reason`, like
+ * `Error.toString()`, which PouchDB's errors (plain objects) lack.
+ */
+export function errorText(error: unknown): string {
+  if (typeof error === "string") {
+    return error;
+  }
+  const err = (error ?? {}) as Record<string, unknown>;
+  return `${textOf(err.name)}: ${textOf(err.message)} ${textOf(err.reason)}`;
+}
+
+function textOf(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }
