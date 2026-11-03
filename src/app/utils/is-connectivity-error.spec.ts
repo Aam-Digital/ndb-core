@@ -35,19 +35,15 @@ describe("isConnectivityError", () => {
     expect(isConnectivityError(wrapped)).toBe(true);
   });
 
-  it("detects a connectivity failure wrapped by another error", () => {
+  it("detects the failed fetch of the remote database, also wrapped by another error", () => {
+    // what the remote database's fetch throws, wrapped by PouchDatabase
     const failedFetch = new DatabaseException(
-      new ConnectivityError("Failed to fetch from DB"),
+      new ConnectivityError("Failed to fetch from DB", {
+        cause: new TypeError("Failed to fetch"),
+      }),
     );
 
+    expect(isConnectivityError(failedFetch)).toBe(true);
     expect(isConnectivityError(new SyncFailedError(failedFetch))).toBe(true);
-  });
-
-  it("classifies a DatabaseException whose message is a network failure", () => {
-    const wrapped = new DatabaseException({
-      message: "Failed to fetch from DB",
-    });
-
-    expect(isConnectivityError(wrapped)).toBe(true);
   });
 });
