@@ -184,11 +184,12 @@ cause instead of by stack trace, which would open one issue per call site (and p
 
 Foreign errors are converted into typed errors (`TypedError` in `error-classification.ts`, one class per
 kind of failure: connectivity, server error, not permitted, expired session, write conflict, broken
-local database) where they enter the app: the database layer (`DatabaseException`, the remote
-database's fetch wrapper) and `typedHttpErrorInterceptor` for requests to our backend (`/db`, `/api`).
-Everything else, including remote monitoring, judges an error by its type (`classifyError()`); only
-foreign errors that never pass such a boundary (e.g. an unhandled failed `fetch`, keycloak-js) fall back
-to their status, name and wording. For a new kind of failure, extend one of the typed classes.
+local database) where they enter the app, by the knowledge of the module they belong to: the database
+layer (`DatabaseException`, `pouchdb-errors.ts`), `typedHttpErrorInterceptor` for requests to our backend
+(`/db`, `/api`) and `KeycloakAuthService`, sharing what our backend's responses mean
+(`src/app/utils/backend-response.ts`). Everything else judges an error by its type (`classifyError()`).
+Only remote monitoring also recognizes the few foreign errors that reach it uncaught, e.g. a failed chunk
+load (`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes.
 
 - **Check for a kind of failure** with `isConnectivityError()`, `isNotPermittedError()` or
   `isExpiredSessionError()` (`src/app/utils/`), which apply this classification to the whole `cause`
@@ -257,10 +258,11 @@ users, as events deliberately carry no user identity (data minimization under th
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `error-classification.ts` — the typed errors, `classifyError()`, the status mapping of the boundaries and the fallback patterns
-- `typed-http-error.interceptor.ts` — the boundary converting failed responses of our backend into typed errors
+- `error-classification.ts` — the typed errors and `classifyError()`
+- `uncaught-error-classification.ts` — the foreign errors recognized only when they reach remote monitoring uncaught
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
 - `report-once.ts` — turning repeated reports of one failure into breadcrumbs
 - `log-level.ts` — the `LogLevel` definitions
 - `src/app/utils/failed-http-response.ts`, `src/app/utils/*-error.ts` — helpers to read and classify failed requests
+- `src/app/utils/typed-http-error.interceptor.ts`, `src/app/utils/backend-response.ts` — the HTTP boundary and what our backend's responses mean
