@@ -70,6 +70,9 @@
           "entityType": "Todo"
         },
         {
+          "entityType": "Action"
+        },
+        {
           "label": "Import",
           "icon": "file-import",
           "link": "/import"
@@ -2190,6 +2193,141 @@
           }
         }
       }
+    },
+    "entity:Action": {
+      "label": "Action",
+      "labelPlural": "Actions",
+      "icon": "list-check",
+      "toStringAttributes": [
+        "title"
+      ],
+      "route": "action",
+      "attributes": {
+        "title": {
+          "label": "Title",
+          "dataType": "string",
+          "validators": {
+            "required": true
+          }
+        },
+        "parentAction": {
+          "label": "Parent action",
+          "dataType": "entity",
+          "additional": "Action"
+        },
+        "dependsOn": {
+          "label": "Depends on",
+          "dataType": "entity",
+          "additional": "Action"
+        },
+        "status": {
+          "label": "Status",
+          "dataType": "configurable-enum",
+          "additional": "action-status"
+        },
+        "responsible": {
+          "label": "Responsible",
+          "dataType": "entity",
+          "additional": "User"
+        },
+        "timeframe": {
+          "label": "Timeframe",
+          "dataType": "date-range"
+        }
+      }
+    },
+    "view:action": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "Action",
+        "columns": [
+          "title",
+          "status",
+          "responsible",
+          "timeframe"
+        ],
+        "filters": [
+          {
+            "id": "status"
+          },
+          {
+            "id": "responsible"
+          }
+        ],
+        "dataSource": {
+          "name": "hierarchy",
+          "config": {
+            "hierarchyFields": [
+              "parentAction",
+              "dependsOn"
+            ]
+          }
+        }
+      },
+      "_id": "view:action"
+    },
+    "view:action/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Action",
+        "panels": [
+          {
+            "title": "Action",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "title",
+                        "status",
+                        "responsible",
+                        "timeframe"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "parentAction",
+                        "dependsOn"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Sub-actions",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Action",
+                  "property": "parentAction",
+                  "dataSource": "hierarchy",
+                  "columns": [
+                    {
+                      "id": "title"
+                    },
+                    {
+                      "id": "status"
+                    },
+                    {
+                      "id": "responsible"
+                    },
+                    {
+                      "id": "timeframe",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:action/:id"
     }
   }
 }
