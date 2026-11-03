@@ -382,8 +382,16 @@ export class ImportAdditionalService {
     const { sourceType, targetTypes, relationshipType } =
       this.resolveActionTypes(importAction);
 
+    // the parent menu item already names the record, so the target type is only
+    // added where it tells two actions of the same relationship type apart
+    const targetTypeLabel =
+      targetTypes.length > 1
+        ? $localize` for ${targetTypes.map((t) => t.toString()).join(" / ")}`
+        : "";
+
     return (
       sourceType.toString(true) +
+      targetTypeLabel +
       this.getAdditionalContextDetailsForActionLabel(
         importAction,
         targetTypes,
