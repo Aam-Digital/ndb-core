@@ -26,8 +26,10 @@ import {
 import { isConnectivityError } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "../../session/session-expired.error";
-import { CONNECTIVITY_ERROR_STATUS } from "#src/app/utils/backend-response";
-import { normalizeRequestPath } from "../../logging/sentry-grouping";
+import {
+  CONNECTIVITY_ERROR_STATUS,
+  normalizeRequestPath,
+} from "#src/app/utils/backend-response";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -493,26 +495,6 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected = this.pendingLostPermissions;
     this.pendingLostPermissions = [];
     return collected;
-  }
-
-  /**
-   * Open a separate connection to the same remote database, authenticated the same way,
-   * whose requests do not affect the state of this one: it does not track lost permissions.
-   *
-   * Close it with `close()` once done - never with `destroy()`,
-   * which would delete the database on the server.
-   */
-  openSeparateConnection(): PouchDB.Database {
-    const connection = new RemotePouchDatabase(
-      this.dbName,
-      this.authService,
-      undefined,
-      this.ngZone,
-    );
-    connection.init(undefined, {
-      unauthenticatedSession: this.unauthenticatedSession,
-    });
-    return connection.getPouchDB();
   }
 
   override supportsFind(): boolean {

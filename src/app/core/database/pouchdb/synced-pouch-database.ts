@@ -42,6 +42,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
+  /**
+   * Destroy the local database.
+   * Its last completed sync is forgotten, so that a new database with the same name
+   * is not taken for local data that was lost (see DatabaseResolverService).
+   */
+  override async destroy(): Promise<any> {
+    const lastSyncKey = this.LAST_SYNC_KEY;
+    const result = await super.destroy();
+    if (lastSyncKey) {
+      localStorage.removeItem(lastSyncKey);
+    }
+    return result;
+  }
+
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
@@ -77,27 +91,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   get localSyncState(): SyncStateSubject {
     return this.syncState;
-  }
-
-  /**
-   * Open a separate connection to this database's remote database,
-   * as the replication source of the background migration (see `IndexeddbMigrationService`).
-   *
-   * Unlike the connection this database syncs through, it does not collect the documents
-   * the server reports as no longer permitted: a replication from scratch gets all documents
-   * the user may not read reported, and this database's next sync would purge each of them
-   * before completing.
-   *
-   * The caller has to close it with `close()` once done (never `destroy()`,
-   * which would delete the database on the server).
-   *
-   * @returns undefined if the database is not initialized yet
-   */
-  openRemoteReplicationSource(): PouchDB.Database | undefined {
-    if (!this.remoteDatabase.isInitialized()) {
-      return undefined;
-    }
-    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(
@@ -330,21 +323,36 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
   private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    this.logSyncFailure(err, lastSyncedDocIds);
+    this.syncState.next(SyncState.FAILED);
+  }
+
+  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    const context = {
+      db: this.dbName,
+      ...lastSyncedBatchContext(lastSyncedDocIds),
+    };
     if (this.isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
         err,
       );
-    } else if (
+      return;
+    }
+
+    // reported (with the offer to reset the local data) by the recovery service
+    const reportedAsCorruption =
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-      )
-    ) {
-      // reported (with the offer to reset the local data) by the recovery service
-    } else if (isTransientReplicationFailure(err)) {
+        context,
+      );
+    if (reportedAsCorruption) {
+      return;
+    }
+
+    if (isTransientReplicationFailure(err)) {
       Logging.debug(
         `sync failed (offline or unauthorized)`,
         { db: this.dbName },
@@ -353,7 +361,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } else {
       Logging.warn(`sync failed`, { db: this.dbName }, err);
     }
-    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {

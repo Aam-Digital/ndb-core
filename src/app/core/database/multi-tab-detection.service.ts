@@ -1,9 +1,10 @@
 import { inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 type TabChannelMessage = {
-  type: "hello" | "ping" | "goodbye";
+  type: "hello" | "ping" | "goodbye" | "reload";
   tabId: string;
 };
 
@@ -27,6 +28,7 @@ export class MultiTabDetectionService implements OnDestroy {
     PouchdbCorruptionRecoveryService,
     { optional: true },
   );
+  private readonly location = inject(LOCATION_TOKEN, { optional: true });
   private _isMultipleTabsOpen = false;
   private pingIntervalId?: ReturnType<typeof setInterval>;
   /** Emits whenever the multi-tab state changes. */
@@ -58,6 +60,14 @@ export class MultiTabDetectionService implements OnDestroy {
     }
   }
 
+  /**
+   * Make all other tabs of the app reload, e.g. after the local database was replaced,
+   * which they would otherwise keep using through their closed connection.
+   */
+  reloadOtherTabs() {
+    this.postMessage("reload");
+  }
+
   private readonly handleBeforeUnload = () => {
     this.postMessage("goodbye");
   };
@@ -82,6 +92,11 @@ export class MultiTabDetectionService implements OnDestroy {
 
     if (tabMessage.type === "ping") {
       this.markTabAlive(tabMessage.tabId);
+      return;
+    }
+
+    if (tabMessage.type === "reload") {
+      this.location?.reload();
       return;
     }
 

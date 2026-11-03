@@ -1,5 +1,4 @@
 import { MatTableDataSource } from "@angular/material/table";
-import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DestroyRef, effect, inject, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
@@ -61,7 +60,7 @@ const LOAD_ERROR_CAUSES: Partial<Record<ErrorClassification, LoadErrorCause>> =
  */
 export abstract class EntitiesTableDataSource<
   T extends Entity,
-> extends MatTableDataSource<TableRow<T>> {
+> extends MatTableDataSource<T> {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly entityMapper = inject(EntityMapperService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
@@ -75,12 +74,12 @@ export abstract class EntitiesTableDataSource<
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
   /**
-   * The rows handed to the table as input data, in the order they were loaded.
+   * The records handed to the table as input data, in the order they were loaded.
    * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
    */
-  displayedData = signal<TableRow<T>[]>([]);
+  displayedData = signal<T[]>([]);
   /**
-   * The rows as currently rendered by the table:
+   * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
    */
   readonly renderedRows = toSignal(this.connect(), { requireSync: true });
@@ -89,11 +88,11 @@ export abstract class EntitiesTableDataSource<
 
   // NOTE: overriding only the setter would hide the inherited `get data`,
   // so `dataSource.data` would return `undefined`. Provide both accessors.
-  override get data(): TableRow<T>[] {
+  override get data(): T[] {
     return super.data;
   }
 
-  override set data(data: TableRow<T>[]) {
+  override set data(data: T[]) {
     // expose signal containing current data
     this.displayedData.set(data);
     super.data = data;
@@ -105,7 +104,7 @@ export abstract class EntitiesTableDataSource<
   protected constructor() {
     super();
     effect(() => {
-      this.data = this.filteredRecords().map((record) => ({ record }));
+      this.data = this.filteredRecords();
     });
     effect(() => {
       if (this.loadRecordConfig()) {

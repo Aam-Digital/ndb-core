@@ -7,6 +7,9 @@ import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 
+/** A request to another service (not converted by the HTTP interceptor) without response. */
+const offlineResponse = new HttpErrorResponse({ status: 0 });
+
 describe("LoggingService", () => {
   const failure = new Error("Failed to fetch");
 
@@ -41,6 +44,13 @@ describe("LoggingService", () => {
       level: LogLevel.WARN,
       context: [new HttpErrorResponse({ status: 404 })],
       expected: undefined,
+    },
+    {
+      // grouped and filtered like that failure (into the network issue)
+      call: "a warning with a request to another service without response",
+      level: LogLevel.WARN,
+      context: [offlineResponse],
+      expected: { message: "Could not load X", cause: offlineResponse },
     },
   ])(
     "should report $call as the logged message caused by the error (or as a plain message if undefined)",
@@ -111,6 +121,16 @@ describe("LoggingService", () => {
 
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
+  });
+
+  it("should report a failed request to another service logged as message as the cause of its message", () => {
+    const reported = toReportedError(offlineResponse, [], LogLevel.WARN);
+
+    expect(reported).toBeInstanceOf(LoggedError);
+    expect(reported).toMatchObject({
+      message: offlineResponse.message,
+      cause: offlineResponse,
+    });
   });
 
   it.each([undefined, ""])(

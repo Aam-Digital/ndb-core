@@ -416,6 +416,7 @@ export class PouchDatabase extends Database {
             // backend answers with a plain 401: retried below
             Logging.debug("changes feed failed (unauthorized)", err);
           } else {
+            // offline or a session that could not be renewed: retried below
             Logging.errorUnlessExpected(
               "changes feed failed",
               toTypedDatabaseError(err),

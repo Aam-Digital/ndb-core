@@ -21,6 +21,7 @@ import {
 } from "../../skill-api/skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
+import { isNotPermittedError } from "../../../../core/logging/error-classification";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -142,7 +143,12 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         "SkillModule: Failed to load external profiles",
         e,
       );
-      this.error = e;
+      // a NotPermittedError keeps its static message (its issue title), the user gets a translated one
+      this.error = isNotPermittedError(e)
+        ? {
+            message: $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`,
+          }
+        : e;
       return;
     } finally {
       this.loading = false;

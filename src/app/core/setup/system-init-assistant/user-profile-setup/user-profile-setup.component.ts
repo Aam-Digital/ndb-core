@@ -164,7 +164,6 @@ export class UserProfileSetupComponent implements OnInit {
         entity,
         this.destroyRef,
         false,
-        false,
       ),
     );
   }

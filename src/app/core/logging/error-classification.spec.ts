@@ -77,11 +77,6 @@ describe("classification helpers", () => {
       "connectivity",
     ],
     [
-      "a DatabaseException whose message is a network failure",
-      new DatabaseException({ message: "Failed to fetch from DB" }),
-      "connectivity",
-    ],
-    [
       "an expired token wrapped in a DatabaseException",
       new DatabaseException(
         couchDbUnauthorized("exp not in future"),
@@ -210,9 +205,9 @@ describe("classifyReportedError", () => {
       "connectivity",
     ],
     [
-      "an HttpErrorResponse without response logged as message",
-      "Http failure response for /nominatim/search: 0 Unknown Error",
-      "connectivity",
+      "a message never by its wording",
+      "Failed to fetch roles for user",
+      undefined,
     ],
     [
       "a failed fetch (Chrome)",

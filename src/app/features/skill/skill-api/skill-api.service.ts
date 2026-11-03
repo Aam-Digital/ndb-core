@@ -66,12 +66,6 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) => value),
-        catchError((e) => {
-          if (e.status === 403) {
-            e.message = $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`;
-          }
-          throw e;
-        }),
       );
   }
 

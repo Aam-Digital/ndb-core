@@ -30,26 +30,24 @@ const CHUNK_LOAD_FAILURE_PATTERNS = [
   "Importing a module script failed", // Safari
 ];
 
-/** Angular's message of an `HttpErrorResponse` without a response, e.g. logged as message. */
-const NO_HTTP_RESPONSE_TEXT = "0 Unknown Error";
-
 /**
- * ONLY for foreign errors that reach us uncaught (Angular's `ErrorHandler`, the
- * window's error events) or are logged as they are, without a boundary converting
- * them into a typed error: everything else is judged by its type alone.
+ * ONLY for foreign error objects that reach us uncaught (Angular's `ErrorHandler`,
+ * the window's error events) or are logged as they are, without a boundary
+ * converting them into a typed error: everything else is judged by its type alone.
  * - a failed chunk load, a `fetch` that failed outside a boundary, or a failed
  *   request of another service (status 0, 502-504, e.g. of an `HttpErrorResponse`);
  * - a raw error of PouchDB or IndexedDB that no `DatabaseException` wraps, e.g.
  *   raised in PouchDB's callbacks (see `classifyPouchDbError` of the database module).
  *
- * Never for our own errors: a logged message is not classified by its wording.
+ * Never for our own errors, and never for a string: a logged message is not
+ * classified by its wording (e.g. "Failed to fetch roles" is no failed `fetch`).
  */
 function classifyUncaughtError(
   error: unknown,
 ): ErrorClassification | undefined {
   if (
     !error ||
-    (typeof error !== "object" && typeof error !== "string") ||
+    typeof error !== "object" ||
     error instanceof LoggedError ||
     error instanceof NamedError
   ) {
@@ -59,7 +57,6 @@ function classifyUncaughtError(
   if (
     CONNECTIVITY_ERROR_STATUS.has((error as { status?: number }).status) ||
     isFailedFetch(error) ||
-    text.includes(NO_HTTP_RESPONSE_TEXT) ||
     CHUNK_LOAD_FAILURE_PATTERNS.some((pattern) => text.includes(pattern))
   ) {
     return "connectivity";

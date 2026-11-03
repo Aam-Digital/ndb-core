@@ -2,6 +2,7 @@ import type * as Sentry from "@sentry/angular";
 import { ErrorClassification, isTypedErrorName } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
+import { errorText, textOf } from "#src/app/utils/backend-response";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
@@ -138,12 +139,34 @@ function failedRequestPassedOn(
   if (chainClassifications[values.indexOf(reportedError)] === "connectivity") {
     return reportedError;
   }
+  if (!(original instanceof LoggedError)) {
+    return undefined;
+  }
+  if (!(original.cause instanceof Error)) {
+    return loggedForeignFailedRequest(original.cause);
+  }
   const causeIndex = values.length - 2;
-  return original instanceof LoggedError &&
-    causeIndex >= 0 &&
-    chainClassifications[causeIndex] === "connectivity"
+  return causeIndex >= 0 && chainClassifications[causeIndex] === "connectivity"
     ? values[causeIndex]
     : undefined;
+}
+
+/**
+ * A logged failure that is not an `Error` (e.g. an `HttpErrorResponse` of a request
+ * to another service without response), which Sentry does not serialize as an
+ * exception of the event: as the exception it would be, if it is a failed request.
+ */
+function loggedForeignFailedRequest(
+  cause: unknown,
+): Sentry.Exception | undefined {
+  if (classifyReportedError(cause) !== "connectivity") {
+    return undefined;
+  }
+  const { name, message } = (cause ?? {}) as Record<string, unknown>;
+  return {
+    type: textOf(name) || "Error",
+    value: textOf(message) || errorText(cause),
+  };
 }
 
 /**
@@ -334,25 +357,6 @@ export function normalizeErrorValue(value: string | undefined): string {
       normalized.replace(pattern, placeholder),
     value,
   );
-}
-
-/** A path segment naming a route rather than a record: a word (e.g. `_bulk_docs`) or an API version. */
-const ROUTE_PATH_SEGMENT = /^(_?[a-z][a-z_-]*|v\d+)$/i;
-
-/**
- * The path of a request as a grouping key: without host, query and fragment
- * (which may hold personal data), and with every segment that is not a route
- * name masked (document ids, uuids, numbers),
- * e.g. "/db/app/Child%3A1?rev=1-a" → "/db/app/<id>".
- */
-export function normalizeRequestPath(url: string): string {
-  const path = url.replace(/^[a-z]+:\/\/[^/]*/i, "").split(/[?#]/)[0];
-  return path
-    .split("/")
-    .map((segment) =>
-      segment === "" || ROUTE_PATH_SEGMENT.test(segment) ? segment : "<id>",
-    )
-    .join("/");
 }
 
 /**

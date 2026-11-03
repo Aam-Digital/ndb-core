@@ -90,3 +90,22 @@ export function errorText(error: unknown): string {
 export function textOf(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
+
+/** A path segment naming a route rather than a record: a word (e.g. `_bulk_docs`) or an API version. */
+const ROUTE_PATH_SEGMENT = /^(_?[a-z][a-z_-]*|v\d+)$/i;
+
+/**
+ * The path of a request as a grouping key: without host, query and fragment
+ * (which may hold personal data), and with every segment that is not a route
+ * name masked (document ids, uuids, numbers),
+ * e.g. "/db/app/Child%3A1?rev=1-a" → "/db/app/<id>".
+ */
+export function normalizeRequestPath(url: string): string {
+  const path = url.replace(/^[a-z]+:\/\/[^/]*/i, "").split(/[?#]/)[0];
+  return path
+    .split("/")
+    .map((segment) =>
+      segment === "" || ROUTE_PATH_SEGMENT.test(segment) ? segment : "<id>",
+    )
+    .join("/");
+}

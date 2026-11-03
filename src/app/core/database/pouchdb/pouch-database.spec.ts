@@ -25,6 +25,8 @@ import {
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { Logging } from "../../logging/logging.service";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -509,6 +511,55 @@ describe("PouchDatabase tests", () => {
     expect(createIndex).not.toHaveBeenCalled();
 
     await localDatabase.destroy();
+  });
+
+  describe("changes feed", () => {
+    afterEach(() => {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it.each([
+      {
+        failure: new ConnectivityError("Failed to fetch from DB", {
+          status: 0,
+        }),
+        reported: false,
+      },
+      {
+        failure: new SessionExpiredError("Session could not be renewed", {
+          status: 401,
+        }),
+        reported: false,
+      },
+      {
+        failure: new ServerError("Server error response from DB", {
+          status: 500,
+        }),
+        reported: true,
+      },
+    ])(
+      "retries after a $failure.name, reported as error: $reported",
+      async ({ failure, reported }) => {
+        vi.useFakeTimers();
+        const feed = {
+          addListener: () => feed,
+          catch: (onError: (err: unknown) => void) => onError(failure),
+        };
+        const changes = vi
+          .spyOn(database.getPouchDB(), "changes")
+          .mockReturnValue(feed as any);
+        const error = vi.spyOn(Logging, "error");
+
+        database.changes();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(error).toHaveBeenCalledTimes(reported ? 1 : 0);
+        await vi.advanceTimersByTimeAsync(10000);
+        expect(changes).toHaveBeenCalledTimes(2);
+      },
+    );
   });
 
   describe("purge", () => {

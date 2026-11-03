@@ -85,6 +85,18 @@ describe("processSentryEvent", () => {
 
       expect(processError(error) === null).toBe(dropped);
     });
+
+    it("should not drop a logged message while offline for its wording", () => {
+      vi.stubGlobal("navigator", { onLine: false });
+      const message = "Failed to fetch roles for user";
+
+      const event = processSentryEvent({ message } as Sentry.ErrorEvent, {
+        originalException: message,
+      });
+
+      expect(event).not.toBeNull();
+      expect(event.tags?.error_class).toBeUndefined();
+    });
   });
 
   it("should drop an unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser)", () => {

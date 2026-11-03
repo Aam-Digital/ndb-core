@@ -129,6 +129,15 @@ describe("processSentryEvent", () => {
         title: "NetworkError: Failed to reach the server",
       },
       {
+        case: "a logged failed request to another service (not an Error), in the network issue",
+        error: new LoggedError(
+          "Failed to load config descriptor",
+          new HttpErrorResponse({ status: 0 }),
+        ),
+        fingerprint: ["network-error"],
+        title: "NetworkError: Failed to reach the server",
+      },
+      {
         case: "a logged chunk load failure, in the network issue",
         error: new LoggedError(
           "Failed to load dynamic component",

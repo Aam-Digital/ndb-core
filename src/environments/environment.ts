@@ -74,7 +74,7 @@ export const environment = {
   /**
    * Use the newer "indexeddb" PouchDB adapter (and Keycloak-UUID-based local database names)
    * instead of the legacy "idb" adapter.
-   * When true (default), existing local databases on the old adapter are migrated in the background
+   * When true (default), existing local databases on the old adapter are migrated
    * (see IndexeddbMigrationService).
    * Set to false via config.json to opt out and keep using the legacy adapter.
    */

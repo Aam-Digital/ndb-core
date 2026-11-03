@@ -23,7 +23,6 @@ import {
   MatTableModule,
 } from "@angular/material/table";
 import { Router } from "@angular/router";
-import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
@@ -39,12 +38,10 @@ import {
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { Logging } from "../../logging/logging.service";
-import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import { TableRow } from "./table-row";
 import {
   EntitiesTableSelectionStore,
-  shouldSkipRowInteraction,
+  isClickableTarget,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
@@ -57,7 +54,6 @@ import { EntitiesTableDataSource } from "#src/app/core/common-components/entitie
   selector: "app-entities-table",
   providers: [EntitiesTableSortStore, EntitiesTableSelectionStore],
   imports: [
-    EntityFieldEditComponent,
     EntityFieldLabelComponent,
     EntityFieldViewComponent,
     ListPaginatorComponent,
@@ -66,7 +62,6 @@ import { EntitiesTableDataSource } from "#src/app/core/common-components/entitie
     MatSlideToggleModule,
     MatSortModule,
     MatTableModule,
-    EntityInlineEditActionsComponent,
     EntityCreateButtonComponent,
   ],
   templateUrl: "./entities-table.component.html",
@@ -103,6 +98,12 @@ export class EntitiesTableComponent<T extends Entity>
   getBackgroundColor = input<(rec: T) => string>();
   clickMode = input<"popup" | "navigate" | "popup-details" | "none">("popup");
   newRecordFactory = input<() => T>();
+  /**
+   * Whether to show the button to create a new record in the table header.
+   *
+   * (Records cannot be edited within the table itself,
+   * clicking a row opens it according to the `clickMode` instead.)
+   */
   editable = input<boolean>(true);
   selectable = input<boolean>(false);
   /**
@@ -121,7 +122,7 @@ export class EntitiesTableComponent<T extends Entity>
 
   // --- Internal constants ---
   readonly ACTIONCOLUMN_SELECT = "__select";
-  readonly ACTIONCOLUMN_EDIT = "__edit";
+  readonly ACTIONCOLUMN_CREATE = "__create";
 
   // --- Column state ---
   readonly _customColumns = computed<FormFieldConfig[]>(() => {
@@ -180,7 +181,7 @@ export class EntitiesTableComponent<T extends Entity>
     const columns: string[] = [];
     for (const col of colsToDisplay) {
       if (typeof col === "string" && col.startsWith("__")) {
-        continue; // reserved ids for the select/edit action columns added below
+        continue; // reserved ids for the select/create action columns added below
       }
       if (typeof col !== "string" || !knownIds.has(col)) {
         // a dangling or incompletely configured column id must not block the rest of the table from rendering
@@ -197,7 +198,7 @@ export class EntitiesTableComponent<T extends Entity>
       columns.unshift(this.ACTIONCOLUMN_SELECT);
     }
     if (this.editable()) {
-      columns.splice(this.selectable() ? 1 : 0, 0, this.ACTIONCOLUMN_EDIT);
+      columns.splice(this.selectable() ? 1 : 0, 0, this.ACTIONCOLUMN_CREATE);
     }
     return columns;
   });
@@ -277,24 +278,24 @@ export class EntitiesTableComponent<T extends Entity>
     );
   }
 
-  onRowClick(row: TableRow<T>, event: MouseEvent) {
-    if (shouldSkipRowInteraction(event.target, row)) {
+  onRowClick(record: T, event: MouseEvent) {
+    if (isClickableTarget(event.target)) {
       return;
     }
     if (this.selectable()) {
       this.selectionStore.selectRow(
-        row,
-        !this.selectedRecords()?.includes(row.record),
+        record,
+        !this.selectedRecords()?.includes(record),
       );
       return;
     }
-    this.showEntity(row.record);
-    this.entityClick.emit(row.record);
+    this.showEntity(record);
+    this.entityClick.emit(record);
   }
 
-  onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
+  onRowMouseDown(event: MouseEvent, record: T) {
     if (!this.selectable()) {
-      this.onRowClick(row, event);
+      this.onRowClick(record, event);
       return;
     }
 
@@ -304,8 +305,8 @@ export class EntitiesTableComponent<T extends Entity>
       event.preventDefault();
     }
 
-    if (this.selectionStore.handleSelectableRowMouseDown(event, row)) {
-      this.onRowClick(row, event);
+    if (this.selectionStore.handleSelectableRowMouseDown(event, record)) {
+      this.onRowClick(record, event);
     }
   }
 

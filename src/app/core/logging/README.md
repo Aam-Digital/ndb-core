@@ -101,7 +101,8 @@ Logging.error("Could not download file", err, { fileId });
 `Logging.error(message, err)` and `Logging.warn(message, err)` report the message as an error (a
 `LoggedError`) with the original as its `cause`, which Sentry keeps in the exception chain. A warning
 without an `Error` is reported as a plain message event. Angular's `HttpErrorResponse` is not an `Error`
-and counts as "no error" here. Do not drop the error before logging (e.g. `catchError(() => of(null))`
+and counts as "no error" here, unless it is a request to another service that got no response (status 0
+or a gateway status): that is reported as the `cause`, so that it goes into the network issue. Do not drop the error before logging (e.g. `catchError(() => of(null))`
 followed by a log call without it).
 
 ### Our own errors: `NamedError`
