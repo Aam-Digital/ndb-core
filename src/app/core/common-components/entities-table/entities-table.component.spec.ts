@@ -685,10 +685,17 @@ describe("EntitiesTableComponent", () => {
         new MouseEvent("mousedown", { shiftKey: true }),
         c,
       );
+      fixture.detectChanges();
       expect(component.selectedRecords()).toEqual([a, c]);
 
       component.onRowMouseDown(new MouseEvent("mousedown"), locked);
+      fixture.detectChanges();
       expect(component.selectedRecords()).toEqual([a, c]);
+
+      // also when the host selects it
+      component.selectedRecords.set([a, locked]);
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a]);
 
       component.selectedRecords.set([]);
       fixture.detectChanges();

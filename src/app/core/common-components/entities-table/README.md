@@ -65,8 +65,9 @@ A `RowDecoration` can have:
 - `selectable: false`: the row cannot be selected for bulk actions
   (disabled checkbox, skipped by "select all" and Shift-click ranges).
 
-The table unselects a selected record as soon as its decoration makes it not selectable
-(e.g. a row the data source hides), so a bulk action never applies to it.
+The selection never holds a record that is not selectable: one effect of the table removes it,
+however it got there (Shift-click range, the host, or a decoration that changed since, e.g. a row the data source hides),
+so a bulk action never applies to it.
 
 Decorations are display state of one table, so they live in the data source rather than on the records.
 They are looked up by `entity.getId()` rather than by record object,

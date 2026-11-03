@@ -28,8 +28,6 @@ export interface MouseSelectionInput<T extends Entity> {
   shiftKey: boolean;
   lastSelectedRecord: T | null;
   lastSelection: boolean | null;
-  /** whether a record can be selected (default: all can) */
-  isSelectable?: (record: T) => boolean;
 }
 
 /**
@@ -76,14 +74,10 @@ export function applyRangeSelection<T extends Entity>(
   records: T[],
   range: { start: number; end: number },
   shouldCheck: boolean,
-  isSelectable: (record: T) => boolean = () => true,
 ): T[] {
   const updatedSelection = [...selectedRecords];
   for (let index = range.start; index <= range.end; index++) {
     const record = records[index];
-    if (!isSelectable(record)) {
-      continue;
-    }
     const isSelected = updatedSelection.includes(record);
 
     if (shouldCheck && !isSelected) {
@@ -108,11 +102,7 @@ export function updateSelectionFromMouseDown<T extends Entity>(
     shiftKey,
     lastSelectedRecord,
     lastSelection,
-    isSelectable = () => true,
   } = input;
-  if (!isSelectable(record)) {
-    return { selectedRecords, lastSelectedRecord, lastSelection };
-  }
   const currentIndex = currentPageRows.indexOf(record);
   const anchorIndex = lastSelectedRecord
     ? currentPageRows.indexOf(lastSelectedRecord)
@@ -137,7 +127,6 @@ export function updateSelectionFromMouseDown<T extends Entity>(
         currentPageRows,
         { start, end },
         shouldCheck,
-        isSelectable,
       ),
       lastSelectedRecord: record,
       lastSelection,
@@ -172,7 +161,10 @@ export interface EntitiesTableSelectionContext<T extends Entity> {
   filteredRows: ReadSignal<T[]>;
   /** records of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal<T[]>;
-  /** whether a record can be selected (e.g. not if its row decoration says so) */
+  /**
+   * whether a record can be selected (e.g. not if its row decoration says so);
+   * the table unselects every record that is not, whoever selected it
+   */
   isSelectable: ReadSignal<(record: T) => boolean>;
 }
 
@@ -215,9 +207,6 @@ export class EntitiesTableSelectionStore<T extends Entity> {
 
   /** Selects or unselects the record of a single row. */
   selectRow(record: T, checked: boolean) {
-    if (checked && !this.context.isSelectable()(record)) {
-      return;
-    }
     this.context.selectedRecords.set(
       toggleRecordSelection(this.context.selectedRecords(), record, checked),
     );
@@ -240,7 +229,6 @@ export class EntitiesTableSelectionStore<T extends Entity> {
       shiftKey: event.shiftKey,
       lastSelectedRecord: this.lastSelectedRecord(),
       lastSelection: this.lastSelection(),
-      isSelectable: this.context.isSelectable(),
     });
     this.context.selectedRecords.set(nextState.selectedRecords);
     this.lastSelectedRecord.set(nextState.lastSelectedRecord);

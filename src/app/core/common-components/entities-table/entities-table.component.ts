@@ -283,9 +283,10 @@ export class EntitiesTableComponent<T extends Entity>
       }
     });
     effect(() => {
-      // e.g. a row hidden by the data source: it must not stay selected for a bulk action
+      // the one place that keeps records out of the selection that cannot be selected,
+      // however they got there (a click, a range, the host, or a row the data source has hidden since)
       const isSelectable = this.isSelectable();
-      const selected = untracked(this.selectedRecords) ?? [];
+      const selected = this.selectedRecords() ?? [];
       if (!selected.every(isSelectable)) {
         this.selectedRecords.set(selected.filter(isSelectable));
       }
