@@ -230,17 +230,23 @@ describe("HierarchyDataSource", () => {
       expect(
         (await dataSource.getAllData(true)).map((r) => r.title).sort(),
       ).toEqual(matches.sort());
-      const contextRow = dataSource
-        .renderedRows()
-        .find((r) => dataSource.rows().get(r.getId()).isContext);
-      expect(dataSource.rowDecorations().get(contextRow.getId())).toEqual(
-        expect.objectContaining({
-          cssClass: CONTEXT_ROW_CLASS,
-          selectable: false,
-        }),
-      );
     },
   );
+
+  it("decorates context rows with their CSS class, as not selectable", async () => {
+    await createDataSource();
+    dataSource.dataFilter.set({ responsible: "Asha" });
+    await settle();
+
+    expect(
+      dataSource.rowDecorations().get("HierarchyTestAction:Meetings"),
+    ).toEqual(
+      expect.objectContaining({
+        cssClass: CONTEXT_ROW_CLASS,
+        selectable: false,
+      }),
+    );
+  });
 
   it("sorts each level on its own", async () => {
     await createDataSource();
