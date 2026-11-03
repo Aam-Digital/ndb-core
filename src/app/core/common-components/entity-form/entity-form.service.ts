@@ -55,12 +55,10 @@ export class EntityFormService {
    * Uses schema information to fill missing fields in the FormFieldConfig.
    * @param formField
    * @param entityType
-   * @param forTable
    */
   public extendFormFieldConfig(
     formField: ColumnConfig,
     entityType: EntityConstructor,
-    forTable = false,
   ): FormFieldConfig {
     const fullField = toFormFieldConfig(formField);
 
@@ -68,7 +66,6 @@ export class EntityFormService {
       return this.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
-        forTable,
       );
     } catch (err) {
       throw new Error(
@@ -80,7 +77,6 @@ export class EntityFormService {
   private addSchemaToFormField(
     formField: FormFieldConfig,
     propertySchema: EntitySchemaField | undefined,
-    forTable: boolean,
   ): FormFieldConfig {
     // formField config has precedence over schema
     const fullField = Object.assign(
@@ -96,16 +92,7 @@ export class EntityFormService {
       fullField.viewComponent ||
       this.entitySchemaService.getComponent(propertySchema, "view");
 
-    if (forTable) {
-      fullField.forTable = true;
-      fullField.label =
-        fullField.label || fullField.labelShort || fullField.label;
-      delete fullField.description;
-    } else {
-      fullField.forTable = false;
-      fullField.label =
-        fullField.label || fullField.label || fullField.labelShort;
-    }
+    fullField.label = fullField.label || fullField.labelShort;
 
     this.resolveTranslatableLabels(fullField);
 
@@ -133,7 +120,6 @@ export class EntityFormService {
    * @param entity
    * @param destroyRef the caller's DestroyRef, used to scope the form's change tracking to the
    *   caller's lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
-   * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
    */
@@ -141,7 +127,6 @@ export class EntityFormService {
     formFields: ColumnConfig[],
     entity: T,
     destroyRef: DestroyRef,
-    forTable = false,
     withPermissionCheck = true,
     withDefaultValues = true,
   ): Promise<EntityForm<T>> {
@@ -149,11 +134,7 @@ export class EntityFormService {
     for (const formField of formFields) {
       try {
         fields.push(
-          this.extendFormFieldConfig(
-            formField,
-            entity.getConstructor(),
-            forTable,
-          ),
+          this.extendFormFieldConfig(formField, entity.getConstructor()),
         );
       } catch (err) {
         // an incompletely configured field must not block the rest of the form from opening

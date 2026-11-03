@@ -83,11 +83,11 @@ Local databases keep only the latest `LOCAL_DB_REVS_LIMIT` (100) revisions of a 
 the `indexeddb` adapter cannot store the revision tree of a document with many hundred revisions (#4631).
 
 Existing users are migrated automatically (`IndexeddbMigrationService`):
-the data is downloaded from the server into the new database in the background, then the user is asked to reload.
-The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;
-otherwise it keeps the old database and retries on the next start.
+once their old database has synced, they are asked to upgrade.
+After a final sync has pushed all local changes, the old database is deleted
+and the app reloads into the new one, which is downloaded from the server like on a fresh login.
+If anything fails, the app keeps the old database and retries on the next start.
 The migration is tracked as usage analytics events (category `indexeddb_adapter_migration`).
-The legacy databases are not deleted yet.
 
 ## Key files
 

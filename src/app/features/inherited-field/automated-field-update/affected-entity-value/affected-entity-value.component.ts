@@ -107,7 +107,6 @@ export class AffectedEntityValueComponent implements OnInit {
       [row.targetFieldId],
       row.affectedEntity,
       this.destroyRef,
-      false,
       true,
       false,
     );

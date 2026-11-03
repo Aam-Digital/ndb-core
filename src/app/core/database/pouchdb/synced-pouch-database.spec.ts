@@ -12,9 +12,6 @@ import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
 import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
-import PouchDB from "pouchdb-browser";
-import memory from "pouchdb-adapter-memory";
-import { environment } from "../../../../environments/environment";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -503,6 +500,34 @@ describe("SyncedPouchDatabase", () => {
     expect(JSON.stringify(warnSpy.mock.calls)).not.toContain("Note:1");
   });
 
+  describe("destroy", () => {
+    const LAST_SYNC_KEY = "LAST_SYNC_unit-test-db";
+
+    afterEach(() => localStorage.removeItem(LAST_SYNC_KEY));
+
+    it.each([
+      { scenario: "local db deleted", destroyFails: false, forgotten: true },
+      { scenario: "deletion failed", destroyFails: true, forgotten: false },
+    ])(
+      "forgets the last completed sync only once the local db is deleted: $scenario",
+      async ({ destroyFails, forgotten }) => {
+        service["pouchDB"] = {
+          name: "unit-test-db",
+          destroy: destroyFails
+            ? vi.fn().mockRejectedValue(new Error("deletion failed"))
+            : vi.fn().mockResolvedValue({ ok: true }),
+        } as any;
+        localStorage.setItem(LAST_SYNC_KEY, "2026-11-01T10:00:00Z");
+
+        await service.destroy().catch(() => undefined);
+
+        expect(localStorage.getItem(LAST_SYNC_KEY)).toBe(
+          forgotten ? null : "2026-11-01T10:00:00Z",
+        );
+      },
+    );
+  });
+
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
     let warnSpy: Mock;
@@ -657,54 +682,5 @@ describe("SyncedPouchDatabase", () => {
       // tracking should be re-enabled for subsequent syncs
       expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
-
-    describe("remote replication source (background migration)", () => {
-      let fetchSpy: Mock;
-
-      beforeEach(() => {
-        PouchDB.plugin(memory);
-        service.adapter = "memory";
-        fetchSpy = vi
-          .spyOn(PouchDB, "fetch")
-          .mockImplementation(fakeRemoteFetch) as unknown as Mock;
-      });
-
-      afterEach(async () => {
-        fetchSpy.mockRestore();
-        await service["pouchDB"].destroy();
-      });
-
-      it("does not make the next sync purge what replicating from it reports as not permitted", async () => {
-        service.init("unit-test-db", "app");
-
-        const source = service.openRemoteReplicationSource();
-        await source.changes({ since: 0 });
-        await source.close();
-        await service.sync();
-
-        // the same remote database, with the user's authentication ...
-        expect(fetchSpy).toHaveBeenCalledWith(
-          expect.stringContaining(
-            `${environment.DB_PROXY_PREFIX}/app/_changes`,
-          ),
-          expect.anything(),
-        );
-        expect(mockAuthService.addAuthHeader).toHaveBeenCalled();
-        // ... but its lost permissions are not passed on to the sync
-        expect(purgeSpy).not.toHaveBeenCalled();
-      });
-    });
   });
 });
-
-/** A remote database, whose every `_changes` page (of a replication from scratch) reports all docs the user may not read */
-async function fakeRemoteFetch(url: string): Promise<Response> {
-  const body = url.includes("_changes")
-    ? {
-        results: [],
-        last_seq: "1-seq",
-        lostPermissions: ["Child:not-permitted"],
-      }
-    : {};
-  return new Response(JSON.stringify(body));
-}

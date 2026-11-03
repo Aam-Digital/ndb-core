@@ -78,9 +78,7 @@
       ></app-inherited-value-button>
     }
 
-    @if (!compactMode()) {
-      <app-help-button [text]="_field().description"></app-help-button>
-    }
+    <app-help-button [text]="_field().description"></app-help-button>
   </div>
 } @else {
   <app-entity-field-view

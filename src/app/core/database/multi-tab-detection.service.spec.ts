@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { MultiTabDetectionService } from "./multi-tab-detection.service";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 class MockBroadcastChannel {
   public static readonly channels = new Map<
@@ -41,6 +42,7 @@ describe("MultiTabDetectionService", () => {
   let mockRecoveryService: {
     promptMultiTabWarningDialog: ReturnType<typeof vi.fn>;
   };
+  let mockLocation: { reload: ReturnType<typeof vi.fn> };
 
   function createService() {
     return TestBed.runInInjectionContext(() => new MultiTabDetectionService());
@@ -53,12 +55,14 @@ describe("MultiTabDetectionService", () => {
     mockRecoveryService = {
       promptMultiTabWarningDialog: vi.fn().mockResolvedValue(undefined),
     };
+    mockLocation = { reload: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         {
           provide: PouchdbCorruptionRecoveryService,
           useValue: mockRecoveryService,
         },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
   });
@@ -80,6 +84,18 @@ describe("MultiTabDetectionService", () => {
       mockRecoveryService.promptMultiTabWarningDialog,
     ).toHaveBeenCalledTimes(2);
 
+    firstTab.ngOnDestroy();
+    secondTab.ngOnDestroy();
+  });
+
+  it("reloads the other tabs, but not itself, when asked to", () => {
+    const firstTab = createService();
+    const secondTab = createService();
+
+    firstTab.reloadOtherTabs();
+
+    // both tabs share the location mock: only the second one reloaded
+    expect(mockLocation.reload).toHaveBeenCalledTimes(1);
     firstTab.ngOnDestroy();
     secondTab.ngOnDestroy();
   });
