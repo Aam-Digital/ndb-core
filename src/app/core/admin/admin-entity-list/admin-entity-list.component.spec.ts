@@ -11,6 +11,11 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { Component, input } from "@angular/core";
+import { ComponentRegistry } from "#src/app/dynamic-components";
+import { ADMIN_ENTITY_LIST_SETTINGS } from "./admin-entity-list-settings";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("AdminEntityListComponent", () => {
   // mirrors the real "Event" config entity from the education demo config:
@@ -87,3 +92,44 @@ describe("AdminEntityListComponent", () => {
     expect(ids).not.toContain("participants.status");
   });
 });
+
+describe("AdminEntityListComponent settings of feature modules", () => {
+  it("shows the list settings of feature modules for the edited list", async () => {
+    TestBed.configureTestingModule({
+      imports: [AdminEntityListComponent, MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: ADMIN_ENTITY_LIST_SETTINGS,
+          useValue: "TestListSettings",
+          multi: true,
+        },
+      ],
+    });
+    TestBed.inject(ComponentRegistry).add(
+      "TestListSettings",
+      async () => TestListSettingsComponent,
+    );
+    const fixture = TestBed.createComponent(AdminEntityListComponent);
+    fixture.componentRef.setInput("entityConstructor", TestEntity);
+    fixture.componentRef.setInput("config", {
+      entityType: "TestEntity",
+    } as EntityListConfig);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const settings: HTMLElement = fixture.nativeElement.querySelector(
+      "app-test-list-settings",
+    );
+    expect(settings?.textContent).toBe("TestEntity");
+  });
+});
+
+@Component({
+  selector: "app-test-list-settings",
+  template: "{{ config().entityType }}",
+})
+class TestListSettingsComponent {
+  entityConstructor = input.required<unknown>();
+  config = input.required<EntityListConfig>();
+}

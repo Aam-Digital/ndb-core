@@ -105,6 +105,8 @@ A data source that needs options gets them from the same entry, as `config` next
 ```
 
 This keeps options of feature data sources out of the inputs of the core list and section components.
+To let admins set these options in the admin editor of a list view, a feature module provides a settings component
+through `ADMIN_ENTITY_LIST_SETTINGS` (`src/app/core/admin/admin-entity-list/admin-entity-list-settings.ts`).
 
 ## State in the URL
 
