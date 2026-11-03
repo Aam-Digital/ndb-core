@@ -59,10 +59,11 @@ Invalid fields (not a single link to the same type) are ignored without an error
 
 ## How it works
 
-- The table's pipeline calls `_orderData()` of the data source instead of sorting a flat list:
-  `HierarchyDataSource` builds the tree from all loaded records (for the parents) and the filtered records (the matches)
-  and stores the result as a signal, from which the row decorations are computed.
-  Changes of the field or of the collapsed rows re-run the pipeline.
+- `HierarchyDataSource` computes the tree (`view`) from signals: all loaded records (for the parents),
+  the filtered records (the matches), the field, the collapsed rows and the sort (`effectiveSort` and `sortValueFns`,
+  set by the table). The row decorations are computed from it.
+- The table's pipeline calls `_orderData()` of the data source, which returns the records in tree order
+  instead of sorting a flat list. A change of the tree re-runs the pipeline.
 - In a section, `getFilterPredicate()` replaces the condition linking records to the page's record
   (which only covers direct sub-records) by "is in the branch below the page's record".
 - The prefix configs are cached per record id, so rows do not reload their tree cell when the tree changes.

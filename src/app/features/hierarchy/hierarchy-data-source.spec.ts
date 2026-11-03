@@ -107,6 +107,7 @@ describe("HierarchyDataSource", () => {
     sort.direction = "asc";
     sort.ngOnInit(); // marks the sort as initialized, as the table does
     dataSource.sort = sort;
+    dataSource.effectiveSort.set({ active: "title", direction: "asc" });
     await settle();
   }
 
@@ -243,8 +244,11 @@ describe("HierarchyDataSource", () => {
 
   it("sorts each level on its own", async () => {
     await createDataSource();
+    // as the table does when the user sorts by a column
     dataSource.sort.direction = "desc";
     dataSource.sort.sortChange.emit({ active: "title", direction: "desc" });
+    dataSource.effectiveSort.set({ active: "title", direction: "desc" });
+    await settle();
 
     expect(displayedRows()).toEqual([
       "Loop",

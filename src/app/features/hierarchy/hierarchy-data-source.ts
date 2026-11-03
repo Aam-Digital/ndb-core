@@ -95,8 +95,34 @@ export class HierarchyDataSource<
   /** Records whose sub-records are hidden. Not remembered, the tree opens fully expanded. */
   readonly collapsedIds = signal<ReadonlySet<string>>(new Set());
 
-  /** The tree as last arranged for the table (see {@link _orderData}). */
-  private readonly view = signal<HierarchyView<T> | undefined>(undefined);
+  /**
+   * The filtered records arranged as a tree, each level sorted on its own
+   * (none for a flat list). The table shows its rows, see {@link _orderData}.
+   */
+  private readonly view = computed<HierarchyView<T> | undefined>(() => {
+    const field = this.activeField();
+    if (!field) {
+      return undefined;
+    }
+    const sort = this.effectiveSort();
+    return buildHierarchyView(this.allRecords(), this.filteredRecords(), {
+      parentField: field,
+      rootId: this.rootRecord()?.getId(),
+      sort: sort
+        ? {
+            active: sort.active ?? "",
+            direction: sort.direction,
+            sortValueFns: this.sortValueFns(),
+          }
+        : undefined,
+      collapsedIds: this.collapsedIds(),
+    });
+  });
+
+  /** The records in the order of the {@link view}, kept as one array for the table. */
+  private readonly viewOrder = computed(() =>
+    this.view()?.rows.map((row) => row.record),
+  );
 
   /** The tree position of each displayed record, by id. */
   readonly rows: Signal<ReadonlyMap<string, HierarchyRow<T>>> = computed(
@@ -171,9 +197,8 @@ export class HierarchyDataSource<
       untracked(() => this.expandAll());
     });
     effect(() => {
-      // arrange the rows again (the table's pipeline does not know these signals)
-      this.activeField();
-      this.collapsedIds();
+      // show the new order (the table's pipeline does not know signals)
+      this.viewOrder();
       untracked(() => (this.data = this.data));
     });
   }
@@ -210,33 +235,13 @@ export class HierarchyDataSource<
   }
 
   /**
-   * Arrange the filtered records as a tree, each level sorted on its own.
+   * The records in tree order, or sorted as a flat list without a hierarchy field.
    * Called by the table's pipeline instead of sorting a flat list.
    */
   override _orderData(data: T[]): T[] {
     // undefined while the base class subscribes its pipeline during construction
-    const field = this.activeField?.();
-    if (!field) {
-      this.view?.set(undefined);
-      return super._orderData(data);
-    }
-
-    const view = untracked(() =>
-      buildHierarchyView(this.allRecords(), data, {
-        parentField: field,
-        rootId: this.rootRecord()?.getId(),
-        sort: this.sort
-          ? {
-              active: this.sort.active ?? "",
-              direction: this.sort.direction,
-              sortValueFns: this.sortValueFns(),
-            }
-          : undefined,
-        collapsedIds: this.collapsedIds(),
-      }),
-    );
-    this.view.set(view);
-    return view.rows.map((row) => row.record);
+    const order = this.viewOrder && untracked(this.viewOrder);
+    return order ?? super._orderData(data);
   }
 
   /**
