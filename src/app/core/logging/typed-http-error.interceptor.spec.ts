@@ -58,11 +58,29 @@ describe("typedHttpErrorInterceptor", () => {
     },
   );
 
+  it("should keep the url and its query out of the typed error's message", async () => {
+    const url =
+      "/api/v1/skill/user-profile?fullName=Jane+Doe&email=jane%40example.org";
+    const response = new HttpErrorResponse({ status: 500, url });
+
+    const failure = await failureOf(url, response);
+
+    expect(failure).toBeInstanceOf(ServerError);
+    expect(failure.message).not.toContain("user-profile");
+    expect(failure.message).not.toContain("Jane");
+    expect(failure.details).toEqual({
+      url: "/api/v1/skill/user-profile",
+      method: "GET",
+      statusText: "Unknown Error",
+    });
+  });
+
   it.each([
     ["an unclassified status of the backend", "/db/app/Child:1", 404],
     ["another 401 of the backend", "/db/app/Child:1", 401],
     ["a response of another service", "https://nominatim.example/search", 403],
     ["a response of another service", "https://keycloak.example/admin", 0],
+    ["a response of another service", "https://esco.example/resource", 500],
   ])("should leave %s unchanged", async (_, url, status) => {
     const response = new HttpErrorResponse({ status, url });
 

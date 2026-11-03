@@ -370,7 +370,10 @@ describe("ReportingComponent", () => {
 
   /** A failed request as it reaches the caller (see typedHttpErrorInterceptor). */
   const failedRequest = (response: HttpErrorResponse) =>
-    toTypedHttpError(response) as Error;
+    toTypedHttpError(response, {
+      method: "POST",
+      url: "/api/v1/reporting",
+    }) as Error;
 
   it.each<[string, Error, string]>([
     ["an unexpected error", new Error("foo"), "foo"],

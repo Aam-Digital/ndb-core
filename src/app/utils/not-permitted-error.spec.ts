@@ -22,9 +22,10 @@ describe("isNotPermittedError", () => {
     ],
     [
       "of the API",
-      toTypedHttpError(
-        new HttpErrorResponse({ status: 403, url: "/api/v1/x" }),
-      ),
+      toTypedHttpError(new HttpErrorResponse({ status: 403 }), {
+        method: "GET",
+        url: "/api/v1/x",
+      }),
     ],
     [
       "wrapped by another error",

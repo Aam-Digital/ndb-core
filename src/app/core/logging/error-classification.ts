@@ -263,7 +263,7 @@ const WRITE_CONFLICT_TEXT = "document update conflict";
 export function classifyResponseStatus(
   status: unknown,
   reasons: unknown[],
-): ErrorClassification | undefined {
+): Exclude<ErrorClassification, "local-storage" | "server-error"> | undefined {
   if (CONNECTIVITY_ERROR_STATUS.has(status as number)) {
     return "connectivity";
   }

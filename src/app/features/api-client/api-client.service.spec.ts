@@ -11,6 +11,9 @@ import {
   logRequestError,
 } from "./api-client.service";
 
+/** A request to the api-client module of the backend (see typedHttpErrorInterceptor). */
+const apiRequest = { method: "POST", url: "/api/v1/admin/api-client" };
+
 describe("ApiClientService", () => {
   let mockHttpClient: { get: Mock };
   let originalKeycloakConfig: Pick<
@@ -111,7 +114,9 @@ describe("ApiClientService", () => {
     ],
   ])("explains %s to the user", (_, error, expectedMessage) => {
     // as the backend's response reaches the caller (see typedHttpErrorInterceptor)
-    expect(errorMessageOf(toTypedHttpError(error))).toContain(expectedMessage);
+    expect(errorMessageOf(toTypedHttpError(error, apiRequest))).toContain(
+      expectedMessage,
+    );
   });
 
   it.each<[number, "debug" | "warn"]>([
@@ -126,7 +131,7 @@ describe("ApiClientService", () => {
 
     logRequestError(
       "failed",
-      toTypedHttpError(new HttpErrorResponse({ status })),
+      toTypedHttpError(new HttpErrorResponse({ status }), apiRequest),
     );
 
     expect(debug).toHaveBeenCalledTimes(expectedLevel === "debug" ? 1 : 0);

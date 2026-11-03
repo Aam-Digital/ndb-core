@@ -246,19 +246,20 @@ export class ReportingComponent {
   /**
    * The details of a failed calculation for the user. For a failed request, this is the message
    * the backend sends (e.g. naming the invalid entry of a report definition), if any,
-   * rather than the generic "Http failure response for …".
+   * else the response's "Http failure response for …" rather than the static
+   * message of the typed error it was converted into.
    */
   private getErrorDetails(
     reason: ReportCalculationError | HttpErrorResponse | Error,
   ): string {
-    const backendMessage: string | undefined =
-      failedHttpResponse(reason)?.error?.errorMessage;
+    const response = failedHttpResponse(reason);
+    const backendMessage: string | undefined = response?.error?.errorMessage;
     const calculationDetails =
       reason instanceof ReportCalculationError
         ? reason.reportCalculation?.errorDetails
         : undefined;
     return [
-      backendMessage ?? reason.message ?? String(reason),
+      backendMessage ?? response?.message ?? reason.message ?? String(reason),
       calculationDetails,
     ]
       .filter((part) => !!part)
