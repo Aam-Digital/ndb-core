@@ -1,11 +1,8 @@
-import {
-  causeChain,
-  SessionExpiredError,
-} from "#src/app/core/logging/error-classification";
+import { classifyErrorChain } from "#src/app/core/logging/error-classification";
 
 /**
  * Check whether an error is the server rejecting an expired session:
- * a {@link SessionExpiredError}, also when wrapped (as `cause`).
+ * a `SessionExpiredError`, also when wrapped (as `cause`), see `classifyErrorChain`.
  *
  * `RemotePouchDatabase` retries a rejected request after renewing the session,
  * and fails with this only if the renewal failed - usually because the login
@@ -19,5 +16,5 @@ import {
  * indicate a misconfiguration and must keep being reported.
  */
 export function isExpiredSessionError(err: unknown): boolean {
-  return causeChain(err).some((error) => error instanceof SessionExpiredError);
+  return classifyErrorChain(err) === "session-expired";
 }

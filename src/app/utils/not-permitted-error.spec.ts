@@ -3,6 +3,13 @@ import { isNotPermittedError } from "./not-permitted-error";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "../core/logging/typed-http-error.interceptor";
 import { LoggedError } from "../core/logging/reported-errors";
+import { isConnectivityError } from "./connectivity-error";
+import { isExpiredSessionError } from "./expired-session-error";
+import {
+  ConnectivityError,
+  NotPermittedError,
+  SessionExpiredError,
+} from "../core/logging/error-classification";
 
 describe("isNotPermittedError", () => {
   it("should detect the permission backend refusing a record (wrapped in a DatabaseException)", () => {
@@ -72,5 +79,55 @@ describe("isNotPermittedError", () => {
       ),
     ).toBe(false);
     expect(isNotPermittedError(undefined)).toBe(false);
+  });
+});
+
+describe("the error classification helpers", () => {
+  const helpers = {
+    isConnectivityError,
+    isNotPermittedError,
+    isExpiredSessionError,
+  };
+
+  it.each<[string, unknown, keyof typeof helpers | undefined]>([
+    [
+      "a typed error",
+      new NotPermittedError("forbidden"),
+      "isNotPermittedError",
+    ],
+    [
+      "a typed error wrapped by a logged message",
+      new LoggedError("Could not load", new SessionExpiredError("expired")),
+      "isExpiredSessionError",
+    ],
+    [
+      "a typed error that lost its class (a copy made by PouchDB)",
+      { name: "SessionExpiredError", message: "Session could not be renewed" },
+      "isExpiredSessionError",
+    ],
+    [
+      "a DatabaseException converting a raw error",
+      new DatabaseException({ status: 403, message: "forbidden" }),
+      "isNotPermittedError",
+    ],
+    [
+      "a DatabaseException wrapping a typed error",
+      new DatabaseException(new ConnectivityError("Failed to fetch from DB")),
+      "isConnectivityError",
+    ],
+    [
+      "a foreign error that passed no boundary, by its wording",
+      new TypeError("Failed to fetch"),
+      "isConnectivityError",
+    ],
+    [
+      "an unclassified failure",
+      new DatabaseException({ status: 404, message: "missing" }),
+      undefined,
+    ],
+  ])("should agree with the classification for %s", (_, err, matching) => {
+    for (const [name, helper] of Object.entries(helpers)) {
+      expect(helper(err), name).toBe(name === matching);
+    }
   });
 });
