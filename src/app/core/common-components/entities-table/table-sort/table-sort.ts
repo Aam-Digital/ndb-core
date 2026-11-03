@@ -1,6 +1,5 @@
 import { getReadableValue } from "../value-accessor/value-accessor";
 import { Entity } from "../../../entity/model/entity";
-import { TableRow } from "../table-row";
 
 /**
  * Map of column id to a function that derives the value used for sorting that column.
@@ -13,14 +12,14 @@ export type SortValueFns<OBJECT> = Record<
 >;
 
 /**
- * Custom sort implementation for a MatTableDataSource<TableRow<T>>
+ * Custom sort implementation for a MatTableDataSource<T> of entities
  * @param data The data of the data source
  * @param direction direction "asc", "desc" or "" meaning none
  * @param active the property of T for which it should be sorted
- * @returns the sorted table rows
+ * @returns the sorted records
  */
 export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
-  data: TableRow<OBJECT>[],
+  data: OBJECT[],
   {
     direction,
     active,
@@ -30,19 +29,19 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
     active: PROPERTY | "";
     sortValueFns?: SortValueFns<OBJECT>;
   },
-): TableRow<OBJECT>[] {
+): OBJECT[] {
   if (direction === "" || !active) {
     return data;
   }
   data.sort((objA, objB) => {
-    const valueA = getComparableValue(objA.record, active, sortValueFns);
-    const valueB = getComparableValue(objB.record, active, sortValueFns);
+    const valueA = getComparableValue(objA, active, sortValueFns);
+    const valueB = getComparableValue(objB, active, sortValueFns);
     const primaryComparison = compareValues(valueA, valueB);
 
     // If the primary values are equal, sort by the created at
     if (primaryComparison === 0) {
-      const dateA = new Date(objA.record.created?.at || 0).getTime();
-      const dateB = new Date(objB.record.created?.at || 0).getTime();
+      const dateA = new Date(objA.created?.at || 0).getTime();
+      const dateB = new Date(objB.created?.at || 0).getTime();
 
       return dateA - dateB;
     }

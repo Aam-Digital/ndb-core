@@ -2,9 +2,27 @@ import { DateRange } from "@angular/material/datepicker";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import moment from "moment";
 
+/**
+ * A predefined range with fixed dates (e.g. the period of a linked record),
+ * offered next to the ranges relative to today ({@link DateRangeFilterConfigOption}).
+ */
+export interface FixedDateRangeOption {
+  label: string;
+  start: Date;
+  end: Date;
+}
+
+/** a predefined range offered next to the calendar of the {@link DateRangeFilterPanelComponent} */
+export type DateRangeOption =
+  DateRangeFilterConfigOption | FixedDateRangeOption;
+
 export function calculateDateRange(
-  dateRangeOption: DateRangeFilterConfigOption,
+  dateRangeOption: DateRangeOption,
 ): DateRange<Date> {
+  if ("start" in dateRangeOption) {
+    return new DateRange(dateRangeOption.start, dateRangeOption.end);
+  }
+
   const startOffsets = dateRangeOption.startOffsets ?? [
     { amount: 0, unit: "days" },
   ];

@@ -1,0 +1,14 @@
+// Like other empty fields, an empty range shows no "Start date – End date" (only while typing into it).
+// The text is made transparent rather than hidden, so that the inputs can still be clicked.
+:host(:not(:focus-within))
+  ::ng-deep
+  .mat-date-range-input-container:has(.mat-start-date:placeholder-shown):has(
+    .mat-end-date:placeholder-shown
+  ) {
+  .mat-date-range-input-inner::placeholder,
+  .mat-date-range-input-separator {
+    color: transparent;
+    // disabled fields (the view mode) get their text color this way (see _mat-input.scss)
+    -webkit-text-fill-color: transparent;
+  }
+}

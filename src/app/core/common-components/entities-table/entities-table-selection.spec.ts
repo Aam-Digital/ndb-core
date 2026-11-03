@@ -3,7 +3,6 @@ import {
   applyRangeSelection,
   isCheckboxTarget,
   isClickableTarget,
-  shouldSkipRowInteraction,
   toggleRecordSelection,
   updateSelectionFromMouseDown,
 } from "./entities-table-selection";
@@ -24,11 +23,7 @@ describe("entities-table-selection util", () => {
     const recordA = TestEntity.create("A");
     const recordB = TestEntity.create("B");
     const recordC = TestEntity.create("C");
-    const rows = [
-      { record: recordA },
-      { record: recordB },
-      { record: recordC },
-    ];
+    const rows = [recordA, recordB, recordC];
 
     const rangeSelected = applyRangeSelection(
       [],
@@ -60,53 +55,34 @@ describe("entities-table-selection util", () => {
     expect(isCheckboxTarget(container)).toBe(false);
   });
 
-  it("skips row interaction for clickable targets or enabled inline edit rows", () => {
-    const record = TestEntity.create("A");
-    const clickable = document.createElement("button");
-    clickable.classList.add("clickable");
-
-    expect(shouldSkipRowInteraction(clickable, { record })).toBe(true);
-    expect(
-      shouldSkipRowInteraction(document.createElement("div"), {
-        record,
-        formGroup: { enabled: true } as any,
-      }),
-    ).toBe(true);
-  });
-
   it("updates selection state for normal and shift-range mouse down", () => {
     const recordA = TestEntity.create("A");
     const recordB = TestEntity.create("B");
     const recordC = TestEntity.create("C");
-    const rows = [
-      { record: recordA },
-      { record: recordB },
-      { record: recordC },
-    ];
+    const rows = [recordA, recordB, recordC];
 
     const firstClick = updateSelectionFromMouseDown({
       selectedRecords: [],
       currentPageRows: rows,
-      row: rows[0],
+      record: recordA,
       shiftKey: false,
-      lastSelectedRow: null,
+      lastSelectedRecord: null,
       lastSelection: null,
     });
     expect(firstClick.selectedRecords).toEqual([recordA]);
     expect(firstClick.lastSelection).toBe(false);
-    expect(firstClick.lastSelectedRow).toBe(rows[0]);
+    expect(firstClick.lastSelectedRecord).toBe(recordA);
 
-    // row wrappers are re-created whenever filter or sorting change,
-    // so the anchor row has to be matched by its record
-    const newRows = rows.map((row) => ({ ...row }));
+    // the range is taken from the current order of the page, e.g. after sorting changed
+    const resortedRows = [recordC, recordA, recordB];
     const shiftClick = updateSelectionFromMouseDown({
       selectedRecords: firstClick.selectedRecords,
-      currentPageRows: newRows,
-      row: newRows[2],
+      currentPageRows: resortedRows,
+      record: recordB,
       shiftKey: true,
-      lastSelectedRow: firstClick.lastSelectedRow,
+      lastSelectedRecord: firstClick.lastSelectedRecord,
       lastSelection: firstClick.lastSelection,
     });
-    expect(shiftClick.selectedRecords).toEqual([recordA, recordB, recordC]);
+    expect(shiftClick.selectedRecords).toEqual([recordA, recordB]);
   });
 });

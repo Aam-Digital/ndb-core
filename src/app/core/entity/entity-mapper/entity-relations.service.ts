@@ -9,6 +9,17 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { getEmbeddedEntityReferenceFields } from "../schema/embedded-schema-field.util";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+
+/** fields of an entity type that another type links to (see {@link EntityRelationsService.getFieldsOfLinkedTypes}) */
+export interface LinkedTypeFields {
+  /** id of the field linking to the type */
+  linkId: string;
+  link: EntitySchemaField;
+  linkedType: EntityConstructor;
+  /** the matching fields of the linked type, as [id, schema] */
+  fields: [string, EntitySchemaField][];
+}
 
 /**
  * Service to work with related, interlinked entities.
@@ -46,6 +57,35 @@ export class EntityRelationsService {
       }
     }
     return referencingTypes;
+  }
+
+  /**
+   * Get the fields of the given data type in each entity type that the given type links to,
+   * along with the field linking to it.
+   *
+   * e.g. given Child and "date-range" -> [{ linkId: "projectSchool", linkedType: School, fields: [["dateRangeField", …]] }]
+   */
+  getFieldsOfLinkedTypes(
+    entityType: EntityConstructor,
+    dataType: string,
+  ): LinkedTypeFields[] {
+    return Array.from(entityType.schema)
+      .filter(([, link]) => link.dataType === EntityDatatype.dataType)
+      .flatMap(([linkId, link]) =>
+        asArray(link.additional ?? [])
+          .filter((typeId) => this.entityRegistry.has(typeId))
+          .map((typeId) => {
+            const linkedType = this.entityRegistry.get(typeId);
+            return {
+              linkId,
+              link,
+              linkedType,
+              fields: Array.from(linkedType.schema).filter(
+                ([, field]) => field.dataType === dataType,
+              ),
+            };
+          }),
+      );
   }
 
   /**

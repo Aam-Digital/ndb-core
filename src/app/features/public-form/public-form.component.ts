@@ -15,7 +15,10 @@ import {
   PublicFormEntityFormConfig,
 } from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
+import {
+  EntityFormService,
+  hasOnlyWarnings,
+} from "../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
@@ -174,9 +177,12 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   private hasInvalidForms(): boolean {
-    return this.entityFormEntries().some(
-      (entry) => entry.form?.formGroup?.invalid ?? true,
-    );
+    return this.entityFormEntries().some((entry) => {
+      const formGroup = entry.form?.formGroup;
+      return formGroup
+        ? formGroup.invalid && !hasOnlyWarnings(formGroup)
+        : true;
+    });
   }
 
   private markAllFormsAsTouched() {

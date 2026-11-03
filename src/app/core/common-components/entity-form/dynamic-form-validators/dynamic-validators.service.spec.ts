@@ -8,6 +8,7 @@ import { FormValidatorConfig } from "./form-validator-config";
 import {
   AsyncValidatorFn,
   UntypedFormControl,
+  UntypedFormGroup,
   ValidatorFn,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -21,6 +22,7 @@ describe("DynamicValidatorsService", () => {
   beforeEach(() => {
     mockedEntityMapper = {
       loadType: vi.fn().mockName("EntityMapperService.loadType"),
+      load: vi.fn().mockName("EntityMapperService.load"),
     };
 
     TestBed.configureTestingModule({
@@ -194,6 +196,79 @@ describe("DynamicValidatorsService", () => {
     expect(validationErrors.uniqueProperty).toBeUndefined();
 
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
+  });
+
+  describe("withinParent", () => {
+    const parent = Object.assign(TestEntity.create("Training"), {
+      period: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
+    });
+    const outside = {
+      start: new Date(2026, 4, 20),
+      end: new Date(2026, 5, 15),
+    };
+
+    /**
+     * @param parentInForm the parent link entered in the form; undefined if the form has no such field
+     * @param parentOfRecord the parent link saved for the record
+     */
+    function validate(
+      period: object,
+      parentInForm: string | null | undefined,
+      parentOfRecord?: string,
+      anonymized = false,
+    ) {
+      const record = Object.assign(new TestEntity(), {
+        ref: parentOfRecord,
+        anonymized,
+      });
+      const { asyncValidators } = service.buildValidators(
+        { withinParent: { parentReferenceField: "ref" } },
+        record,
+        "period",
+      );
+      const form = new UntypedFormGroup({
+        period: new UntypedFormControl(period),
+        ...(parentInForm !== undefined && {
+          ref: new UntypedFormControl(parentInForm),
+        }),
+      });
+      return (asyncValidators as AsyncValidatorFn[])[0](form.get("period"));
+    }
+
+    beforeEach(() => mockedEntityMapper.load.mockResolvedValue(parent));
+
+    it("returns a warning with the parent's name for a period beyond the parent's", async () => {
+      expect(await validate(outside, parent.getId())).toEqual({
+        withinParent: {
+          warning: true,
+          errorMessage: "Outside the period of Training",
+        },
+      });
+    });
+
+    it.each<[string, object, string | null | undefined, string?, boolean?]>([
+      [
+        "a period within the parent's",
+        { start: new Date(2026, 2, 10), end: new Date(2026, 2, 20) },
+        parent.getId(),
+      ],
+      ["no parent linked", outside, null],
+      ["a link removed in the form", outside, null, parent.getId()],
+      ["an anonymized record", outside, parent.getId(), undefined, true],
+    ])(
+      "returns nothing for %s",
+      async (_, period, parentInForm, parentOfRecord, anonymized) => {
+        expect(
+          await validate(period, parentInForm, parentOfRecord, anonymized),
+        ).toBeNull();
+      },
+    );
+
+    it("uses the saved parent link if the form has no field for it", async () => {
+      expect(await validate(outside, undefined, parent.getId())).toEqual({
+        withinParent: expect.objectContaining({ warning: true }),
+      });
+    });
   });
 
   it("keeps minDate as a date validator for date-with-age fields", () => {

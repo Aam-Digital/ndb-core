@@ -1,7 +1,11 @@
 import type { Mock } from "vitest";
 import { TestBed } from "@angular/core/testing";
 
-import { LanguageService } from "./language.service";
+import {
+  INVALID_LOCALE_REPORTED_KEY,
+  LanguageService,
+} from "./language.service";
+import { Logging } from "../logging/logging.service";
 import { LOCALE_ID } from "@angular/core";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import {
@@ -86,6 +90,8 @@ describe("LanguageService", () => {
   afterEach(() => {
     window.localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
     window.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
+    sessionStorage.removeItem(INVALID_LOCALE_REPORTED_KEY);
+    vi.restoreAllMocks();
   });
 
   function logIn() {
@@ -249,6 +255,20 @@ describe("LanguageService", () => {
 
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(null);
     expect(reloadSpy).not.toHaveBeenCalled();
+  });
+
+  it("should report an invalid locale only once per browser session, with a readable value", () => {
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    vi.spyOn(Logging, "debug").mockImplementation(() => {});
+    warn.mockClear();
+
+    service.switchLocale({ id: "de" } as any);
+    service.switchLocale({ id: "de" } as any);
+
+    expect(warn).toHaveBeenCalledExactlyOnceWith(
+      "Ignoring an invalid locale.",
+      { invalidLocale: '{"id":"de"}', type: "object" },
+    );
   });
 
   describe("with language switching disabled", () => {

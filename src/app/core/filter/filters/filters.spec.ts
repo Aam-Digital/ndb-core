@@ -2,6 +2,7 @@ import { combineFilterConditions, Filter, SelectableFilter } from "./filters";
 import { FilterService } from "../filter.service";
 import { BooleanFilter } from "./booleanFilter";
 import { StringFilter } from "./stringFilter";
+import { TranslatableTextFilter } from "./translatableTextFilter";
 import { Entity } from "../../entity/model/entity";
 import { TestBed } from "@angular/core/testing";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
@@ -131,6 +132,33 @@ describe("Filters", () => {
 
     filter.selectedOptionValues = ["(Senior)"];
     testFilter(filter, [withBracket, withoutBracket], [withBracket]);
+  });
+
+  it("should match a multi-lingual text in any language, however it is stored", () => {
+    const filter = new TranslatableTextFilter("title", "Title");
+
+    const plainText = { title: "Monthly report" };
+    const localeMap = {
+      title: { "en-US": "Monthly report", de: "Monatsbericht" },
+    };
+    // translation maps may also key by the base language alone (see isTranslatableText)
+    const baseLanguageMap = {
+      title: { en: "Annual summary", de: "Jahresbericht" },
+    };
+    const noTitle = {};
+    const all = [plainText, localeMap, baseLanguageMap, noTitle];
+
+    filter.selectedOptionValues = ["report"];
+    testFilter(filter, all, [plainText, localeMap]);
+
+    filter.selectedOptionValues = ["bericht"];
+    testFilter(filter, all, [localeMap, baseLanguageMap]);
+
+    filter.selectedOptionValues = ["summary"];
+    testFilter(filter, all, [baseLanguageMap]);
+
+    filter.selectedOptionValues = [];
+    testFilter(filter, all, all);
   });
 
   it("should support numbers as options", () => {

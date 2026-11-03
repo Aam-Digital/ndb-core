@@ -35,7 +35,8 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 
 ## Code conventions
 
-- **Components:** standalone (the default, do not set `standalone: true`), `changeDetection: ChangeDetectionStrategy.OnPush`, `input()` and `output()` functions, `inject()` instead of constructor injection, host bindings in the `host` object (no `@HostBinding` or `@HostListener`). Keep them small, prefer inline templates for small ones, use reactive forms, lazy-load feature routes.
+- **Components:** standalone (the default, do not set `standalone: true`), `OnPush` change detection (the default since Angular 22, do not set `changeDetection`), `input()` and `output()` functions, host bindings in the `host` object (no `@HostBinding` or `@HostListener`). Keep them small, prefer inline templates for small ones, use reactive forms, lazy-load feature routes.
+- **Dependency injection:** `inject()` into a `private readonly` field (`private readonly entityMapper = inject(EntityMapperService)`), in components, services, directives and pipes alike; no constructor injection.
 - **State:** signals for local state, `computed()` for derived state, `update` or `set` (never `mutate`).
 - **Templates:** keep them simple. Use `@if`, `@for` and `@switch`, class and style bindings instead of `ngClass` and `ngStyle`, the `async` pipe for observables, the `customDate` pipe for dates, `NgOptimizedImage` for static images. Use `<app-fa-dynamic-icon>` for icons, never `<fa-icon>` directly.
 - **Services:** `providedIn: 'root'` for singletons, one responsibility each.
@@ -49,7 +50,7 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 - **Config:** the platform is configured through JSON ([config](src/app/core/config/README.md)). Use the existing config patterns for new features, create interfaces for config objects, and validate configs.
 - **UX and styling:** follow the [UX guidelines](doc/compodoc_sources/concepts/ux-guidelines.md): Angular Material, SCSS with the global variables and classes in `src/styles/`, no inline styles. For mockups in Figma, use the `figma-mockups` skill.
 - **i18n:** all user-facing strings are translatable (Angular i18n markers or `$localize`); no context labels unless the string is truly ambiguous ([i18n](src/app/core/language/README.md)).
-- **Accessibility:** follow WCAG and use the Angular Material accessibility features.
+- **Accessibility:** follow WCAG and use the Angular Material accessibility features. Keyboard navigation is not supported across the app yet ([#4644](https://github.com/Aam-Digital/ndb-core/issues/4644)), so leave keyboard interaction out of use cases and feature designs until that general support exists.
 
 ## Errors and logging
 

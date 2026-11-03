@@ -70,12 +70,8 @@ describe("AffectedEntityValueComponent", () => {
   });
 
   it("should create the form without default value handling, which only queries linked records for the hidden inherit button", () => {
-    // forTable, withPermissionCheck, withDefaultValues
-    expect(createEntityForm.mock.calls[0].slice(3)).toEqual([
-      false,
-      true,
-      false,
-    ]);
+    // withPermissionCheck, withDefaultValues
+    expect(createEntityForm.mock.calls[0].slice(3)).toEqual([true, false]);
     expect(control.value).toEqual(toEntityFormat(["a"]));
   });
 

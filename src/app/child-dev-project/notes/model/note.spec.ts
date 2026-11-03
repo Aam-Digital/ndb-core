@@ -119,35 +119,43 @@ describe("Note", () => {
       expect(Note.getLinkFields()).toContain("relatedEntities");
       expect(Note.getLinkFields()).not.toContain("authors");
       expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
-      expect(Note.getPropertyFor("User")).toBe("authors");
+      expect(Note.getPropertyFor("User")).toBe("relatedEntities");
       expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
     } finally {
       Note.schema.delete("linkedTestType");
     }
   });
 
-  it("should store multiple entities of a type in a field specific to that type rather than a single-value field or relatedEntities", () => {
+  it("should store entities of a type in the first entity array field allowing that type, but never in authors", () => {
     const relatedEntities = Note.schema.get("relatedEntities");
     Note.schema.set("relatedEntities", {
       ...relatedEntities,
-      additional: ["TestType", "Other"],
+      additional: ["TestType", "User"],
     });
-    Note.schema.set("mainTestType", {
+    Note.schema.set("mainOtherType", {
       dataType: "entity",
-      additional: "TestType",
+      additional: "OtherType",
     });
     Note.schema.set("linkedTestType", {
       dataType: "entity",
       isArray: true,
       additional: "TestType",
     });
+    Note.schema.set("linkedOtherType", {
+      dataType: "entity",
+      isArray: true,
+      additional: "OtherType",
+    });
     try {
-      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
-      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+      expect(Note.getPropertyFor("TestType")).toBe("relatedEntities");
+      expect(Note.getPropertyFor("User")).toBe("relatedEntities");
+      // not allowed in relatedEntities: the array field for the type, not the single-value one
+      expect(Note.getPropertyFor("OtherType")).toBe("linkedOtherType");
     } finally {
       Note.schema.set("relatedEntities", relatedEntities);
-      Note.schema.delete("mainTestType");
+      Note.schema.delete("mainOtherType");
       Note.schema.delete("linkedTestType");
+      Note.schema.delete("linkedOtherType");
     }
   });
 

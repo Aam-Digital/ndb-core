@@ -40,6 +40,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
+  /**
+   * Destroy the local database.
+   * Its last completed sync is forgotten, so that a new database with the same name
+   * is not taken for local data that was lost (see DatabaseResolverService).
+   */
+  override async destroy(): Promise<any> {
+    const lastSyncKey = this.LAST_SYNC_KEY;
+    const result = await super.destroy();
+    if (lastSyncKey) {
+      localStorage.removeItem(lastSyncKey);
+    }
+    return result;
+  }
+
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
@@ -75,27 +89,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   get localSyncState(): SyncStateSubject {
     return this.syncState;
-  }
-
-  /**
-   * Open a separate connection to this database's remote database,
-   * as the replication source of the background migration (see `IndexeddbMigrationService`).
-   *
-   * Unlike the connection this database syncs through, it does not collect the documents
-   * the server reports as no longer permitted: a replication from scratch gets all documents
-   * the user may not read reported, and this database's next sync would purge each of them
-   * before completing.
-   *
-   * The caller has to close it with `close()` once done (never `destroy()`,
-   * which would delete the database on the server).
-   *
-   * @returns undefined if the database is not initialized yet
-   */
-  openRemoteReplicationSource(): PouchDB.Database | undefined {
-    if (!this.remoteDatabase.isInitialized()) {
-      return undefined;
-    }
-    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(
@@ -397,8 +390,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * that the user may not read - it has no knowledge of which of those the
    * client actually holds locally. Most reported ids therefore do not exist
    * locally at all and purging them is a no-op. Only an actual local deletion
-   * is reported as a warning, so that the log stays a signal for data being
-   * removed rather than a count of what the server reported.
+   * is logged with details, so that the log stays a signal for data being
+   * removed rather than a count of what the server reported. That is the
+   * expected outcome of a change of permissions, so it is not reported to
+   * remote monitoring; only a failed purge is.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
     const reportedIds = this.remoteDatabase
@@ -407,6 +402,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) => !id.startsWith("_design/"));
 
     if (reportedIds.length === 0) {
+      return;
+    }
+
+    if (this.adapter === "idb") {
+      // a known limitation, not an event: the legacy "idb" adapter does not implement purge()
+      // (LocalPermissionEnforcerService destroys the local db instead where necessary)
+      Logging.debug(
+        "sync: cannot purge local docs on the legacy idb adapter, skipping",
+        { db: this.dbName, reportedByServer: reportedIds.length },
+      );
       return;
     }
 
@@ -437,8 +442,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
     };
 
     if (purgedIds.length > 0) {
-      // local data was actually deleted - log for traceability of possible data loss
-      Logging.warn(
+      // expected after a change of permissions: the user can no longer read these docs,
+      // so local changes to them could not have been synced anyway
+      Logging.debug(
         "sync: purged local docs that the server reported as no longer permitted",
         {
           ...stats,
@@ -458,7 +464,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     if (failedIds.length > 0) {
       // the local database keeps docs the user is no longer allowed to read
-      // (the legacy "idb" adapter does not implement purge at all, see purge())
       Logging.warn(
         "sync: failed to purge local docs that the server reported as no longer permitted",
         { ...stats, sampleIds: failedIds.slice(0, this.SAMPLE_IDS_LOGGED) },
