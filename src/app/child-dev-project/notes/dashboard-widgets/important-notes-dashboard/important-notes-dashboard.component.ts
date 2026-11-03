@@ -77,12 +77,15 @@ export class ImportantNotesDashboardComponent {
         await this.importantNotesIndex
           .buildIndex(relevantLevels)
           .catch((err) =>
-            Logging.error("Failed to build index for important notes", err),
+            Logging.errorUnlessExpected(
+              "Failed to build index for important notes",
+              err,
+            ),
           );
         const notes = await this.importantNotesIndex
           .queryIndex(relevantLevels)
           .catch((err) => {
-            Logging.error("Failed to load important notes", err);
+            Logging.errorUnlessExpected("Failed to load important notes", err);
             return [];
           });
         if (isCurrent) {

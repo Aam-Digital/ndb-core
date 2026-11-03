@@ -285,7 +285,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const records = await this.entityMapper
         .loadType(newSide.entityType)
         .catch((err) => {
-          Logging.error(
+          Logging.errorUnlessExpected(
             "Failed to initialize entities for matching side",
             err,
             {

@@ -441,10 +441,10 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
           referenceField as IndexedProperty,
         )
         .catch((error) =>
-          Logging.warn(
+          Logging.warnUnlessExpected(
             "AutomatedFieldUpdateConfigService: Could not create the index of linked records",
-            { indexId },
             error,
+            { indexId },
           ),
         );
     }

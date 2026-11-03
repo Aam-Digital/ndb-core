@@ -28,7 +28,10 @@ export class SearchService {
         concatMap(() =>
           from(this.createSearchIndex()).pipe(
             catchError((error) => {
-              Logging.error("Failed to create search index", error);
+              Logging.errorUnlessExpected(
+                "Failed to create search index",
+                error,
+              );
               return EMPTY;
             }),
           ),

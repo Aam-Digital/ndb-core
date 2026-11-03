@@ -136,7 +136,7 @@ export class EntityRelationResolverService {
       // without resolving (and thereby recursing into) its own relations.
       return match ? this.copySchemaFieldsShallow(match) : { _id: id };
     } catch (err) {
-      Logging.warn(
+      Logging.warnUnlessExpected(
         "EntityRelationResolverService: failed to load entities to resolve a relation field",
         err,
         { entityType, field: fieldSchema.id },

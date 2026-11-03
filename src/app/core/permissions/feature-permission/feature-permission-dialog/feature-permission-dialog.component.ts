@@ -165,7 +165,10 @@ export class FeaturePermissionDialogComponent {
       try {
         return await this.loadPermissionRows();
       } catch (error) {
-        Logging.error("Failed to load feature permissions", error);
+        Logging.errorUnlessExpected(
+          "Failed to load feature permissions",
+          error,
+        );
         return { rows: [], loadFailed: true };
       }
     },
