@@ -1,6 +1,5 @@
 import type * as Sentry from "@sentry/angular";
 import {
-  classifyError,
   classifyErrorChain,
   causeChain,
   ErrorClassification,
@@ -13,7 +12,7 @@ import {
   isUnhandled,
   truncateTag,
 } from "./sentry-grouping";
-import { LoggedError, NamedError } from "./reported-errors";
+import { NamedError } from "./reported-errors";
 import { reportOnce } from "./report-once";
 
 /**
@@ -32,7 +31,7 @@ export function processSentryEvent(
 
   const classification = classifySentryEvent(event, hint);
   const policy = classification ? REPORTING_POLICY[classification] : undefined;
-  if (policy?.drop?.(hint, event)) {
+  if (policy?.drop?.()) {
     return null;
   }
   if (classification) {
@@ -54,7 +53,7 @@ const REPORTING_POLICY: Record<
   ErrorClassification,
   {
     /** whether nobody can act on it: not reported at all */
-    drop?: (hint: Sentry.EventHint, event: Sentry.ErrorEvent) => boolean;
+    drop?: () => boolean;
     /** changes to the event after grouping */
     adjust?: (event: Sentry.ErrorEvent) => void;
   }
@@ -64,15 +63,11 @@ const REPORTING_POLICY: Record<
   connectivity: { drop: () => !navigator.onLine },
   // the user is told; the code waiting for the data is not at fault
   "session-expired": { drop: () => true },
-  // usually a permission-configuration state, not a bug: reported (as a warning)
-  // where a component deliberately logged it with a message of its own, or where
-  // nothing handled it (e.g. a public form failing on every submission because
-  // the public role may not create the record)
-  "not-permitted": {
-    drop: (hint, event) =>
-      !isUnhandled(event) && !isDeliberatelyLogged(hint?.originalException),
-    adjust: (event) => (event.level = "warning"),
-  },
+  // a caught one is logged at debug (see `isExpectedFailure`): this one was not
+  // handled or is wrapped in a named error, usually a permission-configuration
+  // state (e.g. a public form failing on every submission because the public role
+  // may not create the record)
+  "not-permitted": { adjust: (event) => (event.level = "warning") },
   // normal for an offline-first app: the user is told by the form and it is
   // counted in usage analytics instead
   "write-conflict": { drop: () => true },
@@ -104,14 +99,6 @@ function classifySentryEvent(
     return classification;
   }
   return event.exception?.values?.map(classifyException).find(Boolean);
-}
-
-/** A failure logged with a message by a component, or wrapped in one of our named errors. */
-function isDeliberatelyLogged(error: unknown): boolean {
-  return (
-    error instanceof LoggedError ||
-    (error instanceof NamedError && !classifyError(error))
-  );
 }
 
 /**

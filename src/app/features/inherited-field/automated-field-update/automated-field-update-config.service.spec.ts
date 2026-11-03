@@ -1394,12 +1394,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
       let warn: MockInstance;
 
       beforeEach(() => {
-        warn = vi.spyOn(Logging, "warn").mockReturnValue(undefined);
+        // through the real `Logging`, which decides whether a failure is expected
+        vi.spyOn(console, "debug").mockImplementation(() => {});
+        warn = vi.spyOn(console, "warn").mockImplementation(() => {});
       });
 
-      afterEach(() => {
-        warn.mockRestore();
-      });
+      afterEach(() => vi.restoreAllMocks());
 
       it.each([
         [

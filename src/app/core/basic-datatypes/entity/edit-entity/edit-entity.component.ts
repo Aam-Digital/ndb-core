@@ -331,7 +331,7 @@ export class EditEntityComponent<
             selectedId,
           );
         } else {
-          Logging.warnUnlessExpected(
+          Logging.warn(
             "[ENTITY_SELECT] Error loading selected entity.",
             err,
             selectedId,

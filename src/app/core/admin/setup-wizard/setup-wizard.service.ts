@@ -73,7 +73,7 @@ export class SetupWizardService extends LatestEntityLoader<
         this.setUnavailable();
       }
     } catch (e) {
-      Logging.warnUnlessExpected("Failed to load SetupWizard config", e);
+      Logging.warn("Failed to load SetupWizard config", e);
       if (this._state() === "loading") {
         this._state.set("error");
       }

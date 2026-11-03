@@ -247,7 +247,7 @@ Afterwards you have to set up the system from scratch. This step cannot be rever
           err,
         );
       } else {
-        Logging.warnUnlessExpected(
+        Logging.warn(
           "Could not look up user accounts before deleting records",
           err,
         );

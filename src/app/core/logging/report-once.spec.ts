@@ -92,8 +92,7 @@ describe("processSentryEvent", () => {
 
     it("should report the network issue once per page load", () => {
       // AAM-DIGITAL-77E: all pending requests fail at the same moment
-      const network = () =>
-        processError(new LoggedError("Could not load notes", failedFetch()));
+      const network = () => processError(failedFetch(), { unhandled: true });
 
       expect(network().fingerprint).toEqual(["network-error"]);
       expect(network()).toBeNull();

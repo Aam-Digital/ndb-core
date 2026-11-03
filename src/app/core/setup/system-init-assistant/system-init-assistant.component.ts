@@ -130,7 +130,7 @@ export class SystemInitAssistantComponent implements OnInit {
       this.languageService.switchLocale(localeId);
     } catch (err) {
       this.languageSelect()?.resetToCurrent();
-      Logging.warnUnlessExpected("Failed to save the default language", err);
+      Logging.warn("Failed to save the default language", err);
       this.alertService.addDanger(
         $localize`The language could not be saved. Please try again.`,
       );

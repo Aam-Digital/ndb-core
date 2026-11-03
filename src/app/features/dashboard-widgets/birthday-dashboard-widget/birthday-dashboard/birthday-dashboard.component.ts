@@ -81,10 +81,7 @@ export class BirthdayDashboardComponent {
             this.birthdayIndex.queryBirthdayIndex(entityConfig, threshold),
           )
           .catch((err) => {
-            Logging.errorUnlessExpected(
-              "Failed to load upcoming birthdays",
-              err,
-            );
+            Logging.error("Failed to load upcoming birthdays", err);
             return [];
           })
           .then((res) => {

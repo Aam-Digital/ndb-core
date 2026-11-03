@@ -98,7 +98,7 @@ export class UserLanguageSettingsComponent {
         return;
       }
 
-      Logging.errorUnlessExpected("Failed to save the user's language", err);
+      Logging.error("Failed to save the user's language", err);
       this.alertService.addDanger(
         $localize`Your language could not be saved. Please try again.`,
       );

@@ -2,7 +2,6 @@ import type * as Sentry from "@sentry/angular";
 import { ErrorClassification, isTypedErrorName } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
-import { errorText, textOf } from "#src/app/utils/backend-response";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
@@ -37,28 +36,19 @@ export function groupSentryEvent(
       : rewrappedNamedError(values, original);
 
   if (reportedError) {
-    const failedRequest = failedRequestPassedOn(
-      reportedError,
+    // a connectivity failure itself (e.g. an unhandled `ConnectivityError`)
+    if (
+      chainClassifications[values.indexOf(reportedError)] === "connectivity"
+    ) {
+      return groupAsNetworkError(event, thrown, reportedError);
+    }
+    return groupByRootCause(
+      event,
       values,
       chainClassifications,
-      original,
+      reportedError,
+      rootCauseIndex(values, errors),
     );
-    if (!failedRequest) {
-      return groupByRootCause(
-        event,
-        values,
-        chainClassifications,
-        reportedError,
-        rootCauseIndex(values, errors),
-      );
-    }
-    if (original instanceof LoggedError) {
-      event.tags = {
-        ...event.tags,
-        logged_message: truncateTag(normalizeErrorValue(thrown.value)),
-      };
-    }
-    return groupAsNetworkError(event, thrown, failedRequest);
   }
 
   if (classification === "connectivity") {
@@ -123,50 +113,6 @@ export function classifyException(
 /** Whether nothing caught the reported error: it reached Angular's `ErrorHandler` or the window. */
 export function isUnhandled(event: Sentry.ErrorEvent): boolean {
   return event.exception?.values?.at(-1)?.mechanism?.handled === false;
-}
-
-/**
- * The failed request that our error only passes on, if that is all it reports:
- * a `DatabaseException` that is a connectivity failure itself, or one logged
- * with a message (whatever component logged it, it is the same dropped connection).
- */
-function failedRequestPassedOn(
-  reportedError: Sentry.Exception,
-  values: Sentry.Exception[],
-  chainClassifications: (ErrorClassification | undefined)[],
-  original: unknown,
-): Sentry.Exception | undefined {
-  if (chainClassifications[values.indexOf(reportedError)] === "connectivity") {
-    return reportedError;
-  }
-  if (!(original instanceof LoggedError)) {
-    return undefined;
-  }
-  if (!(original.cause instanceof Error)) {
-    return loggedForeignFailedRequest(original.cause);
-  }
-  const causeIndex = values.length - 2;
-  return causeIndex >= 0 && chainClassifications[causeIndex] === "connectivity"
-    ? values[causeIndex]
-    : undefined;
-}
-
-/**
- * A logged failure that is not an `Error` (e.g. an `HttpErrorResponse` of a request
- * to another service without response), which Sentry does not serialize as an
- * exception of the event: as the exception it would be, if it is a failed request.
- */
-function loggedForeignFailedRequest(
-  cause: unknown,
-): Sentry.Exception | undefined {
-  if (classifyReportedError(cause) !== "connectivity") {
-    return undefined;
-  }
-  const { name, message } = (cause ?? {}) as Record<string, unknown>;
-  return {
-    type: textOf(name) || "Error",
-    value: textOf(message) || errorText(cause),
-  };
 }
 
 /**

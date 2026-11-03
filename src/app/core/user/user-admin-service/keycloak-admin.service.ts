@@ -394,11 +394,9 @@ export class KeycloakAdminService extends UserAdminService {
             })),
             catchError((error) => {
               // Log the error but don't fail the entire operation
-              Logging.warnUnlessExpected(
-                "Failed to fetch roles for user",
-                error,
-                { userId: user.id },
-              );
+              Logging.warn("Failed to fetch roles for user", error, {
+                userId: user.id,
+              });
               // Return user without roles
               return of({
                 id: user.id,

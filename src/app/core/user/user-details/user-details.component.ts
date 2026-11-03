@@ -434,10 +434,7 @@ export class UserDetailsComponent {
     } catch (error) {
       // a failed lookup is not evidence that the profile is free - refuse the change rather
       // than risk linking a second account to a profile that already has one
-      Logging.errorUnlessExpected(
-        "Failed to check for an existing user account",
-        error,
-      );
+      Logging.error("Failed to check for an existing user account", error);
       this.alertService.addDanger(
         $localize`:Error message:Could not check whether this profile already has a user account. Please try again.`,
       );

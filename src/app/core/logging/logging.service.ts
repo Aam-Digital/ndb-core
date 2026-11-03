@@ -12,8 +12,7 @@ import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { LoggedError } from "./reported-errors";
-import { isExpectedFailure } from "./error-classification";
-import { classifyReportedError } from "./uncaught-error-classification";
+import { isExpectedFailure } from "./uncaught-error-classification";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -126,39 +125,6 @@ export class LoggingService {
   }
 
   /**
-   * Log a caught error as a warning, or only for debugging if it is an expected
-   * failure of the user's environment (offline, expired session, missing
-   * permission, edit conflict; see `isExpectedFailure`).
-   * @param message static description of what failed
-   * @param err the caught error, reported as the cause of the message
-   * @param context Additional context for debugging
-   */
-  public warnUnlessExpected(
-    message: string,
-    err: unknown,
-    ...context: unknown[]
-  ) {
-    if (isExpectedFailure(err)) {
-      this.debug(message, err, ...context);
-    } else {
-      this.warn(message, err, ...context);
-    }
-  }
-
-  /** Like {@link warnUnlessExpected}, for a failure that is an error unless expected. */
-  public errorUnlessExpected(
-    message: string,
-    err: unknown,
-    ...context: unknown[]
-  ) {
-    if (isExpectedFailure(err)) {
-      this.debug(message, err, ...context);
-    } else {
-      this.error(message, err, ...context);
-    }
-  }
-
-  /**
    * Generic logging of a message.
    * @param message Message to be logged
    * @param logLevel Optional log level - default is "info"
@@ -169,9 +135,16 @@ export class LoggingService {
     logLevel: LogLevel = LogLevel.INFO,
     ...context: any[]
   ) {
+    if (
+      SENTRY_LEVELS[logLevel] &&
+      isExpectedFailure(loggedError(message, context))
+    ) {
+      // a failure of the user's environment, not ours to fix
+      logLevel = LogLevel.DEBUG;
+    }
     this.logToConsole(message, logLevel, ...context);
 
-    if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
+    if (SENTRY_LEVELS[logLevel]) {
       this.logToRemoteMonitoring(message, logLevel, ...context);
     }
   }
@@ -270,11 +243,25 @@ function messageText(message: any): string {
 }
 
 /**
+ * The error a log call is about: the message if it is an error, else the first
+ * error among the context (also an error-like object, e.g. an `HttpErrorResponse`).
+ */
+function loggedError(message: unknown, context: unknown[]): unknown {
+  if (message instanceof Error) {
+    return message;
+  }
+  return (
+    context.find((c) => c instanceof Error) ??
+    context.find((c) => typeof (c as { name?: unknown })?.name === "string")
+  );
+}
+
+/**
  * The Error to report for a log call, or `undefined` for a plain message event.
  *
  * A logged message comes with the logged error as its `cause` (a {@link LoggedError}),
- * also for a warning: only as an exception is the error grouped and filtered by its
- * cause. A warning without an error is about the situation itself.
+ * also for a warning: only as an exception is the error grouped by its cause.
+ * A warning without an error is about the situation itself.
  */
 export function toReportedError(
   message: any,
@@ -284,30 +271,9 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
-  if (isClassifiedForeignFailure(message)) {
-    // e.g. an `HttpErrorResponse` logged as it is: grouped and filtered like that failure
-    return new LoggedError(messageText(message), message);
-  }
-
-  const cause =
-    context.find((c) => c instanceof Error) ??
-    context.find((c) => isClassifiedForeignFailure(c));
+  const cause = context.find((c) => c instanceof Error);
   if (!cause && logLevel !== LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
-}
-
-/**
- * A logged failure that is not an `Error` but that remote monitoring recognizes
- * (e.g. an `HttpErrorResponse` of another service without response): reported as
- * the cause, so that it is grouped and filtered like that failure. Other failed
- * responses (e.g. a 404) stay data: whether they are exceptional is for the caller to decide.
- */
-function isClassifiedForeignFailure(value: unknown): boolean {
-  return (
-    !!value &&
-    typeof value === "object" &&
-    classifyReportedError(value) !== undefined
-  );
 }

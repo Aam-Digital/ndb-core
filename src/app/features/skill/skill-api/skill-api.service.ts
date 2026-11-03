@@ -129,7 +129,7 @@ export class SkillApiService {
             this.getExternalProfileById(externalProfile),
           ).catch((e) => {
             // the user is alerted below
-            Logging.warnUnlessExpected(
+            Logging.warn(
               "SkillApiService error getting external profile for applying data",
               e,
             );

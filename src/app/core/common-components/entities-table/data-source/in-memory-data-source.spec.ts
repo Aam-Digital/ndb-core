@@ -141,7 +141,7 @@ describe("InMemoryDataSource", () => {
         expect.anything(),
       );
     });
-    it("tells the user they don't have access (and does not report it) if not permitted", async () => {
+    it("tells the user they don't have access if not permitted", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
         new DatabaseException({
           status: 401,
@@ -149,7 +149,6 @@ describe("InMemoryDataSource", () => {
           error: "User is not permitted",
         }),
       );
-      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
 
       const ds = TestBed.runInInjectionContext(
         () => new InMemoryDataSource<Entity>(),
@@ -164,7 +163,6 @@ describe("InMemoryDataSource", () => {
         "×", // no "Retry": it cannot help for a permission problem
         expect.anything(),
       );
-      expect(errorSpy).not.toHaveBeenCalled();
     });
   });
 

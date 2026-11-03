@@ -238,7 +238,7 @@ export class RollCallComponent {
         // e.g. an outdated link
         Logging.debug("Could not load event", e, { eventId: id });
       } else {
-        Logging.warnUnlessExpected("Could not load event", e, { eventId: id });
+        Logging.warn("Could not load event", e, { eventId: id });
       }
       void this.router.navigate(["/404"]);
       return undefined;

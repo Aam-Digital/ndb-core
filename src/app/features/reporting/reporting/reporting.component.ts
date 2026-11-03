@@ -297,7 +297,7 @@ export class ReportingComponent {
         // when they calculate the report explicitly
         Logging.debug("Background report refresh failed", reason);
       } else {
-        Logging.warnUnlessExpected("Background report refresh failed", reason);
+        Logging.warn("Background report refresh failed", reason);
       }
       // keep showing the stale data + warning
     } finally {

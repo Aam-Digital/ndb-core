@@ -110,21 +110,6 @@ export function isNotPermittedError(err: unknown): boolean {
   return classifyErrorChain(err) === "not-permitted";
 }
 
-const EXPECTED_FAILURES = new Set<ErrorClassification | undefined>([
-  "connectivity",
-  "session-expired",
-  "not-permitted",
-  "write-conflict",
-]);
-
-/**
- * A failure of the user's environment rather than a bug: offline, expired
- * session, missing permission, edit conflict (judged by the whole `cause` chain).
- */
-export function isExpectedFailure(err: unknown): boolean {
-  return EXPECTED_FAILURES.has(classifyErrorChain(err));
-}
-
 /**
  * The classification of the first error in the `cause` chain that has one,
  * outermost first: a boundary's typed error wins over the raw error it wraps.

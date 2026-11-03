@@ -146,7 +146,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
    * (the database layer triggers a re-login) or the device is offline.
    */
   private logRulesLoadFailure(err: unknown) {
-    Logging.errorUnlessExpected("Failed to load permission rules", err);
+    Logging.error("Failed to load permission rules", err);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {

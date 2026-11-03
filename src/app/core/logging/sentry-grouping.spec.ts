@@ -10,7 +10,6 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   brokenIndexedDb,
-  failedFetch,
   processError,
   setUpPageLoad,
   title,
@@ -119,30 +118,6 @@ describe("processSentryEvent", () => {
       {
         case: "a failed database request, in the network issue",
         error: new DatabaseException({ message: "Load failed" }),
-        fingerprint: ["network-error"],
-        title: "NetworkError: Failed to reach the server",
-      },
-      {
-        case: "a logged failed request, in the network issue whoever logged it",
-        error: new LoggedError("Could not load notes", failedFetch()),
-        fingerprint: ["network-error"],
-        title: "NetworkError: Failed to reach the server",
-      },
-      {
-        case: "a logged failed request to another service (not an Error), in the network issue",
-        error: new LoggedError(
-          "Failed to load config descriptor",
-          new HttpErrorResponse({ status: 0 }),
-        ),
-        fingerprint: ["network-error"],
-        title: "NetworkError: Failed to reach the server",
-      },
-      {
-        case: "a logged chunk load failure, in the network issue",
-        error: new LoggedError(
-          "Failed to load dynamic component",
-          new TypeError("Importing a module script failed."),
-        ),
         fingerprint: ["network-error"],
         title: "NetworkError: Failed to reach the server",
       },
@@ -316,18 +291,6 @@ describe("processSentryEvent", () => {
         expect(processError(error, withStack).fingerprint).toEqual(fingerprint);
       },
     );
-
-    it("should keep the logged message and the original error of a network failure searchable", () => {
-      const event = processError(
-        new LoggedError("Could not load notes", failedFetch()),
-      );
-
-      expect(event.level).toBe("warning");
-      expect(event.tags).toMatchObject({
-        logged_message: "Could not load notes",
-        network_error: "DatabaseException: Failed to fetch from DB",
-      });
-    });
 
     it("should group a message event by its normalized message", () => {
       const event = processSentryEvent(

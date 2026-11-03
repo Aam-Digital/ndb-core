@@ -179,7 +179,7 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        Logging.errorUnlessExpected(
+        Logging.error(
           "Error loading data in datasource",
           err,
           this.loadRecordConfig(),

@@ -24,8 +24,6 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { ConnectivityError } from "#src/app/utils/backend-errors";
-import { NotPermittedError } from "../not-permitted.error";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -617,21 +615,6 @@ describe("AbilityService", () => {
     beforeEach(() => vi.useFakeTimers());
     afterEach(() => vi.useRealTimers());
 
-    it.each([
-      // anonymous visitors of a public form may not read the rules config
-      ["a permission denial", new NotPermittedError("User is not permitted")],
-      [
-        "a connectivity failure",
-        new ConnectivityError("Failed to fetch from DB"),
-      ],
-    ])("should not report %s as an error", async (_, err) => {
-      const errorSpy = vi.spyOn(Logging, "error");
-
-      await initWithLoadError(err);
-
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
     it("should not hand the permissive fallback to the enforcer while the rules are unknown", async () => {
       // otherwise "allowed everything" is stored as the baseline, so the real
       // rules arriving later look like a permission change
@@ -685,7 +668,8 @@ describe("AbilityService", () => {
       expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
     });
 
-    it("should report an unexpected failure with the error", async () => {
+    // whether it is reported (e.g. not while offline) is decided by `Logging`
+    it("should log a failure with the error", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
       const failure = new Error("something unexpected");
 

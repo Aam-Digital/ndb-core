@@ -168,7 +168,7 @@ export class CouchdbFileService extends FileService {
               // expired session (whose 401 body, a blob here, cannot be classified)
               Logging.debug("Could not load file", entity?.getId(), property);
             } else {
-              Logging.warnUnlessExpected(
+              Logging.warn(
                 "Could not load file",
                 err,
                 entity?.getId(),

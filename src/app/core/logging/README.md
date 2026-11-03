@@ -28,12 +28,12 @@ to act on the failure:
 | An external service unavailable (address lookup, GitHub releases API), a normal fallback, a known limitation (`purge()` on the `idb` adapter), an optional feature not set up (push without Firebase config) | `debug`                                                                                             |
 | A reference the UI falls back from on its own (a file field pointing to a missing attachment, an unknown icon)                                                                                               | `debug`                                                                                             |
 
-In a catch block, use `Logging.warnUnlessExpected(message, err, ...context)` (or `errorUnlessExpected`): it
-logs at `debug` if the error is a failure of the user's environment (`isExpectedFailure()`: offline,
-expired session, missing permission, edit conflict, judged along the `cause` chain) and at `warn`
-(`error`) otherwise. Do not downgrade a whole catch block, and do not write ad-hoc status checks per
-component: a component that only treats `404` as expected logs every dropped connection as a warning of
-its own. Where a site has an expected case of its own (e.g. a `404`), handle it in a branch before.
+In a catch block, log the caught error with `Logging.warn(message, err)` or `Logging.error(message, err)`.
+`Logging` itself logs it at `debug` if it is a failure of the user's environment (`isExpectedFailure()`:
+offline, expired session, missing permission, edit conflict, judged along the `cause` chain), unless one
+of our named errors wraps it (e.g. `AppBootstrapError`: the app could not start). So do not check for
+these yourself, and do not write ad-hoc status checks: handle only an expected case of your own (e.g. a
+`404`) in a branch before.
 
 - **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event handler
   needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's `ErrorHandler` and is
@@ -101,9 +101,9 @@ Logging.error("Could not download file", err, { fileId });
 `Logging.error(message, err)` and `Logging.warn(message, err)` report the message as an error (a
 `LoggedError`) with the original as its `cause`, which Sentry keeps in the exception chain. A warning
 without an `Error` is reported as a plain message event. Angular's `HttpErrorResponse` is not an `Error`
-and counts as "no error" here, unless it is a request to another service that got no response (status 0
-or a gateway status): that is reported as the `cause`, so that it goes into the network issue. Do not drop the error before logging (e.g. `catchError(() => of(null))`
-followed by a log call without it).
+and is reported as context only; one that got no response (status 0 or a gateway status) is a
+connectivity failure and logged at `debug`. Do not drop the error before logging (e.g.
+`catchError(() => of(null))` followed by a log call without it).
 
 ### Our own errors: `NamedError`
 
@@ -129,12 +129,12 @@ responses mean (`src/app/utils/backend-response.ts`). Each typed class extends `
 module that creates it: `ConnectivityError` and `ServerError` in `src/app/utils/backend-errors.ts`,
 `NotPermittedError` in `core/permissions/`, `SessionExpiredError` in `core/session/`,
 `WriteConflictError` and `LocalStorageError` in `core/database/pouchdb/database-errors.ts`.
-Everything else judges an error by its type (`classifyError()`). Only remote monitoring also recognizes
-the few foreign errors that reach it uncaught, e.g. a failed chunk load
-(`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
+Everything else judges an error by its type (`classifyError()`). Only the logging also recognizes the
+few foreign errors that reach it unconverted, e.g. a failed chunk load or a failed request to another
+service (`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
 (e.g. `SyncStalledError extends ConnectivityError`).
 
-- **Check for a kind of failure** with `isExpectedFailure()` (or `Logging.warnUnlessExpected()`),
+- **Check for a kind of failure** (e.g. to tell the user why something failed) with
   `isConnectivityError()`, `isNotPermittedError()` or `classifyErrorChain()` (`error-classification.ts`),
   which apply this classification to the whole `cause` chain, never with ad-hoc status checks.
 - **Read a failed HTTP response** with `failedHttpResponse(err)` (`src/app/utils/failed-http-response.ts`),
@@ -144,16 +144,18 @@ the few foreign errors that reach it uncaught, e.g. a failed chunk load
   stay an `HttpErrorResponse`. For a session without login (a public form), the database layer
   converts every `401` into a `NotPermittedError`: there is no session to renew.
 
-What remote monitoring does with each kind (`REPORTING_POLICY` in `sentry-event-processing.ts`):
+What remote monitoring does with each kind (`REPORTING_POLICY` in `sentry-event-processing.ts`). A
+caught `connectivity`, `session-expired`, `not-permitted` or `write-conflict` failure is logged at
+`debug` and never reaches it: these rows are about unhandled failures and named errors wrapping one.
 
-| Classification    | Reported                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------- |
-| `connectivity`    | one shared `network-error` issue, as warning; not while offline                       |
-| `server-error`    | at the logged level, one issue per status and endpoint                                |
-| `not-permitted`   | as a warning if logged with a message or unhandled; dropped if logged without message |
-| `local-storage`   | the first event of the page load, tagged `incident: local-db`                         |
-| `session-expired` | no: the user is told                                                                  |
-| `write-conflict`  | no: normal for an offline-first app, counted in usage analytics                       |
+| Classification    | Reported                                                        |
+| ----------------- | --------------------------------------------------------------- |
+| `connectivity`    | one shared `network-error` issue, as warning; not while offline |
+| `server-error`    | at the logged level, one issue per status and endpoint          |
+| `not-permitted`   | as a warning                                                    |
+| `local-storage`   | the first event of the page load, tagged `incident: local-db`   |
+| `session-expired` | no: the user is told                                            |
+| `write-conflict`  | no: normal for an offline-first app, counted in usage analytics |
 
 ### How events are grouped and filtered
 
@@ -202,8 +204,8 @@ users, as events deliberately carry no user identity (data minimization under th
 
 - `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
 - `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
-- `error-classification.ts` — `TypedError`, the base of the typed errors, `classifyError()` and its helpers (`isExpectedFailure()`, ...)
-- `uncaught-error-classification.ts` — the foreign errors recognized only when they reach remote monitoring uncaught
+- `error-classification.ts` — `TypedError`, the base of the typed errors, `classifyError()` and its helpers (`isConnectivityError()`, ...)
+- `uncaught-error-classification.ts` — the foreign errors recognized by the logging, and `isExpectedFailure()`
 - `sentry-event-processing.ts` — the `beforeSend` hook: details, the reporting policy per classification
 - `sentry-grouping.ts` — the grouping rules and message normalization
 - `report-once.ts` — turning repeated reports of one failure into breadcrumbs

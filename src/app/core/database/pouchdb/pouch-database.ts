@@ -412,10 +412,7 @@ export class PouchDatabase extends Database {
         })
         .catch((err) => {
           // only the local database: RemotePouchDatabase polls with its own loop
-          Logging.errorUnlessExpected(
-            "changes feed failed",
-            toTypedDatabaseError(err),
-          );
+          Logging.error("changes feed failed", toTypedDatabaseError(err));
 
           // retry
           setTimeout(() => this.subscribeChanges(), 10000);

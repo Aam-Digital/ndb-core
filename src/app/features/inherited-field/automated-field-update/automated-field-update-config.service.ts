@@ -441,7 +441,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
           referenceField as IndexedProperty,
         )
         .catch((error) =>
-          Logging.warnUnlessExpected(
+          Logging.warn(
             "AutomatedFieldUpdateConfigService: Could not create the index of linked records",
             error,
             { indexId },
@@ -534,7 +534,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       );
     } catch (error) {
       // e.g. no read access to the linked entity - expected for some roles
-      Logging.warnUnlessExpected(
+      Logging.warn(
         "AutomatedFieldUpdateConfigService: Failed to load linked entity",
         error,
         { entityType: entityType?.ENTITY_TYPE, entityId },

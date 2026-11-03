@@ -128,7 +128,7 @@ export abstract class AbstractEntityDetailsComponent {
             );
           }
           if (error?.status !== 404) {
-            Logging.warnUnlessExpected("Error loading record", error);
+            Logging.warn("Error loading record", error);
           }
           return null;
         });

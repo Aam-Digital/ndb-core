@@ -54,10 +54,7 @@ export class NotesService {
         concatMap((linkFields) =>
           from(this.createNotesRelatedIndex(linkFields)).pipe(
             catchError((error) => {
-              Logging.errorUnlessExpected(
-                "Failed to create notes related index",
-                error,
-              );
+              Logging.error("Failed to create notes related index", error);
               return EMPTY;
             }),
           ),

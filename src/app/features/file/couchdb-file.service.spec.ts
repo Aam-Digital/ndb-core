@@ -232,11 +232,13 @@ describe("CouchdbFileService", () => {
         url: `${environment.DB_PROXY_PREFIX}/app-attachments/failing/logo`,
       });
       mockHttp.get.mockReturnValue(throwError(() => failure));
-      vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
-      const warn = vi
-        .spyOn(Logging, "warn")
-        .mockImplementation(() => undefined);
-      warn.mockClear();
+      // through the real `Logging`, which decides whether a failure is expected
+      const debug = vi.spyOn(console, "debug").mockImplementation(() => {});
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      onTestFinished(() => {
+        debug.mockRestore();
+        warn.mockRestore();
+      });
 
       await firstValueFrom(
         service.loadFile(new Entity(`failing-${status}`), "logo"),

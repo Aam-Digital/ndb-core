@@ -191,7 +191,7 @@ export class AddressSearchComponent implements OnInit {
             // the external lookup service is down or rate-limiting: nothing to fix
             Logging.debug("Address Lookup API unavailable", error);
           } else {
-            Logging.warnUnlessExpected("Address Lookup API error", error);
+            Logging.warn("Address Lookup API error", error);
           }
           this.otherTypeError.set(true);
         }

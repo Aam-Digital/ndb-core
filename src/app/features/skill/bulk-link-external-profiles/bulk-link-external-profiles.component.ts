@@ -183,10 +183,7 @@ export class BulkLinkExternalProfilesComponent {
       }
     } catch (err) {
       // the warning is shown for the record
-      Logging.warnUnlessExpected(
-        "Could not load external profiles (bulk action)",
-        err,
-      );
+      Logging.warn("Could not load external profiles (bulk action)", err);
       record.warning = {
         ...(record.warning ?? {}),
         possibleMatches: $localize`:bulk-link external profile error:Error while fetching possible matches. Please try to manually search and select a profile to see details.`,

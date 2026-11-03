@@ -64,10 +64,7 @@ export class PublicFormPermissionWarningComponent {
           entityType,
         );
       } catch (error) {
-        Logging.errorUnlessExpected(
-          "Failed to check public permissions",
-          error,
-        );
+        Logging.error("Failed to check public permissions", error);
         return false;
       }
     },

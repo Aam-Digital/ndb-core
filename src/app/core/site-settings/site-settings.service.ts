@@ -113,7 +113,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() => {
       super.startLoading().catch((err) => {
-        Logging.errorUnlessExpected("Failed to load site settings", err);
+        Logging.error("Failed to load site settings", err);
       });
     });
   }

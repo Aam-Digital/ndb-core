@@ -139,10 +139,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
       );
     } catch (e) {
       // the error is shown in the dialog
-      Logging.warnUnlessExpected(
-        "SkillModule: Failed to load external profiles",
-        e,
-      );
+      Logging.warn("SkillModule: Failed to load external profiles", e);
       // a NotPermittedError keeps its static message (its issue title), the user gets a translated one
       this.error = isNotPermittedError(e)
         ? {

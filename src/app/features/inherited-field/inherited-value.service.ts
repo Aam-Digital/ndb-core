@@ -136,7 +136,7 @@ export class InheritedValueService extends DefaultValueStrategy {
               field.defaultValue.config,
             )
             .catch((error) => {
-              Logging.warnUnlessExpected(
+              Logging.warn(
                 "InheritedValueService could not load linked records for collected field",
                 error,
                 { field: field.id },
@@ -423,7 +423,7 @@ export class InheritedValueService extends DefaultValueStrategy {
       };
     } catch (error) {
       // a bug, but later changes of the linked parents are still watched
-      Logging.errorUnlessExpected(
+      Logging.error(
         "InheritedValueService could not determine the inherited value",
         error,
         { field: fieldId },

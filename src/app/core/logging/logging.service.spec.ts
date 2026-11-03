@@ -45,13 +45,6 @@ describe("LoggingService", () => {
       context: [new HttpErrorResponse({ status: 404 })],
       expected: undefined,
     },
-    {
-      // grouped and filtered like that failure (into the network issue)
-      call: "a warning with a request to another service without response",
-      level: LogLevel.WARN,
-      context: [offlineResponse],
-      expected: { message: "Could not load X", cause: offlineResponse },
-    },
   ])(
     "should report $call as the logged message caused by the error (or as a plain message if undefined)",
     ({ level, context, expected }) => {
@@ -74,17 +67,19 @@ describe("LoggingService", () => {
       }),
       "debug",
     ],
-    [
-      "a wrapped missing permission",
-      new NamedError("SomeError", "x", {
-        cause: new NotPermittedError("forbidden"),
-      }),
-      "debug",
-    ],
+    ["a failed fetch that passed no boundary", failure, "debug"],
+    ["a request to another service without response", offlineResponse, "debug"],
     [
       "an edit conflict",
       new DatabaseException({ status: 409, message: "conflict" }),
       "debug",
+    ],
+    [
+      "a missing permission wrapped in a named error",
+      new NamedError("SomeError", "x", {
+        cause: new NotPermittedError("forbidden"),
+      }),
+      "warn",
     ],
     [
       "a 401 for an invalid token",
@@ -94,24 +89,25 @@ describe("LoggingService", () => {
       }),
       "warn",
     ],
-    // converted into a typed error where it enters the app, not judged here
-    [
-      "a failed fetch that passed no boundary",
-      new TypeError("Failed to fetch"),
-      "warn",
-    ],
     ["a server error", new HttpErrorResponse({ status: 500 }), "warn"],
+    // context data, not the error the log call is about
+    ["a plain status object", { status: 0 }, "warn"],
     ["a bug", new TypeError("x is undefined"), "warn"],
   ] as const)(
-    "should log a failure that is %s at %s level with warnUnlessExpected",
-    (_, err, level) => {
-      const logging = new LoggingService();
-      vi.spyOn(logging, "debug").mockImplementation(() => undefined);
-      vi.spyOn(logging, "warn").mockImplementation(() => undefined);
+    "should log a warning about %s at %s level",
+    (_, err, consoleMethod) => {
+      const consoleSpies = {
+        debug: vi.spyOn(console, "debug").mockImplementation(() => undefined),
+        warn: vi.spyOn(console, "warn").mockImplementation(() => undefined),
+      };
 
-      logging.warnUnlessExpected("Could not load X", err, "Child:1");
+      onTestFinished(() =>
+        Object.values(consoleSpies).forEach((spy) => spy.mockRestore()),
+      );
 
-      expect(logging[level]).toHaveBeenCalledWith(
+      new LoggingService().warn("Could not load X", err, "Child:1");
+
+      expect(consoleSpies[consoleMethod]).toHaveBeenCalledWith(
         "Could not load X",
         err,
         "Child:1",
@@ -121,16 +117,6 @@ describe("LoggingService", () => {
 
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
-  });
-
-  it("should report a failed request to another service logged as message as the cause of its message", () => {
-    const reported = toReportedError(offlineResponse, [], LogLevel.WARN);
-
-    expect(reported).toBeInstanceOf(LoggedError);
-    expect(reported).toMatchObject({
-      message: offlineResponse.message,
-      cause: offlineResponse,
-    });
   });
 
   it.each([undefined, ""])(

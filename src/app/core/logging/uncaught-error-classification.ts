@@ -1,4 +1,8 @@
-import { classifyError, ErrorClassification } from "./error-classification";
+import {
+  causeChain,
+  classifyError,
+  ErrorClassification,
+} from "./error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
 import {
   CONNECTIVITY_ERROR_STATUS,
@@ -17,6 +21,32 @@ export function classifyReportedError(
   error: unknown,
 ): ErrorClassification | undefined {
   return classifyError(error) ?? classifyUncaughtError(error);
+}
+
+const EXPECTED_FAILURES = new Set<ErrorClassification>([
+  "connectivity",
+  "session-expired",
+  "not-permitted",
+  "write-conflict",
+]);
+
+/**
+ * A failure of the user's environment rather than a bug: offline, expired session,
+ * missing permission, edit conflict. Judged by the first error along the `cause`
+ * chain that is classified (see {@link classifyReportedError}) or named by us: a
+ * named error (e.g. `AppBootstrapError`) says what could not be done, and stays reported.
+ */
+export function isExpectedFailure(error: unknown): boolean {
+  for (const link of causeChain(error)) {
+    const classification = classifyReportedError(link);
+    if (classification) {
+      return EXPECTED_FAILURES.has(classification);
+    }
+    if (link instanceof NamedError) {
+      return false;
+    }
+  }
+  return false;
 }
 
 /**

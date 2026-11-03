@@ -110,10 +110,7 @@ export class NotificationSettingsComponent {
       if (err.status === 404) {
         notificationConfig = await this.createNewNotificationConfig();
       } else {
-        Logging.warnUnlessExpected(
-          "Could not load the notification config",
-          err,
-        );
+        Logging.warn("Could not load the notification config", err);
       }
     }
 

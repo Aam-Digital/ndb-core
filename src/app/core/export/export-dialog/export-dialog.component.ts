@@ -181,7 +181,7 @@ export class ExportDialogComponent {
       );
       this.dialogRef.close();
     } catch (e) {
-      Logging.warnUnlessExpected("Export download failed", e);
+      Logging.warn("Export download failed", e);
       this.downloadError.set(
         $localize`Download failed [${e instanceof Error ? e.message : String(e)}]`,
       );

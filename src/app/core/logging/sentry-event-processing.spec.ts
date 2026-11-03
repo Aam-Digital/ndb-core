@@ -68,16 +68,9 @@ describe("processSentryEvent", () => {
         dropped: false,
       },
       {
-        case: "a record the permission rules exclude, reported without a message of its own",
+        // a caught one is logged at debug and never gets here
+        case: "an unhandled record the permission rules exclude",
         error: new DatabaseException({ status: 403, message: "forbidden" }),
-        dropped: true,
-      },
-      {
-        case: "a record the permission rules exclude, logged by a component",
-        error: new LoggedError(
-          "Could not load record",
-          new DatabaseException({ status: 403, message: "forbidden" }),
-        ),
         dropped: false,
       },
     ])("should drop $case: $dropped", ({ error, offline, dropped }) => {
