@@ -53,6 +53,21 @@ describe("typedHttpErrorInterceptor", () => {
     },
   );
 
+  it("should read the body of a 401 to a file download (a Blob), which tells an expired session", async () => {
+    const body = { error: "unauthorized", reason: "exp not in future" };
+    const response = new HttpErrorResponse({
+      status: 401,
+      error: new Blob([JSON.stringify(body)]),
+    });
+
+    const failure = await failureOf(
+      "/db/app-attachments/Child:1/photo",
+      response,
+    );
+
+    expect(failure).toBeInstanceOf(SessionExpiredError);
+  });
+
   it("should keep the url and its query out of the typed error's message", async () => {
     const url =
       "/api/v1/skill/user-profile?fullName=Jane+Doe&email=jane%40example.org";
