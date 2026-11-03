@@ -10,6 +10,7 @@ import {
   createTypedError,
   ErrorClassification,
 } from "./error-classification";
+import { normalizeRequestPath } from "./sentry-grouping";
 
 /**
  * Where failed responses of our own backend (the database and API proxies)
@@ -42,7 +43,8 @@ type HttpErrorClassification = Exclude<ErrorClassification, "local-storage">;
  * The message of the typed error of each classification. Static, as the
  * message of a classified error is its issue title and grouping key: the url
  * (with ids and query parameters, which may hold personal data) goes into the
- * error's `details`, without the query.
+ * error's `details`, without the query (and as `requestPath` with ids masked,
+ * which tells server errors of different endpoints apart).
  */
 const TYPED_HTTP_ERROR_MESSAGES: Record<HttpErrorClassification, string> = {
   connectivity: "Failed to fetch from",
@@ -72,7 +74,12 @@ export function toTypedHttpError(
     {
       status: error.status,
       cause: error,
-      details: { url, method: request.method, statusText: error.statusText },
+      details: {
+        url,
+        requestPath: normalizeRequestPath(url),
+        method: request.method,
+        statusText: error.statusText,
+      },
     },
   );
 }

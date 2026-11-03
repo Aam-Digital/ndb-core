@@ -7,6 +7,7 @@ import { LoggedError, NamedError } from "./reported-errors";
 import { processSentryEvent } from "./sentry-event-processing";
 import { MAX_REPEATED_SENTRY_EVENTS, resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
+import { toTypedHttpError } from "./typed-http-error.interceptor";
 import {
   classifyError,
   ConnectivityError,
@@ -384,6 +385,56 @@ describe("processSentryEvent", () => {
         expect(event.fingerprint).toEqual(fingerprint);
         expect(title(event)).toBe(expected);
         expect(event.tags?.reported_by).toBe(reportedBy);
+      },
+    );
+
+    it.each([
+      [
+        "/api/v1/skill/user-profile?fullName=Jane+Doe",
+        "/api/v1/skill/user-profile?fullName=John+Roe",
+        "/api/v1/skill/user-profile",
+        "/api/v1/skill/user-profile",
+      ],
+      [
+        "/db/app/Child%3A1?rev=1-abc",
+        "/db/app/Child%3A2",
+        "/db/app/<id>",
+        "/db/app/<id>",
+      ],
+      [
+        "/api/v1/skill/user-profile",
+        "/api/v1/reporting/report-calculation",
+        "/api/v1/skill/user-profile",
+        "/api/v1/reporting/report-calculation",
+      ],
+    ])(
+      "should group server errors of %s and %s by their endpoint",
+      (urlA, urlB, pathA, pathB) => {
+        const [eventA, eventB] = [urlA, urlB].map((url) =>
+          process(
+            new LoggedError(
+              "Could not load",
+              toTypedHttpError(new HttpErrorResponse({ status: 500, url }), {
+                method: "GET",
+                url,
+              }) as Error,
+            ),
+            withStack,
+          ),
+        );
+
+        expect(eventA.fingerprint.join() === eventB.fingerprint.join()).toBe(
+          pathA === pathB,
+        );
+        for (const [event, path] of [
+          [eventA, pathA],
+          [eventB, pathB],
+        ] as const) {
+          expect(title(event)).toMatch(new RegExp(`\\(HTTP 500 ${path}\\)$`));
+          expect(`${title(event)} ${event.fingerprint}`).not.toMatch(
+            /\?|Jane|John|Child|rev/,
+          );
+        }
       },
     );
 

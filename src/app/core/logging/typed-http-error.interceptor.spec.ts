@@ -66,10 +66,9 @@ describe("typedHttpErrorInterceptor", () => {
     expect(failure).toBeInstanceOf(ServerError);
     expect(failure.message).not.toContain("user-profile");
     expect(failure.message).not.toContain("Jane");
-    expect(failure.details).toEqual({
+    expect(failure.details).toMatchObject({
       url: "/api/v1/skill/user-profile",
       method: "GET",
-      statusText: "Unknown Error",
     });
   });
 

@@ -111,19 +111,29 @@ function isDeliberatelyLogged(error: unknown): boolean {
   );
 }
 
-/** Report a server fault with an issue per status. */
+/**
+ * Report a server fault with an issue per status and endpoint: grouped by the
+ * root cause alone, a new failing endpoint would otherwise not open an issue
+ * of its own. The endpoint is the masked `requestPath` the boundaries add.
+ */
 function reportServerError(event: Sentry.ErrorEvent) {
   const status = event.extra?.status;
   if (typeof status !== "number") {
     return;
   }
+  const requestPath = event.extra?.requestPath;
+  const key = [String(status)];
+  if (typeof requestPath === "string") {
+    key.push(requestPath);
+    event.tags = { ...event.tags, request_path: truncateTag(requestPath) };
+  }
   event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
   if (event.fingerprint?.length) {
-    event.fingerprint = [...event.fingerprint, String(status)];
+    event.fingerprint = [...event.fingerprint, ...key];
   }
   const thrown = event.exception?.values?.at(-1);
   if (thrown) {
-    thrown.value = `${thrown.value} (HTTP ${status})`;
+    thrown.value = `${thrown.value} (HTTP ${key.join(" ")})`;
   }
 }
 

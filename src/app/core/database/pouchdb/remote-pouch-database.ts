@@ -29,6 +29,7 @@ import {
   ServerError,
   SessionExpiredError,
 } from "../../logging/error-classification";
+import { normalizeRequestPath } from "../../logging/sentry-grouping";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -57,6 +58,8 @@ async function failedResponseError(
 ): Promise<ConnectivityError | ServerError> {
   const details = {
     requestedUrl: remoteUrl,
+    // tells server errors of different endpoints apart (see `reportServerError`)
+    requestPath: normalizeRequestPath(remoteUrl),
     actualResponse: describeResponse(result, method),
     // e.g. a proxy's whole HTML error page: enough of it to tell what answered
     actualResponseBody: (await result?.text())?.slice(
