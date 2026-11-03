@@ -637,6 +637,12 @@ describe("EntitiesTableComponent", () => {
       // the first column holding record data, after the select and "+" columns
       expect(prefixCell?.classList).toContain("mat-column-name");
       expect(prefixCell?.querySelector("app-entity-field-view")).not.toBeNull();
+      // the prefix can span the full height of the row and draw over the row divider
+      const prefixContainer = prefixCell!.querySelector(
+        "app-test-row-prefix",
+      )!.parentElement!;
+      expect(getComputedStyle(prefixContainer).height).toBe("100%");
+      expect(getComputedStyle(prefixCell!).overflow).toBe("visible");
       expect(renderedRow(decorated).classList).toContain("decorated");
       expect(renderedRow(decorated).classList).toContain("table-row");
       expect(

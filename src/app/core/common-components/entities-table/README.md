@@ -62,7 +62,9 @@ A `RowDecoration` can have:
 
 - `prefix`: a component (`DynamicComponentConfig`) shown before the content of the first data cell,
   i.e. the first displayed column that is neither the select column nor the "+" column
-  (a column projected into the table by its host does not show it);
+  (a column projected into the table by its host does not show it).
+  The prefix is a flex item next to the cell's content, in a flex row filling the whole cell:
+  with `align-self: stretch` it spans the full height of the row and may draw over the row divider (e.g. lines connecting rows);
 - `cssClass`: an extra CSS class for the row;
 - `selectable: false`: the row cannot be selected for bulk actions
   (disabled checkbox, skipped by "select all" and Shift-click ranges).
