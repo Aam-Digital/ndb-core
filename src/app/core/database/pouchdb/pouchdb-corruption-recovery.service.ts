@@ -131,6 +131,11 @@ export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   );
 }
 
+/**
+ * The whole error serialized, not only its name, message and reason (as
+ * `errorText` of `backend-response.ts`): the IndexedDB failure may be in nested
+ * properties, e.g. in the result array of a `bulkDocs`.
+ */
 function errorToText(error: unknown): string {
   if (typeof error === "string") return error;
   const prefix =

@@ -5,7 +5,10 @@ import {
   TypedError,
   TypedErrorOptions,
 } from "../../logging/error-classification";
-import { classifyResponseStatus } from "#src/app/utils/backend-response";
+import {
+  classifyResponseStatus,
+  textOf,
+} from "#src/app/utils/backend-response";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "../../permissions/not-permitted.error";
 import { SessionExpiredError } from "../../session/session-expired.error";
@@ -110,8 +113,4 @@ export function toTypedDatabaseError(error: unknown): unknown {
       cause: error,
     },
   );
-}
-
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value : "";
 }
