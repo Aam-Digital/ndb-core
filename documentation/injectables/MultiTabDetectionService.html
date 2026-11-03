@@ -201,6 +201,23 @@
             </tbody>
         </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#reloadOtherTabs" >reloadOtherTabs</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
 
 
@@ -236,7 +253,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:40</a></div>
                             </td>
                         </tr>
 
@@ -244,6 +261,52 @@
         </table>
 </section>
 
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="reloadOtherTabs"></a>
+                    <span class="name">
+                        <span ><b>reloadOtherTabs</b></span>
+                        <a href="#reloadOtherTabs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>reloadOtherTabs()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:67</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Make all other tabs of the app reload, e.g. after the local database was replaced,
+which they would otherwise keep using through their closed connection.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 
             <section data-compodoc="block-properties">
     
@@ -276,7 +339,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:18</a></div>
                         </td>
                     </tr>
 
@@ -308,7 +371,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -343,7 +406,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:36</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/multi-tab-detection.service.ts:38</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -368,9 +431,10 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, OnDestroy } from &quot;@angular/core&quot;;
 import { BehaviorSubject } from &quot;rxjs&quot;;
 import { PouchdbCorruptionRecoveryService } from &quot;./pouchdb/pouchdb-corruption-recovery.service&quot;;
+import { LOCATION_TOKEN } from &quot;../../utils/di-tokens&quot;;
 
 type TabChannelMessage &#x3D; {
-  type: &quot;hello&quot; | &quot;ping&quot; | &quot;goodbye&quot;;
+  type: &quot;hello&quot; | &quot;ping&quot; | &quot;goodbye&quot; | &quot;reload&quot;;
   tabId: string;
 };
 
@@ -394,6 +458,7 @@ export class MultiTabDetectionService implements OnDestroy {
     PouchdbCorruptionRecoveryService,
     { optional: true },
   );
+  private readonly location &#x3D; inject(LOCATION_TOKEN, { optional: true });
   private _isMultipleTabsOpen &#x3D; false;
   private pingIntervalId?: ReturnType&lt;typeof setInterval&gt;;
   /** Emits whenever the multi-tab state changes. */
@@ -425,6 +490,14 @@ export class MultiTabDetectionService implements OnDestroy {
     }
   }
 
+  /**
+   * Make all other tabs of the app reload, e.g. after the local database was replaced,
+   * which they would otherwise keep using through their closed connection.
+   */
+  reloadOtherTabs() {
+    this.postMessage(&quot;reload&quot;);
+  }
+
   private readonly handleBeforeUnload &#x3D; () &#x3D;&gt; {
     this.postMessage(&quot;goodbye&quot;);
   };
@@ -449,6 +522,11 @@ export class MultiTabDetectionService implements OnDestroy {
 
     if (tabMessage.type &#x3D;&#x3D;&#x3D; &quot;ping&quot;) {
       this.markTabAlive(tabMessage.tabId);
+      return;
+    }
+
+    if (tabMessage.type &#x3D;&#x3D;&#x3D; &quot;reload&quot;) {
+      this.location?.reload();
       return;
     }
 

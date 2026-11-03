@@ -273,10 +273,6 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#openSeparateConnection" >openSeparateConnection</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#put" >put</a>
@@ -921,7 +917,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:498</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:478</a></code>
 </div>
                         </td>
                     </tr>
@@ -1094,48 +1090,6 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="openSeparateConnection"></a>
-                    <span class="name">
-                        <span ><b>openSeparateConnection</b></span>
-                        <a href="#openSeparateConnection"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>openSeparateConnection()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="468"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:468</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Open a separate connection to the same remote database, authenticated the same way,
-whose requests do not affect the state of this one: it does not track lost permissions.</p>
-<p>Close it with <code>close()</code> once done - never with <code>destroy()</code>,
-which would delete the database on the server.</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Database.html" target="_self" >PouchDB.Database</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="put"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -1161,7 +1115,7 @@ which would delete the database on the server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:546</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:526</a></code>
 </div>
                         </td>
                     </tr>
@@ -1261,7 +1215,7 @@ writes immediately in both session types.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:556</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:536</a></code>
 </div>
                         </td>
                     </tr>
@@ -1358,7 +1312,7 @@ into one (see <a href="../miscellaneous/functions.html#writeInBatchedRequests">w
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:589</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:569</a></code>
 </div>
                         </td>
                     </tr>
@@ -1439,7 +1393,7 @@ subscribers read to tell a removal apart from an update.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:526</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:506</a></code>
 </div>
                         </td>
                     </tr>
@@ -1516,7 +1470,7 @@ subscribers read to tell a removal apart from an update.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:671</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:651</a></code>
 </div>
                         </td>
                     </tr>
@@ -1570,7 +1524,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:481</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:461</a></code>
 </div>
                         </td>
                     </tr>
@@ -3325,26 +3279,6 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected &#x3D; this.pendingLostPermissions;
     this.pendingLostPermissions &#x3D; [];
     return collected;
-  }
-
-  /**
-   * Open a separate connection to the same remote database, authenticated the same way,
-   * whose requests do not affect the state of this one: it does not track lost permissions.
-   *
-   * Close it with &#x60;close()&#x60; once done - never with &#x60;destroy()&#x60;,
-   * which would delete the database on the server.
-   */
-  openSeparateConnection(): PouchDB.Database {
-    const connection &#x3D; new RemotePouchDatabase(
-      this.dbName,
-      this.authService,
-      undefined,
-      this.ngZone,
-    );
-    connection.init(undefined, {
-      unauthenticatedSession: this.unauthenticatedSession,
-    });
-    return connection.getPouchDB();
   }
 
   override supportsFind(): boolean {

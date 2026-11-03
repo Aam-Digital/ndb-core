@@ -269,6 +269,12 @@ provides functionality to sync with a remote CouchDB.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#destroy" >destroy</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#ensureSynced" >ensureSynced</a>
                             </li>
@@ -280,10 +286,6 @@ provides functionality to sync with a remote CouchDB.</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#liveSync" >liveSync</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#openRemoteReplicationSource" >openRemoteReplicationSource</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -314,11 +316,6 @@ provides functionality to sync with a remote CouchDB.</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#changes" >changes</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#destroy" >destroy</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -457,7 +454,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:99</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:92</a></div>
                             </td>
                         </tr>
 
@@ -603,7 +600,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="520" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:520</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="513" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:513</a></div>
                         </td>
                     </tr>
 
@@ -640,7 +637,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -671,7 +668,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -702,7 +699,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -1041,6 +1038,56 @@ This change can come from the current user or remotely from the (live) synchroni
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="destroy"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>destroy</b></span>
+                        <a href="#destroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>destroy()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:48</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Destroy the local database.
+Its last completed sync is forgotten, so that a new database with the same name
+is not taken for local data that was lost (see DatabaseResolverService).</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="ensureSynced"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -1059,8 +1106,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="497"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:497</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="490"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:490</a></div>
                         </td>
                     </tr>
 
@@ -1109,7 +1156,7 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:160</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:153</a></code>
 </div>
                         </td>
                     </tr>
@@ -1199,8 +1246,8 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="522"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:522</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="515"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:515</a></div>
                         </td>
                     </tr>
 
@@ -1212,56 +1259,6 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="openRemoteReplicationSource"></a>
-                    <span class="name">
-                        <span ><b>openRemoteReplicationSource</b></span>
-                        <a href="#openRemoteReplicationSource"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>openRemoteReplicationSource()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="94"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:94</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Open a separate connection to this database&#39;s remote database,
-as the replication source of the background migration (see <code>IndexeddbMigrationService</code>).</p>
-<p>Unlike the connection this database syncs through, it does not collect the documents
-the server reports as no longer permitted: a replication from scratch gets all documents
-the user may not read reported, and this database&#39;s next sync would purge each of them
-before completing.</p>
-<p>The caller has to close it with <code>close()</code> once done (never <code>destroy()</code>,
-which would delete the database on the server).</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Database.html" target="_self" >PouchDB.Database | undefined</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                <p>undefined if the database is not initialized yet</p>
-
-                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1295,7 +1292,7 @@ which would delete the database on the server).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:350</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:343</a></code>
 </div>
                         </td>
                     </tr>
@@ -1388,7 +1385,7 @@ which would delete the database on the server).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:363</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:356</a></code>
 </div>
                         </td>
                     </tr>
@@ -1469,8 +1466,8 @@ which would delete the database on the server).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="486"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:486</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="479"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:479</a></div>
                         </td>
                     </tr>
 
@@ -1511,8 +1508,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="187"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:187</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -1696,53 +1693,6 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                                 <p>observable which emits the filtered changes</p>
 
                             </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="destroy"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>destroy</b></span>
-                        <a href="#destroy"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>destroy()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:433</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Destroy the database and all saved data</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
                 </td>
             </tr>
         </tbody>
@@ -3229,7 +3179,7 @@ Callers should fall back to loading all docs otherwise.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:76</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:90</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -3294,6 +3244,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
+  /**
+   * Destroy the local database.
+   * Its last completed sync is forgotten, so that a new database with the same name
+   * is not taken for local data that was lost (see DatabaseResolverService).
+   */
+  override async destroy(): Promise&lt;any&gt; {
+    const lastSyncKey &#x3D; this.LAST_SYNC_KEY;
+    const result &#x3D; await super.destroy();
+    if (lastSyncKey) {
+      localStorage.removeItem(lastSyncKey);
+    }
+    return result;
+  }
+
   POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
   SYNC_INTERVAL &#x3D; 30000;
 
@@ -3329,27 +3293,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   get localSyncState(): SyncStateSubject {
     return this.syncState;
-  }
-
-  /**
-   * Open a separate connection to this database&#x27;s remote database,
-   * as the replication source of the background migration (see &#x60;IndexeddbMigrationService&#x60;).
-   *
-   * Unlike the connection this database syncs through, it does not collect the documents
-   * the server reports as no longer permitted: a replication from scratch gets all documents
-   * the user may not read reported, and this database&#x27;s next sync would purge each of them
-   * before completing.
-   *
-   * The caller has to close it with &#x60;close()&#x60; once done (never &#x60;destroy()&#x60;,
-   * which would delete the database on the server).
-   *
-   * @returns undefined if the database is not initialized yet
-   */
-  openRemoteReplicationSource(): PouchDB.Database | undefined {
-    if (!this.remoteDatabase.isInitialized()) {
-      return undefined;
-    }
-    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(

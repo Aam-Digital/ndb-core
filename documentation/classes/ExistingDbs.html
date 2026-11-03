@@ -1,0 +1,846 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >ExistingDbs</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/database/indexeddb-migration.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The PouchDB DBs in IndexedDB, by the adapter that created them</p>
+
+            </p>
+
+
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#isIdbAdapterDb" >isIdbAdapterDb</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#isIndexeddbAdapterDb" >isIndexeddbAdapterDb</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dbs: <a href="../classes/Database.html" target="_self">IDBDatabaseInfo[]</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:28</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dbs</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Database.html" target="_self" >IDBDatabaseInfo[]</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isIdbAdapterDb"></a>
+                    <span class="name">
+                        <span ><b>isIdbAdapterDb</b></span>
+                        <a href="#isIdbAdapterDb"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isIdbAdapterDb(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isIndexeddbAdapterDb"></a>
+                    <span class="name">
+                        <span ><b>isIndexeddbAdapterDb</b></span>
+                        <a href="#isIndexeddbAdapterDb"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isIndexeddbAdapterDb(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector, signal } from &quot;@angular/core&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
+import { filter } from &quot;rxjs/operators&quot;;
+import { SessionInfo } from &quot;../session/auth/session-info&quot;;
+import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
+import { computeDbNames, computeLegacyDbNames } from &quot;./db-name-helpers&quot;;
+import { ConfirmationDialogService } from &quot;../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { AlertService } from &quot;../alerts/alert.service&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { LOCAL_STORAGE_TOKEN, WINDOW_TOKEN } from &quot;../../utils/di-tokens&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { Database } from &quot;./database&quot;;
+import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
+import type { AnalyticsService } from &quot;../analytics/analytics.service&quot;;
+import { MultiTabDetectionService } from &quot;./multi-tab-detection.service&quot;;
+
+export interface DbConfig {
+  dbNames: { app: string; notifications: string };
+  adapter: string;
+  /** The legacy DB is used and has to be migrated */
+  migrationPending: boolean;
+}
+
+/** The IndexedDB version of DBs of the &quot;indexeddb&quot; adapter (the &quot;idb&quot; adapter uses 5) */
+const MIN_INDEXEDDB_ADAPTER_VERSION &#x3D; 10 ** 13;
+
+/** The PouchDB DBs in IndexedDB, by the adapter that created them */
+class ExistingDbs {
+  constructor(private readonly dbs: IDBDatabaseInfo[]) {}
+
+  isIdbAdapterDb(name: string): boolean {
+    const db &#x3D; this.find(name);
+    return !!db &amp;&amp; (db.version ?? 0) &lt; MIN_INDEXEDDB_ADAPTER_VERSION;
+  }
+
+  isIndexeddbAdapterDb(name: string): boolean {
+    const db &#x3D; this.find(name);
+    return !!db &amp;&amp; (db.version ?? 0) &gt;&#x3D; MIN_INDEXEDDB_ADAPTER_VERSION;
+  }
+
+  private find(name: string): IDBDatabaseInfo | undefined {
+    // PouchDB prefixes IndexedDB database names with &quot;_pouch_&quot;
+    return this.dbs.find((db) &#x3D;&gt; db.name &#x3D;&#x3D;&#x3D; &#x60;_pouch_${name}&#x60;);
+  }
+}
+
+function legacyDbConfig(
+  session: SessionInfo,
+  migrationPending: boolean,
+): DbConfig {
+  return {
+    dbNames: computeLegacyDbNames(session),
+    adapter: &quot;idb&quot;,
+    migrationPending,
+  };
+}
+
+function newDbConfig(session: SessionInfo): DbConfig {
+  return {
+    dbNames: computeDbNames(session),
+    adapter: &quot;indexeddb&quot;,
+    migrationPending: false,
+  };
+}
+
+function migratedFlagKey(session: SessionInfo): string {
+  return &quot;DB_MIGRATED_&quot; + session.id;
+}
+
+/**
+ * Migrates the local DB from the legacy PouchDB &quot;idb&quot; adapter and username-based name
+ * to the &quot;indexeddb&quot; adapter and Keycloak-UUID-based name.
+ *
+ * After a final sync pushed all local changes of the legacy DB, so that none is left behind,
+ * the legacy DB is deleted and the new DB downloaded from the server after a reload, like on a fresh login.
+ * If anything fails, the app keeps the legacy DB and retries on the next app start.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class IndexeddbMigrationService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN, { optional: true });
+  private readonly injector &#x3D; inject(Injector);
+  private analyticsServicePromise?: Promise&lt;AnalyticsService | null&gt;;
+
+  /** Determine the names and the adapter of the current session&#x27;s local DB. */
+  async resolveDbConfig(session: SessionInfo): Promise&lt;DbConfig&gt; {
+    const legacyAppDb &#x3D; computeLegacyDbNames(session).app;
+    const newAppDb &#x3D; computeDbNames(session).app;
+    const existingDbs &#x3D; await this.findExistingDbs();
+
+    if (!environment.use_indexeddb_adapter) {
+      // if enabled again, the migration has to run again, so that changes made on the legacy DB meanwhile are synced
+      this.localStorage.removeItem(migratedFlagKey(session));
+      if (existingDbs?.isIndexeddbAdapterDb(legacyAppDb)) {
+        // without &quot;username&quot; claim, the legacy name is the new one: this DB cannot be opened with &quot;idb&quot; anymore
+        await this.logStep(
+          &quot;indexeddb_disabled-config-ignored&quot;,
+          &quot;use_indexeddb_adapter disabled, but the DB was already migrated; using new DB&quot;,
+        );
+        return newDbConfig(session);
+      }
+      await this.logStep(
+        &quot;idb_indexeddb-disabled-config&quot;,
+        &quot;use_indexeddb_adapter disabled; using legacy DB&quot;,
+      );
+      return legacyDbConfig(session, false);
+    }
+
+    if (existingDbs?.isIdbAdapterDb(newAppDb)) {
+      // the account had no &quot;username&quot; claim when the DB was created (even if the migration flag is set)
+      await this.logStep(
+        &quot;idb_migration-pending&quot;,
+        &quot;using legacy DB with the name of the new DB (migration pending)&quot;,
+      );
+      return {
+        ...legacyDbConfig(session, true),
+        dbNames: { ...computeLegacyDbNames(session), app: newAppDb },
+      };
+    }
+
+    if (this.isMigrated(session)) {
+      await this.logStep(
+        &quot;indexeddb_after-migration&quot;,
+        &quot;using new DB (migration flag set)&quot;,
+      );
+      return newDbConfig(session);
+    }
+
+    // if the existing DBs cannot be checked, assume a legacy DB exists (the safe default)
+    if (existingDbs &amp;&amp; !existingDbs.isIdbAdapterDb(legacyAppDb)) {
+      this.setMigrated(session);
+      await this.logStep(
+        &quot;indexeddb_fresh-install&quot;,
+        &quot;no legacy DB found; assuming fresh install and setting migration flag&quot;,
+      );
+      return newDbConfig(session);
+    }
+
+    await this.logStep(
+      &quot;idb_migration-pending&quot;,
+      &quot;using legacy DB (migration pending)&quot;,
+    );
+    return legacyDbConfig(session, true);
+  }
+
+  /** @param db the &quot;app&quot; DB, opened with the dbConfig from {@link resolveDbConfig} */
+  startMigrationIfPending(
+    session: SessionInfo,
+    db: Database,
+    dbConfig: DbConfig,
+  ): void {
+    if (!dbConfig.migrationPending || !(db instanceof SyncedPouchDatabase)) {
+      return;
+    }
+    this.migrate(session, db).catch((err) &#x3D;&gt;
+      Logging.error(&quot;IndexeddbMigration: migration failed&quot;, err),
+    );
+  }
+
+  private async migrate(
+    session: SessionInfo,
+    legacyDb: SyncedPouchDatabase,
+  ): Promise&lt;void&gt; {
+    await firstValueFrom(
+      legacyDb.localSyncState.pipe(
+        filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; SyncState.COMPLETED),
+      ),
+    );
+    if (this.isOpenInOtherTabs()) {
+      return this.logStep(
+        &quot;migration_skipped-multiple-tabs&quot;,
+        &quot;switch skipped while the app is open in other tabs; offered again on next app start&quot;,
+      );
+    }
+    if (!(await this.userConfirmsSwitch())) {
+      return this.logStep(
+        &quot;migration_reload-postponed&quot;,
+        &quot;switch postponed by user; offered again on next app start&quot;,
+      );
+    }
+
+    // modal (cannot be closed), so that no further change is made on the legacy DB until the reload
+    const progressDialog &#x3D; this.confirmationDialog.showProgressDialog(
+      signal(
+        $localize&#x60;:Migration final sync progress:Syncing your latest changes before the upgrade ...&#x60;,
+      ),
+    );
+    try {
+      if (!(await this.syncLastChanges(legacyDb))) {
+        return;
+      }
+      // checked again: another tab may have been opened while the dialogs were shown
+      if (this.isOpenInOtherTabs()) {
+        this.alertService.addWarning(
+          $localize&#x60;The database upgrade was postponed because the app is open in another tab. Close the other tabs to upgrade the next time you open the app.&#x60;,
+        );
+        return this.logStep(
+          &quot;migration_skipped-multiple-tabs-after-confirmation&quot;,
+          &quot;legacy DB not deleted while the app is open in other tabs; offered again on next app start&quot;,
+        );
+      }
+      if (!(await this.deleteLegacyDbs(session, legacyDb))) {
+        // the legacy DB cannot be used anymore after its deletion was started: reopen it
+        this.window?.location.reload();
+        return;
+      }
+    } finally {
+      progressDialog.close();
+    }
+
+    // only the &quot;app&quot; DB is migrated: all new DBs are downloaded from the server after the reload
+    this.setMigrated(session);
+    // tabs the multi-tab check missed (e.g. long in the background) would keep using the deleted DB
+    this.injector.get(MultiTabDetectionService, null)?.reloadOtherTabs();
+    this.window?.location.reload();
+  }
+
+  private async userConfirmsSwitch(): Promise&lt;boolean&gt; {
+    const answer &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;Database Upgrade Available&#x60;,
+      $localize&#x60;To improve performance, the data on this device has to be downloaded from the server again once. Depending on the amount of data and your connection, this may take a while: please stay online until all data is loaded. Reload now to upgrade?&#x60;,
+    );
+    // closing the dialog (undefined) postpones the switch as well
+    return answer &#x3D;&#x3D;&#x3D; true;
+  }
+
+  /** @return whether all local changes of the legacy DB are on the server */
+  private async syncLastChanges(
+    legacyDb: SyncedPouchDatabase,
+  ): Promise&lt;boolean&gt; {
+    try {
+      await legacyDb.ensureSynced();
+      return true;
+    } catch (err) {
+      // a failed sync has already been logged by the database itself
+      this.alertService.addWarning(
+        $localize&#x60;:Migration failed alert:The database upgrade could not be completed because your latest changes could not be synced to the server. Please check your internet connection. The upgrade will be tried again the next time you open the app.&#x60;,
+      );
+      await this.logStep(
+        &quot;migration_final-sync-failed&quot;,
+        &quot;final sync of legacy DB failed; keeping legacy DB&quot;,
+        err,
+      );
+      return false;
+    }
+  }
+
+  /** @return whether the legacy app DB was deleted */
+  private async deleteLegacyDbs(
+    session: SessionInfo,
+    legacyDb: SyncedPouchDatabase,
+  ): Promise&lt;boolean&gt; {
+    try {
+      // also deletes the DBs of its indices (which can have the names of the new DB&#x27;s indices)
+      await legacyDb.destroy();
+    } catch (err) {
+      // reported: unless the device&#x27;s IndexedDB is broken, this is a bug that makes the upgrade fail on every app start
+      Logging.warn(&quot;IndexeddbMigration: failed to delete legacy DB&quot;, err);
+      await this.logStep(
+        &quot;migration_legacy-db-deletion-failed&quot;,
+        &quot;failed to delete legacy DB; offered again on next app start&quot;,
+      );
+      return false;
+    }
+    await this.logStep(&quot;migration_legacy-db-deleted&quot;, &quot;legacy DB deleted&quot;);
+    await this.deleteLegacyNotificationsDb(session);
+    return true;
+  }
+
+  /** Its notifications are no longer synced. It has another name than the new DB, so a failure does not block the switch. */
+  private async deleteLegacyNotificationsDb(
+    session: SessionInfo,
+  ): Promise&lt;void&gt; {
+    const indexedDB &#x3D; this.window?.indexedDB;
+    if (!indexedDB) {
+      return;
+    }
+    try {
+      await new Promise&lt;void&gt;((resolve, reject) &#x3D;&gt; {
+        const request &#x3D; indexedDB.deleteDatabase(
+          &#x60;_pouch_${computeLegacyDbNames(session).notifications}&#x60;,
+        );
+        request.onsuccess &#x3D; () &#x3D;&gt; resolve();
+        request.onerror &#x3D; () &#x3D;&gt; reject(request.error);
+        // if it is open in this tab, the &quot;idb&quot; adapter closes it, so only another connection blocks it
+        request.onblocked &#x3D; () &#x3D;&gt; resolve();
+      });
+    } catch (err) {
+      Logging.debug(
+        &quot;IndexeddbMigration: failed to delete legacy notifications DB&quot;,
+        err,
+      );
+    }
+  }
+
+  /** whose unsynced changes would be lost with a deleted legacy DB */
+  private isOpenInOtherTabs(): boolean {
+    return !!this.injector.get(MultiTabDetectionService, null)
+      ?.isMultipleTabsOpen;
+  }
+
+  /** @return the PouchDB DBs in IndexedDB, or undefined if they cannot be listed (not available in all browsers) */
+  private async findExistingDbs(): Promise&lt;ExistingDbs | undefined&gt; {
+    try {
+      const dbs &#x3D; await this.window?.indexedDB?.databases?.();
+      return dbs &amp;&amp; new ExistingDbs(dbs);
+    } catch (err) {
+      Logging.debug(&quot;IndexeddbMigration: cannot list IndexedDB DBs&quot;, err);
+      return undefined;
+    }
+  }
+
+  private isMigrated(session: SessionInfo): boolean {
+    return this.localStorage.getItem(migratedFlagKey(session)) &#x3D;&#x3D;&#x3D; &quot;true&quot;;
+  }
+
+  private setMigrated(session: SessionInfo): void {
+    this.localStorage.setItem(migratedFlagKey(session), &quot;true&quot;);
+  }
+
+  /** Log and track the step as usage analytics event. Never rejects: analytics must not interrupt the migration. */
+  private async logStep(
+    event: string,
+    message: string,
+    ...details: unknown[]
+  ): Promise&lt;void&gt; {
+    Logging.debug(&#x60;IndexeddbMigration: ${message}&#x60;, ...details);
+    try {
+      const analytics &#x3D; await this.getAnalyticsService();
+      analytics?.eventTrack(event, { category: &quot;indexeddb_adapter_migration&quot; });
+    } catch (err) {
+      Logging.debug(&quot;IndexeddbMigration: failed to track event&quot;, err);
+    }
+  }
+
+  /** Lazily, as inject() would cause a ConfigService → EntityMapperService cycle (replaced in tests). */
+  private getAnalyticsService(): Promise&lt;AnalyticsService | null&gt; {
+    this.analyticsServicePromise ??&#x3D; import(&quot;../analytics/analytics.service&quot;)
+      .then(({ AnalyticsService }) &#x3D;&gt;
+        this.injector.get&lt;AnalyticsService | null&gt;(AnalyticsService, null),
+      )
+      .catch(() &#x3D;&gt; null);
+    return this.analyticsServicePromise;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'ExistingDbs.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -406,8 +406,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="309"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:309</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="307"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:307</a></div>
                         </td>
                     </tr>
 
@@ -1018,7 +1018,7 @@ export class DatabaseResolverService {
 
     db.init(this.dbConfig.dbNames.app);
 
-    this.migrationService.runBackgroundMigration(user, db);
+    this.migrationService.startMigrationIfPending(user, db, this.dbConfig);
   }
 
   /**
@@ -1047,8 +1047,6 @@ export class DatabaseResolverService {
     } else {
       db.init(browserDbName ?? serverDbName);
     }
-
-    // Notifications are not critical, therefore we ignore a pre-migration sync for that database
   }
 
   initDatabasesForAnonymous() {

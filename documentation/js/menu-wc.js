@@ -1820,6 +1820,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/EventWithAttendance.html" data-type="entity-link" >EventWithAttendance</a>
                             </li>
                             <li class="link">
+                                <a href="classes/ExistingDbs.html" data-type="entity-link" >ExistingDbs</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/Filter.html" data-type="entity-link" >Filter&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">

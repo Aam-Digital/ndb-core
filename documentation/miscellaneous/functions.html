@@ -881,6 +881,9 @@
                             <a href="#lastSyncedBatchContext" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lastSyncedBatchContext</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#legacyDbConfig" title="src/app/core/database/indexeddb-migration.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>legacyDbConfig</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-migration.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#linkInLegacyField" title="src/app/child-dev-project/notes/deprecated/legacy-note-link-fields.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>linkInLegacyField</b>&nbsp;&nbsp;&nbsp;(src/.../legacy-note-link-fields.ts)</span></a>
                         </li>
                         <li>
@@ -929,6 +932,9 @@
                             <a href="#messageText" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>messageText</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#migratedFlagKey" title="src/app/core/database/indexeddb-migration.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migratedFlagKey</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-migration.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#migrateIsoDatesToInferredDateOnly" title="src/app/core/basic-datatypes/date-only/date-only.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateIsoDatesToInferredDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../date-only.datatype.ts)</span></a>
                         </li>
                         <li>
@@ -960,6 +966,9 @@
                         </li>
                         <li>
                             <a href="#negate" title="src/app/core/common-components/conditions-editor/condition-negation.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>negate</b>&nbsp;&nbsp;&nbsp;(src/.../condition-negation.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#newDbConfig" title="src/app/core/database/indexeddb-migration.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>newDbConfig</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-migration.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#newGroupNode" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>newGroupNode</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
@@ -24921,6 +24930,204 @@ a request failed as a whole after an earlier one had stored documents.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/indexeddb-migration.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="legacyDbConfig"></a>
+                    <span class="name">
+                        <span ><b>legacyDbConfig</b></span>
+                        <a href="#legacyDbConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>legacyDbConfig(session: <a href="../interfaces/SessionInfo.html" target="_self">SessionInfo</a>, migrationPending: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>session</td>
+                                            <td>
+                                                            <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>migrationPending</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/DbConfig.html" target="_self" >DbConfig</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="migratedFlagKey"></a>
+                    <span class="name">
+                        <span ><b>migratedFlagKey</b></span>
+                        <a href="#migratedFlagKey"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>migratedFlagKey(session: <a href="../interfaces/SessionInfo.html" target="_self">SessionInfo</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>session</td>
+                                            <td>
+                                                            <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="newDbConfig"></a>
+                    <span class="name">
+                        <span ><b>newDbConfig</b></span>
+                        <a href="#newDbConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>newDbConfig(session: <a href="../interfaces/SessionInfo.html" target="_self">SessionInfo</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>session</td>
+                                            <td>
+                                                            <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/DbConfig.html" target="_self" >DbConfig</a></code>
 
                         </div>
                             <div class="io-description">
