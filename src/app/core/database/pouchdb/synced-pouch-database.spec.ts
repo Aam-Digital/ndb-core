@@ -10,7 +10,6 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
-import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { Logging } from "../../logging/logging.service";
 import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
 
@@ -208,43 +207,6 @@ describe("SyncedPouchDatabase", () => {
       expect.anything(),
     );
   });
-
-  it.each([
-    [
-      "offline",
-      new ConnectivityError("Failed to fetch from DB", {
-        cause: new TypeError("Failed to fetch"),
-      }),
-      "debug",
-    ],
-    [
-      "an expired session behind the replication backend",
-      { status: 401, statusCode: 401, message: "Unauthorized" },
-      "debug",
-    ],
-    [
-      "cut off while reading the checkpoint",
-      new Error("getCheckpoint rejected with "),
-      "debug",
-    ],
-    ["unexpected", new Error("unexpected"), "warn"],
-  ] as const)(
-    "should log a sync failure that is %s at %s level",
-    async (_, failure, level) => {
-      vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
-      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
-      const { mockLocalDb } = mockPouchDatabaseService();
-      mockLocalDb.sync.mockReturnValue(mockSyncHandler(failure, true));
-
-      await expect(service.sync()).rejects.toBeTruthy();
-
-      expect(Logging[level]).toHaveBeenCalledWith(
-        expect.stringContaining("sync failed"),
-        expect.anything(),
-        failure,
-      );
-    },
-  );
 
   it("should not show fallback popup for known multi-tab IndexedDB sync errors", async () => {
     const { mockLocalDb } = mockPouchDatabaseService();

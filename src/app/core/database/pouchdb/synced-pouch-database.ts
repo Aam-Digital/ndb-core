@@ -23,10 +23,7 @@ import { NotAvailableOfflineError } from "../../session/not-available-offline.er
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
-import {
-  classifyError,
-  isConnectivityError,
-} from "../../logging/error-classification";
+import { isDocumentWriteError } from "./pouchdb-errors";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
@@ -332,7 +329,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       db: this.dbName,
       ...lastSyncedBatchContext(lastSyncedDocIds),
     };
-    if (this.isDocumentWriteError(err)) {
+    if (isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
         context,
@@ -352,15 +349,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
 
-    if (isTransientReplicationFailure(err)) {
-      Logging.debug(
-        `sync failed (offline or unauthorized)`,
-        { db: this.dbName },
-        err,
-      );
-    } else {
-      Logging.warn(`sync failed`, { db: this.dbName }, err);
-    }
+    // at debug if offline or the session expired (see `Logging`): retried later
+    Logging.warn(`sync failed`, { db: this.dbName }, err);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -388,20 +378,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
       throw err;
     });
-  }
-
-  private isDocumentWriteError(err: any): boolean {
-    if (classifyError(err)) {
-      // e.g. "Failed to execute 'transaction' on 'IDBDatabase': The database
-      // connection is closing" is a broken local database, not a document
-      return false;
-    }
-    const message = err?.message || err?.reason || String(err);
-    return (
-      message.includes("Maximum call stack size exceeded") ||
-      message.includes("IDBObjectStore") ||
-      message.includes("Failed to execute")
-    );
   }
 
   /**
@@ -609,20 +585,4 @@ class SyncStalledError extends ConnectivityError {
     super("Sync cancelled after making no progress");
     this.name = "SyncStalledError";
   }
-}
-
-/**
- * Whether a replication with the server failed for a reason that is retried later
- * and that nothing can be fixed for: the connection (offline, stalled, cut off
- * while reading the checkpoint) or a 401 (the fetch layer already triggers a
- * re-login; the replication backend answers an expired session with a plain 401).
- */
-export function isTransientReplicationFailure(err: any): boolean {
-  const message = err?.message || err?.reason || String(err);
-  return (
-    isConnectivityError(err) ||
-    err?.status === 401 ||
-    err?.statusCode === 401 ||
-    message.includes("getCheckpoint")
-  );
 }
