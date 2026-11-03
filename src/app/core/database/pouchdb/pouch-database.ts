@@ -1,5 +1,9 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
+import {
+  classifyErrorChain,
+  ErrorClassification,
+} from "../../logging/error-classification";
 import { DatabaseException, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
@@ -52,6 +56,14 @@ function markAsSecondQuery(res: FindPage): FindPage {
  * (see {@link PouchDatabase.resolveConflict}).
  */
 export type ConflictOutcome = "merged" | "overwritten" | "unresolved";
+
+/**
+ * Failures of the changes feed that it recovers from by retrying: the device is
+ * offline (or the server unreachable), or the session could not be renewed yet.
+ */
+const TRANSIENT_CHANGES_FEED_FAILURES = new Set<
+  ErrorClassification | undefined
+>(["connectivity", "session-expired"]);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -411,14 +423,12 @@ export class PouchDatabase extends Database {
           }
         })
         .catch((err) => {
-          if (
-            err.statusCode === HttpStatusCode.Unauthorized ||
-            err.statusCode === HttpStatusCode.GatewayTimeout
-          ) {
-            // expired session or a gateway timeout: transient, retried below
-            Logging.debug("changes feed failed (unauthorized or timeout)", err);
+          const error = toTypedDatabaseError(err);
+          if (TRANSIENT_CHANGES_FEED_FAILURES.has(classifyErrorChain(error))) {
+            // retried below until the connection or the session is back
+            Logging.debug("changes feed failed", error);
           } else {
-            Logging.error(toTypedDatabaseError(err));
+            Logging.error(error);
           }
 
           // retry
