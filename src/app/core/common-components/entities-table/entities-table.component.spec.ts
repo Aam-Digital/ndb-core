@@ -594,6 +594,10 @@ describe("EntitiesTableComponent", () => {
         "TestRowPrefix",
         async () => TestRowPrefixComponent,
       );
+      TestBed.inject(ComponentRegistry).add(
+        "TestRowSuffix",
+        async () => TestRowSuffixComponent,
+      );
       dataSource = TestBed.runInInjectionContext(
         () => new ExtendedTestDataSource(),
       );
@@ -614,7 +618,7 @@ describe("EntitiesTableComponent", () => {
       return fixture.nativeElement.querySelectorAll("tr[mat-row]")[index];
     }
 
-    it("renders the prefix and CSS class of a row decoration", async () => {
+    it("renders the components and CSS class of a row decoration", async () => {
       const [decorated, plain] = ["A", "B"].map((name) =>
         TestEntity.create(name),
       );
@@ -623,7 +627,11 @@ describe("EntitiesTableComponent", () => {
         new Map([
           [
             decorated.getId(),
-            { prefix: { component: "TestRowPrefix" }, cssClass: "decorated" },
+            {
+              prefix: { component: "TestRowPrefix" },
+              suffix: { component: "TestRowSuffix" },
+              cssClass: "decorated",
+            },
           ],
         ]),
       );
@@ -636,11 +644,18 @@ describe("EntitiesTableComponent", () => {
         ?.closest("td");
       // the first column holding record data, after the select and "+" columns
       expect(prefixCell?.classList).toContain("mat-column-name");
-      expect(prefixCell?.querySelector("app-entity-field-view")).not.toBeNull();
-      // the prefix can span the full height of the row and draw over the row divider
       const prefixContainer = prefixCell!.querySelector(
         "app-test-row-prefix",
       )!.parentElement!;
+      // side by side in the cell: prefix, the field, suffix
+      expect(
+        [...prefixContainer.children].map((child) => child.localName),
+      ).toEqual([
+        "app-test-row-prefix",
+        "app-entity-field-view",
+        "app-test-row-suffix",
+      ]);
+      // the prefix can span the full height of the row and draw over the row divider
       expect(getComputedStyle(prefixContainer).height).toBe("100%");
       expect(getComputedStyle(prefixCell!).overflow).toBe("visible");
       expect(renderedRow(decorated).classList).toContain("decorated");
@@ -782,3 +797,6 @@ class UnpagedTestDataSource extends InMemoryDataSource<TestEntity> {
 
 @Component({ selector: "app-test-row-prefix", template: "&gt;" })
 class TestRowPrefixComponent {}
+
+@Component({ selector: "app-test-row-suffix", template: "(3)" })
+class TestRowSuffixComponent {}

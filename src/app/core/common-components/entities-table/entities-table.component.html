@@ -44,6 +44,10 @@
                 [field]="col"
                 [entity]="row"
               ></app-entity-field-view>
+              @let suffix = rowDecoration()(row)?.suffix;
+              @if (suffix) {
+                <ng-container [appDynamicComponent]="suffix"></ng-container>
+              }
             </div>
           } @else {
             <app-entity-field-view

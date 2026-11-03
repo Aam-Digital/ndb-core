@@ -65,6 +65,7 @@ A `RowDecoration` can have:
   (a column projected into the table by its host does not show it).
   The prefix is a flex item next to the cell's content, in a flex row filling the whole cell:
   with `align-self: stretch` it spans the full height of the row and may draw over the row divider (e.g. lines connecting rows);
+- `suffix`: a component shown after the content of the first data cell, in the same flex row (e.g. a count next to a title);
 - `cssClass`: an extra CSS class for the row;
 - `selectable: false`: the row cannot be selected for bulk actions
   (disabled checkbox, skipped by "select all" and Shift-click ranges).
@@ -77,7 +78,7 @@ Decorations are display state of one table, so they live in the data source rath
 They are looked up by `entity.getId()` rather than by record object,
 because a live update replaces the record object and the row should keep its decoration
 until the data source has computed new ones.
-Keep the `prefix` and `toolbarControls` config objects stable (e.g. create them once in a `computed`):
+Keep the `prefix`, `suffix` and `toolbarControls` config objects stable (e.g. create them once in a `computed`):
 `appDynamicComponent` reloads the component whenever it gets a new config object.
 
 The entity list shows the `toolbarControls` in its filter row (on desktop and mobile);

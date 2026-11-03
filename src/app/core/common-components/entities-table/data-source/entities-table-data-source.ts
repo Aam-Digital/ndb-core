@@ -50,6 +50,8 @@ export interface LoadRecordConfig<T extends Entity> {
 export interface RowDecoration {
   /** component shown before the content of the first data cell */
   prefix?: DynamicComponentConfig;
+  /** component shown after the content of the first data cell */
+  suffix?: DynamicComponentConfig;
   /** extra CSS class for the row */
   cssClass?: string;
   /** whether the row can be selected for bulk actions (default: true) */
