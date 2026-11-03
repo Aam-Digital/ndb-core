@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
@@ -474,6 +475,8 @@ describe("EntityListComponent", () => {
         ).mockReturnValue({ supportsFind: () => true } as Database);
         createComponent();
         component.isDesktop = true;
+        // the component is OnPush: a plain field change needs to mark it for check
+        fixture.debugElement.injector.get(ChangeDetectorRef).markForCheck();
         fixture.detectChanges();
         await fixture.whenStable();
         fixture.detectChanges();
