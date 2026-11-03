@@ -39,6 +39,8 @@ or `{ "category": { "$elemMatch": { "$in": ["A", "B"] } } }`.
 A condition on one entry is wrapped in `$elemMatch`: `{ "attendance": { "$elemMatch": { "status": "ABSENT" } } }`.
 Inside `$elemMatch`, write several conditions on the same entry as keys of one object, never with `$and` or `$or`:
 the in-memory engine rejects both there. Alternatives go outside, as an `$or` of `$elemMatch` conditions.
+The conditions editor (display conditions, selection conditions) offers the properties of embedded fields
+and stores a row on one as such a condition on an entry; two rows on the same embedded field may match different entries.
 
 **"Not defined"** (`createEmptyValueFilter`) matches a missing, `null` or empty value (and an empty list for multi-value fields).
 For an embedded list it matches records without entries or with at least one entry without a value.

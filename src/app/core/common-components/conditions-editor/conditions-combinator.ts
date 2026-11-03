@@ -35,7 +35,7 @@ const hasValue = (value: any): boolean => {
 };
 
 /** A row is complete once its field has a value. */
-const isCompleteRow = (row: any): boolean =>
+export const isCompleteRow = (row: any): boolean =>
   isPlainObject(row) &&
   Object.keys(row).length > 0 &&
   Object.values(row).every(hasValue);

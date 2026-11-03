@@ -9,6 +9,7 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
+import { SchemaEmbedDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 
 @DatabaseEntity("ConditionsEditorTestEntity")
 class ConditionsEditorTestEntity extends Entity {
@@ -628,6 +629,69 @@ describe("ConditionsEditorComponent", () => {
       ]);
       expect(emit).toHaveBeenLastCalledWith({
         $and: [{ name: "A" }, { name: "B" }],
+      });
+    });
+  });
+
+  describe("properties of embedded fields", () => {
+    @DatabaseEntity("ConditionsEditorEmbedTestEntity")
+    class ConditionsEditorEmbedTestEntity extends Entity {
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          status: {
+            label: "Status",
+            dataType: "configurable-enum",
+            additional: "genders",
+          },
+        },
+      })
+      log: object[];
+    }
+
+    beforeEach(() => {
+      const embedDatatype = TestBed.runInInjectionContext(
+        () => new SchemaEmbedDatatype(),
+      );
+      mockEntitySchemaService.getDatatypeOrDefault.mockImplementation(
+        (dataType: string) =>
+          dataType === "schema-embed" ? embedDatatype : undefined,
+      );
+      component.entityConstructor = ConditionsEditorEmbedTestEntity;
+    });
+
+    it("offers the properties of an embedded field instead of the field itself", () => {
+      component.ngOnInit();
+
+      expect(component.embeddedFieldOptions.map((o) => o.id)).toEqual([
+        "log.status",
+      ]);
+      expect(component.embeddedOuterFields).toEqual(["log"]);
+    });
+
+    it("edits a condition on one entry of an embedded field as a row of its property", () => {
+      mockEntitySchemaService.valueToEntityFormat.mockImplementation(
+        (value) => value,
+      );
+      mockEntitySchemaService.valueToDatabaseFormat.mockImplementation(
+        (value) => value,
+      );
+      component.conditions = {
+        log: { $elemMatch: { status: { $in: ["M"] } } },
+      };
+      component.ngOnInit();
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      expect(component.conditionsArray()).toEqual([
+        { "log.status": { $in: ["M"] } },
+      ]);
+
+      component.conditionFormControls.get("0").setValue(["F"]);
+
+      expect(emit).toHaveBeenLastCalledWith({
+        log: { $elemMatch: { status: { $in: ["F"] } } },
       });
     });
   });

@@ -37,6 +37,8 @@
           <mat-label i18n>Field</mat-label>
           <app-entity-field-select
             [entityType]="entityConstructor"
+            [options]="embeddedFieldOptions"
+            [excludedFields]="embeddedOuterFields"
             [value]="getConditionField(condition)"
             [showInternalIdField]="showInternalIdField()"
             (valueChange)="onConditionFieldChange(conditionId, $event)"
