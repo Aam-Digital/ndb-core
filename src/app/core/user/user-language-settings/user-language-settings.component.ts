@@ -17,6 +17,7 @@ import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
 import { UserSettings } from "../../site-settings/user-settings";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityPermissionError } from "../../entity/entity-mapper/entity-permission-error";
 import { SessionSubject } from "../../session/auth/session-info";
 import { isNotPermittedError } from "../../logging/error-classification";
 
@@ -90,7 +91,7 @@ export class UserLanguageSettingsComponent {
       this.languageService.switchToOwnLocale(localeId);
     } catch (err) {
       this.languageSelect()?.resetToCurrent();
-      if (isNotPermittedError(err)) {
+      if (err instanceof EntityPermissionError || isNotPermittedError(err)) {
         // caused by the instance's permission config, not a bug to report
         Logging.debug("User may not save their own language", err);
         this.alertService.addDanger(this.missingPermissionText);

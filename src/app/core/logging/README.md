@@ -132,7 +132,7 @@ module that creates it: `ConnectivityError` and `ServerError` in `src/app/utils/
 Everything else judges an error by its type (`classifyError()`). Only remote monitoring also recognizes
 the few foreign errors that reach it uncaught, e.g. a failed chunk load
 (`uncaught-error-classification.ts`). For a new kind of failure, extend one of the typed classes
-(e.g. `SyncStalledError extends ConnectivityError`, `EntityPermissionError extends NotPermittedError`).
+(e.g. `SyncStalledError extends ConnectivityError`).
 
 - **Check for a kind of failure** with `isExpectedFailure()` (or `Logging.warnUnlessExpected()`),
   `isConnectivityError()`, `isNotPermittedError()` or `classifyErrorChain()` (`error-classification.ts`),
