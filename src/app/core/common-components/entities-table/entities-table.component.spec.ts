@@ -641,6 +641,29 @@ describe("EntitiesTableComponent", () => {
       expect(renderedRow(plain).classList).not.toContain("decorated");
     });
 
+    it("keeps the field view of the first cell when its prefix comes or goes", async () => {
+      const record = TestEntity.create("A");
+      dataSource.allRecords.set([record]);
+      fixture.detectChanges();
+      const fieldView = () =>
+        renderedRow(record).querySelector(
+          "td.mat-column-name app-entity-field-view",
+        );
+      const initialFieldView = fieldView();
+
+      dataSource.rowDecorations.set(
+        new Map([[record.getId(), { prefix: { component: "TestRowPrefix" } }]]),
+      );
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(
+        renderedRow(record).querySelector("app-test-row-prefix"),
+      ).not.toBeNull();
+      expect(fieldView()).toBe(initialFieldView);
+    });
+
     it("never selects a row whose decoration marks it as not selectable", () => {
       const [a, locked, c] = ["A", "B", "C"].map((name) =>
         TestEntity.create(name),

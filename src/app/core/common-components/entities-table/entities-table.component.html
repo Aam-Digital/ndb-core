@@ -29,11 +29,13 @@
           ></app-entity-field-label>
         </th>
         <td mat-cell *matCellDef="let row">
-          @let prefix =
-            col.id === firstDataColumn() ? rowDecoration()(row)?.prefix : null;
-          @if (prefix) {
+          @if (col.id === firstDataColumn()) {
+            <!-- the same elements with or without a prefix: a prefix that comes or goes does not rebuild the cell -->
             <div class="flex-row align-center">
-              <ng-container [appDynamicComponent]="prefix"></ng-container>
+              @let prefix = rowDecoration()(row)?.prefix;
+              @if (prefix) {
+                <ng-container [appDynamicComponent]="prefix"></ng-container>
+              }
               <app-entity-field-view
                 [field]="col"
                 [entity]="row"
