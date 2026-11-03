@@ -77,4 +77,6 @@ The engine compares with `extendedCompare`, so that a `Date` matches a day strin
   for both single-value and multi-value fields; used by list filters and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
 - `filter.service.ts` — the in-memory engine, and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
+  ("Add new" in related entities and the entity select): it applies the conditions requiring one specific value,
+  also for an entry of an embedded field, and converts the stored values through the field's datatype
 - `stored-format.ts` — normalizes conditions and converts records to the stored format, for the in-memory engine and database queries

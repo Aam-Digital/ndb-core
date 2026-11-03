@@ -1,8 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { Entity } from "../entity/model/entity";
-import moment from "moment";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import {
   combineFilterConditions,
   DataFilter,
@@ -12,6 +10,8 @@ import { createFilterPredicate } from "../../utils/filter-compare-utils";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
 import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
+import { getSchemaEmbedDatatype } from "../entity/schema/embedded-schema-field.util";
+import { asArray } from "../../utils/asArray";
 import { Logging } from "../logging/logging.service";
 
 /**
@@ -21,7 +21,6 @@ import { Logging } from "../logging/logging.service";
   providedIn: "root",
 })
 export class FilterService {
-  private enumService = inject(ConfigurableEnumService);
   private readonly schemaService = inject(EntitySchemaService);
 
   /** the records in the stored format, kept per saved revision (see {@link toStoredFormat}) */
@@ -113,93 +112,155 @@ export class FilterService {
   /**
    * Patches an entity with values required to pass the filter query.
    * This patch happens in-place.
+   *
+   * Only conditions requiring one specific value are applied, like `{ category: "A" }`, `{ category: { $in: ["A"] } }`
+   * or `{ tags: { $elemMatch: { $eq: "A" } } }` (only for a multi-value field), every branch of `$or` and `$and`.
+   * A condition on an entry of an embedded field (like `{ attendance: { $elemMatch: { participant: "Child:1" } } }`)
+   * adds such an entry. The values are converted from the stored format through the datatype of the field.
+   *
    * @param entity the entity to be patched
    * @param filter the filter which the entity should pass afterward
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
-    Object.entries(filter ?? {}).forEach(([key, value]) => {
-      if ((key === "$or" || key === "$and") && Array.isArray(value)) {
+    for (const [key, condition] of Object.entries(filter ?? {})) {
+      if ((key === "$or" || key === "$and") && Array.isArray(condition)) {
         // apply each branch of the alternatives ($or) or required parts ($and)
-        for (const branch of value) {
+        for (const branch of condition) {
           this.alignEntityWithFilter(entity, branch);
         }
-      } else if (typeof value !== "object") {
-        // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
-        this.assignValueToEntity(key, value, schema, entity);
-      } else if (value["$elemMatch"]?.["$eq"]) {
-        // e.g. { children: { $elemMatch: { $eq: "Child:some-id" } } }
-        this.assignValueToEntity(
-          key,
-          value["$elemMatch"]["$eq"],
-          schema,
-          entity,
-          true,
-        );
-      } else if (isSingleOptionList(value?.["$in"])) {
-        // e.g. { category: { $in: ["GUARDIAN_TALK"] } } (as saved by the conditions editor)
-        this.assignValueToEntity(key, value["$in"][0], schema, entity);
-      } else if (isSingleOptionList(value?.["$elemMatch"]?.["$in"])) {
-        this.assignValueToEntity(
-          key,
-          value["$elemMatch"]["$in"][0],
-          schema,
-          entity,
-          true,
-        );
+        continue;
       }
-    });
+
+      const [path, storedCondition] = Object.entries(
+        toStoredFormatCondition(
+          { [key]: condition },
+          schema,
+          this.schemaService,
+        ),
+      )[0];
+      const [fieldId, ...innerPath] = path.split(".");
+      const field = schema.get(fieldId);
+      if (!field) {
+        continue;
+      }
+
+      const container = getSchemaEmbedDatatype(this.schemaService, field);
+      if (container && innerPath.length > 0) {
+        // a single embedded object, e.g. { "phone.type": "mobile" }
+        this.alignEmbeddedValue(entity, field, fieldId, {
+          [innerPath.join(".")]: storedCondition,
+        });
+      } else if (container && isPlainObject(storedCondition?.["$elemMatch"])) {
+        this.alignEmbeddedValue(
+          entity,
+          field,
+          fieldId,
+          storedCondition["$elemMatch"],
+        );
+      } else if (innerPath.length === 0) {
+        const value = requiredValue(storedCondition, field.isArray);
+        if (value !== undefined) {
+          entity[fieldId] = this.schemaService.valueToEntityFormat(
+            field.isArray ? [value] : value,
+            field,
+            entity,
+          );
+        }
+      }
+    }
   }
 
   /**
-   * @param isElemMatch whether the value comes from an `$elemMatch` filter condition.
+   * Add the values required by the conditions on the inner properties of an embedded field
+   * (as an entry of a list of embedded objects, or into a single embedded object).
    */
-  private assignValueToEntity<T extends Entity>(
-    key: string,
-    value,
-    schema: Map<string, EntitySchemaField>,
-    newEntity: T,
-    isElemMatch = false,
+  private alignEmbeddedValue(
+    entity: Entity,
+    field: EntitySchemaField,
+    fieldId: string,
+    innerConditions: object,
   ) {
-    if (key.includes(".")) {
-      // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)
-      [key, value] = this.transformNestedKey(key, value);
-    }
-    const property = schema.get(key);
+    const container = getSchemaEmbedDatatype(this.schemaService, field);
+    const innerSchema = container.getEffectiveSchema(field);
+    // the conditions use the paths of the inner properties in the stored value (e.g. "0" in a tuple)
+    const innerFieldOfPath = new Map(
+      [...innerSchema.entries()].map(([innerId, innerField]) => [
+        container.getEmbeddedFieldDbPath(innerId),
+        innerField,
+      ]),
+    );
 
-    if (!property) {
-      // not a schema property
+    const storedEntry: object = Object.keys(innerConditions).some((p) =>
+      /^\d/.test(p),
+    )
+      ? []
+      : {};
+    // an entry stored with nested parts (like the tuple of an old attendance field) needs all of them
+    for (const innerPath of innerFieldOfPath.keys()) {
+      parentOfPath(storedEntry, innerPath);
+    }
+    let hasValue = false;
+    for (const [innerPath, innerCondition] of Object.entries(innerConditions)) {
+      const value = requiredValue(
+        innerCondition,
+        innerFieldOfPath.get(innerPath)?.isArray,
+      );
+      if (value !== undefined) {
+        parentOfPath(storedEntry, innerPath)[innerPath.split(".").at(-1)] =
+          value;
+        hasValue = true;
+      }
+    }
+    if (!hasValue) {
       return;
     }
-    if (isElemMatch && !property.isArray) {
-      // Filter options (e.g. of ConfigurableEnumFilter, EntityFilter) offer a plain equality and an
-      // `$elemMatch` variant side by side to also match data saved while the field had the other
-      // (single / multi select) setting. Only the variant fitting the current field applies here.
-      return;
-    }
 
-    if (property?.dataType === "configurable-enum") {
-      value = this.parseConfigurableEnumValue(property, value);
+    if (container.holdsArray(field)) {
+      const [newEntry] = asArray(
+        this.schemaService.valueToEntityFormat([storedEntry], field, entity),
+      );
+      entity[fieldId] = [...asArray(entity[fieldId] ?? []), newEntry];
+    } else {
+      entity[fieldId] = {
+        ...(entity[fieldId] ?? {}),
+        ...this.schemaService.valueToEntityFormat(storedEntry, field, entity),
+      };
     }
-    if (property?.dataType.includes("date")) {
-      value = moment(value).toDate();
-    }
-    newEntity[key] = property.isArray ? [value] : value;
-  }
-
-  private transformNestedKey(key: string, value): any[] {
-    const [first, second] = key.split(".");
-    return [first, { [second]: value }];
-  }
-
-  private parseConfigurableEnumValue(property: EntitySchemaField, value) {
-    const enumValues = this.enumService.getEnumValues(property.additional);
-    const valueId = typeof value === "string" ? value : value["id"];
-    return enumValues.find(({ id }) => id === valueId);
   }
 }
 
-/** a list with exactly one option, which can be applied as plain value */
-function isSingleOptionList(value: unknown): value is [unknown] {
-  return Array.isArray(value) && value.length === 1;
+/**
+ * The one value a condition requires, or `undefined` if it allows several or none:
+ * a plain value, `$eq` or a single option of `$in`;
+ * for a multi-value field also these inside `$elemMatch`, for which a single-value field requires nothing.
+ */
+function requiredValue(condition: unknown, isArrayField: boolean): unknown {
+  if (!isPlainObject(condition)) {
+    return condition;
+  }
+  if ("$eq" in condition) {
+    return condition["$eq"];
+  }
+  if (Array.isArray(condition["$in"]) && condition["$in"].length === 1) {
+    return condition["$in"][0];
+  }
+  if (isArrayField && isPlainObject(condition["$elemMatch"])) {
+    return requiredValue(condition["$elemMatch"], false);
+  }
+  return undefined;
+}
+
+function isPlainObject(value: unknown): value is object {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+/** the object holding the last segment of the path, created where missing */
+function parentOfPath(target: object, path: string): object {
+  let current = target;
+  for (const segment of path.split(".").slice(0, -1)) {
+    current[segment] ??= {};
+    current = current[segment];
+  }
+  return current;
 }

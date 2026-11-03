@@ -114,6 +114,38 @@ describe("RelatedEntitiesComponent", () => {
     expect(newEntity["other"]).toBe("A");
   });
 
+  it.each(["attendance", "event-attendance-map"])(
+    "pre-fills a new record with an entry referencing the related one in an embedded %s field",
+    async (dataType) => {
+      @DatabaseEntity(`EmbeddedPrefillTest-${dataType}`)
+      class EmbeddedPrefillTest extends Entity {}
+      EmbeddedPrefillTest.schema.set("participants", {
+        dataType,
+        isArray: dataType === "attendance",
+        additional: {
+          participant: {
+            dataType: EntityDatatype.dataType,
+            additional: TestEntity.ENTITY_TYPE,
+          },
+        },
+      });
+
+      const related = new TestEntity();
+      fixture.componentRef.setInput("entity", related);
+      fixture.componentRef.setInput(
+        "entityType",
+        EmbeddedPrefillTest.ENTITY_TYPE,
+      );
+      await initComponent();
+
+      const newEntity = component.createNewRecordFactory()();
+
+      expect(newEntity["participants"]).toEqual([
+        expect.objectContaining({ participant: related.getId() }),
+      ]);
+    },
+  );
+
   it("should create a new entity that references the related one", async () => {
     const related = new TestEntity();
     fixture.componentRef.setInput("entity", related);
