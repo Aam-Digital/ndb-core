@@ -378,6 +378,22 @@ describe("EntityListComponent", () => {
     );
   });
 
+  it("should reset the free-text search through 'Clear' of the filter overlay (small screens)", async () => {
+    createComponent();
+    const dataSource = component.recordsDataSource();
+    dataSource.searchText.set("Alipore");
+
+    component.openFilterOverlay();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const clearButton = Array.from<HTMLElement>(
+      document.querySelectorAll(".cdk-overlay-container button"),
+    ).find((button) => button.textContent.includes("Clear"));
+    clearButton.click();
+
+    expect(dataSource.searchText()).toBe("");
+  });
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
