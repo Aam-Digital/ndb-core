@@ -14,6 +14,7 @@ import {
 import { $and, $nor, $not, $or, and, nor, not, or } from "@ucast/mongo2js";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
+import { EmbeddedEntity } from "../../entity/model/embedded-entity";
 import { Logging } from "../../logging/logging.service";
 
 /** The action and subject types this ability checks permissions for. */
@@ -114,6 +115,16 @@ export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
     field?: string,
     enforceConditions?: boolean,
   ): boolean {
+    const recordCheck = this.getRecordCheckForEmbedded(action, entity);
+    if (recordCheck) {
+      return this.can(
+        recordCheck.action,
+        recordCheck.record,
+        recordCheck.field,
+        enforceConditions,
+      );
+    }
+
     if (action === "create" && !enforceConditions) {
       const rules = this.rules.map((r) => {
         const simplifiedRule = { ...r };
@@ -136,7 +147,47 @@ export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
     entity: EntitySubject,
     field?: string,
   ): boolean {
+    const recordCheck = this.getRecordCheckForEmbedded(action, entity);
+    if (recordCheck) {
+      return this.cannot(
+        recordCheck.action,
+        recordCheck.record,
+        recordCheck.field,
+      );
+    }
+
     return super.cannot(action, this.getSubject(entity), field);
+  }
+
+  /**
+   * An embedded entry (e.g. a row of an embedded table) has no permissions of its own:
+   * reading it needs read permission for the field of the record holding it,
+   * any change of it needs permission to change that field.
+   *
+   * @returns the check on the record holding the entry, or undefined if the subject is no embedded entry
+   *   (or one edited without a record)
+   */
+  private getRecordCheckForEmbedded(
+    action: EntityActionPermission,
+    entity: EntitySubject,
+  ):
+    | { action: EntityActionPermission; record: Entity; field: string }
+    | undefined {
+    if (!(entity instanceof EmbeddedEntity)) {
+      return undefined;
+    }
+    const root = entity.getRoot();
+    if (!root) {
+      return undefined;
+    }
+
+    let recordAction: EntityActionPermission;
+    if (action === "read") {
+      recordAction = "read";
+    } else {
+      recordAction = root.record.isNew ? "create" : "update";
+    }
+    return { action: recordAction, record: root.record, field: root.field };
   }
 
   private getSubject(entity: EntitySubject): any {

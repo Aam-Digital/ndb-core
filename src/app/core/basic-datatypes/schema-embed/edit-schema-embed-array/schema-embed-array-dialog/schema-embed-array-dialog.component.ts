@@ -17,10 +17,12 @@ import { applySchemaEmbedArrayEntryChange } from "../../schema-embed-array-entry
 export interface SchemaEmbedArrayDialogData {
   /** The field's FormControl, holding the entries and receiving their changes. */
   formControl: FormControl<Record<string, any>[]>;
+  /** The `schema-embed-array` field itself. */
+  field: FormFieldConfig;
   /** The inner fields (table columns), resolved from the field's schema-embed configuration. */
   columns: FormFieldConfig[];
-  /** The entity holding the field (context for the inner fields' validators). */
-  entity: Entity;
+  /** The record holding the field (context of the inner fields, e.g. for permissions), if any. */
+  entity?: Entity;
   /** Dialog title, typically the field's own label. */
   label?: string;
 }

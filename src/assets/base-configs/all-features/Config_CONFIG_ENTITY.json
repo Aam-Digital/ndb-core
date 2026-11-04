@@ -1560,7 +1560,10 @@
             },
             "issueDate": {
               "dataType": "date",
-              "label": "Issue Date"
+              "label": "Issue Date",
+              "validators": {
+                "readonlyAfterSet": true
+              }
             }
           }
         }

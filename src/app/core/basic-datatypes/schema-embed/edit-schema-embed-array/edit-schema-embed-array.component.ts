@@ -89,6 +89,7 @@ export class EditSchemaEmbedArrayComponent
       maxHeight: "90vh",
       data: {
         formControl: this.formControl,
+        field: this.formFieldConfig(),
         columns: this.columns(),
         entity: this.entity(),
         label: this.formFieldConfig()?.label,

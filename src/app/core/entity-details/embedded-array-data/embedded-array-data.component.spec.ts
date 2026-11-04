@@ -118,6 +118,7 @@ describe("EmbeddedArrayDataComponent", () => {
         .map((c) => c.id),
     ).toEqual(["documentType", "documentNumber"]);
     expect(table().entity()).toBe(entity);
+    expect(table().field().id).toBe("documents");
   });
 
   it.each([
@@ -142,12 +143,11 @@ describe("EmbeddedArrayDataComponent", () => {
     await render();
 
     await table().applyChange()({
-      entry: { documentType: "Visa" },
+      entry: { documentType: "Visa", documentNumber: "B2" },
       index: 1,
       original: { documentType: "ID Card", documentNumber: "B2" },
     });
 
-    // inner fields not edited in the popup are kept
     const expected = [
       { documentType: "Passport", documentNumber: "A1" },
       { documentType: "Visa", documentNumber: "B2" },

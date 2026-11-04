@@ -261,13 +261,8 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    if (!(await this.confirmValidity(entityForm))) {
-      throw new InvalidFormFieldError();
-    }
-
     const originalEntity = entity.copy();
-    const updatedEntity = this.createUpdatedEntity(entity, form);
-    updatedEntity.assertValid();
+    const updatedEntity = await this.applyChanges(entityForm, entity);
     this.assertPermissionsToSave(entity, updatedEntity);
 
     try {
@@ -295,6 +290,34 @@ export class EntityFormService {
       new EntityFormSavedEvent(entity, originalEntity),
     );
     return entity;
+  }
+
+  /**
+   * Apply the changes of the formGroup to a copy of the entity, without saving it.
+   * Like {@link saveChanges}, the form has to be valid (see {@link confirmValidity})
+   * and empty values are removed and strings trimmed.
+   * Used where the record holding the changes is saved by someone else
+   * (e.g. an {@link EmbeddedEntity} entry, which is saved as part of its record).
+   *
+   * @param entityForm The form holding the changes
+   * @param entity The entity on which the changes should be applied (not modified)
+   * @returns a copy of the input entity with the changes from the form group
+   * @throws InvalidFormFieldError if a field of the form is invalid
+   */
+  public async applyChanges<T extends Entity>(
+    entityForm: EntityForm<T>,
+    entity: T,
+  ): Promise<T> {
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
+
+    const updatedEntity = this.createUpdatedEntity(
+      entity,
+      entityForm.formGroup,
+    );
+    updatedEntity.assertValid();
+    return updatedEntity;
   }
 
   /**

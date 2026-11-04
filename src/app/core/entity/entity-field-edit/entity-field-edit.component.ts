@@ -63,7 +63,7 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
 
   /**
    * Alternative to `form`: a bare FormGroup to use when only a field's own local form context
-   * is available (e.g. one row of an embedded table edited outside the entity form lifecycle),
+   * is available (e.g. one row of the inline edit mode of an entities table),
    * without the wider EntityForm context (`entity`, `fieldConfigs`, `inheritedParentValues`, ...).
    *
    * Side effect: since that wider context is required to inherit/default values, the inherit

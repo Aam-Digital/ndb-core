@@ -60,7 +60,10 @@ export class SchemaEmbedArrayTableComponent {
    */
   editColumns = input<FormFieldConfig[]>();
 
-  /** The entity holding the entries (context for the inner fields' validators in the popup). */
+  /** The `schema-embed-array` field holding the entries (required to open the popup of an entry). */
+  field = input<FormFieldConfig>();
+
+  /** The record holding the entries (context of the inner fields in the popup, e.g. for permissions). */
   entity = input<Entity>();
 
   /** Persist a changed list of entries; enables opening the popup of an entry if set. */
@@ -108,6 +111,7 @@ export class SchemaEmbedArrayTableComponent {
       data: {
         entries: this.rows(),
         index,
+        field: this.field(),
         columns: this.editColumns() ?? this.columns(),
         entity: this.entity(),
         readonly: this.readonly(),
