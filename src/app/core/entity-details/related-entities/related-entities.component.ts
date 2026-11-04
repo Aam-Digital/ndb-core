@@ -116,6 +116,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
   showInactive = model<boolean | undefined>(undefined);
 
   clickMode = input<"popup" | "navigate" | "popup-details">("popup");
+  /**
+   * Whether to show the button to create a new related record.
+   */
   editable = input<boolean>(true);
 
   protected readonly entityCtr = computed<EntityConstructor<E> | undefined>(

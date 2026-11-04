@@ -52,8 +52,8 @@
         Import Status
       </th>
 
-      <td mat-cell *matCellDef="let row" [class.highlight]="row.record._rev">
-        @if (row.record._rev) {
+      <td mat-cell *matCellDef="let row" [class.highlight]="row._rev">
+        @if (row._rev) {
           <em
             matTooltip="We identified an existing record in the database that matches your imported data (based on the ID fields you selected in the previous step). The data of the record will be updated for the fields shown here in the preview."
             i18n-matTooltip
@@ -61,7 +61,7 @@
           >
             Updating
           </em>
-          <app-entity-block [entity]="row.record"></app-entity-block>
+          <app-entity-block [entity]="row"></app-entity-block>
         } @else {
           <em
             class="status-create"
@@ -70,7 +70,7 @@
             i18n
             >Creating</em
           >
-          @if (row.record[MULTIPLE_MATCHING_ENTITIES_KEY]) {
+          @if (row[MULTIPLE_MATCHING_ENTITIES_KEY]) {
             <fa-icon
               icon="warning"
               class="warning-red"

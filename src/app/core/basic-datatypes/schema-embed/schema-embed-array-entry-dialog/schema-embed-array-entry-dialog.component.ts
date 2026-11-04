@@ -189,7 +189,6 @@ export class SchemaEmbedArrayEntryDialogComponent {
       this.data.columns,
       this.entry,
       this.destroyRef,
-      /* forTable */ false,
       // without a record, there are no permissions to check the entry against
       /* withPermissionCheck */ !!this.data.entity,
       // default values for new entries are not supported yet

@@ -51,7 +51,7 @@ Claude skill to assist creating and discussing these: /feature-use-cases
 ...
 
 ### Known limitations
-- Only applies when records are saved through their form (not import, bulk edit or inline table edit).
+- Only applies when records are saved through their form (not import or bulk edit).
 - If a linked record can't be loaded (e.g. missing read permission), no shared value is inherited.
 - Values of multi-select source fields are compared exactly, so `[a, b]` and `[b, a]` count as different.
 - Moving a child to another group, with an unchanged city, does not trigger an update for either group.

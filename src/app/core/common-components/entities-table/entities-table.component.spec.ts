@@ -22,6 +22,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
 import { Logging } from "../../logging/logging.service";
 import { Component } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
+import { Angulartics2Module } from "angulartics2";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -38,7 +39,11 @@ describe("EntitiesTableComponent", () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [EntitiesTableComponent, CoreTestingModule],
+      imports: [
+        EntitiesTableComponent,
+        CoreTestingModule,
+        Angulartics2Module.forRoot(),
+      ],
       providers: [
         { provide: EntitySpecialLoaderService, useValue: undefined },
         InMemoryDataSource,
@@ -57,6 +62,8 @@ describe("EntitiesTableComponent", () => {
             const spy = {
               navigate: vi.fn(),
               createUrlTree: vi.fn(),
+              // for the route tracking of the analytics on the create button
+              events: of(),
             };
             spy.createUrlTree.mockReturnValue({ toString: () => "/?foo=bar" });
             return spy;
@@ -154,7 +161,7 @@ describe("EntitiesTableComponent", () => {
     const sortedIds = component
       .recordsDataSource()
       ._orderData(component.recordsDataSource().data)
-      .map((note) => note.record.getId(true));
+      .map((note) => note.getId(true));
     expect(sortedIds).toEqual(["note-2", "note-1", "note-3", "note-0"]);
   });
 
@@ -186,7 +193,7 @@ describe("EntitiesTableComponent", () => {
     const sortedNames = component
       .recordsDataSource()
       ._orderData(component.recordsDataSource().data)
-      .map((row) => row.record["name"]);
+      .map((record) => record["name"]);
     expect(sortedNames).toEqual(["youngest", "oldest"]);
   });
 
@@ -197,7 +204,7 @@ describe("EntitiesTableComponent", () => {
       expect(entity).toEqual(child);
     });
 
-    component.onRowClick({ record: child }, mockEvent);
+    component.onRowClick(child, mockEvent);
   });
 
   it("should shift-select the range of rows as currently displayed", () => {
@@ -219,7 +226,7 @@ describe("EntitiesTableComponent", () => {
     fixture.detectChanges();
 
     const rows = component.recordsDataSource().renderedRows();
-    expect(rows.map((row) => row.record)).toEqual([a, b, c, d]);
+    expect(rows).toEqual([a, b, c, d]);
 
     component.onRowMouseDown(new MouseEvent("mousedown"), rows[1]);
     const shiftClick = new MouseEvent("mousedown", {
@@ -301,10 +308,7 @@ describe("EntitiesTableComponent", () => {
     fixture.componentRef.setInput("filter", { name: "Matching" });
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([
-      { record: c1 },
-      { record: c3 },
-    ]);
+    expect(component.recordsDataSource().data).toEqual([c1, c3]);
 
     fixture.componentRef.setInput("filter", {
       name: "Matching",
@@ -312,7 +316,7 @@ describe("EntitiesTableComponent", () => {
     });
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([{ record: c3 }]);
+    expect(component.recordsDataSource().data).toEqual([c3]);
 
     const c4 = TestEntity.create("Matching");
     c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
@@ -321,10 +325,7 @@ describe("EntitiesTableComponent", () => {
     component.recordsDataSource().allRecords.set([c1, c2, c3, c4, c5]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([
-      { record: c3 },
-      { record: c4 },
-    ]);
+    expect(component.recordsDataSource().data).toEqual([c3, c4]);
   });
 
   it("should remove an entity if it does not pass the filter anymore", async () => {
@@ -336,7 +337,7 @@ describe("EntitiesTableComponent", () => {
     } as any);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([{ record: child }]);
+    expect(component.recordsDataSource().data).toEqual([child]);
 
     child.category = genders[2];
     component.recordsDataSource().allRecords.set([child]); // parent component has to update the records Input array
@@ -359,8 +360,8 @@ describe("EntitiesTableComponent", () => {
     fixture.detectChanges();
 
     expect(component.recordsDataSource().data).toEqual([
-      { record: active1 },
-      { record: neverArchived },
+      active1,
+      neverArchived,
     ]);
   });
 
@@ -478,6 +479,27 @@ describe("EntitiesTableComponent", () => {
     expect(component._columnsToDisplay()).toEqual(["name", "other"]);
     expect(errorSpy).toHaveBeenCalled();
   });
+
+  it.each([
+    [true, 1],
+    [false, 0],
+  ])(
+    "with editable=%s offers %i create button in the header and no action buttons in the rows",
+    (editable, expectedCreateButtons) => {
+      fixture.componentRef.setInput("editable", editable);
+      fixture.componentRef.setInput("entityType", TestEntity);
+      fixture.componentRef.setInput("columnsToDisplay", ["name"]);
+      component.recordsDataSource().allRecords.set([TestEntity.create("A")]);
+      fixture.detectChanges();
+
+      const table: HTMLElement = fixture.nativeElement;
+      expect(table.querySelectorAll("th button")).toHaveLength(
+        expectedCreateButtons,
+      );
+      expect(table.querySelector("td")).not.toBeNull();
+      expect(table.querySelectorAll("td button")).toHaveLength(0);
+    },
+  );
 
   it("should display a column that the parent component defines through a projected matColumnDef", () => {
     @Component({

@@ -125,7 +125,6 @@ export class EmbeddedArrayDataComponent {
         [property],
         entity,
         saveScope.get(DestroyRef),
-        /* forTable */ false,
         /* withPermissionCheck */ true,
         /* withDefaultValues */ false,
       );
