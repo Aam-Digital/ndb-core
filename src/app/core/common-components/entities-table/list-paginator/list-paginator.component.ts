@@ -40,6 +40,7 @@ import { LOCAL_STORAGE_TOKEN } from "#src/app/utils/di-tokens";
 })
 export class ListPaginatorComponent<E> {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly paginatorIntl = inject(
     MatPaginatorIntl,
   ) as UnknownTotalPaginatorIntl;
@@ -74,7 +75,7 @@ export class ListPaginatorComponent<E> {
       this.bindPaginator(this.dataSource());
     });
     // a data source may stop using pagination while it lives on (see `usesPagination`)
-    inject(DestroyRef).onDestroy(() => this.unbindPaginator());
+    this.destroyRef.onDestroy(() => this.unbindPaginator());
 
     effect(() => {
       const dataSource = this.dataSource();
