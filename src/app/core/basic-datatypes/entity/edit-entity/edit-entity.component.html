@@ -27,6 +27,14 @@
   >
     <ng-template let-item>
       @if (!item.isHidden) {
+        @if (isIneligible(item)) {
+          <app-fa-dynamic-icon
+            class="ineligible-icon margin-end-small"
+            icon="warning"
+            matTooltip="Not matching the selection conditions of this field"
+            i18n-matTooltip
+          ></app-fa-dynamic-icon>
+        }
         <app-entity-block
           style="margin: auto"
           [entity]="item"

@@ -65,6 +65,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [
     "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
+    "./edit-entity.component.scss",
   ],
   imports: [
     ReactiveFormsModule,
@@ -263,13 +264,22 @@ export class EditEntityComponent<
   private readonly isOffered: Signal<
     (e: E, include: OfferedRecordsToggles) => boolean
   > = computed(() => {
-    const isEligible = matchesSelectionCondition(
-      this.selectionFilter(),
-      this.filterService,
-    );
+    const isEligible = this.isEligible();
     return (e, { includeInactive, includeIneligible }) =>
       (includeInactive || !e.inactive) && (includeIneligible || isEligible(e));
   });
+
+  private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
+    matchesSelectionCondition(this.selectionFilter(), this.filterService),
+  );
+
+  /**
+   * Whether a record does not match the `selectionCondition`, to mark it in the options and chips.
+   * Records that could not be loaded are not checked.
+   */
+  isIneligible(e: E): boolean {
+    return !(e as { isHidden?: boolean }).isHidden && !this.isEligible()(e);
+  }
 
   /**
    * Number of inactive records that would additionally be shown when including inactive records.
@@ -412,16 +422,10 @@ export class EditEntityComponent<
    * without asking on every save - this hint still shows them.
    */
   readonly selectedNotMatching: Signal<string | undefined> = computed(() => {
-    const isOffered = this.isOffered();
     const selected = this.values();
     const names = this.availableEntitiesResource
       .value()
-      .filter(
-        (e) =>
-          selected.includes(e.getId()) &&
-          !(e as { isHidden?: boolean }).isHidden &&
-          !isOffered(e, { includeInactive: true, includeIneligible: false }),
-      )
+      .filter((e) => selected.includes(e.getId()) && this.isIneligible(e))
       .map((e) => e.toString());
     return names.length > 0 ? names.join(", ") : undefined;
   });
