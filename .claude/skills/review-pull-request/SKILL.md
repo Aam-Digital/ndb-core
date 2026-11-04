@@ -39,6 +39,27 @@ you can.
 5. **Report** in the format below and nothing else. Do not post anything to GitHub
    unless the user explicitly asks for that.
 
+## Delegate the reading to sub-agents
+
+If your tool can start sub-agents (e.g. Claude Code), keep step 1 and the report in the
+main conversation and hand the reading to sub-agents. The main context then holds only
+the findings, and the review is not anchored on the reasoning of whoever wrote the code,
+which matters most for a self-review in the session that wrote it.
+
+- **Context search** (only for larger PRs): a fast exploration agent collects the code
+  outside the diff that the change touches (callers of changed functions, users of
+  changed types, state or config keys) and the places that match the checklist patterns
+  that can be searched for. It returns locations with one line on what is there each,
+  not verdicts.
+- **Bug reading** (steps 2-4): a sub-agent on your own model, not a smaller one, because
+  a finding it misses cannot be recovered from its report. It does not see this
+  conversation: give it the PR number and fetched ref, the linked issue, anything the
+  user said about the review, the results of the context search, and these steps with
+  the output format, and ask for the report only.
+
+Check each finding against the code before you report it and drop what does not hold.
+For a small PR, one sub-agent for steps 2-4 is enough.
+
 ## Output format
 
 ```
