@@ -20,7 +20,8 @@ import {
 } from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
 
 /**
- * Button to edit the display condition of a field or field group in the admin UI.
+ * Button to edit the display condition of a field or field group in the admin UI
+ * (or the selection filter of a field referencing other records).
  *
  * Opens the condition editor dialog on click and reports the result through `conditionChange`,
  * so the same button works for anything that has a `displayCondition`.
@@ -42,19 +43,19 @@ import {
         mat-stroked-button
         type="button"
         [color]="color()"
-        [matTooltip]="tooltip()"
+        [matTooltip]="buttonTooltip()"
         (click)="openDialog()"
       >
         <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
-        {{ label() }}
+        {{ buttonLabel() }}
       </button>
     } @else {
       <button
         mat-icon-button
         type="button"
         [color]="color()"
-        [attr.aria-label]="label()"
-        [matTooltip]="tooltip()"
+        [attr.aria-label]="buttonLabel()"
+        [matTooltip]="buttonTooltip()"
         (click)="openDialog()"
       >
         <fa-icon icon="filter"></fa-icon>
@@ -75,8 +76,23 @@ export class AdminDisplayConditionButtonComponent {
   /** What the condition applies to, used to describe it to the user. */
   readonly target = input.required<"field" | "fieldGroup">();
 
+  /**
+   * (Optional) Type of the record being edited when the condition is applied,
+   * whose fields the condition can compare with.
+   */
+  readonly currentRecordType = input<EntityConstructor>();
+
   /** Show a text label next to the icon instead of an icon-only button. */
   readonly showLabel = input(false);
+
+  /**
+   * (Optional) texts replacing the standard "display condition" wording,
+   * for a button that edits another kind of condition.
+   */
+  readonly createLabel = input<string>();
+  readonly editLabel = input<string>();
+  readonly tooltip = input<string>();
+  readonly explanation = input<string>();
 
   /**
    * Emits the new condition when the editor is saved, or `null` when the condition was removed.
@@ -88,13 +104,16 @@ export class AdminDisplayConditionButtonComponent {
     this.condition() ? "accent" : undefined,
   );
 
-  protected readonly label = computed(() =>
+  protected readonly buttonLabel = computed(() =>
     this.condition()
-      ? $localize`Edit Display Condition`
-      : $localize`Create Display Condition`,
+      ? (this.editLabel() ?? $localize`Edit Display Condition`)
+      : (this.createLabel() ?? $localize`Create Display Condition`),
   );
 
-  protected readonly tooltip = computed(() => {
+  protected readonly buttonTooltip = computed(() => {
+    if (this.tooltip()) {
+      return this.tooltip();
+    }
     const isGroup = this.target() === "fieldGroup";
     if (this.condition()) {
       return isGroup
@@ -107,17 +126,20 @@ export class AdminDisplayConditionButtonComponent {
   });
 
   protected openDialog() {
-    const isGroup = this.target() === "fieldGroup";
     this.dialog
       .open(ConditionEditorDialogComponent, {
         data: {
           entityConstructor: this.entityType(),
           conditions: this.condition(),
-          explanation: isGroup
-            ? $localize`This field group is shown only while the record matches...`
-            : $localize`This field is shown only while the record matches...`,
+          explanation:
+            this.explanation() ??
+            (this.target() === "fieldGroup"
+              ? $localize`This field group is shown only while the record matches...`
+              : $localize`This field is shown only while the record matches...`),
+          currentRecordType: this.currentRecordType(),
         } satisfies ConditionEditorDialogData,
-        width: "600px",
+        // comparing with fields of the current record needs an additional column
+        width: this.currentRecordType() ? "800px" : "600px",
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

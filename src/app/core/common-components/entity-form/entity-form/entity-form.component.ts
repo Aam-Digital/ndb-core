@@ -19,6 +19,7 @@ import moment from "moment";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
+import { createCurrentRecordState } from "../current-record-state";
 import { FieldGroup } from "../../../entity-details/form/field-group";
 import { ColumnConfig } from "../FormConfig";
 import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
@@ -214,8 +215,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
       return;
     }
 
-    const currentEntityState = entity.copy();
-    Object.assign(currentEntityState, form.formGroup.getRawValue());
+    const currentEntityState = createCurrentRecordState(entity, form.formGroup);
 
     const hiddenFieldIds = new Set<string>();
     for (const group of groupsWithCondition) {
@@ -333,8 +333,9 @@ export class EntityFormComponent<T extends Entity = Entity> {
 
     // re-apply user-edited fields
     userEditsWithoutConflicts.forEach(([key, value]) => {
-      this.form().formGroup.get(key).setValue(value);
+      // marked dirty first: validators only checking changed fields (e.g. `selectionCondition`) run on `setValue`
       this.form().formGroup.get(key).markAsDirty();
+      this.form().formGroup.get(key).setValue(value);
     });
   }
 

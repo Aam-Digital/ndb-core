@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { MatTooltip } from "@angular/material/tooltip";
 import { provideNativeDateAdapter } from "@angular/material/core";
@@ -7,6 +7,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
+import { computed, signal, Signal, WritableSignal } from "@angular/core";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import {
@@ -25,6 +26,10 @@ import {
 } from "../../../../utils/test-utils/dialog-mocks";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { periodRangeOptions } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
+import {
+  createCurrentRecordState,
+  CurrentRecordContext,
+} from "../../../common-components/entity-form/current-record-state";
 import { EditDateRangeComponent } from "./edit-date-range.component";
 
 @DatabaseEntity("EditDateRangeTestAction")
@@ -35,6 +40,16 @@ class EditDateRangeTestAction extends Entity {
   @DatabaseField() parent: string;
   @DatabaseField({ dataType: "date-range" }) period: DateRangeValue;
   @DatabaseField({ dataType: "date-range" }) plannedPeriod: DateRangeValue;
+}
+
+/** the current state of the record in its form, as `EntityForm.currentRecord` provides it */
+function followRecordInForm(record: Entity, form: FormGroup): Signal<Entity> {
+  const changes = signal(0);
+  form.valueChanges.subscribe(() => changes.update((v) => v + 1));
+  return computed(() => {
+    changes();
+    return createCurrentRecordState(record, form);
+  });
 }
 
 describe("EditDateRangeComponent", () => {
@@ -53,8 +68,12 @@ describe("EditDateRangeComponent", () => {
     plannedPeriod: { start },
   });
 
+  /** the record and form of the field rendered by `render()`, whose current state the field follows */
+  let recordInForm: WritableSignal<Signal<Entity | undefined>>;
+
   beforeEach(async () => {
     dialog = mockMatDialog();
+    recordInForm = signal(signal(undefined));
     await TestBed.configureTestingModule({
       imports: [EditDateRangeComponent, NoopAnimationsModule],
       providers: [
@@ -62,6 +81,10 @@ describe("EditDateRangeComponent", () => {
         { provide: MatDialog, useValue: dialog },
         ...mockEntityMapperProvider([parentAction, ongoingParentAction]),
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: CurrentRecordContext,
+          useValue: { currentRecord: computed(() => recordInForm()()) },
+        },
       ],
     }).compileComponents();
 
@@ -275,13 +298,12 @@ describe("EditDateRangeComponent", () => {
       if (parentInForm !== undefined) {
         form.addControl("parent", new FormControl(parentInForm));
       }
-      parentFixture.componentRef.setInput(
-        "entity",
-        Object.assign(new EditDateRangeTestAction(), {
-          parent: parentOfRecord,
-          anonymized,
-        }),
-      );
+      const record = Object.assign(new EditDateRangeTestAction(), {
+        parent: parentOfRecord,
+        anonymized,
+      });
+      parentFixture.componentRef.setInput("entity", record);
+      recordInForm.set(followRecordInForm(record, form));
       form.get("period").setValue(period);
       if (!editing) {
         form.get("period").disable();

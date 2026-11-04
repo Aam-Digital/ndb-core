@@ -59,6 +59,16 @@ class EntityFormServiceTestAction extends Entity {
     validators: { withinParent: { parentReferenceField: "parent" } },
   })
   period: DateRangeValue;
+  @DatabaseField() center: string;
+  @DatabaseField({
+    dataType: "entity",
+    additional: "EntityFormServiceTestAction",
+    isArray: true,
+    validators: {
+      selectionCondition: { center: { $in: ["$current_record.center"] } },
+    },
+  })
+  participants: string[];
 }
 
 describe("EntityFormService", () => {
@@ -72,6 +82,7 @@ describe("EntityFormService", () => {
     entity: T,
     withPermissionCheck?: boolean,
     withDefaultValues?: boolean,
+    singleRecord?: boolean,
   ) =>
     service.createEntityForm(
       formFields,
@@ -79,6 +90,7 @@ describe("EntityFormService", () => {
       destroyRef,
       withPermissionCheck,
       withDefaultValues,
+      singleRecord,
     );
 
   beforeEach(waitForAsync(() => {
@@ -368,6 +380,85 @@ describe("EntityFormService", () => {
     });
   });
 
+  describe("link fields with a selectionCondition", () => {
+    const fromBerlin = Object.assign(
+      new EntityFormServiceTestAction("berlin"),
+      { name: "Anna", center: "BERLIN" },
+    );
+    const recordInHamburg = () =>
+      Object.assign(new EntityFormServiceTestAction(), { center: "HAMBURG" });
+
+    beforeEach(() =>
+      (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(
+        fromBerlin,
+      ),
+    );
+
+    it("warns about a selected record not matching the condition, and checks again when the field it compares with changes", async () => {
+      const form = await createForm(
+        [{ id: "center" }, { id: "participants" }],
+        recordInHamburg(),
+      );
+      // a field following the record holds its state from before the change while the validator checks it
+      form.currentRecord();
+      // the value of a multi-select field is one array, not a FormArray as typed
+      const participants: AbstractControl = form.formGroup.get("participants");
+
+      participants.markAsDirty(); // like a user selecting a record
+      participants.setValue([fromBerlin.getId()]);
+      await vi.waitFor(() =>
+        expect(participants.errors?.selectionCondition?.warning).toBe(true),
+      );
+
+      form.formGroup.get("center").setValue("BERLIN");
+      await vi.waitFor(() => expect(participants.errors).toBeNull());
+    });
+
+    it("does not warn about records linked before, until the field the condition compares with is changed", async () => {
+      const loadType = vi.spyOn(
+        TestBed.inject(EntityMapperService),
+        "loadType",
+      );
+      const record = Object.assign(recordInHamburg(), {
+        participants: [fromBerlin.getId()],
+      });
+      const form = await createForm(
+        [{ id: "center" }, { id: "participants" }],
+        record,
+      );
+      const participants: AbstractControl = form.formGroup.get("participants");
+      await vi.waitFor(() => expect(participants.pending).toBe(false));
+      expect(participants.errors).toBeNull();
+      expect(loadType).not.toHaveBeenCalled();
+
+      const center = form.formGroup.get("center");
+      center.markAsDirty(); // like a user changing it
+      center.setValue("MUNICH");
+      await vi.waitFor(() =>
+        expect(participants.errors?.selectionCondition?.warning).toBe(true),
+      );
+    });
+
+    it("does not compare with a record if the form edits several records at once (bulk edit)", async () => {
+      const form = await createForm(
+        [{ id: "participants" }],
+        recordInHamburg(),
+        true,
+        true,
+        false,
+      );
+      expect(form.currentRecord()).toBeUndefined();
+      // the value of a multi-select field is one array, not a FormArray as typed
+      const participants: AbstractControl = form.formGroup.get("participants");
+
+      participants.markAsDirty(); // like a user selecting a record
+      participants.setValue([fromBerlin.getId()]);
+      await vi.waitFor(() => expect(participants.pending).toBe(false));
+
+      expect(participants.errors).toBeNull();
+    });
+  });
+
   describe("warnings (validation errors marked with `warning: true`)", () => {
     const warning = () => ({
       withinParent: {
@@ -521,6 +612,31 @@ describe("EntityFormService", () => {
     expect(form.formGroup.get("simpleField").value).toBe("original");
     expect(form.formGroup.get("getterField").value).toBe("original value");
     expect(form.formGroup.get("emptyField").value).toBeUndefined();
+  });
+
+  it("provides the record with the current, possibly unsaved values of the form", async () => {
+    const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
+    const form = await createForm(["name", "other"], entity);
+    expect(form.currentRecord().other).toBe("BERLIN");
+
+    form.formGroup.get("other").setValue("HAMBURG");
+    form.formGroup.get("other").disable(); // disabled fields still count, like for display conditions
+
+    expect(form.currentRecord().other).toBe("HAMBURG");
+    expect(form.currentRecord().name).toBe("Saved");
+    expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+  });
+
+  it("builds one record state per change, shared by all fields following the form", async () => {
+    const form = await createForm(["name"], new TestEntity());
+    const before = form.currentRecord();
+    expect(form.currentRecord()).toBe(before);
+
+    form.formGroup.get("name").patchValue("changed");
+
+    expect(form.currentRecord()).not.toBe(before);
+    expect(form.currentRecord().name).toBe("changed");
+    expect(form.currentRecord()).toBe(form.currentRecord());
   });
 
   it("should clear pending changes and stop tracking once the DestroyRef is destroyed (no leak)", async () => {

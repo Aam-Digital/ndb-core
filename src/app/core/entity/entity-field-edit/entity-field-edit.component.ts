@@ -3,10 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  forwardRef,
   inject,
   input,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { CurrentRecordContext } from "#src/app/core/common-components/entity-form/current-record-state";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -50,8 +52,16 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     MatFormFieldModule,
     ErrorHintComponent,
   ],
+  providers: [
+    {
+      provide: CurrentRecordContext,
+      useExisting: forwardRef(() => EntityFieldEditComponent),
+    },
+  ],
 })
-export class EntityFieldEditComponent<T extends Entity = Entity> {
+export class EntityFieldEditComponent<
+  T extends Entity = Entity,
+> implements CurrentRecordContext {
   private entityFormService = inject(EntityFormService);
   private entitySchemaService = inject(EntitySchemaService);
 
@@ -69,6 +79,16 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
 
   /** Whether to hide the inherit value button for inherited-field default values. */
   hideInheritButton = input<boolean>(false);
+
+  /**
+   * The record with the current, possibly unsaved values of the form,
+   * for fields that depend on other fields of the record.
+   * Only computed while read, so fields that don't need it don't cost anything.
+   */
+  readonly currentRecord = computed<T | undefined>(() => {
+    const currentRecord = this.form()?.currentRecord;
+    return currentRecord ? currentRecord() : this.entity();
+  });
 
   /** full field config extended from schema */
   readonly _field = computed<FormFieldConfig | undefined>(() => {
