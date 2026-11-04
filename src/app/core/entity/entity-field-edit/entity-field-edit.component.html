@@ -1,12 +1,10 @@
-@if (
-  _field() && effectiveFormGroup() && _field().editComponent && formControl()
-) {
+@if (_field() && form() && _field().editComponent && formControl()) {
   <div
     class="flex-row"
     [class.hidden]="_field()?.hideFromForm"
     [class.readonlyAfterSet]="
       _field()?.validators?.readonlyAfterSet &&
-      effectiveFormGroup().enabled &&
+      form()?.formGroup?.enabled &&
       formControl()?.disabled
     "
   >
@@ -61,9 +59,7 @@
       </mat-form-field>
     </div>
 
-    @if (
-      _field().validators?.readonlyAfterSet && effectiveFormGroup().enabled
-    ) {
+    @if (_field()?.validators?.readonlyAfterSet && form()?.formGroup?.enabled) {
       <button
         mat-icon-button
         i18n-matTooltip
@@ -74,7 +70,7 @@
       </button>
     }
 
-    @if (!hideInheritButton() && form()) {
+    @if (!hideInheritButton()) {
       <app-inherited-value-button
         [form]="form()"
         [field]="_field()"

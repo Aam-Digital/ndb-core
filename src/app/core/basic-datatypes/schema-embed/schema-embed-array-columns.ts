@@ -4,11 +4,11 @@ import {
 } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
-import { SchemaEmbedDatatype } from "./schema-embed.datatype";
+import { getSchemaEmbedDatatype } from "#src/app/core/entity/schema/embedded-schema-field.util";
 
 /**
  * Resolve the inner fields of a `schema-embed-array` field as table columns
- * through the field's datatype (see {@link SchemaEmbedDatatype.getColumns}).
+ * through the field's datatype (see `SchemaEmbedDatatype.getColumns`).
  *
  * @param fieldConfig the schema-embed-array field (holding the inner fields in `additional`)
  * @param entitySchemaService to look up the field's datatype
@@ -20,14 +20,10 @@ export function getSchemaEmbedArrayColumns(
   entitySchemaService: EntitySchemaService,
   columns?: ColumnConfig[],
 ): FormFieldConfig[] {
-  if (!fieldConfig?.dataType) {
-    return [];
-  }
-  const dataType = entitySchemaService.getDatatypeOrDefault(
-    fieldConfig.dataType,
+  return (
+    getSchemaEmbedDatatype(entitySchemaService, fieldConfig)?.getColumns(
+      fieldConfig,
+      columns,
+    ) ?? []
   );
-  if (!(dataType instanceof SchemaEmbedDatatype)) {
-    return [];
-  }
-  return dataType.getColumns(fieldConfig, columns);
 }

@@ -6,7 +6,7 @@ import {
   inject,
   input,
 } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -61,17 +61,6 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
   entity = input<T>();
   form = input<EntityForm<T>>();
 
-  /**
-   * Alternative to `form`: a bare FormGroup to use when only a field's own local form context
-   * is available (e.g. one row of the inline edit mode of an entities table),
-   * without the wider EntityForm context (`entity`, `fieldConfigs`, `inheritedParentValues`, ...).
-   *
-   * Side effect: since that wider context is required to inherit/default values, the inherit
-   * value button is never shown for this field while only `fieldFormGroup` is set, regardless of
-   * `hideInheritButton`. If both `form` and `fieldFormGroup` are set, `form` takes precedence.
-   */
-  fieldFormGroup = input<FormGroup>();
-
   /** Whether to display the field label or not. */
   hideLabel = input<boolean>();
 
@@ -101,16 +90,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
     return result;
   });
 
-  /** The FormGroup to actually use, from whichever of `form`/`fieldFormGroup` was set. */
-  readonly effectiveFormGroup = computed<FormGroup | undefined>(
-    () => this.form()?.formGroup ?? this.fieldFormGroup(),
-  );
-
   readonly formControl = computed<FormControl | null>(() => {
-    const formGroup = this.effectiveFormGroup();
+    const form = this.form();
     const field = this._field();
-    if (!formGroup || !field) return null;
-    return formGroup.get(field.id) as FormControl;
+    if (!form || !field) return null;
+    return form.formGroup.get(field.id) as FormControl;
   });
 
   readonly isPartiallyAnonymized = computed<boolean>(() => {

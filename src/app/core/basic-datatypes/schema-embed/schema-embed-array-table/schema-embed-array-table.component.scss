@@ -65,7 +65,8 @@
 
   .mat-mdc-header-cell,
   .mat-mdc-cell {
-    padding: 2px 12px 2px 0;
+    padding-block: 2px;
+    padding-inline: 0 12px;
     white-space: nowrap;
     border-bottom: none;
   }

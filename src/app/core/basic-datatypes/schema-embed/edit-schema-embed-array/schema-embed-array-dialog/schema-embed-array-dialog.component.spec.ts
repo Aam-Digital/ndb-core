@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
@@ -93,6 +93,18 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(formControl.value).toEqual(changed);
     expect(formControl.dirty).toBe(true);
     expect(table().rows()).toEqual(changed);
+  });
+
+  it("marks the surrounding form dirty already when its valueChanges fire", async () => {
+    const group = new FormGroup({ documents: formControl });
+    const dirtyOnValueChange: boolean[] = [];
+    group.valueChanges.subscribe(() => dirtyOnValueChange.push(group.dirty));
+
+    await table().applyChange()({
+      entry: { documentType: "Visa", documentNumber: "C3" },
+    });
+
+    expect(dirtyOnValueChange).toEqual([true]);
   });
 
   it("starts without entries if the field has no value yet", async () => {

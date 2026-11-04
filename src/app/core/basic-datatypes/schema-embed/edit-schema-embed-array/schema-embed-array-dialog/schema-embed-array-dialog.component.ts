@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -44,7 +39,6 @@ export interface SchemaEmbedArrayDialogData {
     SchemaEmbedArrayTableComponent,
   ],
   templateUrl: "./schema-embed-array-dialog.component.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchemaEmbedArrayDialogComponent {
   protected readonly data = inject<SchemaEmbedArrayDialogData>(MAT_DIALOG_DATA);
@@ -61,8 +55,9 @@ export class SchemaEmbedArrayDialogComponent {
       this.data.formControl.value,
       change,
     );
-    this.data.formControl.setValue(entries);
+    // dirty first: valueChanges listeners of the surrounding form (unsaved-changes tracking) read the flag
     this.data.formControl.markAsDirty();
+    this.data.formControl.setValue(entries);
     this.rows.set(entries);
   };
 }

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
@@ -44,7 +38,6 @@ import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/
   ],
   templateUrl: "./edit-schema-embed-array.component.html",
   styleUrls: ["./edit-schema-embed-array.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: MatFormFieldControl,

@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   createEnvironmentInjector,
@@ -49,7 +48,6 @@ export interface EmbeddedArrayDataConfig {
  */
 @DynamicComponent("EmbeddedArrayData")
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-embedded-array-data",
   templateUrl: "./embedded-array-data.component.html",
   imports: [SchemaEmbedArrayTableComponent],

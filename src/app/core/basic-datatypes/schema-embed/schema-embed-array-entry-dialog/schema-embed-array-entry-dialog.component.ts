@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -91,7 +90,6 @@ export interface SchemaEmbedArrayEntryDialogData {
  * (deciding how to persist it, based on the latest entries) and closes the popup with the change as result.
  */
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-schema-embed-array-entry-dialog",
   templateUrl: "./schema-embed-array-entry-dialog.component.html",
   styleUrl: "./schema-embed-array-entry-dialog.component.scss",

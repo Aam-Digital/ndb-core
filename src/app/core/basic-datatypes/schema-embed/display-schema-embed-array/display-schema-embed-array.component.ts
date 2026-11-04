@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
@@ -36,7 +31,6 @@ import { isEmptyValue } from "#src/app/utils/is-empty-value";
   ],
   templateUrl: "./display-schema-embed-array.component.html",
   styleUrls: ["./display-schema-embed-array.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplaySchemaEmbedArrayComponent extends ViewDirective<
   Record<string, any>[],

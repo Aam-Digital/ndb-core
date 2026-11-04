@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatTableModule } from "@angular/material/table";
@@ -43,7 +37,6 @@ import {
   ],
   templateUrl: "./schema-embed-array-table.component.html",
   styleUrls: ["./schema-embed-array-table.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { "[class.compact]": "compact()" },
 })
 export class SchemaEmbedArrayTableComponent {
