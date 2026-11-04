@@ -1,6 +1,6 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseException } from "./database-exception";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -24,6 +24,18 @@ import {
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
+
+/**
+ * How many revisions of a document's history a local database keeps
+ * (PouchDB's `revs_limit`, default 1000).
+ *
+ * The `indexeddb` adapter stores the revision tree as a nested object, and the
+ * browser overflows its stack writing one with many hundred revisions (#4631).
+ * Documents synced from the server are stemmed to this limit on write.
+ * A local document edited more often than this between two syncs comes back
+ * as a conflict on the server, which this limit makes very unlikely.
+ */
+export const LOCAL_DB_REVS_LIMIT = 100;
 
 /** Marks a bookmark of the second query (see {@link PouchDatabase.find}). */
 const SECOND_QUERY_BOOKMARK = "q2:";
@@ -113,6 +125,7 @@ export class PouchDatabase extends Database {
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, {
       adapter: this.adapter,
+      revs_limit: LOCAL_DB_REVS_LIMIT,
       ...options,
     });
     this.databaseInitialized.complete();
@@ -179,7 +192,7 @@ export class PouchDatabase extends Database {
         }
       }
 
-      throw new DatabaseException(err, id);
+      throw databaseError(err, id);
     }
   }
 
@@ -200,10 +213,7 @@ export class PouchDatabase extends Database {
       );
       return result.rows.map((row) => row.doc);
     } catch (err) {
-      throw new DatabaseException(
-        err,
-        "allDocs; startkey: " + options?.["startkey"],
-      );
+      throw databaseError(err, "allDocs; startkey: " + options?.["startkey"]);
     }
   }
 
@@ -225,7 +235,7 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        throw new DatabaseException(err, object._id);
+        throw databaseError(err, object._id);
       }
     }
   }
@@ -268,7 +278,7 @@ export class PouchDatabase extends Database {
               ],
             });
           }
-          return new DatabaseException(e);
+          return databaseError(e);
         });
       }
     }
@@ -293,7 +303,7 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.remove(object))
       .catch((err) => {
-        throw new DatabaseException(err, object["_id"]);
+        throw databaseError(err, object["_id"]);
       });
   }
 
@@ -322,7 +332,7 @@ export class PouchDatabase extends Database {
       if (err.status === 404) {
         return false;
       }
-      throw err;
+      throw databaseError(err, id);
     }
 
     // Purge the winning revision and any conflicting leaf revisions
@@ -331,8 +341,12 @@ export class PouchDatabase extends Database {
       localDoc._rev,
       ...((localDoc as any)._conflicts ?? []),
     ];
-    for (const rev of revsToPurge) {
-      await (db as any).purge(id, rev);
+    try {
+      for (const rev of revsToPurge) {
+        await (db as any).purge(id, rev);
+      }
+    } catch (err) {
+      throw databaseError(err, id);
     }
 
     // PouchDB purge() does not emit change events, so manually notify
@@ -356,7 +370,10 @@ export class PouchDatabase extends Database {
   isEmpty(): Promise<boolean> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.info())
-      .then((res) => res.doc_count === 0);
+      .then((res) => res.doc_count === 0)
+      .catch((err) => {
+        throw databaseError(err);
+      });
   }
 
   /**
@@ -391,14 +408,8 @@ export class PouchDatabase extends Database {
           }
         })
         .catch((err) => {
-          if (
-            err.statusCode === HttpStatusCode.Unauthorized ||
-            err.statusCode === HttpStatusCode.GatewayTimeout
-          ) {
-            Logging.warn(err);
-          } else {
-            Logging.error(err);
-          }
+          // only the local database: RemotePouchDatabase polls with its own loop
+          Logging.error("changes feed failed", toTypedDatabaseError(err));
 
           // retry
           setTimeout(() => this.subscribeChanges(), 10000);
@@ -539,7 +550,7 @@ export class PouchDatabase extends Database {
     const created = await this.withReadRetry(() =>
       pouchDB.createIndex({ index }),
     ).catch((err) => {
-      throw new DatabaseException(err);
+      throw databaseError(err);
     });
     // the installed @types/pouchdb-find does not declare `id`
     return this.findPage({ ...findOptions, use_index: created["id"] }, page);
@@ -562,10 +573,7 @@ export class PouchDatabase extends Database {
     return this.withReadRetry(() =>
       this.getPouchDBOnceReady().then((pouchDB) => pouchDB.query(fun, options)),
     ).catch((err) => {
-      throw new DatabaseException(
-        err,
-        typeof fun === "string" ? fun : undefined,
-      );
+      throw databaseError(err, typeof fun === "string" ? fun : undefined);
     });
   }
 
@@ -670,7 +678,7 @@ export class PouchDatabase extends Database {
       // message: remote monitoring groups by message, so an ID in there would
       // fragment one recurring problem into a separate issue per document
       existingError.message = `${existingError.message} (unable to resolve)`;
-      throw new DatabaseException(existingError, newObject._id);
+      throw databaseError(existingError, newObject._id);
     }
   }
 

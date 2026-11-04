@@ -89,7 +89,7 @@ describe("UpdateManagerService", () => {
     latestChangesDialog = {
       showLatestChangesIfUpdated: vi.fn(),
     };
-    vi.spyOn(Logging, "error");
+    vi.spyOn(Logging, "debug");
     unsavedChanges = { pending: signal(true) };
 
     service = createService();
@@ -202,6 +202,31 @@ describe("UpdateManagerService", () => {
     }
   });
 
+  it("logs a failed update check with the error", async () => {
+    vi.spyOn(Logging, "error").mockImplementation(() => undefined);
+    const failure = new Error("unexpected");
+    swUpdate.checkForUpdate.mockRejectedValue(failure);
+
+    service.regularlyCheckForUpdates();
+    await vi.waitFor(() =>
+      expect(Logging.error).toHaveBeenCalledWith(
+        "Could not check for app updates",
+        failure,
+      ),
+    );
+  });
+
+  it("offers to reload when the app is in an unrecoverable state", () => {
+    service.detectUnrecoverableState();
+
+    unrecoverableSubject.next({
+      reason: "ERROR REASON",
+      type: "UNRECOVERABLE_STATE",
+    });
+
+    expect(snackBar.open).toHaveBeenCalled();
+  });
+
   it("should trigger the latest changes dialog on startup only if update note is set", () => {
     latestChangesDialog.showLatestChangesIfUpdated.mockClear();
 
@@ -227,7 +252,7 @@ describe("UpdateManagerService", () => {
       type: "UNRECOVERABLE_STATE",
     });
 
-    expect(Logging.error).toHaveBeenCalledWith(
+    expect(Logging.debug).toHaveBeenCalledWith(
       "App is in unrecoverable state",
       { reason: "ERROR REASON" },
     );

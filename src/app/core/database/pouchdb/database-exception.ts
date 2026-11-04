@@ -1,20 +1,35 @@
 import { NamedError } from "../../logging/reported-errors";
+import {
+  classifyError,
+  ErrorClassification,
+  TypedError,
+  TypedErrorOptions,
+} from "../../logging/error-classification";
+import {
+  classifyResponseStatus,
+  textOf,
+} from "#src/app/utils/backend-response";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { NotPermittedError } from "../../permissions/not-permitted.error";
+import { SessionExpiredError } from "../../session/session-expired.error";
+import { classifyPouchDbError } from "./pouchdb-errors";
+import { LocalStorageError, WriteConflictError } from "./database-errors";
 
 /**
- * This overwrites PouchDB's error class which only logs limited information
+ * Own properties of PouchDB's errors (and of the copies its `createError()` makes)
+ * that are not taken over, as they identify the `DatabaseException` itself:
+ * e.g. "not_found" as name, or the original `cause` of a copied typed error.
+ */
+const IDENTIFYING_PROPERTIES = new Set(["name", "message", "stack", "cause"]);
+
+/**
+ * An error of the (local or remote) PouchDB that is not one of the classified
+ * failures (e.g. a `404 missing`), as thrown by {@link databaseError}.
+ * It takes over the error's properties (`status`, `reason`, ...), so that callers
+ * can keep checking them, but keeps its own name and message.
  */
 export class DatabaseException extends NamedError {
   entityId?: string;
-
-  /**
-   * The `name` of the underlying error that was wrapped (e.g. "AbortError",
-   * "TimeoutError", "not_found"). Preserved separately because {@link name} is
-   * deliberately kept as "DatabaseException" for stable Sentry grouping — which
-   * would otherwise erase the original name and hide that a failure is actually
-   * a transient network abort. Read by {@link isConnectivityError} so wrapped
-   * transient errors stay classifiable.
-   */
-  originalName?: string;
 
   constructor(
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
@@ -23,13 +38,85 @@ export class DatabaseException extends NamedError {
     super("DatabaseException", error?.message || "Database error");
 
     this.entityId = entityId;
-    // Capture the wrapped error's name before Object.assign / `this.name` erase it.
-    const originalName = (error as { name?: string })?.name;
-    Object.assign(this, error);
-    // Restore class name after Object.assign overwrites it with PouchDB's name (e.g. "not_found")
-    this.name = "DatabaseException";
-    if (originalName && originalName !== "DatabaseException") {
-      this.originalName = originalName;
+    for (const [key, value] of Object.entries(error ?? {})) {
+      if (!IDENTIFYING_PROPERTIES.has(key)) {
+        (this as Record<string, unknown>)[key] = value;
+      }
     }
   }
+}
+
+/**
+ * Where errors of the (local or remote) PouchDB enter the app: the error to throw
+ * for one. A classified failure is converted into its typed error (see
+ * {@link toTypedDatabaseError}), as is a typed error thrown by our own code
+ * underneath (e.g. a `ServerError` of the remote database's fetch) passed on;
+ * any other error becomes a {@link DatabaseException}.
+ * @param entityId the document (or query) concerned, reported as extra data
+ */
+export function databaseError(error: unknown, entityId?: string): Error {
+  const typed = toTypedDatabaseError(error, entityId);
+  return typed instanceof NamedError
+    ? typed
+    : new DatabaseException(error as PouchDB.Core.Error, entityId);
+}
+
+/** The typed error that a raw error of the database of each classification is converted into. */
+const DATABASE_ERRORS: Record<
+  ErrorClassification,
+  new (message: string, options: TypedErrorOptions) => TypedError
+> = {
+  connectivity: ConnectivityError,
+  "server-error": ServerError,
+  "not-permitted": NotPermittedError,
+  "session-expired": SessionExpiredError,
+  "write-conflict": WriteConflictError,
+  "local-storage": LocalStorageError,
+};
+
+type RawDatabaseError = {
+  status?: unknown;
+  name?: unknown;
+  message?: unknown;
+  reason?: unknown;
+  error?: unknown;
+};
+
+/**
+ * The typed error (see {@link DATABASE_ERRORS}) for an error of PouchDB or of the
+ * IndexedDB underneath it, keeping the raw error as its `cause` and its `status`:
+ * - by its status and the reason the server gave (no response or a gateway status,
+ *   401 expired / not permitted, 403, 409), the same mapping as the HTTP
+ *   interceptor's (`classifyResponseStatus`);
+ * - a typed error of ours that PouchDB's replication copied, losing its class
+ *   (recognized by its name): re-created, with the copy as `cause`;
+ * - else by the name and wording of PouchDB's and IndexedDB's errors
+ *   (`classifyPouchDbError`): a broken IndexedDB, an aborted request, a conflict.
+ *
+ * Any other error is returned unchanged (e.g. a `404 missing`), as is one of our
+ * errors (e.g. a `ConnectivityError` of the remote database's fetch).
+ */
+export function toTypedDatabaseError(
+  error: unknown,
+  entityId?: string,
+): unknown {
+  if (!error || typeof error !== "object" || error instanceof NamedError) {
+    return error;
+  }
+  const raw = error as RawDatabaseError;
+  const classification =
+    classifyResponseStatus(raw.status, [raw.reason, raw.error, raw.message]) ??
+    classifyError(error) ??
+    classifyPouchDbError(error);
+  if (!classification) {
+    return error;
+  }
+  return new DATABASE_ERRORS[classification](
+    textOf(raw.message) || textOf(raw.reason) || "Database error",
+    {
+      status: typeof raw.status === "number" ? raw.status : undefined,
+      cause: error,
+      details: entityId ? { entityId } : undefined,
+    },
+  );
 }

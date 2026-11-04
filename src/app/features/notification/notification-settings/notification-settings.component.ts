@@ -110,7 +110,7 @@ export class NotificationSettingsComponent {
       if (err.status === 404) {
         notificationConfig = await this.createNewNotificationConfig();
       } else {
-        Logging.warn(err);
+        Logging.warn("Could not load the notification config", err);
       }
     }
 
@@ -198,7 +198,7 @@ export class NotificationSettingsComponent {
       await this.entityMapper.save(config);
       return true;
     } catch (err) {
-      Logging.error(err.message);
+      Logging.error("Could not save the notification config", err);
       return false;
     }
   }
@@ -278,9 +278,7 @@ export class NotificationSettingsComponent {
    */
   testNotification() {
     this.notificationService.testNotification().catch((reason) => {
-      Logging.error("Could not send test notification", {
-        reason: reason.message,
-      });
+      Logging.error("Could not send test notification", reason);
     });
   }
 }

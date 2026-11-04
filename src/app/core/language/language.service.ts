@@ -24,6 +24,18 @@ import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Logging } from "../logging/logging.service";
 import { SessionSubject } from "../session/auth/session-info";
 
+/** sessionStorage key marking that an invalid locale was already reported in this browser session */
+export const INVALID_LOCALE_REPORTED_KEY = "invalid_locale_reported";
+
+/** A readable description of a value for logs, instead of "[Object]" */
+function describeValue(value: unknown): string {
+  try {
+    return (JSON.stringify(value) ?? String(value)).slice(0, 200);
+  } catch {
+    return String(value);
+  }
+}
+
 /**
  * Service that provides the currently active locale and applies a newly selected one.
  */
@@ -179,6 +191,24 @@ export class LanguageService {
   }
 
   /**
+   * An invalid locale comes from the instance's config or data, so it is applied again on
+   * every page load: report it only once per browser session.
+   */
+  private reportInvalidLocale(value: unknown) {
+    const context = { invalidLocale: describeValue(value), type: typeof value };
+    try {
+      if (sessionStorage.getItem(INVALID_LOCALE_REPORTED_KEY)) {
+        Logging.debug("Ignoring an invalid locale.", context);
+        return;
+      }
+      sessionStorage.setItem(INVALID_LOCALE_REPORTED_KEY, "1");
+    } catch {
+      // storage unavailable: report it anyway
+    }
+    Logging.warn("Ignoring an invalid locale.", context);
+  }
+
+  /**
    * Switch the current locale and persist it in this.localStorage.
    * @param newLocale
    * @param ownerId the account whose own language setting this is;
@@ -187,7 +217,7 @@ export class LanguageService {
   switchLocale(newLocale: string, ownerId?: string): void {
     if (newLocale && !isValidLocale(newLocale)) {
       // storing this would stringify it and break loading translations on the next reload
-      Logging.warn("Ignoring an invalid locale.", { newLocale });
+      this.reportInvalidLocale(newLocale);
       return;
     }
     if (!newLocale) return;
@@ -223,7 +253,9 @@ export class LanguageService {
       // a language picked on this device earlier must not outlast the switch being disabled
       this.getDefaultLanguage()
         .then((language) => this.applyDefaultLanguage(language))
-        .catch((err) => Logging.error(err));
+        .catch((err) =>
+          Logging.error("Could not apply the default language", err),
+        );
       return;
     }
 

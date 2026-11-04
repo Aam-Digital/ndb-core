@@ -15,6 +15,7 @@ import { uniquePropertyValidator } from "../unique-property-validator/unique-pro
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
+import { EmbeddedEntity } from "../../../entity/model/embedded-entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
 import { withinParentValidator } from "../../../basic-datatypes/date-range/within-parent-validator";
 import { selectionConditionValidator } from "../../../basic-datatypes/entity/selection-condition";
@@ -141,6 +142,14 @@ export class DynamicValidatorsService {
           Logging.warn(
             "Trying to generate uniqueId validator without fieldId context",
           );
+          return null;
+        }
+
+        if (entity instanceof EmbeddedEntity) {
+          // not supported (yet) for inner fields of embedded entries: unique among which entries is not decided
+          Logging.debug("Skipping uniqueId validator of an embedded entry", {
+            fieldId,
+          });
           return null;
         }
 

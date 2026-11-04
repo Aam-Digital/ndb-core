@@ -131,6 +131,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EditText",
   "EditTextWithAutocomplete",
   "EditUrl",
+  "EmbeddedArrayData",
   "EntityList",
   "ImportantNotesDashboard",
   "ImportantNotesDashboardSettings",

@@ -1,4 +1,4 @@
-import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
+import { databaseError } from "#src/app/core/database/pouchdb/database-exception";
 import { TestBed } from "@angular/core/testing";
 import { AttendanceExportService } from "./attendance-export.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -137,7 +137,7 @@ describe("AttendanceExportService", () => {
       new AttendanceItem(NullAttendanceStatusType, "", "Child:unknown-1"),
     ];
     mockEntityMapper.load.mockRejectedValue(
-      new DatabaseException({ message: "missing", status: 404 }),
+      databaseError({ message: "missing", status: 404 }),
     );
 
     await service.exportAttendanceList(entity, "participants");

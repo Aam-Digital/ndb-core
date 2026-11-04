@@ -29,7 +29,8 @@ export class UpdateManagerService {
 
   constructor() {
     this.updates.unrecoverable.subscribe((err) => {
-      Logging.error("App is in unrecoverable state", { reason: err.reason });
+      // usually the browser evicted cached app files; reloading fetches them again
+      Logging.debug("App is in unrecoverable state", { reason: err.reason });
       this.location.reload();
     });
     const currentVersion = this.localStorage.getItem(
@@ -74,7 +75,10 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() =>
-      this.updates.checkForUpdate().catch((err) => Logging.error(err)),
+      this.updates
+        .checkForUpdate()
+        // offline: checked again in an hour
+        .catch((err) => Logging.error("Could not check for app updates", err)),
     );
   }
 
@@ -120,7 +124,8 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) => {
-      Logging.warn("SW in unrecoverable state", { reason });
+      // already logged by the subscription in the constructor
+      Logging.debug("SW in unrecoverable state", { reason });
       this.snackBar
         .open(
           $localize`The app is in a unrecoverable state, please reload.`,

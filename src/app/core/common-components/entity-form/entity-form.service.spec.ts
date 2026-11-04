@@ -4,6 +4,7 @@ import { EntityFormService } from "./entity-form.service";
 import {
   EntityForm,
   EntityFormGroup,
+  EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   AbstractControl,
@@ -42,6 +43,7 @@ import {
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
 import { of } from "rxjs";
+import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 
 @DatabaseEntity("EntityFormServiceTestAction")
 class EntityFormServiceTestAction extends Entity {
@@ -79,7 +81,6 @@ describe("EntityFormService", () => {
   const createForm = <T extends Entity>(
     formFields: Parameters<EntityFormService["createEntityForm"]>[0],
     entity: T,
-    forTable?: boolean,
     withPermissionCheck?: boolean,
     withDefaultValues?: boolean,
   ) =>
@@ -87,7 +88,6 @@ describe("EntityFormService", () => {
       formFields,
       entity,
       destroyRef,
-      forTable,
       withPermissionCheck,
       withDefaultValues,
     );
@@ -253,6 +253,27 @@ describe("EntityFormService", () => {
     expect(nameControl.errors["permissionCondition"]).toBeTruthy();
 
     nameControl.setValue("any other name");
+    expect(nameControl.valid).toBe(true);
+  });
+
+  it("should not add permission condition validators to the inner fields of an embedded entry", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage", conditions: { name: "permitted" } },
+    ]);
+    const record = new TestEntity();
+    record.name = "permitted";
+    record._rev = "1";
+    const entry = createEmbeddedEntity(
+      new Map([["name", { dataType: "string" }]]),
+      { record, field: "entries", existing: true },
+    );
+
+    const form = await createForm([{ id: "name" }], entry);
+    // the entry's inner fields are not known to the type of the form
+    const nameControl: AbstractControl = form.formGroup.get("name");
+    nameControl.setValue("any value of the entry");
+
+    expect(nameControl.enabled).toBe(true);
     expect(nameControl.valid).toBe(true);
   });
 
@@ -440,6 +461,25 @@ describe("EntityFormService", () => {
         expect.anything(),
       );
       expect(entityForm.formGroup.disabled).toBe(true);
+    });
+
+    it("reports changes synced in while confirming the warnings as the previous state, not as changes of this save", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+      confirmationDialog.getConfirmation.mockImplementation(async () => {
+        entity["synced"] = "by another user";
+        return true;
+      });
+      const events: unknown[] = [];
+      entityForm.onFormStateChange.subscribe((e) => events.push(e));
+
+      await service.saveChanges(entityForm, entity);
+
+      const saved = events.find(
+        (e): e is EntityFormSavedEvent => e instanceof EntityFormSavedEvent,
+      );
+      expect(saved.previousEntity["synced"]).toBe("by another user");
     });
 
     it("does not save if the warnings are not confirmed", async () => {
@@ -639,7 +679,6 @@ describe("EntityFormService", () => {
     const form = await createForm(
       [{ id: "test" }],
       new TestEntity(),
-      false,
       true,
       false,
     );
@@ -799,7 +838,6 @@ describe("EntityFormService", () => {
       editComponent: "EditComponent",
       viewComponent: "DisplayComponent",
       label: "Field with definition",
-      forTable: false,
       description: "Custom tooltip",
       additional: "additional",
     } as FormFieldConfig);
@@ -809,7 +847,6 @@ describe("EntityFormService", () => {
       editComponent: "PredefinedComponent",
       viewComponent: "PredefinedComponent",
       label: "Property",
-      forTable: false,
       description: "Property description",
       additional: "someAdditional",
     } as FormFieldConfig);

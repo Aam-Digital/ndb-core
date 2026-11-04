@@ -615,23 +615,6 @@ describe("AbilityService", () => {
     beforeEach(() => vi.useFakeTimers());
     afterEach(() => vi.useRealTimers());
 
-    it("should not report an expected permission denial as an error", async () => {
-      // anonymous visitors of a public form may not read the rules config
-      const errorSpy = vi.spyOn(Logging, "error");
-
-      await initWithLoadError({ status: 401, message: "unauthorized" });
-
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
-    it("should not report a connectivity failure as an error", async () => {
-      const errorSpy = vi.spyOn(Logging, "error");
-
-      await initWithLoadError(new Error("Failed to fetch from DB"));
-
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
     it("should not hand the permissive fallback to the enforcer while the rules are unknown", async () => {
       // otherwise "allowed everything" is stored as the baseline, so the real
       // rules arriving later look like a permission change
@@ -685,7 +668,8 @@ describe("AbilityService", () => {
       expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
     });
 
-    it("should report an unexpected failure with the error", async () => {
+    // whether it is reported (e.g. not while offline) is decided by `Logging`
+    it("should log a failure with the error", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
       const failure = new Error("something unexpected");
 

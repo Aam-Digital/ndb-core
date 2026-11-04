@@ -182,6 +182,7 @@ export class BulkLinkExternalProfilesComponent {
         };
       }
     } catch (err) {
+      // the warning is shown for the record
       Logging.warn("Could not load external profiles (bulk action)", err);
       record.warning = {
         ...(record.warning ?? {}),

@@ -1,5 +1,6 @@
 import {
   clearLastSyncMarkers,
+  CLOSE_OTHER_TABS_NOTICE_ID,
   LAST_SYNC_KEY_PREFIX,
   RESET_PENDING_KEY,
   runPendingReset,
@@ -21,6 +22,7 @@ describe("bootstrap-reset", () => {
     // only remove what these tests wrote: localStorage is shared across spec files
     clearLastSyncMarkers();
     localStorage.removeItem("someOtherItem");
+    document.getElementById(CLOSE_OTHER_TABS_NOTICE_ID)?.remove();
 
     if (originalServiceWorker) {
       Object.defineProperty(navigator, "serviceWorker", originalServiceWorker);
@@ -146,23 +148,35 @@ describe("bootstrap-reset", () => {
     expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
   });
 
-  it("runPendingReset should log and still complete once a blocked deletion unblocks", async () => {
+  it("runPendingReset should ask to close other tabs while a deletion is blocked and complete once it unblocks", async () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     sessionStorage.setItem(RESET_PENDING_KEY, "1");
-    stubBrowserApis(["db1"], () => {
+    const blockedRequests: IDBOpenDBRequest[] = [];
+    stubBrowserApis(["db1", "db2"], () => {
       const req = fakeDeleteRequest();
-      // deleteDatabase() has already returned by the time onblocked/onsuccess
-      // are assigned, so both must fire asynchronously like the real IDB API
-      setTimeout(() => {
-        req.onblocked?.(fakeEvent as unknown as IDBVersionChangeEvent);
-        req.onsuccess?.(fakeEvent);
-      });
+      // deleteDatabase() has already returned by the time onblocked is
+      // assigned, so it must fire asynchronously like the real IDB API
+      setTimeout(() =>
+        req.onblocked?.(fakeEvent as unknown as IDBVersionChangeEvent),
+      );
+      blockedRequests.push(req);
       return req;
     });
 
-    await runPendingReset();
+    const reset = runPendingReset();
+    await vi.waitFor(() => expect(warnSpy).toHaveBeenCalledTimes(2));
 
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("db1"));
+    // shown once, even though several databases are blocked
+    expect(
+      document.querySelectorAll(`#${CLOSE_OTHER_TABS_NOTICE_ID}`),
+    ).toHaveLength(1);
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
+
+    // the other tab got closed
+    blockedRequests.forEach((req) => req.onsuccess?.(fakeEvent));
+    await reset;
+
     expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
   });
 });

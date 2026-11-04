@@ -6,7 +6,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { DatabaseException } from "../../database/pouchdb/database-exception";
+import { databaseError } from "../../database/pouchdb/database-exception";
 import { RegistryLookupError } from "../../config/registry/dynamic-registry";
 
 describe("Schema data type: entity", () => {
@@ -67,15 +67,22 @@ describe("Schema data type: entity", () => {
       [
         "entity does not exist (404)",
         () =>
-          Promise.reject(
-            new DatabaseException({ message: "missing", status: 404 }),
-          ),
+          Promise.reject(databaseError({ message: "missing", status: 404 })),
       ],
       [
         "no permission (403)",
         () =>
+          Promise.reject(databaseError({ message: "forbidden", status: 403 })),
+      ],
+      [
+        "no permission (401 not permitted)",
+        () =>
           Promise.reject(
-            new DatabaseException({ message: "forbidden", status: 403 }),
+            databaseError({
+              message: "unauthorized",
+              reason: "User is not permitted",
+              status: 401,
+            }),
           ),
       ],
       [
@@ -103,11 +110,15 @@ describe("Schema data type: entity", () => {
       ["connection error", new TypeError("Failed to fetch")],
       [
         "expired session (401)",
-        new DatabaseException({ message: "unauthorized", status: 401 }),
+        databaseError({
+          message: "unauthorized",
+          reason: "exp not in future",
+          status: 401,
+        }),
       ],
       [
         "server error (500)",
-        new DatabaseException({ message: "server error", status: 500 }),
+        databaseError({ message: "server error", status: 500 }),
       ],
     ])(
       "should fail instead of exporting <not_found> on %s",

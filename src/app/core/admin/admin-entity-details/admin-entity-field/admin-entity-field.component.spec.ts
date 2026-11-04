@@ -163,6 +163,19 @@ describe("AdminEntityFieldComponent", () => {
     );
   });
 
+  it("should keep 'additional' of datatypes without own Type Details UI when opening", async () => {
+    const additional = { name: { dataType: "string" } };
+    const field = {
+      label: "Docs",
+      dataType: "schema-embed-array",
+      additional,
+    } as EntitySchemaField;
+    await recreateComponentWithData(field);
+
+    expect(component.additionalForm.value).toEqual(additional);
+    expect(dialogData.entitySchemaField.additional).toEqual(additional);
+  });
+
   it("should init 'additional' options for configurable-enum", async () => {
     const mockEnumList = ["A", "B"];
     mockEnumService.listEnums.mockReturnValue(mockEnumList);

@@ -4,11 +4,15 @@ import { Observable, of, throwError } from "rxjs";
 import type { Mock } from "vitest";
 import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";
 import {
   ApiClientService,
   errorMessageOf,
   logRequestError,
 } from "./api-client.service";
+
+/** A request to the api-client module of the backend (see typedHttpErrorInterceptor). */
+const apiRequest = { method: "POST", url: "/api/v1/admin/api-client" };
 
 describe("ApiClientService", () => {
   let mockHttpClient: { get: Mock };
@@ -109,7 +113,10 @@ describe("ApiClientService", () => {
       "contact support",
     ],
   ])("explains %s to the user", (_, error, expectedMessage) => {
-    expect(errorMessageOf(error)).toContain(expectedMessage);
+    // as the backend's response reaches the caller (see typedHttpErrorInterceptor)
+    expect(errorMessageOf(toTypedHttpError(error, apiRequest))).toContain(
+      expectedMessage,
+    );
   });
 
   it.each<[number, "debug" | "warn"]>([
@@ -122,7 +129,10 @@ describe("ApiClientService", () => {
     const debug = vi.spyOn(Logging, "debug").mockImplementation(() => {});
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
 
-    logRequestError("failed", new HttpErrorResponse({ status }));
+    logRequestError(
+      "failed",
+      toTypedHttpError(new HttpErrorResponse({ status }), apiRequest),
+    );
 
     expect(debug).toHaveBeenCalledTimes(expectedLevel === "debug" ? 1 : 0);
     expect(warn).toHaveBeenCalledTimes(expectedLevel === "warn" ? 1 : 0);

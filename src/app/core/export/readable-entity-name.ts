@@ -2,6 +2,7 @@ import { HttpStatusCode } from "@angular/common/http";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { EntityPermissionError } from "../entity/entity-mapper/entity-permission-error";
+import { isNotPermittedError } from "../logging/error-classification";
 import { RegistryLookupError } from "../config/registry/dynamic-registry";
 
 /** Placeholder exported for a referenced entity that does not exist (or cannot be read). */
@@ -60,11 +61,14 @@ export function loadReadableEntityName(
 /**
  * Whether the error means the referenced entity cannot be resolved at all
  * (rather than a failure that may succeed on another attempt).
+ *
+ * "No permission" includes the server's `401 "User is not permitted"`,
+ * but not an expired session, which is a `401` as well (see {@link isNotPermittedError}).
  */
 function isUnresolvableReferenceError(err: any): boolean {
   return (
     err?.status === HttpStatusCode.NotFound ||
-    err?.status === HttpStatusCode.Forbidden ||
+    isNotPermittedError(err) ||
     err instanceof EntityPermissionError ||
     err instanceof RegistryLookupError
   );

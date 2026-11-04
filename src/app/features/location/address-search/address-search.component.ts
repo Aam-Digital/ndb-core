@@ -35,7 +35,7 @@ import { Logging } from "../../../core/logging/logging.service";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
@@ -184,7 +184,15 @@ export class AddressSearchComponent implements OnInit {
         if (error.status === 0) {
           this.networkError.set(true);
         } else {
-          Logging.warn("Address Lookup API error", error);
+          if (
+            error.status >= 500 ||
+            error.status === HttpStatusCode.TooManyRequests
+          ) {
+            // the external lookup service is down or rate-limiting: nothing to fix
+            Logging.debug("Address Lookup API unavailable", error);
+          } else {
+            Logging.warn("Address Lookup API error", error);
+          }
           this.otherTypeError.set(true);
         }
 

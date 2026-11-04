@@ -1,3 +1,4 @@
+import { isNotPermittedError } from "#src/app/core/logging/error-classification";
 import { TestBed } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
 import {
@@ -280,8 +281,9 @@ describe("KeycloakAdminService", () => {
     );
   });
 
-  it("should return a 'not permitted' error (and not report it) if Keycloak refuses the update", async () => {
-    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+  it("should return a 'not permitted' error if Keycloak refuses the update", async () => {
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    onTestFinished(() => warn.mockRestore());
     let result: any;
     service
       .updateUser("test-id", { email: "new@example.com" })
@@ -297,8 +299,8 @@ describe("KeycloakAdminService", () => {
     expect(result.userUpdated).toBe(false);
     expect(result.error).toBeInstanceOf(UserAdminApiError);
     expect(result.error.status).toBe(403);
-    expect(warnSpy).not.toHaveBeenCalled();
-    warnSpy.mockRestore();
+    // and therefore only logged for debugging
+    expect(isNotPermittedError(result.error)).toBe(true);
   });
 
   it("should get all roles and filter non-technical roles", async () => {

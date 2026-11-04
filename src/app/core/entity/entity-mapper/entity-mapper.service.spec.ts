@@ -18,6 +18,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { firstValueFrom } from "rxjs";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
+import { createEmbeddedEntity } from "../model/embedded-entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import type { Mock } from "vitest";
 import { UpdateMetadata } from "../model/update-metadata";
@@ -424,6 +425,22 @@ describe("EntityMapperService permission checks", () => {
     await expect(
       entityMapper.saveAll([allowed, denied]),
     ).rejects.toBeInstanceOf(EntityPermissionError);
+  });
+
+  it("never saves an embedded entry on its own, only as part of its record", async () => {
+    const entry = createEmbeddedEntity(new Map(), {
+      record: new Entity("record"),
+      field: "documents",
+      existing: true,
+    });
+
+    await expect(entityMapper.save(entry)).rejects.toThrow(
+      "cannot be saved on its own",
+    );
+    await expect(entityMapper.saveAll([entry])).rejects.toThrow(
+      "cannot be saved on its own",
+    );
+    expect(mockDbResolver.getDatabase).not.toHaveBeenCalled();
   });
 
   it("should throw EntityPermissionError when removing an entity without delete permission", async () => {

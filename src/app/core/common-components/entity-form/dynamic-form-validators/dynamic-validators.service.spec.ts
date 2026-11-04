@@ -17,6 +17,8 @@ import { DataFilter } from "../../../filter/filters/filters";
 import { CurrentRecordSource } from "../current-record-state";
 import { of } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
+import { Entity } from "../../../entity/model/entity";
+import { createEmbeddedEntity } from "../../../entity/model/embedded-entity";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -194,6 +196,22 @@ describe("DynamicValidatorsService", () => {
     expect(validationErrors.uniqueProperty).toBeUndefined();
 
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
+  });
+
+  it("skips the uniqueId validator for inner fields of embedded entries", () => {
+    const entry = createEmbeddedEntity(new Map(), {
+      record: new Entity("record"),
+      field: "documents",
+      existing: false,
+    });
+
+    const options = service.buildValidators(
+      { uniqueId: true },
+      entry,
+      "documentNumber",
+    );
+
+    expect(options.asyncValidators).toEqual([]);
   });
 
   describe("withinParent", () => {

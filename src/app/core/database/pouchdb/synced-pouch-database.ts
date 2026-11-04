@@ -1,4 +1,5 @@
 import { PouchDatabase } from "./pouch-database";
+import { toTypedDatabaseError } from "./database-exception";
 import { Logging } from "../../logging/logging.service";
 import { NamedError } from "../../logging/reported-errors";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
@@ -21,11 +22,9 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
-import {
-  PouchdbCorruptionRecoveryService,
-  isKnownMultiTabDatabaseCorruption,
-} from "./pouchdb-corruption-recovery.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import { isDocumentWriteError } from "./pouchdb-errors";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 /**
@@ -38,6 +37,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return undefined;
     }
     return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
+  }
+
+  /**
+   * Destroy the local database.
+   * Its last completed sync is forgotten, so that a new database with the same name
+   * is not taken for local data that was lost (see DatabaseResolverService).
+   */
+  override async destroy(): Promise<any> {
+    const lastSyncKey = this.LAST_SYNC_KEY;
+    const result = await super.destroy();
+    if (lastSyncKey) {
+      localStorage.removeItem(lastSyncKey);
+    }
+    return result;
   }
 
   POUCHDB_SYNC_BATCH_SIZE = 100;
@@ -75,27 +88,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   get localSyncState(): SyncStateSubject {
     return this.syncState;
-  }
-
-  /**
-   * Open a separate connection to this database's remote database,
-   * as the replication source of the background migration (see `IndexeddbMigrationService`).
-   *
-   * Unlike the connection this database syncs through, it does not collect the documents
-   * the server reports as no longer permitted: a replication from scratch gets all documents
-   * the user may not read reported, and this database's next sync would purge each of them
-   * before completing.
-   *
-   * The caller has to close it with `close()` once done (never `destroy()`,
-   * which would delete the database on the server).
-   *
-   * @returns undefined if the database is not initialized yet
-   */
-  openRemoteReplicationSource(): PouchDB.Database | undefined {
-    if (!this.remoteDatabase.isInitialized()) {
-      return undefined;
-    }
-    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(
@@ -200,8 +192,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       isFirstSync = (await localDb.info()).doc_count === 0;
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
-      this.handleSyncFailure(err, []);
-      throw err;
+      const failure = toTypedDatabaseError(err);
+      this.handleSyncFailure(failure, []);
+      throw failure;
     }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
@@ -290,8 +283,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        this.handleSyncFailure(err, lastSyncedDocIds);
-        throw err;
+        // the replication fails with a copy of the error, which loses the class of a typed error
+        const failure = toTypedDatabaseError(err);
+        this.handleSyncFailure(failure, lastSyncedDocIds);
+        throw failure;
       })
       .finally(() => {
         clearTimeout(stallTimer);
@@ -325,26 +320,37 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
   private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
-    if (this.isDocumentWriteError(err)) {
+    this.logSyncFailure(err, lastSyncedDocIds);
+    this.syncState.next(SyncState.FAILED);
+  }
+
+  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    const context = {
+      db: this.dbName,
+      ...lastSyncedBatchContext(lastSyncedDocIds),
+    };
+    if (isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
         err,
       );
-    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      return;
+    }
+
+    // reported (with the offer to reset the local data) by the recovery service
+    const reportedAsCorruption =
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
       );
-    } else if (isReplicationConnectivityError(err)) {
-      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (isReplicationUnauthorizedError(err)) {
-      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
-    } else {
-      Logging.warn(`sync failed`, { db: this.dbName }, err);
+    if (reportedAsCorruption) {
+      return;
     }
-    this.syncState.next(SyncState.FAILED);
+
+    // at debug if offline or the session expired (see `Logging`): retried later
+    Logging.warn(`sync failed`, { db: this.dbName }, err);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -374,15 +380,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
   }
 
-  private isDocumentWriteError(err: any): boolean {
-    const message = err?.message || err?.reason || String(err);
-    return (
-      message.includes("Maximum call stack size exceeded") ||
-      message.includes("IDBObjectStore") ||
-      message.includes("Failed to execute")
-    );
-  }
-
   /**
    * How many document ids to include as an example in the logs below, which can
    * report on thousands of documents (the count is logged in full alongside).
@@ -397,8 +394,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * that the user may not read - it has no knowledge of which of those the
    * client actually holds locally. Most reported ids therefore do not exist
    * locally at all and purging them is a no-op. Only an actual local deletion
-   * is reported as a warning, so that the log stays a signal for data being
-   * removed rather than a count of what the server reported.
+   * is logged with details, so that the log stays a signal for data being
+   * removed rather than a count of what the server reported. That is the
+   * expected outcome of a change of permissions, so it is not reported to
+   * remote monitoring; only a failed purge is.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
     const reportedIds = this.remoteDatabase
@@ -407,6 +406,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) => !id.startsWith("_design/"));
 
     if (reportedIds.length === 0) {
+      return;
+    }
+
+    if (this.adapter === "idb") {
+      // a known limitation, not an event: the legacy "idb" adapter does not implement purge()
+      // (LocalPermissionEnforcerService destroys the local db instead where necessary)
+      Logging.debug(
+        "sync: cannot purge local docs on the legacy idb adapter, skipping",
+        { db: this.dbName, reportedByServer: reportedIds.length },
+      );
       return;
     }
 
@@ -437,8 +446,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
     };
 
     if (purgedIds.length > 0) {
-      // local data was actually deleted - log for traceability of possible data loss
-      Logging.warn(
+      // expected after a change of permissions: the user can no longer read these docs,
+      // so local changes to them could not have been synced anyway
+      Logging.debug(
         "sync: purged local docs that the server reported as no longer permitted",
         {
           ...stats,
@@ -458,7 +468,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     if (failedIds.length > 0) {
       // the local database keeps docs the user is no longer allowed to read
-      // (the legacy "idb" adapter does not implement purge at all, see purge())
       Logging.warn(
         "sync: failed to purge local docs that the server reported as no longer permitted",
         { ...stats, sampleIds: failedIds.slice(0, this.SAMPLE_IDS_LOGGED) },
@@ -570,27 +579,10 @@ export class SyncFailedError extends NamedError {
   }
 }
 
-/** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends NamedError {
+/** Thrown internally when a sync is cancelled for making no progress (a stalled connection). */
+class SyncStalledError extends ConnectivityError {
   constructor() {
-    super("SyncStalledError", "Sync cancelled after making no progress");
+    super("Sync cancelled after making no progress");
+    this.name = "SyncStalledError";
   }
-}
-
-/**
- * Whether a replication with the server failed only because of the connection
- * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
- */
-export function isReplicationConnectivityError(err: any): boolean {
-  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
-  const message = err?.message || err?.reason || String(err);
-  return message.includes("getCheckpoint");
-}
-
-/**
- * Whether a replication with the server failed because the session expired:
- * the fetch layer already triggers a re-login.
- */
-export function isReplicationUnauthorizedError(err: any): boolean {
-  return err?.status === 401 || err?.statusCode === 401;
 }

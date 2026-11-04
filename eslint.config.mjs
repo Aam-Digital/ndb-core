@@ -43,6 +43,26 @@ export default defineConfig([
     },
   },
   {
+    // failures of our backend may arrive as typed errors (see typedHttpErrorInterceptor)
+    files: ["src/**/*.ts"],
+    ignores: [
+      "src/**/*.spec.ts",
+      "src/app/utils/typed-http-error.interceptor.ts",
+      "src/app/utils/failed-http-response.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "BinaryExpression[operator='instanceof'][right.name='HttpErrorResponse']",
+          message:
+            "A failed request to our backend may arrive as a typed error: read the response with failedHttpResponse(err) (src/app/utils/failed-http-response.ts).",
+        },
+      ],
+    },
+  },
+  {
     files: ["e2e/**/*.ts"],
     extends: [
       eslint.configs.recommended,

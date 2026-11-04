@@ -85,7 +85,7 @@ When a entity is displayed, most of the properties can be omitted and will be fe
 
 ## Showing details of one entity
 
-The EntitySubrecordComponent allows the user to edit an entity inline in the table.
+The table does not edit records inline.
 By default, clicking on a row will automatically open a form popup which shows all editable fields of the table.
 What happens when a row is clicked can be overwritten with the `[showEntity]` parameter.
 This parameter expects a function that gets the clicked entity as input.
