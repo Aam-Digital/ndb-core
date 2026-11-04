@@ -128,7 +128,7 @@
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/core/export/download-service/download.service.ts</code>
+    <code>src/app/core/export/export-column-resolvers.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/export/download-service/download.service.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/core/export/export-column-resolvers.ts:8</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/export/download-service/download.service.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/app/core/export/export-column-resolvers.ts:7</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/export/download-service/download.service.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="6" class="link-to-prism">src/app/core/export/export-column-resolvers.ts:6</a></div>
                                 </td>
                             </tr>
 
@@ -317,25 +317,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
-import { Logging } from &quot;../../logging/logging.service&quot;;
-import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
-import {
-  ExportColumnConfig,
-  normalizeQueryKey,
-} from &quot;../data-transformation-service/export-column-config&quot;;
-import { Papa } from &quot;ngx-papaparse&quot;;
-import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
-import {
-  ExportColumnMapping,
-  ExportContext,
-} from &quot;app/core/entity/default-datatype/default.datatype&quot;;
-import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
-import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
-import { Workbook } from &quot;exceljs&quot;;
-import moment from &quot;moment&quot;;
-import { mapInBatches } from &quot;app/utils/utils&quot;;
-import { EXPORT_BATCH_SIZE } from &quot;../readable-entity-name&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ExportColumnMapping } from &quot;../entity/default-datatype/default.datatype&quot;;
+import { EntitySchemaField } from &quot;../entity/schema/entity-schema-field&quot;;
+import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service&quot;;
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -350,9 +334,9 @@ export interface ExportColumnResolver {
  * the columns the datatype contributes via &#x60;getExportColumns&#x60;.
  *
  * Internal fields are excluded, except the record&#x27;s internal id &#x60;_id&#x60;, which users
- * need to relate exported records to each other ). It can be selected for an
+ * need to relate exported records to each other. It can be selected for an
  * export but is left out of an export that selects no columns,
- * see {@link DownloadService.prepareExportData}.
+ * see &#x60;DownloadService.prepareExportData&#x60;.
  *
  * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
  *   use the field id as label (useful for embedded schemas like attendance items).
@@ -383,306 +367,6 @@ export function buildExportColumnResolvers(
   }
 
   return resolvers;
-}
-
-export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot; | &quot;xlsx&quot; | &quot;zip&quot;;
-
-/**
- * This service allows to start a download process from the browser.
- * Depending on the browser and the setting this might open a popup or directly download the file.
- */
-@Injectable({ providedIn: &quot;root&quot; })
-export class DownloadService {
-  private readonly papa &#x3D; inject(Papa);
-  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
-
-  /** CSV row separator */
-  static readonly SEPARATOR_ROW &#x3D; &quot;\n&quot;;
-  /** CSV column/field separator */
-  static readonly SEPARATOR_COL &#x3D; &quot;,&quot;;
-
-  /**
-   * Starts the download process with the provided data
-   * @param data content of the file that will be downloaded
-   * @param format extension of the file that will be downloaded, support is &#x27;csv&#x27; and &#x27;json&#x27;
-   * @param filename of the file that will be downloaded
-   * @param selectedColumns optional list of export column keys to restrict (and order) the exported columns
-   */
-  async triggerDownload(
-    data: any,
-    format: FileDownloadFormat,
-    filename: string,
-    selectedColumns?: ExportColumnConfig[],
-  ) {
-    const blobData &#x3D; await this.getFormattedBlobData(
-      data,
-      format,
-      selectedColumns,
-    );
-    const filenameWithExtension &#x3D; filename.endsWith(&quot;.&quot; + format)
-      ? filename
-      : filename + &quot;.&quot; + format;
-    const objectUrl &#x3D; globalThis.URL.createObjectURL(blobData);
-    const link &#x3D; document.createElement(&quot;a&quot;);
-    link.setAttribute(&quot;style&quot;, &quot;display:none;&quot;);
-    link.href &#x3D; objectUrl;
-    link.download &#x3D; filenameWithExtension;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    // defer revocation so the browser has time to initiate the download
-    setTimeout(() &#x3D;&gt; globalThis.URL.revokeObjectURL(objectUrl), 1000);
-  }
-
-  private async getFormattedBlobData(
-    data: any,
-    format: FileDownloadFormat,
-    selectedColumns?: ExportColumnConfig[],
-  ): Promise&lt;Blob&gt; {
-    let result &#x3D; &quot;&quot;;
-
-    switch (format.toLowerCase()) {
-      case &quot;json&quot;:
-        result &#x3D; typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot; ? data : JSON.stringify(data); // TODO: support column selection for json format
-        return new Blob([result], { type: &quot;application/json&quot; });
-      case &quot;csv&quot;:
-        if (Array.isArray(data)) {
-          result &#x3D; await this.createCsv(data, selectedColumns);
-        } else {
-          // assume raw csv data
-          result &#x3D; data;
-        }
-        return new Blob([result], { type: &quot;text/csv&quot; });
-      case &quot;xlsx&quot;:
-        if (!Array.isArray(data) &amp;&amp; typeof data !&#x3D;&#x3D; &quot;string&quot;) {
-          Logging.warn(
-            &quot;XLSX export requires an array of records or a CSV string.&quot;,
-          );
-          return new Blob([&quot;&quot;]);
-        }
-        return this.createXlsx(data, selectedColumns);
-      case &quot;pdf&quot;:
-        return new Blob([data], { type: &quot;application/pdf&quot; });
-      case &quot;zip&quot;:
-        return new Blob([data], { type: &quot;application/zip&quot; });
-      default:
-        Logging.warn(&quot;Export format not supported&quot;, { format });
-        return new Blob([&quot;&quot;]);
-    }
-  }
-
-  /**
-   * Creates a CSV string of the input data using the shared export data preparation.
-   *
-   * @param data an array of elements
-   * @returns string a valid CSV string of the input data
-   */
-  async createCsv(
-    data: any[],
-    selectedColumns?: ExportColumnConfig[],
-  ): Promise&lt;string&gt; {
-    const [headers, ...rows] &#x3D; await this.prepareExportData(
-      data,
-      selectedColumns,
-    );
-    return this.papa.unparse(
-      { fields: headers, data: rows },
-      {
-        quotes: true,
-        newline: DownloadService.SEPARATOR_ROW,
-      },
-    );
-  }
-
-  /**
-   * Creates an XLSX Blob from the input data.
-   *
-   * Accepts either an array of records (transformed via the shared export data
-   * preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
-   * report). The raw-string path mirrors {@link getFormattedBlobData}&#x27;s CSV
-   * handling so the same data can be exported to both CSV and XLSX.
-   */
-  async createXlsx(
-    data: any[] | string,
-    selectedColumns?: ExportColumnConfig[],
-  ): Promise&lt;Blob&gt; {
-    const rows &#x3D;
-      typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot;
-        ? this.parseCsvToRows(data)
-        : await this.prepareExportData(data, selectedColumns);
-    return this.buildXlsxBlob(rows);
-  }
-
-  /** Parses a raw CSV string into an array of row arrays for XLSX output. */
-  private parseCsvToRows(csv: string): any[][] {
-    const parsed &#x3D; this.papa.parse(csv, { skipEmptyLines: true });
-    return (parsed?.data as any[][]) ?? [];
-  }
-
-  /** Builds a styled XLSX workbook Blob from an array of row arrays. */
-  private async buildXlsxBlob(rows: any[][]): Promise&lt;Blob&gt; {
-    const wb &#x3D; new Workbook();
-    const ws &#x3D; wb.addWorksheet(&quot;Export&quot;);
-    for (const row of rows) {
-      ws.addRow(row);
-    }
-    const headerRow &#x3D; ws.getRow(1);
-    headerRow.font &#x3D; { bold: true };
-    headerRow.fill &#x3D; {
-      type: &quot;pattern&quot;,
-      pattern: &quot;solid&quot;,
-      fgColor: { argb: &quot;FFD3D3D3&quot; },
-    };
-    headerRow.commit();
-    const buffer &#x3D; await wb.xlsx.writeBuffer();
-    return new Blob([buffer], {
-      type: &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;,
-    });
-  }
-
-  /**
-   * Prepares export data as row arrays (header row + data rows) for use with any export format.
-   *
-   * For entity data: uses schema column resolvers to produce human-readable headers and values.
-   * For plain objects: the first row contains the object keys as headers.
-   */
-  async prepareExportData(
-    data: any[],
-    selectedColumns?: ExportColumnConfig[],
-  ): Promise&lt;any[][]&gt; {
-    // map of selected column key -&gt; custom label (e.g. the list view column label)
-    const selectedKeys &#x3D; selectedColumns?.map((c) &#x3D;&gt;
-      normalizeQueryKey(c.query),
-    );
-    const labelOverrides &#x3D; new Map&lt;string, string&gt;();
-    for (const c of selectedColumns ?? []) {
-      const label &#x3D; resolveLocaleText(c.label);
-      if (label) labelOverrides.set(normalizeQueryKey(c.query), label);
-    }
-
-    let entityConstructor: EntityConstructor | undefined;
-    if (data.length &gt; 0 &amp;&amp; typeof data[0]?.getConstructor &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
-      entityConstructor &#x3D; data[0].getConstructor();
-    }
-
-    if (!entityConstructor) {
-      const mapped &#x3D; data.map((row) &#x3D;&gt;
-        Object.fromEntries(
-          Object.entries(row).map(([key, value]) &#x3D;&gt; [
-            key,
-            this.ensureCsvFriendlyValue(value),
-          ]),
-        ),
-      );
-      const allKeys &#x3D;
-        mapped.length &gt; 0
-          ? Array.from(new Set(mapped.flatMap((r) &#x3D;&gt; Object.keys(r))))
-          : [];
-      const keys &#x3D; selectedKeys
-        ? selectedKeys.filter((k) &#x3D;&gt; allKeys.includes(k))
-        : allKeys;
-      const headers &#x3D; keys.map((k) &#x3D;&gt; labelOverrides.get(k) ?? k);
-      return [headers, ...mapped.map((r) &#x3D;&gt; keys.map((k) &#x3D;&gt; r[k]))];
-    }
-
-    const entitySchema &#x3D; entityConstructor.schema;
-    const columnLabels &#x3D; new Map&lt;string, string&gt;();
-    const columnResolvers &#x3D; new Map&lt;string, ExportColumnResolver&gt;();
-
-    for (const resolver of buildExportColumnResolvers(
-      entitySchema,
-      this.entitySchemaService,
-    )) {
-      const columnId &#x3D; resolver.sourceFieldId + resolver.column.keySuffix;
-      columnLabels.set(columnId, resolver.column.label);
-      columnResolvers.set(columnId, resolver);
-    }
-
-    // Keep selected columns that have no schema resolver (e.g. runtime-attached
-    // fields like a Child&#x27;s &#x60;schoolId&#x60;, or configured query-expression columns)
-    // and read their value directly from the entity, so they are not silently
-    // dropped from the export.
-    const columnKeys &#x3D;
-      selectedKeys ??
-      Array.from(columnResolvers)
-        .filter(([, resolver]) &#x3D;&gt; !resolver.schemaField.isInternalField)
-        .map(([columnId]) &#x3D;&gt; columnId);
-
-    // Only resolve the selected columns: resolving a column can require loading
-    // referenced entities, which is wasted effort for columns that are not exported.
-    const selectedResolvers &#x3D; new Map(
-      columnKeys
-        .filter((key) &#x3D;&gt; columnResolvers.has(key))
-        .map((key) &#x3D;&gt; [key, columnResolvers.get(key)]),
-    );
-    const exportContext: ExportContext &#x3D; { entityNameCache: new Map() };
-    const exportEntities &#x3D; await mapInBatches(data, EXPORT_BATCH_SIZE, (item) &#x3D;&gt;
-      this.mapEntityToExportRow(item, selectedResolvers, exportContext),
-    );
-
-    const headers &#x3D; columnKeys.map(
-      (key) &#x3D;&gt; labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
-    );
-    return [
-      headers,
-      ...data.map((item, i) &#x3D;&gt;
-        columnKeys.map((key) &#x3D;&gt;
-          columnResolvers.has(key)
-            ? exportEntities[i][key]
-            : this.ensureCsvFriendlyValue(item[key]),
-        ),
-      ),
-    ];
-  }
-
-  private async mapEntityToExportRow(
-    item: any,
-    columnResolvers: Map&lt;string, ExportColumnResolver&gt;,
-    exportContext: ExportContext,
-  ): Promise&lt;Object&gt; {
-    const newItem &#x3D; {};
-
-    for (const [columnId, resolver] of columnResolvers.entries()) {
-      const formattedValue &#x3D; await resolver.column.resolveValue(
-        item[resolver.sourceFieldId],
-        resolver.schemaField,
-        exportContext,
-      );
-      newItem[columnId] &#x3D; this.ensureCsvFriendlyValue(formattedValue);
-    }
-
-    return newItem;
-  }
-
-  /**
-   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
-   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
-   */
-  private ensureCsvFriendlyValue(value: any): any {
-    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
-      return value;
-    }
-
-    if (value instanceof Date) {
-      return moment(value).format(&quot;YYYY-MM-DD&quot;);
-    }
-
-    if (Array.isArray(value)) {
-      return value.map((entry) &#x3D;&gt; this.ensureCsvFriendlyValue(entry)).join(&quot;,&quot;);
-    }
-
-    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
-      if (&quot;label&quot; in value) {
-        return value.label;
-      }
-      if (&quot;locationString&quot; in value) {
-        return value.locationString;
-      }
-      return JSON.stringify(value);
-    }
-
-    return value;
-  }
 }
 </code></pre>
     </div>

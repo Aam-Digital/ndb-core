@@ -255,6 +255,24 @@ e.g. <code>{ &quot;id&quot;: &quot;issueDate&quot;, &quot;visibleFrom&quot;: &qu
 }</code></pre></div><p>Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a &quot;Save&quot;
 button. Users without the permission to update the field only see the entries (read-only). See the full example in
 <a href="../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json"><code>Config_CONFIG_ENTITY.json</code></a>.</p>
+<p><strong>Export</strong></p>
+<p>Exports format each inner field like a top-level field of the same type (e.g. names of referenced records, option
+labels, dates). An embedded table offers these columns (&quot;preselected&quot;: selected by default in the export dialog when
+the field is shown in the list):</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>Column</th><th>Example</th><th>Preselected</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Identification Documents</code></td><td><code>Passport, 12345, 2020-01-01; ID Card, 678, 2022-05-10</code></td><td>yes</td></tr>
+<tr><td><code>Identification Documents (Document Type)</code> (one per inner field)</td><td><code>Passport; ID Card</code></td><td>no</td></tr>
+<tr><td><code>Identification Documents (number of entries)</code></td><td><code>2</code></td><td>yes</td></tr>
+</tbody>
+</table>
+<p>Entries are separated by <code>;</code>. In the columns per inner field, an empty value keeps its place (e.g. <code>; Sick</code>), so the
+values of one entry are at the same position in every column. A single embedded object (<code>schema-embed</code> without
+<code>isArray</code>) is exported as one column per inner field. See
+<a href="schema-embed/schema-embed-export-columns.ts"><code>schema-embed-export-columns.ts</code></a>.</p>
 <p><strong>Not yet configurable in the Admin UI.</strong> The Admin UI cannot configure the inner fields yet
 (<a href="https://github.com/Aam-Digital/ndb-core/issues/3840">#3840</a>), so the type is not offered in its field type
 dropdown (the datatype has no <code>label</code>). Define such fields in the config JSON.</p>

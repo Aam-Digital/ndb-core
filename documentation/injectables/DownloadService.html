@@ -270,8 +270,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="161"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:161</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="113"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:113</a></div>
                         </td>
                     </tr>
 
@@ -361,8 +361,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="186"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:186</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:138</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ handling so the same data can be exported to both CSV and XLSX.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="230"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:230</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -533,8 +533,8 @@ For plain objects: the first row contains the object keys as headers.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -668,7 +668,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/export/download-service/download.service.ts:83</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/export/download-service/download.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -707,7 +707,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/export/download-service/download.service.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/export/download-service/download.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -735,64 +735,16 @@ import {
 } from &quot;../data-transformation-service/export-column-config&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
-import {
-  ExportColumnMapping,
-  ExportContext,
-} from &quot;app/core/entity/default-datatype/default.datatype&quot;;
-import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
+import { ExportContext } from &quot;app/core/entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
 import { Workbook } from &quot;exceljs&quot;;
-import moment from &quot;moment&quot;;
 import { mapInBatches } from &quot;app/utils/utils&quot;;
 import { EXPORT_BATCH_SIZE } from &quot;../readable-entity-name&quot;;
-
-export interface ExportColumnResolver {
-  sourceFieldId: string;
-  schemaField: EntitySchemaField;
-  column: ExportColumnMapping;
-}
-
-/**
- * Build export column resolvers for all fields in a schema.
- *
- * Iterates the schema, looks up each field&#x27;s datatype, and collects
- * the columns the datatype contributes via &#x60;getExportColumns&#x60;.
- *
- * Internal fields are excluded, except the record&#x27;s internal id &#x60;_id&#x60;, which users
- * need to relate exported records to each other ). It can be selected for an
- * export but is left out of an export that selects no columns,
- * see {@link DownloadService.prepareExportData}.
- *
- * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
- *   use the field id as label (useful for embedded schemas like attendance items).
- */
-export function buildExportColumnResolvers(
-  schema: Map&lt;string, EntitySchemaField&gt;,
-  entitySchemaService: EntitySchemaService,
-  useFieldIdAsFallbackLabel &#x3D; false,
-): ExportColumnResolver[] {
-  const resolvers: ExportColumnResolver[] &#x3D; [];
-
-  for (const [fieldId, field] of schema.entries()) {
-    if (field.isInternalField &amp;&amp; fieldId !&#x3D;&#x3D; &quot;_id&quot;) continue;
-
-    const schemaField: EntitySchemaField &#x3D; {
-      ...field,
-      id: field.id ?? fieldId,
-      label: field.label || (useFieldIdAsFallbackLabel ? fieldId : undefined),
-    };
-
-    const datatype &#x3D; entitySchemaService.getDatatypeOrDefault(
-      schemaField.dataType,
-    );
-
-    for (const column of datatype.getExportColumns(schemaField)) {
-      resolvers.push({ sourceFieldId: fieldId, schemaField, column });
-    }
-  }
-
-  return resolvers;
-}
+import {
+  buildExportColumnResolvers,
+  ExportColumnResolver,
+} from &quot;../export-column-resolvers&quot;;
+import { toExportValue } from &quot;../export-value&quot;;
 
 export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot; | &quot;xlsx&quot; | &quot;zip&quot;;
 
@@ -979,7 +931,7 @@ export class DownloadService {
         Object.fromEntries(
           Object.entries(row).map(([key, value]) &#x3D;&gt; [
             key,
-            this.ensureCsvFriendlyValue(value),
+            toExportValue(value),
           ]),
         ),
       );
@@ -1038,7 +990,7 @@ export class DownloadService {
         columnKeys.map((key) &#x3D;&gt;
           columnResolvers.has(key)
             ? exportEntities[i][key]
-            : this.ensureCsvFriendlyValue(item[key]),
+            : toExportValue(item[key]),
         ),
       ),
     ];
@@ -1057,40 +1009,10 @@ export class DownloadService {
         resolver.schemaField,
         exportContext,
       );
-      newItem[columnId] &#x3D; this.ensureCsvFriendlyValue(formattedValue);
+      newItem[columnId] &#x3D; toExportValue(formattedValue);
     }
 
     return newItem;
-  }
-
-  /**
-   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
-   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
-   */
-  private ensureCsvFriendlyValue(value: any): any {
-    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
-      return value;
-    }
-
-    if (value instanceof Date) {
-      return moment(value).format(&quot;YYYY-MM-DD&quot;);
-    }
-
-    if (Array.isArray(value)) {
-      return value.map((entry) &#x3D;&gt; this.ensureCsvFriendlyValue(entry)).join(&quot;,&quot;);
-    }
-
-    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
-      if (&quot;label&quot; in value) {
-        return value.label;
-      }
-      if (&quot;locationString&quot; in value) {
-        return value.locationString;
-      }
-      return JSON.stringify(value);
-    }
-
-    return value;
   }
 }
 </code></pre>

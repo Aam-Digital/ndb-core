@@ -263,6 +263,9 @@
                             <a href="#CLOSE_OTHER_TABS_NOTICE_ID" title="src/bootstrap-reset.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CLOSE_OTHER_TABS_NOTICE_ID</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-reset.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#COLUMN_PART_SEPARATOR" title="src/app/core/basic-datatypes/schema-embed/schema-embed-export-columns.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>COLUMN_PART_SEPARATOR</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-export-columns.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#columnsCache" title="src/app/core/basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>columnsCache</b>&nbsp;&nbsp;&nbsp;(src/.../display-schema-embed-array.component.ts)</span></a>
                         </li>
                         <li>
@@ -435,6 +438,9 @@
                         </li>
                         <li>
                             <a href="#entityRegistry" title="src/app/core/entity/database-entity.decorator.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>entityRegistry</b>&nbsp;&nbsp;&nbsp;(src/.../database-entity.decorator.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#ENTRY_SEPARATOR" title="src/app/core/basic-datatypes/schema-embed/schema-embed-export-columns.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ENTRY_SEPARATOR</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-export-columns.ts)</span></a>
                         </li>
                         <li>
                             <a href="#environment" title="src/environments/environment.prod.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.prod.ts)</span></a>
@@ -933,6 +939,9 @@
                         </li>
                         <li>
                             <a href="#validLocaleIds" title="src/app/core/language/active-locale.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>validLocaleIds</b>&nbsp;&nbsp;&nbsp;(src/.../active-locale.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#VALUE_SEPARATOR" title="src/app/core/basic-datatypes/schema-embed/schema-embed-export-columns.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>VALUE_SEPARATOR</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-export-columns.ts)</span></a>
                         </li>
                         <li>
                             <a href="#VIEW_NAME" title="src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>VIEW_NAME</b>&nbsp;&nbsp;&nbsp;(src/.../important-notes-index.service.ts)</span></a>
@@ -3878,6 +3887,105 @@ database last completed a sync (one key per database).</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>sessionStorage key used to signal that a reset is pending.
 Set before a page reload; checked on the next bootstrap in <a href="../miscellaneous/functions.html#runPendingReset">runPendingReset</a>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/basic-datatypes/schema-embed/schema-embed-export-columns.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="COLUMN_PART_SEPARATOR"></a>
+                    <span class="name">
+                        <span ><b>COLUMN_PART_SEPARATOR</b></span>
+                        <a href="#COLUMN_PART_SEPARATOR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot; - &quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Separator between the parts of an inner field exported in several columns, e.g. &quot;2020-01-01 - 2020-12-31&quot;.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENTRY_SEPARATOR"></a>
+                    <span class="name">
+                        <span ><b>ENTRY_SEPARATOR</b></span>
+                        <a href="#ENTRY_SEPARATOR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;; &quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Separator between the entries of an array field, e.g. &quot;Passport, 12345; ID Card, 678&quot;.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="VALUE_SEPARATOR"></a>
+                    <span class="name">
+                        <span ><b>VALUE_SEPARATOR</b></span>
+                        <a href="#VALUE_SEPARATOR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;, &quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Separator between the values of one entry, e.g. &quot;Passport, 12345&quot;.</p>
 </div>
                 </td>
             </tr>

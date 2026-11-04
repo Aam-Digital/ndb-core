@@ -2997,6 +2997,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/InheritedValueState.html" data-type="entity-link" >InheritedValueState</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/InnerExportField.html" data-type="entity-link" >InnerExportField</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/InteractionType.html" data-type="entity-link" >InteractionType</a>
                             </li>
                             <li class="link">

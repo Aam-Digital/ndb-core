@@ -298,6 +298,11 @@ for a user-configurable field use <a href="../injectables/SchemaEmbedArrayDataty
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#getExportColumns" >getExportColumns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#getReferenceSelector" >getReferenceSelector</a>
                             </li>
                             <li>
@@ -328,10 +333,6 @@ for a user-configurable field use <a href="../injectables/SchemaEmbedArrayDataty
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -389,8 +390,8 @@ for a user-configurable field use <a href="../injectables/SchemaEmbedArrayDataty
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="194"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:194</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:196</a></div>
                         </td>
                     </tr>
 
@@ -482,8 +483,8 @@ unknown ids are skipped. If not given, all inner fields are returned.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="128"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:128</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:130</a></div>
                         </td>
                     </tr>
 
@@ -555,8 +556,8 @@ the merge logic or being limited to the <code>additional</code>-only (config-bas
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="151"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:151</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:153</a></div>
                         </td>
                     </tr>
 
@@ -610,6 +611,83 @@ The embedded object is stored as-is, so this is the property name itself.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Readable export columns built from the inner fields (see <a href="../miscellaneous/functions.html#getSchemaEmbedExportColumns">getSchemaEmbedExportColumns</a>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getReferenceSelector"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -634,7 +712,7 @@ The embedded object is stored as-is, so this is the property name itself.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:162</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:164</a></code>
 </div>
                         </td>
                     </tr>
@@ -730,8 +808,8 @@ is stored, through the dotted path to the inner property.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="143"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:143</a></div>
                         </td>
                     </tr>
 
@@ -809,7 +887,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:220</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:236</a></code>
 </div>
                         </td>
                     </tr>
@@ -896,7 +974,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:247</a></code>
 </div>
                         </td>
                     </tr>
@@ -983,7 +1061,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:429</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:436</a></code>
 </div>
                         </td>
                     </tr>
@@ -1093,7 +1171,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:137</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:144</a></code>
 </div>
                         </td>
                     </tr>
@@ -1192,7 +1270,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:122</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:129</a></code>
 </div>
                         </td>
                     </tr>
@@ -1271,87 +1349,6 @@ forwarding their own relevant datatype identifiers.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getExportColumns"></a>
-                    <span class="name">
-                        <span ><b>getExportColumns</b></span>
-                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:374</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Export columns for a field using this datatype.</p>
-<p>Each returned column contributes a CSV header and its own value resolver.
-The returned <code>keySuffix</code> is appended to the field id to form the exported column key.</p>
-<p>The default implementation returns a single column with the raw field value.
-Readable formatting can be applied by callers during CSV transformation.
-Override this to provide custom or additional columns (e.g. entity references
-can add a human-readable name column alongside the ID column).</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>schemaField</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="importMapFunction"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -1376,7 +1373,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:232</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:239</a></code>
 </div>
                         </td>
                     </tr>
@@ -1508,7 +1505,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:256</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:263</a></code>
 </div>
                         </td>
                     </tr>
@@ -1628,7 +1625,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:359</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:366</a></code>
 </div>
                         </td>
                     </tr>
@@ -1713,7 +1710,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:395</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:402</a></code>
 </div>
                         </td>
                     </tr>
@@ -1805,7 +1802,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:114</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:116</a></code>
 </div>
                         </td>
                     </tr>
@@ -1833,7 +1830,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:116</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -1866,7 +1863,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:118</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="120" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:120</a></div>
                         </td>
                     </tr>
 
@@ -1903,7 +1900,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:188</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:195</a></code>
 </div>
                         </td>
                     </tr>
@@ -1942,7 +1939,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:161</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:168</a></code>
 </div>
                         </td>
                     </tr>
@@ -1983,7 +1980,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:335</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:342</a></code>
 </div>
                         </td>
                     </tr>
@@ -2026,7 +2023,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:345</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -2075,7 +2072,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:167</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:174</a></code>
 </div>
                         </td>
                     </tr>
@@ -2121,7 +2118,7 @@ in addition to the <code>validators</code> configured for the field.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:176</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:183</a></code>
 </div>
                         </td>
                     </tr>
@@ -2165,7 +2162,7 @@ in addition to the <code>validators</code> configured for the field.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:187</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:194</a></code>
 </div>
                         </td>
                     </tr>
@@ -2189,6 +2186,7 @@ decorator</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   DefaultDatatype,
+  ExportColumnMapping,
   referenceIdConditions,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
@@ -2206,6 +2204,7 @@ import {
   toFormFieldConfig,
 } from &quot;../../common-components/entity-form/FormConfig&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { getSchemaEmbedExportColumns } from &quot;./schema-embed-export-columns&quot;;
 
 /**
  * Configuration for the &quot;schema-embed&quot; datatype&#x27;s &#x60;additional&#x60; field.
@@ -2387,6 +2386,20 @@ export class SchemaEmbedDatatype&lt;
       result.push(this.schemaService.addSchemaToFormField(config, innerField));
     }
     return result;
+  }
+
+  /**
+   * Readable export columns built from the inner fields (see {@link getSchemaEmbedExportColumns}).
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    return getSchemaEmbedExportColumns(
+      schemaField,
+      this.getEffectiveSchema(schemaField),
+      this.holdsArray(schemaField),
+      this.schemaService,
+    );
   }
 
   override transformToDatabaseFormat(

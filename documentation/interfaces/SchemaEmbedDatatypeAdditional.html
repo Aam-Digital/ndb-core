@@ -189,7 +189,7 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:58</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -202,6 +202,7 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   DefaultDatatype,
+  ExportColumnMapping,
   referenceIdConditions,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
@@ -219,6 +220,7 @@ import {
   toFormFieldConfig,
 } from &quot;../../common-components/entity-form/FormConfig&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { getSchemaEmbedExportColumns } from &quot;./schema-embed-export-columns&quot;;
 
 /**
  * Configuration for the &quot;schema-embed&quot; datatype&#x27;s &#x60;additional&#x60; field.
@@ -400,6 +402,20 @@ export class SchemaEmbedDatatype&lt;
       result.push(this.schemaService.addSchemaToFormField(config, innerField));
     }
     return result;
+  }
+
+  /**
+   * Readable export columns built from the inner fields (see {@link getSchemaEmbedExportColumns}).
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    return getSchemaEmbedExportColumns(
+      schemaField,
+      this.getEffectiveSchema(schemaField),
+      this.holdsArray(schemaField),
+      this.schemaService,
+    );
   }
 
   override transformToDatabaseFormat(
