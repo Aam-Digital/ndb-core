@@ -232,7 +232,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="595" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:595</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="576" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:576</a></div>
                             </td>
                         </tr>
 
@@ -353,8 +353,8 @@ import { NotAvailableOfflineError } from &quot;../../session/not-available-offli
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { QueryOptions } from &quot;../database&quot;;
 import { PouchdbCorruptionRecoveryService } from &quot;./pouchdb-corruption-recovery.service&quot;;
-import { classifyError } from &quot;../../logging/error-classification&quot;;
-import { isConnectivityError } from &quot;#src/app/utils/is-connectivity-error&quot;;
+import { isDocumentWriteError } from &quot;./pouchdb-errors&quot;;
+import { ConnectivityError } from &quot;#src/app/utils/backend-errors&quot;;
 import { LAST_SYNC_KEY_PREFIX } from &quot;#src/bootstrap-reset&quot;;
 
 /**
@@ -659,7 +659,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       db: this.dbName,
       ...lastSyncedBatchContext(lastSyncedDocIds),
     };
-    if (this.isDocumentWriteError(err)) {
+    if (isDocumentWriteError(err)) {
       Logging.warn(
         &#x60;sync failed: document write error (possible oversized document)&#x60;,
         context,
@@ -679,13 +679,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
 
-    if (isReplicationConnectivityError(err)) {
-      Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
-    } else if (isReplicationUnauthorizedError(err)) {
-      Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
-    } else {
-      Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
-    }
+    // at debug if offline or the session expired (see &#x60;Logging&#x60;): retried later
+    Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
   }
 
   override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
@@ -713,20 +708,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
       throw err;
     });
-  }
-
-  private isDocumentWriteError(err: any): boolean {
-    if (classifyError(err)) {
-      // e.g. &quot;Failed to execute &#x27;transaction&#x27; on &#x27;IDBDatabase&#x27;: The database
-      // connection is closing&quot; is a broken local database, not a document
-      return false;
-    }
-    const message &#x3D; err?.message || err?.reason || String(err);
-    return (
-      message.includes(&quot;Maximum call stack size exceeded&quot;) ||
-      message.includes(&quot;IDBObjectStore&quot;) ||
-      message.includes(&quot;Failed to execute&quot;)
-    );
   }
 
   /**
@@ -928,29 +909,12 @@ export class SyncFailedError extends NamedError {
   }
 }
 
-/** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends NamedError {
+/** Thrown internally when a sync is cancelled for making no progress (a stalled connection). */
+class SyncStalledError extends ConnectivityError {
   constructor() {
-    super(&quot;SyncStalledError&quot;, &quot;Sync cancelled after making no progress&quot;);
+    super(&quot;Sync cancelled after making no progress&quot;);
+    this.name &#x3D; &quot;SyncStalledError&quot;;
   }
-}
-
-/**
- * Whether a replication with the server failed only because of the connection
- * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
- */
-export function isReplicationConnectivityError(err: any): boolean {
-  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
-  const message &#x3D; err?.message || err?.reason || String(err);
-  return message.includes(&quot;getCheckpoint&quot;);
-}
-
-/**
- * Whether a replication with the server failed because the session expired:
- * the fetch layer already triggers a re-login.
- */
-export function isReplicationUnauthorizedError(err: any): boolean {
-  return err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401;
 }
 </code></pre>
     </div>

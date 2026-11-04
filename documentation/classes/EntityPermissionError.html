@@ -152,12 +152,23 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The current user&#39;s permission rules do not allow the action on the entity,
+checked in the app before the request: as the UI disables actions the user may
+not do, this usually points to a bug, unlike a <a href="../classes/NotPermittedError.html">NotPermittedError</a> of the server.</p>
+<p><code>action</code>, <code>entityId</code> and <code>entityType</code> are kept out of the message (they would
+split the issue in remote monitoring) and reported as extra data instead.</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                        <code>Error</code>
+                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
             </p>
 
 
@@ -175,7 +186,7 @@
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                        <code>Error</code>
+                                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -212,6 +223,12 @@
                                     <span class="modifier">Readonly</span>
                                 <a href="#entityType" >entityType</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#details" >details</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -236,7 +253,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="1" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:1</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:11</a></div>
                             </td>
                         </tr>
 
@@ -324,7 +341,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="3" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:3</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:13</a></div>
                         </td>
                     </tr>
 
@@ -352,7 +369,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="4" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:4</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:14</a></div>
                         </td>
                     </tr>
 
@@ -380,10 +397,51 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="5" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:5</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/entity/entity-mapper/entity-permission-error.ts:15</a></div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="details"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>details</b></span>
+                        <a href="#details"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, unknown&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/NamedError.html#source" target="_self" >NamedError:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Context for the report, kept out of the message so that it does not split the issue.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -399,20 +457,23 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export class EntityPermissionError extends Error {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NamedError } from &quot;#src/app/core/logging/reported-errors&quot;;
+
+/**
+ * The current user&#x27;s permission rules do not allow the action on the entity,
+ * checked in the app before the request: as the UI disables actions the user may
+ * not do, this usually points to a bug, unlike a {@link NotPermittedError} of the server.
+ *
+ * &#x60;action&#x60;, &#x60;entityId&#x60; and &#x60;entityType&#x60; are kept out of the message (they would
+ * split the issue in remote monitoring) and reported as extra data instead.
+ */
+export class EntityPermissionError extends NamedError {
   constructor(
     public readonly action: string,
     public readonly entityId: string,
     public readonly entityType: string,
   ) {
-    // action, entityId and entityType are deliberately kept out of the message
-    // (entityId is per-record and, for new entities, even timestamp-based; all
-    // three would otherwise fragment Sentry grouping). They stay available as
-    // properties and are picked up as structured context by enrichSentryEvent
-    // in sentry-event-processing.ts, so they remain visible in Sentry&#x27;s &quot;Additional
-    // Data&quot; without being part of the message or name.
-    super(&quot;Current user is not permitted this action&quot;);
-    this.name &#x3D; &quot;EntityPermissionError&quot;;
+    super(&quot;EntityPermissionError&quot;, &quot;Current user is not permitted this action&quot;);
   }
 }
 </code></pre>

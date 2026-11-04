@@ -827,8 +827,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="230"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:230</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="227"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:227</a></div>
                         </td>
                     </tr>
 
@@ -866,8 +866,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="238"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:238</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:235</a></div>
                         </td>
                     </tr>
 
@@ -903,8 +903,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="209"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:209</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="206"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:206</a></div>
                         </td>
                     </tr>
 
@@ -1011,8 +1011,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="256"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:256</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="253"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:253</a></div>
                         </td>
                     </tr>
 
@@ -1158,8 +1158,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="219"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:219</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="216"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:216</a></div>
                         </td>
                     </tr>
 
@@ -2471,7 +2471,7 @@ import { Entity } from &quot;../../../core/entity/model/entity&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 import { NotAvailableOfflineError } from &quot;../../../core/session/not-available-offline.error&quot;;
 import { SyncFailedError } from &quot;../../../core/database/pouchdb/synced-pouch-database&quot;;
-import { isConnectivityError } from &quot;../../../utils/is-connectivity-error&quot;;
+import { isConnectivityError } from &quot;../../../core/logging/error-classification&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { FileService } from &quot;../file.service&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
@@ -2617,10 +2617,7 @@ export class EditFileComponent
     } else {
       // a failed sync before the upload is already logged by the sync itself
       if (!(err instanceof SyncFailedError)) {
-        Logging.error(&quot;Failed to update file&quot;, {
-          status: err?.status,
-          message: err?.message,
-        });
+        Logging.error(&quot;Failed to update file&quot;, err);
       }
       errorMessage &#x3D; $localize&#x60;:File Upload Error Message:Failed to update file attachment. Please try again.&#x60;;
     }

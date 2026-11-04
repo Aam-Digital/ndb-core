@@ -225,7 +225,7 @@ and can click that to reload the app with the new version.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:29</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:28</a></div>
                             </td>
                         </tr>
 
@@ -260,8 +260,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="127"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:127</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -301,8 +301,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="54"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:54</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -374,7 +374,6 @@ import { filter, first } from &quot;rxjs/operators&quot;;
 import { concat, interval } from &quot;rxjs&quot;;
 import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
-import { isFailedFetch } from &quot;../../../utils/backend-response&quot;;
 import { LatestChangesDialogService } from &quot;./latest-changes-dialog.service&quot;;
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
@@ -446,15 +445,10 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ &#x3D; concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() &#x3D;&gt;
-      this.updates.checkForUpdate().catch((err) &#x3D;&gt; {
-        // the service worker&#x27;s own error, which passed no boundary
-        if (isFailedFetch(err)) {
-          // offline: checked again in an hour
-          Logging.debug(&quot;Could not check for app updates (connectivity)&quot;, err);
-        } else {
-          Logging.error(&quot;Could not check for app updates&quot;, err);
-        }
-      }),
+      this.updates
+        .checkForUpdate()
+        // offline: checked again in an hour
+        .catch((err) &#x3D;&gt; Logging.error(&quot;Could not check for app updates&quot;, err)),
     );
   }
 

@@ -156,14 +156,10 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>This overwrites PouchDB&#39;s error class which only logs limited information.</p>
-<p>It is where errors of the (local or remote) PouchDB enter the app: a raw
-error that is one of the classified failures is converted into its typed
-error (see <a href="../miscellaneous/functions.html#toTypedDatabaseError">toTypedDatabaseError</a>), which is kept as the <code>cause</code>, as is
-a typed error thrown by our own code underneath (e.g. a <code>ServerError</code> of the
-remote database&#39;s fetch). It takes over the wrapped error&#39;s properties
-(<code>status</code>, <code>reason</code>, ...), so that callers can keep checking them, but keeps
-its own name, message and cause.</p>
+                <p>An error of the (local or remote) PouchDB that is not one of the classified
+failures (e.g. a <code>404 missing</code>), as thrown by <a href="../miscellaneous/functions.html#databaseError">databaseError</a>.
+It takes over the error&#39;s properties (<code>status</code>, <code>reason</code>, ...), so that callers
+can keep checking them, but keeps its own name and message.</p>
 
             </p>
 
@@ -243,7 +239,7 @@ its own name, message and cause.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:32</a></div>
                             </td>
                         </tr>
 
@@ -318,7 +314,7 @@ its own name, message and cause.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -403,15 +399,10 @@ import { LocalStorageError, WriteConflictError } from &quot;./database-errors&qu
 const IDENTIFYING_PROPERTIES &#x3D; new Set([&quot;name&quot;, &quot;message&quot;, &quot;stack&quot;, &quot;cause&quot;]);
 
 /**
- * This overwrites PouchDB&#x27;s error class which only logs limited information.
- *
- * It is where errors of the (local or remote) PouchDB enter the app: a raw
- * error that is one of the classified failures is converted into its typed
- * error (see {@link toTypedDatabaseError}), which is kept as the &#x60;cause&#x60;, as is
- * a typed error thrown by our own code underneath (e.g. a &#x60;ServerError&#x60; of the
- * remote database&#x27;s fetch). It takes over the wrapped error&#x27;s properties
- * (&#x60;status&#x60;, &#x60;reason&#x60;, ...), so that callers can keep checking them, but keeps
- * its own name, message and cause.
+ * An error of the (local or remote) PouchDB that is not one of the classified
+ * failures (e.g. a &#x60;404 missing&#x60;), as thrown by {@link databaseError}.
+ * It takes over the error&#x27;s properties (&#x60;status&#x60;, &#x60;reason&#x60;, ...), so that callers
+ * can keep checking them, but keeps its own name and message.
  */
 export class DatabaseException extends NamedError {
   entityId?: string;
@@ -420,15 +411,7 @@ export class DatabaseException extends NamedError {
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    const typed &#x3D; toTypedDatabaseError(error);
-    const cause &#x3D; typed instanceof NamedError ? typed : undefined;
-    super(
-      &quot;DatabaseException&quot;,
-      cause?.message || error?.message || &quot;Database error&quot;,
-      {
-        cause,
-      },
-    );
+    super(&quot;DatabaseException&quot;, error?.message || &quot;Database error&quot;);
 
     this.entityId &#x3D; entityId;
     for (const [key, value] of Object.entries(error ?? {})) {
@@ -437,6 +420,21 @@ export class DatabaseException extends NamedError {
       }
     }
   }
+}
+
+/**
+ * Where errors of the (local or remote) PouchDB enter the app: the error to throw
+ * for one. A classified failure is converted into its typed error (see
+ * {@link toTypedDatabaseError}), as is a typed error thrown by our own code
+ * underneath (e.g. a &#x60;ServerError&#x60; of the remote database&#x27;s fetch) passed on;
+ * any other error becomes a {@link DatabaseException}.
+ * @param entityId the document (or query) concerned, reported as extra data
+ */
+export function databaseError(error: unknown, entityId?: string): Error {
+  const typed &#x3D; toTypedDatabaseError(error, entityId);
+  return typed instanceof NamedError
+    ? typed
+    : new DatabaseException(error as PouchDB.Core.Error, entityId);
 }
 
 /** The typed error that a raw error of the database of each classification is converted into. */
@@ -474,7 +472,10 @@ type RawDatabaseError &#x3D; {
  * Any other error is returned unchanged (e.g. a &#x60;404 missing&#x60;), as is one of our
  * errors (e.g. a &#x60;ConnectivityError&#x60; of the remote database&#x27;s fetch).
  */
-export function toTypedDatabaseError(error: unknown): unknown {
+export function toTypedDatabaseError(
+  error: unknown,
+  entityId?: string,
+): unknown {
   if (!error || typeof error !&#x3D;&#x3D; &quot;object&quot; || error instanceof NamedError) {
     return error;
   }
@@ -491,6 +492,7 @@ export function toTypedDatabaseError(error: unknown): unknown {
     {
       status: typeof raw.status &#x3D;&#x3D;&#x3D; &quot;number&quot; ? raw.status : undefined,
       cause: error,
+      details: entityId ? { entityId } : undefined,
     },
   );
 }

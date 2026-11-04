@@ -275,6 +275,9 @@
                             <a href="#FormValidatorConfig" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>FormValidatorConfig</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#Frame" title="src/app/core/logging/logging-test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>Frame</b>&nbsp;&nbsp;&nbsp;(src/.../logging-test-utils.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#GetAllOptions" title="src/app/core/database/database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>GetAllOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</span></a>
                         </li>
                         <li>
@@ -1448,17 +1451,7 @@ This is used for embedded/nested schema objects like <code>AttendanceItem</code>
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>What kind of failure an error is, declared by its <a href="../classes/TypedError.html">TypedError</a> class (see
-<a href="../miscellaneous/functions.html#classifyError">classifyError</a>); what remote monitoring does with each is <code>REPORTING_POLICY</code>.
-Foreign errors are converted into typed errors where they enter the app, by the
-module they belong to, which also defines the typed classes it creates (each
-documents what its kind of failure is).</p>
-</div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <code>    <code>&quot;connectivity&quot; | &quot;session-expired&quot; | &quot;not-permitted&quot; | &quot;local-storage&quot; | &quot;server-error&quot; | &quot;write-conflict&quot;</code>
+                    <code>        <code><a href="../miscellaneous/variables.html#ERROR_CLASSIFICATIONS" target="_self" >typeof ERROR_CLASSIFICATIONS[&#x27;number&#x27;]</a></code>
 </code>
                 </td>
             </tr>
@@ -1615,6 +1608,31 @@ the index of a field group in the form, or the toolbar of fields not used in the
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="../miscellaneous/functions.html#isSupported" target="_self" >Pick&lt;typeof AppSdk &amp; initializeApp&gt; &amp; Pick&lt;typeof MessagingSdk &amp; &quot;isSupported&quot; | &quot;getMessaging&quot; | &quot;getToken&quot; | &quot;deleteToken&quot; | &quot;onMessage&quot;&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/logging/logging-test-utils.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Frame"></a>
+                    <span class="name "><b>Frame</b><a href="#Frame"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Fixtures for the specs of the remote monitoring (Sentry) processing.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>{ function?: string; filename?: string }</code>
 </code>
                 </td>
             </tr>
@@ -2106,7 +2124,7 @@ as a plain string is flagged.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <code>    <code>&quot;label&quot; | &quot;labelShort&quot; | &quot;labelPlural&quot; | &quot;description&quot; | &quot;title&quot; | &quot;header&quot;</code>
+                    <code>        <code><a href="../miscellaneous/functions.html#title" target="_self" >&quot;label&quot; | &quot;labelShort&quot; | &quot;labelPlural&quot; | &quot;description&quot; | &quot;title&quot; | &quot;header&quot;</a></code>
 </code>
                 </td>
             </tr>

@@ -242,7 +242,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="309" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:309</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="304" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:304</a></div>
                                 </td>
                             </tr>
 
@@ -286,7 +286,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="310" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:310</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="305" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:305</a></div>
                                 </td>
                             </tr>
 
@@ -330,7 +330,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="311" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:311</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="306" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:306</a></div>
                                 </td>
                             </tr>
 
@@ -374,7 +374,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="312" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:312</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="307" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:307</a></div>
                                 </td>
                             </tr>
 
@@ -435,7 +435,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="313" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:313</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="308" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:308</a></div>
                                 </td>
                             </tr>
 
@@ -483,7 +483,6 @@ import {
 import { EntitySchema } from &quot;../../../core/entity/schema/entity-schema&quot;;
 import { FormFieldConfig } from &quot;../../../core/common-components/entity-form/FormConfig&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;../../../utils/is-connectivity-error&quot;;
 import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
 import { finalize, firstValueFrom, from, mergeMap } from &quot;rxjs&quot;;
 import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
@@ -631,12 +630,8 @@ export class BulkLinkExternalProfilesComponent {
         };
       }
     } catch (err) {
-      if (isConnectivityError(err)) {
-        // offline or the external system unavailable: the warning is shown for the record
-        Logging.debug(&quot;Could not load external profiles (bulk action)&quot;, err);
-      } else {
-        Logging.warn(&quot;Could not load external profiles (bulk action)&quot;, err);
-      }
+      // the warning is shown for the record
+      Logging.warn(&quot;Could not load external profiles (bulk action)&quot;, err);
       record.warning &#x3D; {
         ...(record.warning ?? {}),
         possibleMatches: $localize&#x60;:bulk-link external profile error:Error while fetching possible matches. Please try to manually search and select a profile to see details.&#x60;,

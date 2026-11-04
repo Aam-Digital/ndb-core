@@ -3223,7 +3223,7 @@ export class EditEntityComponent&lt;
     const entity &#x3D; await this.entityMapperService
       .load&lt;E&gt;(type, selectedId)
       .catch((err: any) &#x3D;&gt; {
-        if (err?.status &#x3D;&#x3D;&#x3D; 404 || err?.status &#x3D;&#x3D;&#x3D; 401) {
+        if (err?.status &#x3D;&#x3D;&#x3D; 404) {
           Logging.debug(
             &quot;[ENTITY_SELECT] Selected entity not found.&quot;,
             selectedId,
@@ -3231,8 +3231,8 @@ export class EditEntityComponent&lt;
         } else {
           Logging.warn(
             &quot;[ENTITY_SELECT] Error loading selected entity.&quot;,
-            selectedId,
             err,
+            selectedId,
           );
         }
         return undefined;

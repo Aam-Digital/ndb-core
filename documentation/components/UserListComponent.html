@@ -829,7 +829,7 @@ export class UserListComponent implements OnInit {
         this.dataSource.paginator?.firstPage();
       },
       error: (err) &#x3D;&gt; {
-        Logging.error(&quot;Failed to load users:&quot;, err);
+        Logging.error(&quot;Failed to load users&quot;, err);
         this.alertService.addWarning(
           $localize&#x60;Failed to load users. Please try again later or contact your server administrator.&#x60;,
         );

@@ -158,7 +158,8 @@
             <p class="comment">
                 <p>The permission rules do not allow the current user what was requested: our
 backend answered 403, or 401 &quot;not permitted&quot; (converted by the database layer
-and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
+and the HTTP interceptor, see <code>backend-response.ts</code>), or any 401 to a session
+without login (e.g. a public form, see <code>RemotePouchDatabase</code>).</p>
 
             </p>
 
@@ -205,16 +206,8 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier">Static</span>
-                                    <span class="modifier"></span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#classification" >classification</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier">Static</span>
-                                    <span class="modifier">Readonly</span>
-                                <a href="#errorName" >errorName</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -252,7 +245,7 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/permissions/not-permitted.error.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/permissions/not-permitted.error.ts:12</a></div>
                             </td>
                         </tr>
 
@@ -313,8 +306,6 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
                 <td class="col-md-4">
                     <a name="classification"></a>
                     <span class="name">
-                            <span class="modifier">Static</span>
-                            <span class="modifier"></span>
                             <span class="modifier">Readonly</span>
                         <span ><b>classification</b></span>
                         <a href="#classification"><span class="icon ion-ios-link"></span></a>
@@ -327,11 +318,6 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
 
                     </td>
                 </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;not-permitted&quot;</code>
-                    </td>
-                </tr>
                         <tr>
                             <td class="col-md-4">
                                 <div class="io-line">Inherited from         <code><a href="../classes/TypedError.html" target="_self" >TypedError</a></code>
@@ -340,44 +326,18 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/TypedError.html#source" target="_self" >TypedError:15</a></code>
+                                <div class="io-line">        <code><a href="../classes/TypedError.html#source" target="_self" >TypedError:39</a></code>
 </div>
                         </td>
                     </tr>
 
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="errorName"></a>
-                    <span class="name">
-                            <span class="modifier">Static</span>
-                            <span class="modifier">Readonly</span>
-                        <span ><b>errorName</b></span>
-                        <a href="#errorName"><span class="icon ion-ios-link"></span></a>
-                    </span>
+                    <div class="io-description"><p>The kind of failure: an own property, so that a copy of the error that lost
+its class (as PouchDB&#39;s <code>createError()</code> makes) still has it.</p>
+</div>
                 </td>
             </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;NotPermittedError&quot;</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/permissions/not-permitted.error.ts:14</a></div>
-                        </td>
-                    </tr>
-
 
         </tbody>
     </table>
@@ -408,7 +368,7 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/TypedError.html#source" target="_self" >TypedError:36</a></code>
+                                <div class="io-line">        <code><a href="../classes/TypedError.html#source" target="_self" >TypedError:42</a></code>
 </div>
                         </td>
                     </tr>
@@ -476,8 +436,6 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ErrorClassification,
-  registerTypedError,
   TypedError,
   TypedErrorOptions,
 } from &quot;#src/app/core/logging/error-classification&quot;;
@@ -485,18 +443,14 @@ and the HTTP interceptor, see <code>backend-response.ts</code>).</p>
 /**
  * The permission rules do not allow the current user what was requested: our
  * backend answered 403, or 401 &quot;not permitted&quot; (converted by the database layer
- * and the HTTP interceptor, see &#x60;backend-response.ts&#x60;).
+ * and the HTTP interceptor, see &#x60;backend-response.ts&#x60;), or any 401 to a session
+ * without login (e.g. a public form, see &#x60;RemotePouchDatabase&#x60;).
  */
 export class NotPermittedError extends TypedError {
-  static readonly errorName &#x3D; &quot;NotPermittedError&quot;;
-  static override readonly classification: ErrorClassification &#x3D;
-    &quot;not-permitted&quot;;
-
   constructor(message: string, options?: TypedErrorOptions) {
-    super(NotPermittedError.errorName, message, options);
+    super(&quot;NotPermittedError&quot;, &quot;not-permitted&quot;, message, options);
   }
 }
-registerTypedError(NotPermittedError);
 </code></pre>
     </div>
 </div>

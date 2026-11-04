@@ -917,7 +917,7 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { UnsavedChangesService } from &quot;../form/unsaved-changes.service&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
-import { isNotPermittedError } from &quot;../../../utils/is-not-permitted-error&quot;;
+import { isNotPermittedError } from &quot;../../logging/error-classification&quot;;
 
 /**
  * This component can be used to display an entity in more detail.
@@ -1022,11 +1022,11 @@ export abstract class AbstractEntityDetailsComponent {
           }
           if (isNotPermittedError(error)) {
             // a permission rule excludes this record for the user (e.g. remote-only session)
-            Logging.debug(&quot;User is not permitted to load record&quot;, error);
             this.alertService.addWarning(
               $localize&#x60;:record details not permitted:You don&#x27;t have access to this record.&#x60;,
             );
-          } else if (error?.status !&#x3D;&#x3D; 404) {
+          }
+          if (error?.status !&#x3D;&#x3D; 404) {
             Logging.warn(&quot;Error loading record&quot;, error);
           }
           return null;

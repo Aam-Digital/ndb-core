@@ -669,7 +669,7 @@ import { UserSettings } from &quot;../../site-settings/user-settings&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { EntityPermissionError } from &quot;../../entity/entity-mapper/entity-permission-error&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
-import { isNotPermittedError } from &quot;#src/app/utils/is-not-permitted-error&quot;;
+import { isNotPermittedError } from &quot;../../logging/error-classification&quot;;
 
 /**
  * Lets a user pick the language for their own account.
@@ -748,9 +748,7 @@ export class UserLanguageSettingsComponent {
         return;
       }
 
-      Logging.error(
-        new Error(&quot;Failed to save the user&#x27;s language&quot;, { cause: err }),
-      );
+      Logging.error(&quot;Failed to save the user&#x27;s language&quot;, err);
       this.alertService.addDanger(
         $localize&#x60;Your language could not be saved. Please try again.&#x60;,
       );

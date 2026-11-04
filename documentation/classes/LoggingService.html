@@ -930,7 +930,7 @@ import { Router } from &quot;@angular/router&quot;;
 import { TraceService } from &quot;@sentry/angular&quot;;
 import { processSentryEvent } from &quot;./sentry-event-processing&quot;;
 import { LoggedError } from &quot;./reported-errors&quot;;
-import { classifyReportedError } from &quot;./uncaught-error-classification&quot;;
+import { isExpectedFailure } from &quot;./uncaught-error-classification&quot;;
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -1053,31 +1053,22 @@ export class LoggingService {
     logLevel: LogLevel &#x3D; LogLevel.INFO,
     ...context: any[]
   ) {
+    if (
+      SENTRY_LEVELS[logLevel] &amp;&amp;
+      isExpectedFailure(loggedError(message, context))
+    ) {
+      // a failure of the user&#x27;s environment, not ours to fix
+      logLevel &#x3D; LogLevel.DEBUG;
+    }
     this.logToConsole(message, logLevel, ...context);
 
-    if (logLevel !&#x3D;&#x3D; LogLevel.DEBUG &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.INFO) {
+    if (SENTRY_LEVELS[logLevel]) {
       this.logToRemoteMonitoring(message, logLevel, ...context);
     }
   }
 
   private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        console.debug(message, ...context);
-        break;
-      case LogLevel.INFO:
-        console.info(message, ...context);
-        break;
-      case LogLevel.WARN:
-        console.warn(message, ...context);
-        break;
-      case LogLevel.ERROR:
-        console.error(message, ...context);
-        break;
-      default:
-        console.log(message, ...context);
-        break;
-    }
+    console[CONSOLE_METHODS[logLevel]](message, ...context);
   }
 
   private logToRemoteMonitoring(
@@ -1096,7 +1087,7 @@ export class LoggingService {
     }
     const scope &#x3D; {
       extra: Object.keys(extra).length &gt; 0 ? extra : undefined,
-      level: this.translateLogLevel(logLevel),
+      level: SENTRY_LEVELS[logLevel],
     };
 
     const error &#x3D; toReportedError(message, context, logLevel);
@@ -1106,22 +1097,20 @@ export class LoggingService {
       Sentry.captureMessage(messageText(message), scope);
     }
   }
-
-  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        return &quot;debug&quot;;
-      case LogLevel.INFO:
-        return &quot;info&quot;;
-      case LogLevel.WARN:
-        return &quot;warning&quot;;
-      case LogLevel.ERROR:
-        return &quot;error&quot;;
-      default:
-        return &quot;info&quot;;
-    }
-  }
 }
+
+const CONSOLE_METHODS: Record&lt;LogLevel, &quot;debug&quot; | &quot;info&quot; | &quot;warn&quot; | &quot;error&quot;&gt; &#x3D; {
+  [LogLevel.DEBUG]: &quot;debug&quot;,
+  [LogLevel.INFO]: &quot;info&quot;,
+  [LogLevel.WARN]: &quot;warn&quot;,
+  [LogLevel.ERROR]: &quot;error&quot;,
+};
+
+/** Only &#x60;warn&#x60; and &#x60;error&#x60; are reported (see {@link LoggingService.log}). */
+const SENTRY_LEVELS: Partial&lt;Record&lt;LogLevel, Sentry.SeverityLevel&gt;&gt; &#x3D; {
+  [LogLevel.WARN]: &quot;warning&quot;,
+  [LogLevel.ERROR]: &quot;error&quot;,
+};
 
 /**
  * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
@@ -1172,11 +1161,25 @@ function messageText(message: any): string {
 }
 
 /**
+ * The error a log call is about: the message if it is an error, else the first
+ * error among the context (also an error-like object, e.g. an &#x60;HttpErrorResponse&#x60;).
+ */
+function loggedError(message: unknown, context: unknown[]): unknown {
+  if (message instanceof Error) {
+    return message;
+  }
+  return (
+    context.find((c) &#x3D;&gt; c instanceof Error) ??
+    context.find((c) &#x3D;&gt; typeof (c as { name?: unknown })?.name &#x3D;&#x3D;&#x3D; &quot;string&quot;)
+  );
+}
+
+/**
  * The Error to report for a log call, or &#x60;undefined&#x60; for a plain message event.
  *
  * A logged message comes with the logged error as its &#x60;cause&#x60; (a {@link LoggedError}),
- * also for a warning: only as an exception is the error grouped and filtered by its
- * cause. A warning without an error is about the situation itself.
+ * also for a warning: only as an exception is the error grouped by its cause.
+ * A warning without an error is about the situation itself.
  */
 export function toReportedError(
   message: any,
@@ -1186,32 +1189,11 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
-  if (isClassifiedForeignFailure(message)) {
-    // e.g. an &#x60;HttpErrorResponse&#x60; logged as it is: grouped and filtered like that failure
-    return new LoggedError(messageText(message), message);
-  }
-
-  const cause &#x3D;
-    context.find((c) &#x3D;&gt; c instanceof Error) ??
-    context.find((c) &#x3D;&gt; isClassifiedForeignFailure(c));
+  const cause &#x3D; context.find((c) &#x3D;&gt; c instanceof Error);
   if (!cause &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
-}
-
-/**
- * A logged failure that is not an &#x60;Error&#x60; but that remote monitoring recognizes
- * (e.g. an &#x60;HttpErrorResponse&#x60; of another service without response): reported as
- * the cause, so that it is grouped and filtered like that failure. Other failed
- * responses (e.g. a 404) stay data: whether they are exceptional is for the caller to decide.
- */
-function isClassifiedForeignFailure(value: unknown): boolean {
-  return (
-    !!value &amp;&amp;
-    typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
-    classifyReportedError(value) !&#x3D;&#x3D; undefined
-  );
 }
 </code></pre>
     </div>

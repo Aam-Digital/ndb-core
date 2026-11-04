@@ -231,7 +231,7 @@ because a login account is linked to them as its &quot;profile&quot;.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:39</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:36</a></div>
                                 </td>
                             </tr>
 
@@ -279,7 +279,7 @@ because it is unknown which of them are linked to an account.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:27</a></div>
                                 </td>
                             </tr>
 
@@ -311,10 +311,7 @@ import { DatabaseResolverService } from &quot;../../database/database-resolver.s
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { ImportMetadata } from &quot;../../import/import-metadata&quot;;
-import {
-  UserAdminApiError,
-  UserAdminService,
-} from &quot;../../user/user-admin-service/user-admin.service&quot;;
+import { UserAdminService } from &quot;../../user/user-admin-service/user-admin.service&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
@@ -538,22 +535,11 @@ Afterwards you have to set up the system from scratch. This step cannot be rever
       );
       return { linkedProfileIds, accountsVerified: true };
     } catch (err) {
-      // a missing account_manager role is an expected, common case and not worth a warning
-      if (err instanceof UserAdminApiError &amp;&amp; err.status &#x3D;&#x3D;&#x3D; 403) {
-        Logging.debug(
-          &quot;Could not look up user accounts before deleting records&quot;,
-          {
-            error: err,
-          },
-        );
-      } else {
-        Logging.warn(
-          &quot;Could not look up user accounts before deleting records&quot;,
-          {
-            error: err,
-          },
-        );
-      }
+      // at debug for a missing account_manager role (see &#x60;UserAdminApiError&#x60;)
+      Logging.warn(
+        &quot;Could not look up user accounts before deleting records&quot;,
+        err,
+      );
       return { linkedProfileIds: new Set(), accountsVerified: false };
     }
   }

@@ -128,238 +128,248 @@
 
 
 <h1>How to log errors</h1>
-<p>This Guide considers logging of errors and information that is necessary for developers in debugging and monitoring.
-Refer to the <em>Display Dialogs and Notifications</em> guide
-regarding ways to inform the user about errors or other events.</p>
+<p>This guide covers logging for debugging and monitoring. Refer to the <em>Display
+Dialogs and Notifications</em> guide for ways to inform the user about errors or
+other events.</p>
 <h2>Logging things</h2>
-<p>Production code (whatever is merged into the <code>master</code> branch) should not contain any calls to <code>console.log()</code>.
-Instead, to log information for analysis and debugging (without explicit notification to the user)
-use the <code>Logging</code> object.
-This way, all logging is done in a consistent manner and can be transferred to the remote monitoring or saved in some other way:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">someFun() {
-  Logging.error(&#39;some error information&#39;);
-}</code></pre></div><p>The <code>LoggingService</code> has multiple log levels (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>)
-that control whether log messages are sent to the remote monitoring and how they are treated there.</p>
-<p>The browser console links every message to the line in <code>logging.service.ts</code>
-that writes it. To see the code that called <code>Logging</code> instead, add
-<code>logging\.service\.ts$</code> as a custom pattern to the ignore list of the
-browser&#39;s developer tools (Chrome: DevTools Settings &gt; Ignore list &gt;
-Add pattern; Firefox: &quot;Ignore source&quot; in the Debugger).
-The expandable stack trace of the message also shows the caller.</p>
+<p>Production code does not call <code>console.log()</code>, but uses the <code>Logging</code> object. It
+has the levels <code>debug</code>, <code>info</code>, <code>warn</code> and <code>error</code>. Only <code>warn</code> and <code>error</code> (and
+every unhandled error) go to remote monitoring; <code>debug</code> and <code>info</code> only to the
+browser console.</p>
+<p>The browser console links every message to the line in <code>logging.service.ts</code> that
+writes it. To see the code that called <code>Logging</code> instead, add
+<code>logging\.service\.ts$</code> to the ignore list of the browser&#39;s developer tools
+(Chrome: DevTools Settings &gt; Ignore list; Firefox: &quot;Ignore source&quot; in the
+Debugger).</p>
 <h2>Deciding what to report</h2>
-<p>A Sentry issue should mean &quot;a developer has something to fix&quot;. Before adding a log call, decide
-who has to act on the failure:</p>
+<p>A Sentry issue should mean &quot;a developer has something to fix&quot;. Before adding a
+log call, decide who has to act on the failure:</p>
 <ul>
-<li><strong>Bug in our code</strong> (e.g. a <code>TypeError</code> in a template, an id built with the wrong entity type):
-report it with <code>Logging.error</code>, or let it throw.</li>
-<li><strong>Server or infrastructure fault</strong> (e.g. an unexpected <code>400</code>/<code>5xx</code> from our own backend):
-report it with <code>Logging.warn</code>, including the response, and tell the user the action failed.</li>
-<li><strong>User or device environment</strong> (e.g. offline or flaky connection, expired session, a record the
-user may not read, a browser permission the user denied such as clipboard or notifications):
-do not report it (<code>Logging.debug</code>); tell the user what happened and what they can do.</li>
-<li><strong>Instance configuration or data problem</strong> (e.g. an unknown <code>dataType</code>, icon or validator in the
-config; a permission rule variable for an account without a linked profile; a file field pointing
-to a missing file): report it with <code>Logging.warn</code>, with a static message and the offending value
-in the context. If it would recur on every page load, report it once per session. Also make it
-visible to admins in the UI where possible, and validate the config when it is saved.</li>
-<li><strong>Optional feature not set up for the instance</strong> (e.g. push notifications without a Firebase
-config): this is not a problem, do not report it (<code>Logging.debug</code>).</li>
+<li><strong><code>error</code>, or let it throw:</strong> a bug in our code (a <code>TypeError</code> in a template,
+an id built with the wrong entity type).</li>
+<li><strong><code>warn</code> with the response; tell the user the action failed:</strong> a server or
+infrastructure fault (an unexpected <code>400</code>/<code>5xx</code> from our backend).</li>
+<li><strong><code>warn</code> with a static message and the offending value as context; once per
+session if it would recur:</strong> an instance configuration or data problem (an
+unknown <code>dataType</code> or validator in the config, a permission rule variable for
+an account without linked profile).</li>
+<li><strong><code>warn</code>:</strong> a risk of data loss, a permission inconsistency pointing to a bug,
+a deliberate audit event (e.g. a confirmed reset of application data).</li>
+<li><strong><code>debug</code>; tell the user what happened and what they can do:</strong> the user&#39;s
+environment: offline, expired session, a record the user may not read, an edit
+conflict, a browser permission the user denied.</li>
+<li><strong><code>debug</code>:</strong> an external service unavailable (address lookup, GitHub releases
+API), a normal fallback, a known limitation (<code>purge()</code> on the <code>idb</code> adapter),
+an optional feature not set up (push without Firebase config).</li>
+<li><strong><code>debug</code>:</strong> a reference the UI falls back from on its own (a file field
+pointing to a missing attachment, an unknown icon).</li>
 </ul>
-<p>Rules that keep one root cause in one Sentry issue (see also &quot;Log an error together with a message&quot;
-and &quot;Log a failure once&quot; below):</p>
+<p>In a catch block, log the caught error with <code>Logging.warn(message, err)</code> or
+<code>Logging.error(message, err)</code>. <code>Logging</code> itself logs it at <code>debug</code> if it is a
+failure of the user&#39;s environment (<code>isExpectedFailure()</code>: offline, expired
+session, missing permission, edit conflict, judged along the <code>cause</code> chain),
+unless one of our named errors wraps it (e.g. <code>AppBootstrapError</code>: the app could
+not start). So do not check for these yourself, and do not write ad-hoc status
+checks: handle only an expected case of your own (e.g. a <code>404</code>) in a branch
+before.</p>
 <ul>
-<li><strong>Never leave a promise floating.</strong> An <code>async</code> call inside <code>subscribe()</code>, an effect or an event
-handler needs <code>await</code> or <code>.catch()</code>. Otherwise an expected failure reaches Angular&#39;s
-<code>ErrorHandler</code> and is reported as a separate, unhandled issue.</li>
-<li><strong>Classify failures with the shared helpers</strong>, not with ad-hoc status checks per component:
-<code>isConnectivityError()</code> (<code>src/app/utils/is-connectivity-error.ts</code>), <code>isExpiredSessionError()</code>
-(<code>src/app/utils/is-expired-session-error.ts</code>) and <code>isNotPermittedError()</code>
-(<code>src/app/utils/is-not-permitted-error.ts</code>). A component that only treats <code>404</code> as expected
-logs every dropped connection as a warning of its own, and cannot tell the user what happened.</li>
-<li><strong>Check whether an optional feature is configured before using it</strong> (e.g. push notifications
-without a Firebase config) instead of logging its failure on every page load.</li>
-<li><strong>A known limitation is not an event.</strong> If something fails on every sync or render for a known
-reason (e.g. <code>purge()</code> on the legacy <code>idb</code> adapter), check the capability up front.</li>
-<li><strong>Expect config values of the wrong type.</strong> The config is plain JSON edited by admins; a template
-or <code>computed()</code> must not crash because a value is not of the type its interface declares.</li>
-</ul>
-<h3>Which level to use</h3>
-<p><code>warn</code> and <code>error</code> go to Sentry, <code>debug</code> and <code>info</code> only to the browser console. Decide per call site:</p>
-<ul>
-<li><strong>Keep <code>warn</code></strong> for an unexpected but handled situation that a developer or support has to act on:<ul>
-<li>a code defect, or a data or config inconsistency (if it would recur on every page load, report
-it once per session, e.g. an invalid locale);</li>
-<li>a risk of data loss: the local database lost or evicted, user data that could not be saved for a
-reason other than permissions or connectivity;</li>
-<li>a permission inconsistency that indicates a bug (e.g. the server refusing docs the client let the
-user change);</li>
-<li>a deliberate audit event the team relies on (e.g. a user-confirmed reset of application data),
-with a static message.</li>
-</ul>
-</li>
-<li><strong>Use <code>debug</code></strong> for expected operational conditions: offline or connectivity failures, an expired
-session, a record the user may not read, an external service being unavailable (e.g. the address
-lookup, the GitHub releases API for &quot;latest changes&quot;), a normal fallback path (e.g. loading all
-records when an index cannot be used), a known limitation (e.g. <code>purge()</code> on the <code>idb</code> adapter),
-purely informational traces, and anything the UI already tells the user with nothing for
-developers to fix.</li>
-<li><strong>Do not downgrade a whole catch block</strong> that mixes both: classify the error with the helpers above
-and log only the expected cases at <code>debug</code>, keeping <code>warn</code> for the rest.</li>
-<li><strong>Do not rethrow</strong> an error after telling the user about it, unless the caller handles it: it is
-reported again as an unhandled error.</li>
+<li><strong>Never leave a promise floating.</strong> An <code>async</code> call inside <code>subscribe()</code>, an
+effect or an event handler needs <code>await</code> or <code>.catch()</code>. Otherwise an expected
+failure reaches Angular&#39;s <code>ErrorHandler</code> and is reported as a separate,
+unhandled issue.</li>
+<li><strong>Log a failure once.</strong> Either handle it where it is caught (log, recover,
+tell the user) or rethrow it, not both: a rethrown error that nothing catches
+is reported again. A component receiving only a result flag from a service
+that has logged the failure does not log it again.</li>
+<li><strong>Check whether an optional feature is configured, or a known limitation
+applies, before using it</strong>, instead of logging the same failure on every page
+load or sync.</li>
+<li><strong>Expect config values of the wrong type</strong> (the config is plain JSON edited by
+admins), make config problems visible to admins in the UI where possible, and
+validate the config when it is saved.</li>
 </ul>
 <h2>Remote Logging</h2>
-<p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.</p>
-<p>Remote logging is off unless the deployment sets the DSN of its Sentry project as <code>remoteLoggingDsn</code> in
-its <code>assets/config.json</code> (the file that overrides the <code>environment</code> at startup, see
-<code>src/bootstrap-environment.ts</code>). No build ships a default DSN, so a deployment without it reports
-nothing and only logs to the browser console:</p>
+<p>Remote logging to <a href="https://sentry.io/">Sentry</a> is off unless the deployment sets
+the DSN of its Sentry project as <code>remoteLoggingDsn</code> in its <code>assets/config.json</code>
+(the file that overrides the <code>environment</code> at startup, see
+<code>src/bootstrap-environment.ts</code>). No build ships a default DSN:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
   &quot;remoteLoggingDsn&quot;: &quot;https://&lt;key&gt;&#64;&lt;org&gt;.ingest.sentry.io/&lt;project&gt;&quot;
-}</code></pre></div><p>The default <code>CSP</code> of the Docker image allows <code>https://*.sentry.io</code>; a Sentry on another host (e.g. self-hosted)
-must be added to <code>CSP</code> (see the build README), otherwise its requests violate the Content Security Policy.</p>
-<p>The DSN is read after <code>config.json</code> has loaded, so errors before that (including a failure to load
-<code>config.json</code> itself) are never reported.</p>
-<p>Events are filed under the Sentry <code>environment</code> &quot;production&quot; for every production build. Deployments
-that are not used in production (internal test instances, demos, PR previews) should set
-<code>remoteLoggingEnvironment</code> in their <code>config.json</code>, so that their events can be filtered out of triage.</p>
+}</code></pre></div><p>The default <code>CSP</code> of the Docker image allows <code>https://*.sentry.io</code>; a Sentry on
+another host (e.g. self-hosted) must be added to <code>CSP</code> (see the build README).
+The DSN is read after <code>config.json</code> has loaded, so errors before that (including
+a failure to load <code>config.json</code> itself) are never reported.</p>
+<p>Events are filed under the Sentry <code>environment</code> &quot;production&quot; for every
+production build. Deployments not used in production (internal test instances,
+demos, PR previews) should set <code>remoteLoggingEnvironment</code> in their
+<code>config.json</code>, so that their events can be filtered out of triage.</p>
 <h3>Keep message strings static</h3>
-<p>How messages are grouped there depends on the (static) message text, so keep <code>Logging.warn()</code> / <code>Logging.error()</code>
-message strings constant and pass variable data as additional context arguments:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">// don&#39;t - one separate issue per entity type, and the details are lost from the title
+<p>Messages are grouped by their text, so keep <code>Logging.warn()</code> / <code>Logging.error()</code>
+messages constant and pass variable data as context arguments:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">// don&#39;t - one issue per entity type, and the details are lost from the title
 Logging.warn(`Config references unknown entity type &quot;${config.entity}&quot;`);
 
 // do - one issue for the problem, details available in the event&#39;s &quot;context&quot;
 Logging.warn(&quot;Config references an unknown entity type&quot;, {
   entityType: config.entity,
-});</code></pre></div><p>For thrown <code>Error</code>s, which reach the monitoring through Angular&#39;s <code>ErrorHandler</code>, whether the message
-affects grouping depends on whether it is one of our named errors — see below. Either way it is the
-issue title, so the readability rule always applies. Never interpolate <code>this.constructor.name</code> into
-one: it is minified in production, and because the message is built when the error is created, source
-maps cannot repair it the way they repair a stack trace. Such a report permanently reads
-<code>not registered in u</code>.</p>
+});</code></pre></div><p>The message of a thrown <code>Error</code> is the issue title, so the same applies to it.
+Never interpolate <code>this.constructor.name</code> into one: it is minified in
+production, and source maps cannot repair a message.</p>
 <h3>Log an error together with a message</h3>
-<p>Pass the caught error as a context argument rather than logging it on its own:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">// don&#39;t - the issue is titled by whatever the library called it (&quot;Error: Failed to fetch&quot;),
-// which says nothing about what the app was doing, and groups by the call site&#39;s stack
+<p>Pass the caught error as the argument after the message, not on its own and not
+inside a context object:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">// don&#39;t - titled by whatever the library called it (&quot;Error: Failed to fetch&quot;)
 Logging.error(err);
+// don&#39;t - the error is not classified, grouped or shown with its stack trace
+Logging.error(&quot;Could not download file&quot;, { error: err });
 
 // do
-Logging.error(&quot;Could not download file&quot;, err);</code></pre></div><p><code>Logging.error(message, err)</code> and <code>Logging.warn(message, err)</code> report the message as the error (a
-<code>LoggedError</code>) with the original as its <code>cause</code>, so the original error and its stack trace stay in the
-event, and the grouping and filtering below apply to it. Logged without an error, the message is
-reported as a plain message event, grouped by its text. An <code>HttpErrorResponse</code> is not an <code>Error</code> and
-counts as &quot;no error&quot; here, unless it is a request to another service that got no response (status 0 or a
-gateway status): that is reported as the <code>cause</code>, so that it goes into the network issue. So do not drop the error before logging (a <code>catchError(() =&gt; of(null))</code>
-followed by a log call without it leaves the report impossible to diagnose), and do not pass the same
-error object twice.</p>
-<h3>Log a failure once</h3>
-<p>Either handle a failure where it is caught (log it, recover, tell the user) or rethrow it — not both.
-When the rethrown error reaches a caller that does not catch it either, it is reported a second time as
-an unhandled error, under its own and usually less telling title. Likewise, when a service has logged
-a failure and only returns a result flag, the component receiving it must not log it again.</p>
+Logging.error(&quot;Could not download file&quot;, err, { fileId });</code></pre></div><p><code>Logging.error(message, err)</code> and <code>Logging.warn(message, err)</code> report the
+message as an error (a <code>LoggedError</code>) with the original as its <code>cause</code>, which
+Sentry keeps in the exception chain. A warning without an <code>Error</code> is reported as
+a plain message event. Angular&#39;s <code>HttpErrorResponse</code> is not an <code>Error</code> and is
+reported as context only; one that got no response (status 0 or a gateway
+status) is a connectivity failure and logged at <code>debug</code>. Do not drop the error
+before logging (e.g. <code>catchError(() =&gt; of(null))</code> followed by a log call without
+it).</p>
 <h3>Our own errors: <code>NamedError</code></h3>
-<p>Extend <code>NamedError</code> (<code>reported-errors.ts</code>) for an error whose name and message identify the problem on
-their own, no matter which component ran into it — e.g. <code>ConfigLoadError</code>, <code>SyncStalledError</code>,
-<code>DatabaseException</code>, <code>RegistryLookupError</code>. Remote monitoring groups these by name, message and root
-cause instead of by stack trace, which would open one issue per call site (and per build).</p>
+<p>Extend <code>NamedError</code> for an error whose name and message identify the problem on
+their own, whichever component ran into it, e.g. <code>ConfigLoadError</code>,
+<code>SyncStalledError</code>, <code>DatabaseException</code>, <code>EntityPermissionError</code>,
+<code>RegistryLookupError</code>. Remote monitoring groups these by name, message and root
+cause instead of by stack trace (which opens one issue per call site and per
+build).</p>
 <ul>
 <li>Pass the name as a literal: the class name is minified in production builds.</li>
-<li>Keep the message free of ids and other variable data, and pass them as <code>details</code> instead: they are
-reported as extra data, without splitting the issue.</li>
-<li>Do not use it for generic errors (<code>TypeError</code>, ...): for those, the stack trace is the only thing
-telling two unrelated bugs apart.</li>
-<li>A failure that is only logged, not thrown, needs no name: <code>Logging.error(message, err)</code> is grouped
-the same way. Name it only where a network failure must keep an issue of its own because the app
-cannot continue (<code>AppBootstrapError</code>, <code>ConfigLoadError</code>).</li>
+<li>Keep the message free of ids and other variable data; pass them as <code>details</code>,
+reported as extra data.</li>
+<li>For a classified failure, extend one of the typed errors below instead.</li>
+<li>Do not use it for generic errors (<code>TypeError</code>, ...): there, the stack trace
+tells two bugs apart.</li>
+<li>A failure that is only logged, not thrown, needs no name:
+<code>Logging.error(message, err)</code> is grouped the same way.</li>
 </ul>
 <h3>Typed errors: classifying failures where they enter the app</h3>
-<p>Foreign errors are converted into typed errors where they enter the app, by the knowledge of the module
-they belong to: the database layer (<code>DatabaseException</code>, <code>pouchdb-errors.ts</code>), <code>typedHttpErrorInterceptor</code>
-for requests to our backend (<code>/db</code>, <code>/api</code>) and <code>KeycloakAuthService</code>, sharing what our backend&#39;s
-responses mean (<code>src/app/utils/backend-response.ts</code>). Each typed class extends <code>TypedError</code>
-(<code>error-classification.ts</code>), declares its kind of failure as <code>static classification</code> and lives in the
-module that creates it: <code>ConnectivityError</code> and <code>ServerError</code> in <code>src/app/utils/backend-errors.ts</code>,
-<code>NotPermittedError</code> in <code>core/permissions/</code>, <code>SessionExpiredError</code> in <code>core/session/</code>,
-<code>WriteConflictError</code> and <code>LocalStorageError</code> in <code>core/database/pouchdb/database-errors.ts</code>.
-Everything else judges an error by its type (<code>classifyError()</code>). Only remote monitoring also recognizes
-the few foreign errors that reach it uncaught, e.g. a failed chunk load
-(<code>uncaught-error-classification.ts</code>). For a new kind of failure, extend one of the typed classes.</p>
+<p>Foreign errors are converted into typed errors where they enter the app, by the
+knowledge of the module they belong to: the database layer (<code>databaseError()</code>,
+<code>pouchdb-errors.ts</code>), <code>typedHttpErrorInterceptor</code> for requests to our backend
+(<code>/db</code>, <code>/api</code>) and <code>KeycloakAuthService</code>, sharing what our backend&#39;s responses
+mean (<code>src/app/utils/backend-response.ts</code>). Each typed class extends
+<code>TypedError</code> (<code>error-classification.ts</code>), passes its name and kind of failure to
+its constructor (kept as properties, so that a copy PouchDB makes of the error
+is still recognized) and lives in the module that creates it:
+<code>ConnectivityError</code> and <code>ServerError</code> in <code>src/app/utils/backend-errors.ts</code>,
+<code>NotPermittedError</code> in <code>core/permissions/</code>, <code>SessionExpiredError</code> in
+<code>core/session/</code>, <code>WriteConflictError</code> and <code>LocalStorageError</code> in
+<code>core/database/pouchdb/database-errors.ts</code>. Everything else judges an error by
+its type (<code>classifyError()</code>). Only the logging also recognizes the few foreign
+errors that reach it unconverted, e.g. a failed chunk load or a failed request
+to another service (<code>uncaught-error-classification.ts</code>). For a new kind of
+failure, extend one of the typed classes (e.g.
+<code>SyncStalledError extends ConnectivityError</code>).</p>
 <ul>
-<li><strong>Check for a kind of failure</strong> with <code>isConnectivityError()</code>, <code>isNotPermittedError()</code> or
-<code>isExpiredSessionError()</code> (<code>src/app/utils/</code>), which apply this classification to the whole <code>cause</code>
-chain, never with ad-hoc status checks.</li>
-<li><strong>Read a failed HTTP response</strong> with <code>failedHttpResponse(err)</code> (<code>src/app/utils/failed-http-response.ts</code>),
-never with <code>instanceof HttpErrorResponse</code> (a lint rule enforces this): a failed request to our backend
-with a classified status (no response, 401 expired or not permitted, 403, 409, 5xx) arrives as a typed
-error, with the <code>HttpErrorResponse</code> as its <code>cause</code>. Other statuses (e.g. 400, 404) and other services
-stay an <code>HttpErrorResponse</code>.</li>
+<li><strong>Check for a kind of failure</strong> (e.g. to tell the user why something failed)
+with <code>isConnectivityError()</code>, <code>isNotPermittedError()</code> or
+<code>classifyErrorChain()</code> (<code>error-classification.ts</code>), which apply this
+classification to the whole <code>cause</code> chain, never with ad-hoc status checks.</li>
+<li><strong>Read a failed HTTP response</strong> with <code>failedHttpResponse(err)</code>
+(<code>src/app/utils/failed-http-response.ts</code>), never with
+<code>instanceof HttpErrorResponse</code> (a lint rule enforces this): a failed request
+to our backend with a classified status (no response, 401 expired or not
+permitted, 403, 409, 5xx) arrives as a typed error, with the
+<code>HttpErrorResponse</code> as its <code>cause</code>. Other statuses (e.g. 400, 404) and other
+services stay an <code>HttpErrorResponse</code>. For a session without login (a public
+form), the database layer converts every <code>401</code> into a <code>NotPermittedError</code>:
+there is no session to renew.</li>
 </ul>
-<p>What remote monitoring does with each kind (<code>REPORTING_POLICY</code> in <code>sentry-event-processing.ts</code>):</p>
+<p>What remote monitoring does with each kind (<code>REPORTING_POLICY</code> in
+<code>sentry-event-processing.ts</code>). A caught <code>connectivity</code>, <code>session-expired</code>,
+<code>not-permitted</code> or <code>write-conflict</code> failure is logged at <code>debug</code> and never
+reaches it: these rows are about unhandled failures and named errors wrapping
+one.</p>
 <table class="table table-bordered compodoc-table">
 <thead>
 <tr><th>Classification</th><th>Reported</th></tr>
 </thead>
 <tbody>
-<tr><td><code>connectivity</code></td><td>one shared <code>network-error</code> issue, as warning; not while offline</td></tr>
+<tr><td><code>connectivity</code></td><td>in the shared <code>network-error</code> issue; not while offline</td></tr>
 <tr><td><code>server-error</code></td><td>at the logged level, one issue per status and endpoint</td></tr>
-<tr><td><code>not-permitted</code></td><td>as a warning if logged with a message or unhandled; dropped if logged without message</td></tr>
-<tr><td><code>local-storage</code></td><td>the first event of the page load, tagged <code>incident: local-db</code></td></tr>
+<tr><td><code>not-permitted</code></td><td>as a warning</td></tr>
+<tr><td><code>local-storage</code></td><td>first event per page load, tagged <code>incident: local-db</code></td></tr>
 <tr><td><code>session-expired</code></td><td>no: the user is told</td></tr>
-<tr><td><code>write-conflict</code></td><td>no: normal for an offline-first app, counted in usage analytics</td></tr>
+<tr><td><code>write-conflict</code></td><td>no: normal offline-first, counted in usage analytics</td></tr>
 </tbody>
 </table>
 <h3>How events are grouped and filtered</h3>
-<p>Sentry groups errors by their stack trace, so rewording a message changes an issue&#39;s title but never
-splits or merges issues; only a fingerprint does. <code>processSentryEvent</code> (the <code>beforeSend</code> hook) sets one
-where the stack is the wrong key, see <code>sentry-grouping.ts</code> for the rules:</p>
+<p>Sentry groups errors by their stack trace, so rewording a message changes an
+issue&#39;s title but never splits or merges issues; only a fingerprint does.
+<code>processSentryEvent</code> (the <code>beforeSend</code> hook) sets one where the stack is the
+wrong key, see <code>sentry-grouping.ts</code> for the rules:</p>
 <ul>
-<li>Our errors (a <code>NamedError</code> or a logged message) wrapping another error are grouped by the error and the
-root cause of the <code>cause</code> chain, so a generic root cause (a <code>missing</code> document, a <code>TypeError</code>) in
-another component gets an issue and alert of its own.</li>
-<li>A classified root cause that means the same wherever it occurs (a broken local database, not
-permitted, a server error, which also by its status and endpoint) is grouped by the root cause alone,
-with the reporting component as the <code>reported_by</code> tag.</li>
-<li>A request that never reached the server goes into the one network issue, unless a named error
-wrapping it says the app could not continue (e.g. <code>AppBootstrapError</code>).</li>
-<li>Errors without a stack and message events are grouped by their message, with ids, URLs and numbers
-masked (<code>fingerprintKey</code>).</li>
+<li>Our errors (a <code>NamedError</code> or a logged message) wrapping another error are
+grouped by the error and the root cause of the <code>cause</code> chain, so a generic
+root cause (a <code>missing</code> document, a <code>TypeError</code>) in another component gets an
+issue and alert of its own.</li>
+<li>A classified root cause that means the same wherever it occurs (a broken local
+database, not permitted, a server error, which also by its status and
+endpoint) is grouped by the root cause alone, with the reporting component as
+the <code>reported_by</code> tag.</li>
+<li>A request that never reached the server goes into the one network issue,
+unless a named error wrapping it says the app could not continue (e.g.
+<code>AppBootstrapError</code>).</li>
+<li>Errors without a stack and message events are grouped by their message, with
+ids, URLs and numbers masked (<code>fingerprintKey</code>).</li>
 </ul>
-<p>It also adds the error&#39;s <code>status</code>, <code>reason</code>, <code>entityId</code> and <code>details</code> as extra data, and drops an
-unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser).
-Changing the grouping does not re-group events already in Sentry: archive the issues it replaces once
-the release carrying it is rolled out.</p>
+<p>It also adds the error&#39;s <code>status</code>, <code>reason</code>, <code>entityId</code> and <code>details</code> as extra
+data, and drops an unhandled error raised only by a script inlined into the page
+(e.g. injected by an in-app browser). Changing the grouping does not re-group
+events already in Sentry: archive the issues it replaces once the release
+carrying it is rolled out.</p>
 <h3>Each failure is reported once per page load</h3>
-<p><code>reportOnce</code> (<code>report-once.ts</code>) turns a repeat of a failure already reported in this page load into a
-breadcrumb: the same error object (e.g. logged, then rethrown), a broken local database or the network
-issue after their first event, and any other issue after <code>MAX_REPEATED_SENTRY_EVENTS</code> events (against
-error loops). An issue&#39;s <strong>event count is therefore not a measure of how often a problem occurs</strong>: weigh
-how many sessions, deployments (the <code>url</code> tag) and releases it affects instead. Sentry shows 0 affected
-users, as events deliberately carry no user identity (data minimization under the GDPR).</p>
+<p><code>reportOnce</code> (<code>report-once.ts</code>) turns a repeat of a failure already reported in
+this page load into a breadcrumb: the same error object (e.g. logged, then
+rethrown), a broken local database or the network issue after their first event,
+and any other issue after <code>MAX_REPEATED_SENTRY_EVENTS</code> events (against error
+loops). An issue&#39;s <strong>event count is therefore not a measure of how often a
+problem occurs</strong>: weigh how many sessions, deployments (the <code>url</code> tag) and
+releases it affects instead. Sentry shows 0 affected users, as events
+deliberately carry no user identity (data minimization under the GDPR).</p>
 <h3>Investigating issues in Sentry</h3>
 <ul>
-<li>Issues from one browser session (same <code>trace</code> id in the event&#39;s context) usually share one root
-cause even when their titles differ: compare trace ids before treating them separately.</li>
-<li>The <code>environment</code> tag reads <code>production</code> for every production build, including internal test
-instances and PR preview builds, unless their <code>config.json</code> sets <code>remoteLoggingEnvironment</code> (see
-above). Check the <code>url</code> and <code>release</code> tags (<code>pr-…</code>, <code>…-master.N</code>) before treating an issue as
-customer-facing.</li>
-<li>Grouping and filtering run in the client, so a change to them only applies to events from clients
-that loaded the new release: cached older app versions keep reporting under the old titles. Check
-the <code>release</code> tag before investigating an issue that a change should already have handled.</li>
+<li>Issues from one browser session (same <code>trace</code> id in the event&#39;s context)
+usually share one root cause even when their titles differ: compare trace ids
+before treating them separately.</li>
+<li>The <code>environment</code> tag reads <code>production</code> for every production build, including
+internal test instances and PR preview builds, unless their <code>config.json</code> sets
+<code>remoteLoggingEnvironment</code> (see above). Check the <code>url</code> and <code>release</code> tags
+(<code>pr-…</code>, <code>…-master.N</code>) before treating an issue as customer-facing.</li>
+<li>Grouping and filtering run in the client, so a change to them only applies to
+events from clients that loaded the new release: cached older app versions
+keep reporting under the old titles. Check the <code>release</code> tag before
+investigating an issue that a change should already have handled.</li>
 </ul>
 <h2>Key files</h2>
 <ul>
-<li><code>logging.service.ts</code> — <code>LoggingService</code> and the <code>Logging</code> singleton; the log levels and how a log call is reported</li>
-<li><code>reported-errors.ts</code> — <code>NamedError</code> and <code>LoggedError</code>, the errors remote monitoring groups by message</li>
-<li><code>error-classification.ts</code> — <code>TypedError</code>, the base of the typed errors, and <code>classifyError()</code></li>
-<li><code>uncaught-error-classification.ts</code> — the foreign errors recognized only when they reach remote monitoring uncaught</li>
-<li><code>sentry-event-processing.ts</code> — the <code>beforeSend</code> hook: details, the reporting policy per classification</li>
+<li><code>logging.service.ts</code> — <code>LoggingService</code> and the <code>Logging</code> singleton; the log
+levels and how a log call is reported</li>
+<li><code>reported-errors.ts</code> — <code>NamedError</code> and <code>LoggedError</code>, the errors remote
+monitoring groups by message</li>
+<li><code>error-classification.ts</code> — <code>TypedError</code>, the base of the typed errors,
+<code>classifyError()</code> and its helpers (<code>isConnectivityError()</code>, ...)</li>
+<li><code>uncaught-error-classification.ts</code> — the foreign errors recognized by the
+logging, and <code>isExpectedFailure()</code></li>
+<li><code>sentry-event-processing.ts</code> — the <code>beforeSend</code> hook: details, the reporting
+policy per classification</li>
 <li><code>sentry-grouping.ts</code> — the grouping rules and message normalization</li>
 <li><code>report-once.ts</code> — turning repeated reports of one failure into breadcrumbs</li>
 <li><code>log-level.ts</code> — the <code>LogLevel</code> definitions</li>
-<li><code>src/app/utils/failed-http-response.ts</code>, <code>src/app/utils/*-error.ts</code> — helpers to read and classify failed requests</li>
-<li><code>src/app/utils/typed-http-error.interceptor.ts</code>, <code>src/app/utils/backend-response.ts</code> — the HTTP boundary and what our backend&#39;s responses mean</li>
+<li><code>http-response-logging.ts</code> — the details of a failed HTTP response for the
+logs</li>
+<li><code>src/app/utils/failed-http-response.ts</code> — reading a failed HTTP response, also
+one converted into a typed error</li>
+<li><code>src/app/utils/typed-http-error.interceptor.ts</code>,
+<code>src/app/utils/backend-response.ts</code> — the HTTP boundary and what our backend&#39;s
+responses mean</li>
 </ul>
 
                    </div><div class="search-results">

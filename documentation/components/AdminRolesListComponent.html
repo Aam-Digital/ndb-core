@@ -752,7 +752,7 @@ export class AdminRolesListComponent implements OnInit {
       // ever clamps the page index downwards, never resets it
       this.dataSource.paginator?.firstPage();
     } catch (err) {
-      Logging.error(&quot;Failed to load roles:&quot;, err);
+      Logging.error(&quot;Failed to load roles&quot;, err);
     }
   }
 

@@ -2137,8 +2137,8 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         .catch((error) &#x3D;&gt;
           Logging.warn(
             &quot;AutomatedFieldUpdateConfigService: Could not create the index of linked records&quot;,
-            { indexId },
             error,
+            { indexId },
           ),
         );
     }
@@ -2227,22 +2227,12 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         entityId,
       );
     } catch (error) {
-      const context &#x3D; { entityType: entityType?.ENTITY_TYPE, entityId };
-      const status &#x3D; error?.[&quot;status&quot;] ?? error?.[&quot;statusCode&quot;];
-      if (status &#x3D;&#x3D;&#x3D; 401 || status &#x3D;&#x3D;&#x3D; 403) {
-        // the user simply has no read access to the linked entity - expected for some roles
-        Logging.debug(
-          &quot;AutomatedFieldUpdateConfigService: No permission to load linked entity&quot;,
-          context,
-          error,
-        );
-      } else {
-        Logging.warn(
-          &quot;AutomatedFieldUpdateConfigService: Failed to load linked entity&quot;,
-          context,
-          error,
-        );
-      }
+      // e.g. no read access to the linked entity - expected for some roles
+      Logging.warn(
+        &quot;AutomatedFieldUpdateConfigService: Failed to load linked entity&quot;,
+        error,
+        { entityType: entityType?.ENTITY_TYPE, entityId },
+      );
       return undefined;
     }
   }

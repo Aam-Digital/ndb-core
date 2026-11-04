@@ -236,7 +236,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:46</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -331,7 +331,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts:52</a></div>
                                 </td>
                             </tr>
 
@@ -372,8 +372,7 @@ import {
 } from &quot;../../skill-api/skill-api.service&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { Logging } from &quot;../../../../core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;../../../../utils/is-connectivity-error&quot;;
-import { isNotPermittedError } from &quot;../../../../utils/is-not-permitted-error&quot;;
+import { isNotPermittedError } from &quot;../../../../core/logging/error-classification&quot;;
 import { MatRadioButton, MatRadioGroup } from &quot;@angular/material/radio&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
@@ -490,12 +489,8 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         this.skillApiService.getExternalProfiles(this.searchParams, page),
       );
     } catch (e) {
-      if (isConnectivityError(e)) {
-        // offline or the external system unavailable: the error is shown in the dialog
-        Logging.debug(&quot;SkillModule: Failed to load external profiles&quot;, e);
-      } else {
-        Logging.warn(&quot;SkillModule: Failed to load external profiles&quot;, e);
-      }
+      // the error is shown in the dialog
+      Logging.warn(&quot;SkillModule: Failed to load external profiles&quot;, e);
       // a NotPermittedError keeps its static message (its issue title), the user gets a translated one
       this.error &#x3D; isNotPermittedError(e)
         ? {

@@ -267,7 +267,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:91</a></div>
                             </td>
                         </tr>
 
@@ -302,8 +302,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="111"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:111</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:110</a></div>
                         </td>
                     </tr>
 
@@ -407,8 +407,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -500,8 +500,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -581,7 +581,7 @@ see <a href="../miscellaneous/functions.html#withEvaluableConditions">withEvalua
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -660,11 +660,10 @@ function withEvaluableConditions(
     permissionConditionsMatcher(rule.conditions);
     return [rule];
   } catch (err) {
-    Logging.warn(&quot;Ignoring permission rule with unusable conditions&quot;, {
+    Logging.warn(&quot;Ignoring permission rule with unusable conditions&quot;, err, {
       subject: rule.subject,
       action: rule.action,
       inverted: !!rule.inverted,
-      error: err?.message,
     });
 
     const { conditions, ...unconditional } &#x3D; rule;

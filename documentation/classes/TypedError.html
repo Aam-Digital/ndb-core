@@ -157,8 +157,8 @@
             </p>
             <p class="comment">
                 <p>A failure of a known kind, converted from a foreign error where it entered the
-app. Each subclass declares its kind once (<code>static classification</code>) and is
-registered with <a href="../miscellaneous/functions.html#registerTypedError">registerTypedError</a> next to its definition.</p>
+app. Each subclass passes its name (a literal: class names are minified) and
+its kind of failure to this constructor.</p>
 
             </p>
 
@@ -185,7 +185,7 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                                             <code><a href="../classes/LocalStorageError.html" target="_self" >LocalStorageError</a></code>
                                 </li>
                                 <li>
-                                            <code><a href="../classes/NotPermittedError.html" target="_self" >NotPermittedError</a></code>
+                                            <code><a href="../classess/NotPermittedError.html" target="_self" >NotPermittedError</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../classes/ServerError.html" target="_self" >ServerError</a></code>
@@ -224,8 +224,6 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Static</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#classification" >classification</a>
                             </li>
@@ -261,12 +259,12 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                 <tr>
                     <td class="col-md-4">
                                 <span class="modifier">Protected</span>
-                        <code>constructor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options?: <a href="../interfaces/TypedErrorOptions.html" target="_self">TypedErrorOptions</a>)</code>
+                        <code>constructor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, classification: <a href="../miscellaneous/typealiases.html#ErrorClassification" target="_self">ErrorClassification</a>, message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options?: <a href="../interfaces/TypedErrorOptions.html" target="_self">TypedErrorOptions</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/logging/error-classification.ts:36</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/logging/error-classification.ts:42</a></div>
                             </td>
                         </tr>
 
@@ -288,6 +286,18 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                                                   
                                                         <td>
                                                                         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>classification</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/typealiases.html#ErrorClassification" target="_self" >ErrorClassification</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -339,8 +349,6 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                 <td class="col-md-4">
                     <a name="classification"></a>
                     <span class="name">
-                            <span class="modifier"></span>
-                            <span class="modifier">Static</span>
                             <span class="modifier">Readonly</span>
                         <span ><b>classification</b></span>
                         <a href="#classification"><span class="icon ion-ios-link"></span></a>
@@ -355,10 +363,17 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/logging/error-classification.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/logging/error-classification.ts:39</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The kind of failure: an own property, so that a copy of the error that lost
+its class (as PouchDB&#39;s <code>createError()</code> makes) still has it.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -383,7 +398,7 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/logging/error-classification.ts:36</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/logging/error-classification.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -449,7 +464,7 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { LoggedError, NamedError } from &quot;./reported-errors&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NamedError } from &quot;./reported-errors&quot;;
 
 /**
  * What kind of failure an error is, declared by its {@link TypedError} class (see
@@ -458,13 +473,15 @@ registered with <a href="../miscellaneous/functions.html#registerTypedError">reg
  * module they belong to, which also defines the typed classes it creates (each
  * documents what its kind of failure is).
  */
-export type ErrorClassification &#x3D;
-  | &quot;connectivity&quot;
-  | &quot;session-expired&quot;
-  | &quot;not-permitted&quot;
-  | &quot;local-storage&quot;
-  | &quot;server-error&quot;
-  | &quot;write-conflict&quot;;
+const ERROR_CLASSIFICATIONS &#x3D; [
+  &quot;connectivity&quot;,
+  &quot;session-expired&quot;,
+  &quot;not-permitted&quot;,
+  &quot;local-storage&quot;,
+  &quot;server-error&quot;,
+  &quot;write-conflict&quot;,
+] as const;
+export type ErrorClassification &#x3D; (typeof ERROR_CLASSIFICATIONS)[number];
 
 /** What a typed error keeps of the foreign failure it was converted from. */
 export interface TypedErrorOptions {
@@ -477,69 +494,59 @@ export interface TypedErrorOptions {
 
 /**
  * A failure of a known kind, converted from a foreign error where it entered the
- * app. Each subclass declares its kind once (&#x60;static classification&#x60;) and is
- * registered with {@link registerTypedError} next to its definition.
+ * app. Each subclass passes its name (a literal: class names are minified) and
+ * its kind of failure to this constructor.
  */
 export abstract class TypedError extends NamedError {
-  declare static readonly classification: ErrorClassification;
+  /**
+   * The kind of failure: an own property, so that a copy of the error that lost
+   * its class (as PouchDB&#x27;s &#x60;createError()&#x60; makes) still has it.
+   */
+  readonly classification: ErrorClassification;
 
   /** The HTTP status of the failed request, if any. */
   readonly status?: number;
 
   protected constructor(
     name: string,
+    classification: ErrorClassification,
     message: string,
     options?: TypedErrorOptions,
   ) {
     super(name, message, options);
+    this.classification &#x3D; classification;
     this.status &#x3D; options?.status;
   }
 }
 
 /**
- * The classifications by the names of the typed errors, for one that lost its
- * class: a copy made by PouchDB&#x27;s &#x60;createError()&#x60;, or an exception of a Sentry
- * event without the original error object.
- */
-const TYPED_ERROR_NAMES &#x3D; new Map&lt;string, ErrorClassification&gt;();
-
-/** Recognize the errors of a typed class also by their name (a literal: class names are minified). */
-export function registerTypedError(type: {
-  errorName: string;
-  classification: ErrorClassification;
-}): void {
-  TYPED_ERROR_NAMES.set(type.errorName, type.classification);
-}
-
-/** Whether the name is that of a typed error, also of one that lost its class. */
-export function isTypedErrorName(name: unknown): boolean {
-  return TYPED_ERROR_NAMES.has(name as string);
-}
-
-/** &#x60;DatabaseException&#x60; (which depends on this file) has the classification of the typed error it wraps. */
-const DATABASE_EXCEPTION_NAME &#x3D; &quot;DatabaseException&quot;;
-
-/**
  * What kind of failure the given error is, judged by this one error (not its
- * &#x60;cause&#x60;s): a typed error by its class, or by its name if it lost its class; a
- * &#x60;DatabaseException&#x60; by the typed error it wraps. Any other error is not
- * classified: foreign errors are converted where they enter the app.
+ * &#x60;cause&#x60;s): a typed error, also a copy of one that lost its class. Any other
+ * error is not classified: foreign errors are converted where they enter the app.
  */
 export function classifyError(error: unknown): ErrorClassification | undefined {
-  if (!error || typeof error !&#x3D;&#x3D; &quot;object&quot;) {
-    return undefined;
-  }
-  const typed &#x3D;
-    error instanceof NamedError &amp;&amp; error.name &#x3D;&#x3D;&#x3D; DATABASE_EXCEPTION_NAME
-      ? error.cause
-      : error;
-  if (typed instanceof TypedError) {
-    return (typed.constructor as typeof TypedError).classification;
-  }
-  if (error instanceof LoggedError || error instanceof NamedError) {
-    return undefined;
-  }
-  return TYPED_ERROR_NAMES.get((error as { name?: unknown }).name as string);
+  const classification &#x3D; (error as { classification?: unknown } | undefined)
+    ?.classification;
+  return ERROR_CLASSIFICATIONS.find((c) &#x3D;&gt; c &#x3D;&#x3D;&#x3D; classification);
+}
+
+/**
+ * A request that never reached our backend or Keycloak: a &#x60;ConnectivityError&#x60;,
+ * also when wrapped (as &#x60;cause&#x60;). A failed request to another service stays an
+ * &#x60;HttpErrorResponse&#x60;: check its status (e.g. &#x60;0&#x60;) with &#x60;failedHttpResponse()&#x60;.
+ * A server error (500) is not a connectivity failure: the server was reached and failed.
+ */
+export function isConnectivityError(err: unknown): boolean {
+  return classifyErrorChain(err) &#x3D;&#x3D;&#x3D; &quot;connectivity&quot;;
+}
+
+/**
+ * The permission rules exclude the record or type for the current user:
+ * a &#x60;NotPermittedError&#x60;, also when wrapped (as &#x60;cause&#x60;). Not an expired session
+ * or another &#x60;401&#x60; (e.g. an invalid token signature), which must keep being reported.
+ */
+export function isNotPermittedError(err: unknown): boolean {
+  return classifyErrorChain(err) &#x3D;&#x3D;&#x3D; &quot;not-permitted&quot;;
 }
 
 /**

@@ -152,6 +152,15 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>A failure of the user account server, with a message for the user.
+A 403 has a <code>NotPermittedError</code> as its <code>cause</code>, so that it is recognized as one
+(see <code>isNotPermittedError</code>) and only logged for debugging.</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -217,12 +226,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(status: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, message?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>constructor(status: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, message?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cause?: unknown)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:116</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:123</a></div>
                             </td>
                         </tr>
 
@@ -236,6 +245,7 @@
                                                 <td>Name</td>
                                                     <td>Type</td>
                                                 <td>Optional</td>
+                                                    <td>Description</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -250,6 +260,8 @@
                                                             No
                                                     </td>
                                                     
+                                                        <td>
+                                                        </td>
                                                 </tr>
                                                 <tr>
                                                         <td>message</td>
@@ -262,6 +274,26 @@
                                                             Yes
                                                     </td>
                                                     
+                                                        <td>
+                                                                <p>for the user; a default one by the status if not given</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>cause</td>
+                                                  
+                                                        <td>
+                                                                    <code>unknown</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>the failed request</p>
+
+                                                        </td>
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -296,7 +328,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:116</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -304,6 +336,7 @@
                 <td class="col-md-4">
                     <div class="io-description"><p>The HTTP status code of the error.</p>
 <ul>
+<li>403: Forbidden (the account may not manage user accounts)</li>
 <li>404: Not Found (e.g. user not found)</li>
 <li>409: Conflict (e.g. email already exists)</li>
 <li>500: Internal Server Error</li>
@@ -326,7 +359,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NotPermittedError } from &quot;#src/app/core/permissions/not-permitted.error&quot;;
+import { inject } from &quot;@angular/core&quot;;
 import { Observable } from &quot;rxjs&quot;;
 import { Role, UserAccount } from &quot;./user-account&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
@@ -434,21 +468,37 @@ export abstract class UserAdminService {
   abstract getAllUsers(): Observable&lt;UserAccount[]&gt;;
 }
 
+/**
+ * A failure of the user account server, with a message for the user.
+ * A 403 has a &#x60;NotPermittedError&#x60; as its &#x60;cause&#x60;, so that it is recognized as one
+ * (see &#x60;isNotPermittedError&#x60;) and only logged for debugging.
+ */
 export class UserAdminApiError extends Error {
   /**
    * The HTTP status code of the error.
+   * - 403: Forbidden (the account may not manage user accounts)
    * - 404: Not Found (e.g. user not found)
    * - 409: Conflict (e.g. email already exists)
    * - 500: Internal Server Error
    */
   status: number;
 
-  constructor(status: number, message?: string) {
-    super(message);
+  /**
+   * @param status
+   * @param message for the user; a default one by the status if not given
+   * @param cause the failed request
+   */
+  constructor(status: number, message?: string, cause?: unknown) {
+    super(message, {
+      cause:
+        status &#x3D;&#x3D;&#x3D; 403
+          ? new NotPermittedError(&quot;Not permitted to manage user accounts&quot;, {
+              status,
+              cause,
+            })
+          : cause,
+    });
     this.name &#x3D; &quot;UserAdminApiError&quot;;
-    // Set the prototype explicitly to maintain the correct prototype chain (see https://medium.com/@Nelsonalfonso/understanding-custom-errors-in-typescript-a-complete-guide-f47a1df9354c)
-    Object.setPrototypeOf(this, UserAdminApiError.prototype);
-
     this.status &#x3D; status;
     if (!message) {
       this.message &#x3D; this.generateDefaultMessage(status);

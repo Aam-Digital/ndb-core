@@ -346,8 +346,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="173"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:173</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:166</a></div>
                         </td>
                     </tr>
 
@@ -429,8 +429,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="180"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:180</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -673,8 +673,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="194"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:194</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="187"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:187</a></div>
                         </td>
                     </tr>
 
@@ -842,8 +842,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="188"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:188</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:181</a></div>
                         </td>
                     </tr>
 
@@ -1204,7 +1204,7 @@ import { EntityRegistry } from &quot;../../core/entity/database-entity.decorator
 import { EntitySchemaService } from &quot;../../core/entity/schema/entity-schema.service&quot;;
 import { catchError, filter, map, shareReplay } from &quot;rxjs/operators&quot;;
 import { Logging } from &quot;../../core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;../../utils/is-connectivity-error&quot;;
+import { isNotPermittedError } from &quot;../../core/logging/error-classification&quot;;
 import { SafeUrl } from &quot;@angular/platform-browser&quot;;
 import { FileDatatype } from &quot;./file.datatype&quot;;
 import { waitForChangeTo } from &quot;../../core/session/session-states/session-utils&quot;;
@@ -1343,22 +1343,15 @@ export abstract class FileService {
         let errorMessage: string;
         if (err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.NotFound) {
           errorMessage &#x3D; $localize&#x60;:File Download Error Message:File attachment &quot;${entity[property]}&quot; not found.&#x60;;
-        } else if (
-          err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
-          err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Forbidden
-        ) {
+        } else if (isNotPermittedError(err)) {
           errorMessage &#x3D; $localize&#x60;:File Download Error Message:You do not have permission to open this file.&#x60;;
         } else {
-          if (isConnectivityError(err)) {
-            Logging.debug(&quot;Could not download file (connectivity)&quot;, err);
-          } else {
-            Logging.warn(
-              &quot;Could not download file&quot;,
-              entity?.getId(),
-              property,
-              err,
-            );
-          }
+          Logging.warn(
+            &quot;Could not download file&quot;,
+            err,
+            entity?.getId(),
+            property,
+          );
           errorMessage &#x3D; $localize&#x60;:File Download Error Message:Failed to download file attachment. Please try again.&#x60;;
         }
 

@@ -556,7 +556,7 @@ export class SqlV2TableComponent {
         );
         this.isError &#x3D; false;
       } catch (error) {
-        Logging.error(error);
+        Logging.error(&quot;Could not display the report data&quot;, error);
         this.isError &#x3D; true;
         this.dataSource.data &#x3D; [];
       }

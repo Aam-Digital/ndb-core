@@ -325,7 +325,6 @@ worth retrying) from genuinely unavailable setups (e.g. browser is offline).</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export class RemoteLoginNotAvailableError extends Error {
   constructor(public override readonly cause?: unknown) {
     super(&quot;Remote login currently unavailable.&quot;);
-    Object.setPrototypeOf(this, RemoteLoginNotAvailableError.prototype);
   }
 }
 </code></pre>

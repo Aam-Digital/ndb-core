@@ -335,7 +335,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:149</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:148</a></code>
 </div>
                         </td>
                     </tr>
@@ -420,7 +420,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:153</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:152</a></code>
 </div>
                         </td>
                     </tr>
@@ -525,7 +525,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:129</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -598,7 +598,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:102</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:101</a></code>
 </div>
                         </td>
                     </tr>
@@ -683,7 +683,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:40</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:39</a></code>
 </div>
                         </td>
                     </tr>
@@ -782,7 +782,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:194</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:187</a></code>
 </div>
                         </td>
                     </tr>
@@ -1276,7 +1276,6 @@ import { from, Observable, of, throwError } from &quot;rxjs&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { FileService } from &quot;./file.service&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
-import { isConnectivityError } from &quot;#src/app/utils/is-connectivity-error&quot;;
 import { ObservableQueue } from &quot;./observable-queue/observable-queue&quot;;
 import { DomSanitizer, SafeUrl } from &quot;@angular/platform-browser&quot;;
 import { environment } from &quot;#src/environments/environment&quot;;
@@ -1429,26 +1428,19 @@ export class CouchdbFileService extends FileService {
           map((blob) &#x3D;&gt; URL.createObjectURL(blob)),
           catchError((err) &#x3D;&gt; {
             if (err?.status &#x3D;&#x3D;&#x3D; 404) {
-              // the file field points to an attachment that does not exist (config / data problem)
-              Logging.debug(&quot;File not found&quot;, entity?.getId(), property);
-            } else if (
-              isConnectivityError(err) ||
-              err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
-              err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Forbidden
-            ) {
-              // offline, an expired session or a file the user may not read: nothing to fix
+              // a file field pointing to an attachment that does not exist
               Logging.debug(
-                &quot;Could not load file (offline or not permitted)&quot;,
+                &quot;Could not load file&quot;,
+                err,
                 entity?.getId(),
                 property,
-                err,
               );
             } else {
               Logging.warn(
                 &quot;Could not load file&quot;,
+                err,
                 entity?.getId(),
                 property,
-                err,
               );
             }
 

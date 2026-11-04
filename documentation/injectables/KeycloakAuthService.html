@@ -755,11 +755,11 @@ import { KeycloakUserDto } from &quot;../../../user/user-admin-service/keycloak-
 import { ActivatedRoute } from &quot;@angular/router&quot;;
 import { ThirdPartyAuthenticationService } from &quot;../../../../features/third-party-authentication/third-party-authentication.service&quot;;
 import { reuseFirstAsync } from &quot;#src/app/utils/reuse-first-async&quot;;
-import { isConnectivityError } from &quot;#src/app/utils/is-connectivity-error&quot;;
 import {
   CONNECTIVITY_ERROR_STATUS,
   isFailedFetch,
 } from &quot;#src/app/utils/backend-response&quot;;
+import { isConnectivityError } from &quot;../../../logging/error-classification&quot;;
 import { ConnectivityError } from &quot;#src/app/utils/backend-errors&quot;;
 import {
   defer,

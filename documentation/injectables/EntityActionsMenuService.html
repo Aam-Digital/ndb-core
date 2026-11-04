@@ -325,8 +325,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -394,8 +394,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -546,8 +546,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="87"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:87</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +615,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="95"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:95</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -685,8 +685,8 @@ depending on the specific entity for which the menu is displayed (e.g. only for 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:127</a></div>
                         </td>
                     </tr>
 
@@ -776,7 +776,7 @@ export class EntityActionsMenuService {
         // a single misbehaving factory must not break the whole context menu
         Logging.warn(
           &quot;EntityActionsMenu: action factory failed; skipping its actions.&quot;,
-          { error: err },
+          err,
         );
         return [];
       }
@@ -806,7 +806,8 @@ export class EntityActionsMenuService {
         // a single misbehaving action must not break the whole context menu
         Logging.warn(
           &quot;EntityActionsMenu: visibility check for action failed; hiding it.&quot;,
-          { action: action.action, error: err },
+          err,
+          { action: action.action },
         );
         isVisible &#x3D; false;
       }

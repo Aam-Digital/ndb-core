@@ -266,13 +266,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/AttendanceModule.html" data-type="entity-link" >AttendanceModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-AttendanceModule-8c341cef36258f20575f252c6c39c5b211f03523ed65471675ec1bb21b3c7e5dfbe15edcddab00288733bc59491fa5e3676882407241aa9525cec8b82bf19bff"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-8c341cef36258f20575f252c6c39c5b211f03523ed65471675ec1bb21b3c7e5dfbe15edcddab00288733bc59491fa5e3676882407241aa9525cec8b82bf19bff"' }>
+                                        'data-bs-target="#injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-8c341cef36258f20575f252c6c39c5b211f03523ed65471675ec1bb21b3c7e5dfbe15edcddab00288733bc59491fa5e3676882407241aa9525cec8b82bf19bff"' :
-                                        'id="xs-injectables-links-module-AttendanceModule-8c341cef36258f20575f252c6c39c5b211f03523ed65471675ec1bb21b3c7e5dfbe15edcddab00288733bc59491fa5e3676882407241aa9525cec8b82bf19bff"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' :
+                                        'id="xs-injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' }>
                                         <li class="link">
                                             <a href="injectables/AttendanceDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AttendanceDatatype</a>
                                         </li>
