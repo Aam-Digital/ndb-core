@@ -631,6 +631,20 @@ describe("ConditionsEditorComponent", () => {
         $and: [{ name: "A" }, { name: "B" }],
       });
     });
+
+    it("keeps the rows of the JSON editor's result while no record type is chosen", () => {
+      component.entityConstructor = undefined;
+      const conditions = {
+        log: { $elemMatch: { status: "M" } },
+        "log.status": "F",
+      };
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(conditions) });
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.openJsonEditor();
+
+      expect(emit).toHaveBeenLastCalledWith(conditions);
+    });
   });
 
   describe("properties of embedded fields", () => {

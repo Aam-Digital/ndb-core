@@ -39,6 +39,7 @@ import {
 import {
   getEmbeddedFieldId,
   getEmbeddedFieldLabel,
+  EmbeddedFieldRef,
   getEmbeddedFieldRefs,
   resolveEmbeddedField,
 } from "../../entity/schema/embedded-schema-field.util";
@@ -534,12 +535,18 @@ export class ConditionsEditorComponent implements OnInit {
   /** the schema of a row's field, also of a property of an embedded field */
   private fieldConfigOf(fieldKey: string): EntitySchemaField | undefined {
     return (
-      this.entityConstructor.schema.get(fieldKey) ??
-      resolveEmbeddedField(
-        this.entitySchemaService,
-        this.entityConstructor,
-        fieldKey,
-      )?.innerSchema
+      this.entityConstructor?.schema.get(fieldKey) ??
+      this.embeddedFieldOf(fieldKey)?.innerSchema
+    );
+  }
+
+  /** the embedded field a row's field is a property of; none while no record type is chosen */
+  private embeddedFieldOf(fieldKey: string): EmbeddedFieldRef | undefined {
+    if (!this.entityConstructor) return undefined;
+    return resolveEmbeddedField(
+      this.entitySchemaService,
+      this.entityConstructor,
+      fieldKey,
     );
   }
 
@@ -547,11 +554,7 @@ export class ConditionsEditorComponent implements OnInit {
   private storedRows(): any[] {
     return (this.working.$or ?? []).map((row) => {
       const fieldKey = this.getConditionField(row);
-      const embedded = resolveEmbeddedField(
-        this.entitySchemaService,
-        this.entityConstructor,
-        fieldKey,
-      );
+      const embedded = this.embeddedFieldOf(fieldKey);
       return embedded && isCompleteRow(row)
         ? conditionOnEmbeddedField(row, fieldKey, embedded)
         : row;
@@ -570,11 +573,7 @@ export class ConditionsEditorComponent implements OnInit {
       return row;
     }
     const embeddedFieldKey = `${fieldKey}.${innerKeys[0]}`;
-    return resolveEmbeddedField(
-      this.entitySchemaService,
-      this.entityConstructor,
-      embeddedFieldKey,
-    )
+    return this.embeddedFieldOf(embeddedFieldKey)
       ? { [embeddedFieldKey]: entryCondition[innerKeys[0]] }
       : row;
   }
