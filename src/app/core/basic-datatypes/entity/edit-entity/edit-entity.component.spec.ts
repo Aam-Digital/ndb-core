@@ -656,6 +656,10 @@ describe("EditEntityComponent", () => {
       fixture.detectChanges();
     }
 
+    function offeredIds(): string[] {
+      return component.availableEntitiesResource.value().map((e) => e.getId());
+    }
+
     it.each<[string, boolean, boolean, boolean]>([
       ["does not offer the record being edited", false, false, false],
       [
@@ -678,9 +682,7 @@ describe("EditEntityComponent", () => {
 
       await vi.waitFor(() => {
         fixture.detectChanges();
-        const offered = component.availableEntitiesResource
-          .value()
-          .map((e) => e.getId());
+        const offered = offeredIds();
         expect(offered).toHaveLength(
           ownRecordOffered ? test1Entities.length : test1Entities.length - 1,
         );
