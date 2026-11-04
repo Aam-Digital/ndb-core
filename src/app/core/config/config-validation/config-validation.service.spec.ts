@@ -66,6 +66,44 @@ describe("ConfigValidationService", () => {
     ]);
   });
 
+  it.each([
+    ["a field not linking to records", { dataType: "string" }, "linking"],
+    [
+      "a field linking to several record types",
+      { dataType: "entity", additional: ["TestEntity", "User"] },
+      "one record type",
+    ],
+    [
+      "a field of embedded entries (instead of its inner field)",
+      { dataType: "attendance" },
+      "additional.participant.validators",
+    ],
+  ])(
+    "should report a selectionCondition on %s, where it is ignored",
+    (_, field, hint) => {
+      const problems = service.validate({
+        "entity:TestEntity": {
+          attributes: {
+            ref: { ...field, validators: { selectionCondition: { a: 1 } } },
+            // applies: a link to one record type
+            single: {
+              dataType: "entity",
+              additional: ["TestEntity"],
+              validators: { selectionCondition: { a: 1 } },
+            },
+          },
+        },
+      });
+
+      expect(problems).toEqual([
+        expect.objectContaining({
+          field: "ref",
+          message: expect.stringContaining(hint),
+        }),
+      ]);
+    },
+  );
+
   it("should report a default value without a valid mode", () => {
     const problems = service.validate({
       "entity:TestEntity": {
