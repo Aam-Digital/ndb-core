@@ -32,7 +32,8 @@ export const DYNAMIC_VALIDATORS = [
    *
    * Condition values can refer to fields of the record being edited
    * through a placeholder like `"$current_record.location"`, including its unsaved changes.
-   * If such a referenced field is empty, the rows of the condition referencing it are not applied.
+   * If such a referenced field is empty, the rows of the condition referencing it are not applied
+   * (with the "any" combinator, `$or`, the whole condition then is not applied).
    * The same applies if there is no single record, like in bulk edit.
    *
    * Only applies to a field referencing a single record type and edited with the entity dropdown

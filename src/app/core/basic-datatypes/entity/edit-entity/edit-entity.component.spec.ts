@@ -477,7 +477,7 @@ describe("EditEntityComponent", () => {
         ["Abc", "Abd"],
       ],
       [
-        "an alternative referring to an empty field (only that alternative is not applied)",
+        "alternatives of which one refers to an empty field (that one does not restrict, so neither do the others)",
         {
           $or: [
             { other: { $in: ["BERLIN"] } },
@@ -485,7 +485,7 @@ describe("EditEntityComponent", () => {
           ],
         },
         { category: null },
-        ["Abc", "Abd"],
+        ["Aba", "Abc", "Abd", "Bcd"],
       ],
     ])(
       "offers the records matching %s",
