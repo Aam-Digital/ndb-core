@@ -249,10 +249,17 @@ export class EntityRelationsService {
         refType,
         fieldId,
       );
-      const onEmbeddedField = embedded
-        ? conditionOnEmbeddedField(condition, fieldId, embedded)
-        : condition;
-      return onEmbeddedField["$or"] ?? [onEmbeddedField];
+      if (!embedded) {
+        return condition.$or;
+      }
+      // records may have been saved while the field held a single object or a list of them
+      return [true, false].flatMap((isArray) => {
+        const onEmbeddedField = conditionOnEmbeddedField(condition, fieldId, {
+          ...embedded,
+          isArray,
+        });
+        return onEmbeddedField["$or"] ?? [onEmbeddedField];
+      });
     });
   }
 

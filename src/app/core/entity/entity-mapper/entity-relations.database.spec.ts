@@ -105,6 +105,15 @@ describe("EntityRelationsService querying a real database", () => {
     expect(await idsLinkingToTarget()).toEqual([referencing]);
   });
 
+  it("finds a reference in an embedded object saved before the field held a list of them", async () => {
+    const legacyId = `${RelationQuerySource.ENTITY_TYPE}:legacy`;
+    await TestBed.inject(DatabaseResolverService)
+      .getDatabase()
+      .put({ _id: legacyId, embeddedArray: { participant: target.getId() } });
+
+    expect(await idsLinkingToTarget()).toEqual([legacyId]);
+  });
+
   it("reports every field of a record that references the target", async () => {
     const referencing = await saveSource({
       refScalar: target.getId(),
