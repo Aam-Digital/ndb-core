@@ -181,7 +181,7 @@ export class DynamicValidatorsService {
               updateOnChange: true,
               fn: selectionConditionValidator(
                 value,
-                // the types the dropdown offers (see EditEntityComponent), which a form config can override
+                // only if the field has no dropdown, which shares the types it offers (see EditEntityComponent)
                 asArray(field.additional ?? []),
                 (control) =>
                   singleRecord

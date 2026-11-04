@@ -23,6 +23,9 @@ import {
   applyTextToCreatedEntity,
   EditEntityComponent,
 } from "./edit-entity.component";
+import { selectionConditionValidator } from "../selection-condition";
+import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { FilterService } from "../../../filter/filter.service";
 
 describe("EditEntityComponent", () => {
   let component: EditEntityComponent;
@@ -495,6 +498,44 @@ describe("EditEntityComponent", () => {
         await expectOfferedNames(expectedNames);
       },
     );
+
+    it("shares the records it loaded and the record types it offers with the field's validator", async () => {
+      const condition = { other: { $in: ["BERLIN"] } };
+      // the form config links to several types, but the dropdown is set to offer only one
+      fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+      editRecordWithCondition(condition, {}, [
+        TestEntity.ENTITY_TYPE,
+        Test2Entity.ENTITY_TYPE,
+      ]);
+      await expectOfferedNames(["Abc", "Abd"]);
+      const entityMapper = TestBed.inject(EntityMapperService);
+      const loadSpy = vi.spyOn(entityMapper, "load");
+      const validator = selectionConditionValidator(
+        condition,
+        [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE],
+        () => undefined,
+        {
+          entityMapper,
+          placeholderService: TestBed.inject(DynamicPlaceholderValueService),
+          filterService: TestBed.inject(FilterService),
+        },
+      );
+      const hamburg = test1Entities[1];
+      formControl.setValue(hamburg.getId());
+      formControl.markAsDirty();
+
+      expect(await validator(formControl)).toEqual({
+        selectionCondition: expect.objectContaining({ warning: true }),
+      });
+      expect(loadSpy).not.toHaveBeenCalledWith(
+        TestEntity.ENTITY_TYPE,
+        expect.anything(),
+      );
+
+      // once the dropdown is gone, the validator loads the record itself (with the types of the field config)
+      fixture.destroy();
+      expect(await validator(formControl)).toBeNull();
+    });
 
     it("updates the offered records when the record being edited is changed", async () => {
       editRecordWithCondition(

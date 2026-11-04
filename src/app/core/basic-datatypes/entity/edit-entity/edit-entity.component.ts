@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DoCheck,
+  effect,
   inject,
   Input,
   input,
@@ -12,6 +13,7 @@ import {
   Resource,
   Signal,
   signal,
+  untracked,
   ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
@@ -50,7 +52,9 @@ import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
 import {
+  loadLinkedRecord,
   matchesSelectionCondition,
+  registerLinkedRecordsSource,
   resolveSelectionCondition,
 } from "../selection-condition";
 
@@ -274,14 +278,6 @@ export class EditEntityComponent<
   );
 
   /**
-   * Whether a record does not match the `selectionCondition`, to mark it in the options and chips.
-   * Records that could not be loaded are not checked.
-   */
-  isIneligible(e: E): boolean {
-    return !(e as { isHidden?: boolean }).isHidden && !this.isEligible()(e);
-  }
-
-  /**
    * Number of inactive records that would additionally be shown when including inactive records.
    */
   currentlyMatchingInactive: Signal<number> = computed(() =>
@@ -406,6 +402,23 @@ export class EditEntityComponent<
     },
   });
 
+  /**
+   * The ids of the options (and selected records) that do not match the `selectionCondition`,
+   * to mark them in the options and chips.
+   * Records that could not be loaded are not checked.
+   */
+  readonly ineligibleIds: Signal<Set<string>> = computed(() => {
+    const isEligible = this.isEligible();
+    return new Set(
+      this.availableEntitiesResource
+        .value()
+        .filter(
+          (e) => !(e as { isHidden?: boolean }).isHidden && !isEligible(e),
+        )
+        .map((e) => e.getId()),
+    );
+  });
+
   readonly hasInaccessible: Signal<boolean> = computed(() => {
     const entities = this.availableEntitiesResource.value();
     const currentValues = this.values();
@@ -423,9 +436,10 @@ export class EditEntityComponent<
    */
   readonly selectedNotMatching: Signal<string | undefined> = computed(() => {
     const selected = this.values();
+    const ineligible = this.ineligibleIds();
     const names = this.availableEntitiesResource
       .value()
-      .filter((e) => selected.includes(e.getId()) && this.isIneligible(e))
+      .filter((e) => selected.includes(e.getId()) && ineligible.has(e.getId()))
       .map((e) => e.toString());
     return names.length > 0 ? names.join(", ") : undefined;
   });
@@ -441,25 +455,7 @@ export class EditEntityComponent<
       return undefined;
     }
 
-    const entity = await this.entityMapperService
-      .load<E>(type, selectedId)
-      .catch((err: any) => {
-        if (err?.status === 404) {
-          Logging.debug(
-            "[ENTITY_SELECT] Selected entity not found.",
-            selectedId,
-          );
-        } else {
-          Logging.warn(
-            "[ENTITY_SELECT] Error loading selected entity.",
-            err,
-            selectedId,
-          );
-        }
-        return undefined;
-      });
-
-    return entity;
+    return loadLinkedRecord<E>(this.entityMapperService, type, selectedId);
   }
 
   toggleIncludeInactive() {
@@ -471,6 +467,29 @@ export class EditEntityComponent<
   }
 
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
+
+  /** the records loaded for the dropdown (including the selected ones), by id */
+  private readonly loadedRecords: Signal<Map<string, E>> = computed(
+    () =>
+      new Map(
+        [...this.allEntities.value(), ...this.availableEntitiesResource.value()]
+          .filter((e) => !(e as { isHidden?: boolean }).isHidden)
+          .map((e) => [e.getId(), e]),
+      ),
+  );
+
+  constructor() {
+    super();
+    // the field's `selectionCondition` validator checks the same record types and reuses the loaded records
+    effect((onCleanup) => {
+      onCleanup(
+        registerLinkedRecordsSource(this.control(), {
+          entityTypes: () => untracked(this.entityType),
+          getLoaded: (id) => untracked(this.loadedRecords).get(id),
+        }),
+      );
+    });
+  }
 
   recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
     if (newAutocompleteFilter) {

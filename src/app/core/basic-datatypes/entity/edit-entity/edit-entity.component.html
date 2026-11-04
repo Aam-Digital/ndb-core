@@ -27,7 +27,7 @@
   >
     <ng-template let-item>
       @if (!item.isHidden) {
-        @if (isIneligible(item)) {
+        @if (ineligibleIds().has(item.getId())) {
           <app-fa-dynamic-icon
             class="ineligible-icon margin-end-small"
             icon="warning"

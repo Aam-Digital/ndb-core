@@ -18,6 +18,10 @@ import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { Entity } from "../../../entity/model/entity";
 import { createEmbeddedEntity } from "../../../entity/model/embedded-entity";
 import { FormFieldConfig } from "../FormConfig";
+import {
+  LinkedRecordsSource,
+  registerLinkedRecordsSource,
+} from "../../../basic-datatypes/entity/selection-condition";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -300,13 +304,22 @@ describe("DynamicValidatorsService", () => {
      * @param singleRecord false if the form edits several records at once (bulk edit)
      * @param field the config of the link field in the form
      * @param changed the fields of the form changed by the user (dirty), by default the link field
+     * @param dropdown what the dropdown editing the field shares with the validator, if any
      */
     function validate(
       selected: string | string[],
       condition: DataFilter<TestEntity>,
       recordInForm: Partial<TestEntity> = {},
       singleRecord?: boolean,
-      { field = linkField, changed = [field.id] } = {},
+      {
+        field = linkField,
+        changed = [field.id],
+        dropdown,
+      }: {
+        field?: FormFieldConfig;
+        changed?: string[];
+        dropdown?: LinkedRecordsSource;
+      } = {},
     ) {
       const { asyncValidators } = service.buildValidators(
         { selectionCondition: condition },
@@ -324,6 +337,9 @@ describe("DynamicValidatorsService", () => {
         ),
       });
       changed.forEach((id) => form.get(id).markAsDirty());
+      if (dropdown) {
+        registerLinkedRecordsSource(form.get(field.id), dropdown);
+      }
       return (asyncValidators as AsyncValidatorFn[])[0](form.get(field.id));
     }
 
@@ -342,8 +358,33 @@ describe("DynamicValidatorsService", () => {
             "Not matching the selection conditions of this field: Ben",
         },
       });
-      // one read of the linked type, not one per selected record
-      expect(mockedEntityMapper.loadType).toHaveBeenCalledTimes(1);
+      // only the selected records, not all records of the linked type
+      expect(mockedEntityMapper.load).toHaveBeenCalledTimes(2);
+      expect(mockedEntityMapper.loadType).not.toHaveBeenCalled();
+    });
+
+    it("uses the record types and the records loaded by the dropdown editing the field", async () => {
+      const loadedBen = Object.assign(ben.copy(), { name: "Ben (as loaded)" });
+      const dropdown: LinkedRecordsSource = {
+        entityTypes: () => [TestEntity.ENTITY_TYPE],
+        getLoaded: (id) => (id === ben.getId() ? loadedBen : undefined),
+      };
+      // in the form, the field links to several types, for which the dropdown does not filter
+      const field = {
+        id: "ref",
+        additional: [TestEntity.ENTITY_TYPE, "OtherType"],
+      };
+
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          field,
+          dropdown,
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({
+          errorMessage: expect.stringContaining("Ben (as loaded)"),
+        }),
+      });
       expect(mockedEntityMapper.load).not.toHaveBeenCalled();
     });
 
@@ -357,7 +398,7 @@ describe("DynamicValidatorsService", () => {
           { changed: ["name"] },
         ),
       ).toBeNull();
-      expect(mockedEntityMapper.loadType).not.toHaveBeenCalled();
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
     });
 
     it("checks the records linked before once a field its condition refers to is changed", async () => {
