@@ -38,8 +38,8 @@ you can.
    code outside the diff that relies on the old meaning and check it too: those callers
    break without being touched.
 4. **Run the checklist in [patterns.md](patterns.md)** against the changed files, and
-   check them against the conventions in `AGENTS.md` (`/code-review` only reads
-   `CLAUDE.md` files, so it misses them). Check each pattern on purpose, and do not skip
+   check them against the conventions in `AGENTS.md` (the conventions check of
+   `/code-review` only looks at `CLAUDE.md` files, so it skips them). Check each pattern on purpose, and do not skip
    one because it "looks irrelevant" before you have looked.
 5. **Report** in the format below and nothing else. Do not repeat what `/code-review`
    already reported. Do not post anything to GitHub unless the user explicitly asks for
