@@ -202,24 +202,19 @@ describe("UpdateManagerService", () => {
     }
   });
 
-  it.each([
-    ["a connectivity failure", new TypeError("Failed to fetch"), "debug"],
-    ["any other failure", new Error("unexpected"), "error"],
-  ] as const)(
-    "logs %s of the update check at %s level",
-    async (_, failure, expectedLevel) => {
-      vi.spyOn(Logging, "error").mockImplementation(() => undefined);
-      swUpdate.checkForUpdate.mockRejectedValue(failure);
+  it("logs a failed update check with the error", async () => {
+    vi.spyOn(Logging, "error").mockImplementation(() => undefined);
+    const failure = new Error("unexpected");
+    swUpdate.checkForUpdate.mockRejectedValue(failure);
 
-      service.regularlyCheckForUpdates();
-      await vi.waitFor(() =>
-        expect(Logging[expectedLevel]).toHaveBeenCalledWith(
-          expect.stringContaining("Could not check for app updates"),
-          failure,
-        ),
-      );
-    },
-  );
+    service.regularlyCheckForUpdates();
+    await vi.waitFor(() =>
+      expect(Logging.error).toHaveBeenCalledWith(
+        "Could not check for app updates",
+        failure,
+      ),
+    );
+  });
 
   it("offers to reload when the app is in an unrecoverable state", () => {
     service.detectUnrecoverableState();

@@ -13,7 +13,7 @@ const INITIAL_SUBJECT = "<NOTE DIALOG INITIAL>";
 const UPDATED_SUBJECT = "<NOTE DIALOG UPDATED>";
 const INITIAL_TEXT = "Initial note text for e2e.";
 const UPDATED_TEXT = "Updated note text for e2e.";
-const OLD_SUBJECT = "<NOTE OUTSIDE DEFAULT FILTER>";
+const OLD_SUBJECT = "<OUTSIDE DEFAULT FILTER>";
 
 test("Edit note details in popup dialog and persist changes", async ({
   page,

@@ -46,7 +46,7 @@ import {
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
 import {
   EntitiesTableDataSource,
-  RowDecoration,
+  RowOptions,
 } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
@@ -207,7 +207,7 @@ export class EntitiesTableComponent<T extends Entity>
     }
     return columns;
   });
-  /** The column whose cells show the prefix of a row decoration: the first one that holds record data. */
+  /** The column whose cells show the prefix of the row options: the first one that holds record data. */
   readonly firstDataColumn = computed(() =>
     this._columnsToDisplay().find(
       (column) =>
@@ -216,18 +216,16 @@ export class EntitiesTableComponent<T extends Entity>
     ),
   );
 
-  /** Look up the row decoration of a record, as provided by the data source. */
-  readonly rowDecoration = computed<(record: T) => RowDecoration | undefined>(
-    () => {
-      const decorations = this.recordsDataSource().rowDecorations();
-      return (record) => decorations.get(record.getId());
-    },
-  );
+  /** Look up the row options of a record, as provided by the data source. */
+  readonly rowOptions = computed<(record: T) => RowOptions | undefined>(() => {
+    const optionsById = this.recordsDataSource().rowOptions();
+    return (record) => optionsById.get(record.getId());
+  });
 
   /** Whether a record can be selected for bulk actions. */
   readonly isSelectable = computed<(record: T) => boolean>(() => {
-    const rowDecoration = this.rowDecoration();
-    return (record) => rowDecoration(record)?.selectable !== false;
+    const rowOptions = this.rowOptions();
+    return (record) => rowOptions(record)?.selectable !== false;
   });
 
   /** Columns with sorting rules applied (managed by the sort store). */

@@ -24,6 +24,7 @@ jobs:
 
       - run: npm ci
       - run: npx eslint --max-warnings=0
+      - run: npm run lint:styles
       - run: npx tsc -p .
       - run: npx tsc -p e2e
 

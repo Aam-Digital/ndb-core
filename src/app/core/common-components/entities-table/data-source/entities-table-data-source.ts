@@ -12,8 +12,10 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import {
+  classifyErrorChain,
+  ErrorClassification,
+} from "#src/app/core/logging/error-classification";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -45,9 +47,9 @@ export interface LoadRecordConfig<T extends Entity> {
 }
 
 /**
- * Optional extras for one row of the table, provided by the data source.
+ * Options for one row of the table, for its display and its selection, provided by the data source.
  */
-export interface RowDecoration {
+export interface RowOptions {
   /** component shown before the content of the first data cell */
   prefix?: DynamicComponentConfig;
   /** component shown after the content of the first data cell */
@@ -59,16 +61,23 @@ export interface RowDecoration {
 }
 
 /**
- * The {@link RowDecoration}s of a table, by the id of the record (`entity.getId()`).
+ * The {@link RowOptions} of the rows of a table, by the id of the record (`entity.getId()`).
  *
  * Looked up by id rather than by record object (WeakMap):
- * a live update replaces the record object, and the row keeps its decoration
- * (e.g. not being selectable) until the data source has computed new decorations.
+ * a live update replaces the record object, and the row keeps its options
+ * (e.g. not being selectable) until the data source has computed new options.
  */
-export type RowDecorations = ReadonlyMap<string, RowDecoration>;
+export type RowOptionsById = ReadonlyMap<string, RowOptions>;
 
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
+
+/** The cause named in the toast for a failed load, by its classification. */
+const LOAD_ERROR_CAUSES: Partial<Record<ErrorClassification, LoadErrorCause>> =
+  {
+    "not-permitted": "notPermitted",
+    "session-expired": "sessionExpired",
+  };
 
 /**
  * Abstract data source for tables that handles all data handling internally.
@@ -128,7 +137,7 @@ export abstract class EntitiesTableDataSource<
   readonly usesPagination: Signal<boolean> = signal(true);
 
   /** optional extras per row (default: none) */
-  readonly rowDecorations: Signal<RowDecorations> = signal(new Map());
+  readonly rowOptions: Signal<RowOptionsById> = signal(new Map());
 
   /**
    * controls a host may show in the list's filter row, in this order (default: none).
@@ -217,24 +226,13 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        let cause: LoadErrorCause = "connection";
-        if (isNotPermittedError(err)) {
-          // a permission rule excludes these records for the user, not an app error
-          cause = "notPermitted";
-          Logging.debug(
-            "User is not permitted to load data in datasource",
-            err,
-          );
-        } else {
-          if (isExpiredSessionError(err)) {
-            cause = "sessionExpired";
-          }
-          Logging.error(
-            "Error loading data in datasource",
-            err,
-            this.loadRecordConfig(),
-          );
-        }
+        Logging.error(
+          "Error loading data in datasource",
+          err,
+          this.loadRecordConfig(),
+        );
+        const cause =
+          LOAD_ERROR_CAUSES[classifyErrorChain(err)] ?? "connection";
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself

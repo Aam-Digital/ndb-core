@@ -10,6 +10,7 @@ import { StringFilter } from "../filters/stringFilter";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { Logging } from "../../logging/logging.service";
 import { InMemoryDataSource } from "../../common-components/entities-table/data-source/in-memory-data-source";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -168,7 +169,7 @@ describe("FilterComponent", () => {
   });
 
   it("should encode filter values containing commas before storing them in the url", () => {
-    const urlState = (component as any).urlState;
+    const urlState = TestBed.inject(UrlStateService);
     const updateFilterParamSpy = vi.spyOn(urlState, "updateFilterParam");
     fixture.componentRef.setInput("useUrlQueryParams", true);
     fixture.detectChanges();

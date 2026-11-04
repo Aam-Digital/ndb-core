@@ -17,8 +17,6 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { filter, firstValueFrom, merge, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { HttpStatusCode } from "@angular/common/http";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
@@ -143,31 +141,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   /**
-   * Report a failed load of the permission rules, unless the failure is an
-   * expected part of normal operation:
-   *
-   * - 401/403: the session may not read the rules config. Anonymous visitors of
-   *   a public form never can, and an expired session is already handled by the
-   *   database layer (which triggers re-login).
-   * - connectivity: offline, a request timeout or a 5xx from the server.
-   *
-   * Both are transient or by design and would otherwise drown out the failures
-   * that do indicate a problem.
+   * Report a failed load of the permission rules, unless the session may not
+   * read them (anonymous visitors of a public form never can), its login expired
+   * (the database layer triggers a re-login) or the device is offline.
    */
-  private logRulesLoadFailure(err: any) {
-    const status = err?.status ?? err?.statusCode;
-    if (
-      status === HttpStatusCode.Unauthorized ||
-      status === HttpStatusCode.Forbidden
-    ) {
-      Logging.debug("Permission rules not readable for this session", err);
-      return;
-    }
-    if (isConnectivityError(err)) {
-      Logging.debug("Could not load permission rules (connectivity)", err);
-      return;
-    }
-
+  private logRulesLoadFailure(err: unknown) {
     Logging.error("Failed to load permission rules", err);
   }
 

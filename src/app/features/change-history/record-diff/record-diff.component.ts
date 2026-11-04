@@ -11,6 +11,7 @@ import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynam
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { ChangeEvent } from "../change-history.types";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 
 interface DiffRow {
   field: string;
@@ -64,21 +65,12 @@ export class RecordDiffComponent {
         new ctor(),
         this.seed(change.field, change.to),
       ),
-      hasFrom: !this.isEmpty(change.from),
-      hasTo: !this.isEmpty(change.to),
+      hasFrom: !isEmptyValue(change.from),
+      hasTo: !isEmptyValue(change.to),
     }));
   });
 
   private seed(field: string, value: any): object {
-    return this.isEmpty(value) ? {} : { [field]: value };
-  }
-
-  private isEmpty(value: any): boolean {
-    return (
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      (Array.isArray(value) && value.length === 0)
-    );
+    return isEmptyValue(value) ? {} : { [field]: value };
   }
 }

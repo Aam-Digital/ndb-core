@@ -376,6 +376,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         entities: this.recordsDataSource().allRecords(),
         useUrlQueryParams: true,
         filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
+        dataSource: this.recordsDataSource(),
       },
     });
   }

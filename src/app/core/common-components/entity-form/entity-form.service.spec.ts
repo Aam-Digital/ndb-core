@@ -4,8 +4,10 @@ import { EntityFormService } from "./entity-form.service";
 import {
   EntityForm,
   EntityFormGroup,
+  EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
+  AbstractControl,
   FormControl,
   UntypedFormControl,
   UntypedFormGroup,
@@ -40,6 +42,7 @@ import {
 } from "../../../utils/test-utils/dialog-mocks";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
+import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 
 @DatabaseEntity("EntityFormServiceTestAction")
 class EntityFormServiceTestAction extends Entity {
@@ -242,6 +245,27 @@ describe("EntityFormService", () => {
     expect(nameControl.valid).toBe(true);
   });
 
+  it("should not add permission condition validators to the inner fields of an embedded entry", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage", conditions: { name: "permitted" } },
+    ]);
+    const record = new TestEntity();
+    record.name = "permitted";
+    record._rev = "1";
+    const entry = createEmbeddedEntity(
+      new Map([["name", { dataType: "string" }]]),
+      { record, field: "entries", existing: true },
+    );
+
+    const form = await createForm([{ id: "name" }], entry);
+    // the entry's inner fields are not known to the type of the form
+    const nameControl: AbstractControl = form.formGroup.get("name");
+    nameControl.setValue("any value of the entry");
+
+    expect(nameControl.enabled).toBe(true);
+    expect(nameControl.valid).toBe(true);
+  });
+
   it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
@@ -379,6 +403,25 @@ describe("EntityFormService", () => {
         expect.anything(),
       );
       expect(entityForm.formGroup.disabled).toBe(true);
+    });
+
+    it("reports changes synced in while confirming the warnings as the previous state, not as changes of this save", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+      confirmationDialog.getConfirmation.mockImplementation(async () => {
+        entity["synced"] = "by another user";
+        return true;
+      });
+      const events: unknown[] = [];
+      entityForm.onFormStateChange.subscribe((e) => events.push(e));
+
+      await service.saveChanges(entityForm, entity);
+
+      const saved = events.find(
+        (e): e is EntityFormSavedEvent => e instanceof EntityFormSavedEvent,
+      );
+      expect(saved.previousEntity["synced"]).toBe("by another user");
     });
 
     it("does not save if the warnings are not confirmed", async () => {

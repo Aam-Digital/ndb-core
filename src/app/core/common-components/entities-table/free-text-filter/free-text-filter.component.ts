@@ -1,5 +1,4 @@
 import { Component, input } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -16,25 +15,25 @@ import { EntitiesTableDataSource } from "#src/app/core/common-components/entitie
 @Component({
   selector: "app-free-text-filter",
   imports: [
-    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     FaDynamicIconComponent,
   ],
   template: `
-    <mat-form-field class="full-width filter-field">
+    <mat-form-field class="full-width">
       <mat-label
         i18n="Filter placeholder|Allows the user to filter through entities"
         >Filter
       </mat-label>
       <input
+        #searchInput
         class="full-width"
         matInput
         i18n-placeholder="Examples of things to filter"
         placeholder="e.g. name, age"
-        [ngModel]="dataSource().searchText()"
-        (ngModelChange)="dataSource().searchText.set($event)"
+        [value]="dataSource().searchText()"
+        (input)="dataSource().searchText.set(searchInput.value)"
       />
       @if (dataSource().searchText()) {
         <button

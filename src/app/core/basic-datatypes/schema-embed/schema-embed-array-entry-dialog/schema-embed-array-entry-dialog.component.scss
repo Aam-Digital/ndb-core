@@ -1,0 +1,18 @@
+@use "mixins/entity-form";
+
+/* same form layout as the EntityFormComponent used in the popup of related entities
+   (not encapsulated to reach the nested mat-form-fields, therefore scoped to this component's element) */
+app-schema-embed-array-entry-dialog {
+  .entry-form {
+    @include entity-form.grid;
+  }
+
+  .entry-form-cell {
+    @include entity-form.cell;
+  }
+
+  .context-menu-button {
+    margin-top: -8px;
+    margin-bottom: -8px;
+  }
+}

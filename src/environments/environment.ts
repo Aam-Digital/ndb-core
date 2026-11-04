@@ -72,7 +72,7 @@ export const environment = {
   /**
    * Use the newer "indexeddb" PouchDB adapter (and Keycloak-UUID-based local database names)
    * instead of the legacy "idb" adapter.
-   * When true (default), existing local databases on the old adapter are migrated in the background
+   * When true (default), existing local databases on the old adapter are migrated
    * (see IndexeddbMigrationService).
    * Set to false via config.json to opt out and keep using the legacy adapter.
    */
@@ -89,8 +89,9 @@ export const environment = {
    * ("paginated" is therefore redundant - it is already the online-only default.)
    * An explicit `dataSource` in a list's config takes precedence over this default.
    *
-   * This has no effect outside of online-only mode: the paginated data source
-   * cannot query the local database, so synced sessions always load records upfront.
+   * Outside of online-only mode, "paginated" falls back to "in-memory": the paginated data source
+   * cannot query the local database, so synced sessions load records upfront.
+   * A data source registered by a feature module is used in every session.
    */
   default_data_source: undefined as string | undefined,
 

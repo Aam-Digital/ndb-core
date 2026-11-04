@@ -36,7 +36,7 @@
           @if (col.id === firstDataColumn()) {
             <!-- the same elements with or without a prefix: a prefix that comes or goes does not rebuild the cell -->
             <div class="first-data-cell-content flex-row align-center">
-              @let prefix = rowDecoration()(row)?.prefix;
+              @let prefix = rowOptions()(row)?.prefix;
               @if (prefix) {
                 <ng-container [appDynamicComponent]="prefix"></ng-container>
               }
@@ -44,7 +44,7 @@
                 [field]="col"
                 [entity]="row"
               ></app-entity-field-view>
-              @let suffix = rowDecoration()(row)?.suffix;
+              @let suffix = rowOptions()(row)?.suffix;
               @if (suffix) {
                 <ng-container [appDynamicComponent]="suffix"></ng-container>
               }
@@ -105,7 +105,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
-      [class]="rowDecoration()(row)?.cssClass ?? ''"
+      [class]="rowOptions()(row)?.cssClass ?? ''"
       [class.inactive-row]="row.inactive"
       [style.background-color]="effectiveBackgroundColor()(row)"
       class="table-row"

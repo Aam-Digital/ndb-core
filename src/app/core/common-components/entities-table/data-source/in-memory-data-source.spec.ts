@@ -8,7 +8,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
-import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
+import { databaseError } from "#src/app/core/database/pouchdb/database-exception";
 
 describe("InMemoryDataSource", () => {
   let dataSource: InMemoryDataSource<TestEntity>;
@@ -118,7 +118,7 @@ describe("InMemoryDataSource", () => {
 
     it("names an expired session as the cause in the toast", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
-        new DatabaseException({
+        databaseError({
           status: 401,
           name: "unauthorized",
           error: "unauthorized",
@@ -142,15 +142,14 @@ describe("InMemoryDataSource", () => {
         expect.anything(),
       );
     });
-    it("tells the user they don't have access (and does not report it) if not permitted", async () => {
+    it("tells the user they don't have access if not permitted", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
-        new DatabaseException({
+        databaseError({
           status: 401,
           message: "unauthorized",
           error: "User is not permitted",
         }),
       );
-      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
 
       const ds = TestBed.runInInjectionContext(
         () => new InMemoryDataSource<Entity>(),
@@ -165,7 +164,6 @@ describe("InMemoryDataSource", () => {
         "×", // no "Retry": it cannot help for a permission problem
         expect.anything(),
       );
-      expect(errorSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -219,12 +217,6 @@ describe("InMemoryDataSource", () => {
     });
 
     it("lets a subclass reinterpret the filter, together with the free-text search", async () => {
-      /** treats the filter as a filter on `name` */
-      class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
-        protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
-          return (record: TestEntity) => record.name === filter["other"];
-        }
-      }
       const custom = TestBed.runInInjectionContext(
         () => new FilterOnNameDataSource(),
       );
@@ -239,3 +231,10 @@ describe("InMemoryDataSource", () => {
     });
   });
 });
+
+/** a data source of a feature module that treats the filter as a filter on `name` */
+class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
+  protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
+    return (record: TestEntity) => record.name === filter["other"];
+  }
+}

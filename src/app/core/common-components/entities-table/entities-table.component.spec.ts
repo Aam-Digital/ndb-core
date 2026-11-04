@@ -22,7 +22,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
 import { Logging } from "../../logging/logging.service";
 import { Component, signal } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { RowDecorations } from "./data-source/entities-table-data-source";
+import { RowOptionsById } from "./data-source/entities-table-data-source";
 import { MatTableModule } from "@angular/material/table";
 import { Angulartics2Module } from "angulartics2";
 
@@ -618,12 +618,12 @@ describe("EntitiesTableComponent", () => {
       return fixture.nativeElement.querySelectorAll("tr[mat-row]")[index];
     }
 
-    it("renders the components and CSS class of a row decoration", async () => {
+    it("renders the components and CSS class of the row options", async () => {
       const [decorated, plain] = ["A", "B"].map((name) =>
         TestEntity.create(name),
       );
       dataSource.allRecords.set([decorated, plain]);
-      dataSource.rowDecorations.set(
+      dataSource.rowOptions.set(
         new Map([
           [
             decorated.getId(),
@@ -644,9 +644,9 @@ describe("EntitiesTableComponent", () => {
         ?.closest("td");
       // the first column holding record data, after the select and "+" columns
       expect(prefixCell?.classList).toContain("mat-column-name");
-      const prefixContainer = prefixCell!.querySelector(
+      const prefixContainer = prefixCell.querySelector(
         "app-test-row-prefix",
-      )!.parentElement!;
+      ).parentElement;
       // side by side in the cell: prefix, the field, suffix
       expect(
         [...prefixContainer.children].map((child) => child.localName),
@@ -657,7 +657,7 @@ describe("EntitiesTableComponent", () => {
       ]);
       // the prefix can span the full height of the row and draw over the row divider
       expect(getComputedStyle(prefixContainer).height).toBe("100%");
-      expect(getComputedStyle(prefixCell!).overflow).toBe("visible");
+      expect(getComputedStyle(prefixCell).overflow).toBe("visible");
       expect(renderedRow(decorated).classList).toContain("decorated");
       expect(renderedRow(decorated).classList).toContain("table-row");
       expect(
@@ -676,7 +676,7 @@ describe("EntitiesTableComponent", () => {
         );
       const initialFieldView = fieldView();
 
-      dataSource.rowDecorations.set(
+      dataSource.rowOptions.set(
         new Map([[record.getId(), { prefix: { component: "TestRowPrefix" } }]]),
       );
       fixture.detectChanges();
@@ -689,12 +689,12 @@ describe("EntitiesTableComponent", () => {
       expect(fieldView()).toBe(initialFieldView);
     });
 
-    it("never selects a row whose decoration marks it as not selectable", () => {
+    it("never selects a row whose row options mark it as not selectable", () => {
       const [a, locked, c] = ["A", "B", "C"].map((name) =>
         TestEntity.create(name),
       );
       dataSource.allRecords.set([a, locked, c]);
-      dataSource.rowDecorations.set(
+      dataSource.rowOptions.set(
         new Map([[locked.getId(), { selectable: false }]]),
       );
       fixture.detectChanges();
@@ -769,15 +769,13 @@ describe("EntitiesTableComponent", () => {
       ).toHaveLength(12);
     });
 
-    it("unselects a selected record once its decoration makes it not selectable", () => {
+    it("unselects a selected record once its row options make it not selectable", () => {
       const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
       dataSource.allRecords.set([a, b]);
       fixture.detectChanges();
       component.selectedRecords.set([a, b]);
 
-      dataSource.rowDecorations.set(
-        new Map([[b.getId(), { selectable: false }]]),
-      );
+      dataSource.rowOptions.set(new Map([[b.getId(), { selectable: false }]]));
       fixture.detectChanges();
 
       expect(component.selectedRecords()).toEqual([a]);
@@ -785,9 +783,9 @@ describe("EntitiesTableComponent", () => {
   });
 });
 
-/** a data source of a feature module, with row decorations */
+/** a data source of a feature module, with row options */
 class ExtendedTestDataSource extends InMemoryDataSource<TestEntity> {
-  override readonly rowDecorations = signal<RowDecorations>(new Map());
+  override readonly rowOptions = signal<RowOptionsById>(new Map());
 }
 
 /** a data source of a feature module that shows all rows at once */

@@ -124,9 +124,7 @@
 <!-- controls provided by the data source, e.g. the free-text "Filter" field -->
 <ng-template #toolbarControls>
   @for (control of recordsDataSource().toolbarControls(); track control) {
-    <div>
-      <ng-container [appDynamicComponent]="control"></ng-container>
-    </div>
+    <ng-container [appDynamicComponent]="control"></ng-container>
   }
 </ng-template>
 

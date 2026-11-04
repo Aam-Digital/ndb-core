@@ -105,3 +105,5 @@ Would create a `.csv` file according to the following table:
 - `data-transformation-service/data-transformation.service.ts` — `DataTransformationService`, runs the JSON-queries and flattens results into rows
 - `export-columns.service.ts` — `ExportColumnsService`, resolves the export columns for a list view
 - `download-service/download.service.ts` — `DownloadService`, turns the transformed data into a downloadable `.csv` file
+- `export-column-resolvers.ts` — `buildExportColumnResolvers`, collects the export columns that each field's datatype contributes (`getExportColumns`)
+- `export-value.ts` — `toExportValue`, formats a single value for CSV/XLSX (dates, enum labels, locations)
