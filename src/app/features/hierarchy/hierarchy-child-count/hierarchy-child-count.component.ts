@@ -3,7 +3,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { HierarchyDataSource } from "../hierarchy-data-source";
 
 /**
- * Shown after the title of a collapsed row in a hierarchy (a row decoration of the {@link HierarchyDataSource}):
+ * Shown after the title of a collapsed row in a hierarchy (row options of the {@link HierarchyDataSource}):
  * the number of its hidden sub-records, e.g. "(3)".
  * Hidden from screen readers, the expand button of the row names the number.
  */

@@ -8,7 +8,7 @@ import {
   untracked,
 } from "@angular/core";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
-import { RowDecorations } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { RowOptionsById } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
@@ -144,13 +144,13 @@ export class HierarchyDataSource<
 
   override readonly usesPagination = computed(() => !this.activeField());
 
-  override readonly rowDecorations: Signal<RowDecorations> = computed(() => {
+  override readonly rowOptions: Signal<RowOptionsById> = computed(() => {
     const view = this.view();
-    const decorations = new Map();
+    const optionsById = new Map();
     for (const row of view?.rows ?? []) {
       const id = row.record.getId();
       const { treeCell, childCount } = this.cellConfigs(id);
-      decorations.set(id, {
+      optionsById.set(id, {
         prefix: treeCell,
         // after the title: "Village meetings (3)"
         suffix: row.isCollapsed ? childCount : undefined,
@@ -160,9 +160,9 @@ export class HierarchyDataSource<
     }
     // "select all" leaves out records hidden under a collapsed row
     for (const id of view?.hiddenIds ?? []) {
-      decorations.set(id, { selectable: false });
+      optionsById.set(id, { selectable: false });
     }
-    return decorations;
+    return optionsById;
   });
 
   private readonly hierarchyControls: DynamicComponentConfig[] = [

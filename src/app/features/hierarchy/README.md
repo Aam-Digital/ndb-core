@@ -50,30 +50,30 @@ Invalid fields (not a single link to the same type) are ignored without an error
 
 ## Key files
 
-| File                                         | Purpose                                                                                     |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `hierarchy-tree.ts`                          | pure functions: resolve parents (loops, missing parents), context rows, sort, flatten       |
-| `hierarchy-fields.ts`                        | which fields can define a hierarchy                                                         |
-| `hierarchy-data-source.ts`                   | `HierarchyDataSource` ("hierarchy"): tree order, row decorations, collapse state, URL param |
-| `hierarchy-tree-cell/`                       | row decoration prefix: indentation, connector lines, expand/collapse button, context icon   |
-| `hierarchy-child-count/`                     | row decoration suffix of a collapsed row: the number of its sub-records                     |
-| `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), included in `styles.scss`   |
-| `hierarchy-select/`                          | toolbar control: the "Hierarchy" dropdown                                                   |
-| `hierarchy-expand-all/`                      | toolbar control: "Collapse all" / "Expand all"                                              |
-| `admin-hierarchy-fields/`                    | admin setting "Hierarchy displayed by" (`ADMIN_ENTITY_LIST_SETTINGS`)                       |
-| `demo-data/demo-action-generator.service.ts` | the sample plan for the "Action" type of demo mode "All Features"                           |
+| File                                         | Purpose                                                                                   |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `hierarchy-tree.ts`                          | pure functions: resolve parents (loops, missing parents), context rows, sort, flatten     |
+| `hierarchy-fields.ts`                        | which fields can define a hierarchy                                                       |
+| `hierarchy-data-source.ts`                   | `HierarchyDataSource` ("hierarchy"): tree order, row options, collapse state, URL param   |
+| `hierarchy-tree-cell/`                       | row options prefix: indentation, connector lines, expand/collapse button, context icon    |
+| `hierarchy-child-count/`                     | row options suffix of a collapsed row: the number of its sub-records                      |
+| `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), included in `styles.scss` |
+| `hierarchy-select/`                          | toolbar control: the "Hierarchy" dropdown                                                 |
+| `hierarchy-expand-all/`                      | toolbar control: "Collapse all" / "Expand all"                                            |
+| `admin-hierarchy-fields/`                    | admin setting "Hierarchy displayed by" (`ADMIN_ENTITY_LIST_SETTINGS`)                     |
+| `demo-data/demo-action-generator.service.ts` | the sample plan for the "Action" type of demo mode "All Features"                         |
 
 ## How it works
 
 - `HierarchyDataSource` computes the tree (`view`) from signals: all loaded records (for the parents),
   the filtered records (the matches), the field, the collapsed rows and the sort (`effectiveSort` and `sortValueFns`,
-  set by the table). The row decorations are computed from it.
+  set by the table). The row options are computed from it.
 - The table's pipeline calls `_orderData()` of the data source, which returns the records in tree order
   instead of sorting a flat list. A change of the tree re-runs the pipeline.
 - In a section, `getFilterPredicate()` replaces the condition linking records to the page's record
   (which only covers direct sub-records) by "is in the branch below the page's record".
 - The prefix and suffix configs are cached per record id, so rows do not reload their components when the tree changes.
-- Rows get global CSS classes from their decoration (context rows, top-level rows, rows with sub-records),
+- Rows get global CSS classes from their row options (context rows, top-level rows, rows with sub-records),
   styled in `_hierarchy-rows.scss`, as rows belong to the table component.
 - The tree cell stretches over the full height of its row (see the entities-table README),
   with a slot per level whose lines are drawn by CSS from `ancestorsContinue` and `isLastChild` of its row,

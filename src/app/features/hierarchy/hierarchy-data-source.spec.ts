@@ -133,10 +133,10 @@ describe("HierarchyDataSource", () => {
   }
 
   function selectableIds(): string[] {
-    const decorations = dataSource.rowDecorations();
+    const optionsById = dataSource.rowOptions();
     return dataSource
       .filteredRecords()
-      .filter((r) => decorations.get(r.getId())?.selectable !== false)
+      .filter((r) => optionsById.get(r.getId())?.selectable !== false)
       .map((r) => r.title);
   }
 
@@ -240,10 +240,10 @@ describe("HierarchyDataSource", () => {
     dataSource.dataFilter.set({ responsible: "Asha" });
     await settle();
 
-    const decoration = (title: string) =>
-      dataSource.rowDecorations().get(`HierarchyTestAction:${title}`);
+    const rowOptions = (title: string) =>
+      dataSource.rowOptions().get(`HierarchyTestAction:${title}`);
     const classes = (title: string) =>
-      decoration(title)?.cssClass?.split(" ").sort() ?? [];
+      rowOptions(title)?.cssClass?.split(" ").sort() ?? [];
     expect(classes("Clean Water")).toEqual(
       [CONTEXT_ROW_CLASS, TOP_ROW_CLASS, PARENT_ROW_CLASS].sort(),
     );
@@ -252,7 +252,7 @@ describe("HierarchyDataSource", () => {
       [CONTEXT_ROW_CLASS, PARENT_ROW_CLASS].sort(),
     );
     expect(classes("Sonpur")).toEqual([]);
-    expect(decoration("Meetings")?.selectable).toBe(false);
+    expect(rowOptions("Meetings")?.selectable).toBe(false);
   });
 
   it("sorts each level on its own", async () => {
@@ -295,7 +295,7 @@ describe("HierarchyDataSource", () => {
     expect(selectableIds()).not.toContain("Rampur");
     // the number of hidden sub-records follows the title of the collapsed row only
     const suffix = (title: string) =>
-      dataSource.rowDecorations().get(`HierarchyTestAction:${title}`)?.suffix
+      dataSource.rowOptions().get(`HierarchyTestAction:${title}`)?.suffix
         ?.component;
     expect(suffix("Mobilisation")).toBe("HierarchyChildCount");
     expect(suffix("Clean Water")).toBeUndefined();
@@ -326,7 +326,7 @@ describe("HierarchyDataSource", () => {
     dataSource.selectField(undefined);
     await settle();
     expect(dataSource.usesPagination()).toBe(true);
-    expect(dataSource.rowDecorations().size).toBe(0);
+    expect(dataSource.rowOptions().size).toBe(0);
     expect(displayedRows()[0]).toBe("Clean Water");
     expect(urlState.updateUrlParams).toHaveBeenLastCalledWith(
       { [HIERARCHY_URL_PARAM]: NO_HIERARCHY },

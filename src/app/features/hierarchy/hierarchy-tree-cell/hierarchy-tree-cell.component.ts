@@ -6,7 +6,7 @@ import { HierarchyDataSource } from "../hierarchy-data-source";
 import { HierarchyRow } from "../hierarchy-tree";
 
 /**
- * Shown before the first cell of a row in a hierarchy (a row decoration of the {@link HierarchyDataSource}):
+ * Shown before the first cell of a row in a hierarchy (row options of the {@link HierarchyDataSource}):
  * the indentation of the record's level with lines connecting it to its parent and siblings,
  * and the button to expand or collapse its sub-records.
  */

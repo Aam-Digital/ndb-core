@@ -1,7 +1,7 @@
 import { ComponentTuple } from "#src/app/dynamic-components";
 
 /**
- * The components of the hierarchy feature that its data source names in row decorations and toolbar controls,
+ * The components of the hierarchy feature that its data source names in row options and toolbar controls,
  * and its admin setting of list views.
  */
 export const hierarchyComponents: ComponentTuple[] = [
