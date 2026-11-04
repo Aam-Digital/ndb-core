@@ -22,15 +22,16 @@ import { selectionConditionValidator } from "../../../basic-datatypes/entity/sel
 import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { FilterService } from "../../../filter/filter.service";
 import { getCurrentRecordPlaceholderFields } from "../../../filter/filters/filters";
-import {
-  CurrentRecordSource,
-  getCurrentRecordOfForm,
-} from "../current-record-state";
+import { getCurrentRecordOfControl } from "../current-record-state";
 import { asArray } from "app/utils/asArray";
 import { merge } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { isEqual } from "lodash-es";
-import { ColumnConfig, toFormFieldConfig } from "../FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../FormConfig";
 import {
   descriptionForDateValidator,
   maxDateValidator,
@@ -79,9 +80,10 @@ export function patternWithMessage(
 interface ValidatorContext {
   /** the record that the form is editing */
   entity: Entity;
-  fieldId?: string;
-  /** the current state of the record in its form, for validators comparing with other fields */
-  currentRecord?: CurrentRecordSource;
+  /** the field's config as in the form (extended from the schema), e.g. for the record types a link field offers */
+  field?: FormFieldConfig;
+  /** false if the form does not edit one single record (e.g. in bulk edit), so there is no record to compare with */
+  singleRecord: boolean;
 }
 
 @Injectable({
@@ -100,7 +102,7 @@ export class DynamicValidatorsService {
   private getValidator(
     key: DynamicValidator,
     config: FormValidatorConfig,
-    { entity, fieldId, currentRecord }: ValidatorContext,
+    { entity, field, singleRecord }: ValidatorContext,
   ):
     | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
@@ -112,6 +114,7 @@ export class DynamicValidatorsService {
       }
     | null {
     const value = config[key];
+    const fieldId = field?.id;
     switch (key) {
       case "min":
         return { fn: Validators.min(value as number) };
@@ -178,9 +181,12 @@ export class DynamicValidatorsService {
               updateOnChange: true,
               fn: selectionConditionValidator(
                 value,
-                asArray(entity.getSchema().get(fieldId)?.additional ?? []),
+                // the types the dropdown offers (see EditEntityComponent), which a form config can override
+                asArray(field.additional ?? []),
                 (control) =>
-                  getCurrentRecordOfForm(control, entity, currentRecord),
+                  singleRecord
+                    ? getCurrentRecordOfControl(control, entity)
+                    : undefined,
                 {
                   entityMapper: this.entityMapper,
                   placeholderService: this.placeholderService,
@@ -205,8 +211,9 @@ export class DynamicValidatorsService {
    * If there is no Validator by a given name, issues a warning.
    * @param config The raw configuration object
    * @param entity The entity that the form is editing
-   * @param fieldId The field the validators are for
-   * @param currentRecord The current state of the record in its form, for validators comparing with other fields
+   * @param field The field the validators are for (its id or its config as in the form, extended from the schema)
+   * @param singleRecord false if the form does not edit one single record (e.g. in bulk edit),
+   *   for validators comparing with other fields of the record
    * @example
    * >>> buildValidators({ required: true, max: 5 })
    * [ Validators.required, Validators.max(5) ]
@@ -215,15 +222,19 @@ export class DynamicValidatorsService {
   public buildValidators(
     config: FormValidatorConfig,
     entity: Entity,
-    fieldId?: string,
-    currentRecord?: CurrentRecordSource,
+    field?: ColumnConfig,
+    singleRecord = true,
   ): FormControlOptions {
     const formControlOptions = {
       validators: [],
       asyncValidators: [],
     };
     let updateOnBlur = false;
-    const context: ValidatorContext = { entity, fieldId, currentRecord };
+    const context: ValidatorContext = {
+      entity,
+      field: field ? toFormFieldConfig(field) : undefined,
+      singleRecord,
+    };
 
     for (const key of Object.keys(config)) {
       const validatorFn = this.getValidator(

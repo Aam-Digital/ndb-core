@@ -5,7 +5,8 @@ import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service
 import { Logging } from "#src/app/core/logging/logging.service";
 import { FormControl, NgControl } from "@angular/forms";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
-import { BehaviorSubject, of } from "rxjs";
+import { of } from "rxjs";
+import { signal, WritableSignal } from "@angular/core";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
@@ -29,14 +30,17 @@ describe("EditEntityComponent", () => {
   let formControl: FormControl;
   let loadTypeSpy: ReturnType<typeof vi.spyOn>;
   /** the state of the record being edited, as provided by the form this field is part of */
-  let recordState: BehaviorSubject<Entity | undefined>;
+  let recordState: WritableSignal<Entity | undefined>;
+  /** reads of the state of the record by this field */
+  let readRecordState: ReturnType<typeof vi.fn>;
 
   @DatabaseEntity("Test2Entity")
   class Test2Entity extends TestEntity {}
 
   beforeEach(async () => {
     formControl = new FormControl();
-    recordState = new BehaviorSubject<Entity | undefined>(undefined);
+    recordState = signal<Entity | undefined>(undefined);
+    readRecordState = vi.fn(() => recordState());
 
     test1Entities = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
       return new TestEntity(s);
@@ -57,7 +61,7 @@ describe("EditEntityComponent", () => {
         { provide: NgControl, useValue: { control: formControl } },
         {
           provide: CurrentRecordContext,
-          useValue: { currentRecordState: () => recordState },
+          useValue: { currentRecord: readRecordState },
         },
       ],
     }).compileComponents();
@@ -429,7 +433,7 @@ describe("EditEntityComponent", () => {
 
     /** the user edits the record, so its form provides a new state */
     function changeRecord(recordValues: Record<string, unknown>) {
-      recordState.next(Object.assign(new TestEntity(), recordValues));
+      recordState.set(Object.assign(new TestEntity(), recordValues));
     }
 
     async function expectOfferedNames(expected: string[]) {
@@ -505,7 +509,7 @@ describe("EditEntityComponent", () => {
 
     it("does not apply references to the record if it edits several records at once (no record)", async () => {
       editRecordWithCondition({ other: { $in: ["$current_record.other"] } });
-      recordState.next(undefined);
+      recordState.set(undefined);
       fixture.detectChanges();
 
       await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
@@ -518,7 +522,7 @@ describe("EditEntityComponent", () => {
       });
       fixture.detectChanges();
 
-      expect(recordState.observed).toBe(false);
+      expect(readRecordState).not.toHaveBeenCalled();
     });
 
     it("does not apply the condition to a field referencing multiple entity types", async () => {
@@ -589,11 +593,15 @@ describe("EditEntityComponent", () => {
       expect(JSON.stringify(debugSpy.mock.calls)).not.toContain("SECRET-VALUE");
     });
 
-    it("pre-fills a new record so that it matches the condition", async () => {
-      editRecordWithCondition(
-        { other: { $in: ["$current_record.other"] } },
-        { other: "BERLIN" },
-      );
+    it("pre-fills a new record so that it matches the condition, already before the first change detection", async () => {
+      changeRecord({ other: "BERLIN" });
+      fixture.componentRef.setInput("formFieldConfig", {
+        id: "testProperty",
+        additional: TestEntity.ENTITY_TYPE,
+        validators: {
+          selectionCondition: { other: { $in: ["$current_record.other"] } },
+        },
+      });
       const formDialogSpy = vi
         .spyOn(TestBed.inject(FormDialogService), "openFormPopup")
         .mockReturnValue({ afterClosed: () => of(undefined) } as any);
@@ -616,7 +624,7 @@ describe("EditEntityComponent", () => {
         id: "testProperty",
         additional: TestEntity.ENTITY_TYPE,
       });
-      recordState.next(currentRecord);
+      recordState.set(currentRecord);
       fixture.detectChanges();
     }
 

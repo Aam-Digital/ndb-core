@@ -1,8 +1,8 @@
 import { FormGroup, ɵElement } from "@angular/forms";
-import { Observable, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EventEmitter } from "@angular/core";
+import { EventEmitter, Signal } from "@angular/core";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -30,13 +30,15 @@ export interface EntityForm<T extends Entity> {
 
   /**
    * The record with the current, possibly unsaved values of this form, updated with every change,
-   * for fields and validators that depend on the values of other fields of the record
+   * for fields that depend on the values of other fields of the record
    * (like the `selectionCondition` of an entity field).
+   * One copy per change, shared by all fields reading it, and only built when read.
+   * (Validators build their own, see `getCurrentRecordOfControl`.)
    *
-   * `undefined` if the form does not edit one single record (e.g. in bulk edit).
+   * Its value is `undefined` if the form does not edit one single record (e.g. in bulk edit).
    * If not set, the field components use the saved `entity` of the form.
    */
-  currentRecord?: Observable<T | undefined>;
+  currentRecord?: Signal<T | undefined>;
 }
 
 export class EntityFormSavedEvent {

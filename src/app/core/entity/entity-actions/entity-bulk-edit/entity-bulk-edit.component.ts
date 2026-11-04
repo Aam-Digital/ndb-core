@@ -23,7 +23,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { of } from "rxjs";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
@@ -101,9 +100,11 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
       fieldKeys,
       this.entityData,
       this.destroyRef,
+      true,
+      true,
+      // the value is set for several records, so there is no single record other fields could refer to
+      false,
     );
-    // the value is set for several records, so there is no single record other fields could refer to
-    this.fieldValueForm.currentRecord = of(undefined);
 
     const selectedField = this.selectedFieldFormControl.value;
     if (this.fieldValueForm.formGroup.controls[selectedField]) {

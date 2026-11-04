@@ -42,7 +42,6 @@ import {
 } from "../../../utils/test-utils/dialog-mocks";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
-import { of } from "rxjs";
 import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 
 @DatabaseEntity("EntityFormServiceTestAction")
@@ -83,6 +82,7 @@ describe("EntityFormService", () => {
     entity: T,
     withPermissionCheck?: boolean,
     withDefaultValues?: boolean,
+    singleRecord?: boolean,
   ) =>
     service.createEntityForm(
       formFields,
@@ -90,6 +90,7 @@ describe("EntityFormService", () => {
       destroyRef,
       withPermissionCheck,
       withDefaultValues,
+      singleRecord,
     );
 
   beforeEach(waitForAsync(() => {
@@ -398,6 +399,8 @@ describe("EntityFormService", () => {
         [{ id: "center" }, { id: "participants" }],
         recordInHamburg(),
       );
+      // a field following the record holds its state from before the change while the validator checks it
+      form.currentRecord();
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
@@ -414,8 +417,11 @@ describe("EntityFormService", () => {
       const form = await createForm(
         [{ id: "participants" }],
         recordInHamburg(),
+        true,
+        true,
+        false,
       );
-      form.currentRecord = of(undefined);
+      expect(form.currentRecord()).toBeUndefined();
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
@@ -584,15 +590,26 @@ describe("EntityFormService", () => {
   it("provides the record with the current, possibly unsaved values of the form", async () => {
     const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
     const form = await createForm(["name", "other"], entity);
-    const records: TestEntity[] = [];
-    form.currentRecord.subscribe((record) => records.push(record));
+    expect(form.currentRecord().other).toBe("BERLIN");
 
     form.formGroup.get("other").setValue("HAMBURG");
     form.formGroup.get("other").disable(); // disabled fields still count, like for display conditions
 
-    expect(records.at(-1).other).toBe("HAMBURG");
-    expect(records.at(-1).name).toBe("Saved");
+    expect(form.currentRecord().other).toBe("HAMBURG");
+    expect(form.currentRecord().name).toBe("Saved");
     expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+  });
+
+  it("builds one record state per change, shared by all fields following the form", async () => {
+    const form = await createForm(["name"], new TestEntity());
+    const before = form.currentRecord();
+    expect(form.currentRecord()).toBe(before);
+
+    form.formGroup.get("name").patchValue("changed");
+
+    expect(form.currentRecord()).not.toBe(before);
+    expect(form.currentRecord().name).toBe("changed");
+    expect(form.currentRecord()).toBe(form.currentRecord());
   });
 
   it("should clear pending changes and stop tracking once the DestroyRef is destroyed (no leak)", async () => {

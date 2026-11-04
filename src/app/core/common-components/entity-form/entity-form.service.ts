@@ -1,4 +1,11 @@
-import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
+import {
+  computed,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Injectable,
+  signal,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   AbstractControl,
@@ -8,10 +15,7 @@ import {
   FormGroup,
 } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
-import {
-  createCurrentRecordState,
-  CurrentRecordSource,
-} from "./current-record-state";
+import { createCurrentRecordState } from "./current-record-state";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -20,7 +24,7 @@ import { PermissionConditionValidatorsService } from "./dynamic-form-validators/
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
-import { filter, map, startWith } from "rxjs/operators";
+import { filter } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { CustomYesNoButtons } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
@@ -84,6 +88,8 @@ export class EntityFormService {
    *   caller's lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
+   * @param singleRecord false if the form does not edit one single record (e.g. in bulk edit),
+   *   so that fields and validators have no record to compare with (see `EntityForm.currentRecord`)
    */
   public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
@@ -91,6 +97,7 @@ export class EntityFormService {
     destroyRef: DestroyRef,
     withPermissionCheck = true,
     withDefaultValues = true,
+    singleRecord = true,
   ): Promise<EntityForm<T>> {
     const fields: FormFieldConfig[] = [];
     for (const formField of formFields) {
@@ -107,15 +114,22 @@ export class EntityFormService {
       }
     }
 
-    // set below: validators read the form's `currentRecord`, but already run while the controls are created
-    const created: { form?: EntityForm<T> } = {};
     const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
       fields,
       entity,
       destroyRef,
       withPermissionCheck,
-      () => created.form?.currentRecord,
+      singleRecord,
     );
+
+    // bumped with every change of the form (below), so that `currentRecord` builds a new copy only then
+    const formVersion = signal(0);
+    const currentRecord = singleRecord
+      ? computed(() => {
+          formVersion();
+          return createCurrentRecordState(entity, typedFormGroup);
+        })
+      : computed((): T | undefined => undefined);
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
@@ -123,12 +137,8 @@ export class EntityFormService {
       fieldConfigs: fields,
       onFormStateChange: new EventEmitter(),
       watcher: new Map(),
-      currentRecord: typedFormGroup.valueChanges.pipe(
-        startWith(null),
-        map(() => createCurrentRecordState(entity, typedFormGroup)),
-      ),
+      currentRecord,
     };
-    created.form = entityForm;
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.
     // Both the subscription and the final cleanup are tied to the caller's lifecycle.
@@ -138,9 +148,10 @@ export class EntityFormService {
     // dirty state from accumulating in UnsavedChangesService.sources.
     typedFormGroup.valueChanges
       .pipe(takeUntilDestroyed(destroyRef))
-      .subscribe(() =>
-        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
-      );
+      .subscribe(() => {
+        formVersion.update((v) => v + 1);
+        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty);
+      });
     // The caller's view may already be destroyed by the time this async form
     // finishes being created (e.g. navigated away while the form was still loading).
     // `onDestroy` throws NG0911 in that case, so check `destroyed` first, the same
@@ -172,7 +183,7 @@ export class EntityFormService {
     entity: T,
     destroyRef: DestroyRef,
     withPermissionCheck = true,
-    currentRecord?: CurrentRecordSource,
+    singleRecord = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -187,7 +198,7 @@ export class EntityFormService {
         f,
         copy,
         withPermissionCheck,
-        currentRecord,
+        singleRecord,
       );
     }
     const group = this.fb.group<Partial<T>>(formConfig);
@@ -222,7 +233,7 @@ export class EntityFormService {
     field: FormFieldConfig,
     entity: Entity,
     withPermissionCheck: boolean,
-    currentRecord?: CurrentRecordSource,
+    singleRecord: boolean,
   ) {
     let value = entity[field.id];
 
@@ -231,8 +242,8 @@ export class EntityFormService {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
         entity,
-        field.id,
-        currentRecord,
+        field,
+        singleRecord,
       );
       Object.assign(controlOptions, validators);
     }

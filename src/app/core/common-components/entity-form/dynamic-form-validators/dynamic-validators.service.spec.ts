@@ -14,11 +14,10 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DataFilter } from "../../../filter/filters/filters";
-import { CurrentRecordSource } from "../current-record-state";
-import { of } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { Entity } from "../../../entity/model/entity";
 import { createEmbeddedEntity } from "../../../entity/model/embedded-entity";
+import { FormFieldConfig } from "../FormConfig";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -291,25 +290,32 @@ describe("DynamicValidatorsService", () => {
     const anna = TestEntity.create({ name: "Anna", other: "BERLIN" });
     const ben = TestEntity.create({ name: "Ben", other: "HAMBURG" });
     const sameLocation = { other: { $in: ["$current_record.other"] } };
+    const linkField: FormFieldConfig = {
+      id: "ref",
+      additional: TestEntity.ENTITY_TYPE,
+    };
 
     /**
      * @param recordInForm values of the record being edited, entered in other fields of the form
-     * @param currentRecord the `currentRecord` of the form, e.g. none in bulk edit
+     * @param singleRecord false if the form edits several records at once (bulk edit)
+     * @param field the config of the link field in the form
+     * @param changed the fields of the form changed by the user (dirty), by default the link field
      */
     function validate(
       selected: string | string[],
       condition: DataFilter<TestEntity>,
       recordInForm: Partial<TestEntity> = {},
-      currentRecord?: CurrentRecordSource,
+      singleRecord?: boolean,
+      { field = linkField, changed = [field.id] } = {},
     ) {
       const { asyncValidators } = service.buildValidators(
         { selectionCondition: condition },
         new TestEntity(),
-        "ref",
-        currentRecord,
+        field,
+        singleRecord,
       );
       const form = new UntypedFormGroup({
-        ref: new UntypedFormControl(selected),
+        [field.id]: new UntypedFormControl(selected),
         ...Object.fromEntries(
           Object.entries(recordInForm).map(([id, value]) => [
             id,
@@ -317,7 +323,8 @@ describe("DynamicValidatorsService", () => {
           ]),
         ),
       });
-      return (asyncValidators as AsyncValidatorFn[])[0](form.get("ref"));
+      changed.forEach((id) => form.get(id).markAsDirty());
+      return (asyncValidators as AsyncValidatorFn[])[0](form.get(field.id));
     }
 
     beforeEach(() => mockedEntityMapper.addAll([anna, ben]));
@@ -336,13 +343,26 @@ describe("DynamicValidatorsService", () => {
       });
     });
 
+    it("checks the record types of the field in the form, which can differ from the schema", async () => {
+      // in the schema, `refMixed` links to several types, for which a condition does not apply
+      const field = { id: "refMixed", additional: TestEntity.ENTITY_TYPE };
+
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          field,
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({ warning: true }),
+      });
+    });
+
     it.each<
       [
         string,
         string | string[],
         DataFilter<TestEntity>,
         Partial<TestEntity>?,
-        CurrentRecordSource?,
+        boolean?,
       ]
     >([
       ["matching records", [anna.getId()], { other: { $in: ["BERLIN"] } }],
@@ -363,13 +383,13 @@ describe("DynamicValidatorsService", () => {
         ben.getId(),
         sameLocation,
         { other: "BERLIN" },
-        () => of(undefined),
+        false,
       ],
     ])(
       "returns nothing for %s",
-      async (_, selected, condition, recordInForm, currentRecord) => {
+      async (_, selected, condition, recordInForm, singleRecord) => {
         expect(
-          await validate(selected, condition, recordInForm, currentRecord),
+          await validate(selected, condition, recordInForm, singleRecord),
         ).toBeNull();
       },
     );

@@ -70,7 +70,7 @@ export interface SelectionConditionServices {
 export function selectionConditionValidator(
   condition: DataFilter<Entity>,
   entityTypes: string[],
-  getCurrentRecord: (control: AbstractControl) => Promise<Entity | undefined>,
+  getCurrentRecord: (control: AbstractControl) => Entity | undefined,
   {
     entityMapper,
     placeholderService,
@@ -87,7 +87,7 @@ export function selectionConditionValidator(
     const resolved = resolveSelectionCondition(
       condition,
       entityTypes,
-      await getCurrentRecord(control),
+      getCurrentRecord(control),
       placeholderService,
     );
     if (!resolved) {
