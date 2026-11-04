@@ -644,9 +644,9 @@ describe("EntitiesTableComponent", () => {
         ?.closest("td");
       // the first column holding record data, after the select and "+" columns
       expect(prefixCell?.classList).toContain("mat-column-name");
-      const prefixContainer = prefixCell!.querySelector(
+      const prefixContainer = prefixCell.querySelector(
         "app-test-row-prefix",
-      )!.parentElement!;
+      ).parentElement;
       // side by side in the cell: prefix, the field, suffix
       expect(
         [...prefixContainer.children].map((child) => child.localName),
@@ -657,7 +657,7 @@ describe("EntitiesTableComponent", () => {
       ]);
       // the prefix can span the full height of the row and draw over the row divider
       expect(getComputedStyle(prefixContainer).height).toBe("100%");
-      expect(getComputedStyle(prefixCell!).overflow).toBe("visible");
+      expect(getComputedStyle(prefixCell).overflow).toBe("visible");
       expect(renderedRow(decorated).classList).toContain("decorated");
       expect(renderedRow(decorated).classList).toContain("table-row");
       expect(

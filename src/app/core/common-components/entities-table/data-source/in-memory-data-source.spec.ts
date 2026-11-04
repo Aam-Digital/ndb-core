@@ -217,12 +217,6 @@ describe("InMemoryDataSource", () => {
     });
 
     it("lets a subclass reinterpret the filter, together with the free-text search", async () => {
-      /** treats the filter as a filter on `name` */
-      class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
-        protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
-          return (record: TestEntity) => record.name === filter["other"];
-        }
-      }
       const custom = TestBed.runInInjectionContext(
         () => new FilterOnNameDataSource(),
       );
@@ -237,3 +231,10 @@ describe("InMemoryDataSource", () => {
     });
   });
 });
+
+/** a data source of a feature module that treats the filter as a filter on `name` */
+class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
+  protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
+    return (record: TestEntity) => record.name === filter["other"];
+  }
+}
