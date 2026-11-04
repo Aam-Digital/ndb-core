@@ -76,7 +76,9 @@ of its findings against the code before you report it and drop what does not hol
 Without `/code-review`, the sub-agent does step 3 as well. For a larger PR, first let a
 fast exploration agent collect the code outside the diff that the change touches
 (callers of changed functions, users of changed types, state or config keys), as
-locations with one line on what is there each, and pass that on.
+locations with one line on what is there each, and pass that on. It searches the
+fetched `pr-<n>` (`git grep <term> pr-<n>`, `git show pr-<n>:<path>` or a separate
+worktree), not the user's working copy, which may be on another branch.
 
 ## Output format
 
