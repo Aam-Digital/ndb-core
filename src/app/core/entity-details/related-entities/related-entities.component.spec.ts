@@ -88,16 +88,18 @@ describe("RelatedEntitiesComponent", () => {
     const matches = TestBed.inject(FilterService).getFilterPredicate(
       component.filterObj(),
     );
-    const open = Object.assign(new ConfiguredOrTest(), {
-      first: entity.getId(),
-      status: "open",
-    });
-    const closed = Object.assign(new ConfiguredOrTest(), {
-      second: entity.getId(),
-      status: "closed",
-    });
-    expect(matches(open)).toBe(true);
-    expect(matches(closed)).toBe(false);
+    const record = (props: object) =>
+      Object.assign(new ConfiguredOrTest(), props);
+    expect(matches(record({ first: entity.getId(), status: "open" }))).toBe(
+      true,
+    );
+    expect(matches(record({ second: entity.getId(), status: "new" }))).toBe(
+      true,
+    );
+    expect(matches(record({ second: entity.getId(), status: "closed" }))).toBe(
+      false,
+    );
+    expect(matches(record({ status: "open" }))).toBe(false);
   });
 
   it("pre-fills the relation of a new record also when a filter is configured", async () => {
