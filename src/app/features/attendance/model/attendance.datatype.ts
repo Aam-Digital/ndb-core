@@ -1,21 +1,11 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { SchemaEmbedArrayDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AttendanceItem } from "./attendance-item";
 import { AttendanceLogicalStatus } from "./attendance-status";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.datatype";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import {
-  ExportColumnMapping,
-  ExportContext,
-  DefaultDatatype,
-} from "#src/app/core/entity/default-datatype/default.datatype";
-import {
-  EXPORT_BATCH_SIZE,
-  loadReadableEntityName,
-} from "#src/app/core/export/readable-entity-name";
-import { mapInBatches } from "#src/app/utils/utils";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -37,8 +27,6 @@ import { mapInBatches } from "#src/app/utils/utils";
  */
 @Injectable()
 export class AttendanceDatatype extends SchemaEmbedArrayDatatype {
-  private readonly entityMapper = inject(EntityMapperService);
-
   static override readonly dataType = "attendance";
   static override label: string = $localize`:datatype-label:attendance (participants with status)`;
 
@@ -46,46 +34,6 @@ export class AttendanceDatatype extends SchemaEmbedArrayDatatype {
 
   override editComponent = "EditAttendance";
   override viewComponent = "DisplayAttendance";
-
-  override getExportColumns(
-    schemaField: EntitySchemaField,
-  ): ExportColumnMapping[] {
-    if (!schemaField.label) {
-      return [];
-    }
-
-    return [
-      {
-        keySuffix: "",
-        label: schemaField.label + " (participation details)",
-        resolveValue: async (
-          value: AttendanceItem[],
-          _schemaField,
-          context?: ExportContext,
-        ) => {
-          const attendance = Array.isArray(value) ? value : [];
-          const participantCache =
-            context?.entityNameCache ?? new Map<string, Promise<string>>();
-
-          const details = await mapInBatches(
-            attendance,
-            EXPORT_BATCH_SIZE,
-            (attendanceItem) =>
-              this.toParticipationDetails(attendanceItem, participantCache),
-          );
-          return details.join(", ");
-        },
-      },
-      {
-        keySuffix: "_participant_count",
-        label: schemaField.label + " (number of participants)",
-        resolveValue: (value: AttendanceItem[]) => {
-          const attendance = Array.isArray(value) ? value : [];
-          return attendance.length;
-        },
-      },
-    ];
-  }
 
   /**
    * Returns the attendance percentage (0–1) for use as the sort key in list columns.
@@ -107,65 +55,6 @@ export class AttendanceDatatype extends SchemaEmbedArrayDatatype {
       }
     }
     return counted > 0 ? present / counted : -1;
-  }
-
-  private async toParticipationDetails(
-    attendanceItem: AttendanceItem,
-    participantCache: Map<string, Promise<string>>,
-  ): Promise<string> {
-    const participant = await this.getParticipantReadable(
-      attendanceItem,
-      participantCache,
-    );
-    const statusLabel = this.getStatusLabel(attendanceItem);
-
-    if (participant && statusLabel) {
-      return `${participant} (${statusLabel})`;
-    }
-
-    if (participant) {
-      return participant;
-    }
-
-    if (statusLabel) {
-      return statusLabel;
-    }
-
-    return "";
-  }
-
-  private async getParticipantReadable(
-    attendanceItem: AttendanceItem,
-    participantCache: Map<string, Promise<string>>,
-  ): Promise<string> {
-    const participantId = attendanceItem?.participant;
-    if (!participantId) {
-      return "";
-    }
-
-    return loadReadableEntityName(
-      this.entityMapper,
-      undefined,
-      participantId,
-      participantCache,
-    );
-  }
-
-  private getStatusLabel(attendanceItem: AttendanceItem): string {
-    const status = attendanceItem?.status;
-    if (!status) {
-      return "";
-    }
-
-    if (typeof status === "string") {
-      return status;
-    }
-
-    if (typeof status === "object" && "label" in status) {
-      return status.label ?? "";
-    }
-
-    return "";
   }
 
   private static readonly ATTENDANCE_DATATYPES = [

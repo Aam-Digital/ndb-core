@@ -17,6 +17,7 @@
 
 import {
   DefaultDatatype,
+  ExportColumnMapping,
   referenceIdConditions,
 } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -34,6 +35,7 @@ import {
   toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
 import { Logging } from "../../logging/logging.service";
+import { getSchemaEmbedExportColumns } from "./schema-embed-export-columns";
 
 /**
  * Configuration for the "schema-embed" datatype's `additional` field.
@@ -215,6 +217,20 @@ export class SchemaEmbedDatatype<
       result.push(this.schemaService.addSchemaToFormField(config, innerField));
     }
     return result;
+  }
+
+  /**
+   * Readable export columns built from the inner fields (see {@link getSchemaEmbedExportColumns}).
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    return getSchemaEmbedExportColumns(
+      schemaField,
+      this.getEffectiveSchema(schemaField),
+      this.holdsArray(schemaField),
+      this.schemaService,
+    );
   }
 
   override transformToDatabaseFormat(
