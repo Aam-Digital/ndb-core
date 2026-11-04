@@ -26,7 +26,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { SyncFailedError } from "../../../core/database/pouchdb/synced-pouch-database";
-import { isConnectivityError } from "../../../utils/is-connectivity-error";
+import { isConnectivityError } from "../../../core/logging/error-classification";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileService } from "../file.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -172,10 +172,7 @@ export class EditFileComponent
     } else {
       // a failed sync before the upload is already logged by the sync itself
       if (!(err instanceof SyncFailedError)) {
-        Logging.error("Failed to update file", {
-          status: err?.status,
-          message: err?.message,
-        });
+        Logging.error("Failed to update file", err);
       }
       errorMessage = $localize`:File Upload Error Message:Failed to update file attachment. Please try again.`;
     }

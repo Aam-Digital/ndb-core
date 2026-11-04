@@ -59,11 +59,10 @@ function withEvaluableConditions(
     permissionConditionsMatcher(rule.conditions);
     return [rule];
   } catch (err) {
-    Logging.warn("Ignoring permission rule with unusable conditions", {
+    Logging.warn("Ignoring permission rule with unusable conditions", err, {
       subject: rule.subject,
       action: rule.action,
       inverted: !!rule.inverted,
-      error: err?.message,
     });
 
     const { conditions, ...unconditional } = rule;

@@ -405,8 +405,8 @@ export class AffectedEntitiesCalculation {
     } catch (error) {
       Logging.warn(
         "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
-        { entityType: target.getType(), fieldId },
         error,
+        { entityType: target.getType(), fieldId },
       );
     }
 

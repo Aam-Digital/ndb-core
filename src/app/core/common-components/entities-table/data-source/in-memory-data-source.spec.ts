@@ -7,7 +7,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
+import { databaseError } from "#src/app/core/database/pouchdb/database-exception";
 
 describe("InMemoryDataSource", () => {
   let dataSource: InMemoryDataSource<TestEntity>;
@@ -117,7 +117,7 @@ describe("InMemoryDataSource", () => {
 
     it("names an expired session as the cause in the toast", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
-        new DatabaseException({
+        databaseError({
           status: 401,
           name: "unauthorized",
           error: "unauthorized",
@@ -141,15 +141,14 @@ describe("InMemoryDataSource", () => {
         expect.anything(),
       );
     });
-    it("tells the user they don't have access (and does not report it) if not permitted", async () => {
+    it("tells the user they don't have access if not permitted", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
-        new DatabaseException({
+        databaseError({
           status: 401,
           message: "unauthorized",
           error: "User is not permitted",
         }),
       );
-      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
 
       const ds = TestBed.runInInjectionContext(
         () => new InMemoryDataSource<Entity>(),
@@ -164,7 +163,6 @@ describe("InMemoryDataSource", () => {
         "×", // no "Retry": it cannot help for a permission problem
         expect.anything(),
       );
-      expect(errorSpy).not.toHaveBeenCalled();
     });
   });
 

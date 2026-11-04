@@ -10,11 +10,11 @@ import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
-import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import {
   CONNECTIVITY_ERROR_STATUS,
   isFailedFetch,
 } from "#src/app/utils/backend-response";
+import { isConnectivityError } from "../../../logging/error-classification";
 import { ConnectivityError } from "#src/app/utils/backend-errors";
 import {
   defer,

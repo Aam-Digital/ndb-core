@@ -21,8 +21,7 @@ import {
 } from "../../skill-api/skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../../utils/is-connectivity-error";
-import { isNotPermittedError } from "../../../../utils/is-not-permitted-error";
+import { isNotPermittedError } from "../../../../core/logging/error-classification";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -139,12 +138,8 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         this.skillApiService.getExternalProfiles(this.searchParams, page),
       );
     } catch (e) {
-      if (isConnectivityError(e)) {
-        // offline or the external system unavailable: the error is shown in the dialog
-        Logging.debug("SkillModule: Failed to load external profiles", e);
-      } else {
-        Logging.warn("SkillModule: Failed to load external profiles", e);
-      }
+      // the error is shown in the dialog
+      Logging.warn("SkillModule: Failed to load external profiles", e);
       // a NotPermittedError keeps its static message (its issue title), the user gets a translated one
       this.error = isNotPermittedError(e)
         ? {

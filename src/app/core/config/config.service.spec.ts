@@ -7,7 +7,7 @@ import { UpdatedEntity } from "../entity/model/entity-update";
 import { HttpStatusCode } from "@angular/common/http";
 import { Config } from "./config";
 import { ConfigService } from "./config.service";
-import { DatabaseException } from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 import { Logging } from "../logging/logging.service";
 import { ConfigValidationService } from "./config-validation/config-validation.service";
 
@@ -291,7 +291,7 @@ describe("ConfigService", () => {
 
     it.each([
       [{ status: 500, message: "Internal Server Error" }, true],
-      [new DatabaseException({ status: 0, message: "Failed to fetch" }), false], // offline
+      [databaseError({ status: 0, message: "Failed to fetch" }), false], // offline
     ])(
       "should abort app on non-404 config load error %j, reporting only unexpected failures",
       async (dbError, reported) => {

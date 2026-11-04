@@ -1,5 +1,5 @@
-import { DatabaseException, PouchDatabase } from "./pouch-database";
-import { toTypedDatabaseError } from "./database-exception";
+import { PouchDatabase } from "./pouch-database";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 import {
   BulkWriteLimits,
   DEFAULT_BULK_WRITE_LIMITS,
@@ -18,29 +18,16 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
-import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 import { FindPage } from "./find-queries";
-import {
-  describeResponse,
-  unexpectedResponseMessage,
-} from "../../logging/http-response-logging";
+import { describeResponse } from "../../logging/http-response-logging";
+import { isConnectivityError } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "../../session/session-expired.error";
+import { NotPermittedError } from "../../permissions/not-permitted.error";
 import {
   CONNECTIVITY_ERROR_STATUS,
   normalizeRequestPath,
 } from "#src/app/utils/backend-response";
-
-/**
- * 4XX statuses that occur during normal operation
- * (and are handled by callers or the auth layer),
- * so they are not reported to remote logging.
- */
-const EXPECTED_4XX_STATUSES: number[] = [
-  HttpStatusCode.Unauthorized,
-  HttpStatusCode.Forbidden,
-  HttpStatusCode.NotFound,
-];
 
 const MAX_RESPONSE_BODY_LENGTH = 500;
 
@@ -241,20 +228,25 @@ export class RemotePouchDatabase extends PouchDatabase {
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
       fetchError = err;
-      Logging.debug("Failed initial fetch from DB", err);
-      Logging.debug("navigator.onLine", navigator.onLine);
+      Logging.debug("Failed initial fetch from DB", err, {
+        online: navigator.onLine,
+      });
       this.showConnectionIssueAlert();
     }
 
-    // Retry login if request failed with unauthorized.
-    // This will redirect to Keycloak if the token is expired or missing,
-    // which is intentional — it ensures users re-authenticate online
-    // when connectivity is available (including after an offline login).
-    // If the session cannot be renewed, this fails with a SessionExpiredError.
-    if (
-      result?.status === HttpStatusCode.Unauthorized &&
-      !this.unauthenticatedSession
-    ) {
+    if (result?.status === HttpStatusCode.Unauthorized) {
+      if (this.unauthenticatedSession) {
+        // without a login, the server answers what the public role may not do with a plain 401
+        throw new NotPermittedError("Not permitted without login", {
+          status: result.status,
+          details: { requestPath: normalizeRequestPath(remoteUrl) },
+        });
+      }
+      // Retry login if request failed with unauthorized.
+      // This will redirect to Keycloak if the token is expired or missing,
+      // which is intentional — it ensures users re-authenticate online
+      // when connectivity is available (including after an offline login).
+      // If the session cannot be renewed, this fails with a SessionExpiredError.
       result = await this.retryWithRenewedSession(remoteUrl, opts, result);
     }
     if (result && result.status !== HttpStatusCode.Unauthorized) {
@@ -265,8 +257,9 @@ export class RemotePouchDatabase extends PouchDatabase {
     const method = requestMethod(opts);
 
     if (!result || result.status >= 500) {
-      Logging.debug("Actual DB Fetch response", result);
-      Logging.debug("navigator.onLine", navigator.onLine);
+      Logging.debug("Actual DB Fetch response", result, {
+        online: navigator.onLine,
+      });
       throw await failedResponseError(result, method, remoteUrl, fetchError);
     }
 
@@ -287,40 +280,19 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Log a 4XX response at the level it deserves:
-   * expected statuses only for debugging, unexpected ones as a warning.
+   * Log a 4XX response for debugging only: the request fails with it, and whoever
+   * made it reports the failure if it is unexpected (reported here as well, it
+   * opened a second issue for each failure).
    */
   private logErrorResponse(
     result: Response,
     method: string,
     remoteUrl: string,
   ): void {
-    const response = describeResponse(result, method);
-    if (this.isNotificationsDatabase() && result.status === 404) {
-      Logging.debug("Notifications database not found (404) - may be expected");
-    } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
-      // expired session (401), permission-filtered doc (403) and missing doc (404)
-      // are part of normal operation and handled by callers
-      Logging.debug("Expected 4XX response from DB", response);
-    } else if (result.status === HttpStatusCode.Conflict) {
-      // A 409 is CouchDB rejecting a write whose revision is out of date. This
-      // layer cannot tell whether that cost anyone anything, but whoever made
-      // the request always can:
-      //  - remote-only session: the write came from PouchDatabase.put(), and
-      //    PouchDatabase.resolveConflict() decides between merging,
-      //    overwriting and failing - and counts the outcome it chose.
-      //  - synced session: writes go to the local database, so the only 409s
-      //    reaching here are replication's own `PUT /_local/<checkpoint>`
-      //    races between concurrent tabs, which PouchDB retries internally.
-      // Reporting it here would therefore be an alert nobody can act on, and
-      // it is what buried the genuinely unexpected statuses in the same issue.
-      Logging.debug("Document update conflict from DB", response);
-    } else {
-      Logging.warn(unexpectedResponseMessage(result.status), {
-        ...response,
-        requestedUrl: remoteUrl,
-      });
-    }
+    Logging.debug("4XX response from DB", {
+      ...describeResponse(result, method),
+      requestedUrl: remoteUrl,
+    });
   }
 
   /**
@@ -344,7 +316,7 @@ export class RemotePouchDatabase extends PouchDatabase {
       try {
         return await operation();
       } catch (err) {
-        // the raw error of PouchDB, not yet converted by a DatabaseException
+        // the raw error of PouchDB, not yet converted by `databaseError`
         if (
           !isConnectivityError(toTypedDatabaseError(err)) ||
           attempt >= this.TRANSIENT_ERROR_RETRIES
@@ -550,7 +522,7 @@ export class RemotePouchDatabase extends PouchDatabase {
           PouchDB.Find.FindResponse<any> & { bookmark?: string }
         >,
     ).catch((err) => {
-      throw new DatabaseException(err);
+      throw databaseError(err);
     });
     return { docs: res.docs, bookmark: res.bookmark };
   }

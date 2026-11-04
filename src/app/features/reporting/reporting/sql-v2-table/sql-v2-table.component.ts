@@ -36,7 +36,7 @@ export class SqlV2TableComponent {
         );
         this.isError = false;
       } catch (error) {
-        Logging.error(error);
+        Logging.error("Could not display the report data", error);
         this.isError = true;
         this.dataSource.data = [];
       }

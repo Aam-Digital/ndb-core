@@ -32,7 +32,6 @@ import {
   tap,
 } from "rxjs/operators";
 import { Logging } from "../../../core/logging/logging.service";
-import { isConnectivityError } from "../../../utils/is-connectivity-error";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
@@ -187,8 +186,7 @@ export class AddressSearchComponent implements OnInit {
         } else {
           if (
             error.status >= 500 ||
-            error.status === HttpStatusCode.TooManyRequests ||
-            isConnectivityError(error)
+            error.status === HttpStatusCode.TooManyRequests
           ) {
             // the external lookup service is down or rate-limiting: nothing to fix
             Logging.debug("Address Lookup API unavailable", error);

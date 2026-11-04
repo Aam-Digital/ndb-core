@@ -144,7 +144,7 @@ describe("EntityActionsMenuService", () => {
     ]);
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining("action factory failed"),
-      expect.objectContaining({ error: expect.any(Error) }),
+      expect.any(Error),
     );
   });
 });

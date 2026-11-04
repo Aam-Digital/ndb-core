@@ -1,16 +1,19 @@
-export class EntityPermissionError extends Error {
+import { NamedError } from "#src/app/core/logging/reported-errors";
+
+/**
+ * The current user's permission rules do not allow the action on the entity,
+ * checked in the app before the request: as the UI disables actions the user may
+ * not do, this usually points to a bug, unlike a {@link NotPermittedError} of the server.
+ *
+ * `action`, `entityId` and `entityType` are kept out of the message (they would
+ * split the issue in remote monitoring) and reported as extra data instead.
+ */
+export class EntityPermissionError extends NamedError {
   constructor(
     public readonly action: string,
     public readonly entityId: string,
     public readonly entityType: string,
   ) {
-    // action, entityId and entityType are deliberately kept out of the message
-    // (entityId is per-record and, for new entities, even timestamp-based; all
-    // three would otherwise fragment Sentry grouping). They stay available as
-    // properties and are picked up as structured context by enrichSentryEvent
-    // in sentry-event-processing.ts, so they remain visible in Sentry's "Additional
-    // Data" without being part of the message or name.
-    super("Current user is not permitted this action");
-    this.name = "EntityPermissionError";
+    super("EntityPermissionError", "Current user is not permitted this action");
   }
 }

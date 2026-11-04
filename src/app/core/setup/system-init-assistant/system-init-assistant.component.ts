@@ -26,7 +26,6 @@ import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-set
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
-import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
 
 /**
  * UI for initial system setup and use case selection,
@@ -131,11 +130,7 @@ export class SystemInitAssistantComponent implements OnInit {
       this.languageService.switchLocale(localeId);
     } catch (err) {
       this.languageSelect()?.resetToCurrent();
-      if (isConnectivityError(err)) {
-        Logging.debug("Could not save the default language", err);
-      } else {
-        Logging.warn("Failed to save the default language", err);
-      }
+      Logging.warn("Failed to save the default language", err);
       this.alertService.addDanger(
         $localize`The language could not be saved. Please try again.`,
       );

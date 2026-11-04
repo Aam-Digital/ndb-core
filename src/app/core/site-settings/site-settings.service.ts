@@ -19,6 +19,9 @@ import { hasRemoteSession } from "../session/session-type";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 import { CONNECTIVITY_ERROR_STATUS } from "../../utils/backend-response";
 
+/** Statuses with which pre-login access to the site settings is unavailable by design. */
+const PRE_LOGIN_UNAVAILABLE_STATUSES = new Set([401, 403, 404]);
+
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
  */
@@ -139,11 +142,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     if (!response.ok) {
       // Pre-login access may be unavailable by design. Keep this best-effort only.
-      if (
-        response.status === 401 ||
-        response.status === 403 ||
-        response.status === 404
-      ) {
+      if (PRE_LOGIN_UNAVAILABLE_STATUSES.has(response.status)) {
         return;
       }
       const failure = { status: response.status };
@@ -153,9 +152,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
           "SiteSettingsService: anonymous fetch failed (connectivity)",
           failure,
         );
-        return;
+      } else {
+        Logging.warn("SiteSettingsService: anonymous fetch failed", failure);
       }
-      Logging.warn("SiteSettingsService: anonymous fetch failed", failure);
       return;
     }
 
@@ -271,10 +270,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
             ),
           );
         } catch (e) {
-          Logging.warn("SiteSettingsService: invalid color value", {
+          Logging.warn("SiteSettingsService: invalid color value", e, {
             property,
             color,
-            error: e,
           });
         }
       }
