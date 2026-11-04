@@ -156,6 +156,11 @@ export class SchemaEmbedArrayEntryDialogComponent {
     loader: () =>
       this.createEntryForm().catch((err) => {
         Logging.error("Could not create the form of an embedded entry", err);
+        // don't leave an empty popup open whose Save does nothing
+        this.alertService.addDanger(
+          $localize`This entry cannot be edited because of an unexpected error.`,
+        );
+        this.dialogRef.close();
         return undefined;
       }),
   });

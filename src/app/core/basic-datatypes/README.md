@@ -172,6 +172,8 @@ Code that treats an `Entity` as a saved document handles the wrapper explicitly:
 
 - `EntityMapperService` refuses to save it on its own; the record holding it is saved instead.
 - `EntityAbility` checks it against the field of the record holding it (`getRoot()`, also for nested entries).
+  Its inner fields get no validators from permission rule conditions, which refer to the record's fields
+  (see [Permissions](../permissions/README.md)).
 - The email client selects templates and links notes for the record holding it (`getSavedRecord()`).
 
 ## Customizing how values are sorted in tables

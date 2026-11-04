@@ -7,6 +7,7 @@ import {
   EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
+  AbstractControl,
   FormControl,
   UntypedFormControl,
   UntypedFormGroup,
@@ -41,6 +42,7 @@ import {
 } from "../../../utils/test-utils/dialog-mocks";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
+import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 
 @DatabaseEntity("EntityFormServiceTestAction")
 class EntityFormServiceTestAction extends Entity {
@@ -240,6 +242,27 @@ describe("EntityFormService", () => {
     expect(nameControl.errors["permissionCondition"]).toBeTruthy();
 
     nameControl.setValue("any other name");
+    expect(nameControl.valid).toBe(true);
+  });
+
+  it("should not add permission condition validators to the inner fields of an embedded entry", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage", conditions: { name: "permitted" } },
+    ]);
+    const record = new TestEntity();
+    record.name = "permitted";
+    record._rev = "1";
+    const entry = createEmbeddedEntity(
+      new Map([["name", { dataType: "string" }]]),
+      { record, field: "entries", existing: true },
+    );
+
+    const form = await createForm([{ id: "name" }], entry);
+    // the entry's inner fields are not known to the type of the form
+    const nameControl: AbstractControl = form.formGroup.get("name");
+    nameControl.setValue("any value of the entry");
+
+    expect(nameControl.enabled).toBe(true);
     expect(nameControl.valid).toBe(true);
   });
 

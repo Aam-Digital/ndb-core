@@ -14,12 +14,10 @@
       }
       @if (moreCount() > 0) {
         &ngsp;
-        <span i18n="schema-embed-array summary: number of further entries"
-          >+{{ moreCount() }} more</span
-        >
+        <span i18n>+{{ moreCount() }} more</span>
       }
     } @else {
-      <span i18n="schema-embed-array field summary">
+      <span i18n>
         {rows().length, plural,
           =1 {1 entry}
           other {{{ rows().length }} entries}

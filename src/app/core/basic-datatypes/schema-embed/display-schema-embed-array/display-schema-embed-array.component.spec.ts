@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 import { DisplaySchemaEmbedArrayComponent } from "./display-schema-embed-array.component";
 
 describe("DisplaySchemaEmbedArrayComponent", () => {
@@ -59,37 +58,34 @@ describe("DisplaySchemaEmbedArrayComponent", () => {
     await vi.waitFor(() => expect(text()).toBe(expected));
   }
 
-  it("shows the first column's values of the first entries", async () => {
-    await expectRendered(
+  it.each<[string, Record<string, any>[], string]>([
+    [
+      "the first column's values of the first entries",
       [{ documentType: "Passport" }, { documentType: "ID Card" }],
       "Passport, ID Card",
-    );
-  });
-
-  it("indicates the number of further entries", async () => {
-    await expectRendered(
+    ],
+    [
+      "the number of further entries",
       [
         { documentType: "Passport" },
         { documentType: "ID Card" },
         { documentType: "Voter ID" },
       ],
       "Passport, ID Card +1 more",
-    );
-  });
-
-  it("skips entries with an empty first column value", async () => {
-    await expectRendered(
+    ],
+    [
+      "no empty first column values",
       [{ issueDate: new Date("2020-01-01") }, { documentType: "ID Card" }],
       "ID Card +1 more",
-    );
-  });
-
-  it("falls back to the number of entries if no entry has a first column value", async () => {
-    await expectRendered(
+    ],
+    [
+      "the number of entries if no entry has a first column value",
       [{ issueDate: new Date("2020-01-01") }, {}],
       "2 entries",
-    );
-    await expectRendered([{}], "1 entry");
+    ],
+    ["the number of entries for a single entry", [{}], "1 entry"],
+  ])("shows %s", async (_, value, expected) => {
+    await expectRendered(value, expected);
   });
 
   it("falls back to the number of entries if there are no columns", async () => {
@@ -101,14 +97,24 @@ describe("DisplaySchemaEmbedArrayComponent", () => {
     await expectRendered([{ documentType: "Passport" }], "1 entry");
   });
 
-  it("shows a preview table of all entries on hover", () => {
-    fixture.componentRef.setInput("value", [{ documentType: "Passport" }]);
+  it("shows a preview table of all entries on hover", async () => {
+    fixture.componentRef.setInput("value", [
+      { documentType: "Passport" },
+      { documentType: "ID Card" },
+    ]);
     fixture.detectChanges();
 
-    const tooltip = fixture.debugElement
-      .query(By.directive(TemplateTooltipDirective))
-      .injector.get(TemplateTooltipDirective);
-    expect(tooltip.contentTemplate()).toBeTruthy();
+    fixture.nativeElement
+      .querySelector(".summary")
+      .dispatchEvent(new MouseEvent("mouseenter"));
+
+    const preview = () =>
+      document.querySelector(".cdk-overlay-container")?.textContent ?? "";
+    await vi.waitFor(() => {
+      expect(preview()).toContain("Document Type");
+      expect(preview()).toContain("Passport");
+      expect(preview()).toContain("ID Card");
+    });
   });
 
   it("shows nothing when there are no entries", () => {

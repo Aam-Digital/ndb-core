@@ -1,6 +1,4 @@
-@use "variables/sizes";
-@use "variables/colors";
-@use "@angular/material/core/style/elevation" as mat-elevation;
+@use "mixins/entities-table";
 
 :host {
   display: block;
@@ -9,34 +7,20 @@
 /* same look as the entities-table used by RelatedEntitiesComponent */
 
 .table {
-  @include mat-elevation.elevation(2);
+  @include entities-table.table;
 }
 
 .table-row.clickable {
   cursor: pointer;
 
-  &:hover {
-    background: #f5f5f5;
-  }
+  @include entities-table.row-hover;
 }
 
-/* adjust action column width to use least possible width */
 .mat-column-__edit {
-  flex: 0 0 auto !important;
-  width: 78px;
-  padding-inline-end: 0;
+  @include entities-table.action-column;
 }
 
-.table-action-button {
-  border: 1px solid lightgrey;
-  border-radius: 4px;
-  margin: sizes.$small;
-  color: colors.$accent;
-}
-
-.icon-only {
-  vertical-align: initial;
-}
+@include entities-table.action-button;
 
 /* small, borderless preview (e.g. in a tooltip) */
 :host(.compact) {

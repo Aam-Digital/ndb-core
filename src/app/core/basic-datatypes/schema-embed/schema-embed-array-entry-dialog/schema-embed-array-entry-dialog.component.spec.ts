@@ -1,3 +1,4 @@
+import { Provider } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -8,6 +9,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import {
   SchemaEmbedArrayEntryDialogComponent,
   SchemaEmbedArrayEntryDialogData,
@@ -58,7 +60,10 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
   let entries: Record<string, any>[];
   let applyChange: ReturnType<typeof vi.fn>;
 
-  async function createDialog(data: Partial<SchemaEmbedArrayEntryDialogData>) {
+  async function createDialog(
+    data: Partial<SchemaEmbedArrayEntryDialogData>,
+    providers: Provider[] = [],
+  ) {
     await TestBed.configureTestingModule({
       imports: [
         SchemaEmbedArrayEntryDialogComponent,
@@ -71,6 +76,7 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
+        ...providers,
       ],
     }).compileComponents();
 
@@ -307,6 +313,22 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     await component.save();
 
     expect(applyChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes with an alert instead of showing an empty popup if the form of the entry cannot be created", async () => {
+    const alertService = { addDanger: vi.fn() };
+    await createDialog({ index: 0 }, [
+      {
+        provide: EntityFormService,
+        useValue: {
+          createEntityForm: vi.fn().mockRejectedValue(new Error("broken")),
+        },
+      },
+      { provide: AlertService, useValue: alertService },
+    ]);
+
+    expect(alertService.addDanger).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalled();
   });
 
   it("stays open and shows the error if applying the change fails", async () => {
