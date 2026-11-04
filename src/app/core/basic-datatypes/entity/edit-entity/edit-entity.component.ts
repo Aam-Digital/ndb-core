@@ -254,40 +254,52 @@ export class EditEntityComponent<
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
     );
 
-  private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
-    matchesSelectionCondition(this.selectionFilter(), this.filterService),
-  );
+  /**
+   * Whether a record is offered as an option (besides the selected ones, which always are):
+   * only active ones matching the `selectionCondition`, unless the user includes the others.
+   */
+  private readonly isOffered: Signal<
+    (e: E, include: OfferedRecordsToggles) => boolean
+  > = computed(() => {
+    const isEligible = matchesSelectionCondition(
+      this.selectionFilter(),
+      this.filterService,
+    );
+    return (e, { includeInactive, includeIneligible }) =>
+      (includeInactive || !e.inactive) && (includeIneligible || isEligible(e));
+  });
 
   /**
    * Number of inactive records that would additionally be shown when including inactive records.
    */
-  currentlyMatchingInactive: Signal<number> = computed(() => {
-    const isEligible = this.isEligible();
-    const selected = this.values();
-    return this.offerableEntities().filter(
-      (e) =>
-        e.inactive &&
-        !selected.includes(e.getId()) &&
-        (this.includeIneligible() || isEligible(e)) &&
-        this.autocompleteFilter()(e),
-    ).length;
-  });
+  currentlyMatchingInactive: Signal<number> = computed(() =>
+    this.countAddedByToggle("includeInactive"),
+  );
 
   /**
    * Number of records not matching the `selectionCondition`
    * that would additionally be shown when including those.
    */
-  currentlyMatchingIneligible: Signal<number> = computed(() => {
-    const isEligible = this.isEligible();
+  currentlyMatchingIneligible: Signal<number> = computed(() =>
+    this.countAddedByToggle("includeIneligible"),
+  );
+
+  /** the number of records (matching the text typed) that switching on the given toggle adds to the options */
+  private countAddedByToggle(toggle: keyof OfferedRecordsToggles): number {
+    const isOffered = this.isOffered();
     const selected = this.values();
+    const include: OfferedRecordsToggles = {
+      includeInactive: this.includeInactive(),
+      includeIneligible: this.includeIneligible(),
+    };
     return this.offerableEntities().filter(
       (e) =>
-        !isEligible(e) &&
         !selected.includes(e.getId()) &&
-        (this.includeInactive() || !e.inactive) &&
+        isOffered(e, { ...include, [toggle]: true }) &&
+        !isOffered(e, { ...include, [toggle]: false }) &&
         this.autocompleteFilter()(e),
     ).length;
-  });
+  }
 
   readonly isCreateDisabled = computed(() => {
     if (this.disableCreateNew === true) {
@@ -343,15 +355,12 @@ export class EditEntityComponent<
       values: this.values(),
       includeInactive: this.includeInactive(),
       includeIneligible: this.includeIneligible(),
-      isEligible: this.isEligible(),
+      isOffered: this.isOffered(),
       getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       const availableEntities = params.offerableEntities.filter(
-        (e) =>
-          params.values.includes(e.getId()) ||
-          ((params.includeInactive || !e.inactive) &&
-            (params.includeIneligible || params.isEligible(e))),
+        (e) => params.values.includes(e.getId()) || params.isOffered(e, params),
       );
 
       for (const id of params.values) {
@@ -480,6 +489,12 @@ export class EditEntityComponent<
   override onContainerClick(event: MouseEvent) {
     this.autocompleteComponent?.onContainerClick(event);
   }
+}
+
+/** the toggles of the dropdown to also offer records that are not offered by default */
+interface OfferedRecordsToggles {
+  includeInactive: boolean;
+  includeIneligible: boolean;
 }
 
 /**
