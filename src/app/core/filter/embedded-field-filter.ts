@@ -1,6 +1,7 @@
 import { Entity } from "../entity/model/entity";
 import { EmbeddedFieldRef } from "../entity/schema/embedded-schema-field.util";
 import { createEmptyValueFilter, DataFilter } from "./filters/filters";
+import { isPlainObject } from "../../utils/filter-compare-utils";
 
 /**
  * Adapt a condition built for the full id of a property nested inside an embedded field
@@ -98,7 +99,7 @@ function rewriteEmbeddedKeys(query: any, fromKey: string, toKey: string): any {
   if (Array.isArray(query)) {
     return query.map((q) => rewriteEmbeddedKeys(q, fromKey, toKey));
   }
-  if (query && typeof query === "object") {
+  if (isPlainObject(query)) {
     const result: any = {};
     for (const [key, value] of Object.entries(query)) {
       const newKey =

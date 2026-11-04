@@ -5,6 +5,7 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { getSchemaEmbedDatatype } from "../entity/schema/embedded-schema-field.util";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
+import { isPlainObject } from "../../utils/filter-compare-utils";
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
@@ -125,7 +126,7 @@ function toDbSelector(
   if (Array.isArray(query)) {
     return query.map((q) => toDbSelector(q, ctx, schemaService));
   }
-  if (!query || typeof query !== "object") {
+  if (!isPlainObject(query)) {
     return query;
   }
 
@@ -140,7 +141,7 @@ function toDbSelector(
     // pouchdb-find skips implicit equality with a falsy value (e.g. `{status: ""}`)
     // inside `$elemMatch` and matches every entry, an explicit `$eq` works on both engines
     result[dbPath] =
-      ctx.inElemMatch && !isOperatorObject(condition)
+      ctx.inElemMatch && !isPlainObject(condition)
         ? { $eq: condition }
         : condition;
   }
@@ -189,7 +190,7 @@ function toDbCondition(
     // would leave an empty selector that matches every document
     return { $exists: false };
   }
-  if (!isOperatorObject(condition)) {
+  if (!isPlainObject(condition)) {
     return condition;
   }
 
@@ -244,12 +245,6 @@ interface SchemaContext {
   inElemMatch?: boolean;
   /** Whether the condition is matched in memory, see {@link toStoredFormatCondition}. */
   inMemory?: boolean;
-}
-
-function isOperatorObject(condition: unknown): condition is object {
-  return (
-    !!condition && typeof condition === "object" && !Array.isArray(condition)
-  );
 }
 
 /**
