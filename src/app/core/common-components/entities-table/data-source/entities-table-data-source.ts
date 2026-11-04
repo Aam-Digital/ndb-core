@@ -45,9 +45,9 @@ export interface LoadRecordConfig<T extends Entity> {
 }
 
 /**
- * Optional extras for one row of the table, provided by the data source.
+ * Options for one row of the table, for its display and its selection, provided by the data source.
  */
-export interface RowDecoration {
+export interface RowOptions {
   /** component shown before the content of the first data cell */
   prefix?: DynamicComponentConfig;
   /** component shown after the content of the first data cell */
@@ -59,13 +59,13 @@ export interface RowDecoration {
 }
 
 /**
- * The {@link RowDecoration}s of a table, by the id of the record (`entity.getId()`).
+ * The {@link RowOptions} of the rows of a table, by the id of the record (`entity.getId()`).
  *
  * Looked up by id rather than by record object (WeakMap):
- * a live update replaces the record object, and the row keeps its decoration
- * (e.g. not being selectable) until the data source has computed new decorations.
+ * a live update replaces the record object, and the row keeps its options
+ * (e.g. not being selectable) until the data source has computed new options.
  */
-export type RowDecorations = ReadonlyMap<string, RowDecoration>;
+export type RowOptionsById = ReadonlyMap<string, RowOptions>;
 
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
@@ -128,7 +128,7 @@ export abstract class EntitiesTableDataSource<
   readonly usesPagination: Signal<boolean> = signal(true);
 
   /** optional extras per row (default: none) */
-  readonly rowDecorations: Signal<RowDecorations> = signal(new Map());
+  readonly rowOptions: Signal<RowOptionsById> = signal(new Map());
 
   /**
    * controls a host may show in the list's filter row, in this order (default: none).

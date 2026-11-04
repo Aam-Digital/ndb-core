@@ -10,7 +10,7 @@ and several feature components.
 
 | File                                        | Purpose                                                                                |
 | ------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `entities-table.component.ts`               | the table: columns, filter input, row click, row decorations                           |
+| `entities-table.component.ts`               | the table: columns, filter input, row click, row options                               |
 | `entities-table-sort.store.ts`              | sort state, default sort and its URL params (`sortBy`, `sortOrder`)                    |
 | `entities-table-selection.ts`               | bulk selection: checkbox, "select all", Shift-click ranges                             |
 | `data-source/entities-table-data-source.ts` | abstract base of all data sources, with the extension points described below           |
@@ -53,12 +53,12 @@ All hooks have defaults, so existing data sources do not need to set them.
 | ---------------------- | -------------- | -------------------------------------------------------------------------------------- |
 | `config`               | `{}`           | options of the data source from the list or section config (see below)                 |
 | `usesPagination`       | `true`         | signal; `false`: the table shows all rows and no paginator (may change at any time)    |
-| `rowDecorations`       | empty map      | optional extras per row, by record id (see below)                                      |
+| `rowOptions`           | empty map      | optional extras per row, by record id (see below)                                      |
 | `toolbarControls`      | `[]`           | `DynamicComponentConfig`s that a host shows in the list's filter row, in this order    |
 | `searchText`           | `""`           | free-text search; only data sources that apply it offer a toolbar control to enter it  |
 | `getFilterPredicate()` | filter service | (`InMemoryDataSource` only) whether a record passes the filter, e.g. to reinterpret it |
 
-A `RowDecoration` can have:
+The `RowOptions` of a row can have:
 
 - `prefix`: a component (`DynamicComponentConfig`) shown before the content of the first data cell,
   i.e. the first displayed column that is neither the select column nor the "+" column
@@ -71,12 +71,12 @@ A `RowDecoration` can have:
   (disabled checkbox, skipped by "select all" and Shift-click ranges).
 
 The selection never holds a record that is not selectable: one effect of the table removes it,
-however it got there (Shift-click range, the host, or a decoration that changed since, e.g. a row the data source hides),
+however it got there (Shift-click range, the host, or row options that changed since, e.g. a row the data source hides),
 so a bulk action never applies to it.
 
-Decorations are display state of one table, so they live in the data source rather than on the records.
+Row options are state of one table, so they live in the data source rather than on the records.
 They are looked up by `entity.getId()` rather than by record object,
-because a live update replaces the record object and the row should keep its decoration
+because a live update replaces the record object and the row should keep its options
 until the data source has computed new ones.
 Keep the `prefix`, `suffix` and `toolbarControls` config objects stable (e.g. create them once in a `computed`):
 `appDynamicComponent` reloads the component whenever it gets a new config object.

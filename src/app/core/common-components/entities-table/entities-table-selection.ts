@@ -162,7 +162,7 @@ export interface EntitiesTableSelectionContext<T extends Entity> {
   /** records of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal<T[]>;
   /**
-   * whether a record can be selected (e.g. not if its row decoration says so);
+   * whether a record can be selected (e.g. not if its row options say so);
    * the table unselects every record that is not, whoever selected it
    */
   isSelectable: ReadSignal<(record: T) => boolean>;
