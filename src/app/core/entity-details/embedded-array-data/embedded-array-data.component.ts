@@ -8,6 +8,7 @@ import {
   input,
   linkedSignal,
 } from "@angular/core";
+import { AbstractControl } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -17,6 +18,7 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import { getSchemaEmbedArrayColumns } from "../../basic-datatypes/schema-embed/schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../../basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
 import { SchemaEmbedArrayApplyChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
@@ -94,12 +96,17 @@ export class EmbeddedArrayDataComponent {
     () => this.entity()?.[this.property()] ?? [],
   );
 
-  /** Entries can only be viewed if this component is not editable or the user lacks permissions. */
+  /**
+   * Entries can only be viewed if this component is not editable or the user lacks permissions.
+   * A new record is saved through its main form first
+   * (saving it from here would skip the validation of the other fields).
+   */
   readonly readonly = computed(() => {
     const entity = this.entity();
     return (
       !this.editable() ||
       !entity ||
+      entity.isNew ||
       this.ability.cannot("update", entity, this.property())
     );
   });
@@ -126,15 +133,33 @@ export class EmbeddedArrayDataComponent {
         /* withPermissionCheck */ true,
         /* withDefaultValues */ false,
       );
-      entityForm.formGroup.get(property).setValue(entries);
+      const control = entityForm.formGroup.get(property);
+      control.setValue(entries);
 
-      const saved = await this.entityFormService.saveChanges(
-        entityForm,
-        entity,
-      );
+      const saved = await this.entityFormService
+        .saveChanges(entityForm, entity)
+        .catch((err) => {
+          if (err instanceof InvalidFormFieldError) {
+            // the popup only shows the fields of a single entry, not the errors of the whole property
+            throw new Error(describeInvalidEntries(control));
+          }
+          throw err;
+        });
       this.rows.set(saved[property] ?? []);
     } finally {
       saveScope.destroy();
     }
   };
+}
+
+/** The validation errors of the whole property (e.g. "required"), as a message for the user. */
+function describeInvalidEntries(control: AbstractControl): string {
+  const messages = Object.values<{ errorMessage?: string }>(
+    control.errors ?? {},
+  )
+    .map((error) => error?.errorMessage)
+    .filter(Boolean);
+  return messages.length
+    ? $localize`Could not save the entries: ${messages.join(" ")}`
+    : $localize`Could not save the entries, because they are not valid.`;
 }

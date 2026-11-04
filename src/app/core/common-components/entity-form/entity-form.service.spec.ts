@@ -4,6 +4,7 @@ import { EntityFormService } from "./entity-form.service";
 import {
   EntityForm,
   EntityFormGroup,
+  EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   FormControl,
@@ -379,6 +380,25 @@ describe("EntityFormService", () => {
         expect.anything(),
       );
       expect(entityForm.formGroup.disabled).toBe(true);
+    });
+
+    it("reports changes synced in while confirming the warnings as the previous state, not as changes of this save", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+      confirmationDialog.getConfirmation.mockImplementation(async () => {
+        entity["synced"] = "by another user";
+        return true;
+      });
+      const events: unknown[] = [];
+      entityForm.onFormStateChange.subscribe((e) => events.push(e));
+
+      await service.saveChanges(entityForm, entity);
+
+      const saved = events.find(
+        (e): e is EntityFormSavedEvent => e instanceof EntityFormSavedEvent,
+      );
+      expect(saved.previousEntity["synced"]).toBe("by another user");
     });
 
     it("does not save if the warnings are not confirmed", async () => {

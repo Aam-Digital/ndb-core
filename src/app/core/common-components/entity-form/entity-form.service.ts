@@ -261,8 +261,10 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    const originalEntity = entity.copy();
     const updatedEntity = await this.applyChanges(entityForm, entity);
+    // copied only after the validity check, which may wait for the user to confirm warnings:
+    // changes synced into the entity meanwhile are not changes of this save
+    const originalEntity = entity.copy();
     this.assertPermissionsToSave(entity, updatedEntity);
 
     try {

@@ -9,6 +9,9 @@ import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
 
+/** Resolved columns per field config (see {@link DisplaySchemaEmbedArrayComponent.columns}) */
+const columnsCache = new WeakMap<FormFieldConfig, FormFieldConfig[]>();
+
 /**
  * Generic view component for the `schema-embed-array` datatype.
  *
@@ -43,12 +46,18 @@ export class DisplaySchemaEmbedArrayComponent extends ViewDirective<
   rows = computed(() => this.value() ?? []);
 
   /** The inner fields (table columns), each with its resolved viewComponent for rendering cells. */
-  columns = computed<FormFieldConfig[]>(() =>
-    getSchemaEmbedArrayColumns(
-      this.formFieldConfig(),
-      this.entitySchemaService,
-    ),
-  );
+  columns = computed<FormFieldConfig[]>(() => {
+    const field = this.formFieldConfig();
+    // a list view shares one field config across the cells of all rows, so resolve its columns only once
+    let columns = columnsCache.get(field);
+    if (!columns) {
+      columns = getSchemaEmbedArrayColumns(field, this.entitySchemaService);
+      if (field) {
+        columnsCache.set(field, columns);
+      }
+    }
+    return columns;
+  });
 
   summaryColumn = computed<FormFieldConfig | undefined>(
     () => this.columns()[0],

@@ -73,7 +73,8 @@ export class SchemaEmbedArrayTableComponent {
 
   readonly ACTION_COLUMN = "__edit";
 
-  readonly interactive = computed(() => !!this.applyChange());
+  // without the field (e.g. a misconfigured property), the popup of an entry cannot be opened
+  readonly interactive = computed(() => !!this.applyChange() && !!this.field());
 
   private readonly currentScreenSize = injectCurrentScreenSize();
 

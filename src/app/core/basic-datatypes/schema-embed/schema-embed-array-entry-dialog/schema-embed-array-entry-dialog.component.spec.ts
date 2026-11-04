@@ -210,6 +210,17 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     },
   );
 
+  it("does not lock read-only-after-set fields of an unsaved entry that only equals a stored one", async () => {
+    entity._rev = "1-existing";
+    entity["documents"] = [{ ...entries[0] }];
+    await createDialog({
+      index: 0,
+      columns: [{ ...columns[1], validators: { readonlyAfterSet: true } }],
+    });
+
+    expect(form().get("documentNumber").disabled).toBe(false);
+  });
+
   it.each<[string, number | undefined, boolean]>([
     ["a stored entry", 0, true],
     ["a new entry", undefined, false],
@@ -278,6 +289,24 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     expect(applyChange).not.toHaveBeenCalled();
     expect(alertSpy).not.toHaveBeenCalled();
     expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it("applies the change only once if saved again while saving", async () => {
+    let finishApply: () => void;
+    applyChange.mockReturnValue(
+      new Promise<void>((resolve) => (finishApply = resolve)),
+    );
+    await createDialog({ index: 0 });
+    enterValues({ documentType: "Visa", documentNumber: "A1" });
+
+    const firstSave = component.save();
+    await vi.waitFor(() => expect(applyChange).toHaveBeenCalled());
+    await component.save();
+    finishApply();
+    await firstSave;
+    await component.save();
+
+    expect(applyChange).toHaveBeenCalledTimes(1);
   });
 
   it("stays open and shows the error if applying the change fails", async () => {

@@ -6,6 +6,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { EmbeddedArrayDataComponent } from "./embedded-array-data.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { InvalidFormFieldError } from "#src/app/core/common-components/entity-form/invalid-form-field.error";
 import { SchemaEmbedArrayTableComponent } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
 import {
   SchemaEmbedArrayEntryChange,
@@ -23,6 +24,17 @@ EmbeddedArrayDataTest.schema.set("documents", {
   },
 });
 
+@DatabaseEntity("EmbeddedArrayDataRequiredTest")
+class EmbeddedArrayDataRequiredTest extends Entity {}
+EmbeddedArrayDataRequiredTest.schema.set("documents", {
+  dataType: "schema-embed-array",
+  label: "Documents",
+  validators: { required: true },
+  additional: {
+    documentType: { dataType: "string", label: "Document Type" },
+  },
+});
+
 describe("EmbeddedArrayDataComponent", () => {
   let fixture: ComponentFixture<EmbeddedArrayDataComponent>;
   let entity: EmbeddedArrayDataTest;
@@ -36,6 +48,8 @@ describe("EmbeddedArrayDataComponent", () => {
       { documentType: "Passport", documentNumber: "A1" },
       { documentType: "ID Card", documentNumber: "B2" },
     ];
+    // an existing record (a new one is read-only here)
+    entity._rev = "1-existing";
 
     fixture = TestBed.createComponent(EmbeddedArrayDataComponent);
     fixture.componentRef.setInput("entity", entity);
@@ -129,6 +143,30 @@ describe("EmbeddedArrayDataComponent", () => {
     await render();
 
     expect(table().readonly()).toBe(expected);
+  });
+
+  it("is read-only for a new record, which is saved through its main form first", async () => {
+    fixture.componentRef.setInput("entity", new EmbeddedArrayDataTest());
+    await render();
+
+    expect(table().readonly()).toBe(true);
+  });
+
+  it("explains a validation error of the whole property instead of a generic message", async () => {
+    const record = new EmbeddedArrayDataRequiredTest();
+    record["documents"] = [{ documentType: "Passport" }];
+    record._rev = "1-existing";
+    fixture.componentRef.setInput("entity", record);
+    await render();
+
+    const result = table().applyChange()({
+      delete: true,
+      index: 0,
+      original: record["documents"][0],
+    });
+
+    await expect(result).rejects.not.toBeInstanceOf(InvalidFormFieldError);
+    await expect(result).rejects.toThrow(/required/i);
   });
 
   it("is read-only if the user lacks permission to update the entity", async () => {

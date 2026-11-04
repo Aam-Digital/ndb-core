@@ -115,7 +115,14 @@ describe("SchemaEmbedArrayTableComponent", () => {
     });
   });
 
-  it("does not open any popup without applyChange", () => {
+  it.each<[string, Record<string, unknown>]>([
+    ["applyChange", { field: { id: "documents" } }],
+    // e.g. a misconfigured property of the EmbeddedArrayData panel
+    ["the field", { applyChange: vi.fn() }],
+  ])("does not open any popup without %s", (_, inputs) => {
+    for (const [name, value] of Object.entries(inputs)) {
+      fixture.componentRef.setInput(name, value);
+    }
     fixture.detectChanges();
 
     tableRows()[0].click();
@@ -131,6 +138,7 @@ describe("SchemaEmbedArrayTableComponent", () => {
     beforeEach(() => {
       fixture.componentRef.setInput("applyChange", applyChange);
       fixture.componentRef.setInput("entity", entity);
+      fixture.componentRef.setInput("field", { id: "documents" });
     });
 
     it("opens the popup for the clicked entry", () => {

@@ -107,6 +107,15 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(dirtyOnValueChange).toEqual([true]);
   });
 
+  it("lists entries changed in the field's control while the dialog is open (e.g. by a sync)", () => {
+    const synced = [{ documentType: "Synced", documentNumber: "S1" }];
+
+    formControl.setValue(synced);
+    fixture.detectChanges();
+
+    expect(table().rows()).toEqual(synced);
+  });
+
   it("starts without entries if the field has no value yet", async () => {
     await setup({ value: null });
 

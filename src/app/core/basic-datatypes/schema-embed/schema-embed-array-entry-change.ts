@@ -51,10 +51,9 @@ export function isStoredEntry(
   entry: Record<string, any>,
   savedEntries: Record<string, any>[] | undefined,
 ): boolean {
-  return (
-    storedEntries.has(entry) ||
-    !!savedEntries?.some((saved) => isEqual(saved, entry))
-  );
+  // by identity, not by equal values: a new entry equal to a stored one is not stored yet
+  // (forms and records share the entry objects, see `Entity.copy`)
+  return storedEntries.has(entry) || !!savedEntries?.includes(entry);
 }
 
 /**

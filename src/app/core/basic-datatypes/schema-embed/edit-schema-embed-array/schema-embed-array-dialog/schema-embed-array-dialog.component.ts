@@ -1,5 +1,7 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl } from "@angular/forms";
+import { map, startWith } from "rxjs";
 import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
@@ -46,8 +48,13 @@ export class SchemaEmbedArrayDialogComponent {
   /** The field's disabled state as of when the dialog opened (read once, not tracked live). */
   protected readonly readonly = this.data.formControl.disabled;
 
-  readonly rows = signal<Record<string, any>[]>(
-    this.data.formControl.value ?? [],
+  /** The field's entries, also updated while the dialog is open (e.g. a sync applied to the form). */
+  readonly rows = toSignal(
+    this.data.formControl.valueChanges.pipe(
+      startWith(this.data.formControl.value),
+      map((entries) => entries ?? []),
+    ),
+    { requireSync: true },
   );
 
   readonly applyChange: SchemaEmbedArrayApplyChange = async (change) => {
@@ -58,6 +65,5 @@ export class SchemaEmbedArrayDialogComponent {
     // dirty first: valueChanges listeners of the surrounding form (unsaved-changes tracking) read the flag
     this.data.formControl.markAsDirty();
     this.data.formControl.setValue(entries);
-    this.rows.set(entries);
   };
 }

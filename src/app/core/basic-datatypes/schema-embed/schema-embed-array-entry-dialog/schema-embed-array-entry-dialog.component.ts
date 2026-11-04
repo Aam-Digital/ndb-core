@@ -4,6 +4,7 @@ import {
   DestroyRef,
   inject,
   resource,
+  signal,
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -159,6 +160,12 @@ export class SchemaEmbedArrayEntryDialogComponent {
       }),
   });
 
+  /**
+   * Whether a save or delete is in progress (or done, while the popup closes),
+   * so that a double click does not apply the change twice
+   */
+  protected readonly saving = signal(false);
+
   /** The form of the entry, available once created */
   readonly entryForm = computed<EntityForm<EmbeddedEntity> | undefined>(() =>
     this.entryFormResource.value(),
@@ -170,16 +177,22 @@ export class SchemaEmbedArrayEntryDialogComponent {
     this.dialogRef
       .backdropClick()
       .pipe(takeUntilDestroyed())
-      .subscribe(async () => {
-        // only this popup's changes count, not those of a form it was opened from
-        const entryForm = this.entryForm();
-        if (
-          !entryForm ||
-          (await this.unsavedChanges.checkUnsavedChanges(entryForm))
-        ) {
-          this.dialogRef.close();
-        }
-      });
+      .subscribe(() =>
+        this.closeUnlessUnsavedChangesKept().catch((err) =>
+          Logging.error("Could not close the popup of an embedded entry", err),
+        ),
+      );
+  }
+
+  private async closeUnlessUnsavedChangesKept() {
+    // only this popup's changes count, not those of a form it was opened from
+    const entryForm = this.entryForm();
+    if (
+      !entryForm ||
+      (await this.unsavedChanges.checkUnsavedChanges(entryForm))
+    ) {
+      this.dialogRef.close();
+    }
   }
 
   private async createEntryForm(): Promise<EntityForm<EmbeddedEntity>> {
@@ -199,14 +212,19 @@ export class SchemaEmbedArrayEntryDialogComponent {
   }
 
   async save() {
+    await this.runExclusively(() => this.applyEditedEntry());
+  }
+
+  /** @returns whether the popup is closed */
+  private async applyEditedEntry(): Promise<boolean> {
     const entryForm = this.entryForm();
     if (!entryForm) {
-      return;
+      return false;
     }
     if (!this.isNew && !entryForm.formGroup.dirty) {
       // nothing changed
       this.cancel();
-      return;
+      return true;
     }
 
     let edited: EmbeddedEntity;
@@ -217,21 +235,21 @@ export class SchemaEmbedArrayEntryDialogComponent {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
       }
-      return;
+      return false;
     }
 
     const entry = edited.toEntryValue(this.original);
     if (this.isNew && Object.values(entry).every(isEmptyValue)) {
       // nothing entered, don't add a blank entry
       this.cancel();
-      return;
+      return true;
     }
 
     if (this.isStored) {
       // keeps the entry's fields locked when it is opened again before its record is saved
       markStoredEntry(entry);
     }
-    await this.applyChange({
+    return this.applyChange({
       entry,
       index: this.data.index,
       original: this.original,
@@ -247,11 +265,32 @@ export class SchemaEmbedArrayEntryDialogComponent {
       return;
     }
 
-    await this.applyChange({
-      delete: true,
-      index: this.data.index,
-      original: this.original,
-    });
+    await this.runExclusively(() =>
+      this.applyChange({
+        delete: true,
+        index: this.data.index,
+        original: this.original,
+      }),
+    );
+  }
+
+  /**
+   * Run the action unless another one is in progress.
+   * Clicks stay blocked once the action closed the popup (during its close animation).
+   */
+  private async runExclusively(action: () => Promise<boolean>) {
+    if (this.saving()) {
+      return;
+    }
+    this.saving.set(true);
+    let closed = false;
+    try {
+      closed = await action();
+    } finally {
+      if (!closed) {
+        this.saving.set(false);
+      }
+    }
   }
 
   cancel() {
@@ -266,14 +305,19 @@ export class SchemaEmbedArrayEntryDialogComponent {
     }
   }
 
-  private async applyChange(change: SchemaEmbedArrayEntryChange) {
+  /** @returns whether the popup is closed */
+  private async applyChange(
+    change: SchemaEmbedArrayEntryChange,
+  ): Promise<boolean> {
     try {
       await this.data.applyChange(change);
       this.discardUnsavedChanges();
       this.dialogRef.close(change);
+      return true;
     } catch (err) {
       // e.g. validation errors of the whole property are not visible in this popup's fields, so always show an alert
       this.alertService.addDanger(err.message);
+      return false;
     }
   }
 }
