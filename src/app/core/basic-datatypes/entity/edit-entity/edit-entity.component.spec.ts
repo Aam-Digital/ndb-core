@@ -589,33 +589,24 @@ describe("EditEntityComponent", () => {
       await expectOfferedNames(["Abc", "Abd", "Bcd"]);
     });
 
-    it("marks selected records not matching the condition, and hints at them until the field shows its own warning", async () => {
+    it("marks only the selected records not matching the condition", async () => {
       formControl.setValue([
         test1Entities[0].getId(), // Abc: matching
         test1Entities[1].getId(), // Bcd: not matching
       ]);
       editRecordWithCondition({ other: { $in: ["BERLIN"] } });
-      const tooltips = () =>
+      const marks = () =>
         fixture.debugElement
           .queryAll(By.directive(MatTooltip))
           .map((el) => el.injector.get(MatTooltip).message)
-          .filter((message) => message.startsWith("Not matching"));
-      const fieldHint =
-        "Not matching the selection conditions of this field: Bcd";
-      const recordMark = "Not matching the selection conditions of this field";
+          .filter(
+            (m) => m === "Not matching the selection conditions of this field",
+          );
 
       await vi.waitFor(() => {
         fixture.detectChanges();
-        expect(tooltips()).toContain(fieldHint);
+        expect(marks()).toHaveLength(1); // only Bcd
       });
-      expect(tooltips().filter((m) => m === recordMark)).toHaveLength(1); // only Bcd
-
-      formControl.setErrors({ selectionCondition: { warning: true } });
-      formControl.markAsTouched();
-      fixture.detectChanges();
-
-      expect(tooltips()).not.toContain(fieldHint);
-      expect(tooltips().filter((m) => m === recordMark)).toHaveLength(1);
     });
 
     it("counts the records each toggle would additionally show", async () => {

@@ -1,15 +1,4 @@
 <div class="flex-row gap-small">
-  <!-- not while the field shows the warning of its validator itself -->
-  @if ((!enabled() || !errorState) && selectedNotMatching(); as names) {
-    <app-fa-dynamic-icon
-      class="input-tooltip-icon"
-      icon="warning"
-      matTooltip="Not matching the selection conditions of this field: {{
-        names
-      }}"
-      i18n-matTooltip
-    ></app-fa-dynamic-icon>
-  }
   <app-basic-autocomplete
     #autocomplete
     (click)="onContainerClick($event)"
@@ -29,7 +18,7 @@
       @if (!item.isHidden) {
         @if (ineligibleIds().has(item.getId())) {
           <app-fa-dynamic-icon
-            class="ineligible-icon margin-end-small"
+            class="ineligible-icon input-tooltip-icon margin-end-small"
             icon="warning"
             matTooltip="Not matching the selection conditions of this field"
             i18n-matTooltip

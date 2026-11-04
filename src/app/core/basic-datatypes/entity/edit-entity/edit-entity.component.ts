@@ -429,21 +429,6 @@ export class EditEntityComponent<
     });
   });
 
-  /**
-   * Names of the selected records that do not match the `selectionCondition`, `undefined` if all match.
-   * The validator of the field only warns about these after a change, so that records linked earlier are kept
-   * without asking on every save - this hint still shows them.
-   */
-  readonly selectedNotMatching: Signal<string | undefined> = computed(() => {
-    const selected = this.values();
-    const ineligible = this.ineligibleIds();
-    const names = this.availableEntitiesResource
-      .value()
-      .filter((e) => selected.includes(e.getId()) && ineligible.has(e.getId()))
-      .map((e) => e.toString());
-    return names.length > 0 ? names.join(", ") : undefined;
-  });
-
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
 
