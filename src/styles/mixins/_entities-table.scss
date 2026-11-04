@@ -1,0 +1,41 @@
+@use "../variables/sizes";
+@use "../variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+/*
+ * Look of the entities tables (see EntitiesTableComponent),
+ * also used by other tables to look the same (e.g. the table of a schema-embed-array field).
+ */
+
+/* the table itself, raised from its background */
+@mixin table {
+  @include mat-elevation.elevation(2);
+}
+
+/* highlight of a row under the mouse */
+@mixin row-hover {
+  &:hover {
+    background: colors.$grey-medium;
+  }
+}
+
+/* column of action buttons (e.g. "add"), using the least possible width */
+@mixin action-column {
+  flex: 0 0 auto !important;
+  width: 78px;
+  padding-inline-end: 0;
+}
+
+/* small outlined icon button in a table's header (see EntityCreateButtonComponent) */
+@mixin action-button {
+  .table-action-button {
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    margin: sizes.$small;
+    color: colors.$accent;
+  }
+
+  .icon-only {
+    vertical-align: initial;
+  }
+}

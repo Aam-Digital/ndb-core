@@ -20,7 +20,6 @@ import { filter } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { CustomYesNoButtons } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
 import {
@@ -30,7 +29,6 @@ import {
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
-import { resolveLocaleText } from "../../language/active-locale";
 import { revalidateOnParentLinkChange } from "../../basic-datatypes/date-range/within-parent-validator";
 
 /**
@@ -63,7 +61,7 @@ export class EntityFormService {
     const fullField = toFormFieldConfig(formField);
 
     try {
-      return this.addSchemaToFormField(
+      return this.entitySchemaService.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
       );
@@ -71,45 +69,6 @@ export class EntityFormService {
       throw new Error(
         `Could not create form config for ${fullField?.id}: ${err}`,
       );
-    }
-  }
-
-  private addSchemaToFormField(
-    formField: FormFieldConfig,
-    propertySchema: EntitySchemaField | undefined,
-  ): FormFieldConfig {
-    // formField config has precedence over schema
-    const fullField = Object.assign(
-      {},
-      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
-      formField,
-    );
-
-    fullField.editComponent =
-      fullField.editComponent ||
-      this.entitySchemaService.getComponent(propertySchema, "edit");
-    fullField.viewComponent =
-      fullField.viewComponent ||
-      this.entitySchemaService.getComponent(propertySchema, "view");
-
-    fullField.label = fullField.label || fullField.labelShort;
-
-    this.resolveTranslatableLabels(fullField);
-
-    return fullField;
-  }
-
-  /**
-   * Config loaded through ConfigService is already resolved, but the runtime
-   * schema can hold a translation map while an admin has configured
-   * translations that are not saved to the config document yet.
-   */
-  private resolveTranslatableLabels(field: FormFieldConfig) {
-    for (const property of ["label", "labelShort", "description"]) {
-      if (field[property] === undefined) {
-        continue;
-      }
-      field[property] = resolveLocaleText(field[property]);
     }
   }
 
@@ -302,13 +261,10 @@ export class EntityFormService {
   ): Promise<T> {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
-    if (!(await this.confirmValidity(entityForm))) {
-      throw new InvalidFormFieldError();
-    }
-
+    const updatedEntity = await this.applyChanges(entityForm, entity);
+    // copied only after the validity check, which may wait for the user to confirm warnings:
+    // changes synced into the entity meanwhile are not changes of this save
     const originalEntity = entity.copy();
-    const updatedEntity = this.createUpdatedEntity(entity, form);
-    updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
     try {
@@ -336,6 +292,34 @@ export class EntityFormService {
       new EntityFormSavedEvent(entity, originalEntity),
     );
     return entity;
+  }
+
+  /**
+   * Apply the changes of the formGroup to a copy of the entity, without saving it.
+   * Like {@link saveChanges}, the form has to be valid (see {@link confirmValidity})
+   * and empty values are removed and strings trimmed.
+   * Used where the record holding the changes is saved by someone else
+   * (e.g. an {@link EmbeddedEntity} entry, which is saved as part of its record).
+   *
+   * @param entityForm The form holding the changes
+   * @param entity The entity on which the changes should be applied (not modified)
+   * @returns a copy of the input entity with the changes from the form group
+   * @throws InvalidFormFieldError if a field of the form is invalid
+   */
+  public async applyChanges<T extends Entity>(
+    entityForm: EntityForm<T>,
+    entity: T,
+  ): Promise<T> {
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
+
+    const updatedEntity = this.createUpdatedEntity(
+      entity,
+      entityForm.formGroup,
+    );
+    updatedEntity.assertValid();
+    return updatedEntity;
   }
 
   /**

@@ -28,6 +28,12 @@ import {
   SchemaEmbeddedType,
 } from "../../entity/schema/entity-schema";
 import { inject, Injectable } from "@angular/core";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../../common-components/entity-form/FormConfig";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Configuration for the "schema-embed" datatype's `additional` field.
@@ -96,6 +102,9 @@ export function mergeEmbeddedSchema(
  *
  * The config in `additional` is merged with the `embeddedType` schema (if present),
  * allowing runtime config to extend or override a class's annotations.
+ *
+ * This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+ * for a user-configurable field use {@link SchemaEmbedArrayDatatype} (`"schema-embed-array"`) instead.
  */
 @Injectable()
 export class SchemaEmbedDatatype<
@@ -111,6 +120,10 @@ export class SchemaEmbedDatatype<
   /**
    * Build the effective inner schema from the embedded type's annotations
    * and/or the `additional` config.
+   *
+   * Public so that generic UI components (e.g. for `schema-embed-array`) can resolve the
+   * same merged column list this datatype uses for (de)serialization, without duplicating
+   * the merge logic or being limited to the `additional`-only (config-based) case.
    */
   getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     return mergeEmbeddedSchema(
@@ -168,6 +181,40 @@ export class SchemaEmbedDatatype<
       },
       ...referenceIdConditions(`${fieldId}.${key}`, referencedId),
     ]);
+  }
+
+  /**
+   * The inner fields of the embedded object as columns for tables and forms,
+   * extended with their schema details (like any entity field), including the components to display them.
+   *
+   * @param schemaField the field using this datatype (holding the inner fields in `additional`)
+   * @param columns optional selection (and overrides) of the inner fields, in display order;
+   *                unknown ids are skipped. If not given, all inner fields are returned.
+   */
+  getColumns(
+    schemaField?: EntitySchemaField,
+    columns?: ColumnConfig[],
+  ): FormFieldConfig[] {
+    const innerSchema = this.getEffectiveSchema(schemaField);
+    const fieldConfigs: FormFieldConfig[] = columns?.length
+      ? columns.map(toFormFieldConfig)
+      : [...innerSchema.keys()].map((id) => ({ id }));
+
+    const result: FormFieldConfig[] = [];
+    for (const config of fieldConfigs) {
+      const innerField = innerSchema.get(config?.id);
+      if (!innerField) {
+        // an instance config mistake (not a bug in our code): must not block the other columns
+        // from rendering, and is not reported (this runs in computed()s, so it would repeat)
+        Logging.debug("Could not display an unknown embedded table column", {
+          column: config,
+          field: schemaField?.id,
+        });
+        continue;
+      }
+      result.push(this.schemaService.addSchemaToFormField(config, innerField));
+    }
+    return result;
   }
 
   override transformToDatabaseFormat(

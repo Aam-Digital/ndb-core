@@ -14,6 +14,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import type { Observable } from "rxjs";
 import type { Mock } from "vitest";
 import { ConfirmationDialogMock } from "#src/app/utils/test-utils/dialog-mocks";
+import { createEmbeddedEntity } from "#src/app/core/entity/model/embedded-entity";
 
 type DialogRefMock = {
   afterClosed: () => Observable<unknown>;
@@ -188,6 +189,40 @@ describe("EmailClientService", () => {
       expect(mailtoCall).toBe(
         "mailto:test%40example.com%2Cjohn%40example.com%2Cjane%40example.com?subject=Subject&body=Body",
       );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("refers to the record holding an embedded entry in the template selection and note", async () => {
+    vi.useFakeTimers();
+    try {
+      const record = new EntityWithEmail();
+      const entry = createEmbeddedEntity(
+        new Map([["email", { dataType: EmailDatatype.dataType }]]),
+        { record, field: "contacts", existing: true },
+        { email: "contact@example.com" },
+      );
+      mockDialog.open.mockReturnValue({
+        afterClosed: () =>
+          of({
+            template: { subject: "Subject", body: "Body" },
+            createNote: true,
+            sendAsBCC: false,
+          }),
+        close: vi.fn(),
+      } satisfies DialogRefMock);
+
+      await service.executeMailto(entry, "email");
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(mockWindow.location.href).toBe(
+        "mailto:contact%40example.com?subject=Subject&body=Body",
+      );
+      expect(mockDialog.open.mock.calls[0][1].data.entity).toBe(record);
+      const note = vi.mocked(TestBed.inject(FormDialogService).openView).mock
+        .lastCall[0];
+      expect(note["relatedEntities"]).toEqual([record.getId()]);
     } finally {
       vi.useRealTimers();
     }

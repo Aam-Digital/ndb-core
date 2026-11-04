@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
+import { SchemaEmbedArrayDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AttendanceItem } from "./attendance-item";
 import { AttendanceLogicalStatus } from "./attendance-status";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
@@ -36,7 +36,7 @@ import { mapInBatches } from "#src/app/utils/utils";
  * ```
  */
 @Injectable()
-export class AttendanceDatatype extends SchemaEmbedDatatype {
+export class AttendanceDatatype extends SchemaEmbedArrayDatatype {
   private readonly entityMapper = inject(EntityMapperService);
 
   static override readonly dataType = "attendance";
@@ -46,13 +46,6 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
 
   override editComponent = "EditAttendance";
   override viewComponent = "DisplayAttendance";
-
-  override normalizeSchemaField(
-    schemaField: EntitySchemaField,
-  ): EntitySchemaField {
-    // attendance always requires isArray
-    return { ...schemaField, isArray: true };
-  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

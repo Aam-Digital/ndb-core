@@ -1,6 +1,7 @@
 @use "variables/sizes";
 @use "variables/colors";
 @use "@angular/material/core/style/elevation" as mat-elevation;
+@use "mixins/entities-table";
 
 .table-container {
   position: relative; /* anchor for further absolute positioning of child elements */
@@ -12,8 +13,8 @@
   inset-inline-end: 0;
 }
 
-.table-row:hover {
-  background: #f5f5f5;
+.table-row {
+  @include entities-table.row-hover;
 }
 
 .loading-bar {
@@ -27,7 +28,7 @@
 }
 
 .table {
-  @include mat-elevation.elevation(2);
+  @include entities-table.table;
 }
 
 .table-footer {
@@ -45,9 +46,6 @@
   color: colors.$inactive;
 }
 
-/* adjust action column width to use least possible width */
 .mat-column-__create {
-  flex: 0 0 auto !important;
-  width: 78px;
-  padding-inline-end: 0;
+  @include entities-table.action-column;
 }

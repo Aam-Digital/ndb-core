@@ -1,0 +1,61 @@
+@use "mixins/entities-table";
+
+:host {
+  display: block;
+}
+
+/* same look as the entities-table used by RelatedEntitiesComponent */
+
+.table {
+  @include entities-table.table;
+}
+
+.table-row.clickable {
+  cursor: pointer;
+
+  @include entities-table.row-hover;
+}
+
+.mat-column-__edit {
+  @include entities-table.action-column;
+}
+
+@include entities-table.action-button;
+
+/* small, borderless preview (e.g. in a tooltip) */
+:host(.compact) {
+  padding: 0.5em;
+
+  .table-container {
+    // keep a tooltip-hosted table from growing unbounded with many rows/columns
+    max-height: 300px;
+    max-width: 480px;
+    overflow: auto;
+  }
+
+  .table {
+    box-shadow: none;
+    background: transparent;
+    // min-width (not width): lets the table grow past its container so cells don't get
+    // squeezed - .table-container then scrolls horizontally instead of clipping content.
+    min-width: 100%;
+    width: max-content;
+  }
+
+  .mat-mdc-header-row,
+  .mat-mdc-row {
+    height: auto;
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding-block: 2px;
+    padding-inline: 0 12px;
+    white-space: nowrap;
+    border-bottom: none;
+  }
+
+  .mat-mdc-header-cell {
+    border-bottom: 1px solid var(--mdc-theme-divider-color, rgba(0, 0, 0, 0.12));
+  }
+}
