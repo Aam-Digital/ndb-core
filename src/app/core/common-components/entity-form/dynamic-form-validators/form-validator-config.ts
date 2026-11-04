@@ -46,6 +46,7 @@ export const DYNAMIC_VALIDATORS = [
    * (not checked for an embedded field like the participants of `attendance`).
    * The warning only appears when the user changed this field or a field the condition refers to
    * (e.g. a new `location` that existing links do not match), not on every save of a record linked before.
+   * Selected records that do not match are still marked with a warning icon at the field.
    */
   "selectionCondition",
 ] as const;

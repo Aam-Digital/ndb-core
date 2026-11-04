@@ -6,6 +6,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
 import { FormControl, NgControl } from "@angular/forms";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { of } from "rxjs";
+import { By } from "@angular/platform-browser";
+import { MatTooltip } from "@angular/material/tooltip";
 import { signal, WritableSignal } from "@angular/core";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
@@ -544,6 +546,32 @@ describe("EditEntityComponent", () => {
       editRecordWithCondition({ other: { $in: ["BERLIN"] } });
 
       await expectOfferedNames(["Abc", "Abd", "Bcd"]);
+    });
+
+    it("hints at selected records not matching the condition until the field shows its own warning", async () => {
+      formControl.setValue([
+        test1Entities[0].getId(), // Abc: matching
+        test1Entities[1].getId(), // Bcd: not matching
+      ]);
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } });
+      const hint = () =>
+        fixture.debugElement
+          .queryAll(By.directive(MatTooltip))
+          .map((el) => el.injector.get(MatTooltip).message)
+          .find((message) => message.startsWith("Not matching"));
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(hint()).toBe(
+          "Not matching the selection conditions of this field: Bcd",
+        );
+      });
+
+      formControl.setErrors({ selectionCondition: { warning: true } });
+      formControl.markAsTouched();
+      fixture.detectChanges();
+
+      expect(hint()).toBeUndefined();
     });
 
     it("counts the records each toggle would additionally show", async () => {

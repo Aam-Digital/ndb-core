@@ -31,6 +31,7 @@ import {
   CreateOptionConfig,
 } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { currentRecordSignal } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -77,6 +78,7 @@ import {
     BasicAutocompleteComponent,
     MatSlideToggle,
     FormsModule,
+    FaDynamicIconComponent,
   ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditEntityComponent },
@@ -402,6 +404,26 @@ export class EditEntityComponent<
       const entity = entities.find((e) => e.getId() === id);
       return entity && (entity as any).isHidden === true;
     });
+  });
+
+  /**
+   * Names of the selected records that do not match the `selectionCondition`, `undefined` if all match.
+   * The validator of the field only warns about these after a change, so that records linked earlier are kept
+   * without asking on every save - this hint still shows them.
+   */
+  readonly selectedNotMatching: Signal<string | undefined> = computed(() => {
+    const isOffered = this.isOffered();
+    const selected = this.values();
+    const names = this.availableEntitiesResource
+      .value()
+      .filter(
+        (e) =>
+          selected.includes(e.getId()) &&
+          !(e as { isHidden?: boolean }).isHidden &&
+          !isOffered(e, { includeInactive: true, includeIneligible: false }),
+      )
+      .map((e) => e.toString());
+    return names.length > 0 ? names.join(", ") : undefined;
   });
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
