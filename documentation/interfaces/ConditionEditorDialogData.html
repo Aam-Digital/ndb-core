@@ -176,6 +176,12 @@
                                 </a>
                         </li>
                         <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#currentRecordType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">currentRecordType</span>
+                                </a>
+                        </li>
+                        <li>
                                 <a href="#entityConstructor" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityConstructor</span>
                                 </a>
@@ -247,6 +253,56 @@
                     <tr>
                         <td class="col-md-4">
                             <div class="io-description"><p>existing condition to edit, if any</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="currentRecordType"></a>
+                                <span class="name "><b>currentRecordType</b>
+                                    <a href="#currentRecordType">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>currentRecordType:         <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:28</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>type of the record being edited when the condition is applied, whose fields condition rows can compare with</p>
 </div>
                         </td>
                     </tr>
@@ -422,6 +478,9 @@ export interface ConditionEditorDialogData {
 
   /** also offer the internal &quot;_id&quot; field in the field dropdown (e.g. for permission conditions) */
   showInternalIdField?: boolean;
+
+  /** type of the record being edited when the condition is applied, whose fields condition rows can compare with */
+  currentRecordType?: EntityConstructor;
 }
 
 /**

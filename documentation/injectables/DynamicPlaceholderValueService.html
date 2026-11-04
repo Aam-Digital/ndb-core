@@ -240,6 +240,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#resolveRecordPlaceholders" >resolveRecordPlaceholders</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#setDefaultValue" >setDefaultValue</a>
                             </li>
@@ -299,7 +303,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:26</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:35</a></code>
 </div>
                         </td>
                     </tr>
@@ -336,8 +340,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -395,6 +399,112 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="resolveRecordPlaceholders"></a>
+                    <span class="name">
+                        <span ><b>resolveRecordPlaceholders</b></span>
+                        <a href="#resolveRecordPlaceholders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>resolveRecordPlaceholders&lt;T&gt;(condition: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, record: <a href="../classes/Entity.html" target="_self">Entity | undefined</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:104</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Replace the <code>$current_record.&lt;fieldId&gt;</code> placeholders in a condition
+(e.g. the <code>selectionCondition</code> of a field) with the values of the given record.
+A placeholder inside a list (e.g. of <code>$in</code>) is replaced by all values of a multi-value field.
+The values are used in database format, like the values of the records the condition is applied to.</p>
+<p>A row (a field with its value, or one of the conditions of <code>$and</code> or <code>$nor</code>) that references an empty field
+cannot be applied and is left out. All other rows still apply.
+If one of the alternatives of <code>$or</code> cannot be applied at all, the whole <code>$or</code> is left out
+(that alternative does not restrict anything, so neither does the <code>$or</code>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>condition</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The condition to resolve. It is not changed, a resolved copy is returned.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>record</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The resolved condition, which is empty if no row is left to apply.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="setDefaultValue"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -419,7 +529,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:40</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:49</a></code>
 </div>
                         </td>
                     </tr>
@@ -697,7 +807,7 @@ so call it in a reactive context (e.g. a <code>computed</code>) to get updates o
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:22</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:30</a></code>
 </div>
                         </td>
                     </tr>
@@ -719,11 +829,19 @@ import {
 } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import {
+  DataFilter,
+  isCurrentRecordPlaceholder,
+  placeholderFieldId,
+} from &quot;../../filter/filters/filters&quot;;
 import {
   AdminDefaultValueContext,
   DefaultValueStrategy,
 } from &quot;../default-value-strategy.interface&quot;;
 import { DefaultValueConfigDynamic } from &quot;./default-value-config-dynamic&quot;;
+import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -735,6 +853,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   override readonly mode &#x3D; &quot;dynamic&quot;;
 
   private currentUser &#x3D; inject(CurrentUserSubject);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
 
   override async getAdminUI(): Promise&lt;AdminDefaultValueContext&gt; {
     const component &#x3D;
@@ -789,6 +908,126 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         return;
     }
   }
+
+  /**
+   * Replace the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition
+   * (e.g. the &#x60;selectionCondition&#x60; of a field) with the values of the given record.
+   * A placeholder inside a list (e.g. of &#x60;$in&#x60;) is replaced by all values of a multi-value field.
+   * The values are used in database format, like the values of the records the condition is applied to.
+   *
+   * A row (a field with its value, or one of the conditions of &#x60;$and&#x60; or &#x60;$nor&#x60;) that references an empty field
+   * cannot be applied and is left out. All other rows still apply.
+   * If one of the alternatives of &#x60;$or&#x60; cannot be applied at all, the whole &#x60;$or&#x60; is left out
+   * (that alternative does not restrict anything, so neither does the &#x60;$or&#x60;).
+   *
+   * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
+   * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
+   * @returns The resolved condition, which is empty if no row is left to apply.
+   */
+  resolveRecordPlaceholders&lt;T&gt;(
+    condition: DataFilter&lt;T&gt;,
+    record: Entity | undefined,
+  ): DataFilter&lt;T&gt; {
+    const getValue &#x3D; (fieldId: string) &#x3D;&gt; {
+      const value &#x3D; record?.[fieldId];
+      const schemaField &#x3D; record?.getSchema().get(fieldId);
+      if (value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || !schemaField) {
+        return value;
+      }
+      return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
+    };
+    return resolveCondition(condition ?? {}, getValue) as DataFilter&lt;T&gt;;
+  }
+}
+
+/** operators combining a list of conditions, each of which is a condition on its own */
+const CONDITION_LIST_OPERATORS &#x3D; [&quot;$or&quot;, &quot;$and&quot;, &quot;$nor&quot;];
+
+/** marks a value that cannot be resolved, because it references an empty field */
+const UNRESOLVED &#x3D; Symbol(&quot;unresolved&quot;);
+
+/** returns the value of the given field of the current record (in database format) */
+type FieldValueGetter &#x3D; (fieldId: string) &#x3D;&gt; unknown;
+
+/** the rows of a condition that can be applied, with their placeholders resolved */
+function resolveCondition(condition: object, getValue: FieldValueGetter) {
+  const resolved &#x3D; {};
+  for (const [key, value] of Object.entries(condition)) {
+    const resolvedValue &#x3D;
+      CONDITION_LIST_OPERATORS.includes(key) &amp;&amp; Array.isArray(value)
+        ? resolveConditionList(key, value, getValue)
+        : resolveValue(value, getValue);
+    if (resolvedValue !&#x3D;&#x3D; UNRESOLVED) {
+      resolved[key] &#x3D; resolvedValue;
+    }
+  }
+  return resolved;
+}
+
+/**
+ * The conditions of a list operator (&#x60;$or&#x60;, &#x60;$and&#x60;, &#x60;$nor&#x60;) of which at least one row can be applied
+ * (&#x60;UNRESOLVED&#x60; if none can).
+ * A condition that cannot be applied at all is left out of &#x60;$and&#x60; and &#x60;$nor&#x60;, which then restrict less.
+ * For &#x60;$or&#x60; it would restrict more, as the other alternatives would have to match instead:
+ * the whole &#x60;$or&#x60; is left out, because the alternative that cannot be applied does not restrict anything.
+ */
+function resolveConditionList(
+  operator: string,
+  conditions: object[],
+  getValue: FieldValueGetter,
+) {
+  const resolved &#x3D; conditions.map((condition) &#x3D;&gt; ({
+    condition,
+    resolved: resolveCondition(condition, getValue),
+  }));
+  const isUnresolved &#x3D; ({ condition, resolved }: (typeof resolved)[number]) &#x3D;&gt;
+    Object.keys(resolved).length &#x3D;&#x3D;&#x3D; 0 &amp;&amp; Object.keys(condition).length &gt; 0;
+
+  if (operator &#x3D;&#x3D;&#x3D; &quot;$or&quot; &amp;&amp; resolved.some(isUnresolved)) {
+    return UNRESOLVED;
+  }
+  const applicable &#x3D; resolved
+    .filter((entry) &#x3D;&gt; !isUnresolved(entry))
+    .map((entry) &#x3D;&gt; entry.resolved);
+  return applicable.length &gt; 0 ? applicable : UNRESOLVED;
+}
+
+/** the value with its placeholders resolved (&#x60;UNRESOLVED&#x60; if one of them references an empty field) */
+function resolveValue(value: unknown, getValue: FieldValueGetter): unknown {
+  if (isCurrentRecordPlaceholder(value)) {
+    const fieldValue &#x3D; getValue(placeholderFieldId(value));
+    return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
+  }
+  if (Array.isArray(value)) {
+    return resolveList(value, getValue);
+  }
+  if (value &amp;&amp; typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    return resolveObject(value, getValue);
+  }
+  return value;
+}
+
+/** a placeholder inside a list is replaced by all values of a multi-value field */
+function resolveList(list: unknown[], getValue: FieldValueGetter): unknown {
+  const items &#x3D; list.map((item) &#x3D;&gt; [item, resolveValue(item, getValue)]);
+  if (items.some(([, resolved]) &#x3D;&gt; resolved &#x3D;&#x3D;&#x3D; UNRESOLVED)) {
+    return UNRESOLVED;
+  }
+  return items.flatMap(([item, resolved]) &#x3D;&gt;
+    isCurrentRecordPlaceholder(item) &amp;&amp; Array.isArray(resolved)
+      ? resolved
+      : [resolved],
+  );
+}
+
+function resolveObject(value: object, getValue: FieldValueGetter): unknown {
+  const entries &#x3D; Object.entries(value).map(([key, v]) &#x3D;&gt; [
+    key,
+    resolveValue(v, getValue),
+  ]);
+  return entries.some(([, resolved]) &#x3D;&gt; resolved &#x3D;&#x3D;&#x3D; UNRESOLVED)
+    ? UNRESOLVED
+    : Object.fromEntries(entries);
 }
 </code></pre>
     </div>

@@ -417,8 +417,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="111"
-                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:111</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -736,6 +736,10 @@ export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
       fieldKeys,
       this.entityData,
       this.destroyRef,
+      true,
+      true,
+      // the value is set for several records, so there is no single record other fields could refer to
+      false,
     );
 
     const selectedField &#x3D; this.selectedFieldFormControl.value;

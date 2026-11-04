@@ -258,8 +258,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="309"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:309</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="344"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:344</a></div>
                         </td>
                     </tr>
 
@@ -370,8 +370,8 @@ Used where the record holding the changes is saved by someone else
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="329"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:329</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="364"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:364</a></div>
                         </td>
                     </tr>
 
@@ -444,15 +444,15 @@ or its only errors are warnings (marked with <code>warning: true</code>, e.g. a 
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createEntityForm&lt;T&gt;(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, destroyRef: <a href="https://angular.dev/api/core/DestroyRef" target="_blank">DestroyRef</a>, withPermissionCheck: unknown, withDefaultValues: unknown)</code>
+                    <code>createEntityForm&lt;T&gt;(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, destroyRef: <a href="https://angular.dev/api/core/DestroyRef" target="_blank">DestroyRef</a>, withPermissionCheck: unknown, withDefaultValues: unknown, singleRecord: unknown)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -469,7 +469,8 @@ or its only errors are warnings (marked with <code>warning: true</code>, e.g. a 
                 <td class="col-md-4">
                         <div class="io-description"><p>Creates a form with the formFields and the existing values from the entity.
 Missing fields in the formFields are filled with schema information.
-  caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)</p>
+  caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
+  so that fields and validators have no record to compare with (see <code>EntityForm.currentRecord</code>)</p>
 </div>
 
                             <div class="io-description">
@@ -575,6 +576,26 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                                             </td>
                                         </tr>
+                                        <tr>
+                                                <td>singleRecord</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>false if the form does not edit one single record (e.g. in bulk edit),
+so that fields and validators have no record to compare with (see <code>EntityForm.currentRecord</code>)</p>
+
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -611,8 +632,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="57"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:57</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -692,8 +713,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="412"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:412</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="447"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:447</a></div>
                         </td>
                     </tr>
 
@@ -782,8 +803,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="258"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:258</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="293"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:293</a></div>
                         </td>
                     </tr>
 
@@ -870,7 +891,14 @@ The input entity will not be modified but a copy of it will be returned in case 
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DestroyRef, EventEmitter, inject, Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  computed,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Injectable,
+  signal,
+} from &quot;@angular/core&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import {
   AbstractControl,
@@ -880,6 +908,7 @@ import {
   FormGroup,
 } from &quot;@angular/forms&quot;;
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from &quot;./FormConfig&quot;;
+import { createCurrentRecordState } from &quot;./current-record-state&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
@@ -901,7 +930,6 @@ import {
   TypedFormGroup,
 } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
-import { revalidateOnParentLinkChange } from &quot;../../basic-datatypes/date-range/within-parent-validator&quot;;
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -953,6 +981,8 @@ export class EntityFormService {
    *   caller&#x27;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
    * @param withPermissionCheck if true, fields without &#x27;update&#x27; permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
+   * @param singleRecord false if the form does not edit one single record (e.g. in bulk edit),
+   *   so that fields and validators have no record to compare with (see &#x60;EntityForm.currentRecord&#x60;)
    */
   public async createEntityForm&lt;T extends Entity&gt;(
     formFields: ColumnConfig[],
@@ -960,6 +990,7 @@ export class EntityFormService {
     destroyRef: DestroyRef,
     withPermissionCheck &#x3D; true,
     withDefaultValues &#x3D; true,
+    singleRecord &#x3D; true,
   ): Promise&lt;EntityForm&lt;T&gt;&gt; {
     const fields: FormFieldConfig[] &#x3D; [];
     for (const formField of formFields) {
@@ -981,7 +1012,17 @@ export class EntityFormService {
       entity,
       destroyRef,
       withPermissionCheck,
+      singleRecord,
     );
+
+    // bumped with every change of the form (below), so that &#x60;currentRecord&#x60; builds a new copy only then
+    const formVersion &#x3D; signal(0);
+    const currentRecord &#x3D; singleRecord
+      ? computed(() &#x3D;&gt; {
+          formVersion();
+          return createCurrentRecordState(entity, typedFormGroup);
+        })
+      : computed((): T | undefined &#x3D;&gt; undefined);
 
     const entityForm: EntityForm&lt;T&gt; &#x3D; {
       formGroup: typedFormGroup,
@@ -989,6 +1030,7 @@ export class EntityFormService {
       fieldConfigs: fields,
       onFormStateChange: new EventEmitter(),
       watcher: new Map(),
+      currentRecord,
     };
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.
@@ -999,9 +1041,10 @@ export class EntityFormService {
     // dirty state from accumulating in UnsavedChangesService.sources.
     typedFormGroup.valueChanges
       .pipe(takeUntilDestroyed(destroyRef))
-      .subscribe(() &#x3D;&gt;
-        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
-      );
+      .subscribe(() &#x3D;&gt; {
+        formVersion.update((v) &#x3D;&gt; v + 1);
+        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty);
+      });
     // The caller&#x27;s view may already be destroyed by the time this async form
     // finishes being created (e.g. navigated away while the form was still loading).
     // &#x60;onDestroy&#x60; throws NG0911 in that case, so check &#x60;destroyed&#x60; first, the same
@@ -1033,6 +1076,7 @@ export class EntityFormService {
     entity: T,
     destroyRef: DestroyRef,
     withPermissionCheck &#x3D; true,
+    singleRecord &#x3D; true,
   ): EntityFormGroup&lt;T&gt; {
     const formConfig &#x3D; {};
     const copy &#x3D; entity.copy();
@@ -1042,10 +1086,20 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
+      this.addFormControlConfig(
+        formConfig,
+        f,
+        copy,
+        withPermissionCheck,
+        singleRecord,
+      );
     }
     const group &#x3D; this.fb.group&lt;Partial&lt;T&gt;&gt;(formConfig);
-    revalidateOnParentLinkChange(group, formFields, destroyRef);
+    this.dynamicValidator.revalidateOnDependencyChange(
+      group,
+      formFields,
+      destroyRef,
+    );
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -1072,6 +1126,7 @@ export class EntityFormService {
     field: FormFieldConfig,
     entity: Entity,
     withPermissionCheck: boolean,
+    singleRecord: boolean,
   ) {
     let value &#x3D; entity[field.id];
 
@@ -1080,7 +1135,8 @@ export class EntityFormService {
       const validators &#x3D; this.dynamicValidator.buildValidators(
         field.validators,
         entity,
-        field.id,
+        field,
+        singleRecord,
       );
       Object.assign(controlOptions, validators);
     }

@@ -203,7 +203,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:44</a></div>
                             </td>
                         </tr>
 
@@ -278,7 +278,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -305,7 +305,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:35</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.ts:47</a></div>
                         </td>
                     </tr>
 
@@ -328,7 +328,7 @@
 import { Subscription } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-form/FormConfig&quot;;
-import { EventEmitter } from &quot;@angular/core&quot;;
+import { EventEmitter, Signal } from &quot;@angular/core&quot;;
 
 /**
  * These are utility types that allow to define the type of &#x60;FormGroup&#x60; the way it is returned by &#x60;EntityFormService.create&#x60;
@@ -353,6 +353,18 @@ export interface EntityForm&lt;T extends Entity&gt; {
   &gt;;
 
   watcher: Map&lt;string, Subscription&gt;;
+
+  /**
+   * The record with the current, possibly unsaved values of this form, updated with every change,
+   * for fields that depend on the values of other fields of the record
+   * (like the &#x60;selectionCondition&#x60; of an entity field).
+   * One copy per change, shared by all fields reading it, and only built when read.
+   * (Validators build their own, see &#x60;getCurrentRecordOfControl&#x60;.)
+   *
+   * Its value is &#x60;undefined&#x60; if the form does not edit one single record (e.g. in bulk edit).
+   * If not set, the field components use the saved &#x60;entity&#x60; of the form.
+   */
+  currentRecord?: Signal&lt;T | undefined&gt;;
 }
 
 export class EntityFormSavedEvent {

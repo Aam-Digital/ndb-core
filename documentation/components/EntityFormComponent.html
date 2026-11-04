@@ -362,7 +362,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:115</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:116</a></div>
                             </td>
                         </tr>
 
@@ -388,7 +388,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:71</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:72</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -415,7 +415,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:74</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -436,7 +436,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:76</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -462,7 +462,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:85</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:86</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -494,7 +494,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:80</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:81</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -541,7 +541,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -579,7 +579,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:106</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="107" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -617,7 +617,7 @@ Inside the entity details component use the FormComponent which is registered as
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:88</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -651,6 +651,7 @@ import moment from &quot;moment&quot;;
 import { Subscription } from &quot;rxjs&quot;;
 import { filter } from &quot;rxjs/operators&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { createCurrentRecordState } from &quot;../current-record-state&quot;;
 import { FieldGroup } from &quot;../../../entity-details/form/field-group&quot;;
 import { ColumnConfig } from &quot;../FormConfig&quot;;
 import { EntityFieldEditComponent } from &quot;../../../entity/entity-field-edit/entity-field-edit.component&quot;;
@@ -846,8 +847,7 @@ export class EntityFormComponent&lt;T extends Entity &#x3D; Entity&gt; {
       return;
     }
 
-    const currentEntityState &#x3D; entity.copy();
-    Object.assign(currentEntityState, form.formGroup.getRawValue());
+    const currentEntityState &#x3D; createCurrentRecordState(entity, form.formGroup);
 
     const hiddenFieldIds &#x3D; new Set&lt;string&gt;();
     for (const group of groupsWithCondition) {
@@ -965,8 +965,9 @@ export class EntityFormComponent&lt;T extends Entity &#x3D; Entity&gt; {
 
     // re-apply user-edited fields
     userEditsWithoutConflicts.forEach(([key, value]) &#x3D;&gt; {
-      this.form().formGroup.get(key).setValue(value);
+      // marked dirty first: validators only checking changed fields (e.g. &#x60;selectionCondition&#x60;) run on &#x60;setValue&#x60;
       this.form().formGroup.get(key).markAsDirty();
+      this.form().formGroup.get(key).setValue(value);
     });
   }
 

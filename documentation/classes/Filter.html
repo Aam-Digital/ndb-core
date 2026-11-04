@@ -239,7 +239,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/filter/filters/filters.ts:102</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/filter/filters/filters.ts:133</a></div>
                             </td>
                         </tr>
 
@@ -318,7 +318,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/filter/filters/filters.ts:92</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/filter/filters/filters.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -351,7 +351,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/filter/filters/filters.ts:106</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/filter/filters/filters.ts:137</a></div>
                         </td>
                     </tr>
 
@@ -378,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/core/filter/filters/filters.ts:105</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/filter/filters/filters.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -409,7 +409,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/filter/filters/filters.ts:102</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/filter/filters/filters.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -449,7 +449,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/filter/filters/filters.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/filter/filters/filters.ts:125</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +483,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -556,8 +556,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="117"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:117</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:148</a></div>
                         </td>
                     </tr>
 
@@ -622,6 +622,37 @@ export function combineFilterConditions&lt;T&gt;(
   }
 
   return { $and: relevant } as DataFilter&lt;T&gt;;
+}
+
+/**
+ * Prefix of a placeholder in a condition value that stands for the value of a field
+ * of the record currently being edited, e.g. &#x60;&quot;$current_record.location&quot;&#x60;.
+ */
+export const CURRENT_RECORD_PLACEHOLDER_PREFIX &#x3D; &quot;$current_record.&quot;;
+
+export function isCurrentRecordPlaceholder(value: unknown): value is string {
+  return (
+    typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+    value.startsWith(CURRENT_RECORD_PLACEHOLDER_PREFIX)
+  );
+}
+
+/** the id of the field that a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to */
+export function placeholderFieldId(placeholder: string): string {
+  return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+}
+
+/** the ids of the fields that the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition refer to */
+export function getCurrentRecordPlaceholderFields(
+  condition: unknown,
+): string[] {
+  if (isCurrentRecordPlaceholder(condition)) {
+    return [placeholderFieldId(condition)];
+  }
+  if (condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
+  }
+  return [];
 }
 
 export function createEmptyValueFilter&lt;T extends Entity&gt;(

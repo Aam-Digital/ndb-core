@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:78</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:84</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:85</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:91</a></div>
                                 </td>
                             </tr>
 
@@ -327,7 +327,7 @@ The entityType is not changed by this component.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:91</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:97</a></div>
                                 </td>
                             </tr>
 
@@ -348,6 +348,7 @@ Use to prevent changes to config that are required to be consistent across all u
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
   computed,
+  Signal,
   DestroyRef,
   inject,
   OnInit,
@@ -400,8 +401,12 @@ import {
 } from &quot;../../../language/active-locale&quot;;
 import { generateIdFromLabel } from &quot;../../../../utils/generate-id-from-label/generate-id-from-label&quot;;
 import { merge } from &quot;rxjs&quot;;
-import { filter } from &quot;rxjs/operators&quot;;
-import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { filter, pairwise } from &quot;rxjs/operators&quot;;
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from &quot;@angular/core/rxjs-interop&quot;;
 import { uniquePropertyValidator } from &quot;app/core/common-components/entity-form/unique-property-validator/unique-property-validator&quot;;
 import { ConfigureEntityFieldValidatorComponent } from &quot;./configure-entity-field-validator/configure-entity-field-validator.component&quot;;
 import { FormValidatorConfig } from &quot;app/core/common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
@@ -414,6 +419,7 @@ import { SimpleDropdownValue } from &quot;app/core/common-components/basic-autoc
 import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { YesNoButtons } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { AttendanceDatatype } from &quot;#src/app/features/attendance/model/attendance.datatype&quot;;
+import { asArray } from &quot;app/utils/asArray&quot;;
 import { DateRangeDatatype } from &quot;../../../basic-datatypes/date-range/date-range.datatype&quot;;
 import { DateRangeFilterConfigOption } from &quot;../../../entity-list/EntityListConfig&quot;;
 
@@ -501,7 +507,13 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
-  additionalForm: FormControl;
+  readonly additionalForm: FormControl &#x3D; this.fb.control(
+    this.data.entitySchemaField.additional,
+  );
+  private readonly additionalValue &#x3D; toSignal(
+    this.additionalForm.valueChanges,
+    { initialValue: this.additionalForm.value },
+  );
   typeAdditionalOptions: SimpleDropdownValue[] &#x3D; [];
   dataTypes: SimpleDropdownValue[] &#x3D; [];
   entityAdditionalMultiSelect: WritableSignal&lt;boolean&gt; &#x3D; signal(false);
@@ -511,6 +523,23 @@ export class AdminEntityFieldComponent implements OnInit {
   readonly selectedDataType &#x3D; signal&lt;string&gt;(
     this.data.entitySchemaField.dataType,
   );
+
+  /**
+   * The record type this field references, if a &#x60;selectionCondition&#x60; can be applied to the field
+   * (and the admin can therefore configure one in the Validation tab): a link to exactly one record type.
+   */
+  readonly selectionConditionTargetType: Signal&lt;EntityConstructor | undefined&gt; &#x3D;
+    computed(() &#x3D;&gt; {
+      if (this.selectedDataType() !&#x3D;&#x3D; EntityDatatype.dataType) {
+        return undefined;
+      }
+      const types &#x3D; asArray(this.additionalValue() ?? []);
+      // TODO: generalize to support multiple entity types
+      if (types.length !&#x3D;&#x3D; 1 || !this.entityRegistry.has(types[0])) {
+        return undefined;
+      }
+      return this.entityRegistry.get(types[0]);
+    });
 
   /** whether a &quot;date-range&quot; field offers predefined periods (&#x60;additional&#x60; is not an empty list) */
   datePresetsOffered: WritableSignal&lt;boolean&gt; &#x3D; signal(true);
@@ -525,6 +554,14 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
+
+  constructor() {
+    // a &#x60;selectionCondition&#x60; refers to fields of the linked record type, so it is removed when that type changes
+    // (the validator settings then show the field&#x27;s validators without it, see ConfigureEntityFieldValidatorComponent)
+    toObservable(this.selectionConditionTargetType)
+      .pipe(pairwise(), takeUntilDestroyed())
+      .subscribe(() &#x3D;&gt; this.removeSelectionCondition());
+  }
 
   ngOnInit() {
     this.entityType &#x3D; this.data.entityType;
@@ -571,10 +608,6 @@ export class AdminEntityFieldComponent implements OnInit {
         }),
       ],
     });
-    this.additionalForm &#x3D; this.fb.control(
-      this.data.entitySchemaField.additional,
-    );
-
     const labelFormControl &#x3D; this.fb.control(
       // the raw value (plain string or per-language map) - the input component
       // displays only the active language of it
@@ -724,6 +757,14 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
+  private removeSelectionCondition() {
+    const validators &#x3D; this.schemaFieldsForm.get(&quot;validators&quot;);
+    const { selectionCondition, ...otherValidators } &#x3D; validators.value ?? {};
+    if (selectionCondition) {
+      validators.setValue(otherValidators);
+    }
+  }
+
   entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get(&quot;validators&quot;).setValue(validatorData);
   }
@@ -853,10 +894,7 @@ export class AdminEntityFieldComponent implements OnInit {
       const validValues &#x3D; newAdditional.filter((value) &#x3D;&gt;
         this.isValidEntityType(value),
       );
-      // Use setTimeout to ensure Angular processes the multi input change before setting the value
-      setTimeout(() &#x3D;&gt; {
-        this.additionalForm.setValue(validValues);
-      });
+      this.additionalForm.setValue(validValues);
       return;
     }
 
@@ -889,12 +927,14 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     if (validValues.length &gt; 0) {
-      this.additionalForm.setValue(this.buildAttendanceAdditional(validValues));
+      this.additionalForm.setValue(
+        this.buildAttendanceAdditional(validValues, newAdditional),
+      );
     }
 
-    // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
-    setTimeout(() &#x3D;&gt; {
-      this.attendanceParticipantTypesForm.setValue(validValues);
+    // not emitted: &#x60;additional&#x60; already holds these types, with the rest of its config
+    this.attendanceParticipantTypesForm.setValue(validValues, {
+      emitEvent: false,
     });
   }
 
@@ -916,10 +956,43 @@ export class AdminEntityFieldComponent implements OnInit {
     );
   }
 
-  private buildAttendanceAdditional(types: string[]): object | null {
-    return types &amp;&amp; types.length &gt; 0
-      ? { participant: { dataType: &quot;entity&quot;, additional: types } }
-      : null;
+  /**
+   * The &#x60;additional&#x60; of an attendance field with the given participant types,
+   * keeping the other config of its embedded fields (e.g. set in the JSON config).
+   */
+  private buildAttendanceAdditional(
+    types: string[],
+    previous &#x3D; this.additionalForm.value,
+  ): object | null {
+    if (!types || types.length &#x3D;&#x3D;&#x3D; 0) {
+      return null;
+    }
+
+    const base &#x3D;
+      typeof previous &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; !Array.isArray(previous)
+        ? previous
+        : undefined;
+    const { validators, ...participant } &#x3D; base?.participant ?? {};
+    const { selectionCondition, ...otherValidators } &#x3D; validators ?? {};
+    const sameTypes &#x3D;
+      JSON.stringify(asArray(participant.additional ?? [])) &#x3D;&#x3D;&#x3D;
+      JSON.stringify(types);
+    const keptValidators &#x3D; {
+      ...otherValidators,
+      // a selection filter refers to fields of the previous participant types
+      ...(sameTypes &amp;&amp; selectionCondition ? { selectionCondition } : {}),
+    };
+    return {
+      ...base,
+      participant: {
+        ...participant,
+        dataType: &quot;entity&quot;,
+        additional: types,
+        ...(Object.keys(keptValidators).length &gt; 0
+          ? { validators: keptValidators }
+          : {}),
+      },
+    };
   }
 
   private isValidEntityType(type: string): boolean {

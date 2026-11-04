@@ -562,6 +562,17 @@ export class FilterService {
           entity,
           true,
         );
+      } else if (isSingleOptionList(value?.[&quot;$in&quot;])) {
+        // e.g. { category: { $in: [&quot;GUARDIAN_TALK&quot;] } } (as saved by the conditions editor)
+        this.assignValueToEntity(key, value[&quot;$in&quot;][0], schema, entity);
+      } else if (isSingleOptionList(value?.[&quot;$elemMatch&quot;]?.[&quot;$in&quot;])) {
+        this.assignValueToEntity(
+          key,
+          value[&quot;$elemMatch&quot;][&quot;$in&quot;][0],
+          schema,
+          entity,
+          true,
+        );
       }
     });
   }
@@ -609,8 +620,14 @@ export class FilterService {
 
   private parseConfigurableEnumValue(property: EntitySchemaField, value) {
     const enumValues &#x3D; this.enumService.getEnumValues(property.additional);
-    return enumValues.find(({ id }) &#x3D;&gt; id &#x3D;&#x3D;&#x3D; value[&quot;id&quot;]);
+    const valueId &#x3D; typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; ? value : value[&quot;id&quot;];
+    return enumValues.find(({ id }) &#x3D;&gt; id &#x3D;&#x3D;&#x3D; valueId);
   }
+}
+
+/** a list with exactly one option, which can be applied as plain value */
+function isSingleOptionList(value: unknown): value is [unknown] {
+  return Array.isArray(value) &amp;&amp; value.length &#x3D;&#x3D;&#x3D; 1;
 }
 </code></pre>
     </div>

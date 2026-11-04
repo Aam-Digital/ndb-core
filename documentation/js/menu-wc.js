@@ -1757,6 +1757,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ConnectivityError.html" data-type="entity-link" >ConnectivityError</a>
                             </li>
                             <li class="link">
+                                <a href="classes/CurrentRecordContext.html" data-type="entity-link" >CurrentRecordContext</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/CustomFaker.html" data-type="entity-link" >CustomFaker</a>
                             </li>
                             <li class="link">
@@ -3006,6 +3009,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/LegacyNoteField.html" data-type="entity-link" >LegacyNoteField</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/LinkedRecordsSource.html" data-type="entity-link" >LinkedRecordsSource</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/LinkedTypeFields.html" data-type="entity-link" >LinkedTypeFields</a>
                             </li>
                             <li class="link">
@@ -3084,6 +3090,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/NotesDashboardSettingsConfig.html" data-type="entity-link" >NotesDashboardSettingsConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/OfferedRecordsToggles.html" data-type="entity-link" >OfferedRecordsToggles</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/OperationMeta.html" data-type="entity-link" >OperationMeta</a>
                             </li>
                             <li class="link">
@@ -3094,9 +3103,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/PanelConfig.html" data-type="entity-link" >PanelConfig&lt;T &#x3D; any&gt;</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/ParentLinkInForm.html" data-type="entity-link" >ParentLinkInForm</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ParentRange.html" data-type="entity-link" >ParentRange</a>
@@ -3207,6 +3213,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/SelectableOption.html" data-type="entity-link" >SelectableOption&lt;O, V&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/SelectionConditionServices.html" data-type="entity-link" >SelectionConditionServices</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/SentryBreadcrumbHint.html" data-type="entity-link" >SentryBreadcrumbHint</a>
                             </li>
                             <li class="link">
@@ -3295,6 +3304,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserSessionRedirectDto.html" data-type="entity-link" >UserSessionRedirectDto</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ValidatorContext.html" data-type="entity-link" >ValidatorContext</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ViewConfig.html" data-type="entity-link" >ViewConfig&lt;T &#x3D; any&gt;</a>

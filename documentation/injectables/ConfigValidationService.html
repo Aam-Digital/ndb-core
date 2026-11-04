@@ -233,8 +233,8 @@ not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGE
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -303,8 +303,8 @@ not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGE
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -376,6 +376,9 @@ import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { Config } from &quot;../config&quot;;
 import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
+import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+import { SchemaEmbedDatatype } from &quot;../../basic-datatypes/schema-embed/schema-embed.datatype&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -510,6 +513,8 @@ export class ConfigValidationService {
       }
     }
 
+    problems.push(...this.validateSelectionCondition(schema));
+
     if (schema.defaultValue &amp;&amp; !this.isKnownDefaultValueMode(schema)) {
       problems.push(
         schema.defaultValue.mode
@@ -519,6 +524,38 @@ export class ConfigValidationService {
     }
 
     return problems;
+  }
+
+  /** a &#x60;selectionCondition&#x60; only applies to a field linking to exactly one record type (see &#x60;DYNAMIC_VALIDATORS&#x60;) */
+  private validateSelectionCondition(schema: EntitySchemaField): string[] {
+    if (!schema.validators?.selectionCondition) {
+      return [];
+    }
+    if (schema.dataType !&#x3D;&#x3D; EntityDatatype.dataType) {
+      return [
+        this.isEmbeddingDataType(schema.dataType)
+          ? $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. &quot;additional.participant.validators&quot;).&#x60;
+          : $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to records, it is ignored.&#x60;,
+      ];
+    }
+    if (asArray(schema.additional ?? []).length !&#x3D;&#x3D; 1) {
+      return [
+        $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to one record type, it is ignored.&#x60;,
+      ];
+    }
+    return [];
+  }
+
+  private isEmbeddingDataType(dataType: string | undefined): boolean {
+    try {
+      return (
+        this.injector
+          .get(EntitySchemaService)
+          .getDatatypeOrDefault(dataType, false) instanceof SchemaEmbedDatatype
+      );
+    } catch {
+      return false;
+    }
   }
 
   private validateMenuItems(

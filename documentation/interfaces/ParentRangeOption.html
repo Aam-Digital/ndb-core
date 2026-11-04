@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts:43</a></div>
                                 </td>
                             </tr>
 
@@ -317,6 +317,7 @@ import {
 import { HelpButtonComponent } from &quot;../../../../common-components/help-button/help-button.component&quot;;
 import { EditDateComponent } from &quot;../../../../basic-datatypes/date/edit-date/edit-date.component&quot;;
 import { EditMonthComponent } from &quot;../../../../basic-datatypes/month/edit-month/edit-month.component&quot;;
+import { AdminDisplayConditionButtonComponent } from &quot;../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component&quot;;
 
 /** an option of the date ranges a date range field can be checked against */
 interface ParentRangeOption {
@@ -337,6 +338,7 @@ interface ParentRangeOption {
     EditDateComponent,
     EditMonthComponent,
     MatSelectModule,
+    AdminDisplayConditionButtonComponent,
   ],
   templateUrl: &quot;./configure-entity-field-validator.component.html&quot;,
   styleUrl: &quot;./configure-entity-field-validator.component.scss&quot;,
@@ -362,6 +364,12 @@ export class ConfigureEntityFieldValidatorComponent {
   private readonly fieldDataType &#x3D; computed(
     () &#x3D;&gt; this.dataType() ?? this.entitySchemaField()?.dataType,
   );
+
+  /**
+   * the record type a link field links to, if it is exactly one (as needed for a &#x60;selectionCondition&#x60;);
+   * it can change while editing the field, the parent then removes the &#x60;selectionCondition&#x60; from the field&#x27;s validators
+   */
+  linkedEntityType &#x3D; input&lt;EntityConstructor&gt;();
 
   /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
@@ -431,6 +439,8 @@ export class ConfigureEntityFieldValidatorComponent {
     a?.parentValueField &#x3D;&#x3D;&#x3D; b?.parentValueField;
 
   validatorForm &#x3D; computed(() &#x3D;&gt; {
+    // read again when the linked type changes, as the parent then removes the &#x60;selectionCondition&#x60;
+    this.linkedEntityType();
     const v &#x3D; this.entitySchemaField()?.validators;
     const isObjectForm &#x3D; typeof v?.pattern &#x3D;&#x3D;&#x3D; &quot;object&quot;;
     return this.fb.group({
@@ -449,6 +459,7 @@ export class ConfigureEntityFieldValidatorComponent {
       uniqueId: [v?.uniqueId ?? &quot;&quot;],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
       withinParent: [v?.withinParent ?? null],
+      selectionCondition: [v?.selectionCondition ?? null],
     });
   });
 

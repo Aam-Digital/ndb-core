@@ -295,7 +295,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="158" class="link-to-prism">src/app/core/filter/filters/filters.ts:158</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="189" class="link-to-prism">src/app/core/filter/filters/filters.ts:189</a></div>
                             </td>
                         </tr>
 
@@ -422,7 +422,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:171</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:202</a></code>
 </div>
                         </td>
                     </tr>
@@ -463,7 +463,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:169</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -496,7 +496,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="170" class="link-to-prism">src/app/core/filter/filters/filters.ts:170</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="201" class="link-to-prism">src/app/core/filter/filters/filters.ts:201</a></div>
                         </td>
                     </tr>
 
@@ -528,7 +528,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="172" class="link-to-prism">src/app/core/filter/filters/filters.ts:172</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="203" class="link-to-prism">src/app/core/filter/filters/filters.ts:203</a></div>
                         </td>
                     </tr>
 
@@ -570,7 +570,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:123</a></code>
 </div>
                         </td>
                     </tr>
@@ -614,7 +614,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:102</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:133</a></code>
 </div>
                         </td>
                     </tr>
@@ -661,7 +661,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:94</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:125</a></code>
 </div>
                         </td>
                     </tr>
@@ -698,8 +698,8 @@ an instance of this FilterSelection class can manage all filter selection logic.
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="142"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:142</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -812,7 +812,7 @@ that is true of a data item&#39;s property exactly matches that value.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:192</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:223</a></code>
 </div>
                         </td>
                     </tr>
@@ -852,8 +852,8 @@ If the given key is undefined or invalid, the returned filter matches any elemen
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="182"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:182</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="213"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:213</a></div>
                         </td>
                     </tr>
 
@@ -932,7 +932,7 @@ If the given key is undefined or invalid, the returned filter matches any elemen
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:109</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:140</a></code>
 </div>
                         </td>
                     </tr>
@@ -1032,6 +1032,37 @@ export function combineFilterConditions&lt;T&gt;(
   }
 
   return { $and: relevant } as DataFilter&lt;T&gt;;
+}
+
+/**
+ * Prefix of a placeholder in a condition value that stands for the value of a field
+ * of the record currently being edited, e.g. &#x60;&quot;$current_record.location&quot;&#x60;.
+ */
+export const CURRENT_RECORD_PLACEHOLDER_PREFIX &#x3D; &quot;$current_record.&quot;;
+
+export function isCurrentRecordPlaceholder(value: unknown): value is string {
+  return (
+    typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+    value.startsWith(CURRENT_RECORD_PLACEHOLDER_PREFIX)
+  );
+}
+
+/** the id of the field that a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to */
+export function placeholderFieldId(placeholder: string): string {
+  return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+}
+
+/** the ids of the fields that the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition refer to */
+export function getCurrentRecordPlaceholderFields(
+  condition: unknown,
+): string[] {
+  if (isCurrentRecordPlaceholder(condition)) {
+    return [placeholderFieldId(condition)];
+  }
+  if (condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
+  }
+  return [];
 }
 
 export function createEmptyValueFilter&lt;T extends Entity&gt;(

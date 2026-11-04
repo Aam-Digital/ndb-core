@@ -503,7 +503,7 @@ With the <code>withinParent</code> validator, a warning icon shows in view mode 
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:137</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:132</a></div>
                             </td>
                         </tr>
 
@@ -529,7 +529,7 @@ With the <code>withinParent</code> validator, a warning icon shows in view mode 
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:76</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:72</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -550,7 +550,7 @@ With the <code>withinParent</code> validator, a warning icon shows in view mode 
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:71</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -789,8 +789,8 @@ With the <code>withinParent</code> validator, a warning icon shows in view mode 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="224"
-                                    class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:224</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="206"
+                                    class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:206</a></div>
                         </td>
                     </tr>
 
@@ -1428,7 +1428,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:129</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -1469,7 +1469,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:134</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -1517,7 +1517,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:85</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -2019,7 +2019,6 @@ as well as <code>[(value)]</code> / <code>writeValue</code> updates.</p>
   inject,
   input,
   OnInit,
-  signal,
 } from &quot;@angular/core&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import {
@@ -2049,11 +2048,8 @@ import {
   periodRangeOptions,
 } from &quot;../../date/date-range-filter/date-range-filter-panel/date-range-utils&quot;;
 import { DateRangeValue } from &quot;../date-range.datatype&quot;;
-import {
-  findParentOutside,
-  ParentLinkInForm,
-  parentRangesResource,
-} from &quot;../parent-ranges&quot;;
+import { findParentOutside, parentRangesResource } from &quot;../parent-ranges&quot;;
+import { currentRecordSignal } from &quot;../../../common-components/entity-form/current-record-state&quot;;
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
@@ -2123,18 +2119,17 @@ export class EditDateRangeComponent
   });
 
   /**
-   * the parent link as entered in the form, if the form has that field (otherwise the record&#x27;s saved link is used),
+   * the record with the current values of its form,
    * so that the parent&#x27;s period offered and shaded while editing follows a changed link before it is saved
    */
-  private readonly parentReferenceInForm &#x3D; signal&lt;ParentLinkInForm | undefined&gt;(
-    undefined,
+  private readonly currentRecord &#x3D; currentRecordSignal(
+    () &#x3D;&gt; !!this.formFieldConfig()?.validators?.withinParent,
   );
 
   private readonly parents &#x3D; parentRangesResource(() &#x3D;&gt; ({
-    record: this.entity(),
+    record: this.currentRecord() ?? this.entity(),
     fieldId: this.formFieldConfig()?.id,
     config: this.formFieldConfig()?.validators?.withinParent,
-    linkInForm: this.parentReferenceInForm(),
   }));
 
   /** name of the first linked parent record whose range the entered range goes beyond */
@@ -2188,33 +2183,20 @@ export class EditDateRangeComponent
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((value) &#x3D;&gt; this.showValue(value));
-    this.followParentReferenceInForm();
     this.range.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() &#x3D;&gt; this.formControl.updateValueAndValidity());
     this.range.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ start, end }) &#x3D;&gt; {
+        // marked dirty first: validators of other fields depending on this one only check changed fields
+        this.formControl.markAsDirty();
         this.formControl.setValue(
           start || end
             ? { ...(start &amp;&amp; { start }), ...(end &amp;&amp; { end }) }
             : null,
         );
-        this.formControl.markAsDirty();
       });
-  }
-
-  private followParentReferenceInForm() {
-    const field &#x3D;
-      this.formFieldConfig()?.validators?.withinParent?.parentReferenceField;
-    const control &#x3D; field &amp;&amp; this.formControl.parent?.get(field);
-    if (!control) {
-      return;
-    }
-    this.parentReferenceInForm.set({ value: control.value });
-    control.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) &#x3D;&gt; this.parentReferenceInForm.set({ value }));
   }
 
   /** Show a value that was set from outside, without resetting what the user is just typing. */
