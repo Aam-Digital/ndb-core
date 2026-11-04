@@ -31,6 +31,8 @@ class ConditionsEditorTestEntity extends Entity {
 class ConditionsEditorRecordTestEntity extends Entity {
   @DatabaseField({ label: "Record name" })
   recordName: string;
+  @DatabaseField({ label: "Record names", isArray: true })
+  recordNames: string[];
   @DatabaseField({
     label: "Record gender",
     dataType: "configurable-enum",
@@ -405,21 +407,28 @@ describe("ConditionsEditorComponent", () => {
       [
         "a text field as plain value",
         "name",
+        "recordName",
         { name: "$current_record.recordName" },
+      ],
+      [
+        "a text field with a multi-value field of the record in an $in list",
+        "name",
+        "recordNames",
+        { name: { $in: ["$current_record.recordNames"] } },
       ],
       [
         "a dropdown field in an $in list",
         "genderSingle",
+        "recordGender",
         { genderSingle: { $in: ["$current_record.recordGender"] } },
       ],
       [
         "a multi-value field in an $elemMatch.$in list",
         "gender",
+        "recordGender",
         { gender: { $elemMatch: { $in: ["$current_record.recordGender"] } } },
       ],
-    ])("saves the comparison of %s", (_, field, expected) => {
-      const recordField = field === "name" ? "recordName" : "recordGender";
-
+    ])("saves the comparison of %s", (_, field, recordField, expected) => {
       compareRowWithRecordField(field, recordField);
 
       expect(component.conditionsArray()[0]).toEqual(expected);

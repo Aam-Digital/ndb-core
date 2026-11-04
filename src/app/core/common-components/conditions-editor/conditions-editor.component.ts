@@ -218,12 +218,17 @@ export class ConditionsEditorComponent implements OnInit {
     if (!actualRecordFieldId || !fieldConfig) return;
 
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
+    const recordFieldIsArray =
+      !!this.currentRecordType()?.schema.get(actualRecordFieldId)?.isArray;
     const conditionFieldConfig = {
       ...fieldConfig,
-      isArray: this.shouldUseMultiSelectCondition(
-        fieldConfig,
-        this.entitySchemaService.getComponent(fieldConfig, "edit"),
-      ),
+      // the placeholder resolves to all values of a multi-value record field, which only match in a list (`$in`)
+      isArray:
+        recordFieldIsArray ||
+        this.shouldUseMultiSelectCondition(
+          fieldConfig,
+          this.entitySchemaService.getComponent(fieldConfig, "edit"),
+        ),
     };
     const positive = this.wrapConditionValue(
       fieldConfig,
