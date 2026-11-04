@@ -6,7 +6,6 @@ import {
   ChangeDetectionStrategy,
   effect,
   computed,
-  untracked,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
@@ -86,12 +85,9 @@ export class ConfigureEntityFieldValidatorComponent {
 
   /**
    * the record type a link field links to, if it is exactly one (as needed for a `selectionCondition`);
-   * it can change while editing the field
+   * it can change while editing the field, the parent then removes the `selectionCondition` from the field's validators
    */
   linkedEntityType = input<EntityConstructor>();
-
-  /** the linked record type the `selectionCondition` refers to (`null` until the input is first read) */
-  private conditionLinkedType: EntityConstructor | undefined | null = null;
 
   /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
@@ -161,6 +157,8 @@ export class ConfigureEntityFieldValidatorComponent {
     a?.parentValueField === b?.parentValueField;
 
   validatorForm = computed(() => {
+    // read again when the linked type changes, as the parent then removes the `selectionCondition`
+    this.linkedEntityType();
     const v = this.entitySchemaField()?.validators;
     const isObjectForm = typeof v?.pattern === "object";
     return this.fb.group({
@@ -218,22 +216,6 @@ export class ConfigureEntityFieldValidatorComponent {
       ) {
         withinParent.setValue(null);
       }
-    });
-
-    effect(() => {
-      const linkedType = this.linkedEntityType();
-      const selectionCondition = this.validatorForm().get("selectionCondition");
-      untracked(() => {
-        // a condition refers to fields of the linked record type, so it would stay (invisible) in the config
-        if (
-          this.conditionLinkedType !== null &&
-          linkedType !== this.conditionLinkedType &&
-          selectionCondition.value
-        ) {
-          selectionCondition.setValue(null);
-        }
-        this.conditionLinkedType = linkedType;
-      });
     });
 
     effect((onCleanup) => {

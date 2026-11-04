@@ -1,6 +1,7 @@
 import { signal } from "@angular/core";
 import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
@@ -835,12 +836,22 @@ describe("AdminEntityFieldComponent", () => {
       ])(
         "clears the condition, but not the other validators, when switching %s",
         async (_, change) => {
+          await openValidationTab();
           change(component);
           await settle();
 
           expect(dialogData.entitySchemaField.validators).toEqual({
             required: true,
           });
+
+          // the validator settings do not bring the condition back with their next change
+          const validatorSettings = fixture.debugElement.query(
+            By.directive(ConfigureEntityFieldValidatorComponent),
+          ).componentInstance as ConfigureEntityFieldValidatorComponent;
+          validatorSettings.validatorForm().get("required").setValue(false);
+          await settle();
+
+          expect(dialogData.entitySchemaField.validators).toEqual({});
         },
       );
 
