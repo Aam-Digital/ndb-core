@@ -453,7 +453,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
 const RELATED_CHILD_NAME = "<RELATED ENTITIES CHILD>";
 const SCHOOL_NAME = "Related Entities School";
 
-test("Add a child-school relation inline via the related-entities table", async ({
+test("Add related entries inline in the tables of a child's details", async ({
   page,
 }) => {
   const users = generateUsers();
@@ -508,6 +508,80 @@ test("Add a child-school relation inline via the related-entities table", async 
   // row identified by its start date.
   await expect(
     page.getByRole("row", { name: /01\.09\.2024.*Related Entities School/ }),
+  ).toBeVisible();
+
+  // Entries of a "schema-embed-array" field are stored within the child itself
+  // and edited one at a time in a popup.
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  const documentsTable = page.getByRole("table");
+  await page.getByRole("button", { name: "add entry" }).click();
+  await dialog
+    .locator("#entity-field__documentType")
+    .getByRole("textbox")
+    .fill("<PASSPORT>");
+  await dialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("P-1234567");
+  await dialog.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(dialog).not.toBeVisible();
+
+  // Clicking an entry opens it prefilled for editing.
+  await documentsTable.getByRole("cell", { name: "P-1234567" }).click();
+  await dialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("P-7654321");
+  await dialog.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(dialog).not.toBeVisible();
+
+  // The entries were saved with the child: still there after reopening it.
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: RELATED_CHILD_NAME }).click();
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  await expect(
+    documentsTable.getByRole("row", { name: /<PASSPORT>.*P-7654321/ }),
+  ).toBeVisible();
+  await argosScreenshot(page, "embedded-array-table");
+
+  // Delete the entry through the popup's menu, after confirming.
+  await documentsTable.getByRole("cell", { name: "P-7654321" }).click();
+  await dialog.getByRole("button", { name: "more actions" }).click();
+  await page.getByRole("menuitem", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Yes" }).click();
+  await expect(documentsTable.getByRole("row")).toHaveCount(1);
+
+  // The same field in a form: entries are managed in a dialog and only saved
+  // together with the form.
+  await page.getByRole("tab", { name: "Basic Information" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Manage entries" }).click();
+  const entriesDialog = page.getByRole("dialog", {
+    name: "Identification Documents",
+  });
+  await entriesDialog.getByRole("button", { name: "add entry" }).click();
+  const entryDialog = page.getByRole("dialog").last();
+  await entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("V-1111111");
+  await entryDialog.getByRole("button", { name: "Apply" }).click();
+  await expect(
+    entriesDialog.getByRole("cell", { name: "V-1111111" }),
+  ).toBeVisible();
+  await entriesDialog.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
+
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  await expect(
+    documentsTable.getByRole("cell", { name: "V-1111111" }),
   ).toBeVisible();
 });
 

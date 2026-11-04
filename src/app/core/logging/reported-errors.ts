@@ -13,7 +13,10 @@ export class NamedError extends Error {
   constructor(
     name: string,
     message: string,
-    options?: { cause?: unknown; details?: Record<string, unknown> },
+    options?: {
+      cause?: unknown;
+      details?: Record<string, unknown>;
+    },
   ) {
     super(
       message,

@@ -10,5 +10,7 @@ reviews:
       instructions: "Core entity system — extra scrutiny for schema changes, backward compatibility"
     - path: "**/*.spec.ts"
       instructions: "Flag missing unit tests for new logic (branches, error paths, edge cases) and, for a bug fix, a missing test that reproduces the bug. Flag redundant tests: smoke-only specs, tests of trivial changes, and three or more near-identical tests that should be one it.each table."
+    - path: "src/**/*.{ts,html,scss,css}"
+      instructions: 'Flag physical left/right styling that breaks right-to-left languages, where Stylelint does not catch it: inline component styles, [style.*] bindings, Material position inputs such as matTooltipPosition="left" or "right" (use "before" / "after"), offsets computed in TypeScript and translateX(). Flag a stylelint-disable of csstools/use-logical without a reason. See the RTL section of src/app/core/language/README.md.'
     - path: "e2e/**"
       instructions: "Flag new stand-alone e2e tests that could be a step in an existing scenario, and an excessive number of scenarios or screenshots."

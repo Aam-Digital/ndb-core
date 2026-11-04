@@ -12,6 +12,7 @@ import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import { processSentryEvent } from "./sentry-event-processing";
 import { LoggedError } from "./reported-errors";
+import { isExpectedFailure } from "./uncaught-error-classification";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -134,31 +135,22 @@ export class LoggingService {
     logLevel: LogLevel = LogLevel.INFO,
     ...context: any[]
   ) {
+    if (
+      SENTRY_LEVELS[logLevel] &&
+      isExpectedFailure(loggedError(message, context))
+    ) {
+      // a failure of the user's environment, not ours to fix
+      logLevel = LogLevel.DEBUG;
+    }
     this.logToConsole(message, logLevel, ...context);
 
-    if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
+    if (SENTRY_LEVELS[logLevel]) {
       this.logToRemoteMonitoring(message, logLevel, ...context);
     }
   }
 
   private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        console.debug(message, ...context);
-        break;
-      case LogLevel.INFO:
-        console.info(message, ...context);
-        break;
-      case LogLevel.WARN:
-        console.warn(message, ...context);
-        break;
-      case LogLevel.ERROR:
-        console.error(message, ...context);
-        break;
-      default:
-        console.log(message, ...context);
-        break;
-    }
+    console[CONSOLE_METHODS[logLevel]](message, ...context);
   }
 
   private logToRemoteMonitoring(
@@ -177,7 +169,7 @@ export class LoggingService {
     }
     const scope = {
       extra: Object.keys(extra).length > 0 ? extra : undefined,
-      level: this.translateLogLevel(logLevel),
+      level: SENTRY_LEVELS[logLevel],
     };
 
     const error = toReportedError(message, context, logLevel);
@@ -187,22 +179,20 @@ export class LoggingService {
       Sentry.captureMessage(messageText(message), scope);
     }
   }
-
-  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
-    switch (+logLevel) {
-      case LogLevel.DEBUG:
-        return "debug";
-      case LogLevel.INFO:
-        return "info";
-      case LogLevel.WARN:
-        return "warning";
-      case LogLevel.ERROR:
-        return "error";
-      default:
-        return "info";
-    }
-  }
 }
+
+const CONSOLE_METHODS: Record<LogLevel, "debug" | "info" | "warn" | "error"> = {
+  [LogLevel.DEBUG]: "debug",
+  [LogLevel.INFO]: "info",
+  [LogLevel.WARN]: "warn",
+  [LogLevel.ERROR]: "error",
+};
+
+/** Only `warn` and `error` are reported (see {@link LoggingService.log}). */
+const SENTRY_LEVELS: Partial<Record<LogLevel, Sentry.SeverityLevel>> = {
+  [LogLevel.WARN]: "warning",
+  [LogLevel.ERROR]: "error",
+};
 
 /**
  * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
@@ -253,11 +243,25 @@ function messageText(message: any): string {
 }
 
 /**
+ * The error a log call is about: the message if it is an error, else the first
+ * error among the context (also an error-like object, e.g. an `HttpErrorResponse`).
+ */
+function loggedError(message: unknown, context: unknown[]): unknown {
+  if (message instanceof Error) {
+    return message;
+  }
+  return (
+    context.find((c) => c instanceof Error) ??
+    context.find((c) => typeof (c as { name?: unknown })?.name === "string")
+  );
+}
+
+/**
  * The Error to report for a log call, or `undefined` for a plain message event.
  *
  * A logged message comes with the logged error as its `cause` (a {@link LoggedError}),
- * also for a warning: only as an exception is the error grouped and filtered by its
- * cause. A warning without an error is about the situation itself.
+ * also for a warning: only as an exception is the error grouped by its cause.
+ * A warning without an error is about the situation itself.
  */
 export function toReportedError(
   message: any,
@@ -267,7 +271,6 @@ export function toReportedError(
   if (message instanceof Error) {
     return message;
   }
-
   const cause = context.find((c) => c instanceof Error);
   if (!cause && logLevel !== LogLevel.ERROR) {
     return undefined;

@@ -205,6 +205,15 @@ Users can only read Reports linked to one of their assigned projects.
 
 > **⚠️ Warning:** Conditions do not support the $or operator (or $and, $nor, $not). Instead, you combine multiple separate can rules for the same action and subject to mimic an logical OR condition.
 
+### Entries of embedded tables (`schema-embed-array`)
+
+The entries of an embedded table field are stored inside their record, not as documents of their own.
+Rules therefore cannot target an entry or its inner fields: an entry is checked against the field of the record holding it.
+
+- Viewing an entry needs `read` permission for the record's field.
+- Adding, editing or deleting an entry needs `update` permission for the record's field (`create` while the record is new).
+- Field restrictions and `conditions` refer to the fields of the record. A rule naming an inner field of an entry has no effect.
+
 ### When permissions change
 
 If you change `Config:Permissions`:

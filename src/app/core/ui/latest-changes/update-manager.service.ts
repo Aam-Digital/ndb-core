@@ -4,7 +4,6 @@ import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Logging } from "../../logging/logging.service";
-import { isConnectivityError } from "../../../utils/connectivity-error";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
@@ -76,14 +75,10 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() =>
-      this.updates.checkForUpdate().catch((err) => {
-        if (isConnectivityError(err)) {
-          // offline: checked again in an hour
-          Logging.debug("Could not check for app updates (connectivity)", err);
-        } else {
-          Logging.error("Could not check for app updates", err);
-        }
-      }),
+      this.updates
+        .checkForUpdate()
+        // offline: checked again in an hour
+        .catch((err) => Logging.error("Could not check for app updates", err)),
     );
   }
 

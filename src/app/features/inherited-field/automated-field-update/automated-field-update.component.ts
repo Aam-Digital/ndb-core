@@ -38,7 +38,7 @@ import {
 } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { isEmptyValue } from "../add-missing-values";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 import { isSameValue } from "../get-common-value";
 import { AffectedEntityValueComponent } from "./affected-entity-value/affected-entity-value.component";
 import { isFieldChanged } from "./change-set";

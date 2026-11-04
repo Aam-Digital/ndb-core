@@ -54,3 +54,10 @@ reviewers keep finding on top of that.
     even where its type says `string` (e.g. `EntitySchemaField.label` in the Admin UI).
     Shown without `resolveLocaleText()` or the `localeText` pipe, it reads
     "[object Object]". See the [language README](src/app/core/language/README.md).
+17. **Physical left/right breaks right-to-left languages.** Stylelint catches `left` /
+    `right` properties and values in `.scss` files, but not inline `styles` in a
+    component `.ts`, `[style.*]` bindings, Material position inputs
+    (`matTooltipPosition="right"` should be `"after"`), offsets computed in TypeScript
+    or `translateX()`. Also check that direction-dependent icons (arrows, chevrons)
+    carry `.mirror-in-rtl`, and that a `stylelint-disable` for `csstools/use-logical`
+    gives a reason. See [RTL languages](src/app/core/language/README.md#right-to-left-rtl-languages).

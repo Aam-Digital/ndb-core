@@ -1,3 +1,5 @@
+import { WriteConflictError } from "./database-errors";
+import { classifyError } from "../../logging/error-classification";
 /*
  *     This file is part of ndb-core.
  *
@@ -17,13 +19,15 @@
 
 import type { Mock } from "vitest";
 import {
-  DatabaseException,
   LOCAL_DB_REVS_LIMIT,
   PouchDatabase,
+  DatabaseException,
 } from "./pouch-database";
+import { databaseError } from "./database-exception";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { Logging } from "../../logging/logging.service";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -334,7 +338,7 @@ describe("PouchDatabase tests", () => {
 
     it("counts a conflict that could not be resolved, by entity type only", async () => {
       await expect(database.put({ ...STALE })).rejects.toBeInstanceOf(
-        DatabaseException,
+        WriteConflictError,
       );
 
       // the document ID must never be reported - see #4174
@@ -397,7 +401,7 @@ describe("PouchDatabase tests", () => {
       );
 
       await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
-        DatabaseException,
+        WriteConflictError,
       );
 
       await new Promise((resolve) => setTimeout(resolve));
@@ -510,6 +514,34 @@ describe("PouchDatabase tests", () => {
     await localDatabase.destroy();
   });
 
+  describe("changes feed", () => {
+    afterEach(() => {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it("retries after a failure, e.g. while offline", async () => {
+      vi.useFakeTimers();
+      const failure = new ConnectivityError("Failed to fetch from DB", {
+        status: 0,
+      });
+      const feed = {
+        addListener: () => feed,
+        catch: (onError: (err: unknown) => void) => onError(failure),
+      };
+      const changes = vi
+        .spyOn(database.getPouchDB(), "changes")
+        .mockReturnValue(feed as any);
+      vi.spyOn(Logging, "error").mockImplementation(() => undefined);
+
+      database.changes();
+      await vi.advanceTimersByTimeAsync(10000);
+
+      expect(changes).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });
@@ -586,37 +618,59 @@ describe("PouchDatabase tests", () => {
   });
 });
 
-describe("DatabaseException", () => {
+describe("databaseError", () => {
   it("keeps name as 'DatabaseException' for stable Sentry grouping", () => {
-    const ex = new DatabaseException(
+    const ex = databaseError(
       { status: 404, name: "not_found", message: "missing" },
       "Entity:1",
     );
 
-    expect(ex.name).toBe("DatabaseException");
-    expect(ex.entityId).toBe("Entity:1");
-    expect(ex.message).toBe("missing");
+    expect(ex).toMatchObject({
+      name: "DatabaseException",
+      entityId: "Entity:1",
+      message: "missing",
+    });
   });
 
-  it("preserves the wrapped error's name in originalName", () => {
-    const abortError = new DOMException(
-      "The operation was aborted.",
-      "AbortError",
-    );
-
-    const ex = new DatabaseException(abortError, "Config:CONFIG_ENTITY");
-
-    // name stays stable for grouping, but the underlying name is retained
-    expect(ex.name).toBe("DatabaseException");
-    expect(ex.originalName).toBe("AbortError");
-    expect(ex.message).toBe("The operation was aborted.");
-  });
-
-  it("does not set originalName when wrapping another DatabaseException", () => {
-    const inner = new DatabaseException({ message: "Failed to fetch from DB" });
-
-    const outer = new DatabaseException(inner, "Entity:1");
-
-    expect(outer.originalName).toBeUndefined();
+  it.each([
+    [
+      "an expired session",
+      { status: 401, reason: "exp not in future", message: "unauthorized" },
+      "session-expired",
+    ],
+    [
+      "a record the user may not read (401)",
+      { status: 401, reason: "User is not permitted", message: "unauthorized" },
+      "not-permitted",
+    ],
+    [
+      "a record the user may not read (403)",
+      { status: 403, message: "forbidden" },
+      "not-permitted",
+    ],
+    [
+      "another 401 (a misconfiguration)",
+      { status: 401, reason: "Unknown kid", message: "unauthorized" },
+      undefined,
+    ],
+    [
+      "a broken IndexedDB",
+      { status: 500, name: "indexed_db_went_bad", message: "unknown" },
+      "local-storage",
+    ],
+    [
+      "multi-tab corruption",
+      {
+        status: 500,
+        name: "unknown_error",
+        message: "Database encountered an unknown error",
+        reason: "transaction was aborted",
+      },
+      // recognised and reported by the PouchdbCorruptionRecoveryService instead
+      undefined,
+    ],
+    ["a missing document", { status: 404, message: "missing" }, undefined],
+  ])("is classified as the kind of failure: %s", (_, error, expected) => {
+    expect(classifyError(databaseError(error))).toBe(expected);
   });
 });

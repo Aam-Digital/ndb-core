@@ -1,4 +1,4 @@
-import { DatabaseException } from "../../database/pouchdb/database-exception";
+import { databaseError } from "../../database/pouchdb/database-exception";
 import { TestBed } from "@angular/core/testing";
 import { DownloadService } from "./download.service";
 import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
@@ -24,6 +24,7 @@ import { parse, unparse } from "papaparse";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
+import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -46,7 +47,7 @@ describe("DownloadService", () => {
         case testSchool.getId():
           return testSchool as any;
         default:
-          throw new DatabaseException({ message: "missing", status: 404 });
+          throw databaseError({ message: "missing", status: 404 });
       }
     });
 
@@ -71,6 +72,11 @@ describe("DownloadService", () => {
         {
           provide: DefaultDatatype,
           useClass: AttendanceDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: SchemaEmbedDatatype,
           multi: true,
         },
         {
@@ -307,7 +313,7 @@ describe("DownloadService", () => {
     );
   });
 
-  it("should add participant count and participation details columns in export", async () => {
+  it("exports each entry of an embedded table readably, plus one column per inner field and the number of entries", async () => {
     class AttendanceDownloadTestEntity extends Entity {
       @DatabaseField({
         dataType: AttendanceDatatype.dataType,
@@ -338,14 +344,72 @@ describe("DownloadService", () => {
     });
 
     expect(parsed.errors).toHaveLength(0);
-    expect(parsed.data).toHaveLength(1);
-    expect(parsed.meta.fields).toContain("attendance (number of participants)");
-    expect(parsed.meta.fields).toContain("attendance (participation details)");
+    expect(parsed.data[0]).toEqual({
+      attendance: `${testSchool.toString()}, Present; ${testChild.toString()}, Absent, Sick`,
+      "attendance (Participant)": `${testSchool.toString()}; ${testChild.toString()}`,
+      "attendance (Status)": "Present; Absent",
+      // an empty value keeps its position, so that values of one entry line up across the columns
+      "attendance (Remarks)": "; Sick",
+      "attendance (number of entries)": "2",
+    });
+  });
 
-    expect(parsed.data[0]["attendance (number of participants)"]).toBe("2");
-    expect(parsed.data[0]["attendance (participation details)"]).toBe(
-      `${testSchool.toString()} (Present), ${testChild.toString()} (Absent)`,
-    );
+  it("keeps the number of entries of an embedded table apart from an inner field with the id 'count'", async () => {
+    class EmbeddedCountDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: SchemaEmbedDatatype.dataType,
+        isArray: true,
+        label: "items",
+        additional: { count: { dataType: "number", label: "Count" } },
+      })
+      items: any[];
+    }
+
+    const testEntity = new EmbeddedCountDownloadTestEntity();
+    testEntity.items = [{ count: 5 }, { count: 7 }];
+
+    const csvExport = await service.createCsv([testEntity]);
+    const parsed = parse<Record<string, string>>(csvExport, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    expect(parsed.data[0]).toEqual({
+      items: "5; 7",
+      "items (Count)": "5; 7",
+      "items (number of entries)": "2",
+    });
+  });
+
+  it("exports a single embedded object with one column per inner field", async () => {
+    class EmbeddedObjectDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: SchemaEmbedDatatype.dataType,
+        label: "contact",
+        additional: {
+          person: { dataType: EntityDatatype.dataType, label: "Person" },
+          since: { label: "Since" },
+        },
+      })
+      contact: any;
+    }
+
+    const testEntity = new EmbeddedObjectDownloadTestEntity();
+    testEntity.contact = {
+      person: testChild.getId(),
+      since: moment("2020-01-15").toDate(),
+    };
+
+    const csvExport = await service.createCsv([testEntity]);
+    const parsed = parse<Record<string, string>>(csvExport, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    expect(parsed.data[0]).toEqual({
+      "contact (Person)": testChild.toString(),
+      "contact (Since)": "2020-01-15",
+    });
   });
 
   it("should stringify object values when csv output would otherwise be [object Object]", async () => {

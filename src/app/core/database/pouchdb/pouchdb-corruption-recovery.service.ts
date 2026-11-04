@@ -97,19 +97,21 @@ This can happen after using multiple tabs in parallel.` +
    *   occurrences of the problem in one issue (see `core/logging/README.md`)
    * @param context which database and other varying details, reported as
    *   structured data alongside the message rather than interpolated into it
+   * @returns whether it was a known corruption (and so is reported)
    */
   handleKnownMultiTabCorruption(
     err: unknown,
     logMessage: string,
     context?: Record<string, unknown>,
-  ): void {
+  ): boolean {
     if (!isKnownMultiTabDatabaseCorruption(err)) {
-      return;
+      return false;
     }
     Logging.warn(logMessage, err, ...(context ? [context] : []));
     this.promptResetApplicationDialog().catch((callbackError) =>
       Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
     );
+    return true;
   }
 }
 
@@ -117,28 +119,31 @@ This can happen after using multiple tabs in parallel.` +
  * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
  * is used in multiple tabs with concurrent writes.
  *
- * We intentionally match on `transaction was aborted` because this is the
- * reliable signal present on the actual error object propagated to app code
- * after IndexedDB global-failure cases. The `unknown_error` label is too
- * generic and may appear for unrelated failures.
+ * Only signals specific to this corruption are matched, as it leads to offering
+ * a reset of the local data: a "transaction was aborted" or an `unknown_error`
+ * also follows other failures, e.g. a document too deeply nested to store.
  */
 export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   const text = errorToText(error).toLowerCase();
-  const transactionAbortedMatch = text.includes("transaction was aborted");
-  const globalFailureMatch = text.includes("database has a global failure");
-  const constraintSeqMatch =
-    text.includes("constrainterror") && text.includes("seq");
-  const isKnownCorruption =
-    transactionAbortedMatch || globalFailureMatch || constraintSeqMatch;
-
-  return isKnownCorruption;
+  return (
+    text.includes("database has a global failure") ||
+    (text.includes("constrainterror") && text.includes("seq"))
+  );
 }
 
+/**
+ * The whole error serialized, not only its name, message and reason (as
+ * `errorText` of `backend-response.ts`): the IndexedDB failure may be in nested
+ * properties, e.g. in the result array of a `bulkDocs`.
+ */
 function errorToText(error: unknown): string {
-  if (error instanceof Error) {
-    const errorWithExtras = error as Error & Record<string, unknown>;
-    return `${error.name} ${error.message} ${JSON.stringify(errorWithExtras)}`;
-  }
   if (typeof error === "string") return error;
-  return JSON.stringify(error ?? "");
+  const prefix =
+    error instanceof Error ? `${error.name} ${error.message} ` : "";
+  try {
+    return prefix + JSON.stringify(error ?? "");
+  } catch {
+    // e.g. a circular structure: classified without its extra properties
+    return prefix;
+  }
 }

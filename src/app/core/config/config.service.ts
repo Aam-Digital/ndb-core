@@ -5,7 +5,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
 import { NamedError } from "../logging/reported-errors";
-import { isConnectivityError } from "../../utils/connectivity-error";
+import { isConnectivityError } from "#src/app/core/logging/error-classification";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";

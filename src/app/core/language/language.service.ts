@@ -253,7 +253,9 @@ export class LanguageService {
       // a language picked on this device earlier must not outlast the switch being disabled
       this.getDefaultLanguage()
         .then((language) => this.applyDefaultLanguage(language))
-        .catch((err) => Logging.error(err));
+        .catch((err) =>
+          Logging.error("Could not apply the default language", err),
+        );
       return;
     }
 
