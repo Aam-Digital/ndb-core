@@ -91,6 +91,7 @@
 Autocomplete
 -->
 <mat-autocomplete
+  class="app-basic-autocomplete-panel"
   [disableRipple]="true"
   #autoSuggestions="matAutocomplete"
   (optionSelected)="select($event.option.value)"

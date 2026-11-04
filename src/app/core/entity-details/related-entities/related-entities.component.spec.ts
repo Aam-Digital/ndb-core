@@ -78,6 +78,18 @@ describe("RelatedEntitiesComponent", () => {
     expect(newEntity["ref"]).toBe(related.getId());
   });
 
+  it("should pre-fill a new entity from a filter selecting a single value in a list", async () => {
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("filter", { other: { $in: ["A"] } });
+    await initComponent();
+
+    const newEntity = component.createNewRecordFactory()();
+
+    expect(newEntity["other"]).toBe("A");
+  });
+
   it("should support multiple related properties", async () => {
     @DatabaseEntity("MultiPropTest")
     class MultiPropTest extends Entity {}

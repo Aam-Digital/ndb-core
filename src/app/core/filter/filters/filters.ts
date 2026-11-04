@@ -55,6 +55,37 @@ export function combineFilterConditions<T>(
   return { $and: relevant } as DataFilter<T>;
 }
 
+/**
+ * Prefix of a placeholder in a condition value that stands for the value of a field
+ * of the record currently being edited, e.g. `"$current_record.location"`.
+ */
+export const CURRENT_RECORD_PLACEHOLDER_PREFIX = "$current_record.";
+
+export function isCurrentRecordPlaceholder(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.startsWith(CURRENT_RECORD_PLACEHOLDER_PREFIX)
+  );
+}
+
+/** the id of the field that a `$current_record.<fieldId>` placeholder refers to */
+export function placeholderFieldId(placeholder: string): string {
+  return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+}
+
+/** the ids of the fields that the `$current_record.<fieldId>` placeholders in a condition refer to */
+export function getCurrentRecordPlaceholderFields(
+  condition: unknown,
+): string[] {
+  if (isCurrentRecordPlaceholder(condition)) {
+    return [placeholderFieldId(condition)];
+  }
+  if (condition && typeof condition === "object") {
+    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
+  }
+  return [];
+}
+
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,

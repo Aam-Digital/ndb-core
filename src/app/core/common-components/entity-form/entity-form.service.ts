@@ -1,4 +1,11 @@
-import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
+import {
+  computed,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Injectable,
+  signal,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   AbstractControl,
@@ -8,6 +15,7 @@ import {
   FormGroup,
 } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
+import { createCurrentRecordState } from "./current-record-state";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -29,7 +37,6 @@ import {
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
-import { revalidateOnParentLinkChange } from "../../basic-datatypes/date-range/within-parent-validator";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -81,6 +88,8 @@ export class EntityFormService {
    *   caller's lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
+   * @param singleRecord false if the form does not edit one single record (e.g. in bulk edit),
+   *   so that fields and validators have no record to compare with (see `EntityForm.currentRecord`)
    */
   public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
@@ -88,6 +97,7 @@ export class EntityFormService {
     destroyRef: DestroyRef,
     withPermissionCheck = true,
     withDefaultValues = true,
+    singleRecord = true,
   ): Promise<EntityForm<T>> {
     const fields: FormFieldConfig[] = [];
     for (const formField of formFields) {
@@ -109,7 +119,17 @@ export class EntityFormService {
       entity,
       destroyRef,
       withPermissionCheck,
+      singleRecord,
     );
+
+    // bumped with every change of the form (below), so that `currentRecord` builds a new copy only then
+    const formVersion = signal(0);
+    const currentRecord = singleRecord
+      ? computed(() => {
+          formVersion();
+          return createCurrentRecordState(entity, typedFormGroup);
+        })
+      : computed((): T | undefined => undefined);
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
@@ -117,6 +137,7 @@ export class EntityFormService {
       fieldConfigs: fields,
       onFormStateChange: new EventEmitter(),
       watcher: new Map(),
+      currentRecord,
     };
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.
@@ -127,9 +148,10 @@ export class EntityFormService {
     // dirty state from accumulating in UnsavedChangesService.sources.
     typedFormGroup.valueChanges
       .pipe(takeUntilDestroyed(destroyRef))
-      .subscribe(() =>
-        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
-      );
+      .subscribe(() => {
+        formVersion.update((v) => v + 1);
+        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty);
+      });
     // The caller's view may already be destroyed by the time this async form
     // finishes being created (e.g. navigated away while the form was still loading).
     // `onDestroy` throws NG0911 in that case, so check `destroyed` first, the same
@@ -161,6 +183,7 @@ export class EntityFormService {
     entity: T,
     destroyRef: DestroyRef,
     withPermissionCheck = true,
+    singleRecord = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -170,10 +193,20 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
+      this.addFormControlConfig(
+        formConfig,
+        f,
+        copy,
+        withPermissionCheck,
+        singleRecord,
+      );
     }
     const group = this.fb.group<Partial<T>>(formConfig);
-    revalidateOnParentLinkChange(group, formFields, destroyRef);
+    this.dynamicValidator.revalidateOnDependencyChange(
+      group,
+      formFields,
+      destroyRef,
+    );
 
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
@@ -200,6 +233,7 @@ export class EntityFormService {
     field: FormFieldConfig,
     entity: Entity,
     withPermissionCheck: boolean,
+    singleRecord: boolean,
   ) {
     let value = entity[field.id];
 
@@ -208,7 +242,8 @@ export class EntityFormService {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
         entity,
-        field.id,
+        field,
+        singleRecord,
       );
       Object.assign(controlOptions, validators);
     }

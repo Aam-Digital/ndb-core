@@ -1,10 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl, FormGroup } from "@angular/forms";
+import { signal } from "@angular/core";
 
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Entity } from "../model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentRecordContext } from "../../common-components/entity-form/current-record-state";
 import { EntityFieldEditComponent } from "./entity-field-edit.component";
 
 describe("EntityFieldEditComponent", () => {
@@ -113,5 +116,46 @@ describe("EntityFieldEditComponent", () => {
     expect(
       fixture.nativeElement.querySelector("app-entity-field-view"),
     ).toBeFalsy();
+  });
+
+  describe("current record state for the fields", () => {
+    it("is provided to the field components", () => {
+      expect(fixture.debugElement.injector.get(CurrentRecordContext)).toBe(
+        component,
+      );
+    });
+
+    it("follows the current record of the form", () => {
+      const currentRecord = signal<TestEntity | undefined>(
+        TestEntity.create({ other: "BERLIN" }),
+      );
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("form", {
+        formGroup: new FormGroup({}),
+        currentRecord,
+      } as any);
+      expect((component.currentRecord() as TestEntity).other).toBe("BERLIN");
+
+      currentRecord.set(TestEntity.create({ other: "HAMBURG" }));
+
+      expect((component.currentRecord() as TestEntity).other).toBe("HAMBURG");
+    });
+
+    it("is empty if the form has no single record (e.g. bulk edit)", () => {
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("form", {
+        formGroup: new FormGroup({}),
+        currentRecord: signal(undefined),
+      } as any);
+
+      expect(component.currentRecord()).toBeUndefined();
+    });
+
+    it("is the record itself if there is no form that provides the current record", () => {
+      const entity = TestEntity.create({ other: "BERLIN" });
+      fixture.componentRef.setInput("entity", entity);
+
+      expect(component.currentRecord()).toBe(entity);
+    });
   });
 });

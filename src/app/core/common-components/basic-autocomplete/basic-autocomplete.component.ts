@@ -347,10 +347,11 @@ export class BasicAutocompleteComponent<O, V = O>
   ) => o?.asValue;
 
   /**
-   * Height of the virtual scroll viewport, capped to fit within the panel.
-   * Material's default panel max-height is 256px. We reserve space for footer elements
-   * ("type to filter" hint, "show inactive" toggle, padding) and cap the viewport accordingly
-   * so that virtual scrolling actually virtualizes (instead of rendering all items).
+   * Height of the virtual scroll viewport, capped so that virtual scrolling actually virtualizes
+   * (instead of rendering all items) and the panel stays about as high as Material's default (256px)
+   * together with its footer ("type to filter" hint, "show inactive" toggle, padding).
+   * The panel itself has no max-height and grows if the footer needs more space (see _mat-autocomplete.scss);
+   * on small screens the viewport is capped further in CSS.
    */
   private static readonly PANEL_MAX_HEIGHT = 256;
   private static readonly FOOTER_RESERVE = 56;

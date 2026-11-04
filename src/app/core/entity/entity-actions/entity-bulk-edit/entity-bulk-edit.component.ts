@@ -100,6 +100,10 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
       fieldKeys,
       this.entityData,
       this.destroyRef,
+      true,
+      true,
+      // the value is set for several records, so there is no single record other fields could refer to
+      false,
     );
 
     const selectedField = this.selectedFieldFormControl.value;

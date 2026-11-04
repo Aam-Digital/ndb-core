@@ -293,6 +293,7 @@
               [entitySchemaField]="data.entitySchemaField"
               [entityType]="data.entityType"
               [dataType]="selectedDataType()"
+              [linkedEntityType]="selectionConditionTargetType()"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
               (entitySchemaFieldChanges)="onEntitySchemaFieldChanges($event)"
             ></app-configure-entity-field-validator>
