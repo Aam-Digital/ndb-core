@@ -22,43 +22,43 @@ you can.
    either. Read the PR and its diff with `gh`, and the linked issue (`closes #`, `fixes #`,
    or a number in the title) with its comments, because scope often changes there. If
    there is no linked issue, say so and do not invent one. To read the PR's files, fetch
-   it (`git fetch origin pull/<n>/head:<ref>`) and use `git show <ref>:<path>` or a
+   it (`git fetch origin pull/<n>/head:pr-<n>`) and use `git show pr-<n>:<path>` or a
    separate worktree. Never check it out in the user's working copy.
 2. **Check coverage.** Compare the ask with what the diff changes and state one of: fully
    addressed / partially addressed (name the gap) / diff does not obviously match the
    issue / no linked issue.
-3. **Read the diff.** Every hunk, plus the whole function around each hunk: a bug in an
-   unchanged line of a touched function is in scope when the PR exposes it or fails to
-   fix it. For each hunk ask what input, state or timing makes the line wrong. When the
-   PR changes what a shared function, type or state means (e.g. a form can now be
-   invalid with only a warning that may be saved), search the code outside the diff that
-   relies on the old meaning and check it too: those callers break without being touched.
-4. **Run the checklist in [patterns.md](patterns.md)** against the changed files. Check
-   each pattern on purpose, and do not skip one because it "looks irrelevant" before
-   you have looked.
-5. **Report** in the format below and nothing else. Do not post anything to GitHub
-   unless the user explicitly asks for that.
+3. **Read the diff for bugs.** If the built-in `/code-review` is available (Claude Code),
+   run it on the fetched ref (`/code-review pr-<n>`, never with `--comment` or `--fix`)
+   and do not read the diff for general bugs yourself as well. It reports its findings
+   in its own list. Otherwise read every hunk, plus the whole function around each
+   hunk: a bug in an unchanged line of a touched function is in scope when the PR
+   exposes it or fails to fix it. For each hunk ask what input, state or timing makes
+   the line wrong. When the PR changes what a shared function, type or state means
+   (e.g. a form can now be invalid with only a warning that may be saved), search the
+   code outside the diff that relies on the old meaning and check it too: those callers
+   break without being touched.
+4. **Run the checklist in [patterns.md](patterns.md)** against the changed files, and
+   check them against the conventions in `AGENTS.md` (`/code-review` only reads
+   `CLAUDE.md` files, so it misses them). Check each pattern on purpose, and do not skip
+   one because it "looks irrelevant" before you have looked.
+5. **Report** in the format below and nothing else. Do not repeat what `/code-review`
+   already reported. Do not post anything to GitHub unless the user explicitly asks for
+   that.
 
 ## Delegate the reading to sub-agents
 
-If your tool can start sub-agents (e.g. Claude Code), keep step 1 and the report in the
-main conversation and hand the reading to sub-agents. The main context then holds only
-the findings, and the review is not anchored on the reasoning of whoever wrote the code,
-which matters most for a self-review in the session that wrote it.
+If your tool can start sub-agents (e.g. Claude Code), keep step 1, `/code-review` and the
+report in the main conversation, and hand steps 2 and 4 to one sub-agent that runs while
+`/code-review` does. It does not see this conversation: give it the PR number and
+fetched ref, the linked issue, anything the user said about the review, steps 2 and 4
+and the output format, and ask for the report only. Use your own model for it, not a
+smaller one, because a finding it misses cannot be recovered from its report. Check each
+of its findings against the code before you report it and drop what does not hold.
 
-- **Context search** (only for larger PRs): a fast exploration agent collects the code
-  outside the diff that the change touches (callers of changed functions, users of
-  changed types, state or config keys) and the places that match the checklist patterns
-  that can be searched for. It returns locations with one line on what is there each,
-  not verdicts.
-- **Bug reading** (steps 2-4): a sub-agent on your own model, not a smaller one, because
-  a finding it misses cannot be recovered from its report. It does not see this
-  conversation: give it the PR number and fetched ref, the linked issue, anything the
-  user said about the review, the results of the context search, and these steps with
-  the output format, and ask for the report only.
-
-Check each finding against the code before you report it and drop what does not hold.
-For a small PR, one sub-agent for steps 2-4 is enough.
+Without `/code-review`, the sub-agent does step 3 as well. For a larger PR, first let a
+fast exploration agent collect the code outside the diff that the change touches
+(callers of changed functions, users of changed types, state or config keys), as
+locations with one line on what is there each, and pass that on.
 
 ## Output format
 
@@ -69,6 +69,7 @@ For a small PR, one sub-agent for steps 2-4 is enough.
 - Coverage: <fully / partially (name the gap) / no clear match / no linked issue found>
 
 ## Should fix
+- `/code-review`: <n> findings above (<short summary of each, separated by ";">)
 - **`<file>`, ~line <n>** — <what is wrong> when <the concrete input, state, or
   timing that triggers it>. Fix: <what to change>.
 
@@ -87,7 +88,7 @@ Rules for both sections:
 - Sub-bullets only when one finding has distinct parts (e.g. two call sites of the same
   bug), one level deep at most.
 - Never write "consider improving X". Say what breaks and when.
-- If nothing is left under **Should fix**, write exactly this one line:
+- If nothing is left under **Should fix**, from `/code-review` either, write exactly this one line:
   `- No blocking issues found — nothing needs to change before merge.`
 - **Edge cases to verify** is written for someone deciding whether this is safe to ship,
   not for someone reading the code.
