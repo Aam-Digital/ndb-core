@@ -238,7 +238,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:17</a></div>
                                 </td>
                             </tr>
 
@@ -277,7 +277,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:22</a></div>
                                 </td>
                             </tr>
 
@@ -316,7 +316,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:23</a></div>
                                 </td>
                             </tr>
 
@@ -355,7 +355,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -400,7 +400,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:18</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/features/change-history/record-diff/record-diff.component.ts:19</a></div>
                                 </td>
                             </tr>
 
@@ -430,6 +430,7 @@ import { FaDynamicIconComponent } from &quot;../../../core/common-components/fa-
 import { EntitySchemaService } from &quot;../../../core/entity/schema/entity-schema.service&quot;;
 import { Entity, EntityConstructor } from &quot;../../../core/entity/model/entity&quot;;
 import { ChangeEvent } from &quot;../change-history.types&quot;;
+import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
 
 interface DiffRow {
   field: string;
@@ -483,22 +484,13 @@ export class RecordDiffComponent {
         new ctor(),
         this.seed(change.field, change.to),
       ),
-      hasFrom: !this.isEmpty(change.from),
-      hasTo: !this.isEmpty(change.to),
+      hasFrom: !isEmptyValue(change.from),
+      hasTo: !isEmptyValue(change.to),
     }));
   });
 
   private seed(field: string, value: any): object {
-    return this.isEmpty(value) ? {} : { [field]: value };
-  }
-
-  private isEmpty(value: any): boolean {
-    return (
-      value &#x3D;&#x3D;&#x3D; undefined ||
-      value &#x3D;&#x3D;&#x3D; null ||
-      value &#x3D;&#x3D;&#x3D; &quot;&quot; ||
-      (Array.isArray(value) &amp;&amp; value.length &#x3D;&#x3D;&#x3D; 0)
-    );
+    return isEmptyValue(value) ? {} : { [field]: value };
   }
 }
 </code></pre>

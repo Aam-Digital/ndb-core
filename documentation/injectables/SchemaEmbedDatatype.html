@@ -162,6 +162,8 @@ with <code>@DatabaseField()</code> annotations.</li>
 </ol>
 <p>The config in <code>additional</code> is merged with the <code>embeddedType</code> schema (if present),
 allowing runtime config to extend or override a class&#39;s annotations.</p>
+<p>This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+for a user-configurable field use <a href="../injectables/SchemaEmbedArrayDatatype.html">SchemaEmbedArrayDatatype</a> (<code>&quot;schema-embed-array&quot;</code>) instead.</p>
 
             </p>
 
@@ -183,9 +185,6 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                         <ul class="list-unstyled relationships-list">
                                 <li>
                                             <code><a href="../modules/CoreModule.html" target="_self" >CoreModule</a></code>
-                                </li>
-                                <li>
-                                            <code><a href="../injectables/AttendanceDatatype.html" target="_self" >AttendanceDatatype</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../injectables/EventAttendanceMapDatatype.html" target="_self" >EventAttendanceMapDatatype</a></code>
@@ -286,6 +285,10 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getColumns" >getColumns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getEffectiveSchema" >getEffectiveSchema</a>
                             </li>
                             <li>
@@ -370,6 +373,99 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getColumns"></a>
+                    <span class="name">
+                        <span ><b>getColumns</b></span>
+                        <a href="#getColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getColumns(schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, columns?: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:194</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The inner fields of the embedded object as columns for tables and forms,
+extended with their schema details (like any entity field), including the components to display them.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">           unknown ids are skipped. If not given, all inner fields are returned.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the field using this datatype (holding the inner fields in <code>additional</code>)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>columns</td>
+                                            <td>
+                                                            <code><a href="../classes/Config.html" target="_self" >ColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional selection (and overrides) of the inner fields, in display order;
+unknown ids are skipped. If not given, all inner fields are returned.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getEffectiveSchema"></a>
                     <span class="name">
                         <span ><b>getEffectiveSchema</b></span>
@@ -386,8 +482,8 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="115"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:115</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:128</a></div>
                         </td>
                     </tr>
 
@@ -396,6 +492,9 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Build the effective inner schema from the embedded type&#39;s annotations
 and/or the <code>additional</code> config.</p>
+<p>Public so that generic UI components (e.g. for <code>schema-embed-array</code>) can resolve the
+same merged column list this datatype uses for (de)serialization, without duplicating
+the merge logic or being limited to the <code>additional</code>-only (config-based) case.</p>
 </div>
 
                             <div class="io-description">
@@ -456,8 +555,8 @@ and/or the <code>additional</code> config.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="138"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:138</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="151"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:151</a></div>
                         </td>
                     </tr>
 
@@ -535,7 +634,7 @@ The embedded object is stored as-is, so this is the property name itself.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:149</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:162</a></code>
 </div>
                         </td>
                     </tr>
@@ -631,8 +730,8 @@ is stored, through the dotted path to the inner property.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="128"
-                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:128</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:141</a></div>
                         </td>
                     </tr>
 
@@ -710,7 +809,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:173</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:220</a></code>
 </div>
                         </td>
                     </tr>
@@ -797,7 +896,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:184</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
 </div>
                         </td>
                     </tr>
@@ -1706,7 +1805,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:105</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:114</a></code>
 </div>
                         </td>
                     </tr>
@@ -1734,7 +1833,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="107" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:107</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:116</a></div>
                         </td>
                     </tr>
 
@@ -1767,7 +1866,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:109</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -2101,6 +2200,12 @@ import {
   SchemaEmbeddedType,
 } from &quot;../../entity/schema/entity-schema&quot;;
 import { inject, Injectable } from &quot;@angular/core&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from &quot;../../common-components/entity-form/FormConfig&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Configuration for the &quot;schema-embed&quot; datatype&#x27;s &#x60;additional&#x60; field.
@@ -2169,6 +2274,9 @@ export function mergeEmbeddedSchema(
  *
  * The config in &#x60;additional&#x60; is merged with the &#x60;embeddedType&#x60; schema (if present),
  * allowing runtime config to extend or override a class&#x27;s annotations.
+ *
+ * This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+ * for a user-configurable field use {@link SchemaEmbedArrayDatatype} (&#x60;&quot;schema-embed-array&quot;&#x60;) instead.
  */
 @Injectable()
 export class SchemaEmbedDatatype&lt;
@@ -2184,6 +2292,10 @@ export class SchemaEmbedDatatype&lt;
   /**
    * Build the effective inner schema from the embedded type&#x27;s annotations
    * and/or the &#x60;additional&#x60; config.
+   *
+   * Public so that generic UI components (e.g. for &#x60;schema-embed-array&#x60;) can resolve the
+   * same merged column list this datatype uses for (de)serialization, without duplicating
+   * the merge logic or being limited to the &#x60;additional&#x60;-only (config-based) case.
    */
   getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     return mergeEmbeddedSchema(
@@ -2241,6 +2353,40 @@ export class SchemaEmbedDatatype&lt;
       },
       ...referenceIdConditions(&#x60;${fieldId}.${key}&#x60;, referencedId),
     ]);
+  }
+
+  /**
+   * The inner fields of the embedded object as columns for tables and forms,
+   * extended with their schema details (like any entity field), including the components to display them.
+   *
+   * @param schemaField the field using this datatype (holding the inner fields in &#x60;additional&#x60;)
+   * @param columns optional selection (and overrides) of the inner fields, in display order;
+   *                unknown ids are skipped. If not given, all inner fields are returned.
+   */
+  getColumns(
+    schemaField?: EntitySchemaField,
+    columns?: ColumnConfig[],
+  ): FormFieldConfig[] {
+    const innerSchema &#x3D; this.getEffectiveSchema(schemaField);
+    const fieldConfigs: FormFieldConfig[] &#x3D; columns?.length
+      ? columns.map(toFormFieldConfig)
+      : [...innerSchema.keys()].map((id) &#x3D;&gt; ({ id }));
+
+    const result: FormFieldConfig[] &#x3D; [];
+    for (const config of fieldConfigs) {
+      const innerField &#x3D; innerSchema.get(config?.id);
+      if (!innerField) {
+        // an instance config mistake (not a bug in our code): must not block the other columns
+        // from rendering, and is not reported (this runs in computed()s, so it would repeat)
+        Logging.debug(&quot;Could not display an unknown embedded table column&quot;, {
+          column: config,
+          field: schemaField?.id,
+        });
+        continue;
+      }
+      result.push(this.schemaService.addSchemaToFormField(config, innerField));
+    }
+    return result;
   }
 
   override transformToDatabaseFormat(

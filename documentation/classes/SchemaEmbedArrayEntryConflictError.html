@@ -1,0 +1,448 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >SchemaEmbedArrayEntryConflictError</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The opened entry is no longer found in the latest entries,
+because it has been changed or removed in the meantime (e.g. by another user).</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>Error</code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>Error</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts:63</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { isEqual } from &quot;lodash-es&quot;;
+
+/**
+ * A change of a single entry of a &#x60;schema-embed-array&#x60; field, as made in its popup.
+ *
+ * It only describes the edited entry (not the whole list of entries), so that it can be applied
+ * to the latest entries when saving, which may have been updated since the popup opened (e.g. by a sync).
+ */
+export type SchemaEmbedArrayEntryChange &#x3D;
+  | {
+      /**
+       * The new or edited entry with all its values, replacing the entry as it was when the popup opened
+       * (so inner fields cleared in the popup are removed)
+       */
+      entry: Record&lt;string, any&gt;;
+      /** Position of the edited entry when the popup opened; a new entry is added if not given */
+      index?: number;
+      /** The edited entry as it was when the popup opened */
+      original?: Record&lt;string, any&gt;;
+    }
+  | {
+      /** Remove the entry */
+      delete: true;
+      /** Position of the deleted entry when the popup opened */
+      index: number;
+      /** The deleted entry as it was when the popup opened */
+      original: Record&lt;string, any&gt;;
+    };
+
+/**
+ * Entries known to be stored in their record, even if they changed since
+ * (e.g. edited in a form of the record that is not saved yet).
+ * Entries are plain objects without an id of their own, so they are tracked by identity.
+ */
+const storedEntries &#x3D; new WeakSet&lt;object&gt;();
+
+/**
+ * Remember that the entry stems from an entry stored in its record, see {@link isStoredEntry}.
+ */
+export function markStoredEntry(entry: Record&lt;string, any&gt;) {
+  storedEntries.add(entry);
+}
+
+/**
+ * Whether the entry is stored in its record, as opposed to only added in a form that is not saved yet.
+ *
+ * @param entry the entry to check
+ * @param savedEntries the entries of the field as saved in the record
+ */
+export function isStoredEntry(
+  entry: Record&lt;string, any&gt;,
+  savedEntries: Record&lt;string, any&gt;[] | undefined,
+): boolean {
+  // by identity, not by equal values: a new entry equal to a stored one is not stored yet
+  // (forms and records share the entry objects, see &#x60;Entity.copy&#x60;)
+  return storedEntries.has(entry) || !!savedEntries?.includes(entry);
+}
+
+/**
+ * The opened entry is no longer found in the latest entries,
+ * because it has been changed or removed in the meantime (e.g. by another user).
+ */
+export class SchemaEmbedArrayEntryConflictError extends Error {
+  constructor() {
+    super(
+      $localize&#x60;This entry has been changed or deleted in the meantime. Please close the popup and try again.&#x60;,
+    );
+    this.name &#x3D; &quot;SchemaEmbedArrayEntryConflictError&quot;;
+  }
+}
+
+/**
+ * Apply the change of a single entry to the latest list of entries,
+ * keeping all other entries as they are now.
+ *
+ * @param entries the latest entries of the field (not mutated)
+ * @param change the change made in the popup of an entry
+ * @returns the changed list of entries
+ * @throws SchemaEmbedArrayEntryConflictError if the edited or deleted entry has been changed or removed in the meantime
+ */
+export function applySchemaEmbedArrayEntryChange(
+  entries: Record&lt;string, any&gt;[] | undefined,
+  change: SchemaEmbedArrayEntryChange,
+): Record&lt;string, any&gt;[] {
+  const result &#x3D; [...(entries ?? [])];
+  if (change.index &#x3D;&#x3D;&#x3D; undefined) {
+    if (&quot;entry&quot; in change) {
+      result.push(change.entry);
+    }
+    return result;
+  }
+
+  const index &#x3D; findCurrentIndex(result, change.index, change.original);
+  if (&quot;delete&quot; in change) {
+    result.splice(index, 1);
+  } else {
+    // the latest entry equals the original (see findCurrentIndex), so the edited entry replaces it completely
+    result[index] &#x3D; change.entry;
+  }
+  return result;
+}
+
+/**
+ * Find the position of the opened entry within the latest entries,
+ * which may have moved if other entries were added or removed in the meantime.
+ */
+function findCurrentIndex(
+  entries: Record&lt;string, any&gt;[],
+  index: number,
+  original: Record&lt;string, any&gt; | undefined,
+): number {
+  if (isEqual(entries[index], original)) {
+    return index;
+  }
+  const matches &#x3D; entries
+    .map((entry, i) &#x3D;&gt; (isEqual(entry, original) ? i : -1))
+    .filter((i) &#x3D;&gt; i &gt;&#x3D; 0);
+  if (matches.length !&#x3D;&#x3D; 1) {
+    // changed or removed, or ambiguous between identical entries
+    throw new SchemaEmbedArrayEntryConflictError();
+  }
+  return matches[0];
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'SchemaEmbedArrayEntryConflictError.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

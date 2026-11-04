@@ -302,6 +302,14 @@ Admins edit this document to control what each role can do.</p>
 <blockquote>
 <p><strong>⚠️ Warning:</strong> Conditions do not support the $or operator (or $and, $nor, $not). Instead, you combine multiple separate can rules for the same action and subject to mimic an logical OR condition.</p>
 </blockquote>
+<h3>Entries of embedded tables (<code>schema-embed-array</code>)</h3>
+<p>The entries of an embedded table field are stored inside their record, not as documents of their own.
+Rules therefore cannot target an entry or its inner fields: an entry is checked against the field of the record holding it.</p>
+<ul>
+<li>Viewing an entry needs <code>read</code> permission for the record&#39;s field.</li>
+<li>Adding, editing or deleting an entry needs <code>update</code> permission for the record&#39;s field (<code>create</code> while the record is new).</li>
+<li>Field restrictions and <code>conditions</code> refer to the fields of the record. A rule naming an inner field of an entry has no effect.</li>
+</ul>
 <h3>When permissions change</h3>
 <p>If you change <code>Config:Permissions</code>:</p>
 <ol>

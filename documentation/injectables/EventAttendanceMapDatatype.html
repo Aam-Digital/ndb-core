@@ -309,6 +309,10 @@ Any method of <a href="../injectables/SchemaEmbedDatatype.html">SchemaEmbedDatat
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getColumns" >getColumns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getEffectiveSchema" >getEffectiveSchema</a>
                             </li>
                             <li>
@@ -755,6 +759,105 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getColumns"></a>
+                    <span class="name">
+                        <span ><b>getColumns</b></span>
+                        <a href="#getColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getColumns(schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, columns?: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:194</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The inner fields of the embedded object as columns for tables and forms,
+extended with their schema details (like any entity field), including the components to display them.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">           unknown ids are skipped. If not given, all inner fields are returned.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the field using this datatype (holding the inner fields in <code>additional</code>)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>columns</td>
+                                            <td>
+                                                            <code><a href="../classes/Config.html" target="_self" >ColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional selection (and overrides) of the inner fields, in display order;
+unknown ids are skipped. If not given, all inner fields are returned.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getEffectiveSchema"></a>
                     <span class="name">
                         <span ><b>getEffectiveSchema</b></span>
@@ -777,7 +880,7 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:115</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -787,6 +890,9 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Build the effective inner schema from the embedded type&#39;s annotations
 and/or the <code>additional</code> config.</p>
+<p>Public so that generic UI components (e.g. for <code>schema-embed-array</code>) can resolve the
+same merged column list this datatype uses for (de)serialization, without duplicating
+the merge logic or being limited to the <code>additional</code>-only (config-based) case.</p>
 </div>
 
                             <div class="io-description">
@@ -1843,7 +1949,7 @@ without requiring every one of them to be redeclared in a field&#39;s <code>addi
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:109</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:118</a></code>
 </div>
                         </td>
                     </tr>

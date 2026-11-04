@@ -238,7 +238,7 @@ that condition validators are derived from.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -282,7 +282,7 @@ that condition validators are derived from.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:22</a></div>
                                 </td>
                             </tr>
 
@@ -297,6 +297,7 @@ that condition validators are derived from.</p>
 import { ValidatorFn } from &quot;@angular/forms&quot;;
 import { createMongoAbility, MongoAbility, subject } from &quot;@casl/ability&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
+import { EmbeddedEntity } from &quot;../../../entity/model/embedded-entity&quot;;
 import { EntitySchemaField } from &quot;../../../entity/schema/entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;../../../entity/schema/entity-schema.service&quot;;
 import { ConfigurableEnumService } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
@@ -336,6 +337,12 @@ export class PermissionConditionValidatorsService {
    * denied save.
    */
   forField(entity: Entity, fieldId: string): ValidatorFn | null {
+    if (entity instanceof EmbeddedEntity) {
+      // rule conditions apply to the fields of the record holding the entry, not to the entry&#x27;s inner fields
+      // (the record is checked when it is saved, see EntityAbility)
+      return null;
+    }
+
     const action &#x3D; entity.isNew ? &quot;create&quot; : &quot;update&quot;;
     const rules &#x3D; this.ability.rulesFor(action, entity.getType());
     const schemaField &#x3D; entity.getSchema().get(fieldId);

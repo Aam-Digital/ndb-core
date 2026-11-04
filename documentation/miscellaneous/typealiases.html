@@ -359,6 +359,12 @@
                             <a href="#RuleExtraProperties" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RuleExtraProperties</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#SchemaEmbedArrayApplyChange" title="src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SchemaEmbedArrayApplyChange</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-array-entry-dialog.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#SchemaEmbedArrayEntryChange" title="src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SchemaEmbedArrayEntryChange</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-array-entry-change.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#SchemaEmbeddedType" title="src/app/core/entity/schema/entity-schema.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SchemaEmbeddedType</b>&nbsp;&nbsp;&nbsp;(src/.../entity-schema.ts)</span></a>
                         </li>
                         <li>
@@ -2237,6 +2243,61 @@ matrix does not model directly but preserves verbatim.</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>Record&lt;string | unknown&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SchemaEmbedArrayApplyChange"></a>
+                    <span class="name "><b>SchemaEmbedArrayApplyChange</b><a href="#SchemaEmbedArrayApplyChange"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Apply the change of a single entry of a <code>schema-embed-array</code> field to its latest entries
+(see <a href="../miscellaneous/functions.html#applySchemaEmbedArrayEntryChange">applySchemaEmbedArrayEntryChange</a>),
+e.g. by saving the entity or by setting the value of the field&#39;s form control.</p>
+<p>Throw an error to keep the popup open (its message is displayed to the user).</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SchemaEmbedArrayEntryChange"></a>
+                    <span class="name "><b>SchemaEmbedArrayEntryChange</b><a href="#SchemaEmbedArrayEntryChange"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A change of a single entry of a <code>schema-embed-array</code> field, as made in its popup.</p>
+<p>It only describes the edited entry (not the whole list of entries), so that it can be applied
+to the latest entries when saving, which may have been updated since the popup opened (e.g. by a sync).</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>literal type | literal type</code>
 </code>
                 </td>
             </tr>

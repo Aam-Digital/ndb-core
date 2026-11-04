@@ -324,13 +324,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/CoreModule.html" data-type="entity-link" >CoreModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' }>
+                                        'data-bs-target="#injectables-links-module-CoreModule-67cc0e6357594076f92a3a9758a5ea82763e1ca3298d8799367f5b865614dc94a1dd619fbbda4134544db0e3f5fea68abd11aa078ffdf4f1f22e6590353253bd"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-67cc0e6357594076f92a3a9758a5ea82763e1ca3298d8799367f5b865614dc94a1dd619fbbda4134544db0e3f5fea68abd11aa078ffdf4f1f22e6590353253bd"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' :
-                                        'id="xs-injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-67cc0e6357594076f92a3a9758a5ea82763e1ca3298d8799367f5b865614dc94a1dd619fbbda4134544db0e3f5fea68abd11aa078ffdf4f1f22e6590353253bd"' :
+                                        'id="xs-injectables-links-module-CoreModule-67cc0e6357594076f92a3a9758a5ea82763e1ca3298d8799367f5b865614dc94a1dd619fbbda4134544db0e3f5fea68abd11aa078ffdf4f1f22e6590353253bd"' }>
                                         <li class="link">
                                             <a href="injectables/BooleanDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >BooleanDatatype</a>
                                         </li>
@@ -366,6 +366,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                         </li>
                                         <li class="link">
                                             <a href="injectables/PercentageDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >PercentageDatatype</a>
+                                        </li>
+                                        <li class="link">
+                                            <a href="injectables/SchemaEmbedArrayDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SchemaEmbedArrayDatatype</a>
                                         </li>
                                         <li class="link">
                                             <a href="injectables/SchemaEmbedDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SchemaEmbedDatatype</a>
@@ -1083,6 +1086,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/DisplayRecurringIntervalComponent.html" data-type="entity-link" >DisplayRecurringIntervalComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/DisplaySchemaEmbedArrayComponent.html" data-type="entity-link" >DisplaySchemaEmbedArrayComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/DisplayTextComponent.html" data-type="entity-link" >DisplayTextComponent</a>
                             </li>
                             <li class="link">
@@ -1200,6 +1206,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/EditReportPeriodToggleComponent.html" data-type="entity-link" >EditReportPeriodToggleComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/EditSchemaEmbedArrayComponent.html" data-type="entity-link" >EditSchemaEmbedArrayComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/EditTemplateExportFileComponent.html" data-type="entity-link" >EditTemplateExportFileComponent</a>
                             </li>
                             <li class="link">
@@ -1216,6 +1225,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EmailTemplateSelectionDialogComponent.html" data-type="entity-link" >EmailTemplateSelectionDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EmbeddedArrayDataComponent.html" data-type="entity-link" >EmbeddedArrayDataComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EntitiesTableComponent.html" data-type="entity-link" >EntitiesTableComponent</a>
@@ -1539,6 +1551,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/RowDetailsComponent.html" data-type="entity-link" >RowDetailsComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/SchemaEmbedArrayDialogComponent.html" data-type="entity-link" >SchemaEmbedArrayDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/SchemaEmbedArrayEntryDialogComponent.html" data-type="entity-link" >SchemaEmbedArrayEntryDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/SchemaEmbedArrayTableComponent.html" data-type="entity-link" >SchemaEmbedArrayTableComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/SearchComponent.html" data-type="entity-link" >SearchComponent</a>
                             </li>
                             <li class="link">
@@ -1793,6 +1814,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/EmailTemplate.html" data-type="entity-link" >EmailTemplate</a>
                             </li>
                             <li class="link">
+                                <a href="classes/EmbeddedEntity.html" data-type="entity-link" >EmbeddedEntity</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/EntitiesTableDataSource.html" data-type="entity-link" >EntitiesTableDataSource&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
@@ -1941,6 +1965,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/ReportConfig.html" data-type="entity-link" >ReportConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/SchemaEmbedArrayEntryConflictError.html" data-type="entity-link" >SchemaEmbedArrayEntryConflictError</a>
                             </li>
                             <li class="link">
                                 <a href="classes/SelectableFilter.html" data-type="entity-link" >SelectableFilter&lt;T extends Entity&gt;</a>
@@ -2730,6 +2757,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/EmailTemplateSelectionResult.html" data-type="entity-link" >EmailTemplateSelectionResult</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/EmbeddedArrayDataConfig.html" data-type="entity-link" >EmbeddedArrayDataConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EmbeddedEntityContext.html" data-type="entity-link" >EmbeddedEntityContext</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/EmbeddedFieldRef.html" data-type="entity-link" >EmbeddedFieldRef</a>
                             </li>
                             <li class="link">
@@ -3157,6 +3190,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/SchemaContext.html" data-type="entity-link" >SchemaContext</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/SchemaEmbedArrayDialogData.html" data-type="entity-link" >SchemaEmbedArrayDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/SchemaEmbedArrayEntryDialogData.html" data-type="entity-link" >SchemaEmbedArrayEntryDialogData</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/SchemaEmbedDatatypeAdditional.html" data-type="entity-link" >SchemaEmbedDatatypeAdditional</a>

@@ -238,7 +238,7 @@ paginated loader uses to mark its own position. Callers only pass it back.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:46</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:47</a></div>
                                 </td>
                             </tr>
 
@@ -277,7 +277,7 @@ paginated loader uses to mark its own position. Callers only pass it back.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:46</a></div>
                                 </td>
                             </tr>
 
@@ -290,6 +290,7 @@ paginated loader uses to mark its own position. Callers only pass it back.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
+import { EmbeddedEntity } from &quot;../model/embedded-entity&quot;;
 import { EntitySchemaService } from &quot;../schema/entity-schema.service&quot;;
 import { Observable } from &quot;rxjs&quot;;
 import { UpdatedEntity } from &quot;../model/entity-update&quot;;
@@ -538,6 +539,7 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean &#x3D; false,
   ): Promise&lt;any&gt; {
+    this.assertSavable(entity);
     this.assertPermission(entity);
     this.setEntityMetadata(entity);
     const rawData &#x3D;
@@ -568,6 +570,7 @@ export class EntityMapperService {
       return [];
     }
 
+    entities.forEach((e) &#x3D;&gt; this.assertSavable(e));
     entities.forEach((e) &#x3D;&gt; this.assertPermission(e));
     entities.forEach((e) &#x3D;&gt; this.setEntityMetadata(e));
 
@@ -631,6 +634,15 @@ export class EntityMapperService {
       return this.registry.get(constructible) as EntityConstructor&lt;T&gt;;
     } else {
       return constructible;
+    }
+  }
+
+  private assertSavable(entity: Entity) {
+    if (entity instanceof EmbeddedEntity) {
+      // only a stand-in while editing an embedded entry, which is stored as part of its record
+      throw new Error(
+        &quot;An embedded entry cannot be saved on its own, save the record holding it instead&quot;,
+      );
     }
   }
 

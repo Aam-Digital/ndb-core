@@ -263,6 +263,9 @@
                             <a href="#CLOSE_OTHER_TABS_NOTICE_ID" title="src/bootstrap-reset.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CLOSE_OTHER_TABS_NOTICE_ID</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-reset.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#columnsCache" title="src/app/core/basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>columnsCache</b>&nbsp;&nbsp;&nbsp;(src/.../display-schema-embed-array.component.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#COMPONENT_PERMISSIONS" title="src/app/features/attendance/attendance-permission.guard.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>COMPONENT_PERMISSIONS</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-permission.guard.ts)</span></a>
                         </li>
                         <li>
@@ -861,6 +864,9 @@
                         </li>
                         <li>
                             <a href="#STORED_BY_ID_DATATYPES" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>STORED_BY_ID_DATATYPES</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#storedEntries" title="src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>storedEntries</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-array-entry-change.ts)</span></a>
                         </li>
                         <li>
                             <a href="#stories" title="src/app/features/todos/model/demo-todo-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>stories</b>&nbsp;&nbsp;&nbsp;(src/.../demo-todo-generator.service.ts)</span></a>
@@ -3879,6 +3885,41 @@ Set before a page reload; checked on the next bootstrap in <a href="../miscellan
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="columnsCache"></a>
+                    <span class="name">
+                        <span ><b>columnsCache</b></span>
+                        <a href="#columnsCache"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new WeakMap&lt;FormFieldConfig, FormFieldConfig[]&gt;()</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Resolved columns per field config (see <a href="DisplaySchemaEmbedArrayComponent.columns">DisplaySchemaEmbedArrayComponent.columns</a>)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/features/attendance/attendance-permission.guard.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -4872,6 +4913,13 @@ that carries neither a status nor a telling name.</p>
       ),
   ],
   [
+    &quot;EmbeddedArrayData&quot;,
+    () &#x3D;&gt;
+      import(&quot;./entity-details/embedded-array-data/embedded-array-data.component&quot;).then(
+        (c) &#x3D;&gt; c.EmbeddedArrayDataComponent,
+      ),
+  ],
+  [
     &quot;RelatedTimePeriodEntities&quot;,
     () &#x3D;&gt;
       import(&quot;./entity-details/related-time-period-entities/related-time-period-entities.component&quot;).then(
@@ -4947,6 +4995,20 @@ that carries neither a status nor a telling name.</p>
     () &#x3D;&gt;
       import(&quot;./admin/json-editor/edit-json/edit-json.component&quot;).then(
         (c) &#x3D;&gt; c.EditJsonComponent,
+      ),
+  ],
+  [
+    &quot;EditSchemaEmbedArray&quot;,
+    () &#x3D;&gt;
+      import(&quot;./basic-datatypes/schema-embed/edit-schema-embed-array/edit-schema-embed-array.component&quot;).then(
+        (c) &#x3D;&gt; c.EditSchemaEmbedArrayComponent,
+      ),
+  ],
+  [
+    &quot;DisplaySchemaEmbedArray&quot;,
+    () &#x3D;&gt;
+      import(&quot;./basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component&quot;).then(
+        (c) &#x3D;&gt; c.DisplaySchemaEmbedArrayComponent,
       ),
   ],
 ]</code>
@@ -11777,6 +11839,43 @@ Scopes not listed here are shown with the description provided by the backend.</
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>datatypes whose value is stored as the referenced id alone</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="storedEntries"></a>
+                    <span class="name">
+                        <span ><b>storedEntries</b></span>
+                        <a href="#storedEntries"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new WeakSet&lt;object&gt;()</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entries known to be stored in their record, even if they changed since
+(e.g. edited in a form of the record that is not saved yet).
+Entries are plain objects without an id of their own, so they are tracked by identity.</p>
 </div>
                 </td>
             </tr>

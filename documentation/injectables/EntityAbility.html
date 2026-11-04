@@ -267,7 +267,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:91</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
                             </td>
                         </tr>
 
@@ -302,8 +302,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -407,8 +407,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="133"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:133</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -500,8 +500,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -581,7 +581,7 @@ see <a href="../miscellaneous/functions.html#withEvaluableConditions">withEvalua
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:91</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -616,6 +616,7 @@ import {
 import { $and, $nor, $not, $or, and, nor, not, or } from &quot;@ucast/mongo2js&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
+import { EmbeddedEntity } from &quot;../../entity/model/embedded-entity&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /** The action and subject types this ability checks permissions for. */
@@ -715,6 +716,16 @@ export class EntityAbility extends Ability&lt;EntityAbilityTuple, MongoQuery&gt;
     field?: string,
     enforceConditions?: boolean,
   ): boolean {
+    const recordCheck &#x3D; this.getRecordCheckForEmbedded(action, entity);
+    if (recordCheck) {
+      return this.can(
+        recordCheck.action,
+        recordCheck.record,
+        recordCheck.field,
+        enforceConditions,
+      );
+    }
+
     if (action &#x3D;&#x3D;&#x3D; &quot;create&quot; &amp;&amp; !enforceConditions) {
       const rules &#x3D; this.rules.map((r) &#x3D;&gt; {
         const simplifiedRule &#x3D; { ...r };
@@ -737,7 +748,47 @@ export class EntityAbility extends Ability&lt;EntityAbilityTuple, MongoQuery&gt;
     entity: EntitySubject,
     field?: string,
   ): boolean {
+    const recordCheck &#x3D; this.getRecordCheckForEmbedded(action, entity);
+    if (recordCheck) {
+      return this.cannot(
+        recordCheck.action,
+        recordCheck.record,
+        recordCheck.field,
+      );
+    }
+
     return super.cannot(action, this.getSubject(entity), field);
+  }
+
+  /**
+   * An embedded entry (e.g. a row of an embedded table) has no permissions of its own:
+   * reading it needs read permission for the field of the record holding it,
+   * any change of it needs permission to change that field.
+   *
+   * @returns the check on the record holding the entry, or undefined if the subject is no embedded entry
+   *   (or one edited without a record)
+   */
+  private getRecordCheckForEmbedded(
+    action: EntityActionPermission,
+    entity: EntitySubject,
+  ):
+    | { action: EntityActionPermission; record: Entity; field: string }
+    | undefined {
+    if (!(entity instanceof EmbeddedEntity)) {
+      return undefined;
+    }
+    const root &#x3D; entity.getRoot();
+    if (!root) {
+      return undefined;
+    }
+
+    let recordAction: EntityActionPermission;
+    if (action &#x3D;&#x3D;&#x3D; &quot;read&quot;) {
+      recordAction &#x3D; &quot;read&quot;;
+    } else {
+      recordAction &#x3D; root.record.isNew ? &quot;create&quot; : &quot;update&quot;;
+    }
+    return { action: recordAction, record: root.record, field: root.field };
   }
 
   private getSubject(entity: EntitySubject): any {

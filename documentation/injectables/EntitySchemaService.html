@@ -213,6 +213,10 @@ You should normally use the EntityMapperService instead of transforming objects 
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#addSchemaToFormField" >addSchemaToFormField</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getComponent" >getComponent</a>
                             </li>
                             <li>
@@ -265,6 +269,98 @@ You should normally use the EntityMapperService instead of transforming objects 
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="addSchemaToFormField"></a>
+                    <span class="name">
+                        <span ><b>addSchemaToFormField</b></span>
+                        <a href="#addSchemaToFormField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addSchemaToFormField(formField: <a href="../interfaces/FormFieldConfig.html" target="_self">FormFieldConfig</a>, propertySchema: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField | undefined</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:218</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Extend a form field config with the details from its property schema:
+the schema&#39;s settings (with the form field&#39;s own settings taking precedence),
+the edit and view components and the resolved (translated) labels.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>formField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the field config to extend; it is not changed</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>propertySchema</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the schema of the property displayed by the field</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getComponent"></a>
                     <span class="name">
                         <span ><b>getComponent</b></span>
@@ -281,8 +377,8 @@ You should normally use the EntityMapperService instead of transforming objects 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="189"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:189</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="191"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:191</a></div>
                         </td>
                     </tr>
 
@@ -382,8 +478,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="70"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:70</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -489,8 +585,8 @@ fail hard (e.g. dedicated schema/config validation, or surfacing a per-item erro
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -589,8 +685,8 @@ fail hard (e.g. dedicated schema/config validation, or surfacing a per-item erro
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -689,8 +785,8 @@ fail hard (e.g. dedicated schema/config validation, or surfacing a per-item erro
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -779,8 +875,8 @@ fail hard (e.g. dedicated schema/config validation, or surfacing a per-item erro
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="214"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:214</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="245"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:245</a></div>
                         </td>
                     </tr>
 
@@ -872,8 +968,8 @@ fail hard (e.g. dedicated schema/config validation, or surfacing a per-item erro
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="240"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:240</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="271"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:271</a></div>
                         </td>
                     </tr>
 
@@ -959,6 +1055,8 @@ import { EntitySchemaField } from &quot;./entity-schema-field&quot;;
 import { DefaultDatatype } from &quot;../default-datatype/default.datatype&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { FormFieldConfig } from &quot;../../common-components/entity-form/FormConfig&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * Transform between entity instances and database objects
@@ -1143,6 +1241,35 @@ export class EntitySchemaService {
   }
 
   /**
+   * Extend a form field config with the details from its property schema:
+   * the schema&#x27;s settings (with the form field&#x27;s own settings taking precedence),
+   * the edit and view components and the resolved (translated) labels.
+   *
+   * @param formField the field config to extend; it is not changed
+   * @param propertySchema the schema of the property displayed by the field
+   */
+  addSchemaToFormField(
+    formField: FormFieldConfig,
+    propertySchema: EntitySchemaField | undefined,
+  ): FormFieldConfig {
+    // formField config has precedence over schema
+    const fullField: FormFieldConfig &#x3D; Object.assign(
+      {},
+      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
+      formField,
+    );
+
+    fullField.editComponent &#x3D;
+      fullField.editComponent || this.getComponent(propertySchema, &quot;edit&quot;);
+    fullField.viewComponent &#x3D;
+      fullField.viewComponent || this.getComponent(propertySchema, &quot;view&quot;);
+    fullField.label &#x3D; fullField.label || fullField.labelShort;
+
+    resolveTranslatableLabels(fullField);
+    return fullField;
+  }
+
+  /**
    * Transform a single value into database format
    * @param value
    * @param schemaField
@@ -1213,6 +1340,20 @@ export class EntitySchemaService {
         &quot; Further occurrences of the same dataType will not be logged again this session.&quot;,
       { dataType: datatypeName },
     );
+  }
+}
+
+/**
+ * Config loaded through ConfigService is already resolved, but the runtime
+ * schema can hold a translation map while an admin has configured
+ * translations that are not saved to the config document yet.
+ */
+function resolveTranslatableLabels(field: FormFieldConfig) {
+  for (const property of [&quot;label&quot;, &quot;labelShort&quot;, &quot;description&quot;]) {
+    if (field[property] &#x3D;&#x3D;&#x3D; undefined) {
+      continue;
+    }
+    field[property] &#x3D; resolveLocaleText(field[property]);
   }
 }
 </code></pre>

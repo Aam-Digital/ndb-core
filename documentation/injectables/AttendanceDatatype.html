@@ -170,7 +170,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                            <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+                            <code><a href="../injectables/SchemaEmbedArrayDatatype.html" target="_self" >SchemaEmbedArrayDatatype</a></code>
             </p>
 
 
@@ -192,7 +192,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                            <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+                                            <code><a href="../injectables/SchemaEmbedArrayDatatype.html" target="_self" >SchemaEmbedArrayDatatype</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -299,12 +299,16 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
-                                <a href="#normalizeSchemaField" >normalizeSchemaField</a>
+                                <a href="#sortValue" >sortValue</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
-                                <a href="#sortValue" >sortValue</a>
+                                <a href="#normalizeSchemaField" >normalizeSchemaField</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getColumns" >getColumns</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -395,7 +399,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:194</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:187</a></code>
 </div>
                         </td>
                     </tr>
@@ -473,7 +477,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:184</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:177</a></code>
 </div>
                         </td>
                     </tr>
@@ -550,7 +554,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:57</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -601,81 +605,6 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="normalizeSchemaField"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>normalizeSchemaField</b></span>
-                        <a href="#normalizeSchemaField"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>normalizeSchemaField(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>schemaField</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="sortValue"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -700,7 +629,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:96</a></code>
 </div>
                         </td>
                     </tr>
@@ -756,6 +685,180 @@ sorts before a real 0% value.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="normalizeSchemaField"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>normalizeSchemaField</b></span>
+                        <a href="#normalizeSchemaField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>normalizeSchemaField(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:37</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getColumns"></a>
+                    <span class="name">
+                        <span ><b>getColumns</b></span>
+                        <a href="#getColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getColumns(schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, columns?: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:194</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The inner fields of the embedded object as columns for tables and forms,
+extended with their schema details (like any entity field), including the components to display them.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">           unknown ids are skipped. If not given, all inner fields are returned.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the field using this datatype (holding the inner fields in <code>additional</code>)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>columns</td>
+                                            <td>
+                                                            <code><a href="../classes/Config.html" target="_self" >ColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional selection (and overrides) of the inner fields, in display order;
+unknown ids are skipped. If not given, all inner fields are returned.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getEffectiveSchema"></a>
                     <span class="name">
                         <span ><b>getEffectiveSchema</b></span>
@@ -778,7 +881,7 @@ sorts before a real 0% value.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:115</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -788,6 +891,9 @@ sorts before a real 0% value.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Build the effective inner schema from the embedded type&#39;s annotations
 and/or the <code>additional</code> config.</p>
+<p>Public so that generic UI components (e.g. for <code>schema-embed-array</code>) can resolve the
+same merged column list this datatype uses for (de)serialization, without duplicating
+the merge logic or being limited to the <code>additional</code>-only (config-based) case.</p>
 </div>
 
                             <div class="io-description">
@@ -854,7 +960,7 @@ and/or the <code>additional</code> config.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:138</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:151</a></code>
 </div>
                         </td>
                     </tr>
@@ -933,7 +1039,7 @@ The embedded object is stored as-is, so this is the property name itself.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:149</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:162</a></code>
 </div>
                         </td>
                     </tr>
@@ -1035,7 +1141,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:128</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:141</a></code>
 </div>
                         </td>
                     </tr>
@@ -1114,7 +1220,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:173</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:220</a></code>
 </div>
                         </td>
                     </tr>
@@ -1201,7 +1307,7 @@ is stored, through the dotted path to the inner property.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:184</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
 </div>
                         </td>
                     </tr>
@@ -1861,7 +1967,7 @@ than one property) override this.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:109</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:118</a></code>
 </div>
                         </td>
                     </tr>
@@ -2055,7 +2161,7 @@ in addition to the <code>validators</code> configured for the field.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
-import { SchemaEmbedDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype&quot;;
+import { SchemaEmbedArrayDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed-array.datatype&quot;;
 import { AttendanceItem } from &quot;./attendance-item&quot;;
 import { AttendanceLogicalStatus } from &quot;./attendance-status&quot;;
 import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
@@ -2092,7 +2198,7 @@ import { mapInBatches } from &quot;#src/app/utils/utils&quot;;
  * &#x60;&#x60;&#x60;
  */
 @Injectable()
-export class AttendanceDatatype extends SchemaEmbedDatatype {
+export class AttendanceDatatype extends SchemaEmbedArrayDatatype {
   private readonly entityMapper &#x3D; inject(EntityMapperService);
 
   static override readonly dataType &#x3D; &quot;attendance&quot;;
@@ -2102,13 +2208,6 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
 
   override editComponent &#x3D; &quot;EditAttendance&quot;;
   override viewComponent &#x3D; &quot;DisplayAttendance&quot;;
-
-  override normalizeSchemaField(
-    schemaField: EntitySchemaField,
-  ): EntitySchemaField {
-    // attendance always requires isArray
-    return { ...schemaField, isArray: true };
-  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

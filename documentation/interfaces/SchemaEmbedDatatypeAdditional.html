@@ -189,7 +189,7 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:56</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -213,6 +213,12 @@ import {
   SchemaEmbeddedType,
 } from &quot;../../entity/schema/entity-schema&quot;;
 import { inject, Injectable } from &quot;@angular/core&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from &quot;../../common-components/entity-form/FormConfig&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Configuration for the &quot;schema-embed&quot; datatype&#x27;s &#x60;additional&#x60; field.
@@ -281,6 +287,9 @@ export function mergeEmbeddedSchema(
  *
  * The config in &#x60;additional&#x60; is merged with the &#x60;embeddedType&#x60; schema (if present),
  * allowing runtime config to extend or override a class&#x27;s annotations.
+ *
+ * This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+ * for a user-configurable field use {@link SchemaEmbedArrayDatatype} (&#x60;&quot;schema-embed-array&quot;&#x60;) instead.
  */
 @Injectable()
 export class SchemaEmbedDatatype&lt;
@@ -296,6 +305,10 @@ export class SchemaEmbedDatatype&lt;
   /**
    * Build the effective inner schema from the embedded type&#x27;s annotations
    * and/or the &#x60;additional&#x60; config.
+   *
+   * Public so that generic UI components (e.g. for &#x60;schema-embed-array&#x60;) can resolve the
+   * same merged column list this datatype uses for (de)serialization, without duplicating
+   * the merge logic or being limited to the &#x60;additional&#x60;-only (config-based) case.
    */
   getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     return mergeEmbeddedSchema(
@@ -353,6 +366,40 @@ export class SchemaEmbedDatatype&lt;
       },
       ...referenceIdConditions(&#x60;${fieldId}.${key}&#x60;, referencedId),
     ]);
+  }
+
+  /**
+   * The inner fields of the embedded object as columns for tables and forms,
+   * extended with their schema details (like any entity field), including the components to display them.
+   *
+   * @param schemaField the field using this datatype (holding the inner fields in &#x60;additional&#x60;)
+   * @param columns optional selection (and overrides) of the inner fields, in display order;
+   *                unknown ids are skipped. If not given, all inner fields are returned.
+   */
+  getColumns(
+    schemaField?: EntitySchemaField,
+    columns?: ColumnConfig[],
+  ): FormFieldConfig[] {
+    const innerSchema &#x3D; this.getEffectiveSchema(schemaField);
+    const fieldConfigs: FormFieldConfig[] &#x3D; columns?.length
+      ? columns.map(toFormFieldConfig)
+      : [...innerSchema.keys()].map((id) &#x3D;&gt; ({ id }));
+
+    const result: FormFieldConfig[] &#x3D; [];
+    for (const config of fieldConfigs) {
+      const innerField &#x3D; innerSchema.get(config?.id);
+      if (!innerField) {
+        // an instance config mistake (not a bug in our code): must not block the other columns
+        // from rendering, and is not reported (this runs in computed()s, so it would repeat)
+        Logging.debug(&quot;Could not display an unknown embedded table column&quot;, {
+          column: config,
+          field: schemaField?.id,
+        });
+        continue;
+      }
+      result.push(this.schemaService.addSchemaToFormField(config, innerField));
+    }
+    return result;
   }
 
   override transformToDatabaseFormat(

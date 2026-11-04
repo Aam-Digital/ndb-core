@@ -201,6 +201,80 @@ anonymization and a validator (the end must not be before the start). See <a hre
 The <code>additional</code> config of the field can change them: a list in the format of the options of date filters
 (<code>DateRangeFilterConfigOption</code>) replaces them, and an empty list offers none. In the Admin UI, a checkbox
 switches them off.</p>
+<h2>Embedded tables (<code>schema-embed-array</code>)</h2>
+<p>The <code>schema-embed-array</code> type stores an array of custom sub-objects on the entity itself, for example several
+identification documents of a person. It is the lightweight alternative to a separate entity type that is linked
+through <code>RelatedEntities</code>: use it for entries that have no life of their own (no separate record, permissions or
+list view). It generalizes the <code>attendance</code> type, which extends it
+(see <a href="schema-embed/schema-embed-array.datatype.ts"><code>SchemaEmbedArrayDatatype</code></a>).</p>
+<p>The inner fields are defined in the <code>additional</code> config of the field, in the same format as entity <code>attributes</code>.
+<code>isArray</code> is set automatically:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;identificationDocuments&quot;: {
+  &quot;dataType&quot;: &quot;schema-embed-array&quot;,
+  &quot;label&quot;: &quot;Identification Documents&quot;,
+  &quot;additional&quot;: {
+    &quot;documentType&quot;: { &quot;dataType&quot;: &quot;string&quot;, &quot;label&quot;: &quot;Document Type&quot; },
+    &quot;documentNumber&quot;: { &quot;dataType&quot;: &quot;string&quot;, &quot;label&quot;: &quot;Document Number&quot; },
+    &quot;issueDate&quot;: { &quot;dataType&quot;: &quot;date&quot;, &quot;label&quot;: &quot;Issue Date&quot; }
+  }
+}</code></pre></div><p><strong>Display and editing</strong></p>
+<ul>
+<li>In forms, the field shows a summary of its entries with a button that opens a popup with the full table.
+Each entry is added or edited in a popup of its own.</li>
+<li>Wherever the value is only displayed (e.g. in table columns), the first column&#39;s values of the first entries are
+shown (e.g. &quot;Passport, ID Card +1 more&quot;). Hovering shows a preview table with all entries.</li>
+</ul>
+<p><strong>Inner fields</strong> behave like the fields of a record: they can use any datatype and the same <code>validators</code>
+(e.g. <code>readonlyAfterSet</code> locks a value once its entry has been saved). Inner fields left empty are not stored.
+Not supported yet:</p>
+<ul>
+<li>the <code>uniqueId</code> validator (ignored for inner fields)</li>
+<li>default values for new entries</li>
+<li>file and photo fields (<a href="https://github.com/Aam-Digital/ndb-core/issues/4624">#4624</a>)</li>
+</ul>
+<p><strong>Panel in the entity details</strong></p>
+<p>The <code>EmbeddedArrayData</code> component shows the entries as a table in a panel of the entity details view, like a list of
+related records. Its config is:</p>
+<ul>
+<li><code>property</code>: the entity field of type <code>schema-embed-array</code></li>
+<li><code>columns</code> (optional): the inner fields to show, as ids or column config objects that override the field details,
+e.g. <code>{ &quot;id&quot;: &quot;issueDate&quot;, &quot;visibleFrom&quot;: &quot;md&quot; }</code>. Defaults to all inner fields.</li>
+<li><code>editable</code> (optional, default <code>true</code>): whether entries can be added and edited.</li>
+</ul>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;title&quot;: &quot;Identification Documents&quot;,
+  &quot;components&quot;: [
+    {
+      &quot;component&quot;: &quot;EmbeddedArrayData&quot;,
+      &quot;config&quot;: {
+        &quot;property&quot;: &quot;identificationDocuments&quot;,
+        &quot;columns&quot;: [&quot;documentType&quot;, &quot;documentNumber&quot;, { &quot;id&quot;: &quot;issueDate&quot;, &quot;visibleFrom&quot;: &quot;md&quot; }]
+      }
+    }
+  ]
+}</code></pre></div><p>Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a &quot;Save&quot;
+button. Users without the permission to update the field only see the entries (read-only). See the full example in
+<a href="../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json"><code>Config_CONFIG_ENTITY.json</code></a>.</p>
+<p><strong>Not yet configurable in the Admin UI.</strong> The Admin UI cannot configure the inner fields yet
+(<a href="https://github.com/Aam-Digital/ndb-core/issues/3840">#3840</a>), so the type is not offered in its field type
+dropdown (the datatype has no <code>label</code>). Define such fields in the config JSON.</p>
+<p><strong>For developers:</strong> a subclass can set <code>embeddedType</code> to a class with <code>@DatabaseField()</code> annotations instead of (or in
+addition to) defining the inner fields in <code>additional</code>; the config is merged over the annotations. See
+<a href="schema-embed/schema-embed.datatype.ts"><code>SchemaEmbedDatatype</code></a> and <code>AttendanceDatatype</code>
+(<code>AttendanceItem</code> as <code>embeddedType</code>).</p>
+<p><strong>For developers: editing an entry.</strong> While an entry is edited in its popup, it is wrapped as
+<a href="../entity/model/embedded-entity.ts"><code>EmbeddedEntity</code></a>, an <code>Entity</code> with the inner fields as schema, so that it goes
+through the standard entity form logic (<code>EntityFormService.createEntityForm</code> and <code>applyChanges</code>) like a record.
+The entry is still stored as a plain object: the popup turns it back with <code>toEntryValue()</code> and passes only the change
+of this entry on (see <a href="schema-embed/schema-embed-array-entry-change.ts"><code>schema-embed-array-entry-change.ts</code></a>).
+Code that treats an <code>Entity</code> as a saved document handles the wrapper explicitly:</p>
+<ul>
+<li><code>EntityMapperService</code> refuses to save it on its own; the record holding it is saved instead.</li>
+<li><code>EntityAbility</code> checks it against the field of the record holding it (<code>getRoot()</code>, also for nested entries).
+Its inner fields get no validators from permission rule conditions, which refer to the record&#39;s fields
+(see <a href="../permissions/README.md">Permissions</a>).</li>
+<li>The email client selects templates and links notes for the record holding it (<code>getSavedRecord()</code>).</li>
+</ul>
 <h2>Customizing how values are sorted in tables</h2>
 <p>By default, table columns are sorted on the readable value of the field.
 Some datatypes store arrays or complex objects whose raw value cannot be compared meaningfully,

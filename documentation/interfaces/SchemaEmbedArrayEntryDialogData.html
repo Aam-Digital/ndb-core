@@ -1,0 +1,1047 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  SchemaEmbedArrayEntryDialogData</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Data interface that must be given when opening the dialog</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#applyChange" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">applyChange</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#columns" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">columns</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#deferSave" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">deferSave</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#entity" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entity</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#entries" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entries</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#field" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">field</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#index" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">index</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#readonly" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">readonly</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="applyChange"></a>
+                                <span class="name "><b>applyChange</b>
+                                    <a href="#applyChange">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>applyChange:         <code><a href="../miscellaneous/typealiases.html#SchemaEmbedArrayApplyChange" target="_self" >SchemaEmbedArrayApplyChange</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#SchemaEmbedArrayApplyChange" target="_self" >SchemaEmbedArrayApplyChange</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:75</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Called with the change of the entry when saving or deleting it</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="columns"></a>
+                                <span class="name "><b>columns</b>
+                                    <a href="#columns">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>columns:         <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:66</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The inner fields of the embedded entries to edit</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="deferSave"></a>
+                                <span class="name "><b>deferSave</b>
+                                    <a href="#deferSave">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>deferSave:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:80</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether <code>applyChange</code> only passes the changes on to be saved later (e.g. with a surrounding form),
+labelling the save button &quot;Apply&quot; instead of &quot;Save&quot;.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entity"></a>
+                                <span class="name "><b>entity</b>
+                                    <a href="#entity">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entity:         <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:71</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The record holding the embedded entries, which is the context of the entry&#39;s inner fields
+(e.g. for permissions); not set if the entries are edited without a record</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entries"></a>
+                                <span class="name "><b>entries</b>
+                                    <a href="#entries">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entries:     <code>Record&lt;string, any&gt;[]</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>Record&lt;string, any&gt;[]</code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:60</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>All entries of the field when opening the popup</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="field"></a>
+                                <span class="name "><b>field</b>
+                                    <a href="#field">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>field:         <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:64</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The <code>schema-embed-array</code> field holding the entries</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="index"></a>
+                                <span class="name "><b>index</b>
+                                    <a href="#index">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>index:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:62</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Position of the entry to edit within the entries; a new entry is added if not given</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="readonly"></a>
+                                <span class="name "><b>readonly</b>
+                                    <a href="#readonly">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>readonly:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component.ts:73</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether the entry can only be viewed, not changed</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  resource,
+  signal,
+  ViewEncapsulation,
+} from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { FormsModule, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from &quot;@angular/material/dialog&quot;;
+import { MatMenuModule } from &quot;@angular/material/menu&quot;;
+import { AlertService } from &quot;#src/app/core/alerts/alert.service&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { DialogCloseComponent } from &quot;#src/app/core/common-components/dialog-close/dialog-close.component&quot;;
+import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-form/FormConfig&quot;;
+import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
+import { EntityFormService } from &quot;#src/app/core/common-components/entity-form/entity-form.service&quot;;
+import { InvalidFormFieldError } from &quot;#src/app/core/common-components/entity-form/invalid-form-field.error&quot;;
+import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
+import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field-edit/entity-field-edit.component&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import {
+  createEmbeddedEntity,
+  EmbeddedEntity,
+} from &quot;#src/app/core/entity/model/embedded-entity&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import { getEmbeddedSchema } from &quot;#src/app/core/entity/schema/embedded-schema-field.util&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
+import {
+  isStoredEntry,
+  markStoredEntry,
+  SchemaEmbedArrayEntryChange,
+} from &quot;../schema-embed-array-entry-change&quot;;
+
+/**
+ * Apply the change of a single entry of a &#x60;schema-embed-array&#x60; field to its latest entries
+ * (see {@link applySchemaEmbedArrayEntryChange}),
+ * e.g. by saving the entity or by setting the value of the field&#x27;s form control.
+ *
+ * Throw an error to keep the popup open (its message is displayed to the user).
+ */
+export type SchemaEmbedArrayApplyChange &#x3D; (
+  change: SchemaEmbedArrayEntryChange,
+) &#x3D;&gt; Promise&lt;void&gt;;
+
+/**
+ * Data interface that must be given when opening the dialog
+ */
+export interface SchemaEmbedArrayEntryDialogData {
+  /** All entries of the field when opening the popup */
+  entries: Record&lt;string, any&gt;[];
+  /** Position of the entry to edit within the entries; a new entry is added if not given */
+  index?: number;
+  /** The &#x60;schema-embed-array&#x60; field holding the entries */
+  field: FormFieldConfig;
+  /** The inner fields of the embedded entries to edit */
+  columns: FormFieldConfig[];
+  /**
+   * The record holding the embedded entries, which is the context of the entry&#x27;s inner fields
+   * (e.g. for permissions); not set if the entries are edited without a record
+   */
+  entity?: Entity;
+  /** Whether the entry can only be viewed, not changed */
+  readonly?: boolean;
+  /** Called with the change of the entry when saving or deleting it */
+  applyChange: SchemaEmbedArrayApplyChange;
+  /**
+   * Whether &#x60;applyChange&#x60; only passes the changes on to be saved later (e.g. with a surrounding form),
+   * labelling the save button &quot;Apply&quot; instead of &quot;Save&quot;.
+   */
+  deferSave?: boolean;
+}
+
+/**
+ * Popup to view, edit or delete a single entry of a &#x60;schema-embed-array&#x60; field,
+ * looking like the {@link RowDetailsComponent} popup of related entities.
+ *
+ * The entry is edited like a record through the standard entity form logic,
+ * wrapped as {@link EmbeddedEntity}.
+ *
+ * Saving or deleting the entry passes only that change to &#x60;applyChange&#x60;
+ * (deciding how to persist it, based on the latest entries) and closes the popup with the change as result.
+ */
+@Component({
+  selector: &quot;app-schema-embed-array-entry-dialog&quot;,
+  templateUrl: &quot;./schema-embed-array-entry-dialog.component.html&quot;,
+  styleUrl: &quot;./schema-embed-array-entry-dialog.component.scss&quot;,
+  // no encapsulation to style the mat-form-fields nested in the field components, like EntityFormComponent does
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    FormsModule, // importing FormsModule prevents native form submission / page reload (e.g. pressing Enter in a field)
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatMenuModule,
+    DialogCloseComponent,
+    EntityFieldEditComponent,
+    FaDynamicIconComponent,
+  ],
+})
+export class SchemaEmbedArrayEntryDialogComponent {
+  protected readonly data &#x3D;
+    inject&lt;SchemaEmbedArrayEntryDialogData&gt;(MAT_DIALOG_DATA);
+  private readonly dialogRef &#x3D;
+    inject&lt;
+      MatDialogRef&lt;
+        SchemaEmbedArrayEntryDialogComponent,
+        SchemaEmbedArrayEntryChange
+      &gt;
+    &gt;(MatDialogRef);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+  private readonly entityFormService &#x3D; inject(EntityFormService);
+  private readonly unsavedChanges &#x3D; inject(UnsavedChangesService);
+  private readonly confirmation &#x3D; inject(ConfirmationDialogService);
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+
+  protected readonly isNew &#x3D; this.data.index &#x3D;&#x3D;&#x3D; undefined;
+
+  /** The edited entry as it was when opening the popup */
+  private readonly original: Record&lt;string, any&gt; | undefined &#x3D; this.isNew
+    ? undefined
+    : this.data.entries[this.data.index];
+
+  /**
+   * Whether the edited entry is stored in its record.
+   * An entry that was only added in a form of the record that is not saved yet is not,
+   * so its fields (e.g. with &#x60;readonlyAfterSet&#x60;) can still be corrected.
+   */
+  private readonly isStored &#x3D;
+    !this.isNew &amp;&amp;
+    (!this.data.entity ||
+      isStoredEntry(this.original, this.data.entity[this.data.field.id]));
+
+  /** The edited entry, wrapped to be edited like a record */
+  readonly entry: EmbeddedEntity &#x3D; createEmbeddedEntity(
+    getEmbeddedSchema(this.entitySchemaService, this.data.field) ?? new Map(),
+    {
+      record: this.data.entity,
+      field: this.data.field.id,
+      existing: this.isStored,
+    },
+    this.original,
+  );
+
+  private readonly entryFormResource &#x3D; resource({
+    loader: () &#x3D;&gt;
+      this.createEntryForm().catch((err) &#x3D;&gt; {
+        Logging.error(&quot;Could not create the form of an embedded entry&quot;, err);
+        // don&#x27;t leave an empty popup open whose Save does nothing
+        this.alertService.addDanger(
+          $localize&#x60;This entry cannot be edited because of an unexpected error.&#x60;,
+        );
+        this.dialogRef.close();
+        return undefined;
+      }),
+  });
+
+  /**
+   * Whether a save or delete is in progress (or done, while the popup closes),
+   * so that a double click does not apply the change twice
+   */
+  protected readonly saving &#x3D; signal(false);
+
+  /** The form of the entry, available once created */
+  readonly entryForm &#x3D; computed&lt;EntityForm&lt;EmbeddedEntity&gt; | undefined&gt;(() &#x3D;&gt;
+    this.entryFormResource.value(),
+  );
+
+  constructor() {
+    // same as the popup of related entities: ask before discarding changes when clicking outside
+    this.dialogRef.disableClose &#x3D; true;
+    this.dialogRef
+      .backdropClick()
+      .pipe(takeUntilDestroyed())
+      .subscribe(() &#x3D;&gt;
+        this.closeUnlessUnsavedChangesKept().catch((err) &#x3D;&gt;
+          Logging.error(&quot;Could not close the popup of an embedded entry&quot;, err),
+        ),
+      );
+  }
+
+  private async closeUnlessUnsavedChangesKept() {
+    // only this popup&#x27;s changes count, not those of a form it was opened from
+    const entryForm &#x3D; this.entryForm();
+    if (
+      !entryForm ||
+      (await this.unsavedChanges.checkUnsavedChanges(entryForm))
+    ) {
+      this.dialogRef.close();
+    }
+  }
+
+  private async createEntryForm(): Promise&lt;EntityForm&lt;EmbeddedEntity&gt;&gt; {
+    const entryForm &#x3D; await this.entityFormService.createEntityForm(
+      this.data.columns,
+      this.entry,
+      this.destroyRef,
+      // without a record, there are no permissions to check the entry against
+      /* withPermissionCheck */ !!this.data.entity,
+      // default values for new entries are not supported yet
+      /* withDefaultValues */ false,
+    );
+    if (this.data.readonly) {
+      entryForm.formGroup.disable();
+    }
+    return entryForm;
+  }
+
+  async save() {
+    await this.runExclusively(() &#x3D;&gt; this.applyEditedEntry());
+  }
+
+  /** @returns whether the popup is closed */
+  private async applyEditedEntry(): Promise&lt;boolean&gt; {
+    const entryForm &#x3D; this.entryForm();
+    if (!entryForm) {
+      return false;
+    }
+    if (!this.isNew &amp;&amp; !entryForm.formGroup.dirty) {
+      // nothing changed
+      this.cancel();
+      return true;
+    }
+
+    let edited: EmbeddedEntity;
+    try {
+      edited &#x3D; await this.entityFormService.applyChanges(entryForm, this.entry);
+    } catch (err) {
+      // invalid fields are highlighted in the form, other errors need an alert
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
+      return false;
+    }
+
+    const entry &#x3D; edited.toEntryValue(this.original);
+    if (this.isNew &amp;&amp; Object.values(entry).every(isEmptyValue)) {
+      // nothing entered, don&#x27;t add a blank entry
+      this.cancel();
+      return true;
+    }
+
+    if (this.isStored) {
+      // keeps the entry&#x27;s fields locked when it is opened again before its record is saved
+      markStoredEntry(entry);
+    }
+    return this.applyChange({
+      entry,
+      index: this.data.index,
+      original: this.original,
+    });
+  }
+
+  async delete() {
+    const confirmed &#x3D; await this.confirmation.getConfirmation(
+      $localize&#x60;:Delete confirmation title:Delete?&#x60;,
+      $localize&#x60;:Delete confirmation text for an entry of an embedded table:Are you sure you want to delete this entry?&#x60;,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    await this.runExclusively(() &#x3D;&gt;
+      this.applyChange({
+        delete: true,
+        index: this.data.index,
+        original: this.original,
+      }),
+    );
+  }
+
+  /**
+   * Run the action unless another one is in progress.
+   * Clicks stay blocked once the action closed the popup (during its close animation).
+   */
+  private async runExclusively(action: () &#x3D;&gt; Promise&lt;boolean&gt;) {
+    if (this.saving()) {
+      return;
+    }
+    this.saving.set(true);
+    let closed &#x3D; false;
+    try {
+      closed &#x3D; await action();
+    } finally {
+      if (!closed) {
+        this.saving.set(false);
+      }
+    }
+  }
+
+  cancel() {
+    this.discardUnsavedChanges();
+    this.dialogRef.close();
+  }
+
+  private discardUnsavedChanges() {
+    const entryForm &#x3D; this.entryForm();
+    if (entryForm) {
+      this.unsavedChanges.setUnsavedChanges(entryForm, false);
+    }
+  }
+
+  /** @returns whether the popup is closed */
+  private async applyChange(
+    change: SchemaEmbedArrayEntryChange,
+  ): Promise&lt;boolean&gt; {
+    try {
+      await this.data.applyChange(change);
+      this.discardUnsavedChanges();
+      this.dialogRef.close(change);
+      return true;
+    } catch (err) {
+      // e.g. validation errors of the whole property are not visible in this popup&#x27;s fields, so always show an alert
+      this.alertService.addDanger(err.message);
+      return false;
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'SchemaEmbedArrayEntryDialogData.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

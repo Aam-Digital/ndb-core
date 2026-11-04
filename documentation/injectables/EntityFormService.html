@@ -187,6 +187,12 @@ new changes correctly to the entity.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#applyChanges" >applyChanges</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#confirmValidity" >confirmValidity</a>
                             </li>
@@ -233,6 +239,119 @@ new changes correctly to the entity.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="applyChanges"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>applyChanges</b></span>
+                        <a href="#applyChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>applyChanges&lt;T&gt;(entityForm: <a href="../interfaces/EntityForm.html" target="_self">EntityForm&lt;T&gt;</a>, entity: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="309"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:309</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Apply the changes of the formGroup to a copy of the entity, without saving it.
+Like <a href="saveChanges">saveChanges</a>, the form has to be valid (see <a href="confirmValidity">confirmValidity</a>)
+and empty values are removed and strings trimmed.
+Used where the record holding the changes is saved by someone else
+(e.g. an <a href="../classes/EmbeddedEntity.html">EmbeddedEntity</a> entry, which is saved as part of its record).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityForm</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntityForm.html" target="_self" >EntityForm&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The form holding the changes</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entity on which the changes should be applied (not modified)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>a copy of the input entity with the changes from the form group</p>
+
+                            </div>
+                            <div class="io-description">
+                                <b>Throws :</b>
+                                <ul>
+                                        <li><p>InvalidFormFieldError if a field of the form is invalid</p>
+</li>
+                                </ul>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="confirmValidity"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -251,8 +370,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="345"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:345</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="329"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:329</a></div>
                         </td>
                     </tr>
 
@@ -332,8 +451,8 @@ or its only errors are warnings (marked with <code>warning: true</code>, e.g. a 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -492,8 +611,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -573,8 +692,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="428"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:428</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="412"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:412</a></div>
                         </td>
                     </tr>
 
@@ -663,8 +782,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="299"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:299</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="258"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:258</a></div>
                         </td>
                     </tr>
 
@@ -773,7 +892,6 @@ import { filter } from &quot;rxjs/operators&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { ConfirmationDialogService } from &quot;../confirmation-dialog/confirmation-dialog.service&quot;;
 import { CustomYesNoButtons } from &quot;../confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
-import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DefaultValueService } from &quot;../../default-values/default-value-service/default-value.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import {
@@ -783,7 +901,6 @@ import {
   TypedFormGroup,
 } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
-import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 import { revalidateOnParentLinkChange } from &quot;../../basic-datatypes/date-range/within-parent-validator&quot;;
 
 /**
@@ -816,7 +933,7 @@ export class EntityFormService {
     const fullField &#x3D; toFormFieldConfig(formField);
 
     try {
-      return this.addSchemaToFormField(
+      return this.entitySchemaService.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
       );
@@ -824,45 +941,6 @@ export class EntityFormService {
       throw new Error(
         &#x60;Could not create form config for ${fullField?.id}: ${err}&#x60;,
       );
-    }
-  }
-
-  private addSchemaToFormField(
-    formField: FormFieldConfig,
-    propertySchema: EntitySchemaField | undefined,
-  ): FormFieldConfig {
-    // formField config has precedence over schema
-    const fullField &#x3D; Object.assign(
-      {},
-      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
-      formField,
-    );
-
-    fullField.editComponent &#x3D;
-      fullField.editComponent ||
-      this.entitySchemaService.getComponent(propertySchema, &quot;edit&quot;);
-    fullField.viewComponent &#x3D;
-      fullField.viewComponent ||
-      this.entitySchemaService.getComponent(propertySchema, &quot;view&quot;);
-
-    fullField.label &#x3D; fullField.label || fullField.labelShort;
-
-    this.resolveTranslatableLabels(fullField);
-
-    return fullField;
-  }
-
-  /**
-   * Config loaded through ConfigService is already resolved, but the runtime
-   * schema can hold a translation map while an admin has configured
-   * translations that are not saved to the config document yet.
-   */
-  private resolveTranslatableLabels(field: FormFieldConfig) {
-    for (const property of [&quot;label&quot;, &quot;labelShort&quot;, &quot;description&quot;]) {
-      if (field[property] &#x3D;&#x3D;&#x3D; undefined) {
-        continue;
-      }
-      field[property] &#x3D; resolveLocaleText(field[property]);
     }
   }
 
@@ -1055,13 +1133,10 @@ export class EntityFormService {
   ): Promise&lt;T&gt; {
     const form: EntityFormGroup&lt;T&gt; &#x3D; entityForm.formGroup;
 
-    if (!(await this.confirmValidity(entityForm))) {
-      throw new InvalidFormFieldError();
-    }
-
+    const updatedEntity &#x3D; await this.applyChanges(entityForm, entity);
+    // copied only after the validity check, which may wait for the user to confirm warnings:
+    // changes synced into the entity meanwhile are not changes of this save
     const originalEntity &#x3D; entity.copy();
-    const updatedEntity &#x3D; this.createUpdatedEntity(entity, form);
-    updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
     try {
@@ -1089,6 +1164,34 @@ export class EntityFormService {
       new EntityFormSavedEvent(entity, originalEntity),
     );
     return entity;
+  }
+
+  /**
+   * Apply the changes of the formGroup to a copy of the entity, without saving it.
+   * Like {@link saveChanges}, the form has to be valid (see {@link confirmValidity})
+   * and empty values are removed and strings trimmed.
+   * Used where the record holding the changes is saved by someone else
+   * (e.g. an {@link EmbeddedEntity} entry, which is saved as part of its record).
+   *
+   * @param entityForm The form holding the changes
+   * @param entity The entity on which the changes should be applied (not modified)
+   * @returns a copy of the input entity with the changes from the form group
+   * @throws InvalidFormFieldError if a field of the form is invalid
+   */
+  public async applyChanges&lt;T extends Entity&gt;(
+    entityForm: EntityForm&lt;T&gt;,
+    entity: T,
+  ): Promise&lt;T&gt; {
+    if (!(await this.confirmValidity(entityForm))) {
+      throw new InvalidFormFieldError();
+    }
+
+    const updatedEntity &#x3D; this.createUpdatedEntity(
+      entity,
+      entityForm.formGroup,
+    );
+    updatedEntity.assertValid();
+    return updatedEntity;
   }
 
   /**

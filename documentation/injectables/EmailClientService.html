@@ -227,8 +227,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -422,6 +422,7 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EmailDatatype } from &quot;#src/app/core/basic-datatypes/string/email.datatype&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { getSavedRecord } from &quot;#src/app/core/entity/model/embedded-entity&quot;;
 import { inject, Injectable } from &quot;@angular/core&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import {
@@ -484,9 +485,10 @@ export class EmailClientService {
       return false;
     }
 
-    const filteredEntities &#x3D; entityList.filter(
-      (e) &#x3D;&gt; !excludedEntities.includes(e),
-    );
+    // for an embedded entry (e.g. a row of an embedded table), the template and note refer to the record holding it
+    const filteredEntities &#x3D; entityList
+      .filter((e) &#x3D;&gt; !excludedEntities.includes(e))
+      .map(getSavedRecord);
 
     const result &#x3D; await this.selectTemplate(
       filteredEntities[0],

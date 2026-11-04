@@ -666,7 +666,19 @@ export class AdminEntityFieldComponent implements OnInit {
         this.additionalForm.setValue(this.buildAttendanceAdditional(types));
       });
 
-    this.updateDataTypeAdditional(this.schemaFieldsForm.get(&quot;dataType&quot;).value);
+    const initialDataType &#x3D; this.schemaFieldsForm.get(&quot;dataType&quot;).value;
+    if (
+      [
+        ConfigurableEnumDatatype.dataType,
+        EntityDatatype.dataType,
+        AttendanceDatatype.dataType,
+        DateRangeDatatype.dataType,
+      ].includes(initialDataType)
+    ) {
+      this.updateDataTypeAdditional(initialDataType);
+    }
+    // for other dataTypes (e.g. &quot;schema-embed-array&quot;) this dialog has no UI for &#x60;additional&#x60;:
+    // keep it as is when opening, so that saving does not wipe it. It is only reset on a dataType change.
     this.schemaFieldsForm
       .get(&quot;dataType&quot;)
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))

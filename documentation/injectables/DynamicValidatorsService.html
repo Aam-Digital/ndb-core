@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="167"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:167</a></div>
                         </td>
                     </tr>
 
@@ -333,6 +333,7 @@ import { uniquePropertyValidator } from &quot;../unique-property-validator/uniqu
 import { EntityMapperService } from &quot;../../../entity/entity-mapper/entity-mapper.service&quot;;
 import { buildReadonlyValidator } from &quot;./readonly-after-set.validator&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
+import { EmbeddedEntity } from &quot;../../../entity/model/embedded-entity&quot;;
 import { AsyncPromiseValidatorFn } from &quot;./validator-types&quot;;
 import { withinParentValidator } from &quot;../../../basic-datatypes/date-range/within-parent-validator&quot;;
 import {
@@ -434,6 +435,14 @@ export class DynamicValidatorsService {
           Logging.warn(
             &quot;Trying to generate uniqueId validator without fieldId context&quot;,
           );
+          return null;
+        }
+
+        if (entity instanceof EmbeddedEntity) {
+          // not supported (yet) for inner fields of embedded entries: unique among which entries is not decided
+          Logging.debug(&quot;Skipping uniqueId validator of an embedded entry&quot;, {
+            fieldId,
+          });
           return null;
         }
 
