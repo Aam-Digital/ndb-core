@@ -95,12 +95,14 @@ export function selectionConditionValidator(
     }
 
     const matches = matchesSelectionCondition(resolved, filterService);
-    const selected = await Promise.all(
-      selectedIds.map((id) =>
-        entityMapper.load(entityTypes[0], id).catch(() => undefined),
-      ),
+    // one read of the whole type instead of one per selected record (a field can link to many)
+    const records = new Map<string, Entity>(
+      (
+        await entityMapper.loadType(entityTypes[0]).catch((): Entity[] => [])
+      ).map((record) => [record.getId(), record]),
     );
-    const notMatching = selected
+    const notMatching = selectedIds
+      .map((id) => records.get(Entity.createPrefixedId(entityTypes[0], id)))
       .filter((record) => record && !matches(record))
       .map((record) => record.toString());
     if (notMatching.length === 0) {

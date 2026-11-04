@@ -331,7 +331,8 @@ describe("DynamicValidatorsService", () => {
 
     it("returns a warning naming the selected records that do not match, compared with the record being edited", async () => {
       expect(
-        await validate([anna.getId(), ben.getId()], sameLocation, {
+        // a legacy id without the type prefix is found as well
+        await validate([anna.getId(), ben.getId(true)], sameLocation, {
           other: "BERLIN",
         }),
       ).toEqual({
@@ -341,6 +342,9 @@ describe("DynamicValidatorsService", () => {
             "Not matching the selection conditions of this field: Ben",
         },
       });
+      // one read of the linked type, not one per selected record
+      expect(mockedEntityMapper.loadType).toHaveBeenCalledTimes(1);
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
     });
 
     it("checks the record types of the field in the form, which can differ from the schema", async () => {
