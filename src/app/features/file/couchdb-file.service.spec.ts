@@ -19,7 +19,6 @@ import {
   throwError,
 } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
-import { Logging } from "../../core/logging/logging.service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";

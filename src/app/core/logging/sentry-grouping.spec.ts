@@ -4,10 +4,7 @@ import { processSentryEvent } from "./sentry-event-processing";
 import { resetReportedEvents } from "./report-once";
 import { normalizeErrorValue } from "./sentry-grouping";
 import { ServerError } from "#src/app/utils/backend-errors";
-import {
-  databaseError,
-  DatabaseException,
-} from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";

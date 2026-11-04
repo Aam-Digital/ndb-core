@@ -1,4 +1,4 @@
-import { LoggedError, NamedError } from "./reported-errors";
+import { NamedError } from "./reported-errors";
 
 /**
  * What kind of failure an error is, declared by its {@link TypedError} class (see

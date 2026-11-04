@@ -9,10 +9,7 @@ import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { NotPermittedError } from "#src/app/core/permissions/not-permitted.error";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
 import { classifyReportedError } from "./uncaught-error-classification";
-import {
-  databaseError,
-  DatabaseException,
-} from "../database/pouchdb/database-exception";
+import { databaseError } from "../database/pouchdb/database-exception";
 import { SyncFailedError } from "../database/pouchdb/synced-pouch-database";
 import { HttpErrorResponse } from "@angular/common/http";
 import { toTypedHttpError } from "#src/app/utils/typed-http-error.interceptor";

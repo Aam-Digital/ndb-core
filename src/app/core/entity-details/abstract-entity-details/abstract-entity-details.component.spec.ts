@@ -11,7 +11,6 @@ import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 import { AlertService } from "../../alerts/alert.service";
-import { Logging } from "../../logging/logging.service";
 import { databaseError } from "../../database/pouchdb/database-exception";
 
 type EntityActionsServiceMock = {
