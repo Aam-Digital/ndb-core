@@ -123,18 +123,24 @@ describe("FilterService", () => {
     expect(relation.childId).toBe(child.getId());
   });
 
-  it("should support patching with date values", () => {
-    const filter = { date: "2022-02-03" } as DataFilter<Note>;
-    const predicate = service.getFilterPredicate(filter);
-    const note = new Note();
+  it.each(["date", "date-only"])(
+    "patches a %s field with the day of the filter in local time",
+    (dataType) => {
+      @DatabaseEntity(`DatePatchTestEntity-${dataType}`)
+      class DatePatchTestEntity extends Entity {}
+      DatePatchTestEntity.schema.set("day", { dataType });
+      const filter = { day: "2022-02-03" } as DataFilter<DatePatchTestEntity>;
+      const predicate = service.getFilterPredicate(filter);
+      const record = new DatePatchTestEntity();
 
-    expect(predicate(note)).toBe(false);
+      expect(predicate(record)).toBe(false);
 
-    service.alignEntityWithFilter(note, filter);
+      service.alignEntityWithFilter(record, filter);
 
-    expect(note.date).toBeInstanceOf(Date);
-    expect(predicate(note)).toBe(true);
-  });
+      expect(record["day"]).toEqual(moment("2022-02-03").toDate());
+      expect(predicate(record)).toBe(true);
+    },
+  );
 
   it("should support patching with array values", () => {
     const child = new TestEntity();
@@ -171,6 +177,19 @@ describe("FilterService", () => {
     [
       "nothing, if an $in list offers multiple options",
       { subject: { $in: ["A", "B"] } },
+      "subject",
+      undefined,
+    ],
+    [
+      "nothing, for an empty value (of a 'not defined' condition)",
+      { subject: { $eq: null } },
+      "subject",
+      undefined,
+    ],
+    ["nothing, for an empty text", { subject: "" }, "subject", undefined],
+    [
+      "nothing, for a list as value",
+      { subject: ["A", "B"] },
       "subject",
       undefined,
     ],
@@ -212,6 +231,12 @@ describe("FilterService", () => {
       date: { $gte: "2022-01-02", $lt: "2022-01-04" },
     } as DataFilter<Note>);
     expect(notes.filter(predicate)).toEqual([n2, n3]);
+
+    // e.g. the date of the edited record, as a resolved `$current_record` placeholder
+    predicate = service.getFilterPredicate({
+      date: moment("2022-01-02").toDate(),
+    } as DataFilter<Note>);
+    expect(notes.filter(predicate)).toEqual([n2]);
   });
 
   it("should skip filters without a selection when combining them", () => {

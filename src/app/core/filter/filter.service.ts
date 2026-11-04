@@ -6,7 +6,11 @@ import {
   DataFilter,
   Filter as EntityFilter,
 } from "./filters/filters";
-import { createFilterPredicate } from "../../utils/filter-compare-utils";
+import {
+  createFilterPredicate,
+  isPlainObject,
+} from "../../utils/filter-compare-utils";
+import moment from "moment";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
 import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
@@ -159,7 +163,10 @@ export class FilterService {
           storedCondition["$elemMatch"],
         );
       } else if (innerPath.length === 0) {
-        const value = requiredValue(storedCondition, field.isArray);
+        const value = toStoredValue(
+          requiredValue(storedCondition, field.isArray),
+          field,
+        );
         if (value !== undefined) {
           entity[fieldId] = this.schemaService.valueToEntityFormat(
             field.isArray ? [value] : value,
@@ -202,9 +209,10 @@ export class FilterService {
     }
     let hasValue = false;
     for (const [innerPath, innerCondition] of Object.entries(innerConditions)) {
-      const value = requiredValue(
-        innerCondition,
-        innerFieldOfPath.get(innerPath)?.isArray,
+      const innerField = innerFieldOfPath.get(innerPath);
+      const value = toStoredValue(
+        requiredValue(innerCondition, innerField?.isArray),
+        innerField,
       );
       if (value !== undefined) {
         parentOfPath(storedEntry, innerPath)[innerPath.split(".").at(-1)] =
@@ -234,16 +242,19 @@ export class FilterService {
  * The one value a condition requires, or `undefined` if it allows several or none:
  * a plain value, `$eq` or a single option of `$in`;
  * for a multi-value field also these inside `$elemMatch`, for which a single-value field requires nothing.
+ * An empty value (of a "not defined" condition) or a list is not one value to set.
  */
 function requiredValue(condition: unknown, isArrayField: boolean): unknown {
   if (!isPlainObject(condition)) {
-    return condition;
+    return condition === null || condition === "" || Array.isArray(condition)
+      ? undefined
+      : condition;
   }
   if ("$eq" in condition) {
-    return condition["$eq"];
+    return requiredValue(condition["$eq"], false);
   }
   if (Array.isArray(condition["$in"]) && condition["$in"].length === 1) {
-    return condition["$in"][0];
+    return requiredValue(condition["$in"][0], false);
   }
   if (isArrayField && isPlainObject(condition["$elemMatch"])) {
     return requiredValue(condition["$elemMatch"], false);
@@ -251,8 +262,19 @@ function requiredValue(condition: unknown, isArrayField: boolean): unknown {
   return undefined;
 }
 
-function isPlainObject(value: unknown): value is object {
-  return !!value && typeof value === "object" && !Array.isArray(value);
+/**
+ * The value in the stored format of the field: a day ("YYYY-MM-DD") required for a `date` field (a timestamp)
+ * is the start of that day in local time, like the matching compares it.
+ */
+function toStoredValue(
+  value: unknown,
+  field: EntitySchemaField | undefined,
+): unknown {
+  if (field?.dataType !== "date" || typeof value !== "string") {
+    return value;
+  }
+  const day = moment(value, "YYYY-MM-DD", true);
+  return day.isValid() ? day.toISOString() : value;
 }
 
 /** the object holding the last segment of the path, created where missing */
