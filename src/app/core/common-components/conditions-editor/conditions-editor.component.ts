@@ -4,6 +4,8 @@ import {
   Output,
   EventEmitter,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   inject,
   computed,
   input,
@@ -73,7 +75,7 @@ import { asArray } from "app/utils/asArray";
     FaDynamicIconComponent,
   ],
 })
-export class ConditionsEditorComponent implements OnInit {
+export class ConditionsEditorComponent implements OnInit, OnChanges {
   @Input() conditions: any = {};
   @Input() entityConstructor?: EntityConstructor;
   @Input() disabled = false;
@@ -145,6 +147,13 @@ export class ConditionsEditorComponent implements OnInit {
     ];
     this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // the record type may only be chosen once the editor is shown (e.g. in a notification rule)
+    if (changes["entityConstructor"]?.firstChange === false) {
+      this.ngOnInit();
+    }
   }
 
   /**
