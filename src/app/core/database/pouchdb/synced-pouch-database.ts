@@ -23,8 +23,8 @@ import { NotAvailableOfflineError } from "../../session/not-available-offline.er
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
-import { classifyError } from "../../logging/error-classification";
-import { isConnectivityError } from "#src/app/utils/is-connectivity-error";
+import { isDocumentWriteError } from "./pouchdb-errors";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 /**
@@ -329,7 +329,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       db: this.dbName,
       ...lastSyncedBatchContext(lastSyncedDocIds),
     };
-    if (this.isDocumentWriteError(err)) {
+    if (isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
         context,
@@ -349,13 +349,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
 
-    if (isReplicationConnectivityError(err)) {
-      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (isReplicationUnauthorizedError(err)) {
-      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
-    } else {
-      Logging.warn(`sync failed`, { db: this.dbName }, err);
-    }
+    // at debug if offline or the session expired (see `Logging`): retried later
+    Logging.warn(`sync failed`, { db: this.dbName }, err);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -383,20 +378,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
       throw err;
     });
-  }
-
-  private isDocumentWriteError(err: any): boolean {
-    if (classifyError(err)) {
-      // e.g. "Failed to execute 'transaction' on 'IDBDatabase': The database
-      // connection is closing" is a broken local database, not a document
-      return false;
-    }
-    const message = err?.message || err?.reason || String(err);
-    return (
-      message.includes("Maximum call stack size exceeded") ||
-      message.includes("IDBObjectStore") ||
-      message.includes("Failed to execute")
-    );
   }
 
   /**
@@ -598,27 +579,10 @@ export class SyncFailedError extends NamedError {
   }
 }
 
-/** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends NamedError {
+/** Thrown internally when a sync is cancelled for making no progress (a stalled connection). */
+class SyncStalledError extends ConnectivityError {
   constructor() {
-    super("SyncStalledError", "Sync cancelled after making no progress");
+    super("Sync cancelled after making no progress");
+    this.name = "SyncStalledError";
   }
-}
-
-/**
- * Whether a replication with the server failed only because of the connection
- * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
- */
-export function isReplicationConnectivityError(err: any): boolean {
-  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
-  const message = err?.message || err?.reason || String(err);
-  return message.includes("getCheckpoint");
-}
-
-/**
- * Whether a replication with the server failed because the session expired:
- * the fetch layer already triggers a re-login.
- */
-export function isReplicationUnauthorizedError(err: any): boolean {
-  return err?.status === 401 || err?.statusCode === 401;
 }

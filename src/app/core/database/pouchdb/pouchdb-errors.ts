@@ -1,4 +1,7 @@
-import type { ErrorClassification } from "../../logging/error-classification";
+import {
+  classifyError,
+  type ErrorClassification,
+} from "../../logging/error-classification";
 import { errorText, isFailedFetch } from "#src/app/utils/backend-response";
 
 /**
@@ -75,4 +78,22 @@ export function classifyPouchDbError(
     return "local-storage";
   }
   return undefined;
+}
+
+/**
+ * Whether the local database could not store a document itself (e.g. one nested
+ * too deeply for IndexedDB), as opposed to a classified failure such as a broken
+ * local database ("Failed to execute 'transaction' on 'IDBDatabase': The database
+ * connection is closing").
+ */
+export function isDocumentWriteError(error: unknown): boolean {
+  if (classifyError(error) || classifyPouchDbError(error)) {
+    return false;
+  }
+  const text = errorText(error);
+  return (
+    text.includes("Maximum call stack size exceeded") ||
+    text.includes("IDBObjectStore") ||
+    text.includes("Failed to execute")
+  );
 }

@@ -1,6 +1,4 @@
 import {
-  ErrorClassification,
-  registerTypedError,
   TypedError,
   TypedErrorOptions,
 } from "#src/app/core/logging/error-classification";
@@ -11,12 +9,7 @@ import {
  * "exp not in future" by the database layer and the HTTP interceptor.
  */
 export class SessionExpiredError extends TypedError {
-  static readonly errorName = "SessionExpiredError";
-  static override readonly classification: ErrorClassification =
-    "session-expired";
-
   constructor(message: string, options?: TypedErrorOptions) {
-    super(SessionExpiredError.errorName, message, options);
+    super("SessionExpiredError", "session-expired", message, options);
   }
 }
-registerTypedError(SessionExpiredError);

@@ -1,8 +1,7 @@
 import type * as Sentry from "@sentry/angular";
-import { ErrorClassification, isTypedErrorName } from "./error-classification";
+import { classifyError, ErrorClassification } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import { LoggedError, NamedError } from "./reported-errors";
-import { errorText, textOf } from "#src/app/utils/backend-response";
 
 /**
  * Set a grouping fingerprint (and a matching title) where Sentry's default
@@ -13,6 +12,18 @@ import { errorText, textOf } from "#src/app/utils/backend-response";
  * @param classification of the event's error chain (see `classifyErrorChain`)
  */
 export function groupSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+  classification?: ErrorClassification,
+): Sentry.ErrorEvent {
+  groupByCause(event, hint, classification);
+  if (classification === "server-error") {
+    groupByStatusAndEndpoint(event);
+  }
+  return event;
+}
+
+function groupByCause(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
   classification?: ErrorClassification,
@@ -37,28 +48,19 @@ export function groupSentryEvent(
       : rewrappedNamedError(values, original);
 
   if (reportedError) {
-    const failedRequest = failedRequestPassedOn(
-      reportedError,
+    // a connectivity failure itself (e.g. an unhandled `ConnectivityError`)
+    if (
+      chainClassifications[values.indexOf(reportedError)] === "connectivity"
+    ) {
+      return groupAsNetworkError(event, thrown, reportedError);
+    }
+    return groupByRootCause(
+      event,
       values,
       chainClassifications,
-      original,
+      reportedError,
+      rootCauseIndex(errors),
     );
-    if (!failedRequest) {
-      return groupByRootCause(
-        event,
-        values,
-        chainClassifications,
-        reportedError,
-        rootCauseIndex(values, errors),
-      );
-    }
-    if (original instanceof LoggedError) {
-      event.tags = {
-        ...event.tags,
-        logged_message: truncateTag(normalizeErrorValue(thrown.value)),
-      };
-    }
-    return groupAsNetworkError(event, thrown, failedRequest);
   }
 
   if (classification === "connectivity") {
@@ -97,17 +99,11 @@ function errorsOfExceptions(
 
 /**
  * The index of the root cause: the innermost of our typed errors, as the foreign
- * error a boundary converted into it (its `cause`) only details it; else the
- * innermost exception.
+ * error a boundary converted into it (its `cause`) only details it; else (also
+ * without the error objects) the innermost exception.
  */
-function rootCauseIndex(
-  values: Sentry.Exception[],
-  errors: Error[] | undefined,
-): number {
-  const index = errors
-    ? errors.findIndex((error) => isTypedErrorName(error.name))
-    : values.findIndex((value) => isTypedErrorName(value.type));
-  return Math.max(index, 0);
+function rootCauseIndex(errors: Error[] | undefined): number {
+  return Math.max(errors?.findIndex((error) => classifyError(error)) ?? 0, 0);
 }
 
 /** The classification of an exception as Sentry serialized it, without the error object. */
@@ -123,50 +119,6 @@ export function classifyException(
 /** Whether nothing caught the reported error: it reached Angular's `ErrorHandler` or the window. */
 export function isUnhandled(event: Sentry.ErrorEvent): boolean {
   return event.exception?.values?.at(-1)?.mechanism?.handled === false;
-}
-
-/**
- * The failed request that our error only passes on, if that is all it reports:
- * a `DatabaseException` that is a connectivity failure itself, or one logged
- * with a message (whatever component logged it, it is the same dropped connection).
- */
-function failedRequestPassedOn(
-  reportedError: Sentry.Exception,
-  values: Sentry.Exception[],
-  chainClassifications: (ErrorClassification | undefined)[],
-  original: unknown,
-): Sentry.Exception | undefined {
-  if (chainClassifications[values.indexOf(reportedError)] === "connectivity") {
-    return reportedError;
-  }
-  if (!(original instanceof LoggedError)) {
-    return undefined;
-  }
-  if (!(original.cause instanceof Error)) {
-    return loggedForeignFailedRequest(original.cause);
-  }
-  const causeIndex = values.length - 2;
-  return causeIndex >= 0 && chainClassifications[causeIndex] === "connectivity"
-    ? values[causeIndex]
-    : undefined;
-}
-
-/**
- * A logged failure that is not an `Error` (e.g. an `HttpErrorResponse` of a request
- * to another service without response), which Sentry does not serialize as an
- * exception of the event: as the exception it would be, if it is a failed request.
- */
-function loggedForeignFailedRequest(
-  cause: unknown,
-): Sentry.Exception | undefined {
-  if (classifyReportedError(cause) !== "connectivity") {
-    return undefined;
-  }
-  const { name, message } = (cause ?? {}) as Record<string, unknown>;
-  return {
-    type: textOf(name) || "Error",
-    value: textOf(message) || errorText(cause),
-  };
 }
 
 /**
@@ -234,16 +186,6 @@ function groupByRootCause(
     thrown.value = reportedError.value;
     return event;
   }
-  // as is one passing on the classification of the typed error it wraps (a DatabaseException)
-  if (
-    rootClassification &&
-    chainClassifications[reportedIndex] === rootClassification
-  ) {
-    event.fingerprint = rootKey;
-    thrown.type = rootCause.type;
-    thrown.value = normalizeErrorValue(rootCause.value);
-    return event;
-  }
 
   if (!rootClassification || rootClassification === "connectivity") {
     const rootText =
@@ -263,6 +205,32 @@ function groupByRootCause(
   thrown.type = rootCause.type;
   thrown.value = normalizeErrorValue(rootCause.value);
   return event;
+}
+
+/**
+ * A server fault (whoever logged it) gets an issue per status and endpoint: grouped by the
+ * root cause alone, a new failing endpoint would otherwise not open an issue
+ * of its own. The endpoint is the masked `requestPath` the boundaries add.
+ */
+function groupByStatusAndEndpoint(event: Sentry.ErrorEvent) {
+  const status = event.extra?.status;
+  if (typeof status !== "number") {
+    return;
+  }
+  const requestPath = event.extra?.requestPath;
+  const key = [String(status)];
+  if (typeof requestPath === "string") {
+    key.push(requestPath);
+    event.tags = { ...event.tags, request_path: truncateTag(requestPath) };
+  }
+  event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
+  if (event.fingerprint?.length) {
+    event.fingerprint = [...event.fingerprint, ...key];
+  }
+  const thrown = event.exception?.values?.at(-1);
+  if (thrown) {
+    thrown.value = `${thrown.value} (HTTP ${key.join(" ")})`;
+  }
 }
 
 /**

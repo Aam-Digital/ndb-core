@@ -361,7 +361,7 @@ export class EntityDatatype extends StringDatatype {
             ),
           );
         } catch (error) {
-          Logging.error("Error loading entities for import mapping:", error);
+          Logging.error("Error loading entities for import mapping", error);
           // cache the empty result so the failing type is not retried for every
           // other field referencing it in this same import run
           context.setEntitiesOfType(type, []);

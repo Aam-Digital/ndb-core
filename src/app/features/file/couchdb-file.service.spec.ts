@@ -19,7 +19,6 @@ import {
   throwError,
 } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
-import { Logging } from "../../core/logging/logging.service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -220,7 +219,7 @@ describe("CouchdbFileService", () => {
   it.each([
     [404, false], // the file field points to a missing attachment
     [0, false], // offline
-    [401, false], // expired session
+    [401, true], // without a reason (an expired session says so, see the interceptor)
     [403, false], // a file the user may not read
     [500, true],
   ])(
@@ -232,11 +231,13 @@ describe("CouchdbFileService", () => {
         url: `${environment.DB_PROXY_PREFIX}/app-attachments/failing/logo`,
       });
       mockHttp.get.mockReturnValue(throwError(() => failure));
-      vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
-      const warn = vi
-        .spyOn(Logging, "warn")
-        .mockImplementation(() => undefined);
-      warn.mockClear();
+      // through the real `Logging`, which decides whether a failure is expected
+      const debug = vi.spyOn(console, "debug").mockImplementation(() => {});
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      onTestFinished(() => {
+        debug.mockRestore();
+        warn.mockRestore();
+      });
 
       await firstValueFrom(
         service.loadFile(new Entity(`failing-${status}`), "logo"),
@@ -349,37 +350,31 @@ describe("CouchdbFileService", () => {
     );
   });
 
-  it("should show a distinct warning alert if file download returns 401 (not authenticated)", () => {
-    mockHttp.get.mockReturnValue(
-      throwError(
-        () => new HttpErrorResponse({ status: HttpStatusCode.Unauthorized }),
-      ),
-    );
-    const entity = new Entity("testId");
-    entity["testProp"] = "some-file.pdf";
+  it.each([
+    [HttpStatusCode.Forbidden, { error: "forbidden" }],
+    [HttpStatusCode.Unauthorized, { error: "User is not permitted" }],
+  ])(
+    "should show a distinct warning alert if file download returns %s (not permitted)",
+    (status, body) => {
+      // as the HTTP interceptor delivers a failed request to the database
+      const failure = toTypedHttpError(
+        new HttpErrorResponse({ status, error: body }),
+        {
+          method: "GET",
+          url: `${environment.DB_PROXY_PREFIX}/app-attachments/testId/testProp`,
+        },
+      );
+      mockHttp.get.mockReturnValue(throwError(() => failure));
+      const entity = new Entity("testId");
+      entity["testProp"] = "some-file.pdf";
 
-    service.showFile(entity, "testProp");
+      service.showFile(entity, "testProp");
 
-    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
-      expect.stringContaining("permission"),
-    );
-  });
-
-  it("should show a distinct warning alert if file download returns 403 (not permitted)", () => {
-    mockHttp.get.mockReturnValue(
-      throwError(
-        () => new HttpErrorResponse({ status: HttpStatusCode.Forbidden }),
-      ),
-    );
-    const entity = new Entity("testId");
-    entity["testProp"] = "some-file.pdf";
-
-    service.showFile(entity, "testProp");
-
-    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
-      expect.stringContaining("permission"),
-    );
-  });
+      expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+        expect.stringContaining("permission"),
+      );
+    },
+  );
 
   it("should not let a second subscriber to the progress observable (e.g. the snackbar's AsyncPipe) see an unhandled error", () => {
     const events = new Subject<HttpEvent<Blob>>();

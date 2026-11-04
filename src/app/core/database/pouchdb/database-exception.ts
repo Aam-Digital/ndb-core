@@ -23,15 +23,10 @@ import { LocalStorageError, WriteConflictError } from "./database-errors";
 const IDENTIFYING_PROPERTIES = new Set(["name", "message", "stack", "cause"]);
 
 /**
- * This overwrites PouchDB's error class which only logs limited information.
- *
- * It is where errors of the (local or remote) PouchDB enter the app: a raw
- * error that is one of the classified failures is converted into its typed
- * error (see {@link toTypedDatabaseError}), which is kept as the `cause`, as is
- * a typed error thrown by our own code underneath (e.g. a `ServerError` of the
- * remote database's fetch). It takes over the wrapped error's properties
- * (`status`, `reason`, ...), so that callers can keep checking them, but keeps
- * its own name, message and cause.
+ * An error of the (local or remote) PouchDB that is not one of the classified
+ * failures (e.g. a `404 missing`), as thrown by {@link databaseError}.
+ * It takes over the error's properties (`status`, `reason`, ...), so that callers
+ * can keep checking them, but keeps its own name and message.
  */
 export class DatabaseException extends NamedError {
   entityId?: string;
@@ -40,15 +35,7 @@ export class DatabaseException extends NamedError {
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    const typed = toTypedDatabaseError(error);
-    const cause = typed instanceof NamedError ? typed : undefined;
-    super(
-      "DatabaseException",
-      cause?.message || error?.message || "Database error",
-      {
-        cause,
-      },
-    );
+    super("DatabaseException", error?.message || "Database error");
 
     this.entityId = entityId;
     for (const [key, value] of Object.entries(error ?? {})) {
@@ -57,6 +44,21 @@ export class DatabaseException extends NamedError {
       }
     }
   }
+}
+
+/**
+ * Where errors of the (local or remote) PouchDB enter the app: the error to throw
+ * for one. A classified failure is converted into its typed error (see
+ * {@link toTypedDatabaseError}), as is a typed error thrown by our own code
+ * underneath (e.g. a `ServerError` of the remote database's fetch) passed on;
+ * any other error becomes a {@link DatabaseException}.
+ * @param entityId the document (or query) concerned, reported as extra data
+ */
+export function databaseError(error: unknown, entityId?: string): Error {
+  const typed = toTypedDatabaseError(error, entityId);
+  return typed instanceof NamedError
+    ? typed
+    : new DatabaseException(error as PouchDB.Core.Error, entityId);
 }
 
 /** The typed error that a raw error of the database of each classification is converted into. */
@@ -94,7 +96,10 @@ type RawDatabaseError = {
  * Any other error is returned unchanged (e.g. a `404 missing`), as is one of our
  * errors (e.g. a `ConnectivityError` of the remote database's fetch).
  */
-export function toTypedDatabaseError(error: unknown): unknown {
+export function toTypedDatabaseError(
+  error: unknown,
+  entityId?: string,
+): unknown {
   if (!error || typeof error !== "object" || error instanceof NamedError) {
     return error;
   }
@@ -111,6 +116,7 @@ export function toTypedDatabaseError(error: unknown): unknown {
     {
       status: typeof raw.status === "number" ? raw.status : undefined,
       cause: error,
+      details: entityId ? { entityId } : undefined,
     },
   );
 }

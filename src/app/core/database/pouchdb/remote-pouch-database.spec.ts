@@ -1,8 +1,8 @@
+import { classifyErrorChain } from "../../logging/error-classification";
 import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
 import { SessionExpiredError } from "#src/app/core/session/session-expired.error";
-import { isExpiredSessionError } from "#src/app/utils/is-expired-session-error";
 import type { Mock } from "vitest";
-import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PouchDatabase } from "./pouch-database";
 import { PartialBulkWriteError } from "../database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
@@ -184,7 +184,7 @@ describe("RemotePouchDatabase tests", () => {
     expect(result._id).toBe("Entity:ABC");
   });
 
-  it("should surface a persistent transient read failure as a DatabaseException after exhausting retries", async () => {
+  it("should surface a persistent transient read failure as a connectivity failure after exhausting retries", async () => {
     (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
     database.init("");
     const pouchDB = (database as any).pouchDB;
@@ -195,7 +195,7 @@ describe("RemotePouchDatabase tests", () => {
       throw new DOMException("The operation was aborted.", "AbortError");
     });
 
-    await expect(database.get("Entity:ABC")).rejects.toThrow(DatabaseException);
+    await expect(database.get("Entity:ABC")).rejects.toThrow(ConnectivityError);
     // 1 initial + 2 retries = 3 total
     expect(calls).toBe(3);
   });
@@ -403,6 +403,23 @@ describe("RemotePouchDatabase tests", () => {
     },
   );
 
+  it("should fail as not permitted without trying to log in if an anonymous session gets a 401", async () => {
+    (database as RemotePouchDatabase).init(undefined, {
+      unauthenticatedSession: true,
+    });
+    (PouchDB.fetch as Mock).mockImplementationOnce(
+      async () =>
+        new Response('{ "error": "unauthorized" }', {
+          status: HttpStatusCode.Unauthorized,
+        }),
+    );
+
+    const failure = await database.get("Entity:ABC").catch((err) => err);
+
+    expect(classifyErrorChain(failure)).toBe("not-permitted");
+    expect(mockAuthService.login).not.toHaveBeenCalled();
+  });
+
   describe("session renewal alert", () => {
     let mockAlertService: { addWarning: Mock };
 
@@ -494,10 +511,8 @@ describe("RemotePouchDatabase tests", () => {
 
         const failure = await database.get("Entity:ABC").catch((err) => err);
 
-        expect(failure).toBeInstanceOf(DatabaseException);
+        expect(failure).toBeInstanceOf(SessionExpiredError);
         expect(failure.status).toBe(HttpStatusCode.Unauthorized);
-        expect(failure.cause).toBeInstanceOf(SessionExpiredError);
-        expect(isExpiredSessionError(failure)).toBe(true);
         warn.mockRestore();
       },
     );
@@ -678,89 +693,29 @@ describe("RemotePouchDatabase tests", () => {
     });
   });
 
-  describe("4XX logging", () => {
-    let warn: Mock;
-
-    beforeEach(() => {
-      // spy set up after the outer beforeEach, and cleared per test:
-      // vi.spyOn returns the existing spy when one is already installed
-      warn = vi.spyOn(Logging, "warn") as unknown as Mock;
-      warn.mockClear();
+  it("should log a 4XX response only for debugging, with its status and method: the caller reports the failure", async () => {
+    // AAM-DIGITAL-77H: a Response itself is logged as `{}`, without its status
+    const warn = vi.spyOn(Logging, "warn");
+    const debug = vi.spyOn(Logging, "debug").mockImplementation(() => {});
+    onTestFinished(() => {
+      warn.mockRestore();
+      debug.mockRestore();
     });
+    database.init("");
+    (PouchDB.fetch as Mock).mockResolvedValueOnce(
+      new Response("{}", { status: HttpStatusCode.BadRequest }),
+    );
 
-    afterEach(() => {
-      // the shared teardown destroys the database, which fetches - leave the
-      // mock succeeding again so it does not fail on this test's 4XX response
-      (PouchDB.fetch as Mock).mockReturnValue(
-        Promise.resolve(new Response("{}", { status: HttpStatusCode.Ok })),
-      );
-    });
+    await (database as any).defaultFetch(READ_URL, { headers: {} });
 
-    /** The DB response warnings logged, ignoring anything else the app logs. */
-    const warningsLogged = () =>
-      warn.mock.calls.filter(([message]) =>
-        String(message).startsWith("Unexpected DB response"),
-      );
-
-    const fetch4xx = async (status: number, method?: string) => {
-      database.init("");
-      (PouchDB.fetch as Mock).mockReturnValue(
-        Promise.resolve(new Response("{}", { status })),
-      );
-      await (database as any).defaultFetch(
-        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-        { headers: {}, method },
-      );
-    };
-
-    it("should report the status and method of an unexpected 4XX, not an unserializable Response", async () => {
-      // Reproduces AAM-DIGITAL-77H: passing the Response itself logged `context: [{}]`,
-      // because a Response has no own enumerable properties - so the status,
-      // the only thing distinguishing these failures, never reached monitoring.
-      await fetch4xx(HttpStatusCode.BadRequest);
-
-      const [, context] = warningsLogged()[0];
-      expect(context).toEqual(
-        expect.objectContaining({
-          status: HttpStatusCode.BadRequest,
-          method: "GET",
-        }),
-      );
-      expect(JSON.stringify(context)).toContain("400");
-    });
-
-    it("should report each status under its own message, so monitoring separates the root causes", async () => {
-      // the wording itself is covered by the http-response-logging spec; what
-      // matters here is that two statuses do not end up in one bucket
-      await fetch4xx(HttpStatusCode.BadRequest);
-      await fetch4xx(HttpStatusCode.TooManyRequests);
-
-      const [first, second] = warningsLogged().map(([message]) => message);
-      expect(first).not.toEqual(second);
-    });
-
-    it("should keep the numeric status in the context of an unnamed 4XX", async () => {
-      await fetch4xx(423); // Locked - not one we expect from CouchDB
-
-      expect(warningsLogged()[0][1]).toEqual(
-        expect.objectContaining({ status: 423 }),
-      );
-    });
-
-    it("should not report expected 4XX statuses as warnings", async () => {
-      await fetch4xx(HttpStatusCode.Forbidden);
-
-      expect(warningsLogged()).toEqual([]);
-    });
-
-    it("should not report a conflict as a warning, as only the caller knows its outcome", async () => {
-      // a 409 is always surfaced to whoever made the write - either
-      // PouchDatabase.resolveConflict or PouchDB's own replication - so warning
-      // here alerts on something nobody can act on
-      await fetch4xx(HttpStatusCode.Conflict, "PUT");
-
-      expect(warningsLogged()).toEqual([]);
-    });
+    expect(debug).toHaveBeenCalledWith(
+      "4XX response from DB",
+      expect.objectContaining({
+        status: HttpStatusCode.BadRequest,
+        method: "GET",
+      }),
+    );
+    expect(warn).not.toHaveBeenCalled();
   });
 
   describe("find", () => {

@@ -2,8 +2,9 @@ import {
   HttpErrorResponse,
   HttpInterceptorFn,
   HttpRequest,
+  HttpStatusCode,
 } from "@angular/common/http";
-import { catchError, throwError } from "rxjs";
+import { catchError, from, switchMap, throwError } from "rxjs";
 import { environment } from "#src/environments/environment";
 import {
   ErrorClassification,
@@ -33,9 +34,41 @@ import { ConnectivityError, ServerError } from "./backend-errors";
 export const typedHttpErrorInterceptor: HttpInterceptorFn = (request, next) =>
   isBackendRequest(request.url)
     ? next(request).pipe(
-        catchError((err) => throwError(() => toTypedHttpError(err, request))),
+        catchError((err) =>
+          from(withReadableBody(err)).pipe(
+            switchMap((failure) =>
+              throwError(() => toTypedHttpError(failure, request)),
+            ),
+          ),
+        ),
       )
     : next(request);
+
+/**
+ * The failed response with its body parsed, if it is a `Blob` (e.g. of a file
+ * download): only the body tells an expired session from another `401`.
+ */
+async function withReadableBody(error: unknown): Promise<unknown> {
+  if (
+    !(error instanceof HttpErrorResponse) ||
+    error.status !== HttpStatusCode.Unauthorized ||
+    !(error.error instanceof Blob)
+  ) {
+    return error;
+  }
+  try {
+    return new HttpErrorResponse({
+      error: JSON.parse(await error.error.text()),
+      headers: error.headers,
+      status: error.status,
+      statusText: error.statusText,
+      url: error.url ?? undefined,
+    });
+  } catch {
+    // not JSON: classified by its status alone
+    return error;
+  }
+}
 
 function isBackendRequest(url: string): boolean {
   return [environment.DB_PROXY_PREFIX, environment.API_PROXY_PREFIX].some(

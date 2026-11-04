@@ -1,19 +1,17 @@
 import type * as Sentry from "@sentry/angular";
 import {
-  classifyError,
   classifyErrorChain,
   causeChain,
   ErrorClassification,
-  isTypedErrorName,
+  classifyError,
 } from "./error-classification";
 import { classifyReportedError } from "./uncaught-error-classification";
 import {
   classifyException,
   groupSentryEvent,
   isUnhandled,
-  truncateTag,
 } from "./sentry-grouping";
-import { LoggedError, NamedError } from "./reported-errors";
+import { NamedError } from "./reported-errors";
 import { reportOnce } from "./report-once";
 
 /**
@@ -32,7 +30,7 @@ export function processSentryEvent(
 
   const classification = classifySentryEvent(event, hint);
   const policy = classification ? REPORTING_POLICY[classification] : undefined;
-  if (policy?.drop?.(hint, event)) {
+  if (policy?.drop?.()) {
     return null;
   }
   if (classification) {
@@ -50,29 +48,27 @@ export function processSentryEvent(
  * (see `error-classification.ts`). Failures without a classification are
  * reported as they are, grouped as described in the README.
  */
-const REPORTING_POLICY: Record<
-  ErrorClassification,
-  {
-    /** whether nobody can act on it: not reported at all */
-    drop?: (hint: Sentry.EventHint, event: Sentry.ErrorEvent) => boolean;
-    /** changes to the event after grouping */
-    adjust?: (event: Sentry.ErrorEvent) => void;
-  }
+const REPORTING_POLICY: Partial<
+  Record<
+    ErrorClassification,
+    {
+      /** whether nobody can act on it: not reported at all */
+      drop?: () => boolean;
+      /** changes to the event after grouping */
+      adjust?: (event: Sentry.ErrorEvent) => void;
+    }
+  >
 > = {
   // into the shared `network-error` issue at level warning (see `groupSentryEvent`),
   // once per page load (see `reportOnce`); while offline it is expected
   connectivity: { drop: () => !navigator.onLine },
   // the user is told; the code waiting for the data is not at fault
   "session-expired": { drop: () => true },
-  // usually a permission-configuration state, not a bug: reported (as a warning)
-  // where a component deliberately logged it with a message of its own, or where
-  // nothing handled it (e.g. a public form failing on every submission because
-  // the public role may not create the record)
-  "not-permitted": {
-    drop: (hint, event) =>
-      !isUnhandled(event) && !isDeliberatelyLogged(hint?.originalException),
-    adjust: (event) => (event.level = "warning"),
-  },
+  // a caught one is logged at debug (see `isExpectedFailure`): this one was not
+  // handled or is wrapped in a named error, usually a permission-configuration
+  // state (e.g. a public form failing on every submission because the public role
+  // may not create the record)
+  "not-permitted": { adjust: (event) => (event.level = "warning") },
   // normal for an offline-first app: the user is told by the form and it is
   // counted in usage analytics instead
   "write-conflict": { drop: () => true },
@@ -80,8 +76,6 @@ const REPORTING_POLICY: Record<
   "local-storage": {
     adjust: (event) => (event.tags = { ...event.tags, incident: "local-db" }),
   },
-  // a fault of our backend, whoever logged it: at the level it was logged with
-  "server-error": { adjust: reportServerError },
 };
 
 /**
@@ -104,40 +98,6 @@ function classifySentryEvent(
     return classification;
   }
   return event.exception?.values?.map(classifyException).find(Boolean);
-}
-
-/** A failure logged with a message by a component, or wrapped in one of our named errors. */
-function isDeliberatelyLogged(error: unknown): boolean {
-  return (
-    error instanceof LoggedError ||
-    (error instanceof NamedError && !classifyError(error))
-  );
-}
-
-/**
- * Report a server fault with an issue per status and endpoint: grouped by the
- * root cause alone, a new failing endpoint would otherwise not open an issue
- * of its own. The endpoint is the masked `requestPath` the boundaries add.
- */
-function reportServerError(event: Sentry.ErrorEvent) {
-  const status = event.extra?.status;
-  if (typeof status !== "number") {
-    return;
-  }
-  const requestPath = event.extra?.requestPath;
-  const key = [String(status)];
-  if (typeof requestPath === "string") {
-    key.push(requestPath);
-    event.tags = { ...event.tags, request_path: truncateTag(requestPath) };
-  }
-  event.tags = { ...event.tags, http_status: truncateTag(String(status)) };
-  if (event.fingerprint?.length) {
-    event.fingerprint = [...event.fingerprint, ...key];
-  }
-  const thrown = event.exception?.values?.at(-1);
-  if (thrown) {
-    thrown.value = `${thrown.value} (HTTP ${key.join(" ")})`;
-  }
 }
 
 /**
@@ -191,7 +151,7 @@ function enrichSentryEvent(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
       details.status ??= error.response.status;
     }
     // also of a typed error that lost its class (a copy made by PouchDB)
-    if (error instanceof NamedError || isTypedErrorName(error.name)) {
+    if (error instanceof NamedError || classifyError(error)) {
       Object.assign(details, error.details);
     }
   }

@@ -1,8 +1,8 @@
 import { HttpStatusCode } from "@angular/common/http";
-import { isNotPermittedError } from "#src/app/utils/is-not-permitted-error";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { EntityPermissionError } from "../entity/entity-mapper/entity-permission-error";
+import { isNotPermittedError } from "../logging/error-classification";
 import { RegistryLookupError } from "../config/registry/dynamic-registry";
 
 /** Placeholder exported for a referenced entity that does not exist (or cannot be read). */
