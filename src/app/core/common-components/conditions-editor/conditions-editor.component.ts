@@ -38,6 +38,7 @@ import {
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
   isCurrentRecordPlaceholder,
+  placeholderFieldId,
 } from "../../filter/filters/filters";
 import { asArray } from "app/utils/asArray";
 
@@ -180,7 +181,7 @@ export class ConditionsEditorComponent implements OnInit {
       positive?.$in?.[0],
       positive?.$elemMatch?.$in?.[0],
     ].find(isCurrentRecordPlaceholder);
-    return placeholder?.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+    return placeholder && placeholderFieldId(placeholder);
   }
 
   /** switch a row between comparing with a fixed value and with a field of the current record */
