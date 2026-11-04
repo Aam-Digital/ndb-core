@@ -164,7 +164,8 @@ describe("ExportColumnsService", () => {
           label: "Documents",
           dataType: SchemaEmbedArrayDatatype.dataType,
           isArray: true,
-          additional: { type: { label: "Type" } },
+          // an inner field "count" must not clash with the number of entries column
+          additional: { type: { label: "Type" }, count: { label: "Count" } },
         },
       ],
     ]);
@@ -180,10 +181,11 @@ describe("ExportColumnsService", () => {
       "documents",
       "documents_type",
       "documents_count",
+      "documents#count",
     ]);
     expect(queryKeys(preselectedExportConfig)).toEqual([
       "documents",
-      "documents_count",
+      "documents#count",
     ]);
   });
 

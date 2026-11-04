@@ -89,7 +89,9 @@ export function getSchemaEmbedExportColumns(
       },
     })),
     {
-      keySuffix: "_count",
+      // deliberately not starting with "_" like the inner field columns,
+      // so that no inner field id (e.g. "count") can produce the same column id
+      keySuffix: "#count",
       label:
         schemaField.label +
         $localize`:export column suffix for the number of entries of an embedded table: (number of entries)`,

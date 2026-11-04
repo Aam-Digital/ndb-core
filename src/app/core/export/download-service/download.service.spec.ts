@@ -354,6 +354,33 @@ describe("DownloadService", () => {
     });
   });
 
+  it("keeps the number of entries of an embedded table apart from an inner field with the id 'count'", async () => {
+    class EmbeddedCountDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: SchemaEmbedDatatype.dataType,
+        isArray: true,
+        label: "items",
+        additional: { count: { dataType: "number", label: "Count" } },
+      })
+      items: any[];
+    }
+
+    const testEntity = new EmbeddedCountDownloadTestEntity();
+    testEntity.items = [{ count: 5 }, { count: 7 }];
+
+    const csvExport = await service.createCsv([testEntity]);
+    const parsed = parse<Record<string, string>>(csvExport, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    expect(parsed.data[0]).toEqual({
+      items: "5; 7",
+      "items (Count)": "5; 7",
+      "items (number of entries)": "2",
+    });
+  });
+
   it("exports a single embedded object with one column per inner field", async () => {
     class EmbeddedObjectDownloadTestEntity extends Entity {
       @DatabaseField({
