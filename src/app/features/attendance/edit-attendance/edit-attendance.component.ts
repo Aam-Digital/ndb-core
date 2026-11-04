@@ -232,16 +232,17 @@ export class EditAttendanceComponent
       return;
     }
     const newItem = new AttendanceItem(undefined, "", participantId);
-    this.formControl.setValue([...current, newItem]);
+    // marked dirty first (also below): validators only checking changed fields run on `setValue`
     this.formControl.markAsDirty();
+    this.formControl.setValue([...current, newItem]);
   }
 
   removeParticipant(participantId: string) {
     const current = this.formControl.value ?? [];
+    this.formControl.markAsDirty();
     this.formControl.setValue(
       current.filter((item) => item.participant !== participantId),
     );
-    this.formControl.markAsDirty();
   }
 
   updateAttendanceValue(
@@ -258,8 +259,8 @@ export class EditAttendanceComponent
       updatedItem[property] = newValue;
       return updatedItem;
     });
-    this.formControl.setValue(updatedArray);
     this.formControl.markAsDirty();
+    this.formControl.setValue(updatedArray);
   }
 
   getAttendanceItem(participantId: string): AttendanceItem | undefined {

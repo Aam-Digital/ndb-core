@@ -2,7 +2,10 @@ import { AbstractControl } from "@angular/forms";
 import { asArray } from "app/utils/asArray";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { DataFilter } from "../../filter/filters/filters";
+import {
+  DataFilter,
+  getCurrentRecordPlaceholderFields,
+} from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { Logging } from "../../logging/logging.service";
@@ -62,6 +65,8 @@ export interface SelectionConditionServices {
 /**
  * Validator for a field linking to other records, for selected records that do not match the field's `selectionCondition`.
  * Its error is only a warning (`warning: true`): the record can still be saved after confirming it.
+ * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
+ * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
  * Selected records that cannot be loaded are not checked.
  *
  * @param getCurrentRecord the record being edited, with the current values of its form,
@@ -77,7 +82,14 @@ export function selectionConditionValidator(
     filterService,
   }: SelectionConditionServices,
 ): AsyncPromiseValidatorFn {
+  const referencedFields = getCurrentRecordPlaceholderFields(condition);
   return async (control) => {
+    const changed =
+      control.dirty ||
+      referencedFields.some((field) => control.parent?.get(field)?.dirty);
+    if (!changed) {
+      return null;
+    }
     const selectedIds = asArray<string>(control.value ?? []).filter(
       (id) => !!id,
     );

@@ -347,6 +347,29 @@ describe("DynamicValidatorsService", () => {
       expect(mockedEntityMapper.load).not.toHaveBeenCalled();
     });
 
+    it("does not check records linked before while neither the field nor a field its condition refers to is changed", async () => {
+      expect(
+        await validate(
+          ben.getId(),
+          sameLocation,
+          { other: "BERLIN", name: "changed" },
+          true,
+          { changed: ["name"] },
+        ),
+      ).toBeNull();
+      expect(mockedEntityMapper.loadType).not.toHaveBeenCalled();
+    });
+
+    it("checks the records linked before once a field its condition refers to is changed", async () => {
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          changed: ["other"],
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({ warning: true }),
+      });
+    });
+
     it("checks the record types of the field in the form, which can differ from the schema", async () => {
       // in the schema, `refMixed` links to several types, for which a condition does not apply
       const field = { id: "refMixed", additional: TestEntity.ENTITY_TYPE };

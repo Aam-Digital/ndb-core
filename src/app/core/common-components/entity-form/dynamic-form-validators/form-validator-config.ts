@@ -44,6 +44,8 @@ export const DYNAMIC_VALIDATORS = [
    * and already selected records are kept even if they do not match (anymore).
    * A selected record that does not match is only a warning: users can still save after confirming it
    * (not checked for an embedded field like the participants of `attendance`).
+   * The warning only appears when the user changed this field or a field the condition refers to
+   * (e.g. a new `location` that existing links do not match), not on every save of a record linked before.
    */
   "selectionCondition",
 ] as const;

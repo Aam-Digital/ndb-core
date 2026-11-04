@@ -404,6 +404,7 @@ describe("EntityFormService", () => {
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
+      participants.markAsDirty(); // like a user selecting a record
       participants.setValue([fromBerlin.getId()]);
       await vi.waitFor(() =>
         expect(participants.errors?.selectionCondition?.warning).toBe(true),
@@ -411,6 +412,31 @@ describe("EntityFormService", () => {
 
       form.formGroup.get("center").setValue("BERLIN");
       await vi.waitFor(() => expect(participants.errors).toBeNull());
+    });
+
+    it("does not warn about records linked before, until the field the condition compares with is changed", async () => {
+      const loadType = vi.spyOn(
+        TestBed.inject(EntityMapperService),
+        "loadType",
+      );
+      const record = Object.assign(recordInHamburg(), {
+        participants: [fromBerlin.getId()],
+      });
+      const form = await createForm(
+        [{ id: "center" }, { id: "participants" }],
+        record,
+      );
+      const participants: AbstractControl = form.formGroup.get("participants");
+      await vi.waitFor(() => expect(participants.pending).toBe(false));
+      expect(participants.errors).toBeNull();
+      expect(loadType).not.toHaveBeenCalled();
+
+      const center = form.formGroup.get("center");
+      center.markAsDirty(); // like a user changing it
+      center.setValue("MUNICH");
+      await vi.waitFor(() =>
+        expect(participants.errors?.selectionCondition?.warning).toBe(true),
+      );
     });
 
     it("does not compare with a record if the form edits several records at once (bulk edit)", async () => {
@@ -425,6 +451,7 @@ describe("EntityFormService", () => {
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
+      participants.markAsDirty(); // like a user selecting a record
       participants.setValue([fromBerlin.getId()]);
       await vi.waitFor(() => expect(participants.pending).toBe(false));
 
