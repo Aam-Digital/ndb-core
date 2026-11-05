@@ -32,11 +32,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
    */
   private currentConfig: Config;
 
-  /**
-   * Whether loading the config failed with anything other than "not found",
-   * i.e. we do not know whether this system has a config at all.
-   */
-  private configLoadFailed = false;
+  /** Whether the database confirmed (404) that this system has no config yet. */
+  private configConfirmedMissing = false;
 
   private readonly defaultConfigMigrations = inject(
     DefaultConfigMigrationRegistryService,
@@ -72,7 +69,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
         return;
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
-      this.configLoadFailed = false;
       const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
       this.resolvedConfigData = resolveLocaleConfig(this.currentConfig.data);
@@ -93,9 +89,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       return entity;
     } catch (err) {
       if (err?.status === HttpStatusCode.NotFound) {
-        // a definitive answer rather than a failure: this system has no config
-        // (yet), even if an earlier attempt could not reach the database
-        this.configLoadFailed = false;
+        this.configConfirmedMissing = true;
         return undefined;
       }
       this.abortWithError(
@@ -107,7 +101,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    this.configLoadFailed = true;
     const error = new NamedError("ConfigLoadError", message, { cause });
     if (isConnectivityError(cause)) {
       // offline or the server unreachable (remote-only session): the user is told below
@@ -170,11 +163,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * Whether this system has no config at all and still needs to be set up.
-   * Unlike `!hasConfig()`, this is false while the config merely could not be
-   * loaded - offering the setup for an existing system would be destructive.
+   * Only true on a confirmed 404, never while the config is still loading or
+   * merely could not be loaded - offering the setup for an existing system
+   * would be destructive.
    */
   public isSystemUninitialized() {
-    return !this.hasConfig() && !this.configLoadFailed;
+    return !this.hasConfig() && this.configConfirmedMissing;
   }
 
   public saveConfig(config: any): Promise<void> {
