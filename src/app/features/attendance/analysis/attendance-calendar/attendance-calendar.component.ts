@@ -306,7 +306,14 @@ export class AttendanceCalendarComponent {
       return;
     }
 
-    await this.entityMapper.save(this.selectedEvent().entity);
+    // the signal holds an updated copy, so write it back into the event before saving
+    const event = this.selectedEvent();
+    event.attendanceItems = event.attendanceItems.map((item) =>
+      item.participant === attendance.participant ? attendance : item,
+    );
+    await this.entityMapper.save(event.entity);
+    this.selectedEventAttendanceOriginal = attendance.copy();
+    this.calendar()?.updateTodaysDate(); // re-render the day's status color
 
     this.analyticsService.eventTrack("calendar_save_event_changes", {
       category: "Attendance",
