@@ -6,21 +6,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { getSchemaEmbedDatatype } from "../entity/schema/embedded-schema-field.util";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
 import { isPlainObject } from "../../utils/filter-compare-utils";
-
-/** datatypes whose value is stored as the referenced id alone */
-const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
-
-/**
- * datatypes whose value is an object in the entity (like a `Date` or a dropdown option)
- * but a plain value (like a string) in the stored format, so that a path into the value only exists in the entity
- */
-const PLAIN_STORED_DATATYPES = [
-  ...STORED_BY_ID_DATATYPES,
-  "date",
-  "date-only",
-  "date-with-age",
-  "month",
-];
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 
 /**
  * Key under which a record in the stored format (see {@link toStoredFormatRecord}) gives access to the entity itself,
@@ -72,7 +58,7 @@ export function toStoredFormatRecord(
     const storedAs =
       Array.isArray(value) &&
       !field.isArray &&
-      STORED_BY_ID_DATATYPES.includes(field.dataType)
+      datatypeOf(field, schemaService).storedAsId
         ? { ...field, isArray: true }
         : field;
     const storedValue = schemaService.valueToDatabaseFormat(
@@ -160,7 +146,7 @@ function toDbPath(
   ctx: SchemaContext,
   schemaService: EntitySchemaService,
 ): { dbPath: string; field?: EntitySchemaField } {
-  if (ctx.inMemory && isPathIntoEntityValue(key, ctx.schema)) {
+  if (ctx.inMemory && isPathIntoEntityValue(key, ctx.schema, schemaService)) {
     return { dbPath: `${ENTITY_VALUES_KEY}.${key}` };
   }
 
@@ -168,7 +154,7 @@ function toDbPath(
   let current = ctx;
   let field: EntitySchemaField | undefined;
   for (const segment of key.split(".")) {
-    if (segment === "id" && STORED_BY_ID_DATATYPES.includes(field?.dataType)) {
+    if (segment === "id" && datatypeOf(field, schemaService).storedAsId) {
       continue;
     }
     dbSegments.push(
@@ -215,17 +201,21 @@ function toDbCondition(
 function isPathIntoEntityValue(
   key: string,
   schema: EntitySchema | undefined,
+  schemaService: EntitySchemaService,
 ): boolean {
   const [fieldId, ...path] = key.split(".");
-  const field = schema?.get(fieldId);
-  if (path.length === 0 || !PLAIN_STORED_DATATYPES.includes(field?.dataType)) {
+  const datatype = datatypeOf(schema?.get(fieldId), schemaService);
+  if (path.length === 0 || !datatype.storedAsPlainValue) {
     return false;
   }
-  return !(
-    path.length === 1 &&
-    path[0] === "id" &&
-    STORED_BY_ID_DATATYPES.includes(field.dataType)
-  );
+  return !(path.length === 1 && path[0] === "id" && datatype.storedAsId);
+}
+
+function datatypeOf(
+  field: EntitySchemaField | undefined,
+  schemaService: EntitySchemaService,
+): DefaultDatatype {
+  return schemaService.getDatatypeOrDefault(field?.dataType);
 }
 
 function getEmbeddedContext(

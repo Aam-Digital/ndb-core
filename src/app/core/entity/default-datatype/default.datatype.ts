@@ -177,6 +177,25 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * Whether a value is stored as the plain id of what it refers to (a record or a dropdown option),
+   * so that a condition addressing that id as `<field>.id` means the stored value itself.
+   */
+  static storedAsId = false;
+  get storedAsId(): boolean {
+    return (this.constructor as typeof DefaultDatatype).storedAsId;
+  }
+
+  /**
+   * Whether a value is stored as a plain value (like a text) while the entity holds an object for it
+   * (like a `Date` or a dropdown option), so that a condition on a property of the value (like `dateOfBirth.age`)
+   * can only be matched against the entity, in memory.
+   */
+  static storedAsPlainValue = false;
+  get storedAsPlainValue(): boolean {
+    return (this.constructor as typeof DefaultDatatype).storedAsPlainValue;
+  }
+
+  /**
    * The human-readable name for this dataType, used in config UIs.
    */
   static label: string = $localize`:datatype-label:any`;

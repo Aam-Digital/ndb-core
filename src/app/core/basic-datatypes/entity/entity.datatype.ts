@@ -52,6 +52,7 @@ export class EntityDatatype extends StringDatatype {
   private readonly entityRegistry = inject(EntityRegistry);
 
   static override dataType = "entity";
+  static override storedAsId = true;
   static override label: string = $localize`:datatype-label:link to another record`;
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
