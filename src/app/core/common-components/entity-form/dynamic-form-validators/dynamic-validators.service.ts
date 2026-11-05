@@ -11,10 +11,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Logging } from "../../../logging/logging.service";
-import {
-  UNIQUE_PROPERTY_ERROR_KEY,
-  uniquePropertyValidator,
-} from "../unique-property-validator/unique-property-validator";
+import { uniquePropertyValidator } from "../unique-property-validator/unique-property-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
@@ -369,28 +366,20 @@ export class DynamicValidatorsService {
     async: true;
     fn: AsyncPromiseValidatorFn;
   } {
-    const checkUniqueness = uniquePropertyValidator({
-      getExistingValues: () =>
-        this.entityMapper
-          .loadType(entity.getType())
-          .then((entities) =>
-            entities
-              .map((existingEntity) => Reflect.get(existingEntity, fieldId))
-              .filter((existingValue) => existingValue !== undefined),
-          ),
-      normalize: false,
-      fieldLabel: $localize`:field label:id`,
-    });
     return {
-      // the shared validator reports its error as `uniqueProperty`, but errors are named after their validator here
-      fn: async (control) => {
-        const errors = await checkUniqueness(control);
-        return (
-          errors && {
-            uniqueId: { errorMessage: errors[UNIQUE_PROPERTY_ERROR_KEY] },
-          }
-        );
-      },
+      fn: uniquePropertyValidator({
+        getExistingValues: () =>
+          this.entityMapper
+            .loadType(entity.getType())
+            .then((entities) =>
+              entities
+                .map((existingEntity) => Reflect.get(existingEntity, fieldId))
+                .filter((existingValue) => existingValue !== undefined),
+            ),
+        normalize: false,
+        fieldLabel: $localize`:field label:id`,
+        errorKey: "uniqueId",
+      }),
       async: true,
     };
   }
