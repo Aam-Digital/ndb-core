@@ -129,6 +129,7 @@
     "eslint-plugin-jsonc": "^3.4.2",
     "eslint-plugin-prettier": "^5.5.7",
     "eslint-plugin-storybook": "^10.6.5",
+    "fake-indexeddb": "^6.2.6",
     "jsdom": "30.0.1",
     "jsonc-eslint-parser": "^3.3.0",
     "jsonc-parser": "^3.3.1",
