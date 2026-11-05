@@ -564,8 +564,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="324"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:324</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="331"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:331</a></div>
                         </td>
                     </tr>
 
@@ -601,8 +601,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="316"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:316</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:323</a></div>
                         </td>
                     </tr>
 
@@ -774,8 +774,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="336"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:336</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:343</a></div>
                         </td>
                     </tr>
 
@@ -1537,7 +1537,14 @@ export class AttendanceCalendarComponent {
       return;
     }
 
-    await this.entityMapper.save(this.selectedEvent().entity);
+    // the signal holds an updated copy, so write it back into the event before saving
+    const event &#x3D; this.selectedEvent();
+    event.attendanceItems &#x3D; event.attendanceItems.map((item) &#x3D;&gt;
+      item.participant &#x3D;&#x3D;&#x3D; attendance.participant ? attendance : item,
+    );
+    await this.entityMapper.save(event.entity);
+    this.selectedEventAttendanceOriginal &#x3D; attendance.copy();
+    this.calendar()?.updateTodaysDate(); // re-render the day&#x27;s status color
 
     this.analyticsService.eventTrack(&quot;calendar_save_event_changes&quot;, {
       category: &quot;Attendance&quot;,
