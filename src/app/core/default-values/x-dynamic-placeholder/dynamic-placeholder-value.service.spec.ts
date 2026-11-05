@@ -191,11 +191,27 @@ describe("DynamicPlaceholderValueService", () => {
 
     it.each([
       [
-        "a row among the alternatives",
+        "all of $or if one alternative cannot be applied (which then does not restrict anything)",
         {
-          $or: [{ level: "COUNTRY" }, { location: "$current_record.location" }],
+          level: "COUNTRY",
+          $or: [{ name: "A" }, { location: "$current_record.location" }],
         },
-        { $or: [{ level: "COUNTRY" }] },
+        { level: "COUNTRY" },
+      ],
+      [
+        "only the condition of $and that cannot be applied",
+        {
+          $and: [
+            { level: "COUNTRY" },
+            { location: "$current_record.location" },
+          ],
+        },
+        { $and: [{ level: "COUNTRY" }] },
+      ],
+      [
+        "only the condition of $nor that cannot be applied",
+        { $nor: [{ name: "A" }, { location: "$current_record.location" }] },
+        { $nor: [{ name: "A" }] },
       ],
       [
         "only the unresolved part of an alternative",

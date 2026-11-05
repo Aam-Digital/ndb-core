@@ -301,6 +301,19 @@ test("Edit participants of a recurring activity", async ({ page }) => {
     page.getByRole("option", { name: childInOtherCenter.name }),
   ).toBeVisible();
 
+  // And they are marked with a warning
+  await expect(
+    page
+      .getByRole("option", { name: childInOtherCenter.name })
+      .locator(".ineligible-icon"),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole("option", { name: childInCenter.name })
+      .locator(".ineligible-icon"),
+  ).toHaveCount(0);
+  await argosScreenshot(page, "edit-participants-ineligible");
+
   // But when I select one of them and save, I am asked to confirm it
   await page.getByRole("option", { name: childInOtherCenter.name }).click();
   await page.keyboard.press("Escape");

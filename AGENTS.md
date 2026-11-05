@@ -48,13 +48,15 @@ This file holds the rules that apply everywhere. Details live next to the code, 
 - **Entities:** before changing entity types, their schema or datatypes (also in `*.entity.ts` and `*.datatype.ts` files outside `core/entity/`), read the [Entity System](src/app/core/entity/README.md), the [Entity Schema](src/app/core/entity/schema/README.md), [How to create a new Entity Type](doc/compodoc_sources/how-to-guides/create-new-entity-type.md) and, for datatypes, [basic-datatypes](src/app/core/basic-datatypes/README.md). Provide demo data for new entities ([demo-data](src/app/core/demo-data/README.md)).
 - **Permissions:** check them with `EntityAbility` and `DisableEntityOperationDirective` ([permissions](src/app/core/permissions/README.md)).
 - **Config:** the platform is configured through JSON ([config](src/app/core/config/README.md)). Use the existing config patterns for new features, create interfaces for config objects, and validate configs.
-- **UX and styling:** follow the [UX guidelines](doc/compodoc_sources/concepts/ux-guidelines.md): Angular Material, SCSS with the global variables and classes in `src/styles/`, no inline styles. For mockups in Figma, use the `figma-mockups` skill.
+- **UX and styling:** follow the [UX guidelines](doc/compodoc_sources/concepts/ux-guidelines.md): Angular Material, SCSS with the global variables and classes in `src/styles/`, no inline styles. Use logical properties for the horizontal axis (`margin-inline-start`, `inset-inline-end`, `text-align: start` instead of `left` / `right`), so the layout mirrors for right-to-left languages ([RTL](src/app/core/language/README.md#right-to-left-rtl-languages)); Stylelint enforces this in `.scss` files (`npm run lint:styles`). For mockups in Figma, use the `figma-mockups` skill.
 - **i18n:** all user-facing strings are translatable (Angular i18n markers or `$localize`); no context labels unless the string is truly ambiguous ([i18n](src/app/core/language/README.md)).
-- **Accessibility:** follow WCAG and use the Angular Material accessibility features.
+- **Accessibility:** follow WCAG and use the Angular Material accessibility features. Keyboard navigation is not supported across the app yet ([#4644](https://github.com/Aam-Digital/ndb-core/issues/4644)), so leave keyboard interaction out of use cases and feature designs until that general support exists.
 
 ## Errors and logging
 
-Use `Logging` (from `#src/app/core/logging/logging.service`), never `console.log`. `Logging.warn()` / `Logging.error()` and every unhandled error go to Sentry, and a Sentry issue should mean "a developer has something to fix". Before adding a log call, decide who has to act on the failure: report bugs in our code and server faults, but not what the user's device or the instance's config causes. Read ["Deciding what to report"](src/app/core/logging/README.md) in the logging README before changing how something is logged or handled. Never leave a promise floating: an `async` call inside `subscribe()`, an effect or an event handler needs `await` or `.catch()`.
+Use `Logging` (from `#src/app/core/logging/logging.service`), never `console.log`. `Logging.warn()` / `Logging.error()` and every unhandled error go to Sentry (a caught failure of the user's environment, e.g. offline or not permitted, `Logging` logs at debug itself: no checks of your own), and a Sentry issue should mean "a developer has something to fix". Before adding a log call, decide who has to act on the failure: report bugs in our code and server faults, but not what the user's device or the instance's config causes. Read ["Deciding what to report"](src/app/core/logging/README.md) in the logging README before changing how something is logged or handled. Never leave a promise floating: an `async` call inside `subscribe()`, an effect or an event handler needs `await` or `.catch()`.
+
+Failed `HttpClient` requests to our backend may arrive as typed errors (e.g. `ServerError`, `NotPermittedError`) instead of an `HttpErrorResponse`: read the status or body with `failedHttpResponse(err)` (`src/app/utils/failed-http-response.ts`) instead of `instanceof HttpErrorResponse`.
 
 ## Testing
 
@@ -68,7 +70,7 @@ This repository is public. Never include customer/project-identifying informatio
 
 ## Skills
 
-Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`. Outside that flow, `translate-base-configs` adds a language to the base configs in `src/assets/base-configs/`.
+Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`. Outside that flow, `refactor-clean-code` simplifies existing code for readability (after confirmation, in commits of its own), and `translate-base-configs` adds a language to the base configs in `src/assets/base-configs/`.
 
 ## Common commands
 
@@ -77,4 +79,4 @@ Shared Claude skills are in `.claude/skills/` (overview in the [README](README.m
 - `npm run test-ci` - full CI-style unit test suite with coverage
 - `npm run e2e` - end-to-end tests
 - `npm run build` - production build
-- `npm run lint:fix` - linting (including automatic fixes)
+- `npm run lint:fix` - linting with ESLint and Stylelint (including automatic fixes)

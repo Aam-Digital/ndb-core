@@ -164,14 +164,19 @@ export class CouchdbFileService extends FileService {
           map((blob) => URL.createObjectURL(blob)),
           catchError((err) => {
             if (err?.status === 404) {
-              // the file field points to an attachment that does not exist (config / data problem)
-              Logging.debug("File not found", entity?.getId(), property);
+              // a file field pointing to an attachment that does not exist
+              Logging.debug(
+                "Could not load file",
+                err,
+                entity?.getId(),
+                property,
+              );
             } else {
               Logging.warn(
                 "Could not load file",
+                err,
                 entity?.getId(),
                 property,
-                err,
               );
             }
 

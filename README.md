@@ -128,6 +128,7 @@ A feature usually goes through them in this order: use cases, prototype, plan, t
 | `figma-mockups`          | Design screens in the Aam Digital Figma design system file     |
 | `plan-implementation`    | Write the implementation plan for an issue                     |
 | `review-pull-request`    | Review a pull request                                          |
+| `refactor-clean-code`    | Simplify existing code for readability ("Clean Code")          |
 | `translate-base-configs` | Translate the base configs of a use case into another language |
 
 Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI

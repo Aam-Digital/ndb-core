@@ -7,6 +7,7 @@ import { UpdatedEntity } from "../entity/model/entity-update";
 import { HttpStatusCode } from "@angular/common/http";
 import { Config } from "./config";
 import { ConfigService } from "./config.service";
+import { databaseError } from "../database/pouchdb/database-exception";
 import { Logging } from "../logging/logging.service";
 import { ConfigValidationService } from "./config-validation/config-validation.service";
 
@@ -288,25 +289,30 @@ describe("ConfigService", () => {
       }
     });
 
-    it("should abort app on non-404 config load error", async () => {
-      vi.useFakeTimers();
-      try {
-        const { reloadMock } = await setupReloadTest();
+    it.each([
+      [{ status: 500, message: "Internal Server Error" }, true],
+      [databaseError({ status: 0, message: "Failed to fetch" }), false], // offline
+    ])(
+      "should abort app on non-404 config load error %j, reporting only unexpected failures",
+      async (dbError, reported) => {
+        vi.useFakeTimers();
+        try {
+          const { reloadMock } = await setupReloadTest();
 
-        const dbError = { status: 500, message: "Internal Server Error" };
-        entityMapper.load.mockRejectedValue(dbError);
+          entityMapper.load.mockRejectedValue(dbError);
 
-        service.loadOnce();
-        await vi.advanceTimersByTimeAsync(0);
+          service.loadOnce();
+          await vi.advanceTimersByTimeAsync(0);
 
-        expect(Logging.error).toHaveBeenCalled();
-        expect(window.alert).toHaveBeenCalled();
-        expect(reloadMock).toHaveBeenCalled();
-      } finally {
-        vi.useRealTimers();
-        vi.restoreAllMocks();
-      }
-    });
+          expect(Logging.error).toHaveBeenCalledTimes(reported ? 1 : 0);
+          expect(window.alert).toHaveBeenCalled();
+          expect(reloadMock).toHaveBeenCalled();
+        } finally {
+          vi.useRealTimers();
+          vi.restoreAllMocks();
+        }
+      },
+    );
 
     it("should abort app when config loads with undefined data", async () => {
       vi.useFakeTimers();

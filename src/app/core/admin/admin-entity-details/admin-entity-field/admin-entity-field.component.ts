@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  Signal,
   DestroyRef,
   inject,
   OnInit,
@@ -53,8 +54,12 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter, pairwise } from "rxjs/operators";
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -155,7 +160,13 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
-  additionalForm: FormControl;
+  readonly additionalForm: FormControl = this.fb.control(
+    this.data.entitySchemaField.additional,
+  );
+  private readonly additionalValue = toSignal(
+    this.additionalForm.valueChanges,
+    { initialValue: this.additionalForm.value },
+  );
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
@@ -165,6 +176,23 @@ export class AdminEntityFieldComponent implements OnInit {
   readonly selectedDataType = signal<string>(
     this.data.entitySchemaField.dataType,
   );
+
+  /**
+   * The record type this field references, if a `selectionCondition` can be applied to the field
+   * (and the admin can therefore configure one in the Validation tab): a link to exactly one record type.
+   */
+  readonly selectionConditionTargetType: Signal<EntityConstructor | undefined> =
+    computed(() => {
+      if (this.selectedDataType() !== EntityDatatype.dataType) {
+        return undefined;
+      }
+      const types = asArray(this.additionalValue() ?? []);
+      // TODO: generalize to support multiple entity types
+      if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
+        return undefined;
+      }
+      return this.entityRegistry.get(types[0]);
+    });
 
   /** whether a "date-range" field offers predefined periods (`additional` is not an empty list) */
   datePresetsOffered: WritableSignal<boolean> = signal(true);
@@ -179,6 +207,14 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
+
+  constructor() {
+    // a `selectionCondition` refers to fields of the linked record type, so it is removed when that type changes
+    // (the validator settings then show the field's validators without it, see ConfigureEntityFieldValidatorComponent)
+    toObservable(this.selectionConditionTargetType)
+      .pipe(pairwise(), takeUntilDestroyed())
+      .subscribe(() => this.removeSelectionCondition());
+  }
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -225,10 +261,6 @@ export class AdminEntityFieldComponent implements OnInit {
         }),
       ],
     });
-    this.additionalForm = this.fb.control(
-      this.data.entitySchemaField.additional,
-    );
-
     const labelFormControl = this.fb.control(
       // the raw value (plain string or per-language map) - the input component
       // displays only the active language of it
@@ -320,7 +352,19 @@ export class AdminEntityFieldComponent implements OnInit {
         this.additionalForm.setValue(this.buildAttendanceAdditional(types));
       });
 
-    this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
+    const initialDataType = this.schemaFieldsForm.get("dataType").value;
+    if (
+      [
+        ConfigurableEnumDatatype.dataType,
+        EntityDatatype.dataType,
+        AttendanceDatatype.dataType,
+        DateRangeDatatype.dataType,
+      ].includes(initialDataType)
+    ) {
+      this.updateDataTypeAdditional(initialDataType);
+    }
+    // for other dataTypes (e.g. "schema-embed-array") this dialog has no UI for `additional`:
+    // keep it as is when opening, so that saving does not wipe it. It is only reset on a dataType change.
     this.schemaFieldsForm
       .get("dataType")
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -330,29 +374,6 @@ export class AdminEntityFieldComponent implements OnInit {
         this.selectedDataType.set(v);
       });
     this.updateForNewOrExistingField();
-    this.initSelectionConditionTarget();
-  }
-
-  /**
-   * The record type this field references, if a `selectionCondition` can be applied to the field
-   * (and the admin can therefore configure one in the Validation tab).
-   */
-  readonly selectionConditionTargetType = signal<EntityConstructor | undefined>(
-    undefined,
-  );
-
-  private initSelectionConditionTarget() {
-    merge(
-      this.additionalForm.valueChanges,
-      this.schemaFieldsForm.get("dataType").valueChanges,
-    )
-      .pipe(
-        startWith(null),
-        map(() => this.getSelectionConditionTargetType()),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((type) => this.selectionConditionTargetType.set(type));
   }
 
   private updateSchemaFieldFromForm(formValues) {
@@ -389,6 +410,14 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
+  private removeSelectionCondition() {
+    const validators = this.schemaFieldsForm.get("validators");
+    const { selectionCondition, ...otherValidators } = validators.value ?? {};
+    if (selectionCondition) {
+      validators.setValue(otherValidators);
+    }
+  }
+
   entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
@@ -414,25 +443,6 @@ export class AdminEntityFieldComponent implements OnInit {
         label: d.label,
         value: d.dataType,
       }));
-  }
-
-  /**
-   * The record type this field references, if it is exactly one,
-   * as required for a `selectionCondition`.
-   */
-  private getSelectionConditionTargetType(): EntityConstructor | undefined {
-    if (
-      this.schemaFieldsForm.get("dataType").value !== EntityDatatype.dataType
-    ) {
-      return undefined;
-    }
-
-    const types = asArray(this.additionalForm.value ?? []);
-    // TODO: generalize to support multiple entity types
-    if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
-      return undefined;
-    }
-    return this.entityRegistry.get(types[0]);
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;

@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DoCheck,
+  effect,
   inject,
   Input,
   input,
@@ -12,6 +13,7 @@ import {
   Resource,
   Signal,
   signal,
+  untracked,
   ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
@@ -31,6 +33,7 @@ import {
   CreateOptionConfig,
 } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { currentRecordSignal } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -49,7 +52,9 @@ import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
 import {
+  loadLinkedRecord,
   matchesSelectionCondition,
+  registerLinkedRecordsSource,
   resolveSelectionCondition,
 } from "../selection-condition";
 
@@ -64,6 +69,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [
     "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
+    "./edit-entity.component.scss",
   ],
   imports: [
     ReactiveFormsModule,
@@ -77,6 +83,7 @@ import {
     BasicAutocompleteComponent,
     MatSlideToggle,
     FormsModule,
+    FaDynamicIconComponent,
   ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditEntityComponent },
@@ -254,6 +261,18 @@ export class EditEntityComponent<
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
     );
 
+  /**
+   * Whether a record is offered as an option (besides the selected ones, which always are):
+   * only active ones matching the `selectionCondition`, unless the user includes the others.
+   */
+  private readonly isOffered: Signal<
+    (e: E, include: OfferedRecordsToggles) => boolean
+  > = computed(() => {
+    const isEligible = this.isEligible();
+    return (e, { includeInactive, includeIneligible }) =>
+      (includeInactive || !e.inactive) && (includeIneligible || isEligible(e));
+  });
+
   private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
     matchesSelectionCondition(this.selectionFilter(), this.filterService),
   );
@@ -261,33 +280,34 @@ export class EditEntityComponent<
   /**
    * Number of inactive records that would additionally be shown when including inactive records.
    */
-  currentlyMatchingInactive: Signal<number> = computed(() => {
-    const isEligible = this.isEligible();
-    const selected = this.values();
-    return this.offerableEntities().filter(
-      (e) =>
-        e.inactive &&
-        !selected.includes(e.getId()) &&
-        (this.includeIneligible() || isEligible(e)) &&
-        this.autocompleteFilter()(e),
-    ).length;
-  });
+  currentlyMatchingInactive: Signal<number> = computed(() =>
+    this.countAddedByToggle("includeInactive"),
+  );
 
   /**
    * Number of records not matching the `selectionCondition`
    * that would additionally be shown when including those.
    */
-  currentlyMatchingIneligible: Signal<number> = computed(() => {
-    const isEligible = this.isEligible();
+  currentlyMatchingIneligible: Signal<number> = computed(() =>
+    this.countAddedByToggle("includeIneligible"),
+  );
+
+  /** the number of records (matching the text typed) that switching on the given toggle adds to the options */
+  private countAddedByToggle(toggle: keyof OfferedRecordsToggles): number {
+    const isOffered = this.isOffered();
     const selected = this.values();
+    const include: OfferedRecordsToggles = {
+      includeInactive: this.includeInactive(),
+      includeIneligible: this.includeIneligible(),
+    };
     return this.offerableEntities().filter(
       (e) =>
-        !isEligible(e) &&
         !selected.includes(e.getId()) &&
-        (this.includeInactive() || !e.inactive) &&
+        isOffered(e, { ...include, [toggle]: true }) &&
+        !isOffered(e, { ...include, [toggle]: false }) &&
         this.autocompleteFilter()(e),
     ).length;
-  });
+  }
 
   readonly isCreateDisabled = computed(() => {
     if (this.disableCreateNew === true) {
@@ -343,15 +363,12 @@ export class EditEntityComponent<
       values: this.values(),
       includeInactive: this.includeInactive(),
       includeIneligible: this.includeIneligible(),
-      isEligible: this.isEligible(),
+      isOffered: this.isOffered(),
       getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       const availableEntities = params.offerableEntities.filter(
-        (e) =>
-          params.values.includes(e.getId()) ||
-          ((params.includeInactive || !e.inactive) &&
-            (params.includeIneligible || params.isEligible(e))),
+        (e) => params.values.includes(e.getId()) || params.isOffered(e, params),
       );
 
       for (const id of params.values) {
@@ -385,6 +402,23 @@ export class EditEntityComponent<
     },
   });
 
+  /**
+   * The ids of the options (and selected records) that do not match the `selectionCondition`,
+   * to mark them in the options and chips.
+   * Records that could not be loaded are not checked.
+   */
+  readonly ineligibleIds: Signal<Set<string>> = computed(() => {
+    const isEligible = this.isEligible();
+    return new Set(
+      this.availableEntitiesResource
+        .value()
+        .filter(
+          (e) => !(e as { isHidden?: boolean }).isHidden && !isEligible(e),
+        )
+        .map((e) => e.getId()),
+    );
+  });
+
   readonly hasInaccessible: Signal<boolean> = computed(() => {
     const entities = this.availableEntitiesResource.value();
     const currentValues = this.values();
@@ -406,25 +440,7 @@ export class EditEntityComponent<
       return undefined;
     }
 
-    const entity = await this.entityMapperService
-      .load<E>(type, selectedId)
-      .catch((err: any) => {
-        if (err?.status === 404 || err?.status === 401) {
-          Logging.debug(
-            "[ENTITY_SELECT] Selected entity not found.",
-            selectedId,
-          );
-        } else {
-          Logging.warn(
-            "[ENTITY_SELECT] Error loading selected entity.",
-            selectedId,
-            err,
-          );
-        }
-        return undefined;
-      });
-
-    return entity;
+    return loadLinkedRecord<E>(this.entityMapperService, type, selectedId);
   }
 
   toggleIncludeInactive() {
@@ -436,6 +452,29 @@ export class EditEntityComponent<
   }
 
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
+
+  /** the records loaded for the dropdown (including the selected ones), by id */
+  private readonly loadedRecords: Signal<Map<string, E>> = computed(
+    () =>
+      new Map(
+        [...this.allEntities.value(), ...this.availableEntitiesResource.value()]
+          .filter((e) => !(e as { isHidden?: boolean }).isHidden)
+          .map((e) => [e.getId(), e]),
+      ),
+  );
+
+  constructor() {
+    super();
+    // the field's `selectionCondition` validator checks the same record types and reuses the loaded records
+    effect((onCleanup) => {
+      onCleanup(
+        registerLinkedRecordsSource(this.control(), {
+          entityTypes: () => untracked(this.entityType),
+          getLoaded: (id) => untracked(this.loadedRecords).get(id),
+        }),
+      );
+    });
+  }
 
   recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
     if (newAutocompleteFilter) {
@@ -480,6 +519,12 @@ export class EditEntityComponent<
   override onContainerClick(event: MouseEvent) {
     this.autocompleteComponent?.onContainerClick(event);
   }
+}
+
+/** the toggles of the dropdown to also offer records that are not offered by default */
+interface OfferedRecordsToggles {
+  includeInactive: boolean;
+  includeIneligible: boolean;
 }
 
 /**

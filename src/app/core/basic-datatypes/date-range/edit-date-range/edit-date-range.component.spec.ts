@@ -6,15 +6,8 @@ import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import {
-  BehaviorSubject,
-  map,
-  Observable,
-  of,
-  startWith,
-  Subject,
-  switchMap,
-} from "rxjs";
+import { Subject } from "rxjs";
+import { computed, signal, Signal, WritableSignal } from "@angular/core";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import {
@@ -49,16 +42,14 @@ class EditDateRangeTestAction extends Entity {
   @DatabaseField({ dataType: "date-range" }) plannedPeriod: DateRangeValue;
 }
 
-/** the current state of the record in its form, as `EntityFieldEditComponent` provides it */
-function followRecordInForm(
-  current: { record: Entity; form: FormGroup } | undefined,
-): Observable<Entity | undefined> {
-  return current
-    ? current.form.valueChanges.pipe(
-        startWith(null),
-        map(() => createCurrentRecordState(current.record, current.form)),
-      )
-    : of(undefined);
+/** the current state of the record in its form, as `EntityForm.currentRecord` provides it */
+function followRecordInForm(record: Entity, form: FormGroup): Signal<Entity> {
+  const changes = signal(0);
+  form.valueChanges.subscribe(() => changes.update((v) => v + 1));
+  return computed(() => {
+    changes();
+    return createCurrentRecordState(record, form);
+  });
 }
 
 describe("EditDateRangeComponent", () => {
@@ -78,13 +69,11 @@ describe("EditDateRangeComponent", () => {
   });
 
   /** the record and form of the field rendered by `render()`, whose current state the field follows */
-  let recordInForm: BehaviorSubject<
-    { record: Entity; form: FormGroup } | undefined
-  >;
+  let recordInForm: WritableSignal<Signal<Entity | undefined>>;
 
   beforeEach(async () => {
     dialog = mockMatDialog();
-    recordInForm = new BehaviorSubject(undefined);
+    recordInForm = signal(signal(undefined));
     await TestBed.configureTestingModule({
       imports: [EditDateRangeComponent, NoopAnimationsModule],
       providers: [
@@ -94,10 +83,7 @@ describe("EditDateRangeComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: CurrentRecordContext,
-          useValue: {
-            currentRecordState: () =>
-              recordInForm.pipe(switchMap(followRecordInForm)),
-          },
+          useValue: { currentRecord: computed(() => recordInForm()()) },
         },
       ],
     }).compileComponents();
@@ -317,7 +303,7 @@ describe("EditDateRangeComponent", () => {
         anonymized,
       });
       parentFixture.componentRef.setInput("entity", record);
-      recordInForm.next({ record, form });
+      recordInForm.set(followRecordInForm(record, form));
       form.get("period").setValue(period);
       if (!editing) {
         form.get("period").disable();

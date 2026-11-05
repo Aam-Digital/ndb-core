@@ -70,10 +70,6 @@
       </button>
     }
 
-    @if (!compactMode()) {
-      <app-help-button [text]="_field().description"></app-help-button>
-    }
-
     @if (!hideInheritButton()) {
       <app-inherited-value-button
         [form]="form()"
@@ -81,6 +77,8 @@
         [entity]="entity()"
       ></app-inherited-value-button>
     }
+
+    <app-help-button [text]="_field().description"></app-help-button>
   </div>
 } @else {
   <app-entity-field-view

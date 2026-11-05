@@ -13,6 +13,9 @@ import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
 import { Config } from "../config";
 import { resolveLocaleText } from "../../language/active-locale";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -147,6 +150,8 @@ export class ConfigValidationService {
       }
     }
 
+    problems.push(...this.validateSelectionCondition(schema));
+
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
         schema.defaultValue.mode
@@ -156,6 +161,38 @@ export class ConfigValidationService {
     }
 
     return problems;
+  }
+
+  /** a `selectionCondition` only applies to a field linking to exactly one record type (see `DYNAMIC_VALIDATORS`) */
+  private validateSelectionCondition(schema: EntitySchemaField): string[] {
+    if (!schema.validators?.selectionCondition) {
+      return [];
+    }
+    if (schema.dataType !== EntityDatatype.dataType) {
+      return [
+        this.isEmbeddingDataType(schema.dataType)
+          ? $localize`:config validation:A selection filter ("selectionCondition") does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. "additional.participant.validators").`
+          : $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to records, it is ignored.`,
+      ];
+    }
+    if (asArray(schema.additional ?? []).length !== 1) {
+      return [
+        $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to one record type, it is ignored.`,
+      ];
+    }
+    return [];
+  }
+
+  private isEmbeddingDataType(dataType: string | undefined): boolean {
+    try {
+      return (
+        this.injector
+          .get(EntitySchemaService)
+          .getDatatypeOrDefault(dataType, false) instanceof SchemaEmbedDatatype
+      );
+    } catch {
+      return false;
+    }
   }
 
   private validateMenuItems(

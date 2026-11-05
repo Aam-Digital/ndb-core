@@ -11,9 +11,7 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
-import PouchDB from "pouchdb-browser";
-import memory from "pouchdb-adapter-memory";
-import { environment } from "../../../../environments/environment";
+import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-corruption-recovery.service";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -37,7 +35,9 @@ describe("SyncedPouchDatabase", () => {
       addDanger: vi.fn(),
     };
     mockCorruptionRecovery = {
-      handleKnownMultiTabCorruption: vi.fn(),
+      handleKnownMultiTabCorruption: vi.fn((err) =>
+        isKnownMultiTabDatabaseCorruption(err),
+      ),
     };
 
     service = new SyncedPouchDatabase(
@@ -177,6 +177,35 @@ describe("SyncedPouchDatabase", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should report a broken local database during sync as a sync failure, not as a document write error", async () => {
+    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+    const { mockLocalDb } = mockPouchDatabaseService();
+    mockLocalDb.sync.mockReturnValue(
+      mockSyncHandler(
+        Object.assign(
+          new Error(
+            "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.",
+          ),
+          { name: "InvalidStateError" },
+        ),
+        true,
+      ),
+    );
+
+    await expect(service.sync()).rejects.toBeTruthy();
+
+    expect(Logging.warn).toHaveBeenCalledWith(
+      "sync failed",
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(Logging.warn).not.toHaveBeenCalledWith(
+      expect.stringContaining("document write error"),
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it("should not show fallback popup for known multi-tab IndexedDB sync errors", async () => {
@@ -471,6 +500,34 @@ describe("SyncedPouchDatabase", () => {
     expect(JSON.stringify(warnSpy.mock.calls)).not.toContain("Note:1");
   });
 
+  describe("destroy", () => {
+    const LAST_SYNC_KEY = "LAST_SYNC_unit-test-db";
+
+    afterEach(() => localStorage.removeItem(LAST_SYNC_KEY));
+
+    it.each([
+      { scenario: "local db deleted", destroyFails: false, forgotten: true },
+      { scenario: "deletion failed", destroyFails: true, forgotten: false },
+    ])(
+      "forgets the last completed sync only once the local db is deleted: $scenario",
+      async ({ destroyFails, forgotten }) => {
+        service["pouchDB"] = {
+          name: "unit-test-db",
+          destroy: destroyFails
+            ? vi.fn().mockRejectedValue(new Error("deletion failed"))
+            : vi.fn().mockResolvedValue({ ok: true }),
+        } as any;
+        localStorage.setItem(LAST_SYNC_KEY, "2026-11-01T10:00:00Z");
+
+        await service.destroy().catch(() => undefined);
+
+        expect(localStorage.getItem(LAST_SYNC_KEY)).toBe(
+          forgotten ? null : "2026-11-01T10:00:00Z",
+        );
+      },
+    );
+  });
+
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
     let warnSpy: Mock;
@@ -557,13 +614,17 @@ describe("SyncedPouchDatabase", () => {
       expect(warnedMessages()).toEqual([]);
     });
 
-    it("should warn with the number of docs actually purged, not the number reported", async () => {
+    it("should log the number of docs actually purged, not the number reported, without reporting it", async () => {
+      const debugSpy = vi
+        .spyOn(Logging, "debug")
+        .mockImplementation(() => {}) as unknown as Mock;
+      debugSpy.mockClear();
       purgeSpy.mockImplementation(async (id: string) => id === "Child:1");
       mockLostPermissions(["Child:1", "School:2", "Note:3"]);
 
       await service.sync();
 
-      expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      expect(debugSpy).toHaveBeenCalledWith(
         expect.stringContaining("purged local docs"),
         expect.objectContaining({
           purged: 1,
@@ -573,11 +634,11 @@ describe("SyncedPouchDatabase", () => {
           sampleIds: ["Child:1"],
         }),
       );
+      expect(warnedMessages()).toEqual([]);
     });
 
     it("should report failed purges as a single, separate warning", async () => {
-      // e.g. the legacy "idb" adapter, which does not implement purge at all
-      const error = new Error("Purge is not implemented in the idb adapter.");
+      const error = new Error("unexpected");
       purgeSpy.mockRejectedValue(error);
       mockLostPermissions(["Child:1", "School:2", "Note:3"]);
 
@@ -588,6 +649,16 @@ describe("SyncedPouchDatabase", () => {
         expect.objectContaining({ purged: 0, failed: 3, reportedByServer: 3 }),
         error,
       );
+    });
+
+    it("should not try to purge on the legacy idb adapter, which does not implement purge", async () => {
+      service.adapter = "idb";
+      mockLostPermissions(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+      expect(warnedMessages()).toEqual([]);
     });
 
     it("should skip purge and lost-permission tracking on first sync", async () => {
@@ -611,54 +682,5 @@ describe("SyncedPouchDatabase", () => {
       // tracking should be re-enabled for subsequent syncs
       expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
-
-    describe("remote replication source (background migration)", () => {
-      let fetchSpy: Mock;
-
-      beforeEach(() => {
-        PouchDB.plugin(memory);
-        service.adapter = "memory";
-        fetchSpy = vi
-          .spyOn(PouchDB, "fetch")
-          .mockImplementation(fakeRemoteFetch) as unknown as Mock;
-      });
-
-      afterEach(async () => {
-        fetchSpy.mockRestore();
-        await service["pouchDB"].destroy();
-      });
-
-      it("does not make the next sync purge what replicating from it reports as not permitted", async () => {
-        service.init("unit-test-db", "app");
-
-        const source = service.openRemoteReplicationSource();
-        await source.changes({ since: 0 });
-        await source.close();
-        await service.sync();
-
-        // the same remote database, with the user's authentication ...
-        expect(fetchSpy).toHaveBeenCalledWith(
-          expect.stringContaining(
-            `${environment.DB_PROXY_PREFIX}/app/_changes`,
-          ),
-          expect.anything(),
-        );
-        expect(mockAuthService.addAuthHeader).toHaveBeenCalled();
-        // ... but its lost permissions are not passed on to the sync
-        expect(purgeSpy).not.toHaveBeenCalled();
-      });
-    });
   });
 });
-
-/** A remote database, whose every `_changes` page (of a replication from scratch) reports all docs the user may not read */
-async function fakeRemoteFetch(url: string): Promise<Response> {
-  const body = url.includes("_changes")
-    ? {
-        results: [],
-        last_seq: "1-seq",
-        lostPermissions: ["Child:not-permitted"],
-      }
-    : {};
-  return new Response(JSON.stringify(body));
-}

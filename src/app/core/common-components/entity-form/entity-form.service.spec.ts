@@ -4,6 +4,7 @@ import { EntityFormService } from "./entity-form.service";
 import {
   EntityForm,
   EntityFormGroup,
+  EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   AbstractControl,
@@ -41,7 +42,7 @@ import {
 } from "../../../utils/test-utils/dialog-mocks";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateRangeValue } from "../../basic-datatypes/date-range/date-range.datatype";
-import { of } from "rxjs";
+import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 
 @DatabaseEntity("EntityFormServiceTestAction")
 class EntityFormServiceTestAction extends Entity {
@@ -79,17 +80,17 @@ describe("EntityFormService", () => {
   const createForm = <T extends Entity>(
     formFields: Parameters<EntityFormService["createEntityForm"]>[0],
     entity: T,
-    forTable?: boolean,
     withPermissionCheck?: boolean,
     withDefaultValues?: boolean,
+    singleRecord?: boolean,
   ) =>
     service.createEntityForm(
       formFields,
       entity,
       destroyRef,
-      forTable,
       withPermissionCheck,
       withDefaultValues,
+      singleRecord,
     );
 
   beforeEach(waitForAsync(() => {
@@ -256,6 +257,27 @@ describe("EntityFormService", () => {
     expect(nameControl.valid).toBe(true);
   });
 
+  it("should not add permission condition validators to the inner fields of an embedded entry", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage", conditions: { name: "permitted" } },
+    ]);
+    const record = new TestEntity();
+    record.name = "permitted";
+    record._rev = "1";
+    const entry = createEmbeddedEntity(
+      new Map([["name", { dataType: "string" }]]),
+      { record, field: "entries", existing: true },
+    );
+
+    const form = await createForm([{ id: "name" }], entry);
+    // the entry's inner fields are not known to the type of the form
+    const nameControl: AbstractControl = form.formGroup.get("name");
+    nameControl.setValue("any value of the entry");
+
+    expect(nameControl.enabled).toBe(true);
+    expect(nameControl.valid).toBe(true);
+  });
+
   it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
@@ -377,9 +399,12 @@ describe("EntityFormService", () => {
         [{ id: "center" }, { id: "participants" }],
         recordInHamburg(),
       );
+      // a field following the record holds its state from before the change while the validator checks it
+      form.currentRecord();
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
+      participants.markAsDirty(); // like a user selecting a record
       participants.setValue([fromBerlin.getId()]);
       await vi.waitFor(() =>
         expect(participants.errors?.selectionCondition?.warning).toBe(true),
@@ -389,15 +414,44 @@ describe("EntityFormService", () => {
       await vi.waitFor(() => expect(participants.errors).toBeNull());
     });
 
+    it("does not warn about records linked before, until the field the condition compares with is changed", async () => {
+      const loadType = vi.spyOn(
+        TestBed.inject(EntityMapperService),
+        "loadType",
+      );
+      const record = Object.assign(recordInHamburg(), {
+        participants: [fromBerlin.getId()],
+      });
+      const form = await createForm(
+        [{ id: "center" }, { id: "participants" }],
+        record,
+      );
+      const participants: AbstractControl = form.formGroup.get("participants");
+      await vi.waitFor(() => expect(participants.pending).toBe(false));
+      expect(participants.errors).toBeNull();
+      expect(loadType).not.toHaveBeenCalled();
+
+      const center = form.formGroup.get("center");
+      center.markAsDirty(); // like a user changing it
+      center.setValue("MUNICH");
+      await vi.waitFor(() =>
+        expect(participants.errors?.selectionCondition?.warning).toBe(true),
+      );
+    });
+
     it("does not compare with a record if the form edits several records at once (bulk edit)", async () => {
       const form = await createForm(
         [{ id: "participants" }],
         recordInHamburg(),
+        true,
+        true,
+        false,
       );
-      form.currentRecord = of(undefined);
+      expect(form.currentRecord()).toBeUndefined();
       // the value of a multi-select field is one array, not a FormArray as typed
       const participants: AbstractControl = form.formGroup.get("participants");
 
+      participants.markAsDirty(); // like a user selecting a record
       participants.setValue([fromBerlin.getId()]);
       await vi.waitFor(() => expect(participants.pending).toBe(false));
 
@@ -440,6 +494,25 @@ describe("EntityFormService", () => {
         expect.anything(),
       );
       expect(entityForm.formGroup.disabled).toBe(true);
+    });
+
+    it("reports changes synced in while confirming the warnings as the previous state, not as changes of this save", async () => {
+      const { entity, entityForm } = entityFormWith({
+        period: new FormControl("x", { validators: warning }),
+      });
+      confirmationDialog.getConfirmation.mockImplementation(async () => {
+        entity["synced"] = "by another user";
+        return true;
+      });
+      const events: unknown[] = [];
+      entityForm.onFormStateChange.subscribe((e) => events.push(e));
+
+      await service.saveChanges(entityForm, entity);
+
+      const saved = events.find(
+        (e): e is EntityFormSavedEvent => e instanceof EntityFormSavedEvent,
+      );
+      expect(saved.previousEntity["synced"]).toBe("by another user");
     });
 
     it("does not save if the warnings are not confirmed", async () => {
@@ -544,15 +617,26 @@ describe("EntityFormService", () => {
   it("provides the record with the current, possibly unsaved values of the form", async () => {
     const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
     const form = await createForm(["name", "other"], entity);
-    const records: TestEntity[] = [];
-    form.currentRecord.subscribe((record) => records.push(record));
+    expect(form.currentRecord().other).toBe("BERLIN");
 
     form.formGroup.get("other").setValue("HAMBURG");
     form.formGroup.get("other").disable(); // disabled fields still count, like for display conditions
 
-    expect(records.at(-1).other).toBe("HAMBURG");
-    expect(records.at(-1).name).toBe("Saved");
+    expect(form.currentRecord().other).toBe("HAMBURG");
+    expect(form.currentRecord().name).toBe("Saved");
     expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+  });
+
+  it("builds one record state per change, shared by all fields following the form", async () => {
+    const form = await createForm(["name"], new TestEntity());
+    const before = form.currentRecord();
+    expect(form.currentRecord()).toBe(before);
+
+    form.formGroup.get("name").patchValue("changed");
+
+    expect(form.currentRecord()).not.toBe(before);
+    expect(form.currentRecord().name).toBe("changed");
+    expect(form.currentRecord()).toBe(form.currentRecord());
   });
 
   it("should clear pending changes and stop tracking once the DestroyRef is destroyed (no leak)", async () => {
@@ -639,7 +723,6 @@ describe("EntityFormService", () => {
     const form = await createForm(
       [{ id: "test" }],
       new TestEntity(),
-      false,
       true,
       false,
     );
@@ -799,7 +882,6 @@ describe("EntityFormService", () => {
       editComponent: "EditComponent",
       viewComponent: "DisplayComponent",
       label: "Field with definition",
-      forTable: false,
       description: "Custom tooltip",
       additional: "additional",
     } as FormFieldConfig);
@@ -809,7 +891,6 @@ describe("EntityFormService", () => {
       editComponent: "PredefinedComponent",
       viewComponent: "PredefinedComponent",
       label: "Property",
-      forTable: false,
       description: "Property description",
       additional: "someAdditional",
     } as FormFieldConfig);

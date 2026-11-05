@@ -1,7 +1,12 @@
+@use "variables/colors";
 @use "variables/sizes";
 
 .hint {
   font-size: 0.7em;
   line-height: normal;
   margin-top: sizes.$small;
+}
+
+.ineligible-icon {
+  color: colors.$warn;
 }

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormControl } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
+import { signal, WritableSignal } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
@@ -18,7 +18,7 @@ describe("EditAttendanceComponent", () => {
   let fixture: ComponentFixture<EditAttendanceComponent>;
   let attendanceForm: FormControl<AttendanceItem[]>;
   /** the state of the record being edited, as provided by the form of the attendance field */
-  let recordState: BehaviorSubject<Entity | undefined>;
+  let recordState: WritableSignal<Entity | undefined>;
 
   let childrenEntities: Entity[];
 
@@ -26,7 +26,7 @@ describe("EditAttendanceComponent", () => {
     childrenEntities = [new TestEntity("child1"), new TestEntity("child2")];
     childrenEntities[0]["other"] = "BERLIN";
     childrenEntities[1]["other"] = "HAMBURG";
-    recordState = new BehaviorSubject<Entity | undefined>(undefined);
+    recordState = signal<Entity | undefined>(undefined);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -36,7 +36,7 @@ describe("EditAttendanceComponent", () => {
       providers: [
         {
           provide: CurrentRecordContext,
-          useValue: { currentRecordState: () => recordState },
+          useValue: { currentRecord: recordState },
         },
       ],
     }).compileComponents();
@@ -174,7 +174,7 @@ describe("EditAttendanceComponent", () => {
 
   it("offers only participants matching the selectionCondition of the embedded participant field, compared with the current values of the record", async () => {
     const editRecord = (other: string) =>
-      recordState.next(Object.assign(new TestEntity(), { other }));
+      recordState.set(Object.assign(new TestEntity(), { other }));
     attendanceForm.setValue([]);
     editRecord("BERLIN");
     fixture.componentRef.setInput("formFieldConfig", {

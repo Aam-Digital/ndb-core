@@ -1,6 +1,7 @@
 import { signal } from "@angular/core";
 import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
@@ -161,6 +162,19 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.additionalForm.hasValidator(Validators.required)).toBe(
       true,
     );
+  });
+
+  it("should keep 'additional' of datatypes without own Type Details UI when opening", async () => {
+    const additional = { name: { dataType: "string" } };
+    const field = {
+      label: "Docs",
+      dataType: "schema-embed-array",
+      additional,
+    } as EntitySchemaField;
+    await recreateComponentWithData(field);
+
+    expect(component.additionalForm.value).toEqual(additional);
+    expect(dialogData.entitySchemaField.additional).toEqual(additional);
   });
 
   it("should init 'additional' options for configurable-enum", async () => {
@@ -822,12 +836,22 @@ describe("AdminEntityFieldComponent", () => {
       ])(
         "clears the condition, but not the other validators, when switching %s",
         async (_, change) => {
+          await openValidationTab();
           change(component);
           await settle();
 
           expect(dialogData.entitySchemaField.validators).toEqual({
             required: true,
           });
+
+          // the validator settings do not bring the condition back with their next change
+          const validatorSettings = fixture.debugElement.query(
+            By.directive(ConfigureEntityFieldValidatorComponent),
+          ).componentInstance as ConfigureEntityFieldValidatorComponent;
+          validatorSettings.validatorForm().get("required").setValue(false);
+          await settle();
+
+          expect(dialogData.entitySchemaField.validators).toEqual({});
         },
       );
 

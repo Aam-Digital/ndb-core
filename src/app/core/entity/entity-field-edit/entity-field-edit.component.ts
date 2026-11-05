@@ -5,12 +5,9 @@ import {
   computed,
   forwardRef,
   inject,
-  Injector,
   input,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Observable, of, switchMap } from "rxjs";
 import { CurrentRecordContext } from "#src/app/core/common-components/entity-form/current-record-state";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -67,16 +64,12 @@ export class EntityFieldEditComponent<
 > implements CurrentRecordContext {
   private entityFormService = inject(EntityFormService);
   private entitySchemaService = inject(EntitySchemaService);
-  private readonly injector = inject(Injector);
 
   /** field id or full config */
   field = input<ColumnConfig>();
 
   entity = input<T>();
   form = input<EntityForm<T>>();
-
-  /** Whether to display the field in a limited space, hiding details like the help description button. */
-  compactMode = input<boolean>();
 
   /** Whether to display the field label or not. */
   hideLabel = input<boolean>();
@@ -90,14 +83,12 @@ export class EntityFieldEditComponent<
   /**
    * The record with the current, possibly unsaved values of the form,
    * for fields that depend on other fields of the record.
-   * Only computed while subscribed, so fields that don't need it don't cost anything.
+   * Only computed while read, so fields that don't need it don't cost anything.
    */
-  currentRecordState(): Observable<T | undefined> {
-    return toObservable(
-      computed(() => this.form()?.currentRecord ?? of(this.entity())),
-      { injector: this.injector },
-    ).pipe(switchMap((currentRecord) => currentRecord));
-  }
+  readonly currentRecord = computed<T | undefined>(() => {
+    const currentRecord = this.form()?.currentRecord;
+    return currentRecord ? currentRecord() : this.entity();
+  });
 
   /** full field config extended from schema */
   readonly _field = computed<FormFieldConfig | undefined>(() => {

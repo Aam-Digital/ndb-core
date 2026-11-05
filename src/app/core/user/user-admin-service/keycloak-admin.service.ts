@@ -141,14 +141,13 @@ export class KeycloakAdminService extends UserAdminService {
       ),
       map(() => ({ userUpdated: true })),
       catchError((err) => {
-        if (err?.status === 403) {
-          // the admin's own Keycloak account lacks this permission (instance configuration)
-          Logging.debug("Not permitted to update user on server", err);
-          return of({ userUpdated: false, error: new UserAdminApiError(403) });
-        }
+        const error = this.transformStandardError(err);
         // the only report of this failure: callers just get `userUpdated: false`
-        Logging.warn("Failed to update user on server", err);
-        return of({ userUpdated: false });
+        Logging.warn("Failed to update user on server", error);
+        return of({
+          userUpdated: false,
+          error: error instanceof UserAdminApiError ? error : undefined,
+        });
       }),
     );
   }
@@ -394,9 +393,8 @@ export class KeycloakAdminService extends UserAdminService {
             })),
             catchError((error) => {
               // Log the error but don't fail the entire operation
-              Logging.warn("Failed to fetch roles for user", {
+              Logging.warn("Failed to fetch roles for user", error, {
                 userId: user.id,
-                error,
               });
               // Return user without roles
               return of({
@@ -462,16 +460,21 @@ export class KeycloakAdminService extends UserAdminService {
    * @private
    */
   private transformStandardError(originalError: any) {
-    if (
-      originalError?.name === "HttpErrorResponse" &&
-      originalError?.status === 0
-    ) {
+    if (originalError?.name !== "HttpErrorResponse") {
+      return originalError;
+    }
+    if (originalError.status === 0) {
       return new UserAdminApiError(
         500,
         $localize`:User API error:Could not connect to the server. Please check your network connection, try again later or reach out to your technical support team.`,
+        // a request without response: a connectivity failure
+        originalError,
       );
     }
-
+    if (originalError.status === 403) {
+      // the admin's own Keycloak account lacks this permission (instance configuration)
+      return new UserAdminApiError(403, undefined, originalError);
+    }
     return originalError;
   }
 }

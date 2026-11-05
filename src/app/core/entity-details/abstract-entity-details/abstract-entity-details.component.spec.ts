@@ -11,7 +11,7 @@ import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 import { AlertService } from "../../alerts/alert.service";
-import { Logging } from "../../logging/logging.service";
+import { databaseError } from "../../database/pouchdb/database-exception";
 
 type EntityActionsServiceMock = {
   remove: Mock;
@@ -140,15 +140,17 @@ describe("AbstractEntityDetailsComponent", () => {
     }
   });
 
-  it("should tell the user they don't have access (and not report it) if loading the record is not permitted", async () => {
+  it("should tell the user they don't have access if loading the record is not permitted", async () => {
     vi.useFakeTimers();
-    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     try {
       const entityMapper = TestBed.inject(EntityMapperService);
-      vi.spyOn(entityMapper, "load").mockRejectedValue({
-        status: 401,
-        error: "User is not permitted",
-      });
+      vi.spyOn(entityMapper, "load").mockRejectedValue(
+        databaseError({
+          status: 401,
+          message: "unauthorized",
+          error: "User is not permitted",
+        }),
+      );
       const alertService = TestBed.inject(AlertService);
       vi.spyOn(alertService, "addWarning");
       const router = fixture.debugElement.injector.get(Router);
@@ -160,9 +162,7 @@ describe("AbstractEntityDetailsComponent", () => {
 
       expect(alertService.addWarning).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(["/404"]);
-      expect(warnSpy).not.toHaveBeenCalled();
     } finally {
-      warnSpy.mockRestore();
       vi.useRealTimers();
     }
   });

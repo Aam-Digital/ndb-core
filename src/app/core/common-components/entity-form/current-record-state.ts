@@ -1,7 +1,5 @@
 import { computed, inject, Signal } from "@angular/core";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { AbstractControl, FormGroup } from "@angular/forms";
-import { firstValueFrom, Observable, of, switchMap } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 
 /**
@@ -17,7 +15,7 @@ export abstract class CurrentRecordContext {
    * The record including the current, possibly unsaved values of its form, updated with every change.
    * `undefined` if no single record is being edited.
    */
-  abstract currentRecordState(): Observable<Entity | undefined>;
+  abstract readonly currentRecord: Signal<Entity | undefined>;
 }
 
 /**
@@ -37,6 +35,9 @@ export function createCurrentRecordState<T extends Entity>(
  * The record with the current values of the form the given control belongs to
  * (for validators, which only get their control),
  * or the record itself if the control is not part of a form.
+ *
+ * Validators build this themselves instead of reading `EntityForm.currentRecord`:
+ * they run before the form notifies of the change that triggered them.
  */
 export function getCurrentRecordOfControl<T extends Entity>(
   control: AbstractControl,
@@ -48,29 +49,6 @@ export function getCurrentRecordOfControl<T extends Entity>(
 }
 
 /**
- * Getter for the `currentRecord` of the form a field belongs to (see `EntityForm.currentRecord`),
- * `undefined` while the form is still being created.
- */
-export type CurrentRecordSource = () =>
-  Observable<Entity | undefined> | undefined;
-
-/**
- * The record being edited, with the current values of the form a control belongs to (for validators):
- * the `currentRecord` of the form once it exists (`undefined` if the form does not edit one single record, like in bulk edit),
- * before that the record with the values of the control's form.
- */
-export async function getCurrentRecordOfForm(
-  control: AbstractControl,
-  record: Entity | undefined,
-  source: CurrentRecordSource | undefined,
-): Promise<Entity | undefined> {
-  const currentRecord = source?.();
-  return currentRecord
-    ? firstValueFrom(currentRecord)
-    : getCurrentRecordOfControl(control, record);
-}
-
-/**
  * The current state of the record a field belongs to (see {@link CurrentRecordContext}),
  * followed only while `follow()` is true, otherwise `undefined`.
  * Must be called in an injection context (e.g. as a field initializer of a component).
@@ -79,12 +57,7 @@ export function currentRecordSignal<T extends Entity = Entity>(
   follow: () => boolean,
 ): Signal<T | undefined> {
   const context = inject(CurrentRecordContext, { optional: true });
-  return toSignal(
-    toObservable(computed(follow)).pipe(
-      switchMap((active) =>
-        active && context ? context.currentRecordState() : of(undefined),
-      ),
-    ),
-    { initialValue: undefined },
-  ) as Signal<T | undefined>;
+  return computed(() =>
+    follow() ? (context?.currentRecord() as T | undefined) : undefined,
+  );
 }

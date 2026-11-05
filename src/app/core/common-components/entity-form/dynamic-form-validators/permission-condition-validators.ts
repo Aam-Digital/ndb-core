@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
 import { createMongoAbility, MongoAbility, subject } from "@casl/ability";
 import { Entity } from "../../../entity/model/entity";
+import { EmbeddedEntity } from "../../../entity/model/embedded-entity";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
@@ -41,6 +42,12 @@ export class PermissionConditionValidatorsService {
    * denied save.
    */
   forField(entity: Entity, fieldId: string): ValidatorFn | null {
+    if (entity instanceof EmbeddedEntity) {
+      // rule conditions apply to the fields of the record holding the entry, not to the entry's inner fields
+      // (the record is checked when it is saved, see EntityAbility)
+      return null;
+    }
+
     const action = entity.isNew ? "create" : "update";
     const rules = this.ability.rulesFor(action, entity.getType());
     const schemaField = entity.getSchema().get(fieldId);

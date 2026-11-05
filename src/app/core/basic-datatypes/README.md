@@ -87,6 +87,112 @@ The `additional` config of the field can change them: a list in the format of th
 (`DateRangeFilterConfigOption`) replaces them, and an empty list offers none. In the Admin UI, a checkbox
 switches them off.
 
+## Embedded tables (`schema-embed-array`)
+
+The `schema-embed-array` type stores an array of custom sub-objects on the entity itself, for example several
+identification documents of a person. It is the lightweight alternative to a separate entity type that is linked
+through `RelatedEntities`: use it for entries that have no life of their own (no separate record, permissions or
+list view). It generalizes the `attendance` type, which extends it
+(see [`SchemaEmbedArrayDatatype`](schema-embed/schema-embed-array.datatype.ts)).
+
+The inner fields are defined in the `additional` config of the field, in the same format as entity `attributes`.
+`isArray` is set automatically:
+
+```json
+"identificationDocuments": {
+  "dataType": "schema-embed-array",
+  "label": "Identification Documents",
+  "additional": {
+    "documentType": { "dataType": "string", "label": "Document Type" },
+    "documentNumber": { "dataType": "string", "label": "Document Number" },
+    "issueDate": { "dataType": "date", "label": "Issue Date" }
+  }
+}
+```
+
+**Display and editing**
+
+- In forms, the field shows a summary of its entries with a button that opens a popup with the full table.
+  Each entry is added or edited in a popup of its own.
+- Wherever the value is only displayed (e.g. in table columns), the first column's values of the first entries are
+  shown (e.g. "Passport, ID Card +1 more"). Hovering shows a preview table with all entries.
+
+**Inner fields** behave like the fields of a record: they can use any datatype and the same `validators`
+(e.g. `readonlyAfterSet` locks a value once its entry has been saved). Inner fields left empty are not stored.
+Not supported yet:
+
+- the `uniqueId` validator (ignored for inner fields)
+- default values for new entries
+- file and photo fields ([#4624](https://github.com/Aam-Digital/ndb-core/issues/4624))
+
+**Panel in the entity details**
+
+The `EmbeddedArrayData` component shows the entries as a table in a panel of the entity details view, like a list of
+related records. Its config is:
+
+- `property`: the entity field of type `schema-embed-array`
+- `columns` (optional): the inner fields to show, as ids or column config objects that override the field details,
+  e.g. `{ "id": "issueDate", "visibleFrom": "md" }`. Defaults to all inner fields.
+- `editable` (optional, default `true`): whether entries can be added and edited.
+
+```json
+{
+  "title": "Identification Documents",
+  "components": [
+    {
+      "component": "EmbeddedArrayData",
+      "config": {
+        "property": "identificationDocuments",
+        "columns": ["documentType", "documentNumber", { "id": "issueDate", "visibleFrom": "md" }]
+      }
+    }
+  ]
+}
+```
+
+Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a "Save"
+button. Users without the permission to update the field only see the entries (read-only). See the full example in
+[`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
+
+**Export**
+
+Exports format each inner field like a top-level field of the same type (e.g. names of referenced records, option
+labels, dates). An embedded table offers these columns ("preselected": selected by default in the export dialog when
+the field is shown in the list):
+
+| Column                                                           | Example                                                 | Preselected |
+| ---------------------------------------------------------------- | ------------------------------------------------------- | ----------- |
+| `Identification Documents`                                       | `Passport, 12345, 2020-01-01; ID Card, 678, 2022-05-10` | yes         |
+| `Identification Documents (Document Type)` (one per inner field) | `Passport; ID Card`                                     | no          |
+| `Identification Documents (number of entries)`                   | `2`                                                     | yes         |
+
+Entries are separated by `;`. In the columns per inner field, an empty value keeps its place (e.g. `; Sick`), so the
+values of one entry are at the same position in every column. A single embedded object (`schema-embed` without
+`isArray`) is exported as one column per inner field. See
+[`schema-embed-export-columns.ts`](schema-embed/schema-embed-export-columns.ts).
+
+**Not yet configurable in the Admin UI.** The Admin UI cannot configure the inner fields yet
+([#3840](https://github.com/Aam-Digital/ndb-core/issues/3840)), so the type is not offered in its field type
+dropdown (the datatype has no `label`). Define such fields in the config JSON.
+
+**For developers:** a subclass can set `embeddedType` to a class with `@DatabaseField()` annotations instead of (or in
+addition to) defining the inner fields in `additional`; the config is merged over the annotations. See
+[`SchemaEmbedDatatype`](schema-embed/schema-embed.datatype.ts) and `AttendanceDatatype`
+(`AttendanceItem` as `embeddedType`).
+
+**For developers: editing an entry.** While an entry is edited in its popup, it is wrapped as
+[`EmbeddedEntity`](../entity/model/embedded-entity.ts), an `Entity` with the inner fields as schema, so that it goes
+through the standard entity form logic (`EntityFormService.createEntityForm` and `applyChanges`) like a record.
+The entry is still stored as a plain object: the popup turns it back with `toEntryValue()` and passes only the change
+of this entry on (see [`schema-embed-array-entry-change.ts`](schema-embed/schema-embed-array-entry-change.ts)).
+Code that treats an `Entity` as a saved document handles the wrapper explicitly:
+
+- `EntityMapperService` refuses to save it on its own; the record holding it is saved instead.
+- `EntityAbility` checks it against the field of the record holding it (`getRoot()`, also for nested entries).
+  Its inner fields get no validators from permission rule conditions, which refer to the record's fields
+  (see [Permissions](../permissions/README.md)).
+- The email client selects templates and links notes for the record holding it (`getSavedRecord()`).
+
 ## Customizing how values are sorted in tables
 
 By default, table columns are sorted on the readable value of the field.

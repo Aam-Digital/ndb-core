@@ -36,6 +36,9 @@ export class PaginatedDataSource<
     return this.sortRef;
   }
 
+  /** The records arrive sorted from the database, so the table must not re-sort them (by different collation rules). */
+  override sortData = (data: T[]) => data;
+
   private updateSort(active: string, direction: "asc" | "desc" | "") {
     if (
       (direction === "" && this.sortState.dir === undefined) ||

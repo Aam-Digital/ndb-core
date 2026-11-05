@@ -16,6 +16,14 @@
   >
     <ng-template let-item>
       @if (!item.isHidden) {
+        @if (ineligibleIds().has(item.getId())) {
+          <app-fa-dynamic-icon
+            class="ineligible-icon input-tooltip-icon margin-end-small"
+            icon="warning"
+            matTooltip="Not matching the selection conditions of this field"
+            i18n-matTooltip
+          ></app-fa-dynamic-icon>
+        }
         <app-entity-block
           style="margin: auto"
           [entity]="item"
@@ -40,10 +48,7 @@
             (toggleChange)="toggleIncludeIneligible()"
             matTooltip="These records do not match the conditions configured for this field. Select them only as an exception (or update the record)."
             i18n-matTooltip
-            i18n="
-              Label for checkbox|e.g. include records not matching the selection
-              filter of a field
-            "
+            i18n
             >Also show {{ currentlyMatchingIneligible() }} not matching the
             selection conditions
           </mat-slide-toggle>

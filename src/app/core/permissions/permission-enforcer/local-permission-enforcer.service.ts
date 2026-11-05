@@ -228,8 +228,9 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
     }
 
     if (purgedCount > 0) {
-      // deleting local data based on changed permission rules - log for traceability of possible data loss
-      Logging.warn(
+      // the expected outcome of changed permission rules: local changes to records the user
+      // may no longer read could not be synced anyway (a failed purge is reported above)
+      Logging.debug(
         "Purged local entities that current permission rules deny reading",
         { count: purgedCount },
       );

@@ -333,8 +333,9 @@ export class EntityFormComponent<T extends Entity = Entity> {
 
     // re-apply user-edited fields
     userEditsWithoutConflicts.forEach(([key, value]) => {
-      this.form().formGroup.get(key).setValue(value);
+      // marked dirty first: validators only checking changed fields (e.g. `selectionCondition`) run on `setValue`
       this.form().formGroup.get(key).markAsDirty();
+      this.form().formGroup.get(key).setValue(value);
     });
   }
 

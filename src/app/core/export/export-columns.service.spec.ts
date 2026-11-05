@@ -13,6 +13,7 @@ import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import { StringDatatype } from "../basic-datatypes/string/string.datatype";
 import { DateWithAgeDatatype } from "../basic-datatypes/date-with-age/date-with-age.datatype";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { SchemaEmbedArrayDatatype } from "../basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../entity/entity-actions/entity-actions.service";
 
@@ -45,6 +46,11 @@ describe("ExportColumnsService", () => {
           multi: true,
         },
         { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: SchemaEmbedArrayDatatype,
+          multi: true,
+        },
         // EntityDatatype only uses these to resolve values, which the export column definitions don't
         { provide: EntityMapperService, useValue: {} },
         { provide: EntityActionsService, useValue: {} },
@@ -92,6 +98,21 @@ describe("ExportColumnsService", () => {
     expect(idColumn.label).toBe("School (internal id)");
   });
 
+  it("should offer the record's internal id for selection but not preselect it", () => {
+    const { allAvailableColumns, preselectedExportConfig } =
+      service.buildExportColumns({
+        schema: ExportColumnsTestEntity.schema,
+        visibleColIds: ["name"],
+        availableColumns: [],
+      });
+
+    expect(queryKeys(allAvailableColumns)).toContain("_id");
+    expect(queryKeys(preselectedExportConfig)).not.toContain("_id");
+    // the other internal fields have no label and stay hidden
+    expect(queryKeys(allAvailableColumns)).not.toContain("_rev");
+    expect(queryKeys(allAvailableColumns)).not.toContain("created");
+  });
+
   it("should preselect both the age and date columns for a virtual DisplayAge column", () => {
     const { preselectedExportConfig } = service.buildExportColumns({
       schema: ExportColumnsTestEntity.schema,
@@ -133,6 +154,39 @@ describe("ExportColumnsService", () => {
     );
     expect(readableColumn.label).toBe("School");
     expect(idColumn.label).toBe("School (internal id)");
+  });
+
+  it("offers the detail columns of a visible embedded table without preselecting them", () => {
+    const schema = new Map([
+      [
+        "documents",
+        {
+          label: "Documents",
+          dataType: SchemaEmbedArrayDatatype.dataType,
+          isArray: true,
+          // an inner field "count" must not clash with the number of entries column
+          additional: { type: { label: "Type" }, count: { label: "Count" } },
+        },
+      ],
+    ]);
+
+    const { allAvailableColumns, preselectedExportConfig } =
+      service.buildExportColumns({
+        schema,
+        visibleColIds: ["documents"],
+        availableColumns: [],
+      });
+
+    expect(queryKeys(allAvailableColumns)).toEqual([
+      "documents",
+      "documents_type",
+      "documents_count",
+      "documents#count",
+    ]);
+    expect(queryKeys(preselectedExportConfig)).toEqual([
+      "documents",
+      "documents#count",
+    ]);
   });
 
   it("should offer and preselect a visible column that is not a schema field", () => {

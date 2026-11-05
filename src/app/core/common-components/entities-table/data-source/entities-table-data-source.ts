@@ -1,5 +1,4 @@
 import { MatTableDataSource } from "@angular/material/table";
-import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DestroyRef, effect, inject, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
@@ -12,8 +11,10 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
-import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
+import {
+  classifyErrorChain,
+  ErrorClassification,
+} from "#src/app/core/logging/error-classification";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -46,13 +47,20 @@ export interface LoadRecordConfig<T extends Entity> {
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
 
+/** The cause named in the toast for a failed load, by its classification. */
+const LOAD_ERROR_CAUSES: Partial<Record<ErrorClassification, LoadErrorCause>> =
+  {
+    "not-permitted": "notPermitted",
+    "session-expired": "sessionExpired",
+  };
+
 /**
  * Abstract data source for tables that handles all data handling internally.
  * Depending on the environment all data might be in-memory or only requested from the server on demand.
  */
 export abstract class EntitiesTableDataSource<
   T extends Entity,
-> extends MatTableDataSource<TableRow<T>> {
+> extends MatTableDataSource<T> {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly entityMapper = inject(EntityMapperService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
@@ -66,12 +74,12 @@ export abstract class EntitiesTableDataSource<
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
   /**
-   * The rows handed to the table as input data, in the order they were loaded.
+   * The records handed to the table as input data, in the order they were loaded.
    * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
    */
-  displayedData = signal<TableRow<T>[]>([]);
+  displayedData = signal<T[]>([]);
   /**
-   * The rows as currently rendered by the table:
+   * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
    */
   readonly renderedRows = toSignal(this.connect(), { requireSync: true });
@@ -80,11 +88,11 @@ export abstract class EntitiesTableDataSource<
 
   // NOTE: overriding only the setter would hide the inherited `get data`,
   // so `dataSource.data` would return `undefined`. Provide both accessors.
-  override get data(): TableRow<T>[] {
+  override get data(): T[] {
     return super.data;
   }
 
-  override set data(data: TableRow<T>[]) {
+  override set data(data: T[]) {
     // expose signal containing current data
     this.displayedData.set(data);
     super.data = data;
@@ -96,7 +104,7 @@ export abstract class EntitiesTableDataSource<
   protected constructor() {
     super();
     effect(() => {
-      this.data = this.filteredRecords().map((record) => ({ record }));
+      this.data = this.filteredRecords();
     });
     effect(() => {
       if (this.loadRecordConfig()) {
@@ -171,24 +179,13 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        let cause: LoadErrorCause = "connection";
-        if (isNotPermittedError(err)) {
-          // a permission rule excludes these records for the user, not an app error
-          cause = "notPermitted";
-          Logging.debug(
-            "User is not permitted to load data in datasource",
-            err,
-          );
-        } else {
-          if (isExpiredSessionError(err)) {
-            cause = "sessionExpired";
-          }
-          Logging.error(
-            "Error loading data in datasource",
-            err,
-            this.loadRecordConfig(),
-          );
-        }
+        Logging.error(
+          "Error loading data in datasource",
+          err,
+          this.loadRecordConfig(),
+        );
+        const cause =
+          LOAD_ERROR_CAUSES[classifyErrorChain(err)] ?? "connection";
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself

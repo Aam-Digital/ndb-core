@@ -177,12 +177,13 @@ export class EditDateRangeComponent
     this.range.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ start, end }) => {
+        // marked dirty first: validators of other fields depending on this one only check changed fields
+        this.formControl.markAsDirty();
         this.formControl.setValue(
           start || end
             ? { ...(start && { start }), ...(end && { end }) }
             : null,
         );
-        this.formControl.markAsDirty();
       });
   }
 

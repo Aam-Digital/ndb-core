@@ -66,12 +66,6 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) => value),
-        catchError((e) => {
-          if (e.status === 403) {
-            e.message = $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`;
-          }
-          throw e;
-        }),
       );
   }
 
@@ -134,6 +128,7 @@ export class SkillApiService {
         ? await firstValueFrom(
             this.getExternalProfileById(externalProfile),
           ).catch((e) => {
+            // the user is alerted below
             Logging.warn(
               "SkillApiService error getting external profile for applying data",
               e,

@@ -49,6 +49,7 @@ import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
   isCurrentRecordPlaceholder,
+  placeholderFieldId,
 } from "../../filter/filters/filters";
 import { asArray } from "app/utils/asArray";
 
@@ -216,7 +217,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       positive?.$in?.[0],
       positive?.$elemMatch?.$in?.[0],
     ].find(isCurrentRecordPlaceholder);
-    return placeholder?.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
+    return placeholder && placeholderFieldId(placeholder);
   }
 
   /** switch a row between comparing with a fixed value and with a field of the current record */
@@ -253,12 +254,17 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     if (!actualRecordFieldId || !fieldConfig) return;
 
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
+    const recordFieldIsArray =
+      !!this.currentRecordType()?.schema.get(actualRecordFieldId)?.isArray;
     const conditionFieldConfig = {
       ...fieldConfig,
-      isArray: this.shouldUseMultiSelectCondition(
-        fieldConfig,
-        this.entitySchemaService.getComponent(fieldConfig, "edit"),
-      ),
+      // the placeholder resolves to all values of a multi-value record field, which only match in a list (`$in`)
+      isArray:
+        recordFieldIsArray ||
+        this.shouldUseMultiSelectCondition(
+          fieldConfig,
+          this.entitySchemaService.getComponent(fieldConfig, "edit"),
+        ),
     };
     const positive = this.wrapConditionValue(
       fieldConfig,

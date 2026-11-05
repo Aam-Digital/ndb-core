@@ -17,7 +17,7 @@ import {
 } from "../../database-entity.decorator";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
-import { firstValueFrom, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 
 type DialogRefMock = {
@@ -117,9 +117,9 @@ describe("EntityBulkEditComponent", () => {
     component.selectedFieldFormControl.setValue("name");
     await vi.waitFor(() => expect(component.showValueForm).toBe(true));
 
-    await expect(
-      firstValueFrom(component.fieldValueForm.currentRecord),
-    ).resolves.toBeUndefined();
+    const [, , , , , singleRecord] =
+      mockEntityFormService.createEntityForm.mock.calls.at(-1);
+    expect(singleRecord).toBe(false);
   });
 
   it("should not save if the form is invalid", () => {

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl, FormGroup } from "@angular/forms";
-import { BehaviorSubject, of } from "rxjs";
+import { signal } from "@angular/core";
 
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
@@ -119,22 +119,14 @@ describe("EntityFieldEditComponent", () => {
   });
 
   describe("current record state for the fields", () => {
-    function collectStates() {
-      const states: (TestEntity | undefined)[] = [];
-      component
-        .currentRecordState()
-        .subscribe((s) => states.push(s as TestEntity | undefined));
-      return states;
-    }
-
     it("is provided to the field components", () => {
       expect(fixture.debugElement.injector.get(CurrentRecordContext)).toBe(
         component,
       );
     });
 
-    it("follows the current record of the form", async () => {
-      const currentRecord = new BehaviorSubject<TestEntity | undefined>(
+    it("follows the current record of the form", () => {
+      const currentRecord = signal<TestEntity | undefined>(
         TestEntity.create({ other: "BERLIN" }),
       );
       fixture.componentRef.setInput("entity", new TestEntity());
@@ -142,41 +134,28 @@ describe("EntityFieldEditComponent", () => {
         formGroup: new FormGroup({}),
         currentRecord,
       } as any);
-      const states = collectStates();
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(states.at(-1)?.other).toBe("BERLIN");
-      });
+      expect((component.currentRecord() as TestEntity).other).toBe("BERLIN");
 
-      currentRecord.next(TestEntity.create({ other: "HAMBURG" }));
+      currentRecord.set(TestEntity.create({ other: "HAMBURG" }));
 
-      expect(states.at(-1)?.other).toBe("HAMBURG");
+      expect((component.currentRecord() as TestEntity).other).toBe("HAMBURG");
     });
 
-    it("is empty if the form has no single record (e.g. bulk edit)", async () => {
+    it("is empty if the form has no single record (e.g. bulk edit)", () => {
       fixture.componentRef.setInput("entity", new TestEntity());
       fixture.componentRef.setInput("form", {
         formGroup: new FormGroup({}),
-        currentRecord: of(undefined),
+        currentRecord: signal(undefined),
       } as any);
-      const states = collectStates();
 
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(states).toHaveLength(1);
-      });
-      expect(states[0]).toBeUndefined();
+      expect(component.currentRecord()).toBeUndefined();
     });
 
-    it("is the record itself if there is no form that provides the current record", async () => {
+    it("is the record itself if there is no form that provides the current record", () => {
       const entity = TestEntity.create({ other: "BERLIN" });
       fixture.componentRef.setInput("entity", entity);
-      const states = collectStates();
 
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(states.at(-1)).toBe(entity);
-      });
+      expect(component.currentRecord()).toBe(entity);
     });
   });
 });
