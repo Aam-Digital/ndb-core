@@ -179,12 +179,14 @@ export class AffectedEntitiesCalculation {
    * @return the affected entities, ordered by level
    */
   async run(): Promise<AffectedEntity[]> {
-    const queue: QueuedChange[] = this.triggers.map((trigger) => ({
-      entity: trigger.entity,
-      level: 0,
-      changedFields: trigger.changedFields,
-      onlyLinkedEntities: !!trigger.fieldId,
-    }));
+    const queue: QueuedChange[] = this.triggers.map(
+      ({ entity, changedFields, onlyLinkedEntities }) => ({
+        entity,
+        level: 0,
+        changedFields,
+        onlyLinkedEntities,
+      }),
+    );
 
     let steps = 0;
     while (queue.length > 0) {

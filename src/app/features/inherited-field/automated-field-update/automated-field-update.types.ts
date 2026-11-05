@@ -76,8 +76,8 @@ export interface DialogRow extends AffectedEntity {
 
 /** The change that opened the update dialog (before is the same as entity if there is no change) */
 export interface UpdateTrigger extends StartingChange {
-  /** The field of the entity to pass on to the entities it links to, regardless of a change (from the button next to the field) */
-  fieldId?: string;
+  /** Only pass the changed fields on to the entities that the entity links to, also if they are not changed (from the button next to the field) */
+  onlyLinkedEntities?: boolean;
 }
 
 /** A value that the user entered for an affected entity, instead of the suggested one */

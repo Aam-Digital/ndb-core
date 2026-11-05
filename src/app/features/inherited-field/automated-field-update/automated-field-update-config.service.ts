@@ -67,10 +67,10 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * Applies rules to dependent entities based on changes in the provided entities.
    * Also prompts user confirmation and saves updates if any changes were made.
    * Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
+   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
    * @param entities - The source entities whose changes should trigger updates
    * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
    *   (in the same order)
-   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
    * @return the updated entities as they were before the update (to undo it), without the given entities themselves
    */
   public async applyRulesToDependentEntities(
@@ -142,7 +142,12 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     fieldId: string,
   ): Promise<boolean> {
     const { hasAffectedEntities } = await this.confirmAndSaveAffectedEntities([
-      { entity, before: entity, fieldId, changedFields: [fieldId] },
+      {
+        entity,
+        before: entity,
+        changedFields: [fieldId],
+        onlyLinkedEntities: true,
+      },
     ]);
     return hasAffectedEntities;
   }
@@ -613,13 +618,20 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     }
 
     const userConfirmed = await this.confirmUpdates(affectedEntities, triggers);
-    if (!userConfirmed) {
-      return { hasAffectedEntities: true, previousVersions: [] };
-    }
+    const previousVersions = userConfirmed
+      ? await this.saveUpdates(userConfirmed)
+      : [];
+    return { hasAffectedEntities: true, previousVersions };
+  }
 
+  /**
+   * Save the confirmed values of the affected entities.
+   * @return the updated entities as they were before (to undo the update)
+   */
+  private async saveUpdates(updates: AffectedEntity[]): Promise<Entity[]> {
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
-    const updatesByEntityId = groupBy(userConfirmed, (update) => update.id);
+    const updatesByEntityId = groupBy(updates, (update) => update.id);
 
     const entitiesToSave: Entity[] = [];
     const previousVersions: Entity[] = [];
@@ -644,7 +656,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
     // together, so that none of them is saved if the user may not save one of them
     await this.entityMapper.saveAll(entitiesToSave);
-    return { hasAffectedEntities: true, previousVersions };
+    return previousVersions;
   }
 
   /**
