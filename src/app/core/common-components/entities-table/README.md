@@ -52,7 +52,8 @@ The records a data source holds:
 
 - `allRecords`: all loaded records (only filled by in-memory data sources);
 - `filteredRecords`: the records passing the filters, across all pages (the
-  input data of the table);
+  input data of the table); `PaginatedDataSource` only holds the pages loaded
+  so far, `getAllData()` loads all of them;
 - `renderedRows`: the rows currently rendered: filtered, sorted and reduced to
   the current page.
 
@@ -72,7 +73,8 @@ All hooks have defaults, so existing data sources do not need to set them.
 - `config` (default `{}`): options of the data source from the list or
   section config (see below)
 - `usesPagination` (default `true`): signal; `false`: the table shows all rows
-  and no paginator (may change at any time)
+  and no paginator (may change at any time); not for data sources built on
+  `PaginatedDataSource`, which load no records without a paginator
 - `rowOptionsOf(record)` (default: none): optional extras for the row of a
   record (see below)
 - `toolbarControls` (default `[]`): `DynamicComponentConfig`s that a host

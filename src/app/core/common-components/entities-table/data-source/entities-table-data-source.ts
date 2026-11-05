@@ -96,7 +96,8 @@ export abstract class EntitiesTableDataSource<
   allRecords = signal<T[]>([]);
   /**
    * The records passing all filters (including the free-text {@link searchText}), across all pages,
-   * in the order they were loaded. They are the input data of the table:
+   * in the order they were loaded (with server-side paging only the pages loaded so far, see {@link getAllData}).
+   * They are the input data of the table:
    * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
    */
   filteredRecords = signal<T[]>([]);
