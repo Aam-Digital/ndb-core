@@ -77,6 +77,9 @@ export interface ExportColumnMapping<EntityType = any> {
   ) => Promise<any> | any;
 }
 
+/** see {@link DefaultDatatype.storedFormat} */
+export type StoredFormat = "as-is" | "plain" | "id";
+
 /**
  * The conditions matching the given path against an id (of a referenced record or a dropdown option),
  * covering both shapes it may have been stored in: the id itself or an array containing it
@@ -177,22 +180,17 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
-   * Whether a value is stored as the plain id of what it refers to (a record or a dropdown option),
-   * so that a condition addressing that id as `<field>.id` means the stored value itself.
+   * How the database format of a value relates to the value the entity holds,
+   * which conditions on the field depend on (see the README of the filter module):
+   * - `"as-is"`: the database holds the value as the entity does
+   * - `"plain"`: the database holds a plain value (like a text) for an object of the entity (like a `Date`),
+   *   so a condition on a property of the value (like `dateOfBirth.age`) can only be matched against the entity, in memory
+   * - `"id"`: the database holds the id of what the value refers to (a record or a dropdown option) as a plain value,
+   *   so a condition on `<field>.id` means that id in the database format
    */
-  static readonly storedAsId: boolean = false;
-  get storedAsId(): boolean {
-    return (this.constructor as typeof DefaultDatatype).storedAsId;
-  }
-
-  /**
-   * Whether a value is stored as a plain value (like a text) while the entity holds an object for it
-   * (like a `Date` or a dropdown option), so that a condition on a property of the value (like `dateOfBirth.age`)
-   * can only be matched against the entity, in memory.
-   */
-  static readonly storedAsPlainValue: boolean = false;
-  get storedAsPlainValue(): boolean {
-    return (this.constructor as typeof DefaultDatatype).storedAsPlainValue;
+  static readonly storedFormat: StoredFormat = "as-is";
+  get storedFormat(): StoredFormat {
+    return (this.constructor as typeof DefaultDatatype).storedFormat;
   }
 
   /**

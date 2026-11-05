@@ -58,7 +58,7 @@ export function toStoredFormatRecord(
     const storedAs =
       Array.isArray(value) &&
       !field.isArray &&
-      datatypeOf(field, schemaService).storedAsId
+      datatypeOf(field, schemaService).storedFormat === "id"
         ? { ...field, isArray: true }
         : field;
     const storedValue = schemaService.valueToDatabaseFormat(
@@ -154,7 +154,10 @@ function toStoredPath(
   let current = ctx;
   let field: EntitySchemaField | undefined;
   for (const segment of key.split(".")) {
-    if (segment === "id" && datatypeOf(field, schemaService).storedAsId) {
+    if (
+      segment === "id" &&
+      datatypeOf(field, schemaService).storedFormat === "id"
+    ) {
       continue;
     }
     storedSegments.push(
@@ -204,11 +207,11 @@ function isPathIntoEntityValue(
   schemaService: EntitySchemaService,
 ): boolean {
   const [fieldId, ...path] = key.split(".");
-  const datatype = datatypeOf(schema?.get(fieldId), schemaService);
-  if (path.length === 0 || !datatype.storedAsPlainValue) {
+  const { storedFormat } = datatypeOf(schema?.get(fieldId), schemaService);
+  if (path.length === 0 || storedFormat === "as-is") {
     return false;
   }
-  return !(path.length === 1 && path[0] === "id" && datatype.storedAsId);
+  return !(path.length === 1 && path[0] === "id" && storedFormat === "id");
 }
 
 function datatypeOf(
