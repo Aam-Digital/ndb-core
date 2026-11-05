@@ -217,6 +217,40 @@ describe("DynamicValidatorsService", () => {
     expect(options.asyncValidators).toEqual([]);
   });
 
+  it.each([
+    [{ required: true }, null, expect.any(String)],
+    [{ min: 9 }, 8, expect.stringContaining("9")],
+    [{ max: 10 }, 11, expect.stringContaining("10")],
+    [{ pattern: "[a-z]+" }, "123", expect.any(String)],
+  ])(
+    "adds a readable message to the error of %o",
+    (config: FormValidatorConfig, invalidValue, message) => {
+      const validator = service.buildValidators(config, new TestEntity())
+        .validators[0];
+
+      const errors = validator(new UntypedFormControl(invalidValue));
+
+      expect(errors[Object.keys(config)[0]].errorMessage).toEqual(message);
+    },
+  );
+
+  it.each([
+    [{ unknownRule: 5, required: true }, 1],
+    [{ required: false, uniqueId: false, readonlyAfterSet: false }, 0],
+  ])(
+    "builds only the validators that exist and are switched on: %o",
+    (config, expectedCount) => {
+      const options = service.buildValidators(
+        config as FormValidatorConfig,
+        new TestEntity(),
+        "name",
+      );
+
+      expect(options.validators).toHaveLength(expectedCount);
+      expect(options.asyncValidators).toEqual([]);
+    },
+  );
+
   describe("withinParent", () => {
     const parent = Object.assign(TestEntity.create("Training"), {
       period: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
@@ -462,19 +496,18 @@ describe("DynamicValidatorsService", () => {
       },
     );
 
-    it("checks a selection right away, other async checks only when leaving the field", () => {
-      const entity = new TestEntity();
-      expect(
-        service.buildValidators(
-          { selectionCondition: { other: "BERLIN" } },
-          entity,
-          "ref",
-        ).updateOn,
-      ).toBeUndefined();
-      expect(
-        service.buildValidators({ uniqueId: true }, entity, "name").updateOn,
-      ).toBe("blur");
-    });
+    it.each([
+      [{ selectionCondition: { other: "BERLIN" } }, undefined],
+      [{ uniqueId: true }, "blur"],
+      [{ uniqueId: true, selectionCondition: { other: "BERLIN" } }, "blur"],
+    ])(
+      "checks a selection right away, but the whole field only when leaving it if another async check needs that: %o",
+      (config: FormValidatorConfig, updateOn) => {
+        expect(
+          service.buildValidators(config, new TestEntity(), "ref").updateOn,
+        ).toBe(updateOn);
+      },
+    );
 
     it("names the fields of the record that the condition refers to as dependencies", () => {
       const dependencies = service.getDependencies({
