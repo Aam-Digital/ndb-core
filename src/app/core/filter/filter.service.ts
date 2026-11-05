@@ -161,7 +161,7 @@ export class FilterService {
    */
   private toStoredFormat(record: Entity): object {
     const cached = this.storedFormatCache.get(record);
-    if (cached && record._rev && cached.rev === record._rev) {
+    if (record._rev && cached?.rev === record._rev) {
       return cached.record;
     }
 
@@ -340,12 +340,12 @@ function requiredStoredValue(
     return undefined;
   }
 
+  if (field?.dataType !== "date" || typeof condition !== "string") {
+    return condition;
+  }
   // a day for a `date` field (a timestamp) is the start of that day in local time, like the matching compares it
-  const day =
-    field?.dataType === "date" &&
-    typeof condition === "string" &&
-    moment(condition, "YYYY-MM-DD", true);
-  return day && day.isValid() ? day.toISOString() : condition;
+  const day = moment(condition, "YYYY-MM-DD", true);
+  return day.isValid() ? day.toISOString() : condition;
 }
 
 /** the object holding the last segment of the path, created where missing */

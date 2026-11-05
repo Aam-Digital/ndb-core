@@ -180,7 +180,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * Whether a value is stored as the plain id of what it refers to (a record or a dropdown option),
    * so that a condition addressing that id as `<field>.id` means the stored value itself.
    */
-  static storedAsId = false;
+  static readonly storedAsId: boolean = false;
   get storedAsId(): boolean {
     return (this.constructor as typeof DefaultDatatype).storedAsId;
   }
@@ -190,7 +190,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * (like a `Date` or a dropdown option), so that a condition on a property of the value (like `dateOfBirth.age`)
    * can only be matched against the entity, in memory.
    */
-  static storedAsPlainValue = false;
+  static readonly storedAsPlainValue: boolean = false;
   get storedAsPlainValue(): boolean {
     return (this.constructor as typeof DefaultDatatype).storedAsPlainValue;
   }

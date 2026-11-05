@@ -38,7 +38,7 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
   DBFormat
 > {
   static override dataType = "date";
-  static override storedAsPlainValue = true;
+  static override readonly storedAsPlainValue = true;
   // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
   // static override label: string = $localize`:datatype-label:date (with time)`;
 
