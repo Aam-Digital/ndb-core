@@ -46,8 +46,6 @@ import {
 /**
  * creates a pattern validator that also carries a predefined
  * message
- * @param pattern The pattern to check
- * @param message The custom message to display when the pattern fails
  * @example
  * >>> validator = patternWithMessage(/foo/, "Can only be foo");
  * >>> validator(invalidFormField);
@@ -95,20 +93,18 @@ export class DynamicValidatorsService {
   private readonly filterService = inject(FilterService);
 
   /**
-   * A map of all validators along with a factory that generates the validator function
-   * given a value that serves as basis for the validation.
-   * @private
+   * The validator for one key of the config,
+   * or `null` if its value switches it off (e.g. `required: false`) or there is no such validator.
    */
   private getValidator(
     key: DynamicValidator,
     config: FormValidatorConfig,
     { entity, field, singleRecord }: ValidatorContext,
   ):
-    | { async?: false; fn: ValidatorFn; errorName?: string }
+    | { async?: false; fn: ValidatorFn }
     | {
         async: true;
         fn: AsyncPromiseValidatorFn;
-        errorName?: string;
         /** run on every change of the value, not only when leaving the field (see `buildValidators`) */
         updateOnChange?: boolean;
       }
@@ -127,9 +123,9 @@ export class DynamicValidatorsService {
         return { fn: maxDateValidator(value) };
       }
       case "minAge":
-        return { fn: minAgeValidator(value, config?.maxAge) };
+        return { fn: minAgeValidator(value, config.maxAge) };
       case "maxAge":
-        return { fn: maxAgeValidator(value, config?.minAge) };
+        return { fn: maxAgeValidator(value, config.minAge) };
       case "pattern":
         if (typeof value === "object") {
           return { fn: patternWithMessage(value.pattern, value.message) };
@@ -205,19 +201,12 @@ export class DynamicValidatorsService {
   }
 
   /**
-   * Builds all validator functions that are part of the configuration object.
-   * A validator function is a function that returns possible errors based
-   * on the state of a Form Field.
-   * If there is no Validator by a given name, issues a warning.
-   * @param config The raw configuration object
-   * @param entity The entity that the form is editing
-   * @param field The field the validators are for (its id or its config as in the form, extended from the schema)
+   * The validators configured for a field, as options for its form control.
+   * Each error they return has a readable `errorMessage`. Unknown validators are ignored.
+   * @param entity the record that the form is editing
+   * @param field the field the validators are for (its id or its config as in the form, extended from the schema)
    * @param singleRecord false if the form does not edit one single record (e.g. in bulk edit),
    *   for validators comparing with other fields of the record
-   * @example
-   * >>> buildValidators({ required: true, max: 5 })
-   * [ Validators.required, Validators.max(5) ]
-   * @see ValidatorFn
    */
   public buildValidators(
     config: FormValidatorConfig,
@@ -237,29 +226,23 @@ export class DynamicValidatorsService {
     };
 
     for (const key of Object.keys(config)) {
-      const validatorFn = this.getValidator(
+      const validator = this.getValidator(
         key as DynamicValidator,
         config,
         context,
       );
-
-      if (validatorFn?.async) {
-        const effectiveName = validatorFn.errorName || key;
-        const validatorFnWithReadableErrors = (control) =>
-          validatorFn
+      if (validator?.async) {
+        formControlOptions.asyncValidators.push((control: FormControl) =>
+          validator
             .fn(control)
-            .then((res) => this.addHumanReadableError(effectiveName, res));
-        formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
-        updateOnBlur ||= !validatorFn.updateOnChange;
-      } else if (validatorFn) {
-        const effectiveName = validatorFn.errorName || key;
-        const validatorFnWithReadableErrors = (control: FormControl) =>
-          this.addHumanReadableError(effectiveName, validatorFn.fn(control));
-        formControlOptions.validators.push(validatorFnWithReadableErrors);
+            .then((errors) => this.addHumanReadableError(key, errors)),
+        );
+        updateOnBlur ||= !validator.updateOnChange;
+      } else if (validator) {
+        formControlOptions.validators.push((control: FormControl) =>
+          this.addHumanReadableError(key, validator.fn(control)),
+        );
       }
-
-      // A validator function of `null` is a legal case, for which no validator function is added.
-      // For example `{ required : false }` produces a `null` validator function
     }
 
     // async checks (e.g. loading other records) are not repeated for every keystroke
@@ -346,14 +329,11 @@ export class DynamicValidatorsService {
   }
 
   /**
-   * returns a description for a validator given the value where it failed.
-   * The value is specific for a certain validator. For example, the `min` validator
-   * produces a value that could look something like `{ min: 5, current: 4 }`
-   * @param validator The validator to get the description for
-   * @param validationValue The value associated with the validator
+   * The message for the error of a validator.
+   * The error is specific for a certain validator, e.g. `{ min: 5, actual: 4 }` for the `min` validator.
    */
   private descriptionForValidator(
-    validator: DynamicValidator | string,
+    validator: string,
     validationValue: any,
   ): string {
     switch (validator) {
@@ -377,10 +357,6 @@ export class DynamicValidatorsService {
         }
       case "required":
         return $localize`This field is required`;
-      case "matDatepickerParse":
-        return $localize`Please enter a valid date`;
-      case "isNumber":
-        return $localize`Please enter a valid number`;
       case "withinParent":
       case "selectionCondition":
         return validationValue?.errorMessage;
