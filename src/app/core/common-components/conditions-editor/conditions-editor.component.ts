@@ -38,14 +38,7 @@ import {
   isCompleteRow,
   parseConditions,
 } from "./conditions-combinator";
-import {
-  getEmbeddedFieldId,
-  getEmbeddedFieldLabel,
-  EmbeddedFieldRef,
-  getEmbeddedFieldRefs,
-  resolveEmbeddedField,
-} from "../../entity/schema/embedded-schema-field.util";
-import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
+import { FilterService } from "../../filter/filter.service";
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
   isCurrentRecordPlaceholder,
@@ -123,29 +116,21 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** rows switched to compare with a field of the current record, before that field is selected */
   private readonly referenceRows = new WeakSet<object>();
 
-  /** the properties of embedded fields (e.g. "attendance.status"), offered in addition to the record's own fields */
-  embeddedFieldOptions: FormFieldConfig[] = [];
-
-  /** the embedded fields themselves, whose whole value is not compared */
-  embeddedOuterFields: string[] = [];
+  /** the fields a condition can be set on, in addition to and instead of the record's own fields (see `FilterService.getConditionFields`) */
+  fieldOptions: FormFieldConfig[] = [];
+  excludedFields: string[] = [];
 
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly filterService = inject(FilterService);
   private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
-    const embeddedRefs = getEmbeddedFieldRefs(
-      this.entitySchemaService,
+    const conditionFields = this.filterService.getConditionFields(
       this.entityConstructor,
     );
-    this.embeddedFieldOptions = embeddedRefs.map((ref) => ({
-      ...ref.innerSchema,
-      id: getEmbeddedFieldId(ref),
-      label: getEmbeddedFieldLabel(ref),
-    }));
-    this.embeddedOuterFields = [
-      ...new Set(embeddedRefs.map((ref) => ref.outerProp)),
-    ];
+    this.fieldOptions = conditionFields.options;
+    this.excludedFields = conditionFields.excludedFields;
     this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
   }
@@ -564,49 +549,27 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     );
   }
 
-  /** the schema of a row's field, also of a property of an embedded field */
+  /** the schema of a row's field; none while no record type is chosen */
   private fieldConfigOf(fieldKey: string): EntitySchemaField | undefined {
     return (
-      this.entityConstructor?.schema.get(fieldKey) ??
-      this.embeddedFieldOf(fieldKey)?.innerSchema
+      this.entityConstructor &&
+      this.filterService.getConditionField(this.entityConstructor, fieldKey)
     );
   }
 
-  /** the embedded field a row's field is a property of; none while no record type is chosen */
-  private embeddedFieldOf(fieldKey: string): EmbeddedFieldRef | undefined {
-    if (!this.entityConstructor) return undefined;
-    return resolveEmbeddedField(
-      this.entitySchemaService,
-      this.entityConstructor,
-      fieldKey,
-    );
-  }
-
-  /** the rows in their stored shape: a row on a property of an embedded field is a condition on one of its entries */
+  /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
   private storedRows(): any[] {
-    return (this.working.$or ?? []).map((row) => {
-      const fieldKey = this.getConditionField(row);
-      const embedded = this.embeddedFieldOf(fieldKey);
-      return embedded && isCompleteRow(row)
-        ? conditionOnEmbeddedField(row, fieldKey, embedded)
-        : row;
-    });
+    return (this.working.$or ?? []).map((row) =>
+      this.entityConstructor && isCompleteRow(row)
+        ? this.filterService.toStoredCondition(this.entityConstructor, row)
+        : row,
+    );
   }
 
-  /** a stored condition on one entry of an embedded field is edited as a row of the embedded property */
+  /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
   private toEditorRow(row: any): any {
-    const fieldKey = this.getConditionField(row);
-    const entryCondition = row[fieldKey]?.$elemMatch;
-    const innerKeys =
-      entryCondition && typeof entryCondition === "object"
-        ? Object.keys(entryCondition)
-        : [];
-    if (innerKeys.length !== 1 || innerKeys[0].startsWith("$")) {
-      return row;
-    }
-    const embeddedFieldKey = `${fieldKey}.${innerKeys[0]}`;
-    return this.embeddedFieldOf(embeddedFieldKey)
-      ? { [embeddedFieldKey]: entryCondition[innerKeys[0]] }
+    return this.entityConstructor
+      ? this.filterService.fromStoredCondition(this.entityConstructor, row)
       : row;
   }
 }

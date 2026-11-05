@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { Entity } from "../entity/model/entity";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 import {
   combineFilterConditions,
   DataFilter,
@@ -14,7 +14,15 @@ import moment from "moment";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
 import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
-import { getSchemaEmbedDatatype } from "../entity/schema/embedded-schema-field.util";
+import {
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+  getSchemaEmbedDatatype,
+  resolveEmbeddedField,
+} from "../entity/schema/embedded-schema-field.util";
+import { conditionOnEmbeddedField } from "./embedded-field-filter";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { asArray } from "../../utils/asArray";
 import { Logging } from "../logging/logging.service";
 
@@ -32,6 +40,75 @@ export class FilterService {
     Entity,
     { rev: string; record: object }
   >();
+
+  /**
+   * The fields of the entity type that a condition can be set on, for a field select:
+   * its own fields and, instead of an embedded field itself, the properties of its entries
+   * (with paths like "attendance.status"), as `options` in addition to the record's fields and the `excludedFields`.
+   */
+  getConditionFields(entityType: EntityConstructor): {
+    options: FormFieldConfig[];
+    excludedFields: string[];
+  } {
+    const embeddedRefs = getEmbeddedFieldRefs(this.schemaService, entityType);
+    return {
+      options: embeddedRefs.map((ref) => ({
+        ...ref.innerSchema,
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      })),
+      excludedFields: [...new Set(embeddedRefs.map((ref) => ref.outerProp))],
+    };
+  }
+
+  /** The schema of the field at the path (see {@link getConditionFields}). */
+  getConditionField(
+    entityType: EntityConstructor,
+    fieldPath: string,
+  ): EntitySchemaField | undefined {
+    return (
+      entityType.schema.get(fieldPath) ??
+      resolveEmbeddedField(this.schemaService, entityType, fieldPath)
+        ?.innerSchema
+    );
+  }
+
+  /**
+   * A condition on a field path (see {@link getConditionFields}) as it is stored:
+   * one on a property of an embedded field is a condition on one of its entries
+   * (e.g. `{ "attendance.status": "A" }` becomes `{ attendance: { $elemMatch: { status: "A" } } }`).
+   */
+  toStoredCondition<T extends Entity>(
+    entityType: EntityConstructor,
+    condition: DataFilter<T>,
+  ): DataFilter<T> {
+    const [fieldPath] = Object.keys(condition ?? {});
+    const embedded =
+      fieldPath &&
+      resolveEmbeddedField(this.schemaService, entityType, fieldPath);
+    return embedded
+      ? conditionOnEmbeddedField(condition, fieldPath, embedded)
+      : condition;
+  }
+
+  /** The reverse of {@link toStoredCondition}: a condition on one entry of an embedded field becomes one on the path of the property. */
+  fromStoredCondition<T extends Entity>(
+    entityType: EntityConstructor,
+    condition: DataFilter<T>,
+  ): DataFilter<T> {
+    const [fieldId] = Object.keys(condition ?? {});
+    const entryCondition = condition?.[fieldId]?.$elemMatch;
+    const innerKeys = isPlainObject(entryCondition)
+      ? Object.keys(entryCondition)
+      : [];
+    if (innerKeys.length !== 1 || innerKeys[0].startsWith("$")) {
+      return condition;
+    }
+    const fieldPath = `${fieldId}.${innerKeys[0]}`;
+    return resolveEmbeddedField(this.schemaService, entityType, fieldPath)
+      ? ({ [fieldPath]: entryCondition[innerKeys[0]] } as DataFilter<T>)
+      : condition;
+  }
 
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],

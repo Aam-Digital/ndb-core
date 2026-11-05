@@ -15,6 +15,7 @@ import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields
 import { referenceIdConditions } from "../default-datatype/default.datatype";
 import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
 import { toStoredFormatCondition } from "../../filter/stored-format";
+import { FilterService } from "../../filter/filter.service";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
@@ -39,6 +40,7 @@ export class EntityRelationsService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly schemaService = inject(EntitySchemaService);
+  private readonly filterService = inject(FilterService);
 
   /**
    * Get all entity types whose schema includes fields referencing the given type.
@@ -141,20 +143,12 @@ export class EntityRelationsService {
     fieldPath: string,
     referencedId: string,
   ): DataFilter<any> {
-    const embedded = resolveEmbeddedField(
-      this.schemaService,
-      entityType,
-      fieldPath,
-    );
-    const field = embedded?.innerSchema ?? entityType.schema.get(fieldPath);
-    const condition = {
+    const field = this.filterService.getConditionField(entityType, fieldPath);
+    return this.filterService.toStoredCondition(entityType, {
       [fieldPath]: field?.isArray
         ? { $elemMatch: { $eq: referencedId } }
         : referencedId,
-    };
-    return embedded
-      ? conditionOnEmbeddedField(condition, fieldPath, embedded)
-      : condition;
+    });
   }
 
   /** ids of the inner fields of an embedded field linking to records of the type */

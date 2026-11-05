@@ -40,7 +40,8 @@ A condition on one entry is wrapped in `$elemMatch`: `{ "attendance": { "$elemMa
 Inside `$elemMatch`, write several conditions on the same entry as keys of one object, never with `$and` or `$or`:
 the in-memory engine rejects both there. Alternatives go outside, as an `$or` of `$elemMatch` conditions.
 The conditions editor (display conditions, selection conditions) offers the properties of embedded fields
-and stores a row on one as such a condition on an entry; two rows on the same embedded field may match different entries.
+and stores a row on one as such a condition on an entry (`FilterService.getConditionFields` and `toStoredCondition`);
+two rows on the same embedded field may match different entries.
 
 **"Not defined"** (`createEmptyValueFilter`) matches a missing, `null` or empty value (and an empty list for multi-value fields).
 For an embedded list it matches records without entries or with at least one entry without a value.
@@ -74,11 +75,13 @@ The engine compares with `extendedCompare`, so that a `Date` matches a day strin
   the "not defined" condition and the `$current_record` placeholder helpers
 - `filter-generator/filter-generator.service.ts` — builds the list filters from config, including those for embedded fields
 - `embedded-field-filter.ts` — turns a condition on a property of an embedded field into one on the embedding field,
-  and defines "not defined" for it; used by list filters and related entities
+  and defines "not defined" for it; used by list filters and `FilterService`
 - `../entity/default-datatype/default.datatype.ts` (`referenceIdConditions`) — "the field contains this id",
   for both single-value and multi-value fields; used by list filters and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
-- `filter.service.ts` — the in-memory engine, and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
+- `filter.service.ts` — the in-memory engine; the fields a condition can be set on (also the properties of embedded fields)
+  and the stored form of a condition on such a field (`toStoredCondition`), used by the conditions editor and related entities;
+  and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
   ("Add new" in related entities and the entity select): it applies the conditions requiring one specific value,
   also for an entry of an embedded field, and converts the stored values through the field's datatype
 - `stored-format.ts` — normalizes conditions and converts records to the stored format, for the in-memory engine and database queries

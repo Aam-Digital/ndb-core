@@ -689,11 +689,11 @@ describe("ConditionsEditorComponent", () => {
     it("offers the properties of an embedded field instead of the field itself", () => {
       component.ngOnInit();
 
-      expect(component.embeddedFieldOptions.map((o) => o.id)).toEqual([
+      expect(component.fieldOptions.map((o) => o.id)).toEqual([
         "log.status",
         "log.date",
       ]);
-      expect(component.embeddedOuterFields).toEqual(["log"]);
+      expect(component.excludedFields).toEqual(["log"]);
     });
 
     it("offers the properties of embedded fields also when the record type is chosen later", () => {
@@ -707,9 +707,10 @@ describe("ConditionsEditorComponent", () => {
       );
       editor.detectChanges();
 
-      expect(
-        editor.componentInstance.embeddedFieldOptions.map((o) => o.id),
-      ).toEqual(["log.status", "log.date"]);
+      expect(editor.componentInstance.fieldOptions.map((o) => o.id)).toEqual([
+        "log.status",
+        "log.date",
+      ]);
     });
 
     it.each([
