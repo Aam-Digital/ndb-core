@@ -165,7 +165,7 @@ export interface EntitiesTableSelectionContext<T extends Entity> {
    * whether a record can be selected (e.g. not if its row options say so);
    * the table unselects every record that is not, whoever selected it
    */
-  isSelectable: ReadSignal<(record: T) => boolean>;
+  isSelectable: (record: T) => boolean;
 }
 
 /**
@@ -184,8 +184,7 @@ export class EntitiesTableSelectionStore<T extends Entity> {
   /** the records that "select all" selects */
   private readonly selectableRows = computed(() => {
     if (!this.context) return [];
-    const isSelectable = this.context.isSelectable();
-    return this.context.filteredRows().filter(isSelectable);
+    return this.context.filteredRows().filter(this.context.isSelectable);
   });
 
   readonly allRowsSelected = computed(() => {

@@ -44,10 +44,7 @@ import {
   isClickableTarget,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import {
-  EntitiesTableDataSource,
-  RowOptions,
-} from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 /**
@@ -216,17 +213,9 @@ export class EntitiesTableComponent<T extends Entity>
     ),
   );
 
-  /** Look up the row options of a record, as provided by the data source. */
-  readonly rowOptions = computed<(record: T) => RowOptions | undefined>(() => {
-    const optionsById = this.recordsDataSource().rowOptions();
-    return (record) => optionsById.get(record.getId());
-  });
-
   /** Whether a record can be selected for bulk actions. */
-  readonly isSelectable = computed<(record: T) => boolean>(() => {
-    const rowOptions = this.rowOptions();
-    return (record) => rowOptions(record)?.selectable !== false;
-  });
+  readonly isSelectable = (record: T): boolean =>
+    this.recordsDataSource().rowOptionsOf(record)?.selectable !== false;
 
   /** Columns with sorting rules applied (managed by the sort store). */
   readonly _columns = this.sortStore.columns;
@@ -288,10 +277,9 @@ export class EntitiesTableComponent<T extends Entity>
     effect(() => {
       // the one place that keeps records out of the selection that cannot be selected,
       // however they got there (a click, a range, the host, or a row the data source has hidden since)
-      const isSelectable = this.isSelectable();
       const selected = this.selectedRecords() ?? [];
-      if (!selected.every(isSelectable)) {
-        this.selectedRecords.set(selected.filter(isSelectable));
+      if (!selected.every(this.isSelectable)) {
+        this.selectedRecords.set(selected.filter(this.isSelectable));
       }
     });
   }

@@ -22,7 +22,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
 import { Logging } from "../../logging/logging.service";
 import { Component, signal } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { RowOptionsById } from "./data-source/entities-table-data-source";
+import { RowOptions } from "./data-source/entities-table-data-source";
 import { MatTableModule } from "@angular/material/table";
 import { Angulartics2Module } from "angulartics2";
 
@@ -623,7 +623,7 @@ describe("EntitiesTableComponent", () => {
         TestEntity.create(name),
       );
       dataSource.allRecords.set([decorated, plain]);
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([
           [
             decorated.getId(),
@@ -676,7 +676,7 @@ describe("EntitiesTableComponent", () => {
         );
       const initialFieldView = fieldView();
 
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([[record.getId(), { prefix: { component: "TestRowPrefix" } }]]),
       );
       fixture.detectChanges();
@@ -694,7 +694,7 @@ describe("EntitiesTableComponent", () => {
         TestEntity.create(name),
       );
       dataSource.allRecords.set([a, locked, c]);
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([[locked.getId(), { selectable: false }]]),
       );
       fixture.detectChanges();
@@ -775,7 +775,7 @@ describe("EntitiesTableComponent", () => {
       fixture.detectChanges();
       component.selectedRecords.set([a, b]);
 
-      dataSource.rowOptions.set(new Map([[b.getId(), { selectable: false }]]));
+      dataSource.optionsById.set(new Map([[b.getId(), { selectable: false }]]));
       fixture.detectChanges();
 
       expect(component.selectedRecords()).toEqual([a]);
@@ -785,7 +785,11 @@ describe("EntitiesTableComponent", () => {
 
 /** a data source of a feature module, with row options */
 class ExtendedTestDataSource extends InMemoryDataSource<TestEntity> {
-  override readonly rowOptions = signal<RowOptionsById>(new Map());
+  readonly optionsById = signal<ReadonlyMap<string, RowOptions>>(new Map());
+
+  override rowOptionsOf(record: TestEntity): RowOptions | undefined {
+    return this.optionsById().get(record.getId());
+  }
 }
 
 /** a data source of a feature module that shows all rows at once */

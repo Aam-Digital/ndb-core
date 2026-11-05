@@ -60,15 +60,6 @@ export interface RowOptions {
   selectable?: boolean;
 }
 
-/**
- * The {@link RowOptions} of the rows of a table, by the id of the record (`entity.getId()`).
- *
- * Looked up by id rather than by record object (WeakMap):
- * a live update replaces the record object, and the row keeps its options
- * (e.g. not being selectable) until the data source has computed new options.
- */
-export type RowOptionsById = ReadonlyMap<string, RowOptions>;
-
 /** Why loading the records of a list failed, as named to the user. */
 type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
 
@@ -136,14 +127,19 @@ export abstract class EntitiesTableDataSource<
   /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
   readonly usesPagination: Signal<boolean> = signal(true);
 
-  /** optional extras per row (default: none) */
-  readonly rowOptions: Signal<RowOptionsById> = signal(new Map());
-
   /**
    * controls a host may show in the list's filter row, in this order (default: none).
    * Keep the config objects stable: a new object reloads the control.
    */
   readonly toolbarControls: Signal<DynamicComponentConfig[]> = signal([]);
+
+  /**
+   * Optional extras for the row of a record (default: none).
+   * Called by the table for every rendered row: read signals here, so that the rows update when they change.
+   */
+  rowOptionsOf(_record: T): RowOptions | undefined {
+    return undefined;
+  }
 
   // Make sure only one update subscription is active
   private updateSubscription: Subscription;
