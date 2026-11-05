@@ -30,6 +30,7 @@ import {
   DataFilter,
 } from "../../filter/filters/filters";
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
+import { asArray } from "../../../utils/asArray";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
@@ -206,31 +207,26 @@ export class RelatedEntitiesComponent<E extends Entity> {
   }
 
   protected initFilter(): DataFilter<E> {
-    const relationProperty = this.relationProperty();
-    let relationFilter: DataFilter<E> = {};
-    // only show related entities
-    if (typeof relationProperty === "string" && relationProperty) {
-      relationFilter = this.getFilterForProperty(relationProperty);
-    } else if (Array.isArray(relationProperty) && relationProperty.length > 0) {
-      relationFilter = {
-        $or: relationProperty.map((prop) => this.getFilterForProperty(prop)),
-      };
-    }
-
-    return combineFilterConditions(this.filter() ?? {}, relationFilter);
-  }
-
-  private getFilterForProperty(property: string): DataFilter<E> {
+    // only show related entities: those linking to the entity through any of the relation properties
     const relatedEntityId = this.entity()?.getId();
     const entityCtr = this.entityCtr();
-    if (!relatedEntityId || !entityCtr) {
-      return {};
-    }
-    return this.entityRelations.referenceCondition(
-      entityCtr,
-      property,
-      relatedEntityId,
-    );
+    const conditions =
+      relatedEntityId && entityCtr
+        ? asArray(this.relationProperty())
+            .filter((property) => !!property)
+            .flatMap((property) =>
+              this.entityRelations.referenceConditions(
+                entityCtr,
+                property,
+                relatedEntityId,
+              ),
+            )
+        : [];
+    const relationFilter = (
+      conditions.length > 0 ? { $or: conditions } : {}
+    ) as DataFilter<E>;
+
+    return combineFilterConditions(this.filter() ?? {}, relationFilter);
   }
 
   createNewRecordFactory() {

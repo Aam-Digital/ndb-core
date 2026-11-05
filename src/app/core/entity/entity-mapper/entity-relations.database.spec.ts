@@ -7,6 +7,8 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { DatabaseEntity } from "../database-entity.decorator";
 import { DatabaseField } from "../database-field.decorator";
 import { Entity } from "../model/entity";
+import { EntitySchemaService } from "../schema/entity-schema.service";
+import { toStoredFormatCondition } from "../../filter/stored-format";
 
 /**
  * These run against a real (in-memory) PouchDB rather than the mocked entity mapper,
@@ -113,6 +115,40 @@ describe("EntityRelationsService querying a real database", () => {
 
     expect(await idsLinkingToTarget()).toEqual([legacyId]);
   });
+
+  it.each([
+    ["refArray", (id: string) => ({ refArray: id })],
+    [
+      "embeddedArray.participant",
+      (id: string) => ({ embeddedArray: { participant: id } }),
+    ],
+  ])(
+    "matches a link through %s in the database also in the shape saved before the field held a list",
+    async (fieldPath, storedValues) => {
+      const legacyId = `${RelationQuerySource.ENTITY_TYPE}:legacy`;
+      await TestBed.inject(DatabaseResolverService)
+        .getDatabase()
+        .put({ _id: legacyId, ...storedValues(target.getId()) });
+
+      const condition = {
+        $or: service.referenceConditions(
+          RelationQuerySource,
+          fieldPath,
+          target.getId(),
+        ),
+      };
+      const found = await entityMapper.findAllType(
+        RelationQuerySource,
+        toStoredFormatCondition(
+          condition,
+          RelationQuerySource.schema,
+          TestBed.inject(EntitySchemaService),
+        ),
+      );
+
+      expect(found.map((record) => record.getId())).toEqual([legacyId]);
+    },
+  );
 
   it("reports every field of a record that references the target", async () => {
     const referencing = await saveSource({

@@ -11,6 +11,7 @@ import {
   isPlainObject,
 } from "../../utils/filter-compare-utils";
 import moment from "moment";
+import { isEqual } from "lodash-es";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
 import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
@@ -267,10 +268,14 @@ export class FilterService {
     }
 
     if (container.holdsArray(field)) {
+      const entries = asArray(entity[fieldId] ?? []);
       const [newEntry] = asArray(
         this.schemaService.valueToEntityFormat([storedEntry], field, entity),
       );
-      entity[fieldId] = [...asArray(entity[fieldId] ?? []), newEntry];
+      // the alternatives of a condition (like the shapes a field may be stored in) can require the same entry
+      if (!entries.some((entry) => isEqual(entry, newEntry))) {
+        entity[fieldId] = [...entries, newEntry];
+      }
     } else {
       entity[fieldId] = {
         ...(entity[fieldId] ?? {}),

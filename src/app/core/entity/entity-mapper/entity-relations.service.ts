@@ -15,7 +15,6 @@ import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields
 import { referenceIdConditions } from "../default-datatype/default.datatype";
 import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
 import { toStoredFormatCondition } from "../../filter/stored-format";
-import { FilterService } from "../../filter/filter.service";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
@@ -40,7 +39,6 @@ export class EntityRelationsService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly schemaService = inject(EntitySchemaService);
-  private readonly filterService = inject(FilterService);
 
   /**
    * Get all entity types whose schema includes fields referencing the given type.
@@ -135,19 +133,31 @@ export class EntityRelationsService {
   }
 
   /**
-   * The condition that the field at the path (see {@link getReferencingFieldPaths}) links to the record with the id,
-   * as the field currently stores it: in the field itself or in one of the entries of an embedded field.
+   * The conditions (to combine with `$or`) that the field at the path (see {@link getReferencingFieldPaths})
+   * links to the record with the id, in any of the shapes it may be stored in:
+   * a single id or a list of them, and for a field inside the entries of an embedded field,
+   * a list of entries or a single one (saved while the field had the other setting).
    */
-  referenceCondition(
+  referenceConditions(
     entityType: EntityConstructor,
     fieldPath: string,
     referencedId: string,
-  ): DataFilter<any> {
-    const field = this.filterService.getFieldAtPath(entityType, fieldPath);
-    return this.filterService.toStoredCondition(entityType, {
-      [fieldPath]: field?.isArray
-        ? { $elemMatch: { $eq: referencedId } }
-        : referencedId,
+  ): DataFilter<any>[] {
+    const condition = { $or: referenceIdConditions(fieldPath, referencedId) };
+    const embedded = resolveEmbeddedField(
+      this.schemaService,
+      entityType,
+      fieldPath,
+    );
+    if (!embedded) {
+      return condition.$or;
+    }
+    return [true, false].flatMap((isArray) => {
+      const onEmbeddedField = conditionOnEmbeddedField(condition, fieldPath, {
+        ...embedded,
+        isArray,
+      });
+      return onEmbeddedField["$or"] ?? [onEmbeddedField];
     });
   }
 
@@ -248,7 +258,7 @@ export class EntityRelationsService {
 
     const conditions: DataFilter<any>[] = [];
     for (const refProperty of refProperties) {
-      const propertyConditions = this.referenceConditions(
+      const propertyConditions = this.fieldReferenceConditions(
         refType,
         refProperty,
         primaryEntity.getId(),
@@ -282,13 +292,13 @@ export class EntityRelationsService {
    * also inside the entries of an embedded field.
    * `undefined` if the field's datatype does not hold the reference in a way a query can match.
    */
-  private referenceConditions(
+  private fieldReferenceConditions(
     refType: EntityConstructor,
     refProperty: FormFieldConfig,
     referencedId: string,
   ): DataFilter<any>[] | undefined {
     if (refProperty.dataType === EntityDatatype.dataType) {
-      return referenceIdConditions(refProperty.id, referencedId);
+      return this.referenceConditions(refType, refProperty.id, referencedId);
     }
 
     const container = getSchemaEmbedDatatype(this.schemaService, refProperty);
@@ -297,26 +307,13 @@ export class EntityRelationsService {
     }
     return getInnerEntityReferenceFields(
       container.getEffectiveSchema(refProperty),
-    ).flatMap(([innerProp]) => {
-      const fieldId = `${refProperty.id}.${innerProp}`;
-      const condition = { $or: referenceIdConditions(fieldId, referencedId) };
-      const embedded = resolveEmbeddedField(
-        this.schemaService,
+    ).flatMap(([innerProp]) =>
+      this.referenceConditions(
         refType,
-        fieldId,
-      );
-      if (!embedded) {
-        return condition.$or;
-      }
-      // records may have been saved while the field held a single object or a list of them
-      return [true, false].flatMap((isArray) => {
-        const onEmbeddedField = conditionOnEmbeddedField(condition, fieldId, {
-          ...embedded,
-          isArray,
-        });
-        return onEmbeddedField["$or"] ?? [onEmbeddedField];
-      });
-    });
+        `${refProperty.id}.${innerProp}`,
+        referencedId,
+      ),
+    );
   }
 
   /**

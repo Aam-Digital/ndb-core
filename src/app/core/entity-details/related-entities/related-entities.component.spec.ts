@@ -37,6 +37,21 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
   }
 
+  /** the conditions that the field links to the id, in both shapes a link may be stored in (an id or a list of ids) */
+  function linkTo(field: string, id: string) {
+    return [{ [field]: id }, { [field]: { $elemMatch: { $eq: id } } }];
+  }
+
+  /** the same for a field inside the entries of an embedded field, stored as a list of entries or a single one */
+  function linkInEntriesTo(field: string, innerField: string, id: string) {
+    return [
+      ...linkTo(innerField, id).map((entry) => ({
+        [field]: { $elemMatch: entry },
+      })),
+      ...linkTo(`${field}.${innerField}`, id),
+    ];
+  }
+
   it("should create a filter for the passed entity", async () => {
     const entity = new TestEntity();
     const columns = ["name"];
@@ -46,7 +61,9 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("columns", columns);
     await initComponent();
 
-    expect(component.filterObj()).toEqual({ ref: entity.getId() });
+    expect(component.filterObj()).toEqual({
+      $or: linkTo("ref", entity.getId()),
+    });
   });
 
   it("should also include the provided filter", async () => {
@@ -60,7 +77,7 @@ describe("RelatedEntitiesComponent", () => {
     await initComponent();
 
     expect(component.filterObj()).toEqual({
-      $and: [filter, { ref: entity.getId() }],
+      $and: [filter, { $or: linkTo("ref", entity.getId()) }],
     });
   });
 
@@ -198,8 +215,8 @@ describe("RelatedEntitiesComponent", () => {
     // filter matching relations at any of the available props
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleChild: entity.getId() },
-        { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
+        ...linkTo("singleChild", entity.getId()),
+        ...linkTo("multiEntities", entity.getId()),
       ],
     });
     // all matching properties set when creating a new entity
@@ -223,7 +240,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      singleRelation: component.entity().getId(),
+      $or: linkTo("singleRelation", component.entity().getId()),
     });
 
     PropTest.schema.set("arrayRelation", {
@@ -238,8 +255,8 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleRelation: component.entity().getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
+        ...linkTo("singleRelation", component.entity().getId()),
+        ...linkTo("arrayRelation", component.entity().getId()),
       ],
     });
 
@@ -254,7 +271,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      multiTypeRelation: { $elemMatch: { $eq: component.entity().getId() } },
+      $or: linkTo("multiTypeRelation", component.entity().getId()),
     });
 
     // Now with 2 relations ("singleRelation" and "multiTypeRelation")
@@ -265,13 +282,9 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleRelation: component.entity().getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
-        {
-          multiTypeRelation: {
-            $elemMatch: { $eq: component.entity().getId() },
-          },
-        },
+        ...linkTo("singleRelation", component.entity().getId()),
+        ...linkTo("arrayRelation", component.entity().getId()),
+        ...linkTo("multiTypeRelation", component.entity().getId()),
       ],
     });
 
@@ -282,7 +295,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      singleRelation: component.entity().getId(),
+      $or: linkTo("singleRelation", component.entity().getId()),
     });
   });
 
@@ -309,9 +322,11 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
 
     expect(component.filterObj()).toEqual({
-      attendance: {
-        $elemMatch: { participant: component.entity().getId() },
-      },
+      $or: linkInEntriesTo(
+        "attendance",
+        "participant",
+        component.entity().getId(),
+      ),
     });
   });
 
@@ -344,12 +359,12 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(component.filterObj()).toEqual({
       $or: [
-        { authors: { $elemMatch: { $eq: component.entity().getId() } } },
-        {
-          attendance: {
-            $elemMatch: { participant: component.entity().getId() },
-          },
-        },
+        ...linkTo("authors", component.entity().getId()),
+        ...linkInEntriesTo(
+          "attendance",
+          "participant",
+          component.entity().getId(),
+        ),
       ],
     });
   });
@@ -383,9 +398,11 @@ describe("RelatedEntitiesComponent", () => {
 
     // should only filter by attendance, not authors
     expect(component.filterObj()).toEqual({
-      attendance: {
-        $elemMatch: { participant: component.entity().getId() },
-      },
+      $or: linkInEntriesTo(
+        "attendance",
+        "participant",
+        component.entity().getId(),
+      ),
     });
   });
 
