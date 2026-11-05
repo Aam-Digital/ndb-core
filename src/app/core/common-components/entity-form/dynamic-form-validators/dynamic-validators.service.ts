@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
 import {
   AbstractControl,
+  AsyncValidatorFn,
   FormControl,
   FormControlOptions,
   FormGroup,
@@ -214,10 +215,10 @@ export class DynamicValidatorsService {
     field?: ColumnConfig,
     singleRecord = true,
   ): FormControlOptions {
-    const formControlOptions = {
-      validators: [],
-      asyncValidators: [],
-    };
+    const formControlOptions: FormControlOptions & {
+      validators: ValidatorFn[];
+      asyncValidators: AsyncValidatorFn[];
+    } = { validators: [], asyncValidators: [] };
     let updateOnBlur = false;
     const context: ValidatorContext = {
       entity,
@@ -247,7 +248,7 @@ export class DynamicValidatorsService {
 
     // async checks (e.g. loading other records) are not repeated for every keystroke
     if (updateOnBlur) {
-      (formControlOptions as FormControlOptions).updateOn = "blur";
+      formControlOptions.updateOn = "blur";
     }
 
     return formControlOptions;
