@@ -410,6 +410,16 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * A day ("YYYY-MM-DD") that a condition compares a value with (`$gte`, `$gt`, `$lte`, `$lt`), in the database format,
+   * so that the database compares by day like the matching in memory does.
+   *
+   * @param atEndOfDay whether the value is compared with the end of the day (`$lte`, `$gt`) instead of its start
+   */
+  toStoredDayBound(day: string, atEndOfDay: boolean): unknown {
+    return day;
+  }
+
+  /**
    * Return a comparable primitive for sorting this field's value in a list column.
    * Return `undefined` to fall through to the default sort logic.
    * Override this in datatypes that store arrays or complex objects where the

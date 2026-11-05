@@ -47,30 +47,11 @@ export function toStoredFormatRecord(
   entity: Entity,
   schemaService: EntitySchemaService,
 ): object {
-  const schema = entity.getSchema();
-  const stored = {};
-  for (const [key, field] of schema) {
-    const value = entity[key];
-    if (value === undefined) {
-      continue;
-    }
-    // a value saved while the field allowed several values stays a list, like in the database
-    const storedAs =
-      Array.isArray(value) &&
-      !field.isArray &&
-      datatypeOf(field, schemaService).storedFormat === "id"
-        ? { ...field, isArray: true }
-        : field;
-    const storedValue = schemaService.valueToDatabaseFormat(
-      value,
-      storedAs,
-      entity,
-    );
-    if (storedValue !== undefined) {
-      stored[key] = storedValue;
-    }
-  }
-  return withEntityProperties(stored, entity, schema);
+  return withEntityProperties(
+    schemaService.transformEntityToDatabaseFormat(entity),
+    entity,
+    entity.getSchema(),
+  );
 }
 
 /**
@@ -194,7 +175,7 @@ function toStoredOperators(
     } else if (operator === "$not") {
       result[operator] = toStoredOperators(value, field, schemaService);
     } else {
-      result[operator] = toStoredDateBound(operator, value, field?.dataType);
+      result[operator] = toStoredBound(operator, value, field, schemaService);
     }
   }
   return result;
@@ -242,39 +223,22 @@ interface SchemaContext {
 
 /**
  * Date filters compare with a day ("YYYY-MM-DD"), which records in memory match at day precision.
- * For a field stored in another format, rewrite the day into that format, keeping this meaning:
- * a "date" is a UTC timestamp, so the day becomes its first or last moment in local time;
- * a "month" is "YYYY-MM" and counts as its first day.
+ * For a field stored in another format, the field's datatype rewrites the day into that format (see `toStoredDayBound`).
  */
-function toStoredDateBound(
+function toStoredBound(
   operator: string,
   value: unknown,
-  dataType: string | undefined,
+  field: EntitySchemaField | undefined,
+  schemaService: EntitySchemaService,
 ): unknown {
   if (
-    (dataType !== "date" && dataType !== "month") ||
     !["$gte", "$gt", "$lte", "$lt"].includes(operator) ||
-    typeof value !== "string"
+    typeof value !== "string" ||
+    !moment(value, "YYYY-MM-DD", true).isValid()
   ) {
     return value;
   }
-  const day = moment(value, "YYYY-MM-DD", true);
-  if (!day.isValid()) {
-    return value;
-  }
-
   // `$lte` and `$gt` compare with the end of the day, `$gte` and `$lt` with its start
   const atEndOfDay = operator === "$lte" || operator === "$gt";
-  if (dataType === "date") {
-    if (atEndOfDay) {
-      return day.endOf("day").toISOString();
-    }
-    // a date stored without time ("YYYY-MM-DD") counts as midnight UTC but sorts right before that timestamp,
-    // so where the day starts at midnight UTC, only the day itself as bound treats it like in memory
-    const startOfDay = day.startOf("day").toISOString();
-    return startOfDay === `${value}T00:00:00.000Z` ? value : startOfDay;
-  }
-  return (atEndOfDay || day.date() === 1 ? day : day.add(1, "month")).format(
-    "YYYY-MM",
-  );
+  return datatypeOf(field, schemaService).toStoredDayBound(value, atEndOfDay);
 }
