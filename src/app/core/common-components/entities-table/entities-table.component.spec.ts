@@ -590,14 +590,14 @@ describe("EntitiesTableComponent", () => {
     let dataSource: ExtendedTestDataSource;
 
     beforeEach(async () => {
-      TestBed.inject(ComponentRegistry).add(
-        "TestRowPrefix",
-        async () => TestRowPrefixComponent,
-      );
-      TestBed.inject(ComponentRegistry).add(
-        "TestRowSuffix",
-        async () => TestRowSuffixComponent,
-      );
+      const registry = TestBed.inject(ComponentRegistry);
+      registry.add("TestRowPrefix", async () => TestRowPrefixComponent);
+      registry.add("TestRowSuffix", async () => TestRowSuffixComponent);
+      // the registry is shared by all specs of a test worker
+      onTestFinished(() => {
+        registry.delete("TestRowPrefix");
+        registry.delete("TestRowSuffix");
+      });
       dataSource = TestBed.runInInjectionContext(
         () => new ExtendedTestDataSource(),
       );

@@ -12,6 +12,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Component, input } from "@angular/core";
+import { By } from "@angular/platform-browser";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 import { ADMIN_ENTITY_LIST_SETTINGS } from "./admin-entity-list-settings";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
@@ -105,10 +106,12 @@ describe("AdminEntityListComponent settings of feature modules", () => {
         },
       ],
     });
-    TestBed.inject(ComponentRegistry).add(
-      "TestListSettings",
-      async () => TestListSettingsComponent,
-    );
+    const registry = TestBed.inject(ComponentRegistry);
+    registry.add("TestListSettings", async () => TestListSettingsComponent);
+    // the registry is shared by all specs of a test worker
+    onTestFinished(() => {
+      registry.delete("TestListSettings");
+    });
     const fixture = TestBed.createComponent(AdminEntityListComponent);
     fixture.componentRef.setInput("entityConstructor", TestEntity);
     fixture.componentRef.setInput("config", {
@@ -122,6 +125,10 @@ describe("AdminEntityListComponent settings of feature modules", () => {
       "app-test-list-settings",
     );
     expect(settings?.textContent).toBe("TestEntity");
+    const settingsComponent = fixture.debugElement.query(
+      By.directive(TestListSettingsComponent),
+    ).componentInstance as TestListSettingsComponent;
+    expect(settingsComponent.entityConstructor()).toBe(TestEntity);
   });
 });
 
