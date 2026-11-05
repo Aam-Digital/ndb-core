@@ -425,13 +425,21 @@ describe("AutomatedFieldUpdateComponent", () => {
       },
     );
 
-    it("should show the change of each record of a change of several records", () => {
+    it("should show the change of each changed record that the affected records are reached from", () => {
       fieldConfigs["center"] = { id: "center" };
       initDialog(
-        [{ ...affected(FIRST, ["new"], 1), sourceFieldId: "center" }],
+        [
+          {
+            ...affected(FIRST, ["new"], 1),
+            sourceFieldId: "center",
+            via: ["Entity:first-child", "Entity:second-child"],
+          },
+        ],
         [
           centerChange("first-child", "old", "new"),
           centerChange("second-child", "other", "new"),
+          // e.g. a record of a bulk edit that does not link to any record the rule updates
+          centerChange("unlinked-child", "old", "new"),
         ],
       );
 

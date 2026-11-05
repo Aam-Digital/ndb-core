@@ -26,7 +26,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
-import { differenceWith, groupBy, isEqual, uniq } from "lodash-es";
+import { differenceWith, groupBy, isEqual, uniq, uniqWith } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import {
   catchError,
@@ -38,7 +38,7 @@ import {
   switchMap,
 } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { Entity } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { isEmptyValue } from "../add-missing-values";
 import { isSameValue } from "../get-common-value";
 import { AffectedEntityValueComponent } from "./affected-entity-value/affected-entity-value.component";
@@ -204,37 +204,53 @@ export class AutomatedFieldUpdateComponent {
 
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
     const groups = groupBy(rows, (row) => row.sourceFieldId);
-    return Object.entries(groups).map(([sourceFieldId, groupRows]) => ({
-      sourceFieldId,
-      triggers: (this.data.triggers ?? []).map((trigger) => ({
-        trigger,
-        changes: computed(() =>
-          this.getTriggerChanges(trigger, sourceFieldId, groupRows),
-        ),
-      })),
-      rows: groupRows,
-    }));
+    return Object.entries(groups).map(([sourceFieldId, groupRows]) => {
+      const reachedFrom = new Set(groupRows.flatMap((row) => row.via ?? []));
+      const links = uniqWith(
+        groupRows
+          .filter((row) => row.level === 1)
+          .map((row) => ({
+            fieldId: row.relatedReferenceField,
+            entityType: row.relatedReferenceFieldEntityType,
+          })),
+        isEqual,
+      );
+      return {
+        sourceFieldId,
+        // a changed entity that the rows are not reached from did not cause their update
+        triggers: (this.data.triggers ?? [])
+          .filter((trigger) => reachedFrom.has(trigger.entity.getId()))
+          .map((trigger) => ({
+            trigger,
+            changes: computed(() =>
+              this.getTriggerChanges(trigger, sourceFieldId, links),
+            ),
+          })),
+        rows: groupRows,
+      };
+    });
   }
 
-  /** The fields of the changed entity that caused the update of the given rows, to show what changed */
+  /**
+   * The fields of the changed entity that caused the update of the rows of a group, to show what changed
+   * @param links the fields that link the first level of the rows to the changed entities
+   */
   private getTriggerChanges(
     trigger: UpdateTrigger,
     sourceFieldId: string,
-    groupRows: DialogRow[],
+    links: { fieldId: string; entityType: EntityConstructor }[],
   ): TriggerChange[] {
     const entityType = trigger.entity.getConstructor();
-    const firstLevel = groupRows.filter((entity) => entity.level === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
       sourceFieldId,
-      ...firstLevel
+      ...links
         .filter(
-          (entity) => entity.relatedReferenceFieldEntityType === entityType,
+          (link) =>
+            link.entityType === entityType &&
+            isFieldChanged(trigger.entity, trigger.before, link.fieldId),
         )
-        .map((entity) => entity.relatedReferenceField)
-        .filter((fieldId) =>
-          isFieldChanged(trigger.entity, trigger.before, fieldId),
-        ),
+        .map((link) => link.fieldId),
     ]).filter((fieldId) => !!fieldId);
     return fieldIds
       .map((fieldId) => {
