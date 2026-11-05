@@ -32,6 +32,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
    */
   private currentConfig: Config;
 
+  /**
+   * Whether loading the config failed with anything other than "not found",
+   * i.e. we do not know whether this system has a config at all.
+   */
+  private configLoadFailed = false;
+
   private readonly defaultConfigMigrations = inject(
     DefaultConfigMigrationRegistryService,
   );
@@ -66,6 +72,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
         return;
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
+      this.configLoadFailed = false;
       const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
       this.resolvedConfigData = resolveLocaleConfig(this.currentConfig.data);
@@ -86,6 +93,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
       return entity;
     } catch (err) {
       if (err?.status === HttpStatusCode.NotFound) {
+        // a definitive answer rather than a failure: this system has no config
+        // (yet), even if an earlier attempt could not reach the database
+        this.configLoadFailed = false;
         return undefined;
       }
       this.abortWithError(
@@ -97,6 +107,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
+    this.configLoadFailed = true;
     const error = new NamedError("ConfigLoadError", message, { cause });
     if (isConnectivityError(cause)) {
       // offline or the server unreachable (remote-only session): the user is told below
@@ -155,6 +166,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   public hasConfig() {
     return this.currentConfig !== undefined;
+  }
+
+  /**
+   * Whether this system has no config at all and still needs to be set up.
+   * Unlike `!hasConfig()`, this is false while the config merely could not be
+   * loaded - offering the setup for an existing system would be destructive.
+   */
+  public isSystemUninitialized() {
+    return !this.hasConfig() && !this.configLoadFailed;
   }
 
   public saveConfig(config: any): Promise<void> {

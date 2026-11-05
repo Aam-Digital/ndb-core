@@ -13,6 +13,7 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { SetupService } from "../setup.service";
 import { AssistantService } from "../assistant.service";
+import { ConfigService } from "app/core/config/config.service";
 import type { Mock } from "vitest";
 
 type AssistantServiceMock = Pick<AssistantService, "openAssistant"> & {
@@ -23,10 +24,14 @@ describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
   let mockAssistantService: AssistantServiceMock;
+  let mockConfigService: { isSystemUninitialized: Mock };
 
   beforeEach(async () => {
     mockAssistantService = {
       openAssistant: vi.fn().mockName("AssistantService.openAssistant"),
+    };
+    mockConfigService = {
+      isSystemUninitialized: vi.fn().mockReturnValue(false),
     };
 
     await TestBed.configureTestingModule({
@@ -42,6 +47,7 @@ describe("AssistantButtonComponent", () => {
           useValue: { waitForConfigReady: () => Promise.resolve(true) },
         },
         { provide: AssistantService, useValue: mockAssistantService },
+        { provide: ConfigService, useValue: mockConfigService },
         SyncStateSubject,
       ],
     }).compileComponents();
@@ -58,4 +64,25 @@ describe("AssistantButtonComponent", () => {
 
     expect(mockAssistantService.openAssistant).toHaveBeenCalled();
   });
+
+  it.each([
+    { uninitialized: true, opensSetup: true },
+    { uninitialized: false, opensSetup: false },
+  ])(
+    "offers the setup on startup only for a system without a config (uninitialized: $uninitialized)",
+    async ({ uninitialized, opensSetup }) => {
+      // a config that could not be loaded also has no config available, but must
+      // not offer to set up the existing system again (see issue #4550)
+      mockConfigService.isSystemUninitialized.mockReturnValue(uninitialized);
+      mockAssistantService.openAssistant.mockResolvedValue(undefined);
+
+      const newFixture = TestBed.createComponent(AssistantButtonComponent);
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(mockAssistantService.openAssistant).toHaveBeenCalledTimes(
+        opensSetup ? 1 : 0,
+      );
+    },
+  );
 });
