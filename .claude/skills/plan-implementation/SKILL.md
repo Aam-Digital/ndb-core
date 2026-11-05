@@ -27,6 +27,9 @@ Comments on the issue may be useful for discussion and documenting changed detai
    Read the module READMEs for the folders you will touch (see `AGENTS.md`), 
    then the real code paths. Everything in **Context** is verified against
    the code, and whatever you could not verify is marked as an assumption.
+   If your tool can start sub-agents (e.g. Claude Code), hand the search to a fast
+   exploration agent and ask it for locations with one line on what is there each, not
+   for conclusions. Then read the key code paths yourself before you weigh the approaches.
 3. **Write the plan** in the structure below.
    Consider alternative approaches and explain their pros and cons.
    Ask follow up questions and lead a discussion about the high-level approach.
