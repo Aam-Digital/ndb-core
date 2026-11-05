@@ -176,9 +176,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * Find all entities that reference the given entity.
-   * @param entity The entity to find references to
-   * @returns An array of objects containing an entity referencing the given entity and its specific fields that reference it
+   * The records referencing the given entity, each with its fields that reference it.
    */
   async loadAllLinkingToEntity(
     entity: Entity,
@@ -202,11 +200,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * Search through all entities of the given type and find those that reference the given entity.
-   * @param primaryEntity The entity to which the other entities include a reference
-   * @param refType The entity type of the entities to search for references to primaryEntity
-   * @param refProperties The fields of the refType entities that may contain a reference (based on the refType's schema)
-   * @private
+   * The records of the type referencing the primary entity through one of the given fields (of the type's schema).
    */
   private async loadLinkedEntitiesOfType(
     primaryEntity: Entity,
@@ -361,11 +355,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * Return the fields of entity that contain the given refId.
-   * If there is no such referenced ID, the array will be empty.
-   * @param entity
-   * @param refId
-   * @param relevantFields The entity fields to check for the refId
+   * The fields of the entity (out of the relevant ones) that contain the id.
    */
   private fieldsIncludingId(
     entity: Entity,

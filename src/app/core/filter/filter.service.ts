@@ -28,7 +28,8 @@ import { Logging } from "../logging/logging.service";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
 
 /**
- * Utility service to help handling and aligning filters with entities.
+ * Works with conditions on records: matches records in memory, offers the fields a condition can be set on,
+ * and pre-fills a new record so that it matches a condition.
  */
 @Injectable({
   providedIn: "root",
@@ -122,18 +123,11 @@ export class FilterService {
   }
 
   /**
-   * Builds a predicate for a given filter object.
-   * This predicate can be used to filter arrays of objects.
-   * ```javascript
-   * const predicate = this.filterService.getFilterPredicate(filterObj);
-   * const filtered = this.data.filter(predicate)
-   * ```
-   *
+   * A function telling whether a record matches the condition, e.g. to filter a list of records.
    * Records are matched in the stored format, like the database matches them
    * (see the README of the filter module).
    *
-   * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
-   * @throws if the filter cannot be parsed
+   * @throws if the condition cannot be parsed
    */
   getFilterPredicate<T extends Entity>(
     filter: DataFilter<T>,
@@ -192,16 +186,12 @@ export class FilterService {
   }
 
   /**
-   * Patches an entity with values required to pass the filter query.
-   * This patch happens in-place.
+   * Set the values the condition requires on the entity (in place), so that it matches the condition afterwards.
    *
    * Only conditions requiring one specific value are applied, like `{ category: "A" }`, `{ category: { $in: ["A"] } }`
    * or `{ tags: { $elemMatch: { $eq: "A" } } }` (only for a multi-value field), every branch of `$or` and `$and`.
    * A condition on an entry of an embedded field (like `{ attendance: { $elemMatch: { participant: "Child:1" } } }`)
    * adds such an entry. The values are converted from the stored format through the datatype of the field.
-   *
-   * @param entity the entity to be patched
-   * @param filter the filter which the entity should pass afterward
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
