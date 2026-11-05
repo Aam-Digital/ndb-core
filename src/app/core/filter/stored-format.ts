@@ -33,7 +33,7 @@ export function toStoredFormatCondition(
   schemaService: EntitySchemaService,
   inMemory = false,
 ): any {
-  return toDbSelector(condition, { schema, inMemory }, schemaService);
+  return toStoredSelector(condition, { schema, inMemory }, schemaService);
 }
 
 /**
@@ -104,13 +104,13 @@ function withEntityProperties(
   });
 }
 
-function toDbSelector(
+function toStoredSelector(
   query: unknown,
   ctx: SchemaContext,
   schemaService: EntitySchemaService,
 ): any {
   if (Array.isArray(query)) {
-    return query.map((q) => toDbSelector(q, ctx, schemaService));
+    return query.map((q) => toStoredSelector(q, ctx, schemaService));
   }
   if (!isPlainObject(query)) {
     return query;
@@ -119,14 +119,14 @@ function toDbSelector(
   const result = {};
   for (const [key, value] of Object.entries(query)) {
     if (key.startsWith("$")) {
-      result[key] = toDbSelector(value, ctx, schemaService);
+      result[key] = toStoredSelector(value, ctx, schemaService);
       continue;
     }
-    const { dbPath, field } = toDbPath(key, ctx, schemaService);
-    const condition = toDbCondition(value, field, schemaService);
+    const { storedPath, field } = toStoredPath(key, ctx, schemaService);
+    const condition = toStoredOperators(value, field, schemaService);
     // pouchdb-find skips implicit equality with a falsy value (e.g. `{status: ""}`)
     // inside `$elemMatch` and matches every entry, an explicit `$eq` works on both engines
-    result[dbPath] =
+    result[storedPath] =
       ctx.inElemMatch && !isPlainObject(condition)
         ? { $eq: condition }
         : condition;
@@ -135,38 +135,38 @@ function toDbSelector(
 }
 
 /**
- * Translate a (dotted) field path into its path in the database format:
+ * Translate a (dotted) field path into its path in the stored format:
  * enum and entity references are stored as the plain id, so e.g.
  * "gender.id" becomes "gender" and "phoneNumber.type.id" becomes "phoneNumber.type".
  * Only for fields that are actually stored that way, though - on any other
  * field ".id" is a real path into an object value.
  */
-function toDbPath(
+function toStoredPath(
   key: string,
   ctx: SchemaContext,
   schemaService: EntitySchemaService,
-): { dbPath: string; field?: EntitySchemaField } {
+): { storedPath: string; field?: EntitySchemaField } {
   if (ctx.inMemory && isPathIntoEntityValue(key, ctx.schema, schemaService)) {
-    return { dbPath: `${ENTITY_VALUES_KEY}.${key}` };
+    return { storedPath: `${ENTITY_VALUES_KEY}.${key}` };
   }
 
-  const dbSegments: string[] = [];
+  const storedSegments: string[] = [];
   let current = ctx;
   let field: EntitySchemaField | undefined;
   for (const segment of key.split(".")) {
     if (segment === "id" && datatypeOf(field, schemaService).storedAsId) {
       continue;
     }
-    dbSegments.push(
+    storedSegments.push(
       current.container?.getEmbeddedFieldDbPath(segment) ?? segment,
     );
     field = current.schema?.get(segment);
     current = getEmbeddedContext(field, schemaService);
   }
-  return { dbPath: dbSegments.join("."), field };
+  return { storedPath: storedSegments.join("."), field };
 }
 
-function toDbCondition(
+function toStoredOperators(
   condition: unknown,
   field: EntitySchemaField | undefined,
   schemaService: EntitySchemaService,
@@ -183,13 +183,13 @@ function toDbCondition(
   const result = {};
   for (const [operator, value] of Object.entries(condition)) {
     if (operator === "$elemMatch") {
-      result[operator] = toDbSelector(
+      result[operator] = toStoredSelector(
         value,
         { ...getEmbeddedContext(field, schemaService), inElemMatch: true },
         schemaService,
       );
     } else if (operator === "$not") {
-      result[operator] = toDbCondition(value, field, schemaService);
+      result[operator] = toStoredOperators(value, field, schemaService);
     } else {
       result[operator] = toStoredDateBound(operator, value, field?.dataType);
     }

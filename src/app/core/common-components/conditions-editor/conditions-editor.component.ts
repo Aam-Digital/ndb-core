@@ -553,7 +553,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   private fieldConfigOf(fieldKey: string): EntitySchemaField | undefined {
     return (
       this.entityConstructor &&
-      this.filterService.getConditionField(this.entityConstructor, fieldKey)
+      this.filterService.getFieldAtPath(this.entityConstructor, fieldKey)
     );
   }
 

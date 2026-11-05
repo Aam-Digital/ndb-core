@@ -62,7 +62,7 @@ export class FilterService {
   }
 
   /** The schema of the field at the path (see {@link getConditionFields}). */
-  getConditionField(
+  getFieldAtPath(
     entityType: EntityConstructor,
     fieldPath: string,
   ): EntitySchemaField | undefined {

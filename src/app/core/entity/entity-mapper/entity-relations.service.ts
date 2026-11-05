@@ -143,7 +143,7 @@ export class EntityRelationsService {
     fieldPath: string,
     referencedId: string,
   ): DataFilter<any> {
-    const field = this.filterService.getConditionField(entityType, fieldPath);
+    const field = this.filterService.getFieldAtPath(entityType, fieldPath);
     return this.filterService.toStoredCondition(entityType, {
       [fieldPath]: field?.isArray
         ? { $elemMatch: { $eq: referencedId } }
