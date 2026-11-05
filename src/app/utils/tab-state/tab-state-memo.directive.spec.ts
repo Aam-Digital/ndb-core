@@ -30,7 +30,7 @@ describe("TabStateService", () => {
     const activatedRoute = TestBed.inject(ActivatedRoute);
     await tabGroupHarness.selectTab({ label: "D" });
     await fixture.whenStable();
-    expect(activatedRoute.snapshot.queryParamMap.get("tabIndex")).toBe("3");
+    expect(activatedRoute.snapshot.queryParamMap.get("_tabIndex")).toBe("3");
   });
 
   it("should switch the selected tab when the tabIndex query param changes while mounted", async () => {
@@ -42,7 +42,7 @@ describe("TabStateService", () => {
 
     // simulate an in-app navigation that only changes the tabIndex query param
     // (e.g. clicking the "Notification Settings" toolbar link while already here)
-    await router.navigate([], { queryParams: { tabIndex: 2 } });
+    await router.navigate([], { queryParams: { _tabIndex: 2 } });
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -52,7 +52,7 @@ describe("TabStateService", () => {
 
   it("updates a two-way bound selectedIndex to the tab restored from the URL", async () => {
     const router = TestBed.inject(Router);
-    await router.navigate([], { queryParams: { tabIndex: 2 } });
+    await router.navigate([], { queryParams: { _tabIndex: 2 } });
 
     // initial load of a page whose URL already holds a tabIndex (e.g. navigating back)
     const boundFixture = TestBed.createComponent(TwoWayBoundTestComponent);
@@ -62,14 +62,16 @@ describe("TabStateService", () => {
     boundFixture.detectChanges();
 
     // later in-app navigation that only changes the query param
-    await router.navigate([], { queryParams: { tabIndex: 1 } });
+    await router.navigate([], { queryParams: { _tabIndex: 1 } });
     boundFixture.detectChanges();
     await boundFixture.whenStable();
     expect(boundFixture.componentInstance.selectedIndex()).toBe(1);
   });
 
   it("clamps a restored tabIndex beyond the last tab before passing it to a two-way binding", async () => {
-    await TestBed.inject(Router).navigate([], { queryParams: { tabIndex: 9 } });
+    await TestBed.inject(Router).navigate([], {
+      queryParams: { _tabIndex: 9 },
+    });
 
     const boundFixture = TestBed.createComponent(TwoWayBoundTestComponent);
     boundFixture.detectChanges();

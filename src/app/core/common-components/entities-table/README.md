@@ -13,7 +13,7 @@ sections on details pages and several feature components.
 - `entities-table.component.ts`: the table: columns, filter input, row click,
   row options
 - `entities-table-sort.store.ts`: sort state, default sort and its URL params
-  (`sortBy`, `sortOrder`)
+  (`_sortBy`, `_sortOrder`)
 - `entities-table-selection.ts`: bulk selection: checkbox, "select all",
   Shift-click ranges
 - `data-source/entities-table-data-source.ts`: abstract base of all data
@@ -45,12 +45,15 @@ Hosts usually create it with
 - `PaginatedDataSource`, which pages on the server, falls back to
   `InMemoryDataSource` outside of online-only sessions, because the local
   database cannot page.
+  So does a data source of a feature module that extends it: the list then
+  shows the records without the feature's extras.
 
 The records a data source holds:
 
 - `allRecords`: all loaded records (only filled by in-memory data sources);
 - `filteredRecords`: the records passing the filters, across all pages (the
-  input data of the table);
+  input data of the table); `PaginatedDataSource` only holds the pages loaded
+  so far, `getAllData()` loads all of them;
 - `renderedRows`: the rows currently rendered: filtered, sorted and reduced to
   the current page.
 
@@ -70,9 +73,10 @@ All hooks have defaults, so existing data sources do not need to set them.
 - `config` (default `{}`): options of the data source from the list or
   section config (see below)
 - `usesPagination` (default `true`): signal; `false`: the table shows all rows
-  and no paginator (may change at any time)
-- `rowOptions` (default: empty map): optional extras per row, by record id
-  (see below)
+  and no paginator (may change at any time); not for data sources built on
+  `PaginatedDataSource`, which load no records without a paginator
+- `rowOptionsOf(record)` (default: none): optional extras for the row of a
+  record (see below)
 - `toolbarControls` (default `[]`): `DynamicComponentConfig`s that a host
   shows in the list's filter row, in this order
 - `searchText` (default `""`): free-text search; only data sources that apply
@@ -100,11 +104,14 @@ table removes it, however it got there (Shift-click range, the host, or row
 options that changed since, e.g. a row the data source hides), so a bulk
 action never applies to it.
 
-Row options are state of one table, so they live in the data source rather
-than on the records.
-They are looked up by `entity.getId()` rather than by record object, because a
-live update replaces the record object and the row should keep its options
-until the data source has computed new ones.
+Row options are state of one table, so the data source provides them rather
+than the records (the same record object can be shown in several tables).
+The table calls `rowOptionsOf()` for every rendered row whenever it checks the
+row, so keep it a quick lookup and read the options from signals, so that the
+rows update when they change: e.g. a `computed` map by `entity.getId()`.
+Look them up by id rather than by record object, because a live update
+replaces the record object and the row should keep its options until the data
+source has computed new ones.
 Keep the `prefix`, `suffix` and `toolbarControls` config objects stable (e.g.
 create them once in a `computed`): `appDynamicComponent` reloads the component
 whenever it gets a new config object.
@@ -152,10 +159,19 @@ module provides a settings component through `ADMIN_ENTITY_LIST_SETTINGS`
 The entity list keeps its filters, sort and column-group tab in the URL query
 params, so that reloading or going back restores the view.
 All of this goes through `UrlStateService` (`src/app/utils/url-state/`).
-Every query param counts as a filter value, except the keys that their owners
-register with `registerNonFilterKeys()` before writing them: the sort store
-registers `sortBy` and `sortOrder`, `TabStateMemoDirective` its tab key
-(`tabIndex` by default).
-A new kind of URL state (e.g. of a feature data source) must register its keys
-the same way, otherwise the filters treat it as a filter value and clear the
-default filters on reload.
+The service does not know what a param means; each owner reads and writes its
+own keys, and a naming rule keeps them apart:
+
+- Filters use the id of the filter, usually a field id
+  (e.g. `?status=active`). Links into a list, e.g. from a dashboard widget,
+  use the same keys. `FilterComponent` only reads the params of its configured
+  filters and of fields of the entity type.
+- All other view state uses keys starting with `_`: the sort store `_sortBy`
+  and `_sortOrder`, `TabStateMemoDirective` its tab key (`_tabIndex` by
+  default). Custom field ids cannot start with `_` (the admin UI does not
+  allow it, and CouchDB reserves such top-level properties), so these keys
+  never collide with a filter. Only the built-in `_id` and `_rev` start with
+  `_`: do not use these as keys of view state.
+
+A new kind of URL state (e.g. of a feature data source) must use a key with the
+`_` prefix as well.

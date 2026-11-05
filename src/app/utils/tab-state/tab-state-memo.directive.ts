@@ -29,7 +29,7 @@ import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
  * distinct `tabIndexKey`. Otherwise they share the same query param and reset
  * each other on every navigation.
  *
- * The key is registered with the {@link UrlStateService} as state that is not a filter,
+ * The key starts with "_" like all URL state other than filters (see {@link UrlStateService}),
  * so a list on the same page does not treat the selected tab as a filter value.
  */
 @UntilDestroy()
@@ -49,19 +49,18 @@ export class TabStateMemoDirective implements OnInit {
    * The query param key under which this tab group's selected index is stored.
    * Override this for tab groups nested within another tab group on the same
    * route so they don't clobber each other's state.
+   * Start it with "_", like all URL state other than filters (see {@link UrlStateService}).
    */
-  @Input() tabIndexKey = "tabIndex";
+  @Input() tabIndexKey = "_tabIndex";
 
   ngOnInit() {
-    this.urlState.registerNonFilterKeys(this.tabIndexKey);
-
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
       return;
     }
 
     // React to NavigationEnd (not just snapshot) so that navigating to
-    // ?tabIndex=N while already on this page also updates the tab.
+    // ?_tabIndex=N while already on this page also updates the tab.
     // startWith(null) covers the initial load synchronously.
     this.router.events
       .pipe(

@@ -36,16 +36,15 @@
           @if (col.id === firstDataColumn()) {
             <!-- the same elements with or without a prefix: a prefix that comes or goes does not rebuild the cell -->
             <div class="first-data-cell-content flex-row align-center">
-              @let prefix = rowOptions()(row)?.prefix;
-              @if (prefix) {
+              @let options = recordsDataSource().rowOptionsOf(row);
+              @if (options?.prefix; as prefix) {
                 <ng-container [appDynamicComponent]="prefix"></ng-container>
               }
               <app-entity-field-view
                 [field]="col"
                 [entity]="row"
               ></app-entity-field-view>
-              @let suffix = rowOptions()(row)?.suffix;
-              @if (suffix) {
+              @if (options?.suffix; as suffix) {
                 <ng-container [appDynamicComponent]="suffix"></ng-container>
               }
             </div>
@@ -75,7 +74,7 @@
         <mat-checkbox
           (change)="selectionStore.selectRow(row, $event.checked)"
           [checked]="selectedRecords().includes(row)"
-          [disabled]="!isSelectable()(row)"
+          [disabled]="!isSelectable(row)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
@@ -105,7 +104,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
-      [class]="rowOptions()(row)?.cssClass ?? ''"
+      [class]="recordsDataSource().rowOptionsOf(row)?.cssClass ?? ''"
       [class.inactive-row]="row.inactive"
       [style.background-color]="effectiveBackgroundColor()(row)"
       class="table-row"

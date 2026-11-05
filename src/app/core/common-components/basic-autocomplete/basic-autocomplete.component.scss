@@ -15,6 +15,12 @@ em {
   color: black;
 }
 
+// the options scroll within the panel, which itself has no max-height (see _mat-autocomplete.scss):
+// on small screens, the list is shorter, so that the panel with its header and footer still fits above or below the field
+cdk-virtual-scroll-viewport {
+  max-height: 25vh;
+}
+
 .autocomplete-footer {
   margin: sizes.$small sizes.$regular;
 }

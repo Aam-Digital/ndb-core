@@ -13,28 +13,21 @@ export interface ParentRange {
   range: DateRangeValue;
 }
 
-/** the parent link as entered in a form (e.g. its form control) */
-export interface ParentLinkInForm {
-  value: string | string[] | null;
-}
-
 /**
- * The ids of the parent records to compare a record's range with:
- * the link entered in the form if the form has a field for it, otherwise the record's saved link.
+ * The ids of the parent records to compare a record's range with.
  * None for an anonymized record, whose dates are reduced to the year.
+ *
+ * @param record the record, with the current values of its form while it is edited
+ *   (see `createCurrentRecordState`), so that a changed link is followed before it is saved
  */
 export function getParentIds(
   config: WithinParentConfig,
   record: Entity | undefined,
-  linkInForm?: ParentLinkInForm | null,
 ): string[] {
   if (record?.anonymized) {
     return [];
   }
-  return asArray(
-    (linkInForm ? linkInForm.value : record?.[config.parentReferenceField]) ??
-      [],
-  );
+  return asArray(record?.[config.parentReferenceField] ?? []);
 }
 
 /**
@@ -67,23 +60,22 @@ export async function loadParentRanges(
  * Loads the ranges of the parent records that a record links to (see {@link getParentIds} and {@link loadParentRanges}).
  * Must be called in an injection context (e.g. as a field initializer of a component).
  *
- * @param params the record, the id and the `withinParent` config of its field (without a config nothing is loaded)
- *   and the parent link entered in the form, if the form has a field for it
+ * @param params the record (with the current values of its form while it is edited),
+ *   the id and the `withinParent` config of its field (without a config nothing is loaded)
  */
 export function parentRangesResource(
   params: () => {
     record: Entity | undefined;
     fieldId: string | undefined;
     config: WithinParentConfig | undefined;
-    linkInForm?: ParentLinkInForm;
   },
 ) {
   const entityMapper = inject(EntityMapperService);
 
   return resource({
     params: () => {
-      const { record, fieldId, config, linkInForm } = params();
-      const parentIds = config ? getParentIds(config, record, linkInForm) : [];
+      const { record, fieldId, config } = params();
+      const parentIds = config ? getParentIds(config, record) : [];
       return parentIds.length
         ? { parentIds, valueField: config.parentValueField ?? fieldId }
         : undefined;

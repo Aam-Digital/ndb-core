@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  Signal,
   DestroyRef,
   inject,
   OnInit,
@@ -53,8 +54,12 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { filter } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter, pairwise } from "rxjs/operators";
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -67,6 +72,7 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { asArray } from "app/utils/asArray";
 import { DateRangeDatatype } from "../../../basic-datatypes/date-range/date-range.datatype";
 import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 
@@ -154,7 +160,13 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
-  additionalForm: FormControl;
+  readonly additionalForm: FormControl = this.fb.control(
+    this.data.entitySchemaField.additional,
+  );
+  private readonly additionalValue = toSignal(
+    this.additionalForm.valueChanges,
+    { initialValue: this.additionalForm.value },
+  );
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
@@ -164,6 +176,23 @@ export class AdminEntityFieldComponent implements OnInit {
   readonly selectedDataType = signal<string>(
     this.data.entitySchemaField.dataType,
   );
+
+  /**
+   * The record type this field references, if a `selectionCondition` can be applied to the field
+   * (and the admin can therefore configure one in the Validation tab): a link to exactly one record type.
+   */
+  readonly selectionConditionTargetType: Signal<EntityConstructor | undefined> =
+    computed(() => {
+      if (this.selectedDataType() !== EntityDatatype.dataType) {
+        return undefined;
+      }
+      const types = asArray(this.additionalValue() ?? []);
+      // TODO: generalize to support multiple entity types
+      if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
+        return undefined;
+      }
+      return this.entityRegistry.get(types[0]);
+    });
 
   /** whether a "date-range" field offers predefined periods (`additional` is not an empty list) */
   datePresetsOffered: WritableSignal<boolean> = signal(true);
@@ -178,6 +207,14 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
+
+  constructor() {
+    // a `selectionCondition` refers to fields of the linked record type, so it is removed when that type changes
+    // (the validator settings then show the field's validators without it, see ConfigureEntityFieldValidatorComponent)
+    toObservable(this.selectionConditionTargetType)
+      .pipe(pairwise(), takeUntilDestroyed())
+      .subscribe(() => this.removeSelectionCondition());
+  }
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -224,10 +261,6 @@ export class AdminEntityFieldComponent implements OnInit {
         }),
       ],
     });
-    this.additionalForm = this.fb.control(
-      this.data.entitySchemaField.additional,
-    );
-
     const labelFormControl = this.fb.control(
       // the raw value (plain string or per-language map) - the input component
       // displays only the active language of it
@@ -377,6 +410,14 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
+  private removeSelectionCondition() {
+    const validators = this.schemaFieldsForm.get("validators");
+    const { selectionCondition, ...otherValidators } = validators.value ?? {};
+    if (selectionCondition) {
+      validators.setValue(otherValidators);
+    }
+  }
+
   entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
@@ -506,10 +547,7 @@ export class AdminEntityFieldComponent implements OnInit {
       const validValues = newAdditional.filter((value) =>
         this.isValidEntityType(value),
       );
-      // Use setTimeout to ensure Angular processes the multi input change before setting the value
-      setTimeout(() => {
-        this.additionalForm.setValue(validValues);
-      });
+      this.additionalForm.setValue(validValues);
       return;
     }
 
@@ -542,12 +580,14 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     if (validValues.length > 0) {
-      this.additionalForm.setValue(this.buildAttendanceAdditional(validValues));
+      this.additionalForm.setValue(
+        this.buildAttendanceAdditional(validValues, newAdditional),
+      );
     }
 
-    // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
-    setTimeout(() => {
-      this.attendanceParticipantTypesForm.setValue(validValues);
+    // not emitted: `additional` already holds these types, with the rest of its config
+    this.attendanceParticipantTypesForm.setValue(validValues, {
+      emitEvent: false,
     });
   }
 
@@ -569,10 +609,43 @@ export class AdminEntityFieldComponent implements OnInit {
     );
   }
 
-  private buildAttendanceAdditional(types: string[]): object | null {
-    return types && types.length > 0
-      ? { participant: { dataType: "entity", additional: types } }
-      : null;
+  /**
+   * The `additional` of an attendance field with the given participant types,
+   * keeping the other config of its embedded fields (e.g. set in the JSON config).
+   */
+  private buildAttendanceAdditional(
+    types: string[],
+    previous = this.additionalForm.value,
+  ): object | null {
+    if (!types || types.length === 0) {
+      return null;
+    }
+
+    const base =
+      typeof previous === "object" && !Array.isArray(previous)
+        ? previous
+        : undefined;
+    const { validators, ...participant } = base?.participant ?? {};
+    const { selectionCondition, ...otherValidators } = validators ?? {};
+    const sameTypes =
+      JSON.stringify(asArray(participant.additional ?? [])) ===
+      JSON.stringify(types);
+    const keptValidators = {
+      ...otherValidators,
+      // a selection filter refers to fields of the previous participant types
+      ...(sameTypes && selectionCondition ? { selectionCondition } : {}),
+    };
+    return {
+      ...base,
+      participant: {
+        ...participant,
+        dataType: "entity",
+        additional: types,
+        ...(Object.keys(keptValidators).length > 0
+          ? { validators: keptValidators }
+          : {}),
+      },
+    };
   }
 
   private isValidEntityType(type: string): boolean {

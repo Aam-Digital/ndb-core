@@ -101,41 +101,17 @@ describe("UrlStateService", () => {
     expect(service.getAllUrlParams()).toEqual({ foo: "bar", baz: "qux" });
   });
 
-  it("should call updateUrlParams with replaceUrl false for updateFilterParam", () => {
-    vi.spyOn(service, "updateUrlParams");
-    service.updateFilterParam("filter", "val");
-    expect(service.updateUrlParams).toHaveBeenCalledWith(
-      { filter: "val" },
-      false,
-    );
-  });
-
-  it("should exclude the registered non-filter keys in getFilterParams", () => {
-    service.registerNonFilterKeys("sortBy", "sortOrder");
-    service.registerNonFilterKeys("tabIndex");
-    activatedRouteStub.snapshot.queryParams = {
-      foo: "bar",
-      sortBy: "name",
-      sortOrder: "asc",
-      tabIndex: "1",
-      filter: "val",
-    };
-    expect(service.getFilterParams()).toEqual({ foo: "bar", filter: "val" });
-  });
-
-  it("should remove specified filter keys and call router.navigate in clearFilterParams", () => {
+  it("should remove the given keys and call router.navigate in removeUrlParams", () => {
     activatedRouteStub.snapshot.queryParams = {
       foo: "bar",
       filter1: "a",
       filter2: "b",
     };
-    service.clearFilterParams(["filter1", "filter2"]);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({
-        queryParams: { foo: "bar" },
-      }),
-    );
+    service.removeUrlParams(["filter1", "filter2"], false);
+    expect(routerSpy.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteStub,
+      queryParams: { foo: "bar" },
+    });
   });
 
   it("should remove the longest filter option if URL length exceeds maximum", () => {

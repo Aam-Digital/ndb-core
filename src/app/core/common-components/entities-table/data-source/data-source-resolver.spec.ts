@@ -23,6 +23,9 @@ class InternalTestEntity extends Entity {
 /** a data source of a feature module that works on all records in memory */
 class FeatureDataSource<T extends Entity> extends InMemoryDataSource<T> {}
 
+/** a data source of a feature module that pages on the server */
+class PagedFeatureDataSource<T extends Entity> extends PaginatedDataSource<T> {}
+
 class InternalTranslatedTestEntity extends Entity {
   static override readonly isInternalEntity = true;
 
@@ -110,13 +113,20 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it("should ignore a paginated dataSource configured for a list outside of online mode", () => {
-    environment.session_type = SessionType.synced;
+  it.each(["paginated", "paged-feature"])(
+    "lists in memory outside of online mode although the list is configured for %s, which pages on the server",
+    (name) => {
+      environment.session_type = SessionType.synced;
+      TestBed.inject(DataSourceRegistry).add(
+        "paged-feature",
+        PagedFeatureDataSource,
+      );
 
-    const dataSource = resolveDataSource<Entity>(injector, "paginated");
+      const dataSource = resolveDataSource<Entity>(injector, name);
 
-    expect(dataSource).toBeInstanceOf(InMemoryDataSource);
-  });
+      expect(dataSource).toBeInstanceOf(InMemoryDataSource);
+    },
+  );
 
   it("should use the system-wide default data source in online mode when no dataSource is configured for the list", () => {
     environment.session_type = SessionType.online;

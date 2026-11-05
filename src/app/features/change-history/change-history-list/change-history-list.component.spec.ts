@@ -160,11 +160,11 @@ it("should drop the filters it stops offering from the URL too", async () => {
   // narrowing a query the related-record view does not apply it to
   await setup();
   const urlState = TestBed.inject(UrlStateService);
-  const clearFilterParams = vi.spyOn(urlState, "clearFilterParams");
+  const removeUrlParams = vi.spyOn(urlState, "removeUrlParams");
 
   component.setRelatedEntityFilter("User:1");
 
-  const cleared = clearFilterParams.mock.calls.at(-1)[0];
+  const cleared = removeUrlParams.mock.calls.at(-1)[0];
   expect(cleared).toEqual(
     expect.arrayContaining(["entityType", "operation", "changedBy"]),
   );

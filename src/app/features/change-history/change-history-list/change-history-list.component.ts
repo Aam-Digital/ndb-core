@@ -288,10 +288,11 @@ export class ChangeHistoryListComponent {
       // matching by substring rather than exactly, labelled by its field name,
       // and narrowing a query the related-record view does not apply it to
       const stillOffered = new Set(this.filterConfig().map((c) => c.id));
-      this.urlState.clearFilterParams(
+      this.urlState.removeUrlParams(
         this.allFilterConfigs()
           .map((c) => c.id)
           .filter((id) => !stillOffered.has(id)),
+        false,
       );
     }
     this.applyRelatedRecord();

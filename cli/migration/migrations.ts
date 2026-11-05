@@ -8,6 +8,7 @@ import { historicalDataLoader } from "./historical-data-loader.migration.js";
 import { restoreBackup } from "./restore-backup.migration.js";
 import { todoRouteLinks } from "./todo-route-links.migration.js";
 import { publicFormLegacyFormats } from "./public-form-legacy-formats.migration.js";
+import { syncNotificationConfigTemplate } from "./sync-notification-config-template.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -24,6 +25,7 @@ export const migrations: MigrationDefinition[] = [
   codoAddEventType,
   setMapCountrycodes,
   restoreBackup,
+  syncNotificationConfigTemplate,
 
   // v4 upgrade
   reportDefinitionLegacyCleanup,

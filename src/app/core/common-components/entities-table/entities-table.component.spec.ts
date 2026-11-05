@@ -22,7 +22,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
 import { Logging } from "../../logging/logging.service";
 import { Component, signal } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { RowOptionsById } from "./data-source/entities-table-data-source";
+import { RowOptions } from "./data-source/entities-table-data-source";
 import { MatTableModule } from "@angular/material/table";
 import { Angulartics2Module } from "angulartics2";
 
@@ -590,14 +590,14 @@ describe("EntitiesTableComponent", () => {
     let dataSource: ExtendedTestDataSource;
 
     beforeEach(async () => {
-      TestBed.inject(ComponentRegistry).add(
-        "TestRowPrefix",
-        async () => TestRowPrefixComponent,
-      );
-      TestBed.inject(ComponentRegistry).add(
-        "TestRowSuffix",
-        async () => TestRowSuffixComponent,
-      );
+      const registry = TestBed.inject(ComponentRegistry);
+      registry.add("TestRowPrefix", async () => TestRowPrefixComponent);
+      registry.add("TestRowSuffix", async () => TestRowSuffixComponent);
+      // the registry is shared by all specs of a test worker
+      onTestFinished(() => {
+        registry.delete("TestRowPrefix");
+        registry.delete("TestRowSuffix");
+      });
       dataSource = TestBed.runInInjectionContext(
         () => new ExtendedTestDataSource(),
       );
@@ -623,7 +623,7 @@ describe("EntitiesTableComponent", () => {
         TestEntity.create(name),
       );
       dataSource.allRecords.set([decorated, plain]);
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([
           [
             decorated.getId(),
@@ -676,7 +676,7 @@ describe("EntitiesTableComponent", () => {
         );
       const initialFieldView = fieldView();
 
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([[record.getId(), { prefix: { component: "TestRowPrefix" } }]]),
       );
       fixture.detectChanges();
@@ -694,7 +694,7 @@ describe("EntitiesTableComponent", () => {
         TestEntity.create(name),
       );
       dataSource.allRecords.set([a, locked, c]);
-      dataSource.rowOptions.set(
+      dataSource.optionsById.set(
         new Map([[locked.getId(), { selectable: false }]]),
       );
       fixture.detectChanges();
@@ -769,13 +769,25 @@ describe("EntitiesTableComponent", () => {
       ).toHaveLength(12);
     });
 
+    it("keeps the data source paged while the table is destroyed", () => {
+      dataSource.allRecords.set(
+        Array.from({ length: 12 }, (_, i) => TestEntity.create(`R${i}`)),
+      );
+      fixture.detectChanges();
+
+      fixture.destroy();
+
+      // rendering all rows once during teardown is slow for a long list
+      expect(dataSource.renderedRows()).toHaveLength(10);
+    });
+
     it("unselects a selected record once its row options make it not selectable", () => {
       const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
       dataSource.allRecords.set([a, b]);
       fixture.detectChanges();
       component.selectedRecords.set([a, b]);
 
-      dataSource.rowOptions.set(new Map([[b.getId(), { selectable: false }]]));
+      dataSource.optionsById.set(new Map([[b.getId(), { selectable: false }]]));
       fixture.detectChanges();
 
       expect(component.selectedRecords()).toEqual([a]);
@@ -785,7 +797,11 @@ describe("EntitiesTableComponent", () => {
 
 /** a data source of a feature module, with row options */
 class ExtendedTestDataSource extends InMemoryDataSource<TestEntity> {
-  override readonly rowOptions = signal<RowOptionsById>(new Map());
+  readonly optionsById = signal<ReadonlyMap<string, RowOptions>>(new Map());
+
+  override rowOptionsOf(record: TestEntity): RowOptions | undefined {
+    return this.optionsById().get(record.getId());
+  }
 }
 
 /** a data source of a feature module that shows all rows at once */

@@ -88,6 +88,10 @@ export class FilterComponent<T extends Entity = Entity> {
     this.filterSelections().some((f) => f.selectedOptionValues?.length > 0),
   );
 
+  private readonly configuredFilterIds = computed(
+    () => new Set((this.filterConfig() ?? []).map((f) => f.id)),
+  );
+
   readonly showClearButton = computed(
     () => this.hasActiveFilters() || !!this.dataSource()?.searchText(),
   );
@@ -155,9 +159,12 @@ export class FilterComponent<T extends Entity = Entity> {
     );
     this.applyFilterSelections(updatedSelections);
     if (this.useUrlQueryParams()) {
-      this.urlState.updateFilterParam(
-        filter.name,
-        selectedOptions.map((value) => encodeURIComponent(value)).join(","),
+      this.urlState.updateUrlParams(
+        {
+          [filter.name]: selectedOptions
+            .map((value) => encodeURIComponent(value))
+            .join(","),
+        },
         false,
       );
     }
@@ -179,6 +186,21 @@ export class FilterComponent<T extends Entity = Entity> {
   }
 
   /**
+   * The URL params that belong to the filters of this list:
+   * the configured filters and the fields of the entity type (for links e.g. from dashboards).
+   * Other URL state (sort, selected tab, ...) uses keys starting with "_", which no custom field id has.
+   */
+  private getFilterUrlParams(): Record<string, string> {
+    const configuredIds = this.configuredFilterIds();
+    const schema = this.entityType()?.schema;
+    return Object.fromEntries(
+      Object.entries(this.urlState.getAllUrlParams()).filter(
+        ([key]) => configuredIds.has(key) || schema?.has(key),
+      ),
+    );
+  }
+
+  /**
    * Returns the filter config extended with any URL params that refer to valid entity
    * schema fields but are not already covered by the configured filterConfig.
    * This ensures that navigation links (e.g. from EntityCountDashboard) pre-apply
@@ -190,10 +212,10 @@ export class FilterComponent<T extends Entity = Entity> {
       return this.filterConfig() ?? [];
     }
 
-    const params = this.urlState.getFilterParams();
-    const configuredIds = new Set((this.filterConfig() ?? []).map((f) => f.id));
+    const params = this.getFilterUrlParams();
+    const configuredIds = this.configuredFilterIds();
     const extraConfigs: FilterConfig[] = Object.keys(params)
-      .filter((k) => !configuredIds.has(k) && this.entityType().schema.has(k))
+      .filter((k) => !configuredIds.has(k))
       .map((k) => ({ id: k }));
 
     return [...(this.filterConfig() ?? []), ...extraConfigs];
@@ -219,7 +241,7 @@ export class FilterComponent<T extends Entity = Entity> {
       return filterSelections;
     }
 
-    const params = this.urlState.getFilterParams();
+    const params = this.getFilterUrlParams();
     const hasUrlParams = Object.keys(params).length > 0;
     let hasChanges = false;
 
@@ -280,7 +302,7 @@ export class FilterComponent<T extends Entity = Entity> {
 
     if (this.useUrlQueryParams()) {
       const filterKeys = this.filterSelections().map((f) => f.name);
-      this.urlState.clearFilterParams(filterKeys, false);
+      this.urlState.removeUrlParams(filterKeys, false);
     }
   }
 

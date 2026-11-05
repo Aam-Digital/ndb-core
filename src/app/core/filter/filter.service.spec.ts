@@ -145,6 +145,39 @@ describe("FilterService", () => {
     expect(note.relatedEntities).toEqual([child.getId()]);
   });
 
+  it.each([
+    [
+      "an enum id given as plain value",
+      { category: "GUARDIAN_TALK" },
+      "category",
+      defaultInteractionTypes.find(({ id }) => id === "GUARDIAN_TALK"),
+    ],
+    [
+      "the only option of an $in list (as saved by the conditions editor)",
+      { category: { $in: ["GUARDIAN_TALK"] } },
+      "category",
+      defaultInteractionTypes.find(({ id }) => id === "GUARDIAN_TALK"),
+    ],
+    [
+      "the only option of an $elemMatch.$in list of a multi-value field",
+      { relatedEntities: { $elemMatch: { $in: ["Child:1"] } } },
+      "relatedEntities",
+      ["Child:1"],
+    ],
+    [
+      "nothing, if an $in list offers multiple options",
+      { subject: { $in: ["A", "B"] } },
+      "subject",
+      undefined,
+    ],
+  ])("patches %s", (_, filter, field, expected) => {
+    const note = new Note();
+
+    service.alignEntityWithFilter(note, filter as DataFilter<Note>);
+
+    expect(note[field]).toEqual(expected);
+  });
+
   it("should not set properties without a schema", () => {
     const filter = {
       childId: `${TestEntity.ENTITY_TYPE}:some-id`,

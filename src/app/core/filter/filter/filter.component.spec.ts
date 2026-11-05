@@ -170,16 +170,15 @@ describe("FilterComponent", () => {
 
   it("should encode filter values containing commas before storing them in the url", () => {
     const urlState = TestBed.inject(UrlStateService);
-    const updateFilterParamSpy = vi.spyOn(urlState, "updateFilterParam");
+    const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
     fixture.componentRef.setInput("useUrlQueryParams", true);
     fixture.detectChanges();
 
     const filter = new StringFilter("other", "Other");
     component.filterOptionSelected(filter, ["Doe, John"]);
 
-    expect(updateFilterParamSpy).toHaveBeenCalledWith(
-      "other",
-      encodeURIComponent("Doe, John"),
+    expect(updateUrlParamsSpy).toHaveBeenCalledWith(
+      { other: encodeURIComponent("Doe, John") },
       false,
     );
   });

@@ -39,10 +39,8 @@ export function resolveDataSource<T extends Entity>(
     typeof dataSource === "string" ? { name: dataSource } : (dataSource ?? {});
   const registry = injector.get(DataSourceRegistry);
   let DataSourceClass = getDataSource(registry, name, loaderMethod, entityType);
-  if (
-    DataSourceClass === PaginatedDataSource &&
-    !supportsPagination(injector)
-  ) {
+  if (pagesOnServer(DataSourceClass) && !supportsPagination(injector)) {
+    // lists the records without the extras of a feature's data source, rather than none at all
     DataSourceClass = InMemoryDataSource;
   }
   return runInInjectionContext(injector, () =>
@@ -53,6 +51,14 @@ export function resolveDataSource<T extends Entity>(
       }
       return instance;
     }),
+  );
+}
+
+/** whether the data source is the {@link PaginatedDataSource} or one of a feature module built on it */
+function pagesOnServer(DataSourceClass: DataSourceConstructor): boolean {
+  return (
+    DataSourceClass === PaginatedDataSource ||
+    DataSourceClass.prototype instanceof PaginatedDataSource
   );
 }
 

@@ -21,7 +21,7 @@ import {
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
-import { Entity } from "../../../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../../../entity/model/entity";
 import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
 import {
   FormValidatorConfig,
@@ -29,6 +29,8 @@ import {
 } from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { TranslatableText } from "../../../../config/multi-lingual-config";
 import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
+import { By } from "@angular/platform-browser";
+import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 @DatabaseEntity("ValidatorTestProject")
 class ValidatorTestProject extends Entity {
@@ -289,6 +291,49 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       });
 
       expect(await select.getValueText()).toBe("Project › Planned period");
+    });
+  });
+
+  describe("selection filter of a link field", () => {
+    const condition = { start: { $exists: true } };
+
+    function renderLinkField(linkedEntityType?: EntityConstructor) {
+      fixture.componentRef.setInput("entityType", ValidatorTestAction);
+      fixture.componentRef.setInput("linkedEntityType", linkedEntityType);
+      fixture.componentRef.setInput(
+        "entitySchemaField",
+        ValidatorTestAction.schema.get("project"),
+      );
+      fixture.detectChanges();
+
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+      const button = () =>
+        fixture.debugElement.query(
+          By.directive(AdminDisplayConditionButtonComponent),
+        )?.componentInstance as AdminDisplayConditionButtonComponent;
+      return { emitted, button };
+    }
+
+    it("offers a condition on the linked record type only if the field links to exactly one type", () => {
+      const { button } = renderLinkField();
+      expect(button()).toBeUndefined();
+
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTestProject);
+      fixture.detectChanges();
+
+      expect(button().entityType()).toBe(ValidatorTestProject);
+      expect(button().currentRecordType()).toBe(ValidatorTestAction);
+    });
+
+    it("saves the condition as the field's selectionCondition, and removes it again", () => {
+      const { emitted, button } = renderLinkField(ValidatorTestProject);
+
+      button().conditionChange.emit(condition);
+      expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
+
+      button().conditionChange.emit(null);
+      expect(emitted.at(-1)).toEqual({});
     });
   });
 });
