@@ -167,6 +167,17 @@ export class Entity {
   static color: string | ColorMapping[];
 
   /**
+   * Whether the entity matches a condition of its conditional colors (see {@link color}).
+   * Replaced at the start of the app by the matching of the `FilterService`, in the stored format like all other conditions
+   * (see `matchColorConditionsInStoredFormat`), as an entity cannot inject that service.
+   */
+  static matchesColorCondition: (
+    entity: Entity,
+    condition: DataFilter<any>,
+  ) => boolean = (entity, condition) =>
+    createFilterPredicate(condition)(entity);
+
+  /**
    * Base route of the entity (list/details) view for this entity type.
    */
   static get route(): string {
@@ -412,8 +423,9 @@ export class Entity {
           }
 
           try {
-            const test = createFilterPredicate(mapping.condition);
-            if (test(entity)) return mapping.color;
+            if (Entity.matchesColorCondition(entity, mapping.condition)) {
+              return mapping.color;
+            }
           } catch (e) {
             Logging.debug(
               "Error evaluating color condition",

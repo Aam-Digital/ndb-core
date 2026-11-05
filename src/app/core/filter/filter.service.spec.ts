@@ -10,6 +10,8 @@ import { buildEnumValueFilter } from "./filters/configurableEnumFilter";
 import { EntityFilter } from "./filters/entityFilter";
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
+import { matchColorConditionsInStoredFormat } from "./color-conditions.app-initializer";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { CoreTestingModule } from "../../utils/core-testing.module";
@@ -258,6 +260,42 @@ describe("FilterService", () => {
     expect(service.getConditionFields(TestEntity)).toEqual({
       options: [],
       excludedFields: [],
+    });
+  });
+
+  describe("conditional colors", () => {
+    const defaultMatcher = Entity.matchesColorCondition;
+    afterEach(() => (Entity.matchesColorCondition = defaultMatcher));
+
+    it("match records in the stored format, like all other conditions", () => {
+      // like an attendance entry, the entity keeps the status behind a getter, the stored entry has it as property
+      class Entry {
+        private readonly _status = "absent";
+        get status() {
+          return this._status;
+        }
+      }
+      @DatabaseEntity("ColorConditionTest")
+      class ColorConditionTest extends Entity {
+        static override color = [
+          {
+            condition: { log: { $elemMatch: { status: { $exists: true } } } },
+            color: "red",
+          },
+        ];
+        @DatabaseField({
+          dataType: "schema-embed",
+          isArray: true,
+          additional: { status: { dataType: "string" } },
+        })
+        log: Entry[];
+      }
+      const record = new ColorConditionTest();
+      record.log = [new Entry()];
+
+      TestBed.runInInjectionContext(matchColorConditionsInStoredFormat);
+
+      expect(record.getColor()).toBe("red");
     });
   });
 
