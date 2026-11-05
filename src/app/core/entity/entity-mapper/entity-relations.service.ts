@@ -166,12 +166,9 @@ export class EntityRelationsService {
    * including nested references inside embedded schemas (e.g. attendance fields).
    */
   private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    if (asArray(field.additional).includes(type)) {
-      return true;
-    }
-
-    return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
-      ([, inner]) => asArray(inner.additional).includes(type),
+    return (
+      asArray(field.additional).includes(type) ||
+      this.innerFieldsLinkingTo(field, type).length > 0
     );
   }
 
