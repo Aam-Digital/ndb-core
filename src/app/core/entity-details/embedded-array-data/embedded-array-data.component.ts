@@ -9,6 +9,8 @@ import {
   linkedSignal,
 } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -18,11 +20,13 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityFormSavedEvent } from "../../common-components/entity-form/entity-form";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import { getSchemaEmbedArrayColumns } from "../../basic-datatypes/schema-embed/schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../../basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
 import { SchemaEmbedArrayApplyChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
 import { applySchemaEmbedArrayEntryChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-change";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 
 /**
  * Config format that the EmbeddedArrayDataComponent handles.
@@ -59,6 +63,9 @@ export class EmbeddedArrayDataComponent {
   private readonly entityFormService = inject(EntityFormService);
   private readonly ability = inject(EntityAbility);
   private readonly environmentInjector = inject(EnvironmentInjector);
+  private readonly automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   /** currently viewed/main entity holding the embedded entries */
   entity = input<Entity>();
@@ -135,6 +142,21 @@ export class EmbeddedArrayDataComponent {
       );
       const control = entityForm.formGroup.get(property);
       control.setValue(entries);
+      // like a save of the main form (see EntityFormComponent), until all form saves run the rules (#4537)
+      entityForm.onFormStateChange
+        .pipe(
+          filter(
+            (event): event is EntityFormSavedEvent =>
+              event instanceof EntityFormSavedEvent,
+          ),
+          takeUntilDestroyed(saveScope.get(DestroyRef)),
+        )
+        .subscribe((event) =>
+          this.automatedFieldUpdateConfigService.applyRulesAfterSave(
+            event.newEntity,
+            event.previousEntity,
+          ),
+        );
 
       const saved = await this.entityFormService
         .saveChanges(entityForm, entity)
