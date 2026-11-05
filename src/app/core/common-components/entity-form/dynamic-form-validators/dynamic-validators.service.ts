@@ -124,9 +124,9 @@ export class DynamicValidatorsService {
         return { fn: maxDateValidator(value) };
       }
       case "minAge":
-        return { fn: minAgeValidator(value, config.maxAge) };
+        return { fn: minAgeValidator(config) };
       case "maxAge":
-        return { fn: maxAgeValidator(value, config.minAge) };
+        return { fn: maxAgeValidator(config) };
       case "pattern":
         if (typeof value === "object") {
           return { fn: patternWithMessage(value.pattern, value.message) };

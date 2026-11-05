@@ -2,15 +2,22 @@ import { AbstractControl, ValidatorFn } from "@angular/forms";
 import { calculateAge } from "../../../../utils/utils";
 import { parseToDate } from "./date-validators";
 
+/** the minimum and maximum age configured for a field (either can be missing) */
+export interface AgeRange {
+  minAge?: unknown;
+  maxAge?: unknown;
+}
+
 /**
  * Creates an age range validator (min or max age).
+ * @param rangeConfig both configured ages, only to word the error as a range ("between ... and ...")
  */
 export function createAgeComparisonValidator(
   ageParamValue: unknown,
   comparator: (age: number, param: number) => boolean,
   errorKey: string,
   paramName: "minAge" | "maxAge",
-  rangeConfig?: { minAge?: unknown; maxAge?: unknown },
+  rangeConfig?: AgeRange,
 ): ValidatorFn {
   const paramNum = Number(ageParamValue);
   if (!Number.isFinite(paramNum)) {
@@ -45,34 +52,30 @@ export function createAgeComparisonValidator(
 }
 
 /**
- * Validator for minimum age.
+ * Validator for the minimum age of the range.
+ * The maximum age only words the error as a range, if both are configured.
  */
-export function minAgeValidator(
-  minAgeValue: unknown,
-  maxAgeValue?: unknown,
-): ValidatorFn {
+export function minAgeValidator(ageRange: AgeRange): ValidatorFn {
   return createAgeComparisonValidator(
-    minAgeValue,
+    ageRange.minAge,
     (age, param) => age >= param,
     "minAge",
     "minAge",
-    { minAge: minAgeValue, maxAge: maxAgeValue },
+    ageRange,
   );
 }
 
 /**
- * Validator for maximum age.
+ * Validator for the maximum age of the range.
+ * The minimum age only words the error as a range, if both are configured.
  */
-export function maxAgeValidator(
-  maxAgeValue: unknown,
-  minAgeValue?: unknown,
-): ValidatorFn {
+export function maxAgeValidator(ageRange: AgeRange): ValidatorFn {
   return createAgeComparisonValidator(
-    maxAgeValue,
+    ageRange.maxAge,
     (age, param) => age <= param,
     "maxAge",
     "maxAge",
-    { minAge: minAgeValue, maxAge: maxAgeValue },
+    ageRange,
   );
 }
 
