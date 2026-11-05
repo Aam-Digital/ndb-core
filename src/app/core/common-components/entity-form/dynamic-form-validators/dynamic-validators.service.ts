@@ -11,7 +11,10 @@ import {
   Validators,
 } from "@angular/forms";
 import { Logging } from "../../../logging/logging.service";
-import { uniquePropertyValidator } from "../unique-property-validator/unique-property-validator";
+import {
+  UNIQUE_PROPERTY_ERROR_KEY,
+  uniquePropertyValidator,
+} from "../unique-property-validator/unique-property-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
@@ -306,17 +309,6 @@ export class DynamicValidatorsService {
       return validationResult;
     }
 
-    // uniquePropertyValidator returns `uniqueProperty`, but this pipeline expects
-    // the validator key (`uniqueId`). Normalize once so generic error rendering works.
-    if (
-      validatorType === "uniqueId" &&
-      validationResult.uniqueId === undefined &&
-      validationResult.uniqueProperty !== undefined
-    ) {
-      validationResult.uniqueId = validationResult.uniqueProperty;
-      delete validationResult.uniqueProperty;
-    }
-
     validationResult[validatorType] = {
       ...validationResult[validatorType],
       errorMessage: this.descriptionForValidator(
@@ -357,17 +349,11 @@ export class DynamicValidatorsService {
         }
       case "required":
         return $localize`This field is required`;
-      case "withinParent":
-      case "selectionCondition":
-        return validationValue?.errorMessage;
-      case "uniqueId":
-        if (typeof validationValue === "string") {
-          return validationValue;
-        }
-        return validationValue?.errorMessage;
-      case "readonlyAfterSet":
-        return validationValue;
       default:
+        // e.g. withinParent, selectionCondition, uniqueId: their errors carry their own message
+        if (validationValue?.errorMessage) {
+          return validationValue.errorMessage;
+        }
         Logging.error("No description defined for validator", {
           validator,
           validationValue,
@@ -383,19 +369,28 @@ export class DynamicValidatorsService {
     async: true;
     fn: AsyncPromiseValidatorFn;
   } {
+    const checkUniqueness = uniquePropertyValidator({
+      getExistingValues: () =>
+        this.entityMapper
+          .loadType(entity.getType())
+          .then((entities) =>
+            entities
+              .map((existingEntity) => Reflect.get(existingEntity, fieldId))
+              .filter((existingValue) => existingValue !== undefined),
+          ),
+      normalize: false,
+      fieldLabel: $localize`:field label:id`,
+    });
     return {
-      fn: uniquePropertyValidator({
-        getExistingValues: () =>
-          this.entityMapper
-            .loadType(entity.getType())
-            .then((entities) =>
-              entities
-                .map((existingEntity) => Reflect.get(existingEntity, fieldId))
-                .filter((existingValue) => existingValue !== undefined),
-            ),
-        normalize: false,
-        fieldLabel: $localize`:field label:id`,
-      }),
+      // the shared validator reports its error as `uniqueProperty`, but errors are named after their validator here
+      fn: async (control) => {
+        const errors = await checkUniqueness(control);
+        return (
+          errors && {
+            uniqueId: { errorMessage: errors[UNIQUE_PROPERTY_ERROR_KEY] },
+          }
+        );
+      },
       async: true,
     };
   }
