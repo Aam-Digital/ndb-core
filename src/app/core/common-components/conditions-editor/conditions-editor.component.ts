@@ -194,20 +194,31 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.emitConditions();
   }
 
+  /**
+   * Per row: whether it compares with a field of the current record instead of a fixed value,
+   * and the id of that field once it is chosen. Kept once per change of the rows for the template.
+   * Reads `conditionsSignal`, which gets a new object on every change, as the rows are edited in place.
+   */
+  readonly rowReferences = computed(() =>
+    (this.conditionsSignal()?.$or ?? []).map((condition) =>
+      this.referenceOf(condition),
+    ),
+  );
+
   /** whether the given row compares with a field of the current record instead of a fixed value */
   isReferenceRow(conditionIndex: number): boolean {
-    if (!this.currentRecordType()) return false;
-
-    const condition = this.conditionsArray()[conditionIndex];
-    return (
-      this.referenceRows.has(condition) ||
-      this.getReferencedField(conditionIndex) !== undefined
-    );
+    return this.rowReferences()[conditionIndex]?.isReference ?? false;
   }
 
   /** id of the current record's field the given row compares with, if any */
   getReferencedField(conditionIndex: number): string | undefined {
-    const condition = this.conditionsArray()[conditionIndex];
+    return this.rowReferences()[conditionIndex]?.referencedField;
+  }
+
+  private referenceOf(condition: any): {
+    isReference: boolean;
+    referencedField?: string;
+  } {
     const { positive } = splitNegation(
       condition?.[this.getConditionField(condition)],
     );
@@ -217,7 +228,13 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       positive?.$in?.[0],
       positive?.$elemMatch?.$in?.[0],
     ].find(isCurrentRecordPlaceholder);
-    return placeholder && placeholderFieldId(placeholder);
+    const referencedField = placeholder && placeholderFieldId(placeholder);
+    return {
+      isReference:
+        !!this.currentRecordType() &&
+        (this.referenceRows.has(condition) || referencedField !== undefined),
+      referencedField,
+    };
   }
 
   /** switch a row between comparing with a fixed value and with a field of the current record */
@@ -235,9 +252,9 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     }
     // the value does not fit the new mode, an "is not" the admin chose still applies
     condition[fieldKey] = withSameNegation(condition[fieldKey], null);
+    this.conditionsSignal.set({ ...this.working });
     this.createFormConfigForCondition(conditionIndex, fieldKey);
 
-    this.conditionsSignal.set({ ...this.working });
     this.emitConditions();
   }
 
