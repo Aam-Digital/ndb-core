@@ -262,6 +262,19 @@ describe("syncNotificationConfigTemplate migration", () => {
       expect(result).toEqual({ changed: true, status: "ok" });
       expect(aliceRules(store)).toHaveLength(2);
     });
+
+    it("clears a user's rules when the template has none", async () => {
+      const store = seed([], {
+        alice: { notificationRules: [childCreatedRule] },
+      });
+
+      const result = await syncNotificationConfigTemplate.run(
+        buildTestContext(store, false, ["replace"]),
+      );
+
+      expect(result).toEqual({ changed: true, status: "ok" });
+      expect(aliceRules(store)).toEqual([]);
+    });
   });
 
   it.each([[[]], [["full"]], [["replace"]]])(

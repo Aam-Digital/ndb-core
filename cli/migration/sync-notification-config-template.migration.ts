@@ -182,7 +182,10 @@ export const syncNotificationConfigTemplate: MigrationDefinition = {
     }
 
     const templateRules = template.data?.notificationRules;
-    if (!Array.isArray(templateRules) || templateRules.length === 0) {
+    if (
+      !Array.isArray(templateRules) ||
+      (templateRules.length === 0 && mode !== REPLACE_ARG)
+    ) {
       ctx.log.info(
         "NotificationConfigTemplate has no notificationRules, nothing to sync",
       );
