@@ -49,7 +49,10 @@ describe("AttendanceCalendarComponent", () => {
         Angulartics2Module.forRoot(),
       ],
       providers: [
-        { provide: EntityMapperService, useValue: createEntityMapperSpyObj() },
+        {
+          provide: EntityMapperService,
+          useValue: { ...createEntityMapperSpyObj(), save: vi.fn() },
+        },
         {
           provide: AnalyticsService,
           useValue: {
@@ -307,4 +310,63 @@ describe("AttendanceCalendarComponent", () => {
         .getAttendanceForParticipant(excludedChild.getId()),
     ).toBeDefined();
   });
+  it.each<
+    [
+      string,
+      (c: AttendanceCalendarComponent) => unknown,
+      Partial<AttendanceItem>,
+    ]
+  >([
+    [
+      "status",
+      (c) =>
+        c.statusControl.setValue(
+          defaultAttendanceStatusTypes.find((s) => s.id === "ABSENT"),
+        ),
+      { status: defaultAttendanceStatusTypes.find((s) => s.id === "ABSENT") },
+    ],
+    [
+      "remarks",
+      (c) => {
+        c.onRemarksChange("sick");
+        return c.save(); // triggered by the textarea's blur
+      },
+      { remarks: "sick" },
+    ],
+  ])(
+    "should save the changed %s of the highlighted participant into the event",
+    async (_field, change, expected) => {
+      const testDate = new Date("2020-06-15");
+      const child = new TestEntity("child1");
+      const presentStatus = defaultAttendanceStatusTypes.find(
+        (s) => s.id === "PRESENT",
+      );
+      const event = Object.assign(TestEventEntity.create(testDate), {
+        attendance: [new AttendanceItem(presentStatus, "", child.getId())],
+      });
+      fixture.componentRef.setInput("records", [
+        new EventWithAttendance(
+          event,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
+        ),
+      ]);
+      fixture.componentRef.setInput("highlightForChild", child.getId());
+      component.selectDay(testDate);
+      fixture.detectChanges();
+
+      await change(component);
+      await fixture.whenStable();
+
+      expect(TestBed.inject(EntityMapperService).save).toHaveBeenCalledWith(
+        event,
+      );
+      expect(event.attendance).toEqual([
+        expect.objectContaining({ participant: child.getId(), ...expected }),
+      ]);
+    },
+  );
 });
