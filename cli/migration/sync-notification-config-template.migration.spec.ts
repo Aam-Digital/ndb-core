@@ -58,8 +58,8 @@ describe("syncNotificationConfigTemplate migration", () => {
     ["label", { ...childCreatedRule, label: "Outdated title" }],
     [
       "conditions",
-      // the pre-#4488 shape: the current user's profile id was resolved and baked in at
-      // config-creation time, instead of the (now backend-supported) $current_user placeholder
+      // the profile id was resolved and baked in when the config was created, instead of
+      // the (now backend-supported) $current_user placeholder
       {
         ...childCreatedRule,
         conditions: { assignedTo: { $elemMatch: "Child:abc123" } },
@@ -209,9 +209,12 @@ describe("syncNotificationConfigTemplate migration", () => {
   });
 
   it("refuses to run when the template itself has two rules with the same key", async () => {
-    const store = seed([childCreatedRule, { ...childCreatedRule, label: "Duplicate" }], {
-      alice: { notificationRules: [] },
-    });
+    const store = seed(
+      [childCreatedRule, { ...childCreatedRule, label: "Duplicate" }],
+      {
+        alice: { notificationRules: [] },
+      },
+    );
 
     const result = await syncNotificationConfigTemplate.run(
       buildTestContext(store, false),

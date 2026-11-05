@@ -9,12 +9,9 @@ const TEMPLATE_PATH = "/app/Config:NotificationConfigTemplate";
 const FULL_ARG = "full";
 const REPLACE_ARG = "replace";
 const VALID_ARGS = [FULL_ARG, REPLACE_ARG];
+type Mode = typeof FULL_ARG | typeof REPLACE_ARG | undefined;
 
-/**
- * The parts of `NotificationRule` (`src/app/features/notification/model/notification-config.ts`)
- * this migration reads or writes. Declared locally (instead of importing the `@DatabaseField`-decorated
- * class) to keep the CLI's TypeScript project free of Angular entity decorators.
- */
+/** The parts of `NotificationRule` (notification-config.ts) this migration reads or writes, declared locally to avoid importing the `@DatabaseField`-decorated class into the CLI. */
 interface NotificationRuleLike {
   label?: string;
   notificationType: string;
@@ -30,12 +27,7 @@ interface NotificationConfigDoc {
   notificationRules?: NotificationRuleLike[];
 }
 
-/**
- * Identifies "the same" rule across the template and a user's config, regardless of its label or
- * conditions (so a renamed label or a fixed condition updates the existing rule instead of adding
- * a duplicate). The template must not define two rules with the same key - {@link run} refuses to
- * run in that case, as it would be ambiguous which one an existing rule should be matched/updated against.
- */
+/** Identifies "the same" rule across the template and a user's config, ignoring label/conditions so a rename or a conditions fix updates in place instead of adding a duplicate. */
 function ruleKey(rule: NotificationRuleLike): string {
   return JSON.stringify([
     rule.notificationType,
@@ -58,12 +50,7 @@ function duplicateTemplateRuleGroups(
   return [...byKey.values()].filter((group) => group.length > 1);
 }
 
-/**
- * Among a user's existing rules sharing the template rule's key, find the one it unambiguously
- * corresponds to (an exact label or exact conditions match), so a user's own, differently
- * conditioned rule of the same type is never mistaken for the template's.
- * Returns `undefined` if there is no single unambiguous match (including: no candidates at all).
- */
+/** The one rule among same-key candidates that exactly matches the template rule's label or conditions, or `undefined` if that isn't unambiguous. */
 function findUnambiguousMatch(
   candidates: NotificationRuleLike[],
   templateRule: NotificationRuleLike,
@@ -76,7 +63,8 @@ function findUnambiguousMatch(
     return byLabel[0];
   }
   const byConditions = candidates.filter(
-    (c) => JSON.stringify(c.conditions) === JSON.stringify(templateRule.conditions),
+    (c) =>
+      JSON.stringify(c.conditions) === JSON.stringify(templateRule.conditions),
   );
   return byConditions.length === 1 ? byConditions[0] : undefined;
 }
@@ -125,7 +113,8 @@ function applyTemplateRule(
 
   if (
     existing.label === templateRule.label &&
-    JSON.stringify(existing.conditions) === JSON.stringify(templateRule.conditions)
+    JSON.stringify(existing.conditions) ===
+      JSON.stringify(templateRule.conditions)
   ) {
     return false;
   }
@@ -169,12 +158,15 @@ export const syncNotificationConfigTemplate: MigrationDefinition = {
     'Copy Config:NotificationConfigTemplate rules into every existing NotificationConfig:<user> doc: add missing rules, update label/conditions of matching ones. Run with "full" to also overwrite enabled/channels of matching rules, or "replace" to replace each user\'s rules wholesale with the template\'s. Safe to re-run.',
 
   async run(ctx: MigrationContext): Promise<MigrationResult> {
-    if (ctx.args.length > 1 || (ctx.args.length === 1 && !VALID_ARGS.includes(ctx.args[0]))) {
+    if (
+      ctx.args.length > 1 ||
+      (ctx.args.length === 1 && !VALID_ARGS.includes(ctx.args[0]))
+    ) {
       return failedMigrationResult(
         `Expected no argument or one of ${VALID_ARGS.map((a) => `"${a}"`).join(", ")}, got ${JSON.stringify(ctx.args)}`,
       );
     }
-    const mode = ctx.args[0] as typeof FULL_ARG | typeof REPLACE_ARG | undefined;
+    const mode = ctx.args[0] as Mode;
 
     let template: { data?: { notificationRules?: NotificationRuleLike[] } };
     try {
@@ -203,7 +195,11 @@ export const syncNotificationConfigTemplate: MigrationDefinition = {
         return failedMigrationResult(
           "NotificationConfigTemplate has several rules with the same notificationType/entityType/changeType, " +
             `so it is ambiguous which one an existing rule should be matched against: ${duplicates
-              .map((group) => group.map((r) => `"${r.label ?? r.notificationType}"`).join(" / "))
+              .map((group) =>
+                group
+                  .map((r) => `"${r.label ?? r.notificationType}"`)
+                  .join(" / "),
+              )
               .join("; ")}`,
         );
       }
