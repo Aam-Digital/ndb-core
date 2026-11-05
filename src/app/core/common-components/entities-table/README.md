@@ -45,6 +45,8 @@ Hosts usually create it with
 - `PaginatedDataSource`, which pages on the server, falls back to
   `InMemoryDataSource` outside of online-only sessions, because the local
   database cannot page.
+  So does a data source of a feature module that extends it: the list then
+  shows the records without the feature's extras.
 
 The records a data source holds:
 
