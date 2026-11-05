@@ -6,7 +6,9 @@ import {
 } from "./migration-definition.js";
 
 const TEMPLATE_PATH = "/app/Config:NotificationConfigTemplate";
-const FULL_OVERWRITE_ARG = "full";
+const FULL_ARG = "full";
+const REPLACE_ARG = "replace";
+const VALID_ARGS = [FULL_ARG, REPLACE_ARG];
 
 /**
  * The parts of `NotificationRule` (`src/app/features/notification/model/notification-config.ts`)
@@ -31,8 +33,8 @@ interface NotificationConfigDoc {
 /**
  * Identifies "the same" rule across the template and a user's config, regardless of its label or
  * conditions (so a renamed label or a fixed condition updates the existing rule instead of adding
- * a duplicate). The template should not define two rules with the same key - only the second would
- * ever be matched against an existing rule.
+ * a duplicate). The template must not define two rules with the same key - {@link run} refuses to
+ * run in that case, as it would be ambiguous which one an existing rule should be matched/updated against.
  */
 function ruleKey(rule: NotificationRuleLike): string {
   return JSON.stringify([
@@ -42,40 +44,137 @@ function ruleKey(rule: NotificationRuleLike): string {
   ]);
 }
 
+/** The template rules that share a key with another template rule, grouped by that key. */
+function duplicateTemplateRuleGroups(
+  templateRules: NotificationRuleLike[],
+): NotificationRuleLike[][] {
+  const byKey = new Map<string, NotificationRuleLike[]>();
+  for (const rule of templateRules) {
+    const key = ruleKey(rule);
+    const group = byKey.get(key) ?? [];
+    group.push(rule);
+    byKey.set(key, group);
+  }
+  return [...byKey.values()].filter((group) => group.length > 1);
+}
+
+/**
+ * Among a user's existing rules sharing the template rule's key, find the one it unambiguously
+ * corresponds to (an exact label or exact conditions match), so a user's own, differently
+ * conditioned rule of the same type is never mistaken for the template's.
+ * Returns `undefined` if there is no single unambiguous match (including: no candidates at all).
+ */
+function findUnambiguousMatch(
+  candidates: NotificationRuleLike[],
+  templateRule: NotificationRuleLike,
+): NotificationRuleLike | undefined {
+  if (candidates.length <= 1) {
+    return candidates[0];
+  }
+  const byLabel = candidates.filter((c) => c.label === templateRule.label);
+  if (byLabel.length === 1) {
+    return byLabel[0];
+  }
+  const byConditions = candidates.filter(
+    (c) => JSON.stringify(c.conditions) === JSON.stringify(templateRule.conditions),
+  );
+  return byConditions.length === 1 ? byConditions[0] : undefined;
+}
+
+/** Merge a template rule into a user's existing rules, in place; returns whether it changed anything. */
+function applyTemplateRule(
+  rules: NotificationRuleLike[],
+  templateRule: NotificationRuleLike,
+  fullOverwrite: boolean,
+  warnings: string[],
+  docId: string,
+): boolean {
+  const key = ruleKey(templateRule);
+  const candidates = rules
+    .map((rule, index) => ({ rule, index }))
+    .filter(({ rule }) => ruleKey(rule) === key);
+
+  if (candidates.length === 0) {
+    rules.push(structuredClone(templateRule));
+    return true;
+  }
+
+  const match = findUnambiguousMatch(
+    candidates.map((c) => c.rule),
+    templateRule,
+  );
+  if (!match) {
+    warnings.push(
+      `${docId}: ${candidates.length} existing rules match the template rule ` +
+        `"${templateRule.label ?? templateRule.notificationType}" (same notificationType/entityType/changeType) ` +
+        `but none matches its label or conditions exactly - left unchanged, review manually`,
+    );
+    return false;
+  }
+
+  const index = candidates.find((c) => c.rule === match)!.index;
+  const existing = rules[index];
+
+  if (fullOverwrite) {
+    if (JSON.stringify(existing) === JSON.stringify(templateRule)) {
+      return false;
+    }
+    rules[index] = structuredClone(templateRule);
+    return true;
+  }
+
+  if (
+    existing.label === templateRule.label &&
+    JSON.stringify(existing.conditions) === JSON.stringify(templateRule.conditions)
+  ) {
+    return false;
+  }
+  rules[index] = {
+    ...existing,
+    label: templateRule.label,
+    conditions: structuredClone(templateRule.conditions),
+  };
+  return true;
+}
+
 /**
  * Copy the `Config:NotificationConfigTemplate` rules into every existing `NotificationConfig:<user>` doc.
  *
  * The template is only applied automatically when a user's config is first created
  * (`NotificationSettingsComponent.createNewNotificationConfig`) - a later edit to the template
- * (e.g. renaming a rule's label, fixing its conditions, or adding a new rule) never reaches users
- * who already have a config. This migration re-syncs it:
- * - a template rule not yet present (matched by `notificationType` + `entityType` + `changeType`,
- *   ignoring label and conditions, see {@link ruleKey}) is added, with the template's `enabled` /
- *   `channels` as its defaults
- * - a matching rule has its `label` and `conditions` updated to the template's current version;
- *   its `enabled` / `channels` are left as the user configured them
- * - run with the `full` argument to instead overwrite the whole matched rule, including `enabled` /
- *   `channels`, discarding the user's customization of it
- * - a rule in a user's config with no match in the template is left untouched (e.g. a rule the user
- *   added themselves, or one removed from the template since)
+ * (e.g. renaming a rule's label, fixing its conditions such as `$current_user`, or adding a rule)
+ * never reaches users who already have a config. This migration re-syncs it. By default, for each
+ * template rule:
+ * - if no existing rule shares its `notificationType` + `entityType` + `changeType` (see {@link ruleKey}),
+ *   it is added, with the template's `enabled` / `channels` as its defaults
+ * - if exactly one existing rule shares that key (or, when several do, exactly one matches the
+ *   template rule's label or conditions exactly), that rule's `label` and `conditions` are updated to
+ *   the template's current version; its `enabled` / `channels` are left as the user configured them
+ * - if several existing rules share that key and none matches unambiguously, the template rule is
+ *   left for that doc with a warning, rather than guessing
+ * - an existing rule with no matching key in the template is left untouched (e.g. one the user added
+ *   themselves, or one removed from the template since)
+ *
+ * Takes an optional argument to change this:
+ * - `full`: like the default, but a matched rule is overwritten entirely (including `enabled` /
+ *   `channels`), discarding the user's customization of it
+ * - `replace`: the user's `notificationRules` are replaced wholesale with the template's, discarding
+ *   anything not in the template
  *
  * Safe to re-run.
  */
 export const syncNotificationConfigTemplate: MigrationDefinition = {
   id: "sync-notification-config-template",
   description:
-    'Copy Config:NotificationConfigTemplate rules into every existing NotificationConfig:<user> doc: add missing rules, update label/conditions of matching ones. Run with "full" to also overwrite enabled/channels of matching rules. Safe to re-run.',
+    'Copy Config:NotificationConfigTemplate rules into every existing NotificationConfig:<user> doc: add missing rules, update label/conditions of matching ones. Run with "full" to also overwrite enabled/channels of matching rules, or "replace" to replace each user\'s rules wholesale with the template\'s. Safe to re-run.',
 
   async run(ctx: MigrationContext): Promise<MigrationResult> {
-    if (
-      ctx.args.length > 1 ||
-      (ctx.args.length === 1 && ctx.args[0] !== FULL_OVERWRITE_ARG)
-    ) {
+    if (ctx.args.length > 1 || (ctx.args.length === 1 && !VALID_ARGS.includes(ctx.args[0]))) {
       return failedMigrationResult(
-        `Expected no argument or "${FULL_OVERWRITE_ARG}", got ${JSON.stringify(ctx.args)}`,
+        `Expected no argument or one of ${VALID_ARGS.map((a) => `"${a}"`).join(", ")}, got ${JSON.stringify(ctx.args)}`,
       );
     }
-    const fullOverwrite = ctx.args[0] === FULL_OVERWRITE_ARG;
+    const mode = ctx.args[0] as typeof FULL_ARG | typeof REPLACE_ARG | undefined;
 
     let template: { data?: { notificationRules?: NotificationRuleLike[] } };
     try {
@@ -98,46 +197,48 @@ export const syncNotificationConfigTemplate: MigrationDefinition = {
       return { changed: false, status: "no-change" };
     }
 
+    if (mode !== REPLACE_ARG) {
+      const duplicates = duplicateTemplateRuleGroups(templateRules);
+      if (duplicates.length > 0) {
+        return failedMigrationResult(
+          "NotificationConfigTemplate has several rules with the same notificationType/entityType/changeType, " +
+            `so it is ambiguous which one an existing rule should be matched against: ${duplicates
+              .map((group) => group.map((r) => `"${r.label ?? r.notificationType}"`).join(" / "))
+              .join("; ")}`,
+        );
+      }
+    }
+
     const configs = (await ctx.couchdb.getAll(
       "NotificationConfig",
     )) as NotificationConfigDoc[];
 
     let changedDocs = 0;
+    const warnings: string[] = [];
     for (const config of configs) {
-      const rules = [...(config.notificationRules ?? [])];
-      const indexByKey = new Map(
-        rules.map((rule, index) => [ruleKey(rule), index]),
-      );
-      let docChanged = false;
+      let rules: NotificationRuleLike[];
+      let docChanged: boolean;
 
-      for (const templateRule of templateRules) {
-        const key = ruleKey(templateRule);
-        const index = indexByKey.get(key);
-
-        if (index === undefined) {
-          indexByKey.set(key, rules.length);
-          rules.push(structuredClone(templateRule));
-          docChanged = true;
-          continue;
-        }
-
-        const existing = rules[index];
-        if (fullOverwrite) {
-          if (JSON.stringify(existing) !== JSON.stringify(templateRule)) {
-            rules[index] = structuredClone(templateRule);
+      if (mode === REPLACE_ARG) {
+        docChanged =
+          JSON.stringify(config.notificationRules ?? []) !==
+          JSON.stringify(templateRules);
+        rules = structuredClone(templateRules);
+      } else {
+        rules = structuredClone(config.notificationRules ?? []);
+        docChanged = false;
+        for (const templateRule of templateRules) {
+          if (
+            applyTemplateRule(
+              rules,
+              templateRule,
+              mode === FULL_ARG,
+              warnings,
+              config._id,
+            )
+          ) {
             docChanged = true;
           }
-        } else if (
-          existing.label !== templateRule.label ||
-          JSON.stringify(existing.conditions) !==
-            JSON.stringify(templateRule.conditions)
-        ) {
-          rules[index] = {
-            ...existing,
-            label: templateRule.label,
-            conditions: structuredClone(templateRule.conditions),
-          };
-          docChanged = true;
         }
       }
 
@@ -151,9 +252,17 @@ export const syncNotificationConfigTemplate: MigrationDefinition = {
 
     if (changedDocs === 0) {
       ctx.log.info("All NotificationConfig docs already match the template");
-      return { changed: false, status: "no-change" };
+      return {
+        changed: false,
+        status: "no-change",
+        warnings: warnings.length > 0 ? warnings : undefined,
+      };
     }
 
-    return { changed: true, status: ctx.dryRun ? "dry-run" : "ok" };
+    return {
+      changed: true,
+      status: ctx.dryRun ? "dry-run" : "ok",
+      warnings: warnings.length > 0 ? warnings : undefined,
+    };
   },
 };

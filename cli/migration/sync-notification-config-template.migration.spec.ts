@@ -33,41 +33,43 @@ const childCreatedRule = {
   enabled: true,
   entityType: "Child",
   changeType: ["created"],
-  conditions: {},
+  conditions: { assignedTo: { $elemMatch: "$current_user" } },
 };
+
+function aliceRules(store: DocStore): unknown[] {
+  return (store["app/NotificationConfig:alice"] as any).notificationRules;
+}
 
 describe("syncNotificationConfigTemplate migration", () => {
   it("adds a template rule missing from a user's config, with the template's enabled/channels", async () => {
-    const store = seed([childCreatedRule], { alice: { notificationRules: [] } });
+    const store = seed([childCreatedRule], {
+      alice: { notificationRules: [] },
+    });
 
     const result = await syncNotificationConfigTemplate.run(
       buildTestContext(store, false),
     );
 
     expect(result).toEqual({ changed: true, status: "ok" });
-    expect(
-      (store["app/NotificationConfig:alice"] as any).notificationRules,
-    ).toEqual([childCreatedRule]);
+    expect(aliceRules(store)).toEqual([childCreatedRule]);
   });
 
   it.each([
-    [
-      "label",
-      { ...childCreatedRule, label: "Outdated title" },
-      { ...childCreatedRule, label: "New child" },
-    ],
+    ["label", { ...childCreatedRule, label: "Outdated title" }],
     [
       "conditions",
-      { ...childCreatedRule, conditions: { assignedTo: "$current_user" } },
-      childCreatedRule,
+      // the pre-#4488 shape: the current user's profile id was resolved and baked in at
+      // config-creation time, instead of the (now backend-supported) $current_user placeholder
+      {
+        ...childCreatedRule,
+        conditions: { assignedTo: { $elemMatch: "Child:abc123" } },
+      },
     ],
   ])(
     "updates the %s of a matching rule while keeping the user's enabled/channels",
-    async (_field, existingRule, expectedRule) => {
+    async (_field, existingRule) => {
       const store = seed([childCreatedRule], {
-        alice: {
-          notificationRules: [{ ...existingRule, enabled: false }],
-        },
+        alice: { notificationRules: [{ ...existingRule, enabled: false }] },
       });
 
       const result = await syncNotificationConfigTemplate.run(
@@ -75,17 +77,22 @@ describe("syncNotificationConfigTemplate migration", () => {
       );
 
       expect(result).toEqual({ changed: true, status: "ok" });
-      expect(
-        (store["app/NotificationConfig:alice"] as any).notificationRules,
-      ).toEqual([{ ...expectedRule, enabled: false }]);
+      expect(aliceRules(store)).toEqual([
+        { ...childCreatedRule, enabled: false },
+      ]);
     },
   );
 
-  it("overwrites enabled/channels too when run with the full argument", async () => {
+  it("overwrites enabled/channels too when run with the full argument, dropping fields the template no longer has", async () => {
     const store = seed([childCreatedRule], {
       alice: {
         notificationRules: [
-          { ...childCreatedRule, enabled: false, channels: { email: false } },
+          {
+            ...childCreatedRule,
+            conditions: { assignedTo: { $elemMatch: "Child:abc123" } },
+            enabled: false,
+            channels: { email: false },
+          },
         ],
       },
     });
@@ -95,9 +102,7 @@ describe("syncNotificationConfigTemplate migration", () => {
     );
 
     expect(result).toEqual({ changed: true, status: "ok" });
-    expect(
-      (store["app/NotificationConfig:alice"] as any).notificationRules,
-    ).toEqual([childCreatedRule]);
+    expect(aliceRules(store)).toEqual([childCreatedRule]);
   });
 
   it("leaves a rule the user added themselves untouched", async () => {
@@ -118,9 +123,53 @@ describe("syncNotificationConfigTemplate migration", () => {
     );
 
     expect(result).toEqual({ changed: true, status: "ok" });
-    expect(
-      (store["app/NotificationConfig:alice"] as any).notificationRules,
-    ).toEqual([customRule, childCreatedRule]);
+    expect(aliceRules(store)).toEqual([customRule, childCreatedRule]);
+  });
+
+  it("warns and leaves rules untouched when several existing rules match the same template key ambiguously", async () => {
+    const firstCustom = {
+      ...childCreatedRule,
+      label: "Notify about my own new children",
+      conditions: { assignedTo: { $elemMatch: "Child:abc123" } },
+    };
+    const secondCustom = {
+      ...childCreatedRule,
+      label: "Notify about new children in my school",
+      conditions: { school: { $elemMatch: "School:xyz" } },
+    };
+    const store = seed([childCreatedRule], {
+      alice: { notificationRules: [firstCustom, secondCustom] },
+    });
+
+    const result = await syncNotificationConfigTemplate.run(
+      buildTestContext(store, false),
+    );
+
+    expect(result.changed).toBe(false);
+    expect(result.warnings).toEqual([expect.stringContaining("alice")]);
+    expect(aliceRules(store)).toEqual([firstCustom, secondCustom]);
+  });
+
+  it("disambiguates several same-key rules by an exact conditions match", async () => {
+    const unrelatedRule = {
+      ...childCreatedRule,
+      label: "Unrelated",
+      conditions: { school: { $elemMatch: "School:xyz" } },
+    };
+    const matchingRule = {
+      ...childCreatedRule,
+      label: "Outdated title",
+    };
+    const store = seed([childCreatedRule], {
+      alice: { notificationRules: [unrelatedRule, matchingRule] },
+    });
+
+    const result = await syncNotificationConfigTemplate.run(
+      buildTestContext(store, false),
+    );
+
+    expect(result).toEqual({ changed: true, status: "ok" });
+    expect(aliceRules(store)).toEqual([unrelatedRule, childCreatedRule]);
   });
 
   it("does not change a config already matching the template", async () => {
@@ -159,6 +208,19 @@ describe("syncNotificationConfigTemplate migration", () => {
     expect(result).toEqual({ changed: false, status: "no-change" });
   });
 
+  it("refuses to run when the template itself has two rules with the same key", async () => {
+    const store = seed([childCreatedRule, { ...childCreatedRule, label: "Duplicate" }], {
+      alice: { notificationRules: [] },
+    });
+
+    const result = await syncNotificationConfigTemplate.run(
+      buildTestContext(store, false),
+    );
+
+    expect(result.status).toBe("failed");
+    expect(aliceRules(store)).toEqual([]);
+  });
+
   it("rejects an unknown argument", async () => {
     const store = seed([childCreatedRule], {});
 
@@ -169,7 +231,37 @@ describe("syncNotificationConfigTemplate migration", () => {
     expect(result.status).toBe("failed");
   });
 
-  it.each([[[]], [["full"]]])(
+  describe("replace argument", () => {
+    it("replaces a user's rules wholesale with the template's, discarding anything else", async () => {
+      const customRule = { ...childCreatedRule, label: "My custom rule" };
+      const store = seed([childCreatedRule], {
+        alice: { notificationRules: [customRule] },
+      });
+
+      const result = await syncNotificationConfigTemplate.run(
+        buildTestContext(store, false, ["replace"]),
+      );
+
+      expect(result).toEqual({ changed: true, status: "ok" });
+      expect(aliceRules(store)).toEqual([childCreatedRule]);
+    });
+
+    it("tolerates a template with duplicate keys, since matching does not apply", async () => {
+      const store = seed(
+        [childCreatedRule, { ...childCreatedRule, label: "Duplicate" }],
+        { alice: { notificationRules: [] } },
+      );
+
+      const result = await syncNotificationConfigTemplate.run(
+        buildTestContext(store, false, ["replace"]),
+      );
+
+      expect(result).toEqual({ changed: true, status: "ok" });
+      expect(aliceRules(store)).toHaveLength(2);
+    });
+  });
+
+  it.each([[[]], [["full"]], [["replace"]]])(
     "is idempotent (args=%j)",
     async (args: string[]) => {
       const store = seed([childCreatedRule], {
