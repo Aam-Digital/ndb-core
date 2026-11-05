@@ -351,11 +351,12 @@ export class DynamicValidatorsService {
         if (validationValue?.errorMessage) {
           return validationValue.errorMessage;
         }
+        // not thrown: a rejected async validator would leave the field pending, so the form could not be saved
         Logging.error("No description defined for validator", {
           validator,
           validationValue,
         });
-        throw $localize`Invalid input`;
+        return $localize`Invalid input`;
     }
   }
 
