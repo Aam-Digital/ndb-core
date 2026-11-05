@@ -19,6 +19,7 @@ import { EntityRelationsService } from "../../entity/entity-mapper/entity-relati
 import { asArray } from "../../../utils/asArray";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 import { Logging } from "../../logging/logging.service";
+import { entityToFieldReferenceLabel } from "../../entity/schema/entity-field-reference-label";
 
 /**
  * Service to handle additional import actions
@@ -440,7 +441,16 @@ export class ImportAdditionalService {
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
       relationshipType?.label
     ) {
-      labelExtension = ` (through ${relationshipType?.toString(true)})`;
+      const relationshipLabel = relationshipType.toString(true);
+      const targetFieldLabel = relationshipType.schema.get(
+        (importAction as AdditionalIndirectLinkAction)
+          .relationshipTargetProperty,
+      )?.label;
+      labelExtension = ` (through ${
+        targetFieldLabel
+          ? entityToFieldReferenceLabel(relationshipLabel, targetFieldLabel)
+          : relationshipLabel
+      })`;
     }
 
     return labelExtension;
