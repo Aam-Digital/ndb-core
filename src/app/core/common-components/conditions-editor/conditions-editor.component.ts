@@ -93,6 +93,12 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
    */
   readonly currentRecordType = input<EntityConstructor>();
 
+  /**
+   * Offer an embedded field only as a whole, not the properties of its entries,
+   * for conditions evaluated where conditions on entries are not supported (e.g. permissions, notification rules).
+   */
+  readonly hideEmbeddedFields = input(false);
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
@@ -126,9 +132,9 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
-    const conditionFields = this.filterService.getConditionFields(
-      this.entityConstructor,
-    );
+    const conditionFields = this.hideEmbeddedFields()
+      ? { options: [], excludedFields: [] }
+      : this.filterService.getConditionFields(this.entityConstructor);
     this.fieldOptions = conditionFields.options;
     this.excludedFields = conditionFields.excludedFields;
     this.loadConditions(this.conditions);
@@ -560,7 +566,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
   private storedRows(): any[] {
     return (this.working.$or ?? []).map((row) =>
-      this.entityConstructor && isCompleteRow(row)
+      this.entityConstructor && !this.hideEmbeddedFields() && isCompleteRow(row)
         ? this.filterService.toStoredCondition(this.entityConstructor, row)
         : row,
     );
@@ -568,7 +574,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
   private toEditorRow(row: any): any {
-    return this.entityConstructor
+    return this.entityConstructor && !this.hideEmbeddedFields()
       ? this.filterService.fromStoredCondition(this.entityConstructor, row)
       : row;
   }

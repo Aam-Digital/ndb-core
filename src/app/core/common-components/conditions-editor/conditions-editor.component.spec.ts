@@ -696,6 +696,17 @@ describe("ConditionsEditorComponent", () => {
       expect(component.excludedFields).toEqual(["log"]);
     });
 
+    it("keeps embedded fields whole when their properties are hidden (e.g. for permissions)", () => {
+      fixture.componentRef.setInput("hideEmbeddedFields", true);
+      const stored = { log: { $elemMatch: { status: "M" } } };
+      component.conditions = stored;
+      component.ngOnInit();
+
+      expect(component.fieldOptions).toEqual([]);
+      expect(component.excludedFields).toEqual([]);
+      expect(component.conditionsArray()).toEqual([stored]);
+    });
+
     it("offers the properties of embedded fields also when the record type is chosen later", () => {
       const editor = TestBed.createComponent(ConditionsEditorComponent);
       editor.componentRef.setInput("entityConstructor", null);
