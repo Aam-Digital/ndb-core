@@ -18,6 +18,7 @@ import {
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { UnknownTotalPaginatorIntl } from "./unknown-total-paginator-intl";
 import { LOCAL_STORAGE_TOKEN } from "#src/app/utils/di-tokens";
 
@@ -74,7 +75,6 @@ export class ListPaginatorComponent<E> {
       this.paginatorReady();
       this.bindPaginator(this.dataSource());
     });
-    // a data source may stop using pagination while it lives on (see `usesPagination`)
     this.destroyRef.onDestroy(() => this.unbindPaginator());
 
     effect(() => {
@@ -124,10 +124,16 @@ export class ListPaginatorComponent<E> {
     dataSource.paginator = this.paginator;
   }
 
-  /** Stop paging the data source when this paginator is removed, unless it got another one in the meantime. */
+  /**
+   * Stop paging a data source that no longer uses pagination, unless it got another paginator in the meantime.
+   * Not when the whole list is destroyed: unbinding would render all its rows once during teardown.
+   */
   private unbindPaginator() {
     const dataSource = this.dataSource();
-    if (dataSource && dataSource.paginator === this.paginator) {
+    const stoppedPaging =
+      dataSource instanceof EntitiesTableDataSource &&
+      !dataSource.usesPagination();
+    if (stoppedPaging && dataSource.paginator === this.paginator) {
       dataSource.paginator = null;
     }
   }

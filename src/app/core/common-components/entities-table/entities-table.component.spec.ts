@@ -769,6 +769,18 @@ describe("EntitiesTableComponent", () => {
       ).toHaveLength(12);
     });
 
+    it("keeps the data source paged while the table is destroyed", () => {
+      dataSource.allRecords.set(
+        Array.from({ length: 12 }, (_, i) => TestEntity.create(`R${i}`)),
+      );
+      fixture.detectChanges();
+
+      fixture.destroy();
+
+      // rendering all rows once during teardown is slow for a long list
+      expect(dataSource.renderedRows()).toHaveLength(10);
+    });
+
     it("unselects a selected record once its row options make it not selectable", () => {
       const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
       dataSource.allRecords.set([a, b]);
