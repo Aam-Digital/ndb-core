@@ -19,6 +19,10 @@ import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 type ReadSignal<T> = () => T;
 
+/** URL query params of the sort (with the "_" prefix of view state other than filters, see `UrlStateService`) */
+const SORT_BY_PARAM = "_sortBy";
+const SORT_ORDER_PARAM = "_sortOrder";
+
 /**
  * Input signals consumed by `EntitiesTableSortStore`.
  */
@@ -106,12 +110,13 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
   });
 
   constructor() {
-    this.urlState.registerNonFilterKeys("sortBy", "sortOrder");
-
     // Sync default sort when no manual override and no URL state
     effect(() => {
       if (!this.context) return;
-      if (!this.sortManuallySet() && !this.urlState.getUrlParam("sortBy")) {
+      if (
+        !this.sortManuallySet() &&
+        !this.urlState.getUrlParam(SORT_BY_PARAM)
+      ) {
         this.sortState.set(this.defaultSort());
       }
     });
@@ -123,10 +128,10 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
       if (!externalSort) return;
       this.sortState.set(externalSort);
       if (externalSort.active) {
-        this.urlState.updateUrlParams({
-          sortBy: externalSort.active,
-          sortOrder: externalSort.direction ?? "asc",
-        });
+        this.updateSortUrlParams(
+          externalSort.active,
+          externalSort.direction || "asc",
+        );
       }
       this.sortManuallySet.set(true);
     });
@@ -142,9 +147,9 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
     if (!sort || this.attachedSort === sort) return;
     this.attachedSort = sort;
 
-    const urlSortBy = this.urlState.getUrlParam("sortBy");
+    const urlSortBy = this.urlState.getUrlParam(SORT_BY_PARAM);
     const urlSortOrder = this.urlState.getUrlParam(
-      "sortOrder",
+      SORT_ORDER_PARAM,
     ) as SortDirection;
     if (urlSortBy) {
       sort.active = urlSortBy;
@@ -162,26 +167,11 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
       });
   }
 
+  /** Ascending is the default and is not stored, no direction removes the sort from the URL. */
   private updateSortUrlParams(active: string, direction: SortDirection) {
-    if (!direction) {
-      this.urlState.updateUrlParams({
-        sortBy: null,
-        sortOrder: null,
-      });
-      return;
-    }
-
-    if (direction === "desc") {
-      this.urlState.updateUrlParams({
-        sortBy: active,
-        sortOrder: "desc",
-      });
-      return;
-    }
-
     this.urlState.updateUrlParams({
-      sortBy: active,
-      sortOrder: null,
+      [SORT_BY_PARAM]: direction ? active : null,
+      [SORT_ORDER_PARAM]: direction === "desc" ? "desc" : null,
     });
   }
 }

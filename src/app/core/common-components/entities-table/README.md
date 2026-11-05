@@ -13,7 +13,7 @@ sections on details pages and several feature components.
 - `entities-table.component.ts`: the table: columns, filter input, row click,
   row options
 - `entities-table-sort.store.ts`: sort state, default sort and its URL params
-  (`sortBy`, `sortOrder`)
+  (`_sortBy`, `_sortOrder`)
 - `entities-table-selection.ts`: bulk selection: checkbox, "select all",
   Shift-click ranges
 - `data-source/entities-table-data-source.ts`: abstract base of all data
@@ -159,10 +159,19 @@ module provides a settings component through `ADMIN_ENTITY_LIST_SETTINGS`
 The entity list keeps its filters, sort and column-group tab in the URL query
 params, so that reloading or going back restores the view.
 All of this goes through `UrlStateService` (`src/app/utils/url-state/`).
-Every query param counts as a filter value, except the keys that their owners
-register with `registerNonFilterKeys()` before writing them: the sort store
-registers `sortBy` and `sortOrder`, `TabStateMemoDirective` its tab key
-(`tabIndex` by default).
-A new kind of URL state (e.g. of a feature data source) must register its keys
-the same way, otherwise the filters treat it as a filter value and clear the
-default filters on reload.
+The service does not know what a param means; each owner reads and writes its
+own keys, and a naming rule keeps them apart:
+
+- Filters use the id of the filter, usually a field id
+  (e.g. `?status=active`). Links into a list, e.g. from a dashboard widget,
+  use the same keys. `FilterComponent` only reads the params of its configured
+  filters and of fields of the entity type.
+- All other view state uses keys starting with `_`: the sort store `_sortBy`
+  and `_sortOrder`, `TabStateMemoDirective` its tab key (`_tabIndex` by
+  default). Custom field ids cannot start with `_` (the admin UI does not
+  allow it, and CouchDB reserves such top-level properties), so these keys
+  never collide with a filter. Only the built-in `_id` and `_rev` start with
+  `_`: do not use these as keys of view state.
+
+A new kind of URL state (e.g. of a feature data source) must use a key with the
+`_` prefix as well.

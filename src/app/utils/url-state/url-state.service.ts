@@ -4,29 +4,19 @@ import { ActivatedRoute, Router } from "@angular/router";
 /**
  * Service to persist and restore view state (filters, sort, selected tab, ...) via URL query params.
  *
- * All query params count as filter values, except the keys that their owners register
- * through {@link registerNonFilterKeys} (e.g. the sort of a table or the selected tab of a tab group).
+ * The service does not know what a param means: each owner reads and writes its own keys.
+ * To keep the keys of different owners apart:
+ * - filters use the id of the filter, i.e. usually a field id chosen in the config
+ *   (also used by links into a list, e.g. from dashboards)
+ * - all other view state (sort, selected tab, ...) uses keys starting with "_" (e.g. `_sortBy`).
+ *   Custom field ids cannot start with "_" (the admin UI does not allow it, and CouchDB reserves
+ *   such top-level properties), so such a key never collides with a filter.
+ *   Only the built-in `_id` and `_rev` start with "_": do not use these as keys of view state.
  */
 @Injectable({ providedIn: "root" })
 export class UrlStateService {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-
-  /**
-   * Query param keys that hold view state other than filters.
-   * They stay registered for the whole session: a key is the name of a kind of state
-   * (like "sortBy"), so it never becomes a filter name later on.
-   */
-  private readonly nonFilterKeys = new Set<string>();
-
-  /**
-   * Declare query param keys that hold view state other than filter values,
-   * so that filters neither read nor clear them.
-   * Every owner of such state (sort, tab group, ...) registers its keys before it writes them.
-   */
-  registerNonFilterKeys(...keys: string[]) {
-    keys.forEach((key) => this.nonFilterKeys.add(key));
-  }
 
   /**
    * Update a query param in the URL (without reloading the page).
@@ -36,12 +26,6 @@ export class UrlStateService {
     replaceUrl = true,
   ) {
     const MAX_URL_LENGTH = 2000;
-    if (
-      "sortOrder" in params &&
-      (!params.sortOrder || params.sortOrder === "asc")
-    ) {
-      params.sortOrder = null;
-    }
     let queryParams = { ...this.route.snapshot.queryParams };
     for (const key of Object.keys(params)) {
       const value = params[key];
@@ -105,32 +89,13 @@ export class UrlStateService {
   getAllUrlParams(): Record<string, string> {
     return { ...this.route.snapshot.queryParams };
   }
-  /**
-   * Update a filter param in the URL (for filter components).
-   * If value is empty or null, removes the param.
-   */
-  updateFilterParam(key: string, value: string, replaceUrl = false) {
-    this.updateUrlParams({ [key]: value }, replaceUrl);
-  }
 
   /**
-   * Get all filter params from the URL (excluding the keys registered through {@link registerNonFilterKeys}).
+   * Remove the given query params from the URL.
    */
-  getFilterParams(): Record<string, string> {
-    const params = this.getAllUrlParams();
-    for (const key of this.nonFilterKeys) {
-      delete params[key];
-    }
-    return params;
-  }
-
-  /**
-   * Remove all filter params from the URL (for clear all filters).
-   * Accepts a list of filter keys to remove.
-   */
-  clearFilterParams(filterKeys: string[], replaceUrl = false) {
+  removeUrlParams(keys: string[], replaceUrl = true) {
     const queryParams = this.getAllUrlParams();
-    for (const key of filterKeys) {
+    for (const key of keys) {
       delete queryParams[key];
     }
     this.navigateWithParams(queryParams, replaceUrl);

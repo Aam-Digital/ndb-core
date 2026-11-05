@@ -258,8 +258,8 @@ describe("EntityListComponent", () => {
   it("keeps the default filters when the URL only holds the selected column-group tab", async () => {
     // e.g. reloading the page after switching to the second column group
     mockActivatedRoute.snapshot = {
-      queryParams: { tabIndex: "1" },
-      queryParamMap: convertToParamMap({ tabIndex: "1" }),
+      queryParams: { _tabIndex: "1" },
+      queryParamMap: convertToParamMap({ _tabIndex: "1" }),
     } as any;
 
     createComponent();
