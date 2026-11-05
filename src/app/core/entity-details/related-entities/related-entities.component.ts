@@ -14,7 +14,6 @@ import {
   getVisibleColumnIds,
   injectCurrentScreenSize,
 } from "../../../utils/media/visible-columns";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import {
   ColumnConfig,
@@ -25,15 +24,12 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import {
   combineFilterConditions,
   DataFilter,
 } from "../../filter/filters/filters";
-import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
-import { resolveEmbeddedField } from "../../entity/schema/embedded-schema-field.util";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
@@ -51,7 +47,7 @@ import { resolveDataSource } from "#src/app/core/common-components/entities-tabl
 export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
   protected filterService = inject(FilterService);
-  private readonly schemaService = inject(EntitySchemaService);
+  private readonly entityRelations = inject(EntityRelationsService);
   private readonly injector = inject(Injector);
 
   /** currently viewed/main entity for which related entities are displayed in this component */
@@ -185,20 +181,10 @@ export class RelatedEntitiesComponent<E extends Entity> {
     if (!entity || !entityCtr) {
       return [];
     }
-    const relType = entity.getType();
-    const found: string[] = [];
-
-    for (const [key, field] of entityCtr.schema) {
-      if (this.fieldReferencesType(field, relType)) {
-        found.push(key);
-        continue;
-      }
-
-      for (const innerProp of this.findEmbeddedEntityRefs(field, relType)) {
-        found.push(`${key}.${innerProp}`);
-      }
-    }
-
+    const found = this.entityRelations.getReferencingFieldPaths(
+      entityCtr,
+      entity.getType(),
+    );
     return found.length === 1 ? found[0] : found;
   }
 
@@ -207,23 +193,16 @@ export class RelatedEntitiesComponent<E extends Entity> {
    * into dot-paths (e.g. "attendance" → "attendance.participant").
    */
   private resolvePropertyPath(property: string): string {
-    if (property.includes(".")) {
-      return property;
-    }
     const entityCtr = this.entityCtr();
-    if (!entityCtr) {
-      return property;
-    }
-    const field = entityCtr.schema.get(property);
-    if (!field) {
-      return property;
-    }
     const entity = this.entity();
-    if (!entity) {
+    if (property.includes(".") || !entityCtr || !entity) {
       return property;
     }
-    const refs = this.findEmbeddedEntityRefs(field, entity.getType());
-    return refs.length === 1 ? `${property}.${refs[0]}` : property;
+    return this.entityRelations.resolveReferencingFieldPath(
+      entityCtr,
+      property,
+      entity.getType(),
+    );
   }
 
   protected initFilter(): DataFilter<E> {
@@ -247,59 +226,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
     if (!relatedEntityId || !entityCtr) {
       return {};
     }
-
-    const embedded = resolveEmbeddedField(
-      this.schemaService,
+    return this.entityRelations.referenceCondition(
       entityCtr,
       property,
+      relatedEntityId,
     );
-    const schema = embedded?.innerSchema ?? entityCtr.schema.get(property);
-    const condition = {
-      [property]: schema?.isArray
-        ? { $elemMatch: { $eq: relatedEntityId } }
-        : relatedEntityId,
-    } as DataFilter<E>;
-    return embedded
-      ? conditionOnEmbeddedField(condition, property, embedded)
-      : condition;
-  }
-
-  /** Check whether a schema field directly references the given entity type. */
-  private fieldReferencesType(
-    field: EntitySchemaField,
-    entityType: string,
-  ): boolean {
-    if (field.dataType !== EntityDatatype.dataType) {
-      return false;
-    }
-    return Array.isArray(field.additional)
-      ? field.additional.includes(entityType)
-      : field.additional === entityType;
-  }
-
-  /**
-   * Find inner field names in an embedded schema's `additional` config
-   * that reference the given entity type.
-   */
-  private findEmbeddedEntityRefs(
-    field: EntitySchemaField,
-    entityType: string,
-  ): string[] {
-    const additional = field?.additional;
-    if (
-      typeof additional !== "object" ||
-      additional === null ||
-      Array.isArray(additional)
-    ) {
-      return [];
-    }
-    return Object.entries<any>(additional)
-      .filter(
-        ([, inner]) =>
-          inner?.dataType === EntityDatatype.dataType &&
-          this.fieldReferencesType(inner, entityType),
-      )
-      .map(([key]) => key);
   }
 
   createNewRecordFactory() {
