@@ -13,6 +13,15 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { DataFilter } from "../../../filter/filters/filters";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
+import { Entity } from "../../../entity/model/entity";
+import { createEmbeddedEntity } from "../../../entity/model/embedded-entity";
+import { FormFieldConfig } from "../FormConfig";
+import {
+  LinkedRecordsSource,
+  registerLinkedRecordsSource,
+} from "../../../basic-datatypes/entity/selection-condition";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -20,16 +29,10 @@ describe("DynamicValidatorsService", () => {
   let mockedEntityMapper: any;
 
   beforeEach(() => {
-    mockedEntityMapper = {
-      loadType: vi.fn().mockName("EntityMapperService.loadType"),
-      load: vi.fn().mockName("EntityMapperService.load"),
-    };
-
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityMapperService, useValue: mockedEntityMapper },
-      ],
-    });
+    TestBed.configureTestingModule({ imports: [CoreTestingModule] });
+    mockedEntityMapper = TestBed.inject(EntityMapperService);
+    vi.spyOn(mockedEntityMapper, "loadType");
+    vi.spyOn(mockedEntityMapper, "load");
     service = TestBed.inject(DynamicValidatorsService);
   });
 
@@ -198,6 +201,22 @@ describe("DynamicValidatorsService", () => {
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
   });
 
+  it("skips the uniqueId validator for inner fields of embedded entries", () => {
+    const entry = createEmbeddedEntity(new Map(), {
+      record: new Entity("record"),
+      field: "documents",
+      existing: false,
+    });
+
+    const options = service.buildValidators(
+      { uniqueId: true },
+      entry,
+      "documentNumber",
+    );
+
+    expect(options.asyncValidators).toEqual([]);
+  });
+
   describe("withinParent", () => {
     const parent = Object.assign(TestEntity.create("Training"), {
       period: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
@@ -268,6 +287,206 @@ describe("DynamicValidatorsService", () => {
       expect(await validate(outside, undefined, parent.getId())).toEqual({
         withinParent: expect.objectContaining({ warning: true }),
       });
+    });
+  });
+
+  describe("selectionCondition", () => {
+    const anna = TestEntity.create({ name: "Anna", other: "BERLIN" });
+    const ben = TestEntity.create({ name: "Ben", other: "HAMBURG" });
+    const sameLocation = { other: { $in: ["$current_record.other"] } };
+    const linkField: FormFieldConfig = {
+      id: "ref",
+      additional: TestEntity.ENTITY_TYPE,
+    };
+
+    /**
+     * @param recordInForm values of the record being edited, entered in other fields of the form
+     * @param singleRecord false if the form edits several records at once (bulk edit)
+     * @param field the config of the link field in the form
+     * @param changed the fields of the form changed by the user (dirty), by default the link field
+     * @param dropdown what the dropdown editing the field shares with the validator, if any
+     */
+    function validate(
+      selected: string | string[],
+      condition: DataFilter<TestEntity>,
+      recordInForm: Partial<TestEntity> = {},
+      singleRecord?: boolean,
+      {
+        field = linkField,
+        changed = [field.id],
+        dropdown,
+      }: {
+        field?: FormFieldConfig;
+        changed?: string[];
+        dropdown?: LinkedRecordsSource;
+      } = {},
+    ) {
+      const { asyncValidators } = service.buildValidators(
+        { selectionCondition: condition },
+        new TestEntity(),
+        field,
+        singleRecord,
+      );
+      const form = new UntypedFormGroup({
+        [field.id]: new UntypedFormControl(selected),
+        ...Object.fromEntries(
+          Object.entries(recordInForm).map(([id, value]) => [
+            id,
+            new UntypedFormControl(value),
+          ]),
+        ),
+      });
+      changed.forEach((id) => form.get(id).markAsDirty());
+      if (dropdown) {
+        registerLinkedRecordsSource(form.get(field.id), dropdown);
+      }
+      return (asyncValidators as AsyncValidatorFn[])[0](form.get(field.id));
+    }
+
+    beforeEach(() => mockedEntityMapper.addAll([anna, ben]));
+
+    it("returns a warning naming the selected records that do not match, compared with the record being edited", async () => {
+      expect(
+        // a legacy id without the type prefix is found as well
+        await validate([anna.getId(), ben.getId(true)], sameLocation, {
+          other: "BERLIN",
+        }),
+      ).toEqual({
+        selectionCondition: {
+          warning: true,
+          errorMessage:
+            "Not matching the selection conditions of this field: Ben",
+        },
+      });
+      // only the selected records, not all records of the linked type
+      expect(mockedEntityMapper.load).toHaveBeenCalledTimes(2);
+      expect(mockedEntityMapper.loadType).not.toHaveBeenCalled();
+    });
+
+    it("uses the record types and the records loaded by the dropdown editing the field", async () => {
+      const loadedBen = Object.assign(ben.copy(), { name: "Ben (as loaded)" });
+      const dropdown: LinkedRecordsSource = {
+        entityTypes: () => [TestEntity.ENTITY_TYPE],
+        getLoaded: (id) => (id === ben.getId() ? loadedBen : undefined),
+      };
+      // in the form, the field links to several types, for which the dropdown does not filter
+      const field = {
+        id: "ref",
+        additional: [TestEntity.ENTITY_TYPE, "OtherType"],
+      };
+
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          field,
+          dropdown,
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({
+          errorMessage: expect.stringContaining("Ben (as loaded)"),
+        }),
+      });
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+    });
+
+    it("does not check records linked before while neither the field nor a field its condition refers to is changed", async () => {
+      expect(
+        await validate(
+          ben.getId(),
+          sameLocation,
+          { other: "BERLIN", name: "changed" },
+          true,
+          { changed: ["name"] },
+        ),
+      ).toBeNull();
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+    });
+
+    it("checks the records linked before once a field its condition refers to is changed", async () => {
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          changed: ["other"],
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({ warning: true }),
+      });
+    });
+
+    it("checks the record types of the field in the form, which can differ from the schema", async () => {
+      // in the schema, `refMixed` links to several types, for which a condition does not apply
+      const field = { id: "refMixed", additional: TestEntity.ENTITY_TYPE };
+
+      expect(
+        await validate(ben.getId(), sameLocation, { other: "BERLIN" }, true, {
+          field,
+        }),
+      ).toEqual({
+        selectionCondition: expect.objectContaining({ warning: true }),
+      });
+    });
+
+    it.each<
+      [
+        string,
+        string | string[],
+        DataFilter<TestEntity>,
+        Partial<TestEntity>?,
+        boolean?,
+      ]
+    >([
+      ["matching records", [anna.getId()], { other: { $in: ["BERLIN"] } }],
+      ["no selection", [], { other: { $in: ["BERLIN"] } }],
+      [
+        "a selected record that cannot be loaded",
+        `${TestEntity.ENTITY_TYPE}:deleted`,
+        { other: { $in: ["BERLIN"] } },
+      ],
+      [
+        "a condition referring to an empty field of the record",
+        ben.getId(),
+        sameLocation,
+        { other: null },
+      ],
+      [
+        "a form without one single record (bulk edit)",
+        ben.getId(),
+        sameLocation,
+        { other: "BERLIN" },
+        false,
+      ],
+    ])(
+      "returns nothing for %s",
+      async (_, selected, condition, recordInForm, singleRecord) => {
+        expect(
+          await validate(selected, condition, recordInForm, singleRecord),
+        ).toBeNull();
+      },
+    );
+
+    it("checks a selection right away, other async checks only when leaving the field", () => {
+      const entity = new TestEntity();
+      expect(
+        service.buildValidators(
+          { selectionCondition: { other: "BERLIN" } },
+          entity,
+          "ref",
+        ).updateOn,
+      ).toBeUndefined();
+      expect(
+        service.buildValidators({ uniqueId: true }, entity, "name").updateOn,
+      ).toBe("blur");
+    });
+
+    it("names the fields of the record that the condition refers to as dependencies", () => {
+      const dependencies = service.getDependencies({
+        withinParent: { parentReferenceField: "ref" },
+        selectionCondition: {
+          $or: [sameLocation, { category: "$current_record.category" }],
+        },
+      });
+
+      expect(new Set(dependencies)).toEqual(
+        new Set(["category", "other", "ref"]),
+      );
     });
   });
 

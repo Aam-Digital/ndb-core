@@ -23,6 +23,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import type { Mock } from "vitest";
 import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
@@ -96,6 +97,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           useValue: mockTemplateExportService,
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+        CurrentUserSubject,
       ],
     }).compileComponents();
   }

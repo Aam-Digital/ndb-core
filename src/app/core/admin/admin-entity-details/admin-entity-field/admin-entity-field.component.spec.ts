@@ -1,6 +1,7 @@
 import { signal } from "@angular/core";
 import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
@@ -27,6 +28,10 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { MatButtonHarness } from "@angular/material/button/testing";
+import { MatTabGroupHarness } from "@angular/material/tabs/testing";
+import { By } from "@angular/platform-browser";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableText } from "../../../config/multi-lingual-config";
 
@@ -157,6 +162,19 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.additionalForm.hasValidator(Validators.required)).toBe(
       true,
     );
+  });
+
+  it("should keep 'additional' of datatypes without own Type Details UI when opening", async () => {
+    const additional = { name: { dataType: "string" } };
+    const field = {
+      label: "Docs",
+      dataType: "schema-embed-array",
+      additional,
+    } as EntitySchemaField;
+    await recreateComponentWithData(field);
+
+    expect(component.additionalForm.value).toEqual(additional);
+    expect(dialogData.entitySchemaField.additional).toEqual(additional);
   });
 
   it("should init 'additional' options for configurable-enum", async () => {
@@ -409,29 +427,29 @@ describe("AdminEntityFieldComponent", () => {
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
+    // the embedded fields can have more config, set in the JSON config
+    const additional = {
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+        validators: { selectionCondition: { other: { $in: ["X"] } } },
+      },
+      remarks: { label: "Comments" },
+    };
     await recreateComponentWithData({
       label: "Attendance",
       dataType: "attendance",
       isArray: true,
-      additional: {
-        participant: {
-          dataType: "entity",
-          additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-        },
-      },
+      additional,
     } as EntitySchemaField);
+    await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
 
     expect(component.attendanceParticipantTypesForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
     ]);
-    expect(component.additionalForm.value).toEqual({
-      participant: {
-        dataType: "entity",
-        additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-      },
-    });
+    expect(component.additionalForm.value).toEqual(additional);
   });
 
   it("should sync attendance participant type selection to nested additional format", async () => {
@@ -461,6 +479,46 @@ describe("AdminEntityFieldComponent", () => {
     component.attendanceParticipantTypesForm.setValue([]);
     await fixture.whenStable();
     expect(component.additionalForm.value).toBeNull();
+  });
+
+  it("keeps the config of embedded attendance fields when the participant types change, except a selection filter for the previous types", async () => {
+    const mockEntityTypes = [TestEntity, Note];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+    await recreateComponentWithData({
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: [TestEntity.ENTITY_TYPE],
+          validators: {
+            required: true,
+            selectionCondition: { other: { $in: ["X"] } },
+          },
+          label: "Child",
+        },
+        remarks: { label: "Comments" },
+      },
+    } as EntitySchemaField);
+    await new Promise((resolve) => setTimeout(resolve));
+    await fixture.whenStable();
+
+    component.attendanceParticipantTypesForm.setValue([Note.ENTITY_TYPE]);
+    await fixture.whenStable();
+
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [Note.ENTITY_TYPE],
+        validators: { required: true },
+        label: "Child",
+      },
+      remarks: { label: "Comments" },
+    });
   });
 
   describe("predefined periods of a date range", () => {
@@ -650,6 +708,198 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.errors).toBeNull();
   });
 
+  describe("selection filter", () => {
+    /** the filter is configured in the Validation tab, whose content is only displayed while it is open */
+    async function openValidationTab() {
+      const tabs = await loader.getHarness(MatTabGroupHarness);
+      await tabs.selectTab({ label: "Validation" });
+    }
+
+    async function findSelectionFilterButton() {
+      await openValidationTab();
+      return loader.getHarnessOrNull(
+        MatButtonHarness.with({ text: /Selection Filter/ }),
+      );
+    }
+
+    const entityRef: EntitySchemaField = {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
+
+    it.each<[string, EntitySchemaField, boolean]>([
+      ["a single record type", entityRef, true],
+      [
+        "a list of one record type",
+        { ...entityRef, additional: [TestEntity.ENTITY_TYPE] },
+        true,
+      ],
+      [
+        "multiple record types",
+        {
+          ...entityRef,
+          additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+        },
+        false,
+      ],
+      [
+        "one record type, whatever its edit component",
+        { ...entityRef, editComponent: "EditLegacyAttendance" },
+        true,
+      ],
+      [
+        "an attendance field (configured in the JSON config for now)",
+        {
+          dataType: AttendanceDatatype.dataType,
+          additional: {
+            participant: {
+              dataType: "entity",
+              additional: [TestEntity.ENTITY_TYPE],
+            },
+          },
+        },
+        false,
+      ],
+      [
+        "no record type (text field)",
+        { dataType: StringDatatype.dataType },
+        false,
+      ],
+    ])(
+      "offers the selection filter only for fields referencing exactly one record type (%s)",
+      async (_, field, expectedOffered) => {
+        await recreateComponentWithData({ label: "ref", ...field });
+
+        expect(!!(await findSelectionFilterButton())).toBe(expectedOffered);
+      },
+    );
+
+    it.each<[string, string | string[]]>([
+      ["a single record type", TestEntity.ENTITY_TYPE],
+      ["a list of one record type", [TestEntity.ENTITY_TYPE]],
+    ])(
+      "keeps the condition when the form is opened (%s)",
+      async (_, additional) => {
+        const condition = { other: { $in: ["X"] } };
+        await recreateComponentWithData({
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional,
+          validators: { selectionCondition: condition },
+        } as EntitySchemaField);
+        await new Promise((resolve) => setTimeout(resolve));
+        await fixture.whenStable();
+
+        expect(dialogData.entitySchemaField.validators).toEqual({
+          selectionCondition: condition,
+        });
+      },
+    );
+
+    describe("when the target of the field changes", () => {
+      const condition = { other: { $in: ["X"] } };
+
+      beforeEach(async () => {
+        await recreateComponentWithData({
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional: TestEntity.ENTITY_TYPE,
+          validators: { required: true, selectionCondition: condition },
+        } as EntitySchemaField);
+      });
+
+      async function settle() {
+        fixture.detectChanges();
+        await fixture.whenStable();
+      }
+
+      it.each<[string, (c: AdminEntityFieldComponent) => void]>([
+        [
+          "to another record type",
+          (c) => c.additionalForm.setValue(Note.ENTITY_TYPE),
+        ],
+        [
+          "to several record types",
+          (c) =>
+            c.additionalForm.setValue([
+              TestEntity.ENTITY_TYPE,
+              Note.ENTITY_TYPE,
+            ]),
+        ],
+        [
+          "to a data type without records",
+          (c) =>
+            c.schemaFieldsForm
+              .get("dataType")
+              .setValue(StringDatatype.dataType),
+        ],
+      ])(
+        "clears the condition, but not the other validators, when switching %s",
+        async (_, change) => {
+          await openValidationTab();
+          change(component);
+          await settle();
+
+          expect(dialogData.entitySchemaField.validators).toEqual({
+            required: true,
+          });
+
+          // the validator settings do not bring the condition back with their next change
+          const validatorSettings = fixture.debugElement.query(
+            By.directive(ConfigureEntityFieldValidatorComponent),
+          ).componentInstance as ConfigureEntityFieldValidatorComponent;
+          validatorSettings.validatorForm().get("required").setValue(false);
+          await settle();
+
+          expect(dialogData.entitySchemaField.validators).toEqual({});
+        },
+      );
+
+      it("keeps the condition when only switching between single and multi mode of the same record type", async () => {
+        await component.onEntityAdditionalSelectionModeChange({
+          checked: true,
+          source: { checked: true },
+        } as any);
+        await settle();
+
+        expect(component.additionalForm.value).toEqual([
+          TestEntity.ENTITY_TYPE,
+        ]);
+        expect(dialogData.entitySchemaField.validators).toEqual({
+          required: true,
+          selectionCondition: condition,
+        });
+      });
+    });
+
+    it("filters the referenced records, comparing with fields of the record being edited", async () => {
+      await recreateComponentWithData(
+        {
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional: TestEntity.ENTITY_TYPE,
+        } as EntitySchemaField,
+        Note,
+      );
+      await openValidationTab();
+      const button = fixture.debugElement
+        .queryAll(By.directive(AdminDisplayConditionButtonComponent))
+        .map(
+          (el) => el.componentInstance as AdminDisplayConditionButtonComponent,
+        )
+        .find((b) => !!b.currentRecordType());
+
+      expect(button.entityType()).toBe(TestEntity);
+      expect(button.currentRecordType()).toBe(Note);
+
+      const condition = { other: { $in: ["$current_record.other"] } };
+      button.conditionChange.emit(condition);
+
+      expect(dialogData.entitySchemaField.validators).toEqual({
+        selectionCondition: condition,
+      });
+    });
+  });
   describe("multi-lingual config", () => {
     const TRANSLATIONS = { "en-US": "Name", de: "Vorname" };
 

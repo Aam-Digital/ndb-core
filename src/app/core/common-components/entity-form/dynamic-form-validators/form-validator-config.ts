@@ -25,6 +25,31 @@ export const DYNAMIC_VALIDATORS = [
   "pattern",
   /** type: WithinParentConfig; warns (without blocking saving) when a date range goes beyond the one of a linked parent */
   "withinParent",
+  /**
+   * type: DataFilter; for fields referencing another entity type:
+   * a Mango/MongoDB style query condition that the referenced records have to match
+   * to be offered for selection in this field.
+   *
+   * Condition values can refer to fields of the record being edited
+   * through a placeholder like `"$current_record.location"`, including its unsaved changes.
+   * If such a referenced field is empty, the rows of the condition referencing it are not applied
+   * (with the "any" combinator, `$or`, the whole condition then is not applied).
+   * The same applies if there is no single record, like in bulk edit.
+   *
+   * Only applies to a field referencing a single record type and edited with the entity dropdown
+   * (or an edit component using it), not if a form layout sets another `editComponent`.
+   * A `schema-embed` field (e.g. `attendance`) takes it in the config of its embedded
+   * entity field (e.g. `additional.participant.validators.selectionCondition`).
+   *
+   * Records that do not match can still be shown by the user on request,
+   * and already selected records are kept even if they do not match (anymore).
+   * A selected record that does not match is only a warning: users can still save after confirming it
+   * (not checked for an embedded field like the participants of `attendance`).
+   * The warning only appears when the user changed this field or a field the condition refers to
+   * (e.g. a new `location` that existing links do not match), not on every save of a record linked before.
+   * Selected records that do not match are still marked with a warning icon at the field.
+   */
+  "selectionCondition",
 ] as const;
 
 /**

@@ -1,4 +1,5 @@
 import { PouchDatabase } from "./pouch-database";
+import { toTypedDatabaseError } from "./database-exception";
 import { Logging } from "../../logging/logging.service";
 import { NamedError } from "../../logging/reported-errors";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
@@ -21,11 +22,9 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
 import { QueryOptions } from "../database";
-import {
-  PouchdbCorruptionRecoveryService,
-  isKnownMultiTabDatabaseCorruption,
-} from "./pouchdb-corruption-recovery.service";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import { isDocumentWriteError } from "./pouchdb-errors";
+import { ConnectivityError } from "#src/app/utils/backend-errors";
 import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 /**
@@ -193,8 +192,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       isFirstSync = (await localDb.info()).doc_count === 0;
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
-      this.handleSyncFailure(err, []);
-      throw err;
+      const failure = toTypedDatabaseError(err);
+      this.handleSyncFailure(failure, []);
+      throw failure;
     }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
@@ -283,8 +283,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        this.handleSyncFailure(err, lastSyncedDocIds);
-        throw err;
+        // the replication fails with a copy of the error, which loses the class of a typed error
+        const failure = toTypedDatabaseError(err);
+        this.handleSyncFailure(failure, lastSyncedDocIds);
+        throw failure;
       })
       .finally(() => {
         clearTimeout(stallTimer);
@@ -318,26 +320,37 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
   private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
-    if (this.isDocumentWriteError(err)) {
+    this.logSyncFailure(err, lastSyncedDocIds);
+    this.syncState.next(SyncState.FAILED);
+  }
+
+  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    const context = {
+      db: this.dbName,
+      ...lastSyncedBatchContext(lastSyncedDocIds),
+    };
+    if (isDocumentWriteError(err)) {
       Logging.warn(
         `sync failed: document write error (possible oversized document)`,
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
         err,
       );
-    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      return;
+    }
+
+    // reported (with the offer to reset the local data) by the recovery service
+    const reportedAsCorruption =
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
-        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        context,
       );
-    } else if (isReplicationConnectivityError(err)) {
-      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (isReplicationUnauthorizedError(err)) {
-      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
-    } else {
-      Logging.warn(`sync failed`, { db: this.dbName }, err);
+    if (reportedAsCorruption) {
+      return;
     }
-    this.syncState.next(SyncState.FAILED);
+
+    // at debug if offline or the session expired (see `Logging`): retried later
+    Logging.warn(`sync failed`, { db: this.dbName }, err);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -365,15 +378,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
       throw err;
     });
-  }
-
-  private isDocumentWriteError(err: any): boolean {
-    const message = err?.message || err?.reason || String(err);
-    return (
-      message.includes("Maximum call stack size exceeded") ||
-      message.includes("IDBObjectStore") ||
-      message.includes("Failed to execute")
-    );
   }
 
   /**
@@ -575,27 +579,10 @@ export class SyncFailedError extends NamedError {
   }
 }
 
-/** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends NamedError {
+/** Thrown internally when a sync is cancelled for making no progress (a stalled connection). */
+class SyncStalledError extends ConnectivityError {
   constructor() {
-    super("SyncStalledError", "Sync cancelled after making no progress");
+    super("Sync cancelled after making no progress");
+    this.name = "SyncStalledError";
   }
-}
-
-/**
- * Whether a replication with the server failed only because of the connection
- * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
- */
-export function isReplicationConnectivityError(err: any): boolean {
-  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
-  const message = err?.message || err?.reason || String(err);
-  return message.includes("getCheckpoint");
-}
-
-/**
- * Whether a replication with the server failed because the session expired:
- * the fetch layer already triggers a re-login.
- */
-export function isReplicationUnauthorizedError(err: any): boolean {
-  return err?.status === 401 || err?.statusCode === 401;
 }

@@ -56,9 +56,8 @@ export class RouterService {
         const newRoute = this.createRoute(view, runtimePath, additionalRoutes);
         routes.push(newRoute);
       } catch (e) {
-        Logging.warn("Failed to create route for view", {
+        Logging.warn("Failed to create route for view", e, {
           view: view._id,
-          error: e instanceof Error ? e.message : e,
         });
       }
     }

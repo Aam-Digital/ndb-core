@@ -28,7 +28,7 @@ export class EntityActionsMenuService {
         // a single misbehaving factory must not break the whole context menu
         Logging.warn(
           "EntityActionsMenu: action factory failed; skipping its actions.",
-          { error: err },
+          err,
         );
         return [];
       }
@@ -58,7 +58,8 @@ export class EntityActionsMenuService {
         // a single misbehaving action must not break the whole context menu
         Logging.warn(
           "EntityActionsMenu: visibility check for action failed; hiding it.",
-          { action: action.action, error: err },
+          err,
+          { action: action.action },
         );
         isVisible = false;
       }

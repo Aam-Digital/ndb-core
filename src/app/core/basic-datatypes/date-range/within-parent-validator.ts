@@ -1,11 +1,8 @@
-import { DestroyRef } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormGroup } from "@angular/forms";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dynamic-form-validators/validator-types";
 import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
 import {
   findParentOutside,
   getParentIds,
@@ -26,8 +23,7 @@ export function withinParentValidator(
   return async (control) => {
     const parentIds = getParentIds(
       config,
-      record,
-      control.parent?.get(config.parentReferenceField),
+      getCurrentRecordOfControl(control, record),
     );
     if (!parentIds.length) {
       return null;
@@ -49,26 +45,4 @@ export function withinParentValidator(
       },
     };
   };
-}
-
-/**
- * Validate the fields with a `withinParent` validator again whenever their parent link changes in the same form,
- * as the validator reads that link from the form.
- */
-export function revalidateOnParentLinkChange(
-  form: FormGroup,
-  fields: FormFieldConfig[],
-  destroyRef: DestroyRef,
-) {
-  for (const field of fields) {
-    const linkField = field.validators?.withinParent?.parentReferenceField;
-    const control = form.get(field.id);
-    const link = linkField && form.get(linkField);
-    if (!control || !link) {
-      continue;
-    }
-    link.valueChanges
-      .pipe(takeUntilDestroyed(destroyRef))
-      .subscribe(() => control.updateValueAndValidity());
-  }
 }

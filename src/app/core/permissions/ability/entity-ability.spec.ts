@@ -3,6 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { EntityAbility } from "./entity-ability";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
+import { EntityActionPermission } from "../permission-types";
 
 describe("EntityAbility", () => {
   let ability: EntityAbility;
@@ -186,6 +188,77 @@ describe("EntityAbility", () => {
           true,
         ),
       ).toBe(true);
+    });
+  });
+
+  describe("embedded entries", () => {
+    const innerSchema = new Map([["documentNumber", { dataType: "string" }]]);
+
+    function entryOf(record: TestEntity) {
+      return createEmbeddedEntity(innerSchema, {
+        record,
+        field: "other",
+        existing: true,
+      });
+    }
+
+    it.each<
+      [string, EntityActionPermission, boolean, EntityActionPermission, boolean]
+    >([
+      ["changing", "update", true, "update", true],
+      ["deleting", "delete", true, "update", true],
+      ["reading", "read", true, "read", true],
+      ["reading", "read", true, "update", false],
+      ["adding to a new record", "create", false, "create", true],
+      ["adding to a new record", "create", false, "update", false],
+    ])(
+      "checks %s an entry against the field of the record holding it (%s on existing record: %s, allowed %s: %s)",
+      (_, action, recordExists, allowedAction, expected) => {
+        ability.update([
+          {
+            subject: TestEntity.ENTITY_TYPE,
+            action: allowedAction,
+            fields: ["other"],
+          },
+        ]);
+        const record = TestEntity.create({ _rev: recordExists ? "1-a" : "" });
+
+        expect(ability.can(action, entryOf(record), "documentNumber")).toBe(
+          expected,
+        );
+        expect(ability.cannot(action, entryOf(record), "documentNumber")).toBe(
+          !expected,
+        );
+      },
+    );
+
+    it("denies changing an entry without permission for the field holding it", () => {
+      ability.update([
+        { subject: TestEntity.ENTITY_TYPE, action: "update", fields: ["name"] },
+      ]);
+      const record = TestEntity.create({ _rev: "1-a" });
+
+      expect(ability.can("update", entryOf(record), "documentNumber")).toBe(
+        false,
+      );
+    });
+
+    it("checks a nested entry against the field of the outermost record", () => {
+      ability.update([
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "update",
+          fields: ["other"],
+        },
+      ]);
+      const outerEntry = entryOf(TestEntity.create({ _rev: "1-a" }));
+      const nestedEntry = createEmbeddedEntity(innerSchema, {
+        record: outerEntry,
+        field: "documentNumber",
+        existing: false,
+      });
+
+      expect(ability.can("create", nestedEntry)).toBe(true);
     });
   });
 });

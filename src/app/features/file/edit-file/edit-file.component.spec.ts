@@ -15,6 +15,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
 import { FileService } from "../file.service";
 import { EditFileComponent } from "./edit-file.component";
+import { toTypedHttpError } from "../../../utils/typed-http-error.interceptor";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -283,17 +284,24 @@ describe("EditFileComponent", () => {
     }
   });
 
+  /** A request that never reached the server, as the HTTP interceptor delivers it. */
+  const lostConnection = () =>
+    toTypedHttpError(new HttpErrorResponse({ status: 0 }), {
+      method: "PUT",
+      url: "/db/app-attachments/Entity:1/testProp",
+    });
+
   it.each([
     {
       // a request that never reached the server, e.g. a mobile connection
       // dropping mid-upload, arrives as status 0
       case: "an upload aborted mid-flight",
-      error: new HttpErrorResponse({ status: 0 }),
+      error: lostConnection(),
       message: "connection",
     },
     {
       case: "a sync before the upload that lost the connection",
-      error: new SyncFailedError(new HttpErrorResponse({ status: 0 })),
+      error: new SyncFailedError(lostConnection()),
       message: "connection",
     },
     {

@@ -3,7 +3,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 import { differenceWith, isEqual, uniq } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
-import { addAndRemoveValues, isEmptyValue } from "../add-missing-values";
+import { addAndRemoveValues } from "../add-missing-values";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 import { isSameValue } from "../get-common-value";
 import {
   DefaultValueConfigInheritedField,
@@ -431,8 +432,8 @@ export class AffectedEntitiesCalculation {
     } catch (error) {
       Logging.warn(
         "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
-        { entityType: target.getType(), fieldId },
         error,
+        { entityType: target.getType(), fieldId },
       );
     }
 

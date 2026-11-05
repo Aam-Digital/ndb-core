@@ -182,7 +182,8 @@ describe("RollCallComponent", () => {
 
       expect(Logging[expectedLevel]).toHaveBeenCalledWith(
         "Could not load event",
-        expect.objectContaining({ eventId }),
+        expect.anything(),
+        { eventId },
       );
       expect(router.navigate).toHaveBeenCalledWith(["/404"]);
     },

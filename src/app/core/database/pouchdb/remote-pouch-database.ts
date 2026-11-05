@@ -1,4 +1,5 @@
-import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PouchDatabase } from "./pouch-database";
+import { databaseError, toTypedDatabaseError } from "./database-exception";
 import {
   BulkWriteLimits,
   DEFAULT_BULK_WRITE_LIMITS,
@@ -17,23 +18,54 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
-import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import { FindPage } from "./find-queries";
+import { describeResponse } from "../../logging/http-response-logging";
+import { isConnectivityError } from "../../logging/error-classification";
+import { ConnectivityError, ServerError } from "#src/app/utils/backend-errors";
+import { SessionExpiredError } from "../../session/session-expired.error";
+import { NotPermittedError } from "../../permissions/not-permitted.error";
 import {
-  describeResponse,
-  unexpectedResponseMessage,
-} from "../../logging/http-response-logging";
+  CONNECTIVITY_ERROR_STATUS,
+  normalizeRequestPath,
+} from "#src/app/utils/backend-response";
+
+const MAX_RESPONSE_BODY_LENGTH = 500;
 
 /**
- * 4XX statuses that occur during normal operation
- * (and are handled by callers or the auth layer),
- * so they are not reported to remote logging.
+ * The error for a request that got no usable response: a {@link ConnectivityError}
+ * if it never reached CouchDB (no response, or a gateway status of the proxy in
+ * front of it), else a {@link ServerError} carrying the status - a server that
+ * fails is a fault to fix, not a dropped connection.
  */
-const EXPECTED_4XX_STATUSES: number[] = [
-  HttpStatusCode.Unauthorized,
-  HttpStatusCode.Forbidden,
-  HttpStatusCode.NotFound,
-];
+async function failedResponseError(
+  result: Response | undefined,
+  method: string,
+  remoteUrl: string,
+  fetchError?: unknown,
+): Promise<ConnectivityError | ServerError> {
+  const details = {
+    requestedUrl: remoteUrl,
+    // tells server errors of different endpoints apart (see `reportServerError`)
+    requestPath: normalizeRequestPath(remoteUrl),
+    actualResponse: describeResponse(result, method),
+    // e.g. a proxy's whole HTML error page: enough of it to tell what answered
+    actualResponseBody: (await result?.text())?.slice(
+      0,
+      MAX_RESPONSE_BODY_LENGTH,
+    ),
+  };
+  if (!result || CONNECTIVITY_ERROR_STATUS.has(result.status)) {
+    return new ConnectivityError("Failed to fetch from DB", {
+      status: result?.status,
+      cause: fetchError,
+      details,
+    });
+  }
+  return new ServerError("Server error response from DB", {
+    status: result.status,
+    details,
+  });
+}
 
 /** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
 function requestMethod(opts: RequestInit | undefined): string {
@@ -191,22 +223,30 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     let result: Response;
+    let fetchError: unknown;
     try {
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
-      Logging.debug("Failed initial fetch from DB", err);
-      Logging.debug("navigator.onLine", navigator.onLine);
+      fetchError = err;
+      Logging.debug("Failed initial fetch from DB", err, {
+        online: navigator.onLine,
+      });
       this.showConnectionIssueAlert();
     }
 
-    // Retry login if request failed with unauthorized.
-    // This will redirect to Keycloak if the token is expired or missing,
-    // which is intentional — it ensures users re-authenticate online
-    // when connectivity is available (including after an offline login).
-    if (
-      result?.status === HttpStatusCode.Unauthorized &&
-      !this.unauthenticatedSession
-    ) {
+    if (result?.status === HttpStatusCode.Unauthorized) {
+      if (this.unauthenticatedSession) {
+        // without a login, the server answers what the public role may not do with a plain 401
+        throw new NotPermittedError("Not permitted without login", {
+          status: result.status,
+          details: { requestPath: normalizeRequestPath(remoteUrl) },
+        });
+      }
+      // Retry login if request failed with unauthorized.
+      // This will redirect to Keycloak if the token is expired or missing,
+      // which is intentional — it ensures users re-authenticate online
+      // when connectivity is available (including after an offline login).
+      // If the session cannot be renewed, this fails with a SessionExpiredError.
       result = await this.retryWithRenewedSession(remoteUrl, opts, result);
     }
     if (result && result.status !== HttpStatusCode.Unauthorized) {
@@ -217,14 +257,10 @@ export class RemotePouchDatabase extends PouchDatabase {
     const method = requestMethod(opts);
 
     if (!result || result.status >= 500) {
-      Logging.debug("Actual DB Fetch response", result);
-      Logging.debug("navigator.onLine", navigator.onLine);
-      throw new DatabaseException({
-        message: "Failed to fetch from DB",
-        requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(describeResponse(result, method)),
-        actualResponseBody: await result?.text(),
+      Logging.debug("Actual DB Fetch response", result, {
+        online: navigator.onLine,
       });
+      throw await failedResponseError(result, method, remoteUrl, fetchError);
     }
 
     // additional output for debugging
@@ -244,40 +280,19 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Log a 4XX response at the level it deserves:
-   * expected statuses only for debugging, unexpected ones as a warning.
+   * Log a 4XX response for debugging only: the request fails with it, and whoever
+   * made it reports the failure if it is unexpected (reported here as well, it
+   * opened a second issue for each failure).
    */
   private logErrorResponse(
     result: Response,
     method: string,
     remoteUrl: string,
   ): void {
-    const response = describeResponse(result, method);
-    if (this.isNotificationsDatabase() && result.status === 404) {
-      Logging.debug("Notifications database not found (404) - may be expected");
-    } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
-      // expired session (401), permission-filtered doc (403) and missing doc (404)
-      // are part of normal operation and handled by callers
-      Logging.debug("Expected 4XX response from DB", response);
-    } else if (result.status === HttpStatusCode.Conflict) {
-      // A 409 is CouchDB rejecting a write whose revision is out of date. This
-      // layer cannot tell whether that cost anyone anything, but whoever made
-      // the request always can:
-      //  - remote-only session: the write came from PouchDatabase.put(), and
-      //    PouchDatabase.resolveConflict() decides between merging,
-      //    overwriting and failing - and counts the outcome it chose.
-      //  - synced session: writes go to the local database, so the only 409s
-      //    reaching here are replication's own `PUT /_local/<checkpoint>`
-      //    races between concurrent tabs, which PouchDB retries internally.
-      // Reporting it here would therefore be an alert nobody can act on, and
-      // it is what buried the genuinely unexpected statuses in the same issue.
-      Logging.debug("Document update conflict from DB", response);
-    } else {
-      Logging.warn(unexpectedResponseMessage(result.status), {
-        ...response,
-        requestedUrl: remoteUrl,
-      });
-    }
+    Logging.debug("4XX response from DB", {
+      ...describeResponse(result, method),
+      requestedUrl: remoteUrl,
+    });
   }
 
   /**
@@ -301,8 +316,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       try {
         return await operation();
       } catch (err) {
+        // the raw error of PouchDB, not yet converted by `databaseError`
         if (
-          !isConnectivityError(err) ||
+          !isConnectivityError(toTypedDatabaseError(err)) ||
           attempt >= this.TRANSIENT_ERROR_RETRIES
         ) {
           throw err;
@@ -359,9 +375,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   /**
    * Renew the session and repeat a request that the server rejected as unauthorized.
    *
-   * @returns the repeated request's response; the original `unauthorized`
-   *   response if the session could not be renewed; or `undefined` if the
+   * @returns the repeated request's response; or `undefined` if the
    *   repeated request did not get a response at all (like a failed initial fetch)
+   * @throws SessionExpiredError if the session could not be renewed: the server
+   *   then keeps rejecting the request, whatever reason it gives (the replication
+   *   backend answers an expired session with a bare 401)
    */
   private async retryWithRenewedSession(
     remoteUrl: string,
@@ -381,7 +399,13 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else {
         Logging.warn("Could not renew session after 401", err);
       }
-      return unauthorized;
+      throw new SessionExpiredError("Session could not be renewed", {
+        status: unauthorized.status,
+        cause: err,
+        details: {
+          actualResponse: describeResponse(unauthorized, requestMethod(opts)),
+        },
+      });
     }
 
     this.authService.addAuthHeader(opts.headers);
@@ -498,7 +522,7 @@ export class RemotePouchDatabase extends PouchDatabase {
           PouchDB.Find.FindResponse<any> & { bookmark?: string }
         >,
     ).catch((err) => {
-      throw new DatabaseException(err);
+      throw databaseError(err);
     });
     return { docs: res.docs, bookmark: res.bookmark };
   }

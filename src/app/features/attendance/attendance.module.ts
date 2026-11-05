@@ -91,7 +91,7 @@ export class AttendanceModule {
           );
           return true;
         } catch (err) {
-          Logging.warn("Attendance list download failed:", err);
+          Logging.warn("Attendance list download failed", err);
           this.injector
             .get(AlertService)
             .addDanger(

@@ -5,7 +5,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { catchError, filter, map, shareReplay } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
-import { isConnectivityError } from "../../utils/connectivity-error";
+import { isNotPermittedError } from "../../core/logging/error-classification";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
 import { waitForChangeTo } from "../../core/session/session-states/session-utils";
@@ -144,22 +144,15 @@ export abstract class FileService {
         let errorMessage: string;
         if (err?.status === HttpStatusCode.NotFound) {
           errorMessage = $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`;
-        } else if (
-          err?.status === HttpStatusCode.Unauthorized ||
-          err?.status === HttpStatusCode.Forbidden
-        ) {
+        } else if (isNotPermittedError(err)) {
           errorMessage = $localize`:File Download Error Message:You do not have permission to open this file.`;
         } else {
-          if (isConnectivityError(err)) {
-            Logging.debug("Could not download file (connectivity)", err);
-          } else {
-            Logging.warn(
-              "Could not download file",
-              entity?.getId(),
-              property,
-              err,
-            );
-          }
+          Logging.warn(
+            "Could not download file",
+            err,
+            entity?.getId(),
+            property,
+          );
           errorMessage = $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
         }
 

@@ -6,3 +6,8 @@
 .mat-mdc-tab-group {
   height: 100%;
 }
+
+/* room for the elevation shadow of panel content (e.g. tables), which the scrolling tab body would cut off otherwise */
+:host ::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 6px 8px;
+}

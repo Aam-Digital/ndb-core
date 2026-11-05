@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { Logging } from "../../../logging/logging.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DatabaseException } from "../../../database/pouchdb/pouch-database";
+import { databaseError } from "../../../database/pouchdb/database-exception";
 import {
   EntityRegistry,
   entityRegistry,
@@ -88,7 +89,7 @@ describe("EntityBlockComponent", () => {
     const logSpy = vi.spyOn(Logging, "debug");
 
     mockEntityMapper.load.mockRejectedValue(
-      new DatabaseException(new Error(), "Entity not found"),
+      databaseError(new Error(), "Entity not found"),
     );
     fixture.componentRef.setInput("entityId", "Entity:404");
     fixture.detectChanges();
