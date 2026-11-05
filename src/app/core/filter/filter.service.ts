@@ -52,7 +52,13 @@ export class FilterService {
     options: FormFieldConfig[];
     excludedFields: string[];
   } {
-    const embeddedRefs = getEmbeddedFieldRefs(this.schemaService, entityType);
+    // like the field select does for the record's own fields
+    const embeddedRefs = getEmbeddedFieldRefs(
+      this.schemaService,
+      entityType,
+    ).filter(
+      ({ outerSchema }) => !outerSchema.isInternalField && !!outerSchema.label,
+    );
     return {
       options: embeddedRefs.map((ref) => ({
         ...ref.innerSchema,

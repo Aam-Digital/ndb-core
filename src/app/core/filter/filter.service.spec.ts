@@ -254,6 +254,13 @@ describe("FilterService", () => {
     ).toEqual(selected);
   });
 
+  it("offers no condition fields inside internal embedded fields, like the created and updated metadata", () => {
+    expect(service.getConditionFields(TestEntity)).toEqual({
+      options: [],
+      excludedFields: [],
+    });
+  });
+
   describe("matching records in the stored format", () => {
     function testRecord() {
       return TestEntity.create({
