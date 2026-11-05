@@ -8,7 +8,7 @@ import {
   untracked,
 } from "@angular/core";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
-import { RowOptionsById } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { RowOptions } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
@@ -33,7 +33,7 @@ export type HierarchyDataSourceConfig = {
 };
 
 /** URL query param holding the user's choice of the hierarchy field in a list */
-export const HIERARCHY_URL_PARAM = "hierarchy";
+export const HIERARCHY_URL_PARAM = "_hierarchy";
 /** value of {@link HIERARCHY_URL_PARAM} for the flat list */
 export const NO_HIERARCHY = "none";
 /** CSS class of rows that are only shown as the parent of a matching record */
@@ -144,26 +144,32 @@ export class HierarchyDataSource<
 
   override readonly usesPagination = computed(() => !this.activeField());
 
-  override readonly rowOptions: Signal<RowOptionsById> = computed(() => {
-    const view = this.view();
-    const optionsById = new Map();
-    for (const row of view?.rows ?? []) {
-      const id = row.record.getId();
-      const { treeCell, childCount } = this.cellConfigs(id);
-      optionsById.set(id, {
-        prefix: treeCell,
-        // after the title: "Village meetings (3)"
-        suffix: row.isCollapsed ? childCount : undefined,
-        cssClass: rowClasses(row),
-        selectable: !row.isContext,
-      });
-    }
-    // "select all" leaves out records hidden under a collapsed row
-    for (const id of view?.hiddenIds ?? []) {
-      optionsById.set(id, { selectable: false });
-    }
-    return optionsById;
-  });
+  /** the row options by record id: a live update replaces the record object, the row keeps its options */
+  private readonly rowOptionsById: Signal<ReadonlyMap<string, RowOptions>> =
+    computed(() => {
+      const view = this.view();
+      const optionsById = new Map<string, RowOptions>();
+      for (const row of view?.rows ?? []) {
+        const id = row.record.getId();
+        const { treeCell, childCount } = this.cellConfigs(id);
+        optionsById.set(id, {
+          prefix: treeCell,
+          // after the title: "Village meetings (3)"
+          suffix: row.isCollapsed ? childCount : undefined,
+          cssClass: rowClasses(row),
+          selectable: !row.isContext,
+        });
+      }
+      // "select all" leaves out records hidden under a collapsed row
+      for (const id of view?.hiddenIds ?? []) {
+        optionsById.set(id, { selectable: false });
+      }
+      return optionsById;
+    });
+
+  override rowOptionsOf(record: T): RowOptions | undefined {
+    return this.rowOptionsById().get(record.getId());
+  }
 
   private readonly hierarchyControls: DynamicComponentConfig[] = [
     { component: "HierarchySelect", config: { dataSource: this } },
@@ -196,7 +202,6 @@ export class HierarchyDataSource<
 
   constructor() {
     super();
-    this.urlState.registerNonFilterKeys(HIERARCHY_URL_PARAM);
 
     effect(() => {
       // a changed filter shows all its matches, at every level

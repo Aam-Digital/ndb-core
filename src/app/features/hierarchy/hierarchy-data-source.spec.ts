@@ -133,10 +133,9 @@ describe("HierarchyDataSource", () => {
   }
 
   function selectableIds(): string[] {
-    const optionsById = dataSource.rowOptions();
     return dataSource
       .filteredRecords()
-      .filter((r) => optionsById.get(r.getId())?.selectable !== false)
+      .filter((r) => dataSource.rowOptionsOf(r)?.selectable !== false)
       .map((r) => r.title);
   }
 
@@ -241,7 +240,7 @@ describe("HierarchyDataSource", () => {
     await settle();
 
     const rowOptions = (title: string) =>
-      dataSource.rowOptions().get(`HierarchyTestAction:${title}`);
+      dataSource.rowOptionsOf(new Action(title));
     const classes = (title: string) =>
       rowOptions(title)?.cssClass?.split(" ").sort() ?? [];
     expect(classes("Clean Water")).toEqual(
@@ -295,8 +294,7 @@ describe("HierarchyDataSource", () => {
     expect(selectableIds()).not.toContain("Rampur");
     // the number of hidden sub-records follows the title of the collapsed row only
     const suffix = (title: string) =>
-      dataSource.rowOptions().get(`HierarchyTestAction:${title}`)?.suffix
-        ?.component;
+      dataSource.rowOptionsOf(new Action(title))?.suffix?.component;
     expect(suffix("Mobilisation")).toBe("HierarchyChildCount");
     expect(suffix("Clean Water")).toBeUndefined();
 
@@ -326,7 +324,10 @@ describe("HierarchyDataSource", () => {
     dataSource.selectField(undefined);
     await settle();
     expect(dataSource.usesPagination()).toBe(true);
-    expect(dataSource.rowOptions().size).toBe(0);
+    const options = dataSource
+      .filteredRecords()
+      .map((r) => dataSource.rowOptionsOf(r));
+    expect(options.filter(Boolean)).toEqual([]);
     expect(displayedRows()[0]).toBe("Clean Water");
     expect(urlState.updateUrlParams).toHaveBeenLastCalledWith(
       { [HIERARCHY_URL_PARAM]: NO_HIERARCHY },

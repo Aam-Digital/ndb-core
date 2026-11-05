@@ -35,7 +35,7 @@ Admins set this in the admin UI of the list view ("Hierarchy displayed by").
 ```
 
 The user chooses the field (or "None (flat list)") in the "Hierarchy" dropdown above the list.
-The choice is kept in the URL param `hierarchy` (registered as non-filter key with `UrlStateService`),
+The choice is kept in the URL param `_hierarchy` (with the `_` prefix of URL state other than filters, see `UrlStateService`),
 the default field is not written to the URL.
 
 **Related-entities section** on the details page of a record of the same type (JSON config only):
