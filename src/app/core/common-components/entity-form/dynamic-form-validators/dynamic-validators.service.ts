@@ -100,12 +100,23 @@ export class DynamicValidatorsService {
           ),
         );
         updateOnBlur ||= !rule.checkOnChange;
+      } else if (onlyWarns) {
+        // run with the async checks: Angular skips those while a sync check fails, even if it only warns
+        formControlOptions.asyncValidators.push((control: FormControl) =>
+          Promise.resolve(
+            this.addHumanReadableError(
+              rule,
+              (validator as ValidatorFn)(control),
+              true,
+            ),
+          ),
+        );
       } else {
         formControlOptions.validators.push((control: FormControl) =>
           this.addHumanReadableError(
             rule,
             (validator as ValidatorFn)(control),
-            onlyWarns,
+            false,
           ),
         );
       }

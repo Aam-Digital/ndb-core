@@ -202,6 +202,28 @@ describe("DynamicValidatorsService", () => {
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
   });
 
+  it("still runs the async checks of a field while one of its checks only warns", async () => {
+    mockedEntityMapper.loadType.mockResolvedValue([
+      TestEntity.create({ name: "abc" }),
+    ]);
+    const control = new UntypedFormControl(
+      "",
+      service.buildValidators(
+        { pattern: "^[A-Z]+$", uniqueId: true, _warningOnly: ["pattern"] },
+        new TestEntity(),
+        "name",
+      ),
+    );
+
+    control.setValue("abc");
+    await vi.waitFor(() => expect(control.pending).toBe(false));
+
+    expect(control.errors).toEqual({
+      pattern: expect.objectContaining({ warning: true }),
+      uniqueId: expect.objectContaining({ errorMessage: expect.any(String) }),
+    });
+  });
+
   it("skips the uniqueId validator for inner fields of embedded entries", () => {
     const entry = createEmbeddedEntity(new Map(), {
       record: new Entity("record"),
@@ -283,13 +305,14 @@ describe("DynamicValidatorsService", () => {
     ],
   ])(
     "makes an error only a warning if _warningOnly lists a validator that can be one: %o",
-    (config: FormValidatorConfig, invalidValue, key, warning) => {
-      const validator = service.buildValidators(config, new TestEntity())
-        .validators[0];
+    async (config: FormValidatorConfig, invalidValue, key, warning) => {
+      const control = new UntypedFormControl(
+        invalidValue,
+        service.buildValidators(config, new TestEntity()),
+      );
+      await vi.waitFor(() => expect(control.pending).toBe(false));
 
-      const errors = validator(new UntypedFormControl(invalidValue));
-
-      expect(errors[key].warning).toBe(warning);
+      expect(control.errors[key].warning).toBe(warning);
     },
   );
 
