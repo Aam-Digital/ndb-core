@@ -1,6 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import {
+  EntityMapperService,
+  storedRecordsOf,
+} from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -38,6 +41,21 @@ export const MAX_ENTITIES_TO_REVIEW = 100;
 type IndexedProperty = Parameters<
   DatabaseIndexingService["generateIndexOnProperty"]
 >[2];
+
+/**
+ * Saving the updated records failed after some of them were already stored.
+ * Carries their previous versions, so that the caller can still undo what was saved.
+ */
+class PartiallySavedUpdatesError extends Error {
+  constructor(
+    readonly previousVersions: Entity[],
+    cause: unknown,
+  ) {
+    super("Some of the updated records were saved before the failure", {
+      cause,
+    });
+  }
+}
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -83,14 +101,20 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         asArray(entitiesBeforeChanges),
       );
     } catch (error) {
+      const failure =
+        error instanceof PartiallySavedUpdatesError ? error.cause : error;
       Logging.error(
         "AutomatedFieldUpdateConfigService: Could not update the linked records after saving",
-        error,
+        failure,
       );
       this.alertService.addDanger(
         $localize`The linked records could not be updated.`,
       );
-      return [];
+      // the records that were saved before the failure can still be undone
+      const givenIds = new Set(asArray(entities).map((e) => e.getId()));
+      return error instanceof PartiallySavedUpdatesError
+        ? error.previousVersions.filter((e) => !givenIds.has(e.getId()))
+        : [];
     }
   }
 
@@ -645,7 +669,18 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     });
 
     // together, so that none of them is saved if the user may not save one of them
-    await this.entityMapper.saveAll(entitiesToSave);
+    try {
+      await this.entityMapper.saveAll(entitiesToSave);
+    } catch (error) {
+      const storedIds = new Set(
+        storedRecordsOf(entitiesToSave, error).map((e) => e.getId()),
+      );
+      if (storedIds.size === 0) throw error;
+      throw new PartiallySavedUpdatesError(
+        previousVersions.filter((e) => storedIds.has(e.getId())),
+        error,
+      );
+    }
     return previousVersions;
   }
 

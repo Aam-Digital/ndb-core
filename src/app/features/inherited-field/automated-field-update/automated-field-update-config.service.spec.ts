@@ -2142,6 +2142,34 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(alertService.addDanger).toHaveBeenCalledOnce();
       });
 
+      it("still returns the records that were saved before the saving failed, so that they can be undone", async () => {
+        const workPackage1 = createAction(["health"]);
+        const workPackage2 = createAction(["health"]);
+        const activity1 = createAction(["health"], workPackage1);
+        const activity2 = createAction(["health"], workPackage2);
+        entityMapper.addAll([workPackage1, workPackage2, activity1, activity2]);
+        const before = [activity1.copy(), activity2.copy()];
+        activity1.tags = toTags(["water"]);
+        activity2.tags = toTags(["water"]);
+        // as a partial bulk write: only the first record is stored
+        vi.spyOn(entityMapper, "saveAll").mockRejectedValueOnce([
+          { ok: true, id: workPackage1.getId(), rev: "2-a" },
+          { id: workPackage2.getId(), status: 409, name: "conflict" },
+        ]);
+        vi.spyOn(Logging, "error").mockImplementation(() => {});
+        alertService.addDanger.mockClear();
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity1, activity2],
+          before,
+        );
+
+        expect(previousVersions.map((record) => record.getId())).toEqual([
+          workPackage1.getId(),
+        ]);
+        expect(alertService.addDanger).toHaveBeenCalledOnce();
+      });
+
       it("does not return a changed record that the update changed again, as the caller has it from before its change", async () => {
         const project = new CycleAction();
         const activity = new CycleAction();
