@@ -305,18 +305,31 @@ test("Bulk actions on selected records", async ({ page }) => {
   });
 
   await test.step("Bulk-editing a field that other records collect offers to update them, in one dialog for all edited records", async () => {
-    await openChildrenList(page, "BulkEdit");
-    await enterBulkMode(page);
-    await selectRows(page, ["BulkEdit Child A", "BulkEdit Child B"]);
-    await chooseBulkAction(page, "Bulk Edit");
-    await chooseBulkEditField(page, "Center");
-    const dialog = page.getByRole("dialog");
-    await dialog.locator("#entity-field__center .fa-caret-down").click();
-    await page
-      .getByRole("option", { name: CENTER_BARABAZAR.label, exact: true })
-      .click();
-    await dialog.getByRole("button", { name: "Save" }).click();
+    async function bulkEditCenter(
+      names: string[],
+      center: { label: string },
+    ): Promise<void> {
+      await openChildrenList(page, "BulkEdit");
+      await enterBulkMode(page);
+      await selectRows(page, names);
+      await chooseBulkAction(page, "Bulk Edit");
+      await chooseBulkEditField(page, "Center");
+      const dialog = page.getByRole("dialog");
+      await dialog.locator("#entity-field__center .fa-caret-down").click();
+      await page
+        .getByRole("option", { name: center.label, exact: true })
+        .click();
+      await dialog.getByRole("button", { name: "Save" }).click();
+    }
+    async function openSchool(): Promise<void> {
+      await page.getByRole("navigation").getByText("Schools").click();
+      await page.getByRole("cell", { name: BULK_EDIT_SCHOOL_NAME }).click();
+    }
 
+    await bulkEditCenter(
+      ["BulkEdit Child A", "BulkEdit Child B"],
+      CENTER_BARABAZAR,
+    );
     const updateDialog = page.getByRole("dialog", {
       name: /Update related records/,
     });
@@ -342,20 +355,26 @@ test("Bulk actions on selected records", async ({ page }) => {
       .getByRole("button", { name: "Update related records", exact: true })
       .click();
     await expect(updateDialog).not.toBeVisible();
-    const snackbar = page
-      .locator("simple-snack-bar")
-      .filter({ hasText: "2 Children edited" });
-    await expect(snackbar).toBeVisible();
-
-    await page.getByRole("navigation").getByText("Schools").click();
-    await page.getByRole("cell", { name: BULK_EDIT_SCHOOL_NAME }).click();
+    await expect(
+      page.locator("simple-snack-bar").filter({ hasText: "2 Children edited" }),
+    ).toBeVisible();
+    await openSchool();
     const schoolCenters = page.locator("#entity-field__enumMulti");
     await expect(schoolCenters).toContainText(CENTER_BARABAZAR.label);
 
-    // undo also reverts the related records that were updated
-    await snackbar.getByRole("button", { name: "Undo" }).click();
-    await expect(schoolCenters).toContainText(CENTER_TOLLYGUNGE.label);
-    await expect(schoolCenters).not.toContainText(CENTER_BARABAZAR.label);
+    // undo also reverts the related records that were updated (right away, as the message closes itself after a few seconds)
+    await bulkEditCenter(["BulkEdit Child A"], CENTER_ALIPORE);
+    await updateDialog
+      .getByRole("button", { name: "Update related records", exact: true })
+      .click();
+    await page
+      .locator("simple-snack-bar")
+      .filter({ hasText: '"BulkEdit Child A" edited' })
+      .getByRole("button", { name: "Undo" })
+      .click();
+    await openSchool();
+    await expect(schoolCenters).toContainText(CENTER_BARABAZAR.label);
+    await expect(schoolCenters).not.toContainText(CENTER_ALIPORE.label);
   });
 
   await test.step("Bulk-merge two records combines them into one", async () => {
