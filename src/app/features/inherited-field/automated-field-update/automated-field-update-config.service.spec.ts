@@ -912,6 +912,23 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(rows.length).toBeGreaterThan(MAX_ENTITIES_TO_REVIEW);
     });
 
+    it("does not count records that are only listed to note that their parents have no value in common", async () => {
+      const school = createSchool("primary");
+      const otherSchool = createSchool("primary");
+      const groups = Array.from({ length: MAX_ENTITIES_TO_REVIEW + 1 }, () => {
+        const group = new CommonValueGroup();
+        group.members = [school.getId(), otherSchool.getId()];
+        group.category = "primary";
+        return group;
+      });
+      entityMapper.addAll([school, otherSchool, ...groups]);
+
+      await changeCategory(school);
+
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+      expect(mockDialog.open).toHaveBeenCalledOnce();
+    });
+
     it("asks the user first, and shows them for review if the user chooses so", async () => {
       const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW + 1);
       confirmationDialog.getConfirmation.mockResolvedValueOnce("review");

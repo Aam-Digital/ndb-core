@@ -37,6 +37,11 @@ import {
 /** Above this number of affected records, the dialog to review them can take long to show, so the user is asked first */
 export const MAX_ENTITIES_TO_REVIEW = 100;
 
+/** Whether the update changes the value of the record (not only listed to note that there is no value in common). */
+function changesValue(update: AffectedEntity): boolean {
+  return !isSameValue(update.newValue, update.savedValue);
+}
+
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
   DatabaseIndexingService["generateIndexOnProperty"]
@@ -653,7 +658,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes = updates.filter(
-        (update) => entity && !isSameValue(update.newValue, update.savedValue),
+        (update) => entity && changesValue(update),
       );
       if (changes.length > 0) {
         previousVersions.push(entity.copy());
@@ -693,7 +698,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     triggers: UpdateTrigger[],
   ): Promise<AffectedEntity[] | null> {
     // an entity is listed once for each of its fields that is updated
-    const count = new Set(entitiesToUpdate.map((entity) => entity.id)).size;
+    const count = new Set(
+      entitiesToUpdate.filter(changesValue).map((entity) => entity.id),
+    ).size;
     if (count > MAX_ENTITIES_TO_REVIEW) {
       const choice = await this.askHowToConfirmMany(count, triggers.length > 1);
       if (choice === "update-all") return entitiesToUpdate;
