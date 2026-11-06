@@ -347,6 +347,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "FreeTextFilter",
+    () =>
+      import("./common-components/entities-table/free-text-filter/free-text-filter.component").then(
+        (c) => c.FreeTextFilterComponent,
+      ),
+  ],
+  [
     "EditSchemaEmbedArray",
     () =>
       import("./basic-datatypes/schema-embed/edit-schema-embed-array/edit-schema-embed-array.component").then(

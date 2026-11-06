@@ -157,10 +157,15 @@ type ModelSignal<T> = ReadSignal<T> & { set(value: T): void };
  */
 export interface EntitiesTableSelectionContext<T extends Entity> {
   selectedRecords: ModelSignal<T[]>;
-  /** records that "select all" applies to, i.e. all filtered records across all pages */
-  selectableRows: ReadSignal<T[]>;
+  /** all filtered records across all pages, which "select all" applies to unless they are not selectable */
+  filteredRows: ReadSignal<T[]>;
   /** records of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal<T[]>;
+  /**
+   * whether a record can be selected (e.g. not if its row options say so);
+   * the table unselects every record that is not, whoever selected it
+   */
+  isSelectable: (record: T) => boolean;
 }
 
 /**
@@ -176,15 +181,21 @@ export class EntitiesTableSelectionStore<T extends Entity> {
   private readonly lastSelectedRecord = signal<T | null>(null);
   private readonly lastSelection = signal<boolean | null>(null);
 
+  /** the records that "select all" selects */
+  private readonly selectableRows = computed(() => {
+    if (!this.context) return [];
+    return this.context.filteredRows().filter(this.context.isSelectable);
+  });
+
   readonly allRowsSelected = computed(() => {
     const selected = this.context?.selectedRecords() ?? [];
-    const total = this.context?.selectableRows().length ?? 0;
+    const total = this.selectableRows().length;
     return selected.length > 0 && selected.length === total;
   });
 
   readonly selectionIndeterminate = computed(() => {
     const selected = this.context?.selectedRecords() ?? [];
-    const total = this.context?.selectableRows().length ?? 0;
+    const total = this.selectableRows().length;
     return selected.length > 0 && selected.length < total;
   });
 
@@ -202,9 +213,7 @@ export class EntitiesTableSelectionStore<T extends Entity> {
 
   /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
-    this.context.selectedRecords.set(
-      checked ? [...this.context.selectableRows()] : [],
-    );
+    this.context.selectedRecords.set(checked ? [...this.selectableRows()] : []);
   }
 
   /**

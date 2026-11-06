@@ -1,6 +1,7 @@
 import { MatTableDataSource } from "@angular/material/table";
+import { Sort } from "@angular/material/sort";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
-import { DestroyRef, effect, inject, signal } from "@angular/core";
+import { DestroyRef, effect, inject, Signal, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { SortValueFns } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
@@ -20,6 +21,7 @@ import {
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
+import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -42,6 +44,20 @@ export interface LoadRecordConfig<T extends Entity> {
    * Select if a special loader method should be used for this entity
    */
   loaderMethod?: LoaderMethod;
+}
+
+/**
+ * Options for one row of the table, for its display and its selection, provided by the data source.
+ */
+export interface RowOptions {
+  /** component shown before the content of the first data cell */
+  prefix?: DynamicComponentConfig;
+  /** component shown after the content of the first data cell */
+  suffix?: DynamicComponentConfig;
+  /** extra CSS class for the row */
+  cssClass?: string;
+  /** whether the row can be selected for bulk actions (default: true) */
+  selectable?: boolean;
 }
 
 /** Why loading the records of a list failed, as named to the user. */
@@ -71,13 +87,20 @@ export abstract class EntitiesTableDataSource<
 
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
-  allRecords = signal<T[]>([]);
-  filteredRecords = signal<T[]>([]);
   /**
-   * The records handed to the table as input data, in the order they were loaded.
-   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   * The sort that the table applies (set by the table), as a signal:
+   * for data sources that arrange the rows themselves (the `sort` of the table only offers events).
    */
-  displayedData = signal<T[]>([]);
+  readonly effectiveSort = signal<Sort | undefined>(undefined);
+  /** All loaded records (only filled by data sources that hold all records in memory). */
+  allRecords = signal<T[]>([]);
+  /**
+   * The records passing all filters (including the free-text {@link searchText}), across all pages,
+   * in the order they were loaded (with server-side paging only the pages loaded so far, see {@link getAllData}).
+   * They are the input data of the table:
+   * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
+  filteredRecords = signal<T[]>([]);
   /**
    * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
@@ -86,16 +109,37 @@ export abstract class EntitiesTableDataSource<
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
   isLoading = signal(false);
 
-  // NOTE: overriding only the setter would hide the inherited `get data`,
-  // so `dataSource.data` would return `undefined`. Provide both accessors.
-  override get data(): T[] {
-    return super.data;
-  }
+  /**
+   * Free-text search for the records.
+   * Only data sources that support it apply it (see {@link toolbarControls} for the field to enter it);
+   * "Clear filters" resets it.
+   */
+  readonly searchText = signal("");
 
-  override set data(data: T[]) {
-    // expose signal containing current data
-    this.displayedData.set(data);
-    super.data = data;
+  // --- Extension points for data sources of feature modules (all with defaults) ---
+
+  /**
+   * Options for this data source from the list or section config
+   * (the `config` of a `dataSource: { name, config }` entry), set by `resolveDataSource`.
+   * Data sources of feature modules read their own options from it; core data sources have none.
+   */
+  readonly config = signal<Readonly<Record<string, unknown>>>({});
+
+  /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
+  readonly usesPagination: Signal<boolean> = signal(true);
+
+  /**
+   * controls a host may show in the list's filter row, in this order (default: none).
+   * Keep the config objects stable: a new object reloads the control.
+   */
+  readonly toolbarControls: Signal<DynamicComponentConfig[]> = signal([]);
+
+  /**
+   * Optional extras for the row of a record (default: none).
+   * Called by the table for every rendered row: read signals here, so that the rows update when they change.
+   */
+  rowOptionsOf(_record: T): RowOptions | undefined {
+    return undefined;
   }
 
   // Make sure only one update subscription is active

@@ -12,7 +12,7 @@ import {
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { NgComponentOutlet } from "@angular/common";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
@@ -21,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
 import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 import { Logging } from "../../logging/logging.service";
+import { EntitiesTableDataSource } from "../../common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -40,7 +41,7 @@ import { Logging } from "../../logging/logging.service";
 export class FilterComponent<T extends Entity = Entity> {
   private filterGenerator = inject(FilterGeneratorService);
   private filterService = inject(FilterService);
-  private readonly tableStateUrl = inject(TableStateUrlService);
+  private readonly urlState = inject(UrlStateService);
 
   /**
    * The filter configuration from the config
@@ -65,10 +66,10 @@ export class FilterComponent<T extends Entity = Entity> {
    */
   onlyShowRelevantFilterOptions = input(false);
   /**
-   * A string representation of the current filter state.
-   * This can be used to display the active filters as a single string.
+   * The data source of the filtered table, if any.
+   * "Clear" also resets its free-text search.
    */
-  filterString = input("");
+  dataSource = input<EntitiesTableDataSource<T>>();
   /**
    * The filter query which is build by combining all selected filters.
    * This can be used as two-way-binding or through the `filterObjChange` output.
@@ -78,10 +79,6 @@ export class FilterComponent<T extends Entity = Entity> {
    * An event emitter that notifies about updates of the filter.
    */
   filterObjChange = output<DataFilter<T>>();
-  /**
-   * An event emitter that notifies about updates to the filter string.
-   */
-  filterStringChange = output<string>();
 
   filterSelections = linkedSignal<Filter<T>[]>(
     () => this.generatedFilterSelections.value() ?? [],
@@ -91,8 +88,12 @@ export class FilterComponent<T extends Entity = Entity> {
     this.filterSelections().some((f) => f.selectedOptionValues?.length > 0),
   );
 
+  private readonly configuredFilterIds = computed(
+    () => new Set((this.filterConfig() ?? []).map((f) => f.id)),
+  );
+
   readonly showClearButton = computed(
-    () => this.hasActiveFilters() || !!this.filterString(),
+    () => this.hasActiveFilters() || !!this.dataSource()?.searchText(),
   );
 
   private readonly generatedFilterSelections = resource({
@@ -158,9 +159,12 @@ export class FilterComponent<T extends Entity = Entity> {
     );
     this.applyFilterSelections(updatedSelections);
     if (this.useUrlQueryParams()) {
-      this.tableStateUrl.updateFilterParam(
-        filter.name,
-        selectedOptions.map((value) => encodeURIComponent(value)).join(","),
+      this.urlState.updateUrlParams(
+        {
+          [filter.name]: selectedOptions
+            .map((value) => encodeURIComponent(value))
+            .join(","),
+        },
         false,
       );
     }
@@ -182,6 +186,21 @@ export class FilterComponent<T extends Entity = Entity> {
   }
 
   /**
+   * The URL params that belong to the filters of this list:
+   * the configured filters and the fields of the entity type (for links e.g. from dashboards).
+   * Other URL state (sort, selected tab, ...) uses keys starting with "_", which no custom field id has.
+   */
+  private getFilterUrlParams(): Record<string, string> {
+    const configuredIds = this.configuredFilterIds();
+    const schema = this.entityType()?.schema;
+    return Object.fromEntries(
+      Object.entries(this.urlState.getAllUrlParams()).filter(
+        ([key]) => configuredIds.has(key) || schema?.has(key),
+      ),
+    );
+  }
+
+  /**
    * Returns the filter config extended with any URL params that refer to valid entity
    * schema fields but are not already covered by the configured filterConfig.
    * This ensures that navigation links (e.g. from EntityCountDashboard) pre-apply
@@ -193,10 +212,10 @@ export class FilterComponent<T extends Entity = Entity> {
       return this.filterConfig() ?? [];
     }
 
-    const params = this.tableStateUrl.getFilterParams();
-    const configuredIds = new Set((this.filterConfig() ?? []).map((f) => f.id));
+    const params = this.getFilterUrlParams();
+    const configuredIds = this.configuredFilterIds();
     const extraConfigs: FilterConfig[] = Object.keys(params)
-      .filter((k) => !configuredIds.has(k) && this.entityType().schema.has(k))
+      .filter((k) => !configuredIds.has(k))
       .map((k) => ({ id: k }));
 
     return [...(this.filterConfig() ?? []), ...extraConfigs];
@@ -222,7 +241,7 @@ export class FilterComponent<T extends Entity = Entity> {
       return filterSelections;
     }
 
-    const params = this.tableStateUrl.getFilterParams();
+    const params = this.getFilterUrlParams();
     const hasUrlParams = Object.keys(params).length > 0;
     let hasChanges = false;
 
@@ -279,11 +298,11 @@ export class FilterComponent<T extends Entity = Entity> {
     });
 
     this.filterObjChange.emit({});
-    this.filterStringChange.emit("");
+    this.dataSource()?.searchText.set("");
 
     if (this.useUrlQueryParams()) {
       const filterKeys = this.filterSelections().map((f) => f.name);
-      this.tableStateUrl.clearFilterParams(filterKeys, false);
+      this.urlState.removeUrlParams(filterKeys, false);
     }
   }
 

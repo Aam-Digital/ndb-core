@@ -45,6 +45,7 @@ import {
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -63,6 +64,7 @@ import { EntitiesTableDataSource } from "#src/app/core/common-components/entitie
     MatSortModule,
     MatTableModule,
     EntityCreateButtonComponent,
+    DynamicComponentDirective,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -202,6 +204,19 @@ export class EntitiesTableComponent<T extends Entity>
     }
     return columns;
   });
+  /** The column whose cells show the prefix of the row options: the first one that holds record data. */
+  readonly firstDataColumn = computed(() =>
+    this._columnsToDisplay().find(
+      (column) =>
+        column !== this.ACTIONCOLUMN_SELECT &&
+        column !== this.ACTIONCOLUMN_CREATE,
+    ),
+  );
+
+  /** Whether a record can be selected for bulk actions. */
+  readonly isSelectable = (record: T): boolean =>
+    this.recordsDataSource().rowOptionsOf(record)?.selectable !== false;
+
   /** Columns with sorting rules applied (managed by the sort store). */
   readonly _columns = this.sortStore.columns;
   readonly idForSavingPagination = computed(() =>
@@ -247,11 +262,24 @@ export class EntitiesTableComponent<T extends Entity>
       this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
     });
     effect(() => {
+      this.recordsDataSource().effectiveSort.set(
+        this.sortStore.effectiveSort(),
+      );
+    });
+    effect(() => {
       this.recordsDataSource().dataFilter();
-      this.recordsDataSource().displayedData();
+      this.recordsDataSource().filteredRecords();
       if (untracked(this.selectedRecords)?.length > 0) {
         // reset selection if filter or input data changes
         this.selectedRecords.set([]);
+      }
+    });
+    effect(() => {
+      // the one place that keeps records out of the selection that cannot be selected,
+      // however they got there (a click, a range, the host, or a row the data source has hidden since)
+      const selected = this.selectedRecords() ?? [];
+      if (!selected.every(this.isSelectable)) {
+        this.selectedRecords.set(selected.filter(this.isSelectable));
       }
     });
   }
@@ -267,8 +295,10 @@ export class EntitiesTableComponent<T extends Entity>
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      selectableRows: this.recordsDataSource().displayedData,
-      currentPageRows: this.recordsDataSource().renderedRows,
+      // read through the input, which may switch to another data source later on
+      filteredRows: computed(() => this.recordsDataSource().filteredRecords()),
+      currentPageRows: computed(() => this.recordsDataSource().renderedRows()),
+      isSelectable: this.isSelectable,
     });
   }
 

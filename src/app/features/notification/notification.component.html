@@ -50,7 +50,7 @@
         color="accent"
         class="margin-regular"
         [routerLink]="['/user-account']"
-        [queryParams]="{ tabIndex: 1 }"
+        [queryParams]="{ _tabIndex: 1 }"
         i18n
       >
         Activate Notifications
@@ -124,7 +124,7 @@
     <button
       mat-menu-item
       [routerLink]="['/user-account']"
-      [queryParams]="{ tabIndex: 1 }"
+      [queryParams]="{ _tabIndex: 1 }"
       (click)="closeOnlySubmenu(notificationListTrigger, $event)"
     >
       <fa-icon icon="gear" class="standard-icon-with-text"></fa-icon>

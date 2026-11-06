@@ -19,6 +19,9 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
+import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
+import { ADMIN_ENTITY_LIST_SETTINGS } from "./admin-entity-list-settings";
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
@@ -38,15 +41,32 @@ import {
     ViewTitleComponent,
     AdminListManagerComponent,
     HintBoxComponent,
+    DynamicComponentDirective,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent {
   private readonly schemaService = inject(EntitySchemaService);
+  private readonly settingsComponents =
+    inject(ADMIN_ENTITY_LIST_SETTINGS, { optional: true }) ?? [];
 
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
+
+  /** further settings provided by feature modules, see {@link ADMIN_ENTITY_LIST_SETTINGS} */
+  protected readonly featureSettings = computed<DynamicComponentConfig[]>(
+    () => {
+      const inputs = {
+        entityConstructor: this.entityConstructor(),
+        config: this.config(),
+      };
+      return this.settingsComponents.map((component) => ({
+        component,
+        config: inputs,
+      }));
+    },
+  );
 
   filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
 
