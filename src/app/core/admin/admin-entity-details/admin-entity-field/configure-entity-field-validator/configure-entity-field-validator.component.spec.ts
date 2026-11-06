@@ -30,6 +30,7 @@ import {
 import { TranslatableText } from "../../../../config/multi-lingual-config";
 import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
 import { By } from "@angular/platform-browser";
+import { CoreTestingModule } from "../../../../../utils/core-testing.module";
 import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 @DatabaseEntity("ValidatorTestProject")
@@ -72,6 +73,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         ReactiveFormsModule,
         BrowserAnimationsModule,
         FontAwesomeTestingModule,
+        CoreTestingModule,
       ],
       providers: [
         FormBuilder,
@@ -154,6 +156,51 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     patternControl.setValue("");
     expect(emitted).toEqual({});
     expect(messageControl.disabled).toBe(true); // message only editable while a pattern is set
+  });
+
+  describe("validators fitting the selected type", () => {
+    function renderField(validators: FormValidatorConfig) {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+        validators,
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+      return emitted;
+    }
+
+    it("drops the validators not fitting a newly selected type, and keeps the others", () => {
+      const emitted = renderField({ required: true, pattern: "[a-z]+" });
+
+      fixture.componentRef.setInput("dataType", "number");
+      fixture.detectChanges();
+
+      expect(component.applies("pattern")).toBe(false);
+      expect(component.applies("max")).toBe(true);
+      expect(emitted.at(-1)).toEqual({ required: true });
+    });
+
+    it("keeps validators the tab has no setting for", () => {
+      const emitted = renderField({ customRule: 5 } as FormValidatorConfig);
+
+      component.validatorForm().get("required").setValue(true);
+
+      expect(emitted.at(-1)).toEqual({ customRule: 5, required: true });
+    });
+
+    it("saves the validators that are only a warning, as long as they are set", () => {
+      const emitted = renderField({ pattern: "[a-z]+" });
+
+      component.setWarningOnly("pattern", true);
+      expect(emitted.at(-1)).toEqual({
+        pattern: "[a-z]+",
+        _warningOnly: ["pattern"],
+      });
+
+      component.validatorForm().get("pattern").setValue("");
+      expect(emitted.at(-1)).toEqual({});
+    });
   });
 
   it("should flag invalid regex input as control error and not emit it", () => {
