@@ -88,7 +88,7 @@ export class MaxValidator extends FieldValidator<number> {
  */
 @Injectable()
 export class PatternValidator extends FieldValidator<
-  string | { pattern: string; message: string }
+  string | RegExp | { pattern: string; message: string }
 > {
   static override key = "pattern";
 
@@ -99,11 +99,16 @@ export class PatternValidator extends FieldValidator<
     );
   }
 
-  build(value: string | { pattern: string; message: string }): ValidatorFn {
-    if (typeof value === "object") {
-      return patternWithMessage(value.pattern, value.message);
+  build(
+    value: string | RegExp | { pattern: string; message: string },
+  ): ValidatorFn | null {
+    if (!value) {
+      return null;
     }
-    return Validators.pattern(value);
+    if (typeof value === "string" || value instanceof RegExp) {
+      return Validators.pattern(value);
+    }
+    return patternWithMessage(value.pattern, value.message);
   }
 
   override message(error: { message?: string }): string {

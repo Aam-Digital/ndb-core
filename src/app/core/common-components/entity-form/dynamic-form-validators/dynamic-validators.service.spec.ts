@@ -252,6 +252,26 @@ describe("DynamicValidatorsService", () => {
     },
   );
 
+  it.each([
+    ["a text", "^[0-9]+$"],
+    ["a regular expression", /^[0-9]+$/],
+  ])("checks a pattern given as %s", (_, pattern) => {
+    const validator = service.buildValidators({ pattern }, new TestEntity())
+      .validators[0];
+
+    expect(validator(new UntypedFormControl("12"))).toBeNull();
+    expect(validator(new UntypedFormControl("1a"))?.pattern).toBeDefined();
+  });
+
+  it("adds no pattern check for a pattern without value", () => {
+    const options = service.buildValidators(
+      { pattern: null },
+      new TestEntity(),
+    );
+
+    expect(options.validators).toEqual([]);
+  });
+
   it("registers a rule for each validator key of the config type", () => {
     const keys = service.getRules().map((rule) => rule.key);
 
