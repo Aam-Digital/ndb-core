@@ -1529,7 +1529,16 @@
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number"
+          "label": "Phone Number",
+          "validators": {
+            "pattern": {
+              "pattern": "^\\+?[0-9 ]{6,15}$",
+              "message": "Enter a phone number (digits only)"
+            },
+            "_warningOnly": [
+              "pattern"
+            ]
+          }
         },
         "address": {
           "dataType": "location",
