@@ -23,6 +23,13 @@ import { asArray } from "#src/app/utils/asArray";
 /** keys of a `validators` config starting with this are settings (e.g. `_warningOnly`), not validators */
 export const SETTING_PREFIX = "_";
 
+/** whether the value of a validator in the config switches it off (e.g. `required: false`) */
+function isSwitchedOff(value: unknown): boolean {
+  return (
+    value === false || value === null || value === undefined || value === ""
+  );
+}
+
 /**
  * Builds the validators configured for form fields (`validators` of their schema)
  * from the registered {@link FieldValidator} rules.
@@ -76,7 +83,7 @@ export class DynamicValidatorsService {
 
     const warningOnly = new Set(asArray(config._warningOnly ?? []));
     for (const [key, value] of Object.entries(config)) {
-      if (key.startsWith(SETTING_PREFIX)) {
+      if (key.startsWith(SETTING_PREFIX) || isSwitchedOff(value)) {
         continue;
       }
       const rule = this.rules.get(key);

@@ -48,7 +48,7 @@ Extend `FieldValidator<Config>`, where `Config` is the type of the rule's settin
 ```ts
 @Injectable()
 export class MaxLengthValidator extends FieldValidator<number> {
-  static override key = "maxLength";
+  static override readonly key = "maxLength";
   override readonly datatypesSupported = [LongTextDatatype];
 
   build(maxLength: number): ValidatorFn {
@@ -61,17 +61,17 @@ export class MaxLengthValidator extends FieldValidator<number> {
 }
 ```
 
-| Member                                   | What it does                                                                                                                                                                                                           |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `static key`                             | Key of the rule in `validators`, also the key of its error                                                                                                                                                             |
-| `build(value, context)`                  | The Angular validator, or `null` if the setting switches the rule off (e.g. `required: false`). The `context` holds the record, the field, the whole `validators` config and whether the form edits one single record. |
-| `message(error)`                         | The readable message for the rule's error. By default the `errorMessage` the error carries.                                                                                                                            |
-| `datatypesSupported`                     | The datatypes the rule fits, including their subtypes (e.g. `DateDatatype` also covers date only, date of birth and month). Empty: all datatypes. The admin "Validation" tab only shows the setting for these.         |
-| `appliesTo(datatype, field)`             | Overrides `datatypesSupported` when the type alone is not enough. For example, `pattern` lists its types explicitly, as link and file fields extend the `StringDatatype` too.                                          |
-| `warning`                                | `"optional"` (default): admins can make it only a warning. `"always"`: its errors are always only a warning (set `warning: true` in the error). `"never"`: it always blocks saving.                                    |
-| `async`, `checkOnChange`                 | `async`: `build` returns an `AsyncPromiseValidatorFn` (e.g. to load other records). The field is then only checked when the user leaves it, unless `checkOnChange` is set.                                             |
-| `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                               |
-| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config.                                                                                                                                        |
+| Member                                   | What it does                                                                                                                                                                                                                                                                                         |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `static readonly key`                    | Key of the rule in `validators`, also the key of its error                                                                                                                                                                                                                                           |
+| `build(value, context)`                  | The Angular validator, or `null` if it cannot be built. It is not called for a setting that switches the rule off (`false`, `null` or an empty text, e.g. `required: false`). The `context` holds the record, the field, the whole `validators` config and whether the form edits one single record. |
+| `message(error)`                         | The readable message for the rule's error. By default the `errorMessage` the error carries.                                                                                                                                                                                                          |
+| `datatypesSupported`                     | The datatypes the rule fits, including their subtypes (e.g. `DateDatatype` also covers date only, date of birth and month). Empty: all datatypes. The admin "Validation" tab only shows the setting for these.                                                                                       |
+| `appliesTo(datatype, field)`             | Overrides `datatypesSupported` when the type alone is not enough. For example, `pattern` lists its types explicitly, as link and file fields extend the `StringDatatype` too.                                                                                                                        |
+| `warning`                                | `"optional"` (default): admins can make it only a warning. `"always"`: its errors are always only a warning (set `warning: true` in the error). `"never"`: it always blocks saving.                                                                                                                  |
+| `async`, `checkOnChange`                 | `async`: `build` returns an `AsyncPromiseValidatorFn` (e.g. to load other records). The field is then only checked when the user leaves it, unless `checkOnChange` is set.                                                                                                                           |
+| `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                                                                                                             |
+| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config.                                                                                                                                                                                                                      |
 
 A rule that needs services injects them like any other service (`inject(EntityMapperService)`).
 Do not inject the `EntityFormService`, as it uses the rules itself.

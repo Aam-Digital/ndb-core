@@ -56,7 +56,7 @@ export function withinParentValidator(
 /** `withinParent: { parentReferenceField: "parent" }`: the date range should lie within the one of the linked parent record */
 @Injectable()
 export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
-  static override key = "withinParent";
+  static override readonly key = "withinParent";
   override readonly datatypesSupported = [DateRangeDatatype];
   override readonly warning = "always";
   override readonly async = true;
@@ -67,7 +67,7 @@ export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
     value: WithinParentConfig,
     { entity, field }: ValidatorContext,
   ): AsyncPromiseValidatorFn | null {
-    return value && field?.id
+    return field?.id
       ? withinParentValidator(value, field.id, entity, this.entityMapper)
       : null;
   }

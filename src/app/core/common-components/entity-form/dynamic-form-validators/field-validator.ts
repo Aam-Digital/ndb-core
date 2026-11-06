@@ -27,7 +27,7 @@ export interface ValidatorContext {
  */
 export abstract class FieldValidator<Config = any> {
   /** key of the rule in a field's `validators` config */
-  static key: string;
+  static readonly key: string;
 
   get key(): string {
     return (this.constructor as typeof FieldValidator).key;
@@ -58,7 +58,10 @@ export abstract class FieldValidator<Config = any> {
     );
   }
 
-  /** the validator for the configured value, `null` if the value switches the rule off (e.g. `required: false`) */
+  /**
+   * The validator for the configured value, or `null` if it cannot be built.
+   * Not called for a value that switches the rule off (`false`, `null` or an empty text, e.g. `required: false`).
+   */
   abstract build(
     value: Config,
     context: ValidatorContext,

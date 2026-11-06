@@ -135,7 +135,7 @@ export function descriptionForDateValidator(
 /** `minDate: "2020-01-01"` (or `"$now"`): the date must be on or after the given date */
 @Injectable()
 export class MinDateValidator extends FieldValidator {
-  static override key = "minDate";
+  static override readonly key = "minDate";
   override readonly datatypesSupported = [DateDatatype];
 
   build(value: unknown): ValidatorFn {
@@ -150,7 +150,7 @@ export class MinDateValidator extends FieldValidator {
 /** `maxDate: "$now"` (or a date): the date must be on or before the given date */
 @Injectable()
 export class MaxDateValidator extends FieldValidator {
-  static override key = "maxDate";
+  static override readonly key = "maxDate";
   override readonly datatypesSupported = [DateDatatype];
 
   build(value: unknown): ValidatorFn {

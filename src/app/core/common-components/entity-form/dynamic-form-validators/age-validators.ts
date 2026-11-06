@@ -109,7 +109,7 @@ export function descriptionForAgeValidator(
 /** `minAge: 6`: the age calculated from the date of birth must be at least the given number of years */
 @Injectable()
 export class MinAgeValidator extends FieldValidator {
-  static override key = "minAge";
+  static override readonly key = "minAge";
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
@@ -124,7 +124,7 @@ export class MinAgeValidator extends FieldValidator {
 /** `maxAge: 18`: the age calculated from the date of birth must be at most the given number of years */
 @Injectable()
 export class MaxAgeValidator extends FieldValidator {
-  static override key = "maxAge";
+  static override readonly key = "maxAge";
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {

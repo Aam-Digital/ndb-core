@@ -54,10 +54,10 @@ export function buildReadonlyValidator(entity: Entity): {
 /** `readonlyAfterSet: true`: the field can only be edited until the record is saved for the first time */
 @Injectable()
 export class ReadonlyAfterSetValidator extends FieldValidator<boolean> {
-  static override key = "readonlyAfterSet";
+  static override readonly key = "readonlyAfterSet";
   override readonly warning = "never";
 
-  build(value: boolean, { entity }: ValidatorContext): ValidatorFn | null {
-    return value ? buildReadonlyValidator(entity).fn : null;
+  build(_value: boolean, { entity }: ValidatorContext): ValidatorFn {
+    return buildReadonlyValidator(entity).fn;
   }
 }

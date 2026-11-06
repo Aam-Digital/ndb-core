@@ -211,6 +211,10 @@ export class ConfigureEntityFieldValidatorComponent {
     const pattern = v?.pattern;
     const isObjectForm =
       !!pattern && typeof pattern === "object" && !(pattern instanceof RegExp);
+    let patternText = isObjectForm ? pattern.pattern : pattern;
+    if (patternText instanceof RegExp) {
+      patternText = patternText.source;
+    }
     return this.fb.group({
       required: [v?.required ?? false],
       min: [v?.min ?? null],
@@ -219,14 +223,7 @@ export class ConfigureEntityFieldValidatorComponent {
       maxAge: [v?.maxAge ?? null],
       minDate: [v?.minDate ?? null],
       maxDate: [v?.maxDate ?? null],
-      pattern: [
-        (isObjectForm
-          ? pattern.pattern
-          : pattern instanceof RegExp
-            ? pattern.source
-            : pattern) ?? "",
-        validRegexValidator,
-      ],
+      pattern: [patternText ?? "", validRegexValidator],
       patternMessage: [(isObjectForm ? pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],

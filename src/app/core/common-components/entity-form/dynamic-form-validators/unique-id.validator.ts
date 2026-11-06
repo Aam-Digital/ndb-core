@@ -9,18 +9,15 @@ import { AsyncPromiseValidatorFn } from "./validator-types";
 /** `uniqueId: true`: no other record of the same type may have the same value in this field */
 @Injectable()
 export class UniqueIdValidator extends FieldValidator<boolean> {
-  static override key = "uniqueId";
+  static override readonly key = "uniqueId";
   override readonly async = true;
 
   private readonly entityMapper = inject(EntityMapperService);
 
   build(
-    value: boolean,
+    _value: boolean,
     { entity, field }: ValidatorContext,
   ): AsyncPromiseValidatorFn | null {
-    if (!value) {
-      return null;
-    }
     const fieldId = field?.id;
     if (!fieldId) {
       Logging.warn(

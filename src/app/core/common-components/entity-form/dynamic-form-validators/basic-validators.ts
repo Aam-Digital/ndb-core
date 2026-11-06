@@ -40,11 +40,11 @@ export function patternWithMessage(
 /** `required: true`: the field must have a value */
 @Injectable()
 export class RequiredValidator extends FieldValidator<boolean> {
-  static override key = "required";
+  static override readonly key = "required";
   override readonly warning = "never";
 
-  build(value: boolean): ValidatorFn | null {
-    return value ? Validators.required : null;
+  build(): ValidatorFn {
+    return Validators.required;
   }
 
   override message(): string {
@@ -55,7 +55,7 @@ export class RequiredValidator extends FieldValidator<boolean> {
 /** `min: 5`: the number must be at least the given value */
 @Injectable()
 export class MinValidator extends FieldValidator<number> {
-  static override key = "min";
+  static override readonly key = "min";
   override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {
@@ -70,7 +70,7 @@ export class MinValidator extends FieldValidator<number> {
 /** `max: 10`: the number must be at most the given value */
 @Injectable()
 export class MaxValidator extends FieldValidator<number> {
-  static override key = "max";
+  static override readonly key = "max";
   override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {
@@ -90,7 +90,7 @@ export class MaxValidator extends FieldValidator<number> {
 export class PatternValidator extends FieldValidator<
   string | RegExp | { pattern: string; message: string }
 > {
-  static override key = "pattern";
+  static override readonly key = "pattern";
 
   override appliesTo(datatype: DefaultDatatype): boolean {
     // not by inheritance: link and file fields extend the StringDatatype as they store ids
@@ -101,10 +101,7 @@ export class PatternValidator extends FieldValidator<
 
   build(
     value: string | RegExp | { pattern: string; message: string },
-  ): ValidatorFn | null {
-    if (!value) {
-      return null;
-    }
+  ): ValidatorFn {
     if (typeof value === "string" || value instanceof RegExp) {
       return Validators.pattern(value);
     }

@@ -212,7 +212,7 @@ export function selectionConditionValidator(
 export class SelectionConditionValidator extends FieldValidator<
   DataFilter<Entity>
 > {
-  static override key = "selectionCondition";
+  static override readonly key = "selectionCondition";
   override readonly warning = "always";
   override readonly async = true;
   // selecting a record is a single change (unlike typing a text)
@@ -236,7 +236,7 @@ export class SelectionConditionValidator extends FieldValidator<
     value: DataFilter<Entity>,
     { entity, field, singleRecord }: ValidatorContext,
   ): AsyncPromiseValidatorFn | null {
-    if (!value || !field?.id) {
+    if (!field?.id) {
       return null;
     }
     return selectionConditionValidator(
