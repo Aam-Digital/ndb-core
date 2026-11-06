@@ -275,8 +275,8 @@ describe("DynamicValidatorsService", () => {
   );
 
   it.each([
-    ["a text", "^[0-9]+$"],
-    ["a regular expression", /^[0-9]+$/],
+    ["a text", String.raw`^\d+$`],
+    ["a regular expression", /^\d+$/],
   ])("checks a pattern given as %s", (_, pattern) => {
     const validator = service.buildValidators({ pattern }, new TestEntity())
       .validators[0];

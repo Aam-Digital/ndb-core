@@ -73,68 +73,73 @@ export class DynamicValidatorsService {
       validators: ValidatorFn[];
       asyncValidators: AsyncValidatorFn[];
     } = { validators: [], asyncValidators: [] };
-    let updateOnBlur = false;
     const context: ValidatorContext = {
       entity,
       field: field ? toFormFieldConfig(field) : undefined,
       singleRecord,
       config,
     };
-
     const warningOnly = new Set(asArray(config._warningOnly ?? []));
-    for (const [key, value] of Object.entries(config)) {
-      if (key.startsWith(SETTING_PREFIX) || isSwitchedOff(value)) {
-        continue;
-      }
-      const rule = this.rules.get(key);
-      if (!rule) {
-        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
-        Logging.debug("Trying to generate a validator that does not exist", {
-          validator: key,
-        });
-        continue;
-      }
 
-      const validator = rule.build(value, context);
+    for (const [key, value] of Object.entries(config)) {
+      const rule = this.ruleToBuild(key, value);
+      const validator = rule?.build(value, context);
       if (!validator) {
         continue;
       }
       const onlyWarns = rule.warning === "optional" && warningOnly.has(key);
-      if (rule.async) {
-        formControlOptions.asyncValidators.push((control: FormControl) =>
-          (validator as AsyncPromiseValidatorFn)(control).then((errors) =>
-            this.addHumanReadableError(rule, errors, onlyWarns),
-          ),
-        );
-        updateOnBlur ||= !rule.checkOnChange;
-      } else if (onlyWarns) {
-        // run with the async checks: Angular skips those while a sync check fails, even if it only warns
-        formControlOptions.asyncValidators.push((control: FormControl) =>
-          Promise.resolve(
-            this.addHumanReadableError(
-              rule,
-              (validator as ValidatorFn)(control),
-              true,
-            ),
-          ),
+      if (rule.async || onlyWarns) {
+        formControlOptions.asyncValidators.push(
+          this.asyncWithMessage(rule, validator, onlyWarns),
         );
       } else {
-        formControlOptions.validators.push((control: FormControl) =>
-          this.addHumanReadableError(
-            rule,
-            (validator as ValidatorFn)(control),
-            false,
-          ),
+        formControlOptions.validators.push(
+          this.withMessage(rule, validator as ValidatorFn),
         );
+      }
+      // async checks (e.g. loading other records) are not repeated for every keystroke
+      if (rule.async && !rule.checkOnChange) {
+        formControlOptions.updateOn = "blur";
       }
     }
 
-    // async checks (e.g. loading other records) are not repeated for every keystroke
-    if (updateOnBlur) {
-      formControlOptions.updateOn = "blur";
-    }
-
     return formControlOptions;
+  }
+
+  /** the registered rule to build for a key of the config, `undefined` for a setting, a switched-off or unknown validator */
+  private ruleToBuild(key: string, value: unknown): FieldValidator | undefined {
+    if (key.startsWith(SETTING_PREFIX) || isSwitchedOff(value)) {
+      return undefined;
+    }
+    const rule = this.rules.get(key);
+    if (!rule) {
+      // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+      Logging.debug("Trying to generate a validator that does not exist", {
+        validator: key,
+      });
+    }
+    return rule;
+  }
+
+  private withMessage(
+    rule: FieldValidator,
+    validator: ValidatorFn,
+  ): ValidatorFn {
+    return (control) =>
+      this.addHumanReadableError(rule, validator(control), false);
+  }
+
+  /**
+   * An async validator with readable messages.
+   * Also used for a sync check that only warns: Angular skips the async checks while a sync check fails.
+   */
+  private asyncWithMessage(
+    rule: FieldValidator,
+    validator: ValidatorFn | AsyncPromiseValidatorFn,
+    onlyWarns: boolean,
+  ): AsyncValidatorFn {
+    return async (control: FormControl) =>
+      this.addHumanReadableError(rule, await validator(control), onlyWarns);
   }
 
   /**

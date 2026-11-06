@@ -226,7 +226,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({});
     });
 
-    it.each([null, /^[0-9]+$/])(
+    it.each([null, /^\d+$/])(
       "shows a pattern given as %s in the config",
       (pattern) => {
         renderField({ pattern });
