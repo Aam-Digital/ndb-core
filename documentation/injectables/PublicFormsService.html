@@ -252,8 +252,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="74"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:74</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="83"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -383,8 +383,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="151"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:151</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:160</a></div>
                         </td>
                     </tr>
 
@@ -455,8 +455,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -504,8 +504,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -585,8 +585,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="221"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:221</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="230"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:230</a></div>
                         </td>
                     </tr>
 
@@ -652,6 +652,7 @@ but not persisted to the config. This method persists them.</p>
 import { inject, Injectable } from &quot;@angular/core&quot;;
 import { AlertService } from &quot;app/core/alerts/alert.service&quot;;
 import { EntityActionsMenuService } from &quot;app/core/entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
+import { EntityActionGroup } from &quot;app/core/entity-details/entity-actions-menu/entity-action.interface&quot;;
 import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity } from &quot;app/core/entity/model/entity&quot;;
 import {
@@ -663,6 +664,12 @@ import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quo
 import { AdminEntityService } from &quot;app/core/admin/admin-entity.service&quot;;
 import { EntityRegistry } from &quot;app/core/entity/database-entity.decorator&quot;;
 import { EntityConfigService } from &quot;app/core/entity/entity-config.service&quot;;
+
+const PUBLIC_FORM_LINKS_GROUP: EntityActionGroup &#x3D; {
+  id: &quot;public-form-links&quot;,
+  label: $localize&#x60;:entity context menu:Copy Custom Form link&#x60;,
+  icon: &quot;link&quot;,
+};
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -705,6 +712,8 @@ export class PublicFormsService {
           permission: &quot;read&quot;,
           icon: &quot;link&quot;,
           label: $localize&#x60;Copy Custom Form (${formTitle})&#x60;,
+          shortLabel: formTitle,
+          group: PUBLIC_FORM_LINKS_GROUP,
           tooltip: $localize&#x60;Copy link to public form &quot;${formTitle}&quot; that will connect submissions to this individual record.&#x60;,
           visible: (entity) &#x3D;&gt;
             this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),

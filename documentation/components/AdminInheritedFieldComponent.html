@@ -486,7 +486,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:126</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:133</a></div>
                             </td>
                         </tr>
 
@@ -512,7 +512,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:62</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:66</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -533,7 +533,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:61</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:65</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -772,8 +772,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:148</a></div>
                         </td>
                     </tr>
 
@@ -841,8 +841,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:160</a></div>
                         </td>
                     </tr>
 
@@ -1487,7 +1487,10 @@ that links the form control value to the component value</p>
           const refFieldLabel &#x3D; this.getFieldLabel(attr, entityType);
           options.push({
             type: &quot;inherit&quot;,
-            label: &#x60;${refFieldLabel} &gt; ${this.getEntityLabel(referencedEntityType)}&#x60;,
+            label: fieldToEntityReferenceLabel(
+              refFieldLabel,
+              this.getEntityLabel(referencedEntityType),
+            ),
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
               fieldName: refFieldLabel,
@@ -1507,7 +1510,7 @@ that links the form control value to the component value</p>
         const refEntityType &#x3D; this.entityRegistry.get(option.entityType);
         options.push({
           type: &quot;automated&quot;,
-          label: &#x60;${option.label} &gt; ${refFieldLabel}&#x60;,
+          label: entityToFieldReferenceLabel(option.label, refFieldLabel),
           labelParts: {
             entityName: option.label,
             fieldName: refFieldLabel,
@@ -1526,7 +1529,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -1564,7 +1567,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:119</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -2078,6 +2081,10 @@ import {
 } from &quot;#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component&quot;;
 import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import {
+  entityToFieldReferenceLabel,
+  fieldToEntityReferenceLabel,
+} from &quot;../../../core/entity/schema/entity-field-reference-label&quot;;
 
 interface InheritanceOption {
   type: &quot;inherit&quot; | &quot;automated&quot;;
@@ -2132,7 +2139,10 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective&lt;
           const refFieldLabel &#x3D; this.getFieldLabel(attr, entityType);
           options.push({
             type: &quot;inherit&quot;,
-            label: &#x60;${refFieldLabel} &gt; ${this.getEntityLabel(referencedEntityType)}&#x60;,
+            label: fieldToEntityReferenceLabel(
+              refFieldLabel,
+              this.getEntityLabel(referencedEntityType),
+            ),
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
               fieldName: refFieldLabel,
@@ -2152,7 +2162,7 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective&lt;
         const refEntityType &#x3D; this.entityRegistry.get(option.entityType);
         options.push({
           type: &quot;automated&quot;,
-          label: &#x60;${option.label} &gt; ${refFieldLabel}&#x60;,
+          label: entityToFieldReferenceLabel(option.label, refFieldLabel),
           labelParts: {
             entityName: option.label,
             fieldName: refFieldLabel,

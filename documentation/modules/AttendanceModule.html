@@ -323,7 +323,10 @@ import { AttendancePermissionGuard } from &quot;./attendance-permission.guard&qu
 import { AbstractPermissionGuard } from &quot;#src/app/core/permissions/permission-guard/abstract-permission.guard&quot;;
 import { AttendanceInitService } from &quot;./attendance-init.service&quot;;
 import { EntityActionsMenuService } from &quot;#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
-import { EntityAction } from &quot;#src/app/core/entity-details/entity-actions-menu/entity-action.interface&quot;;
+import {
+  EntityAction,
+  EntityActionGroup,
+} from &quot;#src/app/core/entity-details/entity-actions-menu/entity-action.interface&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { AttendanceExportService } from &quot;./attendance-export.service&quot;;
 import { AlertService } from &quot;#src/app/core/alerts/alert.service&quot;;
@@ -392,6 +395,8 @@ export class AttendanceModule {
     return fields.map((field) &#x3D;&gt; ({
       action: &#x60;download-attendance-${field.fieldId}&#x60;,
       label: $localize&#x60;Download ${field.label} list&#x60;,
+      shortLabel: field.label,
+      group: ATTENDANCE_DOWNLOAD_GROUP,
       icon: &quot;download&quot;,
       permission: &quot;read&quot; as const,
       availableFor: &quot;individual-only&quot; as const,
@@ -416,6 +421,12 @@ export class AttendanceModule {
     }));
   }
 }
+
+const ATTENDANCE_DOWNLOAD_GROUP: EntityActionGroup &#x3D; {
+  id: &quot;attendance-downloads&quot;,
+  label: $localize&#x60;:entity context menu:Download attendance lists&#x60;,
+  icon: &quot;download&quot;,
+};
 </code></pre>
     </div>
 </div>

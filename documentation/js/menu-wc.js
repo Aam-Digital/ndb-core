@@ -266,13 +266,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/AttendanceModule.html" data-type="entity-link" >AttendanceModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' }>
+                                        'data-bs-target="#injectables-links-module-AttendanceModule-502dbd4eb1d2173cc27fead9e83339bcca6b019255d538903dc1f9c25277771367d6f1ef0321a54464d562e47923027ef83f6f401226d0938d899a4077979f52"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-502dbd4eb1d2173cc27fead9e83339bcca6b019255d538903dc1f9c25277771367d6f1ef0321a54464d562e47923027ef83f6f401226d0938d899a4077979f52"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' :
-                                        'id="xs-injectables-links-module-AttendanceModule-1ed1e7c6f151f7cbcc6f725886159298deea0f0a0adc2c7229ac785957f6c66fd03acff5184c4e916a0b49dd273abb90947797f5e1c8acc9f1f8a4ecc0fdb145"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-502dbd4eb1d2173cc27fead9e83339bcca6b019255d538903dc1f9c25277771367d6f1ef0321a54464d562e47923027ef83f6f401226d0938d899a4077979f52"' :
+                                        'id="xs-injectables-links-module-AttendanceModule-502dbd4eb1d2173cc27fead9e83339bcca6b019255d538903dc1f9c25277771367d6f1ef0321a54464d562e47923027ef83f6f401226d0938d899a4077979f52"' }>
                                         <li class="link">
                                             <a href="injectables/AttendanceDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AttendanceDatatype</a>
                                         </li>
@@ -2782,6 +2782,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityAction.html" data-type="entity-link" >EntityAction</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EntityActionGroup.html" data-type="entity-link" >EntityActionGroup</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityAdditional.html" data-type="entity-link" >EntityAdditional</a>

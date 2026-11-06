@@ -200,6 +200,9 @@
                             <a href="#applyUpdate" title="src/app/core/entity/model/entity-update.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>applyUpdate</b>&nbsp;&nbsp;&nbsp;(src/.../entity-update.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#asActionEntry" title="src/app/core/entity-details/entity-actions-menu/entity-actions-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>asActionEntry</b>&nbsp;&nbsp;&nbsp;(src/.../entity-actions-grouping.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#asArray" title="src/app/utils/asArray.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>asArray</b>&nbsp;&nbsp;&nbsp;(src/.../asArray.ts)</span></a>
                         </li>
                         <li>
@@ -440,6 +443,9 @@
                             <a href="#entityIdsMatch" title="src/app/core/user/user-admin-service/user-account-action-guard.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>entityIdsMatch</b>&nbsp;&nbsp;&nbsp;(src/.../user-account-action-guard.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#entityToFieldReferenceLabel" title="src/app/core/entity/schema/entity-field-reference-label.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>entityToFieldReferenceLabel</b>&nbsp;&nbsp;&nbsp;(src/.../entity-field-reference-label.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#entityTypeFilterOptions" title="src/app/features/change-history/audit-filter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>entityTypeFilterOptions</b>&nbsp;&nbsp;&nbsp;(src/.../audit-filter.ts)</span></a>
                         </li>
                         <li>
@@ -498,6 +504,12 @@
                         </li>
                         <li>
                             <a href="#fieldChanges" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>fieldChanges</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#fieldReferenceLabel" title="src/app/core/entity/schema/entity-field-reference-label.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>fieldReferenceLabel</b>&nbsp;&nbsp;&nbsp;(src/.../entity-field-reference-label.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#fieldToEntityReferenceLabel" title="src/app/core/entity/schema/entity-field-reference-label.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>fieldToEntityReferenceLabel</b>&nbsp;&nbsp;&nbsp;(src/.../entity-field-reference-label.ts)</span></a>
                         </li>
                         <li>
                             <a href="#findCurrentIndex" title="src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>findCurrentIndex</b>&nbsp;&nbsp;&nbsp;(src/.../schema-embed-array-entry-change.ts)</span></a>
@@ -750,6 +762,9 @@
                         </li>
                         <li>
                             <a href="#groupByStatusAndEndpoint" title="src/app/core/logging/sentry-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupByStatusAndEndpoint</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-grouping.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#groupEntityActions" title="src/app/core/entity-details/entity-actions-menu/entity-actions-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupEntityActions</b>&nbsp;&nbsp;&nbsp;(src/.../entity-actions-grouping.ts)</span></a>
                         </li>
                         <li>
                             <a href="#groupingValue" title="src/app/core/logging/sentry-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupingValue</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-grouping.ts)</span></a>
@@ -5810,6 +5825,130 @@ may be undefined or null. In this event, the entities-array is returned as is.</
                             <div class="io-description">
                                 <p>An array of the given entities with the update applied</p>
 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/entity-details/entity-actions-menu/entity-actions-grouping.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="asActionEntry"></a>
+                    <span class="name">
+                        <span ><b>asActionEntry</b></span>
+                        <a href="#asActionEntry"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>asActionEntry(action: <a href="../interfaces/EntityAction.html" target="_self">EntityAction</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntityAction.html" target="_self" >EntityAction</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#EntityActionsMenuEntry" target="_self" >EntityActionsMenuEntry</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="groupEntityActions"></a>
+                    <span class="name">
+                        <span ><b>groupEntityActions</b></span>
+                        <a href="#groupEntityActions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>groupEntityActions(actions)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Collapse actions sharing a group into one submenu entry. A group of one stays
+a plain item, as a submenu of one only adds a click.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>actions</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntityAction.html" target="_self" >EntityActionsMenuEntry[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>
@@ -17680,6 +17819,222 @@ against a value coming from an entity picker (which always includes the prefix).
                                     <tbody>
                                         <tr>
                                                 <td>entityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/entity/schema/entity-field-reference-label.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityToFieldReferenceLabel"></a>
+                    <span class="name">
+                        <span ><b>entityToFieldReferenceLabel</b></span>
+                        <a href="#entityToFieldReferenceLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>entityToFieldReferenceLabel(entityLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, fieldLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p><code>School Enrollments &gt; field &quot;Linked School&quot;</code></p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityLabel</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldLabel</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fieldReferenceLabel"></a>
+                    <span class="name">
+                        <span ><b>fieldReferenceLabel</b></span>
+                        <a href="#fieldReferenceLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fieldReferenceLabel(fieldLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p><code>field &quot;Linked School&quot;</code></p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldLabel</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fieldToEntityReferenceLabel"></a>
+                    <span class="name">
+                        <span ><b>fieldToEntityReferenceLabel</b></span>
+                        <a href="#fieldToEntityReferenceLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fieldToEntityReferenceLabel(fieldLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p><code>field &quot;Linked School&quot; &gt; School</code></p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldLabel</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityLabel</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>

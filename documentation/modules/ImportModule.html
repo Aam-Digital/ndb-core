@@ -199,8 +199,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="28"
-                                    class="link-to-prism">src/app/core/import/import.module.ts:28</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/app/core/import/import.module.ts:31</a></div>
                         </td>
                     </tr>
 
@@ -256,7 +256,10 @@
 import { ComponentRegistry, ComponentTuple } from &quot;../../dynamic-components&quot;;
 import { EntityActionsMenuService } from &quot;../entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
 import { ImportAdditionalService } from &quot;./additional-actions/import-additional.service&quot;;
-import { EntityAction } from &quot;../entity-details/entity-actions-menu/entity-action.interface&quot;;
+import {
+  EntityAction,
+  EntityActionGroup,
+} from &quot;../entity-details/entity-actions-menu/entity-action.interface&quot;;
 import { Entity } from &quot;../entity/model/entity&quot;;
 import { Router } from &quot;@angular/router&quot;;
 
@@ -298,6 +301,9 @@ export class ImportModule {
       actions.push({
         action: JSON.stringify(importAction),
         label,
+        shortLabel:
+          this.importAdditionalService.createGroupedActionLabel(importAction),
+        group: IMPORT_ACTIONS_GROUP,
         icon: &quot;file-import&quot;,
         execute: () &#x3D;&gt;
           this.router.navigate([&quot;import&quot;], {
@@ -313,6 +319,12 @@ export class ImportModule {
     return actions;
   }
 }
+
+const IMPORT_ACTIONS_GROUP: EntityActionGroup &#x3D; {
+  id: &quot;import-related&quot;,
+  label: $localize&#x60;:entity context menu:Import related&#x60;,
+  icon: &quot;file-import&quot;,
+};
 
 const importComponents: ComponentTuple[] &#x3D; [
   [
