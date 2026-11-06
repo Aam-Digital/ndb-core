@@ -134,9 +134,6 @@ export class SelectionConditionValidator extends FieldValidator<
 > {
   static override readonly key = "selectionCondition";
   override readonly warning = "always";
-  override readonly async = true;
-  // selecting a record is a single change (unlike typing a text)
-  override readonly checkOnChange = true;
   override readonly requiresFieldId = true;
 
   private readonly entityMapper = inject(EntityMapperService);

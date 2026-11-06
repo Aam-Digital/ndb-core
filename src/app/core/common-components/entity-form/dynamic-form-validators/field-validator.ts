@@ -44,11 +44,11 @@ export abstract class FieldValidator<Config = unknown> {
    */
   readonly warning: "optional" | "always" | "never" = "optional";
 
-  /** the check is async (e.g. it loads records), its `build` returns an {@link AsyncPromiseValidatorFn} */
-  readonly async: boolean = false;
-
-  /** an async check runs on every change of the value (e.g. a selection), not only when leaving the field */
-  readonly checkOnChange: boolean = false;
+  /**
+   * The check is expensive (e.g. it loads records), so the field is only checked when the user leaves it,
+   * not on every change of its value.
+   */
+  readonly checkOnBlur: boolean = false;
 
   /** the rule compares the field's value across records or reads its schema, so it is not built without a field id */
   readonly requiresFieldId: boolean = false;
@@ -69,7 +69,7 @@ export abstract class FieldValidator<Config = unknown> {
   }
 
   /**
-   * The validator for the configured value, or `null` if it cannot be built.
+   * The validator for the configured value (sync or returning a promise), or `null` if it cannot be built.
    * Not called for a value that switches the rule off (see {@link isSwitchedOff}),
    * nor without `context.field.id` if the rule {@link requiresFieldId}.
    */

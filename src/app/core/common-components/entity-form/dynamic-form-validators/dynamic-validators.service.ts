@@ -54,9 +54,8 @@ export class DynamicValidatorsService {
     singleRecord = true,
   ): FormControlOptions {
     const formControlOptions: FormControlOptions & {
-      validators: ValidatorFn[];
       asyncValidators: AsyncValidatorFn[];
-    } = { validators: [], asyncValidators: [] };
+    } = { asyncValidators: [] };
     const context: ValidatorContext = {
       entity,
       field: field ? toFormFieldConfig(field) : undefined,
@@ -74,17 +73,10 @@ export class DynamicValidatorsService {
       const onlyWarns =
         rule.warning === "always" ||
         (rule.warning === "optional" && warningOnly.has(key));
-      if (rule.async || onlyWarns) {
-        formControlOptions.asyncValidators.push(
-          this.asyncWithMessage(rule, validator, onlyWarns),
-        );
-      } else {
-        formControlOptions.validators.push(
-          this.withMessage(rule, validator as ValidatorFn),
-        );
-      }
-      // async checks (e.g. loading other records) are not repeated for every keystroke
-      if (rule.async && !rule.checkOnChange) {
+      formControlOptions.asyncValidators.push(
+        this.withMessage(rule, validator, onlyWarns),
+      );
+      if (rule.checkOnBlur) {
         formControlOptions.updateOn = "blur";
       }
     }
@@ -124,19 +116,12 @@ export class DynamicValidatorsService {
     return rule;
   }
 
-  private withMessage(
-    rule: FieldValidator,
-    validator: ValidatorFn,
-  ): ValidatorFn {
-    return (control) =>
-      this.addHumanReadableError(rule, validator(control), false);
-  }
-
   /**
-   * An async validator with readable messages.
-   * Also used for a sync check that only warns: Angular skips the async checks while a sync check fails.
+   * The rule's check as an async validator with readable messages.
+   * All rules run as async validators, so that rules need not care about it,
+   * and as Angular skips the async validators of a field while one of its sync validators fails.
    */
-  private asyncWithMessage(
+  private withMessage(
     rule: FieldValidator,
     validator: ValidatorFn | AsyncPromiseValidatorFn,
     onlyWarns: boolean,

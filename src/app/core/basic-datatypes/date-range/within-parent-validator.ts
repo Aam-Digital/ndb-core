@@ -58,7 +58,7 @@ export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
   static override readonly key = "withinParent";
   override readonly datatypesSupported = [DateRangeDatatype];
   override readonly warning = "always";
-  override readonly async = true;
+  override readonly checkOnBlur = true;
   override readonly requiresFieldId = true;
 
   private readonly entityMapper = inject(EntityMapperService);

@@ -10,7 +10,7 @@ import { AsyncPromiseValidatorFn } from "./validator-types";
 @Injectable()
 export class UniqueIdValidator extends FieldValidator<boolean> {
   static override readonly key = "uniqueId";
-  override readonly async = true;
+  override readonly checkOnBlur = true;
   override readonly requiresFieldId = true;
 
   private readonly entityMapper = inject(EntityMapperService);

@@ -7,9 +7,11 @@ import {
   FormValidatorConfig,
 } from "./form-validator-config";
 import {
+  AbstractControl,
   AsyncValidatorFn,
   UntypedFormControl,
   UntypedFormGroup,
+  ValidationErrors,
   ValidatorFn,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -23,6 +25,9 @@ import {
   LinkedRecordsSource,
   registerLinkedRecordsSource,
 } from "../../../basic-datatypes/entity/selection-condition";
+
+/** a built validator: all rules run as async validators returning a promise */
+type Check = (control: AbstractControl) => Promise<ValidationErrors | null>;
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -57,42 +62,38 @@ describe("DynamicValidatorsService", () => {
     );
   }
 
-  it("should load validators from the config", () => {
+  it("should load validators from the config", async () => {
     const config: FormValidatorConfig = {
       min: 9,
       pattern: "[a-z]*",
     };
-    const validators = service.buildValidators(
-      config,
-      new TestEntity(),
-    ).validators;
+    const validators = service.buildValidators(config, new TestEntity())
+      .asyncValidators as Check[];
     expect(validators).toHaveLength(2);
-    testValidator(validators[0], 10, 8);
-    testValidator(validators[1], "ab", "1");
+    await testValidator(validators[0], 10, 8);
+    await testValidator(validators[1], "ab", "1");
   });
 
-  it("generates a correct validator for correct configs", () => {
+  it("generates a correct validator for correct configs", async () => {
     const config: FormValidatorConfig = {
       min: 9,
       max: 10,
       required: true,
       pattern: "foo",
     };
-    const validators = service.buildValidators(
-      config,
-      new TestEntity(),
-    ).validators;
-    [
+    const validators = service.buildValidators(config, new TestEntity())
+      .asyncValidators as Check[];
+    for (const [index, [successState, failureState]] of [
       [10, 8],
       [8, 11],
       ["something", undefined],
       ["foo", "bar"],
-    ].forEach(([successState, failureState], index) => {
-      testValidator(validators[index], successState, failureState);
-    });
+    ].entries()) {
+      await testValidator(validators[index], successState, failureState);
+    }
   });
 
-  it("can generate a validator with custom message for patterns", () => {
+  it("can generate a validator with custom message for patterns", async () => {
     const validators = service.buildValidators(
       {
         pattern: {
@@ -101,10 +102,10 @@ describe("DynamicValidatorsService", () => {
         },
       },
       new TestEntity(),
-    ).validators;
+    ).asyncValidators as Check[];
     expect(validators).toHaveLength(1);
     const invalidForm = new UntypedFormControl("09");
-    const validationErrors = validators[0](invalidForm);
+    const validationErrors = await validators[0](invalidForm);
     expect(validationErrors.pattern).toEqual(
       expect.objectContaining({
         message: "M",
@@ -118,10 +119,8 @@ describe("DynamicValidatorsService", () => {
       maxDate: "2020-12-31",
     };
 
-    const validators = service.buildValidators(
-      config,
-      new TestEntity(),
-    ).validators;
+    const validators = service.buildValidators(config, new TestEntity())
+      .asyncValidators as Check[];
 
     expect(validators).toHaveLength(2);
     await testValidator(
@@ -137,7 +136,7 @@ describe("DynamicValidatorsService", () => {
 
     const invalidDateControl = new UntypedFormControl(new Date(2009, 11, 31));
     invalidDateControl.markAsDirty();
-    const validationErrors = validators[0](invalidDateControl);
+    const validationErrors = await validators[0](invalidDateControl);
     expect(validationErrors.minDate.errorMessage).toContain("on or after");
   });
 
@@ -151,10 +150,8 @@ describe("DynamicValidatorsService", () => {
         maxAge: 25,
       };
 
-      const validators = service.buildValidators(
-        config,
-        new TestEntity(),
-      ).validators;
+      const validators = service.buildValidators(config, new TestEntity())
+        .asyncValidators as Check[];
 
       expect(validators).toHaveLength(2);
       await testValidator(
@@ -170,7 +167,7 @@ describe("DynamicValidatorsService", () => {
 
       const invalidAgeControl = new UntypedFormControl(new Date(1990, 3, 24));
       invalidAgeControl.markAsDirty();
-      const validationErrors = validators[1](invalidAgeControl);
+      const validationErrors = await validators[1](invalidAgeControl);
       expect(validationErrors.maxAge.errorMessage).toContain("between");
       expect(validationErrors.maxAge.errorMessage).toContain("9 and 25");
     } finally {
@@ -224,7 +221,7 @@ describe("DynamicValidatorsService", () => {
     });
   });
 
-  it("skips the uniqueId validator for inner fields of embedded entries", () => {
+  it("skips the uniqueId validator for inner fields of embedded entries", async () => {
     const entry = createEmbeddedEntity(new Map(), {
       record: new Entity("record"),
       field: "documents",
@@ -247,11 +244,11 @@ describe("DynamicValidatorsService", () => {
     [{ pattern: "[a-z]+" }, "123", expect.any(String)],
   ])(
     "adds a readable message to the error of %o",
-    (config: FormValidatorConfig, invalidValue, message) => {
+    async (config: FormValidatorConfig, invalidValue, message) => {
       const validator = service.buildValidators(config, new TestEntity())
-        .validators[0];
+        .asyncValidators[0] as Check;
 
-      const errors = validator(new UntypedFormControl(invalidValue));
+      const errors = await validator(new UntypedFormControl(invalidValue));
 
       expect(errors[Object.keys(config)[0]].errorMessage).toEqual(message);
     },
@@ -262,36 +259,37 @@ describe("DynamicValidatorsService", () => {
     [{ required: false, uniqueId: false, readonlyAfterSet: false }, 0],
   ])(
     "builds only the validators that exist and are switched on: %o",
-    (config, expectedCount) => {
+    async (config, expectedCount) => {
       const options = service.buildValidators(
         config as FormValidatorConfig,
         new TestEntity(),
         "name",
       );
 
-      expect(options.validators).toHaveLength(expectedCount);
-      expect(options.asyncValidators).toEqual([]);
+      expect(options.asyncValidators).toHaveLength(expectedCount);
     },
   );
 
   it.each([
     ["a text", String.raw`^\d+$`],
     ["a regular expression", /^\d+$/],
-  ])("checks a pattern given as %s", (_, pattern) => {
+  ])("checks a pattern given as %s", async (_, pattern) => {
     const validator = service.buildValidators({ pattern }, new TestEntity())
-      .validators[0];
+      .asyncValidators[0] as Check;
 
-    expect(validator(new UntypedFormControl("12"))).toBeNull();
-    expect(validator(new UntypedFormControl("1a"))?.pattern).toBeDefined();
+    expect(await validator(new UntypedFormControl("12"))).toBeNull();
+    expect(
+      (await validator(new UntypedFormControl("1a")))?.pattern,
+    ).toBeDefined();
   });
 
-  it("adds no pattern check for a pattern without value", () => {
+  it("adds no pattern check for a pattern without value", async () => {
     const options = service.buildValidators(
       { pattern: null },
       new TestEntity(),
     );
 
-    expect(options.validators).toEqual([]);
+    expect(options.asyncValidators).toEqual([]);
   });
 
   it.each([
@@ -316,7 +314,7 @@ describe("DynamicValidatorsService", () => {
     },
   );
 
-  it("registers a rule for each validator key of the config type", () => {
+  it("registers a rule for each validator key of the config type", async () => {
     const keys = [...service.rules.keys()];
 
     expect(new Set(keys)).toEqual(new Set(DYNAMIC_VALIDATORS));
@@ -574,14 +572,14 @@ describe("DynamicValidatorsService", () => {
       [{ uniqueId: true, selectionCondition: { other: "BERLIN" } }, "blur"],
     ])(
       "checks a selection right away, but the whole field only when leaving it if another async check needs that: %o",
-      (config: FormValidatorConfig, updateOn) => {
+      async (config: FormValidatorConfig, updateOn) => {
         expect(
           service.buildValidators(config, new TestEntity(), "ref").updateOn,
         ).toBe(updateOn);
       },
     );
 
-    it("names the fields of the record that the condition refers to as dependencies", () => {
+    it("names the fields of the record that the condition refers to as dependencies", async () => {
       const dependencies = service.getDependencies({
         withinParent: { parentReferenceField: "ref" },
         selectionCondition: {
@@ -595,36 +593,36 @@ describe("DynamicValidatorsService", () => {
     });
   });
 
-  it("keeps minDate as a date validator for date-with-age fields", () => {
+  it("keeps minDate as a date validator for date-with-age fields", async () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       { minDate: "2021-01-12" },
       entity,
       "dateOfBirth",
-    ).validators;
+    ).asyncValidators as Check[];
 
     expect(validators).toHaveLength(1);
 
     const tooEarlyDate = new Date(2020, 0, 1);
-    const result = validators[0](new UntypedFormControl(tooEarlyDate));
+    const result = await validators[0](new UntypedFormControl(tooEarlyDate));
 
     expect(result?.minDate?.minDate).toEqual(new Date(2021, 0, 12));
     expect(result?.minDate?.errorMessage).toContain("Date must be on or after");
     expect(result?.minAge).toBeUndefined();
   });
 
-  it("keeps maxDate as a date validator for date-with-age fields", () => {
+  it("keeps maxDate as a date validator for date-with-age fields", async () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       { maxDate: "2010-01-01" },
       entity,
       "dateOfBirth",
-    ).validators;
+    ).asyncValidators as Check[];
 
     expect(validators).toHaveLength(1);
 
     const tooLateDate = new Date(2011, 0, 1);
-    const result = validators[0](new UntypedFormControl(tooLateDate));
+    const result = await validators[0](new UntypedFormControl(tooLateDate));
 
     expect(result?.maxDate?.maxDate).toEqual(new Date(2010, 0, 1));
     expect(result?.maxDate?.errorMessage).toContain(
@@ -633,7 +631,7 @@ describe("DynamicValidatorsService", () => {
     expect(result?.maxAge).toBeUndefined();
   });
 
-  it("shows a between message when both age bounds are configured", () => {
+  it("shows a between message when both age bounds are configured", async () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       {
@@ -642,26 +640,28 @@ describe("DynamicValidatorsService", () => {
       },
       entity,
       "dateOfBirth",
-    ).validators;
+    ).asyncValidators as Check[];
 
     const tooOldDate = new Date(2000, 2, 14);
-    const result = validators[1](new UntypedFormControl(tooOldDate));
+    const result = await validators[1](new UntypedFormControl(tooOldDate));
 
     expect(result?.maxAge?.errorMessage).toContain("Age must be between");
     expect(result?.maxAge?.errorMessage).toContain("and");
     expect(result?.maxAge?.errorMessage).toContain("years");
   });
 
-  it("does not convert date validators into age validators for date-with-age fields", () => {
+  it("does not convert date validators into age validators for date-with-age fields", async () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       { minDate: "2021-01-12", maxDate: "2010-01-01" },
       entity,
       "dateOfBirth",
-    ).validators;
+    ).asyncValidators as Check[];
 
     expect(validators).toHaveLength(2);
-    const result = validators[0](new UntypedFormControl(new Date(2020, 0, 1)));
+    const result = await validators[0](
+      new UntypedFormControl(new Date(2020, 0, 1)),
+    );
     expect(result?.minDate).toBeDefined();
     expect(result?.minAge).toBeUndefined();
   });
@@ -670,7 +670,7 @@ describe("DynamicValidatorsService", () => {
 describe("patternWithMessage", () => {
   const CUSTOM_MESSAGE = "Custom error message";
 
-  it("contains a custom error message a form field contains an invalid pattern", () => {
+  it("contains a custom error message a form field contains an invalid pattern", async () => {
     const validationFn = patternWithMessage("[0-9]+", CUSTOM_MESSAGE);
     const invalidFormControl = new UntypedFormControl("ab");
     const validationErrors = validationFn(invalidFormControl);
@@ -681,7 +681,7 @@ describe("patternWithMessage", () => {
     );
   });
 
-  it("returns an empty error message when the form field is valid", () => {
+  it("returns an empty error message when the form field is valid", async () => {
     const validationFn = patternWithMessage("[0-9]+", CUSTOM_MESSAGE);
     const validFormControl = new UntypedFormControl("098");
     const validationErrors = validationFn(validFormControl);
