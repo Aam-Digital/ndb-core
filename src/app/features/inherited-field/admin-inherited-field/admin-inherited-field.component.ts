@@ -26,6 +26,10 @@ import {
 } from "#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { asArray } from "#src/app/utils/asArray";
+import {
+  entityToFieldReferenceLabel,
+  fieldToEntityReferenceLabel,
+} from "../../../core/entity/schema/entity-field-reference-label";
 
 interface InheritanceOption {
   type: "inherit" | "automated";
@@ -80,7 +84,10 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective<Def
           const refFieldLabel = this.getFieldLabel(attr, entityType);
           options.push({
             type: "inherit",
-            label: `${refFieldLabel} > ${this.getEntityLabel(referencedEntityType)}`,
+            label: fieldToEntityReferenceLabel(
+              refFieldLabel,
+              this.getEntityLabel(referencedEntityType),
+            ),
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
               fieldName: refFieldLabel,
@@ -100,7 +107,7 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective<Def
         const refEntityType = this.entityRegistry.get(option.entityType);
         options.push({
           type: "automated",
-          label: `${option.label} > ${refFieldLabel}`,
+          label: entityToFieldReferenceLabel(option.label, refFieldLabel),
           labelParts: {
             entityName: option.label,
             fieldName: refFieldLabel,

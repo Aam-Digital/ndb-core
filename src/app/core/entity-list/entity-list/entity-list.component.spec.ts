@@ -1,10 +1,11 @@
+import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import { of, Subject } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
@@ -18,6 +19,7 @@ import { FeaturePermissionDialogComponent } from "../../permissions/feature-perm
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Database } from "#src/app/core/database/database";
 import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
@@ -253,6 +255,30 @@ describe("EntityListComponent", () => {
     }
   });
 
+  it("keeps the default filters when the URL only holds the selected column-group tab", async () => {
+    // e.g. reloading the page after switching to the second column group
+    mockActivatedRoute.snapshot = {
+      queryParams: { _tabIndex: "1" },
+      queryParamMap: convertToParamMap({ _tabIndex: "1" }),
+    } as any;
+
+    createComponent();
+    component.isDesktop = true;
+    initComponentInputs();
+    for (let i = 0; i < 3; i++) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    expect(component.filterObj()).toEqual({
+      $or: [
+        { inactive: false },
+        { inactive: { $exists: false } },
+        { inactive: { $eq: null } },
+      ],
+    });
+  });
+
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {
     createComponent();
     const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
@@ -352,6 +378,22 @@ describe("EntityListComponent", () => {
     );
   });
 
+  it("should reset the free-text search through 'Clear' of the filter overlay (small screens)", async () => {
+    createComponent();
+    const dataSource = component.recordsDataSource();
+    dataSource.searchText.set("Alipore");
+
+    component.openFilterOverlay();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const clearButton = Array.from<HTMLElement>(
+      document.querySelectorAll(".cdk-overlay-container button"),
+    ).find((button) => button.textContent.includes("Clear"));
+    clearButton.click();
+
+    expect(dataSource.searchText()).toBe("");
+  });
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
@@ -426,20 +468,43 @@ describe("EntityListComponent", () => {
     }
   });
 
-  it("should use the PaginatedDataSource and disable the freetext filter in online mode", () => {
-    const tmpSessionType = environment.session_type;
-    try {
-      environment.session_type = SessionType.online;
-      vi.spyOn(
-        TestBed.inject(DatabaseResolverService),
-        "getDatabase",
-      ).mockReturnValue({ supportsFind: () => true } as Database);
-      createComponent();
+  it.each([
+    {
+      session: SessionType.synced,
+      dataSourceType: InMemoryDataSource,
+      showsFilterField: true,
+    },
+    {
+      session: SessionType.online,
+      dataSourceType: PaginatedDataSource,
+      showsFilterField: false,
+    },
+  ])(
+    "shows the free-text Filter field only if the data source offers it ($session session)",
+    async ({ session, dataSourceType, showsFilterField }) => {
+      const tmpSessionType = environment.session_type;
+      try {
+        environment.session_type = session;
+        vi.spyOn(
+          TestBed.inject(DatabaseResolverService),
+          "getDatabase",
+        ).mockReturnValue({ supportsFind: () => true } as Database);
+        createComponent();
+        component.isDesktop = true;
+        // the component is OnPush: a plain field change needs to mark it for check
+        fixture.debugElement.injector.get(ChangeDetectorRef).markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
 
-      expect(component.showFreetextFilter()).toBe(false);
-      expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
-    } finally {
-      environment.session_type = tmpSessionType;
-    }
-  });
+        expect(component.recordsDataSource()).toBeInstanceOf(dataSourceType);
+        const filterField = fixture.nativeElement.querySelector(
+          "app-free-text-filter input",
+        );
+        expect(!!filterField).toBe(showsFilterField);
+      } finally {
+        environment.session_type = tmpSessionType;
+      }
+    },
+  );
 });

@@ -1,0 +1,12 @@
+@use "variables/breakpoints";
+
+/* the host is the flex item in the filter row of the list */
+:host {
+  display: block;
+  width: 100%;
+
+  @media screen and (min-width: breakpoints.$md) {
+    /* restricts the width so that the field does not feel too big */
+    max-width: 412px;
+  }
+}

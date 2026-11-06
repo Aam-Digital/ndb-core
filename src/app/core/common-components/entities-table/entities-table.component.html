@@ -28,11 +28,32 @@
             [entityType]="entityType()"
           ></app-entity-field-label>
         </th>
-        <td mat-cell *matCellDef="let row">
-          <app-entity-field-view
-            [field]="col"
-            [entity]="row"
-          ></app-entity-field-view>
+        <td
+          mat-cell
+          *matCellDef="let row"
+          [class.first-data-cell]="col.id === firstDataColumn()"
+        >
+          @if (col.id === firstDataColumn()) {
+            <!-- the same elements with or without a prefix: a prefix that comes or goes does not rebuild the cell -->
+            <div class="first-data-cell-content flex-row align-center">
+              @let options = recordsDataSource().rowOptionsOf(row);
+              @if (options?.prefix; as prefix) {
+                <ng-container [appDynamicComponent]="prefix"></ng-container>
+              }
+              <app-entity-field-view
+                [field]="col"
+                [entity]="row"
+              ></app-entity-field-view>
+              @if (options?.suffix; as suffix) {
+                <ng-container [appDynamicComponent]="suffix"></ng-container>
+              }
+            </div>
+          } @else {
+            <app-entity-field-view
+              [field]="col"
+              [entity]="row"
+            ></app-entity-field-view>
+          }
         </td>
       </ng-container>
     }
@@ -53,6 +74,7 @@
         <mat-checkbox
           (change)="selectionStore.selectRow(row, $event.checked)"
           [checked]="selectedRecords().includes(row)"
+          [disabled]="!isSelectable(row)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
@@ -82,6 +104,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
+      [class]="recordsDataSource().rowOptionsOf(row)?.cssClass ?? ''"
       [class.inactive-row]="row.inactive"
       [style.background-color]="effectiveBackgroundColor()(row)"
       class="table-row"
@@ -93,11 +116,13 @@
   <!--
   PAGINATION
   -->
-  <app-list-paginator
-    class="table-footer"
-    [dataSource]="recordsDataSource()"
-    [idForSavingPagination]="idForSavingPagination()"
-  ></app-list-paginator>
+  @if (recordsDataSource().usesPagination()) {
+    <app-list-paginator
+      class="table-footer"
+      [dataSource]="recordsDataSource()"
+      [idForSavingPagination]="idForSavingPagination()"
+    ></app-list-paginator>
+  }
 
   <!--
   SHOW ARCHIVED TOGGLE

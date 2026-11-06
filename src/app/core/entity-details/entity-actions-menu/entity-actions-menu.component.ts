@@ -18,6 +18,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
+import { groupEntityActions } from "./entity-actions-grouping";
 import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
@@ -65,6 +66,14 @@ export class EntityActionsMenuComponent {
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
    */
   showExpanded = input<boolean | undefined>();
+
+  readonly menuEntries = computed(() => {
+    const displayedInline = this.showExpanded() && this.viewContext?.isDialog;
+    const menuActions = this.actions().filter(
+      (a) => !(displayedInline && a.primaryAction),
+    );
+    return groupEntityActions(menuActions);
+  });
 
   async executeAction(action: EntityAction) {
     const entity = this.entity();

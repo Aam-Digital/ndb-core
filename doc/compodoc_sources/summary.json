@@ -132,6 +132,10 @@
         "file": "how-to-guides/entity-subrecord-component.md"
       },
       {
+        "title": "Extend Entity Lists and Tables",
+        "file": "../../src/app/core/common-components/entities-table/README.md"
+      },
+      {
         "title": "Log Errors",
         "file": "../../src/app/core/logging/README.md"
       },

@@ -7,6 +7,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { databaseError } from "#src/app/core/database/pouchdb/database-exception";
 
 describe("InMemoryDataSource", () => {
@@ -183,7 +184,7 @@ describe("InMemoryDataSource", () => {
 
     it("should return all records, ignoring any filter, when filtered=false", async () => {
       dataSource.dataFilter.set({ other: "group-a" });
-      dataSource.filter = "two";
+      dataSource.searchText.set("two");
       TestBed.tick();
 
       const result = await dataSource.getAllData(false);
@@ -203,8 +204,8 @@ describe("InMemoryDataSource", () => {
 
     it("should also apply the free-text filter (as currently displayed by the table) when filtered=true", async () => {
       dataSource.dataFilter.set({ other: "group-a" });
-      // simulates the free-text search box, which lower-cases+trims before assigning
-      dataSource.filter = "two";
+      // as typed into the "Filter" field, independent of case and surrounding spaces
+      dataSource.searchText.set(" TWO ");
       TestBed.tick();
 
       const result = await dataSource.getAllData(true);
@@ -214,5 +215,26 @@ describe("InMemoryDataSource", () => {
       // e3 is excluded by the structured filter.
       expect(result).toEqual([e2]);
     });
+
+    it("lets a subclass reinterpret the filter, together with the free-text search", async () => {
+      const custom = TestBed.runInInjectionContext(
+        () => new FilterOnNameDataSource(),
+      );
+      custom.allRecords.set([e1, e2, e3]);
+      custom.dataFilter.set({ other: e3.name });
+      TestBed.tick();
+      expect(custom.filteredRecords()).toEqual([e3]);
+
+      custom.searchText.set("no match");
+      TestBed.tick();
+      expect(custom.filteredRecords()).toEqual([]);
+    });
   });
 });
+
+/** a data source of a feature module that treats the filter as a filter on `name` */
+class FilterOnNameDataSource extends InMemoryDataSource<TestEntity> {
+  protected override getFilterPredicate(filter: DataFilter<TestEntity>) {
+    return (record: TestEntity) => record.name === filter["other"];
+  }
+}

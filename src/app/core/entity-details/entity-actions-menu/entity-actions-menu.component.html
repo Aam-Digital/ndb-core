@@ -36,28 +36,61 @@
   </button>
 
   <!-- context menu -->
-  <mat-menu #additional>
+  <mat-menu #additional class="entity-actions-menu-panel">
     <!-- standard actions -->
-    @for (a of actions(); track a.action) {
-      @if (!a.primaryAction || !showExpanded() || !viewContext?.isDialog) {
+    @for (entry of menuEntries(); track entry.key) {
+      @if (entry.kind === "group") {
+        <!-- no tooltip: it would cover the submenu -->
+        <button mat-menu-item [matMenuTriggerFor]="groupMenu">
+          <app-fa-dynamic-icon
+            class="standard-icon-with-text color-accent"
+            [icon]="entry.group.icon"
+          ></app-fa-dynamic-icon>
+          <span>{{ entry.group.label }}</span>
+        </button>
+
+        <mat-menu #groupMenu class="entity-actions-menu-panel">
+          @for (a of entry.actions; track a.action) {
+            <button
+              mat-menu-item
+              (click)="executeAction(a)"
+              *appDisabledEntityOperation="{
+                operation: a.permission,
+                entity: entity(),
+              }"
+              angulartics2On="click"
+              [angularticsCategory]="entity()?.getType()"
+              [angularticsAction]="'entity_' + a.action"
+              [matTooltip]="getActionTooltip(a)"
+              matTooltipPosition="before"
+            >
+              <app-fa-dynamic-icon
+                class="standard-icon-with-text color-accent"
+                [icon]="a.icon"
+              ></app-fa-dynamic-icon>
+              <span>{{ a.shortLabel || a.label }}</span>
+            </button>
+          }
+        </mat-menu>
+      } @else {
         <button
           mat-menu-item
-          (click)="executeAction(a)"
+          (click)="executeAction(entry.action)"
           *appDisabledEntityOperation="{
-            operation: a.permission,
+            operation: entry.action.permission,
             entity: entity(),
           }"
           angulartics2On="click"
           [angularticsCategory]="entity()?.getType()"
-          [angularticsAction]="'entity_' + a.action"
-          [matTooltip]="getActionTooltip(a)"
+          [angularticsAction]="'entity_' + entry.action.action"
+          [matTooltip]="getActionTooltip(entry.action)"
           matTooltipPosition="before"
         >
           <app-fa-dynamic-icon
             class="standard-icon-with-text color-accent"
-            [icon]="a.icon"
+            [icon]="entry.action.icon"
           ></app-fa-dynamic-icon>
-          <span>{{ a.label }}</span>
+          <span>{{ entry.action.label }}</span>
         </button>
       }
     }

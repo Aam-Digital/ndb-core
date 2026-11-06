@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { resolveDataSource } from "./data-source-resolver";
 import { InMemoryDataSource } from "./in-memory-data-source";
 import { PaginatedDataSource } from "./paginated-data-source";
+import { DataSourceRegistry } from "./data-source-registry";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
@@ -18,6 +19,12 @@ import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 class InternalTestEntity extends Entity {
   static override readonly isInternalEntity = true;
 }
+
+/** a data source of a feature module that works on all records in memory */
+class FeatureDataSource<T extends Entity> extends InMemoryDataSource<T> {}
+
+/** a data source of a feature module that pages on the server */
+class PagedFeatureDataSource<T extends Entity> extends PaginatedDataSource<T> {}
 
 class InternalTranslatedTestEntity extends Entity {
   static override readonly isInternalEntity = true;
@@ -106,13 +113,20 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it("should ignore a paginated dataSource configured for a list outside of online mode", () => {
-    environment.session_type = SessionType.synced;
+  it.each(["paginated", "paged-feature"])(
+    "lists in memory outside of online mode although the list is configured for %s, which pages on the server",
+    (name) => {
+      environment.session_type = SessionType.synced;
+      TestBed.inject(DataSourceRegistry).add(
+        "paged-feature",
+        PagedFeatureDataSource,
+      );
 
-    const dataSource = resolveDataSource<Entity>(injector, "paginated");
+      const dataSource = resolveDataSource<Entity>(injector, name);
 
-    expect(dataSource).toBeInstanceOf(InMemoryDataSource);
-  });
+      expect(dataSource).toBeInstanceOf(InMemoryDataSource);
+    },
+  );
 
   it("should use the system-wide default data source in online mode when no dataSource is configured for the list", () => {
     environment.session_type = SessionType.online;
@@ -143,6 +157,19 @@ describe("resolveDataSource", () => {
     );
 
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
+  });
+
+  it("should pass the configured options to the named data source", () => {
+    TestBed.inject(DataSourceRegistry).add("feature", FeatureDataSource);
+    const config = { someOption: ["a"] };
+
+    const feature = resolveDataSource<Entity>(injector, {
+      name: "feature",
+      config,
+    });
+
+    expect(feature).toBeInstanceOf(FeatureDataSource);
+    expect(feature.config()).toEqual(config);
   });
 
   it.each([
@@ -199,5 +226,25 @@ describe("resolveDataSource", () => {
     );
 
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
+  });
+
+  it.each([SessionType.online, SessionType.synced])(
+    "uses a data source registered by a feature module in every session (%s)",
+    (session) => {
+      environment.session_type = session;
+      TestBed.inject(DataSourceRegistry).add("feature", FeatureDataSource);
+
+      const dataSource = resolveDataSource<Entity>(injector, "feature");
+
+      expect(dataSource.constructor).toBe(FeatureDataSource);
+    },
+  );
+
+  it("falls back to the default for a data source name that is not registered", () => {
+    environment.session_type = SessionType.online;
+
+    const dataSource = resolveDataSource<Entity>(injector, "unknown");
+
+    expect(dataSource).toBeInstanceOf(PaginatedDataSource);
   });
 });
