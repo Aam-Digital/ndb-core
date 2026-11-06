@@ -30,6 +30,12 @@ import { Logging } from "../../logging/logging.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { createFilterPredicate } from "../../../utils/filter-compare-utils";
 
+/** whether an entity matches a condition of its conditional colors (see {@link Entity.matchColorConditionsWith}) */
+export type ColorConditionMatcher = (
+  entity: Entity,
+  condition: DataFilter<any>,
+) => boolean;
+
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
@@ -166,16 +172,18 @@ export class Entity {
    */
   static color: string | ColorMapping[];
 
+  /** see {@link matchColorConditionsWith} */
+  private static colorConditionMatcher?: ColorConditionMatcher;
+
   /**
-   * Whether the entity matches a condition of its conditional colors (see {@link color}).
-   * Replaced at the start of the app by the matching of the `FilterService`, in the stored format like all other conditions
+   * Match the conditions of conditional colors (see {@link color}) with the given function.
+   * The app sets the matching of the `FilterService` at its start, in the stored format like all other conditions
    * (see `matchColorConditionsInStoredFormat`), as an entity cannot inject that service.
+   * Without a function, the entity is matched as it is.
    */
-  static matchesColorCondition: (
-    entity: Entity,
-    condition: DataFilter<any>,
-  ) => boolean = (entity, condition) =>
-    createFilterPredicate(condition)(entity);
+  static matchColorConditionsWith(matcher: ColorConditionMatcher | undefined) {
+    Entity.colorConditionMatcher = matcher;
+  }
 
   /**
    * Base route of the entity (list/details) view for this entity type.
@@ -423,7 +431,10 @@ export class Entity {
           }
 
           try {
-            if (Entity.matchesColorCondition(entity, mapping.condition)) {
+            const matches =
+              Entity.colorConditionMatcher ??
+              ((record, condition) => createFilterPredicate(condition)(record));
+            if (matches(entity, mapping.condition)) {
               return mapping.color;
             }
           } catch (e) {

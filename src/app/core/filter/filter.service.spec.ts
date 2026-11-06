@@ -264,8 +264,7 @@ describe("FilterService", () => {
   });
 
   describe("conditional colors", () => {
-    const defaultMatcher = Entity.matchesColorCondition;
-    afterEach(() => (Entity.matchesColorCondition = defaultMatcher));
+    afterEach(() => Entity.matchColorConditionsWith(undefined));
 
     it("match records in the stored format, like all other conditions", () => {
       // like an attendance entry, the entity keeps the status behind a getter, the stored entry has it as property
@@ -277,7 +276,7 @@ describe("FilterService", () => {
       }
       @DatabaseEntity("ColorConditionTest")
       class ColorConditionTest extends Entity {
-        static override color = [
+        static override readonly color = [
           {
             condition: { log: { $elemMatch: { status: { $exists: true } } } },
             color: "red",

@@ -14,14 +14,14 @@ export function matchColorConditionsInStoredFormat() {
     DataFilter<Entity>,
     (entity: Entity) => boolean
   >();
-  Entity.matchesColorCondition = (entity, condition) => {
+  Entity.matchColorConditionsWith((entity, condition) => {
     let matches = predicates.get(condition);
     if (!matches) {
       matches = filterService.getFilterPredicate(condition);
       predicates.set(condition, matches);
     }
     return matches(entity);
-  };
+  });
 }
 
 export const APP_INITIALIZER_COLOR_CONDITIONS = provideAppInitializer(

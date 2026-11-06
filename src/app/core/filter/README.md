@@ -66,7 +66,7 @@ old `.id` keys, the stored paths of embedded fields (like the tuples of an old a
 In memory, `FilterService` then matches each record converted to the stored format (`toStoredFormatRecord`),
 once per saved revision of a record.
 Conditional colors (`Entity.getColorWithConditions`) are matched by `FilterService` as well,
-through `Entity.matchesColorCondition`, which the app sets at its start (`color-conditions.app-initializer.ts`).
+through `Entity.matchColorConditionsWith`, which the app calls at its start (`color-conditions.app-initializer.ts`).
 The `MockEntityMapperService` of the unit tests uses the same engine (`createFilterPredicate` in `utils/filter-compare-utils.ts`),
 but on the entity as it is.
 The engine compares with `extendedCompare`, so that a `Date` matches a day string and a dropdown option object matches its id.
