@@ -204,6 +204,9 @@
                                             <code><a href="../components/AdminDashboardComponent.html" target="_self" >AdminDashboardComponent</a></code>
                                 </li>
                                 <li>
+                                            <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
+                                </li>
+                                <li>
                                             <code><a href="../components/AdminWidgetDialogComponent.html" target="_self" >AdminWidgetDialogComponent</a></code>
                                 </li>
                                 <li>
@@ -222,6 +225,9 @@
                                             <code><a href="../components/EditImportColumnMappingComponent.html" target="_self" >EditImportColumnMappingComponent</a></code>
                                 </li>
                                 <li>
+                                            <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+                                </li>
+                                <li>
                                             <code><a href="../components/EntityDetailsComponent.html" target="_self" >EntityDetailsComponent</a></code>
                                 </li>
                                 <li>
@@ -229,6 +235,9 @@
                                 </li>
                                 <li>
                                             <code><a href="../components/EntityImportConfigComponent.html" target="_self" >EntityImportConfigComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityListComponent.html" target="_self" >EntityListComponent</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../components/SchemaEmbedArrayTableComponent.html" target="_self" >SchemaEmbedArrayTableComponent</a></code>
@@ -315,7 +324,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/config/dynamic-components/dynamic-component.directive.ts:40</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/config/dynamic-components/dynamic-component.directive.ts:38</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -355,7 +364,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/config/dynamic-components/dynamic-component.directive.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/config/dynamic-components/dynamic-component.directive.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -369,7 +378,6 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectorRef,
   ComponentRef,
   Directive,
   Input,
@@ -397,7 +405,6 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
 export class DynamicComponentDirective implements OnChanges, OnDestroy {
   viewContainerRef &#x3D; inject(ViewContainerRef);
   private components &#x3D; inject(ComponentRegistry);
-  private changeDetector &#x3D; inject(ChangeDetectorRef);
   private isDestroyed &#x3D; false;
   /**
    * Tracks the latest async load request.
@@ -472,7 +479,10 @@ export class DynamicComponentDirective implements OnChanges, OnDestroy {
     if (this.shouldAbortLoad(currentLoad)) {
       return;
     }
-    this.changeDetector.detectChanges();
+    // Check only the new component: the ChangeDetectorRef of this directive belongs to the
+    // component that declares it, e.g. a whole table for a component in each row of it,
+    // and checking that once for every loaded component makes long tables very slow.
+    componentRef.changeDetectorRef.detectChanges();
   }
 
   private setInputProperties(

@@ -1,0 +1,851 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  RowOptions</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Options for one row of the table, for its display and its selection, provided by the data source.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#cssClass" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">cssClass</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#prefix" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">prefix</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#selectable" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">selectable</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#suffix" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">suffix</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="cssClass"></a>
+                                <span class="name "><b>cssClass</b>
+                                    <a href="#cssClass">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>cssClass:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:58</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>extra CSS class for the row</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="prefix"></a>
+                                <span class="name "><b>prefix</b>
+                                    <a href="#prefix">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>prefix:         <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:54</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>component shown before the content of the first data cell</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="selectable"></a>
+                                <span class="name "><b>selectable</b>
+                                    <a href="#selectable">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>selectable:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:60</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>whether the row can be selected for bulk actions (default: true)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="suffix"></a>
+                                <span class="name "><b>suffix</b>
+                                    <a href="#suffix">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>suffix:         <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:56</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>component shown after the content of the first data cell</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MatTableDataSource } from &quot;@angular/material/table&quot;;
+import { Sort } from &quot;@angular/material/sort&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { DestroyRef, effect, inject, Signal, signal } from &quot;@angular/core&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { SortValueFns } from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
+import { LoaderMethod } from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
+import { UpdatedEntity } from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { takeUntilDestroyed, toSignal } from &quot;@angular/core/rxjs-interop&quot;;
+import { Subject, Subscription } from &quot;rxjs&quot;;
+import { debounceTime } from &quot;rxjs/operators&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import {
+  classifyErrorChain,
+  ErrorClassification,
+} from &quot;#src/app/core/logging/error-classification&quot;;
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  TextOnlySnackBar,
+} from &quot;@angular/material/snack-bar&quot;;
+import { DynamicComponentConfig } from &quot;#src/app/core/config/dynamic-components/dynamic-component-config.interface&quot;;
+
+/**
+ * Configuration object that is necessary if data should be loaded by the datasource
+ */
+export interface LoadRecordConfig&lt;T extends Entity&gt; {
+  /**
+   * Constructor of the entity type to be loaded
+   */
+  entityCtr: EntityConstructor&lt;T&gt;;
+  /**
+   * Set this if entities only related to another entity should be loaded
+   */
+  forEntity?: Entity;
+  /**
+   * Property through which the relation to &#x60;forEntity&#x60; can be resolved,
+   * or several candidates if it cannot be determined unambiguously
+   */
+  relationProperty?: string | string[];
+  /**
+   * Select if a special loader method should be used for this entity
+   */
+  loaderMethod?: LoaderMethod;
+}
+
+/**
+ * Options for one row of the table, for its display and its selection, provided by the data source.
+ */
+export interface RowOptions {
+  /** component shown before the content of the first data cell */
+  prefix?: DynamicComponentConfig;
+  /** component shown after the content of the first data cell */
+  suffix?: DynamicComponentConfig;
+  /** extra CSS class for the row */
+  cssClass?: string;
+  /** whether the row can be selected for bulk actions (default: true) */
+  selectable?: boolean;
+}
+
+/** Why loading the records of a list failed, as named to the user. */
+type LoadErrorCause &#x3D; &quot;connection&quot; | &quot;sessionExpired&quot; | &quot;notPermitted&quot;;
+
+/** The cause named in the toast for a failed load, by its classification. */
+const LOAD_ERROR_CAUSES: Partial&lt;Record&lt;ErrorClassification, LoadErrorCause&gt;&gt; &#x3D;
+  {
+    &quot;not-permitted&quot;: &quot;notPermitted&quot;,
+    &quot;session-expired&quot;: &quot;sessionExpired&quot;,
+  };
+
+/**
+ * Abstract data source for tables that handles all data handling internally.
+ * Depending on the environment all data might be in-memory or only requested from the server on demand.
+ */
+export abstract class EntitiesTableDataSource&lt;
+  T extends Entity,
+&gt; extends MatTableDataSource&lt;T&gt; {
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+  protected readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly bulkOperationState &#x3D; inject(BulkOperationStateService);
+  private readonly snackBar &#x3D; inject(MatSnackBar);
+
+  /** Reference to the currently shown &quot;could not load data&quot; toast, if any. */
+  private loadErrorSnackBarRef?: MatSnackBarRef&lt;TextOnlySnackBar&gt;;
+
+  dataFilter &#x3D; signal&lt;DataFilter&lt;T&gt;&gt;({});
+  sortValueFns &#x3D; signal&lt;SortValueFns&lt;T&gt;&gt;({});
+  /**
+   * The sort that the table applies (set by the table), as a signal:
+   * for data sources that arrange the rows themselves (the &#x60;sort&#x60; of the table only offers events).
+   */
+  readonly effectiveSort &#x3D; signal&lt;Sort | undefined&gt;(undefined);
+  /** All loaded records (only filled by data sources that hold all records in memory). */
+  allRecords &#x3D; signal&lt;T[]&gt;([]);
+  /**
+   * The records passing all filters (including the free-text {@link searchText}), across all pages,
+   * in the order they were loaded (with server-side paging only the pages loaded so far, see {@link getAllData}).
+   * They are the input data of the table:
+   * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
+  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
+  /**
+   * The records as currently rendered by the table:
+   * filtered, sorted and reduced to the current page.
+   */
+  readonly renderedRows &#x3D; toSignal(this.connect(), { requireSync: true });
+  loadRecordConfig &#x3D; signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined);
+  isLoading &#x3D; signal(false);
+
+  /**
+   * Free-text search for the records.
+   * Only data sources that support it apply it (see {@link toolbarControls} for the field to enter it);
+   * &quot;Clear filters&quot; resets it.
+   */
+  readonly searchText &#x3D; signal(&quot;&quot;);
+
+  // --- Extension points for data sources of feature modules (all with defaults) ---
+
+  /**
+   * Options for this data source from the list or section config
+   * (the &#x60;config&#x60; of a &#x60;dataSource: { name, config }&#x60; entry), set by &#x60;resolveDataSource&#x60;.
+   * Data sources of feature modules read their own options from it; core data sources have none.
+   */
+  readonly config &#x3D; signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({});
+
+  /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
+  readonly usesPagination: Signal&lt;boolean&gt; &#x3D; signal(true);
+
+  /**
+   * controls a host may show in the list&#x27;s filter row, in this order (default: none).
+   * Keep the config objects stable: a new object reloads the control.
+   */
+  readonly toolbarControls: Signal&lt;DynamicComponentConfig[]&gt; &#x3D; signal([]);
+
+  /**
+   * Optional extras for the row of a record (default: none).
+   * Called by the table for every rendered row: read signals here, so that the rows update when they change.
+   */
+  rowOptionsOf(_record: T): RowOptions | undefined {
+    return undefined;
+  }
+
+  // Make sure only one update subscription is active
+  private updateSubscription: Subscription;
+
+  protected constructor() {
+    super();
+    effect(() &#x3D;&gt; {
+      this.data &#x3D; this.filteredRecords();
+    });
+    effect(() &#x3D;&gt; {
+      if (this.loadRecordConfig()) {
+        // If config is provided, this class loads the data and listens to updates
+        this.setRecords();
+        this.listenToEntityUpdates();
+      }
+    });
+    effect(() &#x3D;&gt; {
+      // got to first page if filter changes
+      this.dataFilter();
+      this.paginator?.firstPage();
+    });
+
+    // Coalesce the many triggers that fire while a view initializes
+    // (config, default + url-param filters, sort, paginator) into a single load.
+    this.reloadTrigger
+      .pipe(debounceTime(0), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() &#x3D;&gt; this.executeLoad());
+  }
+
+  /** Emits whenever a (re)load of the records is requested, see {@link setRecords}. */
+  private readonly reloadTrigger &#x3D; new Subject&lt;void&gt;();
+  /** Awaiters of the currently scheduled (not yet executed) load. */
+  private pendingReload?: {
+    /** Will resolve with the requested data */
+    promise: Promise&lt;any&gt;;
+    /** Resolver function for the above promise */
+    resolve: (value: Promise&lt;any&gt;) &#x3D;&gt; void;
+  };
+
+  /**
+   * Incremented whenever a new configuration triggers loading of new data.
+   * This allows stale requests to be detected.
+   */
+  protected loadGeneration &#x3D; 0;
+
+  /**
+   * Request a (re)load of the records for the current config/filter/sort/page.
+   *
+   * All the triggers that fire while a view initializes are debounced into a
+   * single request, so opening a list does not send several redundant DB
+   * requests (and the request already uses the fully resolved filter/sort/page).
+   * {@link isLoading} is set immediately so the table can show a progress
+   * indicator until the load finishes.
+   *
+   * @returns a promise that resolves once the resulting load has completed.
+   */
+  protected setRecords(): Promise&lt;any&gt; {
+    this.isLoading.set(true);
+    if (!this.pendingReload) {
+      let resolve!: (value: Promise&lt;any&gt;) &#x3D;&gt; void;
+      const promise &#x3D; new Promise((res) &#x3D;&gt; (resolve &#x3D; res));
+      this.pendingReload &#x3D; { promise, resolve };
+    }
+    this.reloadTrigger.next();
+    return this.pendingReload.promise;
+  }
+
+  private executeLoad(): void {
+    const reload &#x3D; this.pendingReload;
+    this.pendingReload &#x3D; undefined;
+    const generation &#x3D; ++this.loadGeneration;
+    const isCurrentLoad &#x3D; () &#x3D;&gt; generation &#x3D;&#x3D;&#x3D; this.loadGeneration;
+    const load &#x3D; this.loadRecords()
+      .then((data) &#x3D;&gt; {
+        if (isCurrentLoad()) {
+          // a previous failure has now recovered
+          this.loadErrorSnackBarRef?.dismiss();
+          this.loadErrorSnackBarRef &#x3D; undefined;
+        }
+        return data;
+      })
+      .catch((err) &#x3D;&gt; {
+        Logging.error(
+          &quot;Error loading data in datasource&quot;,
+          err,
+          this.loadRecordConfig(),
+        );
+        const cause &#x3D;
+          LOAD_ERROR_CAUSES[classifyErrorChain(err)] ?? &quot;connection&quot;;
+        if (isCurrentLoad()) {
+          // replaces any session alert shown for the same failure (one snackbar
+          // at a time), so it has to name that cause itself
+          this.showLoadErrorToast(cause);
+        }
+        return [];
+      })
+      .finally(() &#x3D;&gt; {
+        if (isCurrentLoad()) {
+          this.isLoading.set(false);
+        }
+      });
+    // let awaiters (e.g. bulk operations) adopt the actual load&#x27;s outcome
+    reload?.resolve(load);
+  }
+
+  /**
+   * Notify the user that the list could not be loaded and (unless not permitted) offer a manual retry.
+   * The retry routes through {@link setRecords} so it reuses the normal
+   * (debounced, &#x60;isLoading&#x60;-tracked) reload path.
+   *
+   * @param cause why the server rejected the request: the user may not access these records,
+   *   the login session expired and could not be renewed, or (default) a connection problem
+   */
+  private showLoadErrorToast(cause: LoadErrorCause &#x3D; &quot;connection&quot;): void {
+    this.loadErrorSnackBarRef?.dismiss();
+    const messages &#x3D; {
+      notPermitted: $localize&#x60;:Table data loading failed because the user is not permitted:Could not load the list because you don&#x27;t have access to these records.&#x60;,
+      sessionExpired: $localize&#x60;:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.&#x60;,
+      connection: $localize&#x60;:Table data loading failed:Could not load the list. Please check your internet connection.&#x60;,
+    };
+    const message &#x3D; messages[cause];
+    // retrying cannot help if the user is not permitted: only offer to dismiss the message
+    const canRetry &#x3D; cause !&#x3D;&#x3D; &quot;notPermitted&quot;;
+    this.loadErrorSnackBarRef &#x3D; this.snackBar.open(
+      message,
+      canRetry ? $localize&#x60;:Retry loading table data:Retry&#x60; : &quot;×&quot;,
+      { duration: 3600000 },
+    );
+    if (canRetry) {
+      this.loadErrorSnackBarRef
+        .onAction()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() &#x3D;&gt; this.setRecords());
+    }
+  }
+
+  /** Actually (re)load the records. Implemented by the concrete data source. */
+  protected abstract loadRecords(): Promise&lt;any&gt;;
+
+  /**
+   * Load the full set of records (independent of the currently displayed page),
+   * for use cases like export that need all data rather than only what is currently rendered.
+   * @param filtered Whether to apply the current &#x60;dataFilter&#x60;, or return unfiltered records
+   */
+  abstract getAllData(filtered?: boolean): Promise&lt;T[]&gt;;
+
+  protected listenToEntityUpdates() {
+    const entityConstructor &#x3D; this.loadRecordConfig().entityCtr;
+    if (!entityConstructor) {
+      return;
+    }
+
+    this.updateSubscription?.unsubscribe();
+    this.updateSubscription &#x3D; this.entityMapper
+      .receiveUpdates(entityConstructor)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((update) &#x3D;&gt; this.handleUpdate(update));
+  }
+
+  private handleUpdate(updatedEntity: UpdatedEntity&lt;T&gt;) {
+    if (this.bulkOperationState.isBulkOperationInProgress()) {
+      return this.handleUpdateDuringBulkOperation(updatedEntity);
+    }
+
+    return this.processEntityUpdate(updatedEntity);
+  }
+
+  protected abstract processEntityUpdate(
+    updatedEntity: UpdatedEntity&lt;T&gt;,
+  ): Promise&lt;any&gt;;
+
+  private async handleUpdateDuringBulkOperation(
+    updatedEntity: UpdatedEntity&lt;T&gt;,
+  ) {
+    //buffer updates during bulk operations to avoid UI performance issues
+    const inProgress &#x3D; this.bulkOperationState.updateBulkOperationProgress(
+      updatedEntity,
+      false,
+    );
+    if (!inProgress) {
+      // reload the list once
+      await this.setRecords();
+      // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
+      setTimeout(() &#x3D;&gt; {
+        requestAnimationFrame(() &#x3D;&gt; {
+          this.bulkOperationState.completeBulkOperation();
+        });
+      });
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'RowOptions.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

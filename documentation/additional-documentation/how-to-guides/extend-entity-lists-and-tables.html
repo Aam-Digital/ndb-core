@@ -1,0 +1,371 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Entities Table</h1>
+<p><code>EntitiesTableComponent</code> (<code>app-entities-table</code>) shows records of one entity
+type as a table: sortable columns, filters, paging, bulk selection and the
+&quot;include archived records&quot; toggle.
+Each row is the record (entity) itself; clicking a row opens it according to
+the <code>clickMode</code>.
+It is used by the entity list (<code>EntityListComponent</code>), the related-records
+sections on details pages and several feature components.</p>
+<h2>Key files</h2>
+<ul>
+<li><code>entities-table.component.ts</code>: the table: columns, filter input, row click,
+row options</li>
+<li><code>entities-table-sort.store.ts</code>: sort state, default sort and its URL params
+(<code>_sortBy</code>, <code>_sortOrder</code>)</li>
+<li><code>entities-table-selection.ts</code>: bulk selection: checkbox, &quot;select all&quot;,
+Shift-click ranges</li>
+<li><code>data-source/entities-table-data-source.ts</code>: abstract base of all data
+sources, with the extension points described below</li>
+<li><code>data-source/in-memory-data-source.ts</code>: loads all records and filters, sorts
+and pages them in memory; free-text search</li>
+<li><code>data-source/paginated-data-source.ts</code>: loads one page at a time from the
+database (online-only sessions)</li>
+<li><code>data-source/data-source-registry.ts</code>: <code>DataSourceRegistry</code>: the data
+sources a config can name</li>
+<li><code>data-source/data-source-resolver.ts</code>: <code>resolveDataSource()</code>: picks the data
+source for a list (config, session type, loader)</li>
+<li><code>free-text-filter/</code>: the &quot;Filter&quot; field, the toolbar control of the
+in-memory data source</li>
+<li><code>list-paginator/</code>: the paginator, remembering the page size per user</li>
+</ul>
+<h2>Data sources</h2>
+<p>The table gets its records from a data source (a <code>MatTableDataSource</code>),
+passed in as <code>recordsDataSource</code>.
+Hosts usually create it with
+<code>resolveDataSource(injector, dataSource, loaderMethod, entityType)</code>:</p>
+<ul>
+<li>an explicit <code>dataSource</code> of the list or section config wins (a name in the
+<code>DataSourceRegistry</code>);</li>
+<li>otherwise <code>&quot;paginated&quot;</code> in online-only sessions, <code>&quot;in-memory&quot;</code> for loaders
+that do not page and for small internal types with translated texts, or
+<code>environment.default_data_source</code>;</li>
+<li><code>PaginatedDataSource</code>, which pages on the server, falls back to
+<code>InMemoryDataSource</code> outside of online-only sessions, because the local
+database cannot page.
+So does a data source of a feature module that extends it: the list then
+shows the records without the feature&#39;s extras.</li>
+</ul>
+<p>The records a data source holds:</p>
+<ul>
+<li><code>allRecords</code>: all loaded records (only filled by in-memory data sources);</li>
+<li><code>filteredRecords</code>: the records passing the filters, across all pages (the
+input data of the table); <code>PaginatedDataSource</code> only holds the pages loaded
+so far, <code>getAllData()</code> loads all of them;</li>
+<li><code>renderedRows</code>: the rows currently rendered: filtered, sorted and reduced to
+the current page.</li>
+</ul>
+<p>The host sets <code>loadRecordConfig</code> to let the data source load and live-update
+the records itself, or sets <code>allRecords</code> directly for records it loads on its
+own.
+The table keeps the signals <code>dataFilter</code> (the filters), <code>effectiveSort</code> (the
+sorted column and direction) and <code>sortValueFns</code> (how each column sorts) of the
+data source up to date.</p>
+<h2>Extension points for feature modules</h2>
+<p>Feature modules can extend lists without feature-specific code in core:
+they subclass a data source, override the hooks below and register it.
+All hooks have defaults, so existing data sources do not need to set them.</p>
+<ul>
+<li><code>config</code> (default <code>{}</code>): options of the data source from the list or
+section config (see below)</li>
+<li><code>usesPagination</code> (default <code>true</code>): signal; <code>false</code>: the table shows all rows
+and no paginator (may change at any time); not for data sources built on
+<code>PaginatedDataSource</code>, which load no records without a paginator</li>
+<li><code>rowOptionsOf(record)</code> (default: none): optional extras for the row of a
+record (see below)</li>
+<li><code>toolbarControls</code> (default <code>[]</code>): <code>DynamicComponentConfig</code>s that a host
+shows in the list&#39;s filter row, in this order</li>
+<li><code>searchText</code> (default <code>&quot;&quot;</code>): free-text search; only data sources that apply
+it offer a toolbar control to enter it</li>
+<li><code>getFilterPredicate()</code> (default: the filter service; <code>InMemoryDataSource</code>
+only): whether a record passes the filter, e.g. to reinterpret it</li>
+</ul>
+<p>The <code>RowOptions</code> of a row can have:</p>
+<ul>
+<li><code>prefix</code>: a component (<code>DynamicComponentConfig</code>) shown before the content of
+the first data cell, i.e. the first displayed column that is neither the
+select column nor the &quot;+&quot; column (a column projected into the table by its
+host does not show it).
+The prefix is a flex item next to the cell&#39;s content, in a flex row filling
+the whole cell: with <code>align-self: stretch</code> it spans the full height of the
+row and may draw over the row divider (e.g. lines connecting rows);</li>
+<li><code>suffix</code>: a component shown after the content of the first data cell, in the
+same flex row (e.g. a count next to a title);</li>
+<li><code>cssClass</code>: an extra CSS class for the row;</li>
+<li><code>selectable: false</code>: the row cannot be selected for bulk actions
+(disabled checkbox, skipped by &quot;select all&quot; and Shift-click ranges).</li>
+</ul>
+<p>The selection never holds a record that is not selectable: one effect of the
+table removes it, however it got there (Shift-click range, the host, or row
+options that changed since, e.g. a row the data source hides), so a bulk
+action never applies to it.</p>
+<p>Row options are state of one table, so the data source provides them rather
+than the records (the same record object can be shown in several tables).
+The table calls <code>rowOptionsOf()</code> for every rendered row whenever it checks the
+row, so keep it a quick lookup and read the options from signals, so that the
+rows update when they change: e.g. a <code>computed</code> map by <code>entity.getId()</code>.
+Look them up by id rather than by record object, because a live update
+replaces the record object and the row should keep its options until the data
+source has computed new ones.
+Keep the <code>prefix</code>, <code>suffix</code> and <code>toolbarControls</code> config objects stable (e.g.
+create them once in a <code>computed</code>): <code>appDynamicComponent</code> reloads the component
+whenever it gets a new config object.</p>
+<p>The entity list shows the <code>toolbarControls</code> in its filter row (on desktop and
+mobile); sections on details pages do not.
+A toolbar control receives the data source through its <code>config</code>, e.g.
+<code>{ component: &quot;FreeTextFilter&quot;, config: { dataSource: this } }</code>,
+and its component has to be registered in the <code>ComponentRegistry</code>.</p>
+<p>Register the data source in the feature module, then configure lists to use it
+by name:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">export class MyFeatureModule {
+  constructor() {
+    inject(DataSourceRegistry).add(&quot;my-feature&quot;, MyFeatureDataSource);
+  }
+}</code></pre></div><b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;component&quot;: &quot;EntityList&quot;,
+  &quot;config&quot;: { &quot;entityType&quot;: &quot;Child&quot;, &quot;dataSource&quot;: &quot;my-feature&quot; }
+}</code></pre></div><p>A data source that needs options gets them from the same entry, as <code>config</code>
+next to its <code>name</code>.
+<code>resolveDataSource</code> sets them as the data source&#39;s <code>config</code> signal:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;dataSource&quot;: { &quot;name&quot;: &quot;my-feature&quot;, &quot;config&quot;: { &quot;someOption&quot;: [&quot;a&quot;, &quot;b&quot;] } }</code></pre></div><p>This keeps options of feature data sources out of the inputs of the core list
+and section components.
+To let admins set these options in the admin editor of a list view, a feature
+module provides a settings component through <code>ADMIN_ENTITY_LIST_SETTINGS</code>
+(<code>src/app/core/admin/admin-entity-list/admin-entity-list-settings.ts</code>).</p>
+<h2>State in the URL</h2>
+<p>The entity list keeps its filters, sort and column-group tab in the URL query
+params, so that reloading or going back restores the view.
+All of this goes through <code>UrlStateService</code> (<code>src/app/utils/url-state/</code>).
+The service does not know what a param means; each owner reads and writes its
+own keys, and a naming rule keeps them apart:</p>
+<ul>
+<li>Filters use the id of the filter, usually a field id
+(e.g. <code>?status=active</code>). Links into a list, e.g. from a dashboard widget,
+use the same keys. <code>FilterComponent</code> only reads the params of its configured
+filters and of fields of the entity type.</li>
+<li>All other view state uses keys starting with <code>_</code>: the sort store <code>_sortBy</code>
+and <code>_sortOrder</code>, <code>TabStateMemoDirective</code> its tab key (<code>_tabIndex</code> by
+default). Custom field ids cannot start with <code>_</code> (the admin UI does not
+allow it, and CouchDB reserves such top-level properties), so these keys
+never collide with a filter. Only the built-in <code>_id</code> and <code>_rev</code> start with
+<code>_</code>: do not use these as keys of view state.</li>
+</ul>
+<p>A new kind of URL state (e.g. of a feature data source) must use a key with the
+<code>_</code> prefix as well.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'extend-entity-lists-and-tables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1151,6 +1151,9 @@
                             <a href="#operationFilterOptions" title="src/app/features/change-history/audit-filter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>operationFilterOptions</b>&nbsp;&nbsp;&nbsp;(src/.../audit-filter.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#pagesOnServer" title="src/app/core/common-components/entities-table/data-source/data-source-resolver.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>pagesOnServer</b>&nbsp;&nbsp;&nbsp;(src/.../data-source-resolver.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#parentRangesResource" title="src/app/core/basic-datatypes/date-range/parent-ranges.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>parentRangesResource</b>&nbsp;&nbsp;&nbsp;(src/.../parent-ranges.ts)</span></a>
                         </li>
                         <li>
@@ -22870,7 +22873,7 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getDataSource(dataSource?: <a href="../miscellaneous/typealiases.html#DataSourceType" target="_self">DataSourceType</a>, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entityType?: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+<code>getDataSource(registry: <a href="../injectables/DataSourceRegistry.html" target="_self">DataSourceRegistry</a>, dataSource?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entityType?: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
                 </td>
             </tr>
 
@@ -22893,9 +22896,21 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                     </thead>
                                     <tbody>
                                         <tr>
+                                                <td>registry</td>
+                                            <td>
+                                                            <code><a href="../injectables/DataSourceRegistry.html" target="_self" >DataSourceRegistry</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
                                                 <td>dataSource</td>
                                             <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#DataSourceType" target="_self" >DataSourceType</a></code>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
 
                                             <td>
@@ -22931,6 +22946,76 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                     </tbody>
                                 </table>
                             </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#DataSourceConstructor" target="_self" >DataSourceConstructor</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pagesOnServer"></a>
+                    <span class="name">
+                        <span ><b>pagesOnServer</b></span>
+                        <a href="#pagesOnServer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>pagesOnServer(DataSourceClass: <a href="../miscellaneous/typealiases.html#DataSourceConstructor" target="_self">DataSourceConstructor</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>whether the data source is the <a href="../classes/PaginatedDataSource.html">PaginatedDataSource</a> or one of a feature module built on it</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>DataSourceClass</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataSourceConstructor" target="_self" >DataSourceConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -22948,7 +23033,7 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>resolveDataSource&lt;T extends Entity&gt;(injector: <a href="https://angular.dev/api/core/Injector" target="_blank">Injector</a>, dataSource?: <a href="../miscellaneous/typealiases.html#DataSourceType" target="_self">DataSourceType</a>, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entityType?: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+<code>resolveDataSource&lt;T extends Entity&gt;(injector: <a href="https://angular.dev/api/core/Injector" target="_blank">Injector</a>, dataSource?, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entityType?: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
                 </td>
             </tr>
 
@@ -22965,6 +23050,8 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Create the data source for a table.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -22975,6 +23062,7 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -22989,11 +23077,14 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                             </td>
 
 
+                                            <td>
+                                                    <p>the injection context the data source lives in (and is destroyed with)</p>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>dataSource</td>
                                             <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#DataSourceType" target="_self" >DataSourceType</a></code>
                                             </td>
 
                                             <td>
@@ -23001,6 +23092,11 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                             </td>
 
 
+                                            <td>
+                                                    <p>name of a data source in the <a href="../injectables/DataSourceRegistry.html">DataSourceRegistry</a>, or its name with options,
+as configured for the list</p>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>loaderMethod</td>
@@ -23013,6 +23109,10 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                             </td>
 
 
+                                            <td>
+                                                    <p>special loader the records come from, if any</p>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>entityType</td>
@@ -23025,6 +23125,10 @@ excluding automation rules (with sourceReferenceEntity), which are handled by th
                                             </td>
 
 
+                                            <td>
+                                                    <p>type of the listed records</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

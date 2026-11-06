@@ -262,7 +262,7 @@ and URL query-param persistence.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:106</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:110</a></div>
                             </td>
                         </tr>
 
@@ -295,8 +295,8 @@ and URL query-param persistence.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="142"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:142</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -364,8 +364,8 @@ and URL query-param persistence.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:141</a></div>
                         </td>
                     </tr>
 
@@ -450,7 +450,7 @@ and URL query-param persistence.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -497,7 +497,7 @@ Disables sorting for entity references, untyped columns, and arrays
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:71</a></div>
                         </td>
                     </tr>
 
@@ -538,7 +538,7 @@ Recomputed whenever columns or columnsToDisplay change.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -577,7 +577,7 @@ inferred from columns when no explicit sort has been set.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -632,7 +632,7 @@ inferred from columns when no explicit sort has been set.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:89</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -670,9 +670,13 @@ import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { FormFieldConfig } from &quot;../entity-form/FormConfig&quot;;
 import { SortValueFns } from &quot;./table-sort/table-sort&quot;;
-import { TableStateUrlService } from &quot;./table-state-url.service&quot;;
+import { UrlStateService } from &quot;#src/app/utils/url-state/url-state.service&quot;;
 
 type ReadSignal&lt;T&gt; &#x3D; () &#x3D;&gt; T;
+
+/** URL query params of the sort (with the &quot;_&quot; prefix of view state other than filters, see &#x60;UrlStateService&#x60;) */
+const SORT_BY_PARAM &#x3D; &quot;_sortBy&quot;;
+const SORT_ORDER_PARAM &#x3D; &quot;_sortOrder&quot;;
 
 /**
  * Input signals consumed by &#x60;EntitiesTableSortStore&#x60;.
@@ -692,7 +696,7 @@ export interface EntitiesTableSortContext {
  */
 @Injectable()
 export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
-  private readonly tableStateUrl &#x3D; inject(TableStateUrlService);
+  private readonly urlState &#x3D; inject(UrlStateService);
   private readonly schemaService &#x3D; inject(EntitySchemaService);
   private readonly destroyRef &#x3D; inject(DestroyRef);
 
@@ -766,7 +770,7 @@ export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
       if (!this.context) return;
       if (
         !this.sortManuallySet() &amp;&amp;
-        !this.tableStateUrl.getUrlParam(&quot;sortBy&quot;)
+        !this.urlState.getUrlParam(SORT_BY_PARAM)
       ) {
         this.sortState.set(this.defaultSort());
       }
@@ -779,10 +783,10 @@ export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
       if (!externalSort) return;
       this.sortState.set(externalSort);
       if (externalSort.active) {
-        this.tableStateUrl.updateUrlParams({
-          sortBy: externalSort.active,
-          sortOrder: externalSort.direction ?? &quot;asc&quot;,
-        });
+        this.updateSortUrlParams(
+          externalSort.active,
+          externalSort.direction || &quot;asc&quot;,
+        );
       }
       this.sortManuallySet.set(true);
     });
@@ -798,9 +802,9 @@ export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
     if (!sort || this.attachedSort &#x3D;&#x3D;&#x3D; sort) return;
     this.attachedSort &#x3D; sort;
 
-    const urlSortBy &#x3D; this.tableStateUrl.getUrlParam(&quot;sortBy&quot;);
-    const urlSortOrder &#x3D; this.tableStateUrl.getUrlParam(
-      &quot;sortOrder&quot;,
+    const urlSortBy &#x3D; this.urlState.getUrlParam(SORT_BY_PARAM);
+    const urlSortOrder &#x3D; this.urlState.getUrlParam(
+      SORT_ORDER_PARAM,
     ) as SortDirection;
     if (urlSortBy) {
       sort.active &#x3D; urlSortBy;
@@ -818,26 +822,11 @@ export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
       });
   }
 
+  /** Ascending is the default and is not stored, no direction removes the sort from the URL. */
   private updateSortUrlParams(active: string, direction: SortDirection) {
-    if (!direction) {
-      this.tableStateUrl.updateUrlParams({
-        sortBy: null,
-        sortOrder: null,
-      });
-      return;
-    }
-
-    if (direction &#x3D;&#x3D;&#x3D; &quot;desc&quot;) {
-      this.tableStateUrl.updateUrlParams({
-        sortBy: active,
-        sortOrder: &quot;desc&quot;,
-      });
-      return;
-    }
-
-    this.tableStateUrl.updateUrlParams({
-      sortBy: active,
-      sortOrder: null,
+    this.urlState.updateUrlParams({
+      [SORT_BY_PARAM]: direction ? active : null,
+      [SORT_ORDER_PARAM]: direction &#x3D;&#x3D;&#x3D; &quot;desc&quot; ? &quot;desc&quot; : null,
     });
   }
 }

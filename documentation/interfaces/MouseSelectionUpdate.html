@@ -483,10 +483,15 @@ type ModelSignal&lt;T&gt; &#x3D; ReadSignal&lt;T&gt; &amp; { set(value: T): void
  */
 export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
   selectedRecords: ModelSignal&lt;T[]&gt;;
-  /** records that &quot;select all&quot; applies to, i.e. all filtered records across all pages */
-  selectableRows: ReadSignal&lt;T[]&gt;;
+  /** all filtered records across all pages, which &quot;select all&quot; applies to unless they are not selectable */
+  filteredRows: ReadSignal&lt;T[]&gt;;
   /** records of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal&lt;T[]&gt;;
+  /**
+   * whether a record can be selected (e.g. not if its row options say so);
+   * the table unselects every record that is not, whoever selected it
+   */
+  isSelectable: (record: T) &#x3D;&gt; boolean;
 }
 
 /**
@@ -502,15 +507,21 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
   private readonly lastSelectedRecord &#x3D; signal&lt;T | null&gt;(null);
   private readonly lastSelection &#x3D; signal&lt;boolean | null&gt;(null);
 
+  /** the records that &quot;select all&quot; selects */
+  private readonly selectableRows &#x3D; computed(() &#x3D;&gt; {
+    if (!this.context) return [];
+    return this.context.filteredRows().filter(this.context.isSelectable);
+  });
+
   readonly allRowsSelected &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.selectableRows().length ?? 0;
+    const total &#x3D; this.selectableRows().length;
     return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
   });
 
   readonly selectionIndeterminate &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.selectableRows().length ?? 0;
+    const total &#x3D; this.selectableRows().length;
     return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
   });
 
@@ -528,9 +539,7 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
 
   /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
-    this.context.selectedRecords.set(
-      checked ? [...this.context.selectableRows()] : [],
-    );
+    this.context.selectedRecords.set(checked ? [...this.selectableRows()] : []);
   }
 
   /**

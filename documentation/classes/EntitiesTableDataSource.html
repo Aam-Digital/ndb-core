@@ -208,11 +208,17 @@ Depending on the environment all data might be in-memory or only requested from 
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#dataFilter" >dataFilter</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#displayedData" >displayedData</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#effectiveSort" >effectiveSort</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -244,7 +250,22 @@ Depending on the environment all data might be in-memory or only requested from 
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#searchText" >searchText</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#toolbarControls" >toolbarControls</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#usesPagination" >usesPagination</a>
                             </li>
                         </ul>
                     </td>
@@ -284,6 +305,10 @@ Depending on the environment all data might be in-memory or only requested from 
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#rowOptionsOf" >rowOptionsOf</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#setRecords" >setRecords</a>
                             </li>
@@ -297,23 +322,6 @@ Depending on the environment all data might be in-memory or only requested from 
 
 
 
-        <table class="table table-sm table-bordered index-table">
-            <tbody>
-                <tr>
-                    <td class="col-md-3">
-                        <h6><b>Accessors</b></h6>
-                    </td>
-                    <td class="col-md-9">
-                        <ul class="index-list">
-                            <li>
-                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
-                                <a href="#data" >data</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 </section>
 
             <section data-compodoc="block-constructor">
@@ -328,7 +336,7 @@ Depending on the environment all data might be in-memory or only requested from 
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:102</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:146</a></div>
                             </td>
                         </tr>
 
@@ -365,10 +373,56 @@ Depending on the environment all data might be in-memory or only requested from 
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:74</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:96</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>All loaded records (only filled by data sources that hold all records in memory).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="config"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>config</b></span>
+                        <a href="#config"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:126</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Options for this data source from the list or section config
+(the <code>config</code> of a <code>dataSource: { name, config }</code> entry), set by <code>resolveDataSource</code>.
+Data sources of feature modules read their own options from it; core data sources have none.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -396,7 +450,7 @@ Depending on the environment all data might be in-memory or only requested from 
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -407,10 +461,11 @@ Depending on the environment all data might be in-memory or only requested from 
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="displayedData"></a>
+                    <a name="effectiveSort"></a>
                     <span class="name">
-                        <span ><b>displayedData</b></span>
-                        <a href="#displayedData"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>effectiveSort</b></span>
+                        <a href="#effectiveSort"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -422,19 +477,19 @@ Depending on the environment all data might be in-memory or only requested from 
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                        <i>Default value : </i><code>signal&lt;Sort | undefined&gt;(undefined)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:94</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The records handed to the table as input data, in the order they were loaded.
-Sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+                    <div class="io-description"><p>The sort that the table applies (set by the table), as a signal:
+for data sources that arrange the rows themselves (the <code>sort</code> of the table only offers events).</p>
 </div>
                 </td>
             </tr>
@@ -467,7 +522,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -498,10 +553,19 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:103</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records passing all filters (including the free-text <a href="searchText">searchText</a>), across all pages,
+in the order they were loaded (with server-side paging only the pages loaded so far, see <a href="getAllData">getAllData</a>).
+They are the input data of the table:
+sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -529,7 +593,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:110</a></div>
                         </td>
                     </tr>
 
@@ -561,7 +625,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:143</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="187" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:187</a></div>
                         </td>
                     </tr>
 
@@ -599,7 +663,7 @@ This allows stale requests to be detected.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:86</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -631,7 +695,7 @@ This allows stale requests to be detected.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:85</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:108</a></div>
                         </td>
                     </tr>
 
@@ -639,6 +703,46 @@ This allows stale requests to be detected.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>The records as currently rendered by the table:
 filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchText"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>searchText</b></span>
+                        <a href="#searchText"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="117" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:117</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Free-text search for the records.
+Only data sources that support it apply it (see <a href="toolbarControls">toolbarControls</a> for the field to enter it);
+&quot;Clear filters&quot; resets it.</p>
 </div>
                 </td>
             </tr>
@@ -669,10 +773,87 @@ filtered, sorted and reduced to the current page.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:89</a></div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toolbarControls"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>toolbarControls</b></span>
+                        <a href="#toolbarControls"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >Signal&lt;DynamicComponentConfig[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:135</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>controls a host may show in the list&#39;s filter row, in this order (default: none).
+Keep the config objects stable: a new object reloads the control.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="usesPagination"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>usesPagination</b></span>
+                        <a href="#usesPagination"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:129</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>false: the table shows all rows and no paginator (may change, e.g. with an option of the data source)</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -705,8 +886,8 @@ filtered, sorted and reduced to the current page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="244"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:244</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="288"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:288</a></div>
                         </td>
                     </tr>
 
@@ -782,8 +963,8 @@ for use cases like export that need all data rather than only what is currently 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="246"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:246</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="290"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:290</a></div>
                         </td>
                     </tr>
 
@@ -822,8 +1003,8 @@ for use cases like export that need all data rather than only what is currently 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="281"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:281</a></div>
                         </td>
                     </tr>
 
@@ -864,8 +1045,8 @@ for use cases like export that need all data rather than only what is currently 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="267"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:267</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="311"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:311</a></div>
                         </td>
                     </tr>
 
@@ -915,6 +1096,76 @@ for use cases like export that need all data rather than only what is currently 
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="rowOptionsOf"></a>
+                    <span class="name">
+                        <span ><b>rowOptionsOf</b></span>
+                        <a href="#rowOptionsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>rowOptionsOf(_record: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Optional extras for the row of a record (default: none).
+Called by the table for every rendered row: read signals here, so that the rows update when they change.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_record</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/RowOptions.html" target="_self" >RowOptions | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="setRecords"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -933,8 +1184,8 @@ for use cases like export that need all data rather than only what is currently 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="200"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:200</a></div>
                         </td>
                     </tr>
 
@@ -968,85 +1219,14 @@ indicator until the load finishes.</p>
 
 
 
-            <section data-compodoc="block-accessors">
-    <h3 id="accessors">
-        Accessors
-    </h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="data"></a>
-                        <span class="name"><b>data</b><a href="#data"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>data()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:91</a></div>
-                                </td>
-                            </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>set</b><code>data(data: T[])</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:95</a></div>
-                                </td>
-                            </tr>
-                    <tr>
-                        <td class="col-md-4">
-
-                                <div class="io-description">
-                                        <b>Parameters :</b>
-                                        <table class="params">
-                                            <thead>
-                                                <tr>
-                                                    <td>Name</td>
-                                                        <td>Type</td>
-                                                    <td>Optional</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                    <tr>
-                                                            <td>data</td>
-                                                    
-                                                            <td>
-                                                                        <code>T[]</code>
-                                                            </td>
-                                                    
-                                                        <td>
-                                                                No
-                                                        </td>
-                                                        
-                                                    </tr>
-                                            </tbody>
-                                        </table>
-                                </div>
-                                <div class="io-description">
-                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                                </div>
-                        </td>
-                    </tr>
-            </tbody>
-        </table>
-</section>
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MatTableDataSource } from &quot;@angular/material/table&quot;;
+import { Sort } from &quot;@angular/material/sort&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
-import { DestroyRef, effect, inject, signal } from &quot;@angular/core&quot;;
+import { DestroyRef, effect, inject, Signal, signal } from &quot;@angular/core&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 import { SortValueFns } from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
 import { LoaderMethod } from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
@@ -1066,6 +1246,7 @@ import {
   MatSnackBarRef,
   TextOnlySnackBar,
 } from &quot;@angular/material/snack-bar&quot;;
+import { DynamicComponentConfig } from &quot;#src/app/core/config/dynamic-components/dynamic-component-config.interface&quot;;
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -1088,6 +1269,20 @@ export interface LoadRecordConfig&lt;T extends Entity&gt; {
    * Select if a special loader method should be used for this entity
    */
   loaderMethod?: LoaderMethod;
+}
+
+/**
+ * Options for one row of the table, for its display and its selection, provided by the data source.
+ */
+export interface RowOptions {
+  /** component shown before the content of the first data cell */
+  prefix?: DynamicComponentConfig;
+  /** component shown after the content of the first data cell */
+  suffix?: DynamicComponentConfig;
+  /** extra CSS class for the row */
+  cssClass?: string;
+  /** whether the row can be selected for bulk actions (default: true) */
+  selectable?: boolean;
 }
 
 /** Why loading the records of a list failed, as named to the user. */
@@ -1117,13 +1312,20 @@ export abstract class EntitiesTableDataSource&lt;
 
   dataFilter &#x3D; signal&lt;DataFilter&lt;T&gt;&gt;({});
   sortValueFns &#x3D; signal&lt;SortValueFns&lt;T&gt;&gt;({});
-  allRecords &#x3D; signal&lt;T[]&gt;([]);
-  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
   /**
-   * The records handed to the table as input data, in the order they were loaded.
-   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   * The sort that the table applies (set by the table), as a signal:
+   * for data sources that arrange the rows themselves (the &#x60;sort&#x60; of the table only offers events).
    */
-  displayedData &#x3D; signal&lt;T[]&gt;([]);
+  readonly effectiveSort &#x3D; signal&lt;Sort | undefined&gt;(undefined);
+  /** All loaded records (only filled by data sources that hold all records in memory). */
+  allRecords &#x3D; signal&lt;T[]&gt;([]);
+  /**
+   * The records passing all filters (including the free-text {@link searchText}), across all pages,
+   * in the order they were loaded (with server-side paging only the pages loaded so far, see {@link getAllData}).
+   * They are the input data of the table:
+   * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
+  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
   /**
    * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
@@ -1132,16 +1334,37 @@ export abstract class EntitiesTableDataSource&lt;
   loadRecordConfig &#x3D; signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined);
   isLoading &#x3D; signal(false);
 
-  // NOTE: overriding only the setter would hide the inherited &#x60;get data&#x60;,
-  // so &#x60;dataSource.data&#x60; would return &#x60;undefined&#x60;. Provide both accessors.
-  override get data(): T[] {
-    return super.data;
-  }
+  /**
+   * Free-text search for the records.
+   * Only data sources that support it apply it (see {@link toolbarControls} for the field to enter it);
+   * &quot;Clear filters&quot; resets it.
+   */
+  readonly searchText &#x3D; signal(&quot;&quot;);
 
-  override set data(data: T[]) {
-    // expose signal containing current data
-    this.displayedData.set(data);
-    super.data &#x3D; data;
+  // --- Extension points for data sources of feature modules (all with defaults) ---
+
+  /**
+   * Options for this data source from the list or section config
+   * (the &#x60;config&#x60; of a &#x60;dataSource: { name, config }&#x60; entry), set by &#x60;resolveDataSource&#x60;.
+   * Data sources of feature modules read their own options from it; core data sources have none.
+   */
+  readonly config &#x3D; signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({});
+
+  /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
+  readonly usesPagination: Signal&lt;boolean&gt; &#x3D; signal(true);
+
+  /**
+   * controls a host may show in the list&#x27;s filter row, in this order (default: none).
+   * Keep the config objects stable: a new object reloads the control.
+   */
+  readonly toolbarControls: Signal&lt;DynamicComponentConfig[]&gt; &#x3D; signal([]);
+
+  /**
+   * Optional extras for the row of a record (default: none).
+   * Called by the table for every rendered row: read signals here, so that the rows update when they change.
+   */
+  rowOptionsOf(_record: T): RowOptions | undefined {
+    return undefined;
   }
 
   // Make sure only one update subscription is active

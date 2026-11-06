@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="321" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:321</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="325" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:325</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="323" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:323</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="327" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:327</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="319" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:319</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="323" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:323</a></div>
                                 </td>
                             </tr>
 
@@ -418,15 +418,19 @@ export class PaginatedDataSource&lt;
   }
 
   private page: { size?: number; index?: number } &#x3D; {};
-  override set paginator(paginator: MatPaginator) {
+  override set paginator(paginator: MatPaginator | null) {
     super.paginator &#x3D; paginator;
+    if (!paginator) {
+      // the paginator was removed (see ListPaginatorComponent)
+      return;
+    }
     merge(paginator.initialized, paginator.page).subscribe(() &#x3D;&gt; {
       this.page.size &#x3D; paginator.pageSize;
       this.page.index &#x3D; paginator.pageIndex;
       this.setRecords();
     });
   }
-  override get paginator(): MatPaginator {
+  override get paginator(): MatPaginator | null {
     return super.paginator;
   }
 

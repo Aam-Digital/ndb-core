@@ -161,6 +161,8 @@ Usage (only the directive is required, the rest is automatic):</p>
 group containing a component that itself uses a tab group), each must use a
 distinct <code>tabIndexKey</code>. Otherwise they share the same query param and reset
 each other on every navigation.</p>
+<p>The key starts with &quot;_&quot; like all URL state other than filters (see <a href="../injectables/UrlStateService.html">UrlStateService</a>),
+so a list on the same page does not treat the selected tab as a filter value.</p>
 
             </p>
 
@@ -267,19 +269,20 @@ each other on every navigation.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;tabIndex&quot;</code>
+                        <i>Default value : </i><code>&quot;_tabIndex&quot;</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/utils/tab-state/tab-state-memo.directive.ts:49</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/utils/tab-state/tab-state-memo.directive.ts:54</a></div>
                             </td>
                         </tr>
                 <tr>
                     <td class="col-md-4">
                         <div class="io-description"><p>The query param key under which this tab group&#39;s selected index is stored.
 Override this for tab groups nested within another tab group on the same
-route so they don&#39;t clobber each other&#39;s state.</p>
+route so they don&#39;t clobber each other&#39;s state.
+Start it with &quot;_&quot;, like all URL state other than filters (see <a href="../injectables/UrlStateService.html">UrlStateService</a>).</p>
 </div>
                     </td>
                 </tr>
@@ -296,7 +299,7 @@ route so they don&#39;t clobber each other&#39;s state.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ActivatedRoute, NavigationEnd, Router } from &quot;@angular/router&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NavigationEnd, Router } from &quot;@angular/router&quot;;
 import { MatTabGroup } from &quot;@angular/material/tabs&quot;;
 import {
   ChangeDetectorRef,
@@ -308,6 +311,7 @@ import {
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
 import { ViewComponentContext } from &quot;../../core/ui/abstract-view/view-component-context&quot;;
 import { filter, startWith } from &quot;rxjs/operators&quot;;
+import { UrlStateService } from &quot;#src/app/utils/url-state/url-state.service&quot;;
 
 /**
  * Memorizes the current state of a &#x60;TabGroup&#x60; (i.e. which tab currently is selected)
@@ -325,6 +329,9 @@ import { filter, startWith } from &quot;rxjs/operators&quot;;
  * group containing a component that itself uses a tab group), each must use a
  * distinct &#x60;tabIndexKey&#x60;. Otherwise they share the same query param and reset
  * each other on every navigation.
+ *
+ * The key starts with &quot;_&quot; like all URL state other than filters (see {@link UrlStateService}),
+ * so a list on the same page does not treat the selected tab as a filter value.
  */
 @UntilDestroy()
 @Directive({
@@ -334,7 +341,7 @@ import { filter, startWith } from &quot;rxjs/operators&quot;;
 })
 export class TabStateMemoDirective implements OnInit {
   private router &#x3D; inject(Router);
-  private route &#x3D; inject(ActivatedRoute);
+  private readonly urlState &#x3D; inject(UrlStateService);
   private tab &#x3D; inject(MatTabGroup);
   private cdr &#x3D; inject(ChangeDetectorRef);
   private viewContext &#x3D; inject(ViewComponentContext, { optional: true });
@@ -343,8 +350,9 @@ export class TabStateMemoDirective implements OnInit {
    * The query param key under which this tab group&#x27;s selected index is stored.
    * Override this for tab groups nested within another tab group on the same
    * route so they don&#x27;t clobber each other&#x27;s state.
+   * Start it with &quot;_&quot;, like all URL state other than filters (see {@link UrlStateService}).
    */
-  @Input() tabIndexKey &#x3D; &quot;tabIndex&quot;;
+  @Input() tabIndexKey &#x3D; &quot;_tabIndex&quot;;
 
   ngOnInit() {
     if (this.viewContext?.isDialog) {
@@ -353,7 +361,7 @@ export class TabStateMemoDirective implements OnInit {
     }
 
     // React to NavigationEnd (not just snapshot) so that navigating to
-    // ?tabIndex&#x3D;N while already on this page also updates the tab.
+    // ?_tabIndex&#x3D;N while already on this page also updates the tab.
     // startWith(null) covers the initial load synchronously.
     this.router.events
       .pipe(
@@ -363,7 +371,7 @@ export class TabStateMemoDirective implements OnInit {
       )
       .subscribe((navigationEvent) &#x3D;&gt; {
         const potentialNextTabIndex &#x3D; parseInt(
-          this.route.snapshot.queryParamMap.get(this.tabIndexKey),
+          this.urlState.getUrlParam(this.tabIndexKey),
           10,
         );
         if (
@@ -402,24 +410,17 @@ export class TabStateMemoDirective implements OnInit {
   }
 
   // Update the URL
-  private async updateURLQueryParams(value: number) {
+  private updateURLQueryParams(value: number) {
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
       return;
     }
-    if (
-      this.route.snapshot.queryParamMap.get(this.tabIndexKey) &#x3D;&#x3D;&#x3D; String(value)
-    ) {
+    if (this.urlState.getUrlParam(this.tabIndexKey) &#x3D;&#x3D;&#x3D; String(value)) {
       // URL already holds this state (e.g. the index was just restored from it)
       return;
     }
 
-    await this.router.navigate([&quot;.&quot;], {
-      relativeTo: this.route,
-      queryParams: { [this.tabIndexKey]: value },
-      replaceUrl: true,
-      queryParamsHandling: &quot;merge&quot;,
-    });
+    this.urlState.updateUrlParams({ [this.tabIndexKey]: String(value) });
   }
 }
 </code></pre>

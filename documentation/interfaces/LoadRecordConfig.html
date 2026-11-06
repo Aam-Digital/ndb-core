@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:31</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:33</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:35</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:37</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:46</a></div>
                                 </td>
                             </tr>
 
@@ -393,7 +393,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:40</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -412,8 +412,9 @@ or several candidates if it cannot be determined unambiguously</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MatTableDataSource } from &quot;@angular/material/table&quot;;
+import { Sort } from &quot;@angular/material/sort&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
-import { DestroyRef, effect, inject, signal } from &quot;@angular/core&quot;;
+import { DestroyRef, effect, inject, Signal, signal } from &quot;@angular/core&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 import { SortValueFns } from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
 import { LoaderMethod } from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
@@ -433,6 +434,7 @@ import {
   MatSnackBarRef,
   TextOnlySnackBar,
 } from &quot;@angular/material/snack-bar&quot;;
+import { DynamicComponentConfig } from &quot;#src/app/core/config/dynamic-components/dynamic-component-config.interface&quot;;
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -455,6 +457,20 @@ export interface LoadRecordConfig&lt;T extends Entity&gt; {
    * Select if a special loader method should be used for this entity
    */
   loaderMethod?: LoaderMethod;
+}
+
+/**
+ * Options for one row of the table, for its display and its selection, provided by the data source.
+ */
+export interface RowOptions {
+  /** component shown before the content of the first data cell */
+  prefix?: DynamicComponentConfig;
+  /** component shown after the content of the first data cell */
+  suffix?: DynamicComponentConfig;
+  /** extra CSS class for the row */
+  cssClass?: string;
+  /** whether the row can be selected for bulk actions (default: true) */
+  selectable?: boolean;
 }
 
 /** Why loading the records of a list failed, as named to the user. */
@@ -484,13 +500,20 @@ export abstract class EntitiesTableDataSource&lt;
 
   dataFilter &#x3D; signal&lt;DataFilter&lt;T&gt;&gt;({});
   sortValueFns &#x3D; signal&lt;SortValueFns&lt;T&gt;&gt;({});
-  allRecords &#x3D; signal&lt;T[]&gt;([]);
-  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
   /**
-   * The records handed to the table as input data, in the order they were loaded.
-   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   * The sort that the table applies (set by the table), as a signal:
+   * for data sources that arrange the rows themselves (the &#x60;sort&#x60; of the table only offers events).
    */
-  displayedData &#x3D; signal&lt;T[]&gt;([]);
+  readonly effectiveSort &#x3D; signal&lt;Sort | undefined&gt;(undefined);
+  /** All loaded records (only filled by data sources that hold all records in memory). */
+  allRecords &#x3D; signal&lt;T[]&gt;([]);
+  /**
+   * The records passing all filters (including the free-text {@link searchText}), across all pages,
+   * in the order they were loaded (with server-side paging only the pages loaded so far, see {@link getAllData}).
+   * They are the input data of the table:
+   * sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
+  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
   /**
    * The records as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
@@ -499,16 +522,37 @@ export abstract class EntitiesTableDataSource&lt;
   loadRecordConfig &#x3D; signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined);
   isLoading &#x3D; signal(false);
 
-  // NOTE: overriding only the setter would hide the inherited &#x60;get data&#x60;,
-  // so &#x60;dataSource.data&#x60; would return &#x60;undefined&#x60;. Provide both accessors.
-  override get data(): T[] {
-    return super.data;
-  }
+  /**
+   * Free-text search for the records.
+   * Only data sources that support it apply it (see {@link toolbarControls} for the field to enter it);
+   * &quot;Clear filters&quot; resets it.
+   */
+  readonly searchText &#x3D; signal(&quot;&quot;);
 
-  override set data(data: T[]) {
-    // expose signal containing current data
-    this.displayedData.set(data);
-    super.data &#x3D; data;
+  // --- Extension points for data sources of feature modules (all with defaults) ---
+
+  /**
+   * Options for this data source from the list or section config
+   * (the &#x60;config&#x60; of a &#x60;dataSource: { name, config }&#x60; entry), set by &#x60;resolveDataSource&#x60;.
+   * Data sources of feature modules read their own options from it; core data sources have none.
+   */
+  readonly config &#x3D; signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({});
+
+  /** false: the table shows all rows and no paginator (may change, e.g. with an option of the data source) */
+  readonly usesPagination: Signal&lt;boolean&gt; &#x3D; signal(true);
+
+  /**
+   * controls a host may show in the list&#x27;s filter row, in this order (default: none).
+   * Keep the config objects stable: a new object reloads the control.
+   */
+  readonly toolbarControls: Signal&lt;DynamicComponentConfig[]&gt; &#x3D; signal([]);
+
+  /**
+   * Optional extras for the row of a record (default: none).
+   * Called by the table for every rendered row: read signals here, so that the rows update when they change.
+   */
+  rowOptionsOf(_record: T): RowOptions | undefined {
+    return undefined;
   }
 
   // Make sure only one update subscription is active

@@ -156,7 +156,8 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>A data source that loads all data at once and sort/filters/paginates fully in-memory</p>
+                <p>A data source that loads all data at once and sort/filters/paginates fully in-memory.
+It also applies the free-text <a href="searchText">searchText</a> and offers the field to enter it as toolbar control.</p>
 
             </p>
 
@@ -203,8 +204,9 @@
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier"></span>
-                                <a href="#filterPredicate" >filterPredicate</a>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#freeTextFilterControl" >freeTextFilterControl</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -213,7 +215,18 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#toolbarControls" >toolbarControls</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#allRecords" >allRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#config" >config</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -221,7 +234,8 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#displayedData" >displayedData</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#effectiveSort" >effectiveSort</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -253,7 +267,17 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#searchText" >searchText</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#usesPagination" >usesPagination</a>
                             </li>
                         </ul>
                     </td>
@@ -272,13 +296,13 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
-                                <a href="#_filterData" >_filterData</a>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllData" >getAllData</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Async</span>
-                                <a href="#getAllData" >getAllData</a>
+                                    <span class="modifier">Protected</span>
+                                <a href="#getFilterPredicate" >getFilterPredicate</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -297,6 +321,10 @@
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#listenToEntityUpdates" >listenToEntityUpdates</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#rowOptionsOf" >rowOptionsOf</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -326,7 +354,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:42</a></div>
                             </td>
                         </tr>
 
@@ -343,31 +371,41 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="filterPredicate"></a>
+                    <a name="freeTextFilterControl"></a>
                     <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>filterPredicate</b></span>
-                        <a href="#filterPredicate"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>freeTextFilterControl</b></span>
+                        <a href="#freeTextFilterControl"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
+                        <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        <i>Default value : </i><code>{
+    component: &quot;FreeTextFilter&quot;,
+    config: { dataSource: this },
+  }</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:24</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:28</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>the &quot;Filter&quot; field to enter the <a href="searchText">searchText</a>, for subclasses that offer further toolbar controls</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -396,7 +434,49 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toolbarControls"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>toolbarControls</b></span>
+                        <a href="#toolbarControls"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >Signal&lt;DynamicComponentConfig[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal([
+    this.freeTextFilterControl,
+  ])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:33</a></code>
+</div>
                         </td>
                     </tr>
 
@@ -433,11 +513,64 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:74</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:96</a></code>
 </div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>All loaded records (only filled by data sources that hold all records in memory).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="config"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>config</b></span>
+                        <a href="#config"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:126</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Options for this data source from the list or section config
+(the <code>config</code> of a <code>dataSource: { name, config }</code> entry), set by <code>resolveDataSource</code>.
+Data sources of feature modules read their own options from it; core data sources have none.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -471,7 +604,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:72</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:88</a></code>
 </div>
                         </td>
                     </tr>
@@ -483,10 +616,11 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="displayedData"></a>
+                    <a name="effectiveSort"></a>
                     <span class="name">
-                        <span ><b>displayedData</b></span>
-                        <a href="#displayedData"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>effectiveSort</b></span>
+                        <a href="#effectiveSort"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -498,7 +632,7 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                        <i>Default value : </i><code>signal&lt;Sort | undefined&gt;(undefined)</code>
                     </td>
                 </tr>
                         <tr>
@@ -509,15 +643,15 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:80</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:94</a></code>
 </div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The records handed to the table as input data, in the order they were loaded.
-Sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+                    <div class="io-description"><p>The sort that the table applies (set by the table), as a signal:
+for data sources that arrange the rows themselves (the <code>sort</code> of the table only offers events).</p>
 </div>
                 </td>
             </tr>
@@ -556,7 +690,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:65</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:81</a></code>
 </div>
                         </td>
                     </tr>
@@ -594,11 +728,20 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:75</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:103</a></code>
 </div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records passing all filters (including the free-text <a href="searchText">searchText</a>), across all pages,
+in the order they were loaded (with server-side paging only the pages loaded so far, see <a href="getAllData">getAllData</a>).
+They are the input data of the table:
+sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -632,7 +775,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:87</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:110</a></code>
 </div>
                         </td>
                     </tr>
@@ -671,7 +814,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:143</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:187</a></code>
 </div>
                         </td>
                     </tr>
@@ -716,7 +859,7 @@ This allows stale requests to be detected.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:86</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -755,7 +898,7 @@ This allows stale requests to be detected.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:85</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:108</a></code>
 </div>
                         </td>
                     </tr>
@@ -764,6 +907,53 @@ This allows stale requests to be detected.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>The records as currently rendered by the table:
 filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchText"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>searchText</b></span>
+                        <a href="#searchText"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:117</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Free-text search for the records.
+Only data sources that support it apply it (see <a href="toolbarControls">toolbarControls</a> for the field to enter it);
+&quot;Clear filters&quot; resets it.</p>
 </div>
                 </td>
             </tr>
@@ -800,11 +990,56 @@ filtered, sorted and reduced to the current page.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:73</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:89</a></code>
 </div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="usesPagination"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>usesPagination</b></span>
+                        <a href="#usesPagination"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:129</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>false: the table shows all rows and no paginator (may change, e.g. with an option of the data source)</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -815,75 +1050,6 @@ filtered, sorted and reduced to the current page.</p>
     <h3 id="methods">
         Methods
     </h3>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="_filterData"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>_filterData</b></span>
-                        <a href="#_filterData"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>_filterData(data: T[])</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="93"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:93</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>data</td>
-                                            <td>
-                                                        <code>T[]</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>T[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -913,7 +1079,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:48</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:73</a></code>
 </div>
                         </td>
                     </tr>
@@ -968,6 +1134,79 @@ filtered, sorted and reduced to the current page.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getFilterPredicate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>getFilterPredicate</b></span>
+                        <a href="#getFilterPredicate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getFilterPredicate(filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a record passes the given filter (the free-text search is applied on top of it).
+Data sources of feature modules can override this to narrow or reinterpret the filter;
+signals read here are tracked, so a change of them filters the records again.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="loadRecords"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -993,7 +1232,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:44</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:69</a></code>
 </div>
                         </td>
                     </tr>
@@ -1040,7 +1279,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:79</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:104</a></code>
 </div>
                         </td>
                     </tr>
@@ -1115,7 +1354,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:246</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:290</a></code>
 </div>
                         </td>
                     </tr>
@@ -1128,6 +1367,82 @@ filtered, sorted and reduced to the current page.</p>
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rowOptionsOf"></a>
+                    <span class="name">
+                        <span ><b>rowOptionsOf</b></span>
+                        <a href="#rowOptionsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>rowOptionsOf(_record: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:141</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Optional extras for the row of a record (default: none).
+Called by the table for every rendered row: read signals here, so that the rows update when they change.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_record</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/RowOptions.html" target="_self" >RowOptions | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1160,7 +1475,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:156</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -1199,7 +1514,7 @@ indicator until the load finishes.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { effect, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { effect, inject, Signal, signal } from &quot;@angular/core&quot;;
 import { FilterService } from &quot;#src/app/core/filter/filter.service&quot;;
 import { entityFilterPredicate } from &quot;#src/app/core/filter/filter-generator/filter-predicate&quot;;
 import { tableSort } from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
@@ -1210,9 +1525,12 @@ import {
 } from &quot;#src/app/core/entity/model/entity-update&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { EntitiesTableDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { DynamicComponentConfig } from &quot;#src/app/core/config/dynamic-components/dynamic-component-config.interface&quot;;
 
 /**
- * A data source that loads all data at once and sort/filters/paginates fully in-memory
+ * A data source that loads all data at once and sort/filters/paginates fully in-memory.
+ * It also applies the free-text {@link searchText} and offers the field to enter it as toolbar control.
  */
 export class InMemoryDataSource&lt;
   T extends Entity,
@@ -1222,8 +1540,15 @@ export class InMemoryDataSource&lt;
     optional: true,
   });
 
-  override filterPredicate &#x3D; (data: T, filter: string) &#x3D;&gt;
-    entityFilterPredicate(data, filter);
+  /** the &quot;Filter&quot; field to enter the {@link searchText}, for subclasses that offer further toolbar controls */
+  protected readonly freeTextFilterControl: DynamicComponentConfig &#x3D; {
+    component: &quot;FreeTextFilter&quot;,
+    config: { dataSource: this },
+  };
+
+  override readonly toolbarControls: Signal&lt;DynamicComponentConfig[]&gt; &#x3D; signal([
+    this.freeTextFilterControl,
+  ]);
 
   override sortData &#x3D; (data, sort) &#x3D;&gt;
     tableSort&lt;T, keyof T&gt;(data, {
@@ -1236,10 +1561,25 @@ export class InMemoryDataSource&lt;
     super();
     effect(() &#x3D;&gt; {
       const records &#x3D; this.allRecords();
-      const filter &#x3D; this.dataFilter();
-      const predicate &#x3D; this.filterService.getFilterPredicate(filter);
-      this.filteredRecords.set(records.filter(predicate));
+      const predicate &#x3D; this.getFilterPredicate(this.dataFilter());
+      const searchText &#x3D; this.searchText().trim().toLowerCase();
+      this.filteredRecords.set(
+        records.filter(
+          (record) &#x3D;&gt;
+            predicate(record) &amp;&amp;
+            (!searchText || entityFilterPredicate(record, searchText)),
+        ),
+      );
     });
+  }
+
+  /**
+   * Whether a record passes the given filter (the free-text search is applied on top of it).
+   * Data sources of feature modules can override this to narrow or reinterpret the filter;
+   * signals read here are tracked, so a change of them filters the records again.
+   */
+  protected getFilterPredicate(filter: DataFilter&lt;T&gt;): (record: T) &#x3D;&gt; boolean {
+    return this.filterService.getFilterPredicate(filter);
   }
 
   protected override loadRecords(): Promise&lt;any&gt; {
@@ -1251,8 +1591,8 @@ export class InMemoryDataSource&lt;
       return this.allRecords();
     }
 
-    // including free-text filter and filter predicate
-    return [...this.filteredData];
+    // including the free-text search
+    return [...this.filteredRecords()];
   }
 
   private getRecords() {
@@ -1289,15 +1629,6 @@ export class InMemoryDataSource&lt;
       );
     }
     this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
-  }
-
-  override _filterData(data: T[]): T[] {
-    const filtered &#x3D; super._filterData(data);
-    // Aligning displayed data with the freetext filter.
-    // Making a safe call (...?.), because the method is already called in the
-    // constructor before &#x60;this.displayedData&#x60; is initialized
-    this.displayedData?.set(filtered);
-    return filtered;
   }
 }
 </code></pre>

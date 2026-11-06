@@ -210,11 +210,17 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#dataFilter" >dataFilter</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#displayedData" >displayedData</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#effectiveSort" >effectiveSort</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -246,7 +252,22 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#searchText" >searchText</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#toolbarControls" >toolbarControls</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#usesPagination" >usesPagination</a>
                             </li>
                         </ul>
                     </td>
@@ -300,6 +321,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#rowOptionsOf" >rowOptionsOf</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#setRecords" >setRecords</a>
                             </li>
@@ -347,7 +372,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:90</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:94</a></div>
                             </td>
                         </tr>
 
@@ -385,7 +410,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:82</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -468,11 +493,64 @@ should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:74</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:96</a></code>
 </div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>All loaded records (only filled by data sources that hold all records in memory).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="config"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>config</b></span>
+                        <a href="#config"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:126</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Options for this data source from the list or section config
+(the <code>config</code> of a <code>dataSource: { name, config }</code> entry), set by <code>resolveDataSource</code>.
+Data sources of feature modules read their own options from it; core data sources have none.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -506,7 +584,7 @@ should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:72</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:88</a></code>
 </div>
                         </td>
                     </tr>
@@ -518,10 +596,11 @@ should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="displayedData"></a>
+                    <a name="effectiveSort"></a>
                     <span class="name">
-                        <span ><b>displayedData</b></span>
-                        <a href="#displayedData"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>effectiveSort</b></span>
+                        <a href="#effectiveSort"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -533,7 +612,7 @@ should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                        <i>Default value : </i><code>signal&lt;Sort | undefined&gt;(undefined)</code>
                     </td>
                 </tr>
                         <tr>
@@ -544,15 +623,15 @@ should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:80</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:94</a></code>
 </div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The records handed to the table as input data, in the order they were loaded.
-Sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+                    <div class="io-description"><p>The sort that the table applies (set by the table), as a signal:
+for data sources that arrange the rows themselves (the <code>sort</code> of the table only offers events).</p>
 </div>
                 </td>
             </tr>
@@ -591,7 +670,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:65</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:81</a></code>
 </div>
                         </td>
                     </tr>
@@ -629,11 +708,20 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:75</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:103</a></code>
 </div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records passing all filters (including the free-text <a href="searchText">searchText</a>), across all pages,
+in the order they were loaded (with server-side paging only the pages loaded so far, see <a href="getAllData">getAllData</a>).
+They are the input data of the table:
+sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -667,7 +755,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:87</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:110</a></code>
 </div>
                         </td>
                     </tr>
@@ -706,7 +794,7 @@ Sorting and pagination are applied on top of this by the table, see <a href="ren
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:143</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:187</a></code>
 </div>
                         </td>
                     </tr>
@@ -751,7 +839,7 @@ This allows stale requests to be detected.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:86</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -790,7 +878,7 @@ This allows stale requests to be detected.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:85</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:108</a></code>
 </div>
                         </td>
                     </tr>
@@ -799,6 +887,53 @@ This allows stale requests to be detected.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>The records as currently rendered by the table:
 filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchText"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>searchText</b></span>
+                        <a href="#searchText"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:117</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Free-text search for the records.
+Only data sources that support it apply it (see <a href="toolbarControls">toolbarControls</a> for the field to enter it);
+&quot;Clear filters&quot; resets it.</p>
 </div>
                 </td>
             </tr>
@@ -835,11 +970,102 @@ filtered, sorted and reduced to the current page.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:73</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:89</a></code>
 </div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toolbarControls"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>toolbarControls</b></span>
+                        <a href="#toolbarControls"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >Signal&lt;DynamicComponentConfig[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:135</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>controls a host may show in the list&#39;s filter row, in this order (default: none).
+Keep the config objects stable: a new object reloads the control.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="usesPagination"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>usesPagination</b></span>
+                        <a href="#usesPagination"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:129</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>false: the table shows all rows and no paginator (may change, e.g. with an option of the data source)</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -873,8 +1099,8 @@ filtered, sorted and reduced to the current page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="161"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:161</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:165</a></div>
                         </td>
                     </tr>
 
@@ -978,7 +1204,7 @@ cursor in it as long as a short page still means the end of the data.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:180</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:184</a></code>
 </div>
                         </td>
                     </tr>
@@ -1059,7 +1285,7 @@ cursor in it as long as a short page still means the end of the data.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:120</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:124</a></code>
 </div>
                         </td>
                     </tr>
@@ -1106,7 +1332,7 @@ cursor in it as long as a short page still means the end of the data.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:206</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:210</a></code>
 </div>
                         </td>
                     </tr>
@@ -1145,8 +1371,8 @@ cursor in it as long as a short page still means the end of the data.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="108"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:108</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -1195,7 +1421,7 @@ cases the existing bookmark chain is no longer valid.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:246</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:290</a></code>
 </div>
                         </td>
                     </tr>
@@ -1208,6 +1434,82 @@ cases the existing bookmark chain is no longer valid.</p>
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rowOptionsOf"></a>
+                    <span class="name">
+                        <span ><b>rowOptionsOf</b></span>
+                        <a href="#rowOptionsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>rowOptionsOf(_record: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:141</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Optional extras for the row of a record (default: none).
+Called by the table for every rendered row: read signals here, so that the rows update when they change.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_record</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/RowOptions.html" target="_self" >RowOptions | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1240,7 +1542,7 @@ cases the existing bookmark chain is no longer valid.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:156</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -1362,13 +1664,13 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:77</a></div>
                                 </td>
                             </tr>
 
                 <tr>
                     <td class="col-md-4">
-                        <span class="accessor"><b>set</b><code>paginator(paginator: MatPaginator)</code></span>
+                        <span class="accessor"><b>set</b><code>paginator(paginator: MatPaginator | null)</code></span>
                     </td>
                 </tr>
                             <tr>
@@ -1394,7 +1696,7 @@ indicator until the load finishes.</p>
                                                             <td>paginator</td>
                                                     
                                                             <td>
-                                                                        <code>MatPaginator</code>
+                                                                        <code>MatPaginator | null</code>
                                                             </td>
                                                     
                                                         <td>
@@ -1482,15 +1784,19 @@ export class PaginatedDataSource&lt;
   }
 
   private page: { size?: number; index?: number } &#x3D; {};
-  override set paginator(paginator: MatPaginator) {
+  override set paginator(paginator: MatPaginator | null) {
     super.paginator &#x3D; paginator;
+    if (!paginator) {
+      // the paginator was removed (see ListPaginatorComponent)
+      return;
+    }
     merge(paginator.initialized, paginator.page).subscribe(() &#x3D;&gt; {
       this.page.size &#x3D; paginator.pageSize;
       this.page.index &#x3D; paginator.pageIndex;
       this.setRecords();
     });
   }
-  override get paginator(): MatPaginator {
+  override get paginator(): MatPaginator | null {
     return super.paginator;
   }
 

@@ -191,6 +191,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="additional-documentation/how-to-guides/display-related-entities.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Display Related Entities</a>
                                             </li>
                                             <li class="link for-chapter2">
+                                                <a href="additional-documentation/how-to-guides/extend-entity-lists-and-tables.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Extend Entity Lists and Tables</a>
+                                            </li>
+                                            <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/log-errors.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Log Errors</a>
                                             </li>
                                             <li class="link for-chapter2">
@@ -1314,6 +1317,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/FormComponent.html" data-type="entity-link" >FormComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/FreeTextFilterComponent.html" data-type="entity-link" >FreeTextFilterComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/GotoThirdPartySystemComponent.html" data-type="entity-link" >GotoThirdPartySystemComponent</a>
                             </li>
                             <li class="link">
@@ -2139,6 +2145,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/DatabaseIndexingService.html" data-type="entity-link" >DatabaseIndexingService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/DataSourceRegistry.html" data-type="entity-link" >DataSourceRegistry</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/DataTransformationService.html" data-type="entity-link" >DataTransformationService</a>
                                 </li>
                                 <li class="link">
@@ -2400,9 +2409,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/SystemResetService.html" data-type="entity-link" >SystemResetService</a>
                                 </li>
                                 <li class="link">
-                                    <a href="injectables/TableStateUrlService.html" data-type="entity-link" >TableStateUrlService</a>
-                                </li>
-                                <li class="link">
                                     <a href="injectables/TemplateExportApiService.html" data-type="entity-link" >TemplateExportApiService</a>
                                 </li>
                                 <li class="link">
@@ -2422,6 +2428,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/UpdateManagerService.html" data-type="entity-link" >UpdateManagerService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/UrlStateService.html" data-type="entity-link" >UrlStateService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/UserAccountActionGuardService.html" data-type="entity-link" >UserAccountActionGuardService</a>
@@ -2695,6 +2704,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/DatabaseRules.html" data-type="entity-link" >DatabaseRules</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/DataSourceConfig.html" data-type="entity-link" >DataSourceConfig&lt;C extends object &#x3D; Record&lt;string, unknown&gt;&gt;</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/DateRangeDatabaseValue.html" data-type="entity-link" >DateRangeDatabaseValue</a>
@@ -3193,6 +3205,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/RoleWithPermissions.html" data-type="entity-link" >RoleWithPermissions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RowOptions.html" data-type="entity-link" >RowOptions</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/RuleFragment.html" data-type="entity-link" >RuleFragment</a>
