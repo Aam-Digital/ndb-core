@@ -1,0 +1,8 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+:host {
+  flex-shrink: 0;
+  margin-inline-start: sizes.$x-small;
+  color: colors.$muted;
+}

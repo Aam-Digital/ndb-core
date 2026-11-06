@@ -18,6 +18,7 @@ import { fileComponents } from "./features/file/file-components";
 import { locationComponents } from "./features/location/location-components";
 import { matchingEntitiesComponents } from "./features/matching-entities/matching-entities-components";
 import { reportingComponents } from "./features/reporting/reporting-components";
+import { hierarchyComponents } from "./features/hierarchy/hierarchy-components";
 
 import { AddressGpsLocationComponent } from "#src/app/features/location/address-gps-location/address-gps-location.component";
 import { AdminConfigCleanupComponent } from "#src/app/core/admin/config-cleanup/admin-config-cleanup.component";
@@ -97,6 +98,7 @@ const REGISTERED: ComponentTuple[] = [
   ...locationComponents,
   ...matchingEntitiesComponents,
   ...reportingComponents,
+  ...hierarchyComponents,
 ];
 
 /**
@@ -106,6 +108,7 @@ const REGISTERED: ComponentTuple[] = [
  * for registry resolution only and carry their own spec for their actual behaviour.
  */
 const NEEDS_BESPOKE_SETUP = new Set([
+  "AdminHierarchyFields",
   "AdminMatchingEntities",
   "AttendanceWeekDashboardSettings",
   "ConflictResolution",
@@ -134,6 +137,10 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EmbeddedArrayData",
   "EntityList",
   "FreeTextFilter",
+  "HierarchyChildCount",
+  "HierarchyExpandAll",
+  "HierarchySelect",
+  "HierarchyTreeCell",
   "ImportantNotesDashboard",
   "ImportantNotesDashboardSettings",
   "NotesDashboardSettings",

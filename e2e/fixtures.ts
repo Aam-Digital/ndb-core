@@ -14,6 +14,7 @@ import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configur
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
+import { DateRangeDatatype } from "#src/app/core/basic-datatypes/date-range/date-range.datatype.js";
 import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
@@ -321,6 +322,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
       { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
       {

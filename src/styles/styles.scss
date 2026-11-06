@@ -20,3 +20,6 @@
    (currently, it is not possible to use styles in a directive) */
 @use "../app/core/common-components/border-highlight/border-highlight.directive";
 @use "../app/core/alerts/alert-style-classes";
+
+/* Rows of the entities table decorated by feature modules */
+@use "../app/features/hierarchy/hierarchy-rows";

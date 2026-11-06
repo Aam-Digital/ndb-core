@@ -31,6 +31,10 @@ $border-color: $grey-darker;
 /* color for inactive or archived elements */
 $inactive: grey;
 
+/* text of elements only shown as context for others (e.g. the parent of a filter match):
+   darker than $inactive, so it can be told apart from archived records and keeps a contrast of 4.5:1 on white */
+$context: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 700);
+
 /* background for the main view */
 $background: white;
 /* background for the sidebar */
