@@ -37,10 +37,15 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
     .getByRole("textbox")
     .fill(NEW_CHILD_NAME);
 
-  await page.locator("#entity-field__phone").getByRole("textbox").fill("0123");
+  // The phone pattern of the demo config is only a warning:
+  // saving asks to confirm, but the record can still be saved.
+  await page.locator("#entity-field__phone").getByRole("textbox").fill("12ab");
 
-  // Save the new record.
   await page.getByRole("button", { name: "Save", exact: true }).click();
+  const warningDialog = page.getByRole("dialog");
+  await expect(warningDialog).toContainText("Save anyway?");
+  await expect(warningDialog).toContainText("Enter a valid phone number");
+  await warningDialog.getByRole("button", { name: "Save anyway" }).click();
 
   // Save completes when the form switches back to view mode (Edit button
   // re-appears) and the page heading updates to the entity's toString.
@@ -58,7 +63,7 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
   await page.getByRole("cell", { name: NEW_CHILD_NAME }).click();
   await expect(
     page.locator("#entity-field__phone").getByRole("textbox"),
-  ).toHaveValue("0123");
+  ).toHaveValue("12ab");
 
   // Delete the record via the entity actions menu (ellipsis button in
   // the entity-actions-menu component on the details page).
