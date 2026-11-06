@@ -21,6 +21,7 @@ import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { ChangeSet } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { SessionSubject } from "#src/app/core/session/auth/session-info";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import {
   AffectedEntitiesCalculation,
   AffectedEntitiesContext,
@@ -45,6 +46,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly sessionInfo = inject(SessionSubject, { optional: true });
+  private readonly alertService = inject(AlertService);
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -70,6 +72,27 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       entity,
       before: entityBeforeChanges,
     });
+  }
+
+  /**
+   * Apply the rules after the entity was saved, without waiting for the user to confirm the updates
+   * (e.g. so that a popup in which the entity was saved can close right away).
+   * A failure is reported and shown to the user; the entity itself stays saved.
+   * @param entity - The saved entity
+   * @param entityBeforeChanges The state of the entity before it was saved
+   */
+  public applyRulesAfterSave(entity: Entity, entityBeforeChanges: Entity) {
+    this.applyRulesToDependentEntities(entity, entityBeforeChanges).catch(
+      (error) => {
+        Logging.error(
+          "Could not update the linked records after saving",
+          error,
+        );
+        this.alertService.addDanger(
+          $localize`The linked records could not be updated.`,
+        );
+      },
+    );
   }
 
   /**
