@@ -72,7 +72,7 @@ describe("AssistantButtonComponent", () => {
     "offers the setup on startup only for a system without a config (uninitialized: $uninitialized)",
     async ({ uninitialized, opensSetup }) => {
       // a config that could not be loaded also has no config available, but must
-      // not offer to set up the existing system again (see issue #4550)
+      // not offer to set up the existing system again
       mockConfigService.isSystemUninitialized.mockReturnValue(uninitialized);
       mockAssistantService.openAssistant.mockResolvedValue(undefined);
 
