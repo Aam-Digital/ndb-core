@@ -355,9 +355,7 @@ test("Bulk actions on selected records", async ({ page }) => {
       .getByRole("button", { name: "Update related records", exact: true })
       .click();
     await expect(updateDialog).not.toBeVisible();
-    await expect(
-      page.locator("simple-snack-bar").filter({ hasText: "2 Children edited" }),
-    ).toBeVisible();
+    await expect(page.getByText("2 Children edited")).toBeVisible();
     await openSchool();
     const schoolCenters = page.locator("#entity-field__enumMulti");
     await expect(schoolCenters).toContainText(CENTER_BARABAZAR.label);
@@ -367,11 +365,8 @@ test("Bulk actions on selected records", async ({ page }) => {
     await updateDialog
       .getByRole("button", { name: "Update related records", exact: true })
       .click();
-    await page
-      .locator("simple-snack-bar")
-      .filter({ hasText: '"BulkEdit Child A" edited' })
-      .getByRole("button", { name: "Undo" })
-      .click();
+    await expect(page.getByText('"BulkEdit Child A" edited')).toBeVisible();
+    await page.getByRole("button", { name: "Undo" }).click();
     await openSchool();
     await expect(schoolCenters).toContainText(CENTER_BARABAZAR.label);
     await expect(schoolCenters).not.toContainText(CENTER_ALIPORE.label);
@@ -420,9 +415,7 @@ test("Bulk actions on selected records", async ({ page }) => {
     await chooseBulkAction(page, "Archive");
 
     // A snackbar confirms the bulk archive.
-    await expect(
-      page.locator("simple-snack-bar").filter({ hasText: /archived/ }),
-    ).toBeVisible();
+    await expect(page.getByText(/2 Children archived/)).toBeVisible();
     await argosScreenshot(page, "bulk-archive-confirmation");
 
     // Both records are hidden from the default (active-only) list.
