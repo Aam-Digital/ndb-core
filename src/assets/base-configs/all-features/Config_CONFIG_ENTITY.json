@@ -1532,8 +1532,8 @@
           "label": "Phone Number",
           "validators": {
             "pattern": {
-              "pattern": "^\\+?[0-9 ]{6,15}$",
-              "message": "Enter a phone number (digits only)"
+              "pattern": "^[+0-9 ()/-]+$",
+              "message": "Enter a valid phone number"
             },
             "_warningOnly": [
               "pattern"
