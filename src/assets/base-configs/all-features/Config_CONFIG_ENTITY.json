@@ -2253,8 +2253,10 @@
           "dataType": "percentage",
           "label": "Result",
           "validators": {
-            "min": 0,
-            "max": 100
+            "range": {
+              "min": 0,
+              "max": 100
+            }
           }
         }
       }

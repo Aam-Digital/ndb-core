@@ -3,18 +3,12 @@
  * to type configs written in code. Each is implemented by a registered `FieldValidator`.
  */
 export const DYNAMIC_VALIDATORS = [
-  /** type: number */
-  "min",
-  /** type: number */
-  "max",
-  /** type: string/date */
-  "minDate",
-  /** type: string/date */
-  "maxDate",
-  /** type: number */
-  "minAge",
-  /** type: number */
-  "maxAge",
+  /** type: RangeConfig<number>, e.g. `{ min: 0, max: 100 }` (either end can be left out) */
+  "range",
+  /** type: RangeConfig of dates (or "$now" for today), e.g. `{ min: "2020-01-01", max: "$now" }` */
+  "dateRange",
+  /** type: RangeConfig<number> of years, the age calculated from a date of birth, e.g. `{ min: 6, max: 18 }` */
+  "ageRange",
   /** type: boolean */
   "required",
   /** type: boolean; validate field value is unique among entities of same type */
@@ -65,12 +59,12 @@ export const WARNING_ONLY_KEY = "_warningOnly";
  * the validators config. This is an object where the key
  * must be one of the `DynamicValidators`. The value to that key
  * is specific to that validator.
- * For example, the `max` validator requires a number while the `pattern`
+ * For example, the `range` validator requires `{ min?, max? }` while the `pattern`
  * validator requires a string or regex.
  * Compliant examples:
  * <pre>
  * {
- *   min: 5,
+ *   range: { min: 5 },
  *   pattern: "[a-z]*",
  * }
  * </pre>
@@ -84,7 +78,7 @@ export const WARNING_ONLY_KEY = "_warningOnly";
  * Non-compliant examples:
  * <pre>
  * {
- *   min: "abc",
+ *   range: "abc",
  *   rabbit: true
  * }
  * </pre>

@@ -1,89 +1,72 @@
 <form class="validator-form-cell flex-column" [formGroup]="validatorForm()">
-  @if (applicableValidators().has("min")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
+  @if (applicableValidators().has("range")) {
+    <div
+      class="flex-row flex-wrap align-center gap-regular"
+      formGroupName="range"
+    >
       <mat-form-field class="number-field">
         <mat-label i18n>Minimum Value</mat-label>
         <input formControlName="min" matInput type="number" />
       </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'min' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("max")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field class="number-field">
         <mat-label i18n>Maximum Value</mat-label>
         <input formControlName="max" matInput type="number" />
       </mat-form-field>
       <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'max' }"
+        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'range' }"
       />
     </div>
   }
 
-  @if (applicableValidators().has("minAge")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
+  @if (applicableValidators().has("ageRange")) {
+    <div
+      class="flex-row flex-wrap align-center gap-regular"
+      formGroupName="ageRange"
+    >
       <mat-form-field floatLabel="always">
         <mat-label i18n>Minimum Age (Years)</mat-label>
-        <input formControlName="minAge" matInput type="number" />
-        <app-help-button
-          matSuffix
-          text="Enter the minimum allowed age in years. This is independent from the date limits."
-          i18n-text
-        ></app-help-button>
+        <input formControlName="min" matInput type="number" />
       </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'minAge' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("maxAge")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         <mat-label i18n>Maximum Age (Years)</mat-label>
-        <input formControlName="maxAge" matInput type="number" />
+        <input formControlName="max" matInput type="number" />
         <app-help-button
           matSuffix
-          text="Enter the maximum allowed age in years. This is independent from the date limits."
+          text="The allowed age in years, calculated from the date of birth. This is independent from the date limits."
           i18n-text
         ></app-help-button>
       </mat-form-field>
       <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'maxAge' }"
+        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'ageRange' }"
       />
     </div>
   }
 
-  @if (applicableValidators().has("minDate")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
+  @if (applicableValidators().has("dateRange")) {
+    <div
+      class="flex-row flex-wrap align-center gap-regular"
+      formGroupName="dateRange"
+    >
       <mat-form-field floatLabel="always">
         @if (isMonthType()) {
           <mat-label i18n>Minimum Month</mat-label>
-          <app-edit-month formControlName="minDate"></app-edit-month>
+          <app-edit-month formControlName="min"></app-edit-month>
         } @else {
           <mat-label i18n>Minimum Date</mat-label>
-          <app-edit-date formControlName="minDate"></app-edit-date>
+          <app-edit-date formControlName="min"></app-edit-date>
         }
       </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'minDate' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("maxDate")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         @if (isMonthType()) {
           <mat-label i18n>Maximum Month</mat-label>
-          <app-edit-month formControlName="maxDate"></app-edit-month>
+          <app-edit-month formControlName="max"></app-edit-month>
         } @else {
           <mat-label i18n>Maximum Date</mat-label>
-          <app-edit-date formControlName="maxDate"></app-edit-date>
+          <app-edit-date formControlName="max"></app-edit-date>
         }
       </mat-form-field>
       <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'maxDate' }"
+        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'dateRange' }"
       />
     </div>
   }

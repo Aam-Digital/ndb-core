@@ -42,6 +42,16 @@ const NAVIGATION_MENU_CONFIG_ID = "navigationMenu";
  * Problems are not reported to remote monitoring: they are instance configuration,
  * not bugs in our code (see "Error Handling & Remote Logging" in AGENTS.md).
  */
+/** old min / max validators and the range validator replacing them */
+const RENAMED_TO_RANGE: Record<string, string> = {
+  min: "range",
+  max: "range",
+  minDate: "dateRange",
+  maxDate: "dateRange",
+  minAge: "ageRange",
+  maxAge: "ageRange",
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -166,11 +176,7 @@ export class ConfigValidationService {
       }
       const rule = rules.rules.get(key);
       if (!rule) {
-        return [
-          key === "regex"
-            ? $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`
-            : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
-        ];
+        return [this.unknownValidatorProblem(key)];
       }
       const problems = rule.validateConfig(value, schema, datatype);
       // without a dataType (e.g. overriding a field of the record type's code) the type is not known here
@@ -186,6 +192,17 @@ export class ConfigValidationService {
       }
       return problems;
     });
+  }
+
+  private unknownValidatorProblem(key: string): string {
+    if (key === "regex") {
+      return $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`;
+    }
+    const range = RENAMED_TO_RANGE[key];
+    if (range) {
+      return $localize`:config validation:Unknown validator "${key}:validator:", it is ignored. Use "${range}:range validator:" with "min" and "max" instead.`;
+    }
+    return $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`;
   }
 
   /** `_warningOnly` lists validators of the field that can be only a warning */

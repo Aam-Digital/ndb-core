@@ -98,12 +98,9 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     // set up
     const testFormValues = {
       required: true,
-      min: null,
-      max: 100,
-      minAge: null,
-      maxAge: 12,
-      minDate: null,
-      maxDate: new Date(2010, 0, 1),
+      range: { min: null, max: 100 },
+      ageRange: { min: null, max: null },
+      dateRange: { min: null, max: new Date(2010, 0, 1) },
       pattern: "abc",
       uniqueId: "",
     };
@@ -115,9 +112,8 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     // check result
     const expectedResult = {
       required: true,
-      max: 100,
-      maxAge: 12,
-      maxDate: new Date(2010, 0, 1),
+      range: { max: 100 },
+      dateRange: { max: new Date(2010, 0, 1) },
       pattern: "abc",
     };
     expect(actualResult).toEqual(expectedResult);
@@ -262,7 +258,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       );
       newFixture.componentRef.setInput("entitySchemaField", {
         dataType: "number",
-        validators: { min: 5, pattern: "[0-9]+" },
+        validators: { range: { min: 5 }, pattern: "[0-9]+" },
       });
       const emitted: FormValidatorConfig[] = [];
       newFixture.componentInstance.entityValidatorChanges.subscribe((v) =>
@@ -287,6 +283,26 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         );
       },
     );
+
+    it("saves the ends of a range that are set, and the range as only a warning", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "number",
+        validators: {},
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      component.validatorForm().get("range.max").setValue(10);
+      component.setWarningOnly("range", true);
+      expect(emitted.at(-1)).toEqual({
+        range: { max: 10 },
+        _warningOnly: ["range"],
+      });
+
+      component.validatorForm().get("range.max").setValue(null);
+      expect(emitted.at(-1)).toEqual({});
+    });
 
     it("saves the validators that are only a warning, as long as they are set", () => {
       const emitted = renderField({ pattern: "[a-z]+" });

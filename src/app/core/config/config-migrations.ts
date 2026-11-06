@@ -27,6 +27,56 @@ const migrateDashboardDefaultEntityType: ConfigMigration = (
   return configPart;
 };
 
+/** the old separate min / max validators and the range validator replacing each pair */
+const RANGE_VALIDATORS: [oldMin: string, oldMax: string, range: string][] = [
+  ["min", "max", "range"],
+  ["minDate", "maxDate", "dateRange"],
+  ["minAge", "maxAge", "ageRange"],
+];
+
+/**
+ * Field validators `min`/`max`, `minDate`/`maxDate` and `minAge`/`maxAge`
+ * used to be separate validators, now one range validator each (`range`, `dateRange`, `ageRange`).
+ * A range is only a warning (`_warningOnly`) if all its old validators were.
+ */
+const migrateMinMaxToRangeValidators: ConfigMigration = (key, configPart) => {
+  if (
+    key !== "validators" ||
+    !configPart ||
+    typeof configPart !== "object" ||
+    Array.isArray(configPart)
+  ) {
+    return configPart;
+  }
+  const warningOnly: unknown = configPart._warningOnly;
+  let warnings: string[] | undefined = Array.isArray(warningOnly)
+    ? [...warningOnly]
+    : undefined;
+  for (const [oldMin, oldMax, range] of RANGE_VALIDATORS) {
+    const oldKeys = [oldMin, oldMax].filter((old) => old in configPart);
+    if (oldKeys.length === 0) {
+      continue;
+    }
+    configPart[range] = {
+      ...(oldMin in configPart && { min: configPart[oldMin] }),
+      ...(oldMax in configPart && { max: configPart[oldMax] }),
+      ...configPart[range],
+    };
+    if (warnings) {
+      const allWarn = oldKeys.every((old) => warnings.includes(old));
+      warnings = warnings.filter((w) => !oldKeys.includes(w));
+      if (allWarn && !warnings.includes(range)) {
+        warnings.push(range);
+      }
+    }
+    oldKeys.forEach((old) => delete configPart[old]);
+  }
+  if (warnings) {
+    configPart._warningOnly = warnings;
+  }
+  return configPart;
+};
+
 /**
  * All temporary config migrations that fix legacy data formats.
  * Applied by both ConfigService (Angular app) and the admin CLI (`latest-config-formats`).
@@ -36,6 +86,7 @@ const migrateDashboardDefaultEntityType: ConfigMigration = (
  */
 export const configMigrations: ConfigMigration[] = [
   migrateDashboardDefaultEntityType,
+  migrateMinMaxToRangeValidators,
 ];
 
 /**

@@ -51,6 +51,18 @@ describe("ConfigValidationService", () => {
     ]);
   });
 
+  it("should report the old min / max validators and suggest the range validator", () => {
+    const problems = service.validate({
+      "entity:TestEntity": {
+        attributes: { other: { dataType: "number", validators: { max: 5 } } },
+      },
+    });
+
+    expect(problems).toEqual([
+      expect.objectContaining({ message: expect.stringContaining('"range"') }),
+    ]);
+  });
+
   it("should report unknown validators and suggest 'pattern' for 'regex'", () => {
     const problems = service.validate({
       "entity:TestEntity": {
@@ -86,9 +98,9 @@ describe("ConfigValidationService", () => {
   });
 
   it.each([
-    [{ max: 10, _warningOnly: ["max"] }, []],
+    [{ range: { max: 10 }, _warningOnly: ["range"] }, []],
     [{ required: true, _warningOnly: ["required"] }, ['"required"']],
-    [{ max: 10, _warningOnly: ["min"] }, ['"min"']],
+    [{ range: { max: 10 }, _warningOnly: ["pattern"] }, ['"pattern"']],
   ])(
     "reports validators in _warningOnly that are not set or cannot be a warning: %o",
     (validators, problemsAbout) => {
