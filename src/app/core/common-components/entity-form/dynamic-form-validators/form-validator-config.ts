@@ -1,6 +1,6 @@
 /**
- * All validator names supported in a {@link FormValidatorConfig}
- * (also used to validate the config when an admin saves it).
+ * The keys of the validators of the core module in a {@link FormValidatorConfig},
+ * to type configs written in code. Each is implemented by a registered `FieldValidator`.
  */
 export const DYNAMIC_VALIDATORS = [
   /** type: number */

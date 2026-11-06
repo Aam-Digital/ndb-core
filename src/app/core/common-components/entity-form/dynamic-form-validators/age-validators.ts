@@ -1,4 +1,7 @@
+import { Injectable } from "@angular/core";
 import { AbstractControl, ValidatorFn } from "@angular/forms";
+import { DateWithAgeDatatype } from "../../../basic-datatypes/date-with-age/date-with-age.datatype";
+import { FieldValidator, ValidatorContext } from "./field-validator";
 import { calculateAge } from "../../../../utils/utils";
 import { parseToDate } from "./date-validators";
 
@@ -100,5 +103,35 @@ export function descriptionForAgeValidator(
         return $localize`Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years`;
       }
       return $localize`Age must be at most ${validationValue.maxAge} years`;
+  }
+}
+
+/** `minAge: 6`: the age calculated from the date of birth must be at least the given number of years */
+@Injectable()
+export class MinAgeValidator extends FieldValidator {
+  static override key = "minAge";
+  override readonly datatypesSupported = [DateWithAgeDatatype];
+
+  build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
+    return minAgeValidator(config);
+  }
+
+  override message(error: unknown): string {
+    return descriptionForAgeValidator("minAge", error);
+  }
+}
+
+/** `maxAge: 18`: the age calculated from the date of birth must be at most the given number of years */
+@Injectable()
+export class MaxAgeValidator extends FieldValidator {
+  static override key = "maxAge";
+  override readonly datatypesSupported = [DateWithAgeDatatype];
+
+  build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
+    return maxAgeValidator(config);
+  }
+
+  override message(error: unknown): string {
+    return descriptionForAgeValidator("maxAge", error);
   }
 }

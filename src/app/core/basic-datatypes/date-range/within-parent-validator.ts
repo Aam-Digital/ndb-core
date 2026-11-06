@@ -1,8 +1,14 @@
+import { inject, Injectable } from "@angular/core";
 import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dynamic-form-validators/validator-types";
 import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
+import {
+  FieldValidator,
+  ValidatorContext,
+} from "../../common-components/entity-form/dynamic-form-validators/field-validator";
+import { DateRangeDatatype } from "./date-range.datatype";
 import {
   findParentOutside,
   getParentIds,
@@ -45,4 +51,28 @@ export function withinParentValidator(
       },
     };
   };
+}
+
+/** `withinParent: { parentReferenceField: "parent" }`: the date range should lie within the one of the linked parent record */
+@Injectable()
+export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
+  static override key = "withinParent";
+  override readonly datatypesSupported = [DateRangeDatatype];
+  override readonly warning = "always";
+  override readonly async = true;
+
+  private readonly entityMapper = inject(EntityMapperService);
+
+  build(
+    value: WithinParentConfig,
+    { entity, field }: ValidatorContext,
+  ): AsyncPromiseValidatorFn | null {
+    return value && field?.id
+      ? withinParentValidator(value, field.id, entity, this.entityMapper)
+      : null;
+  }
+
+  override dependsOn(value: WithinParentConfig): string[] {
+    return value?.parentReferenceField ? [value.parentReferenceField] : [];
+  }
 }

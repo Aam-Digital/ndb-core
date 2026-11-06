@@ -1,6 +1,6 @@
 import { DestroyRef, Injectable, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
+import { FormValidatorConfig } from "./form-validator-config";
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -9,196 +9,39 @@ import {
   FormGroup,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from "@angular/forms";
 import { Logging } from "../../../logging/logging.service";
-import { uniquePropertyValidator } from "../unique-property-validator/unique-property-validator";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
-import { EmbeddedEntity } from "../../../entity/model/embedded-entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
-import { withinParentValidator } from "../../../basic-datatypes/date-range/within-parent-validator";
-import { selectionConditionValidator } from "../../../basic-datatypes/entity/selection-condition";
-import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { FilterService } from "../../../filter/filter.service";
-import { getCurrentRecordPlaceholderFields } from "../../../filter/filters/filters";
-import { getCurrentRecordOfControl } from "../current-record-state";
-import { asArray } from "app/utils/asArray";
 import { merge } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { isEqual } from "lodash-es";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-  toFormFieldConfig,
-} from "../FormConfig";
-import {
-  descriptionForDateValidator,
-  maxDateValidator,
-  minDateValidator,
-} from "./date-validators";
-import {
-  descriptionForAgeValidator,
-  maxAgeValidator,
-  minAgeValidator,
-} from "./age-validators";
+import { ColumnConfig, toFormFieldConfig } from "../FormConfig";
+import { FieldValidator, ValidatorContext } from "./field-validator";
 
 /**
- * creates a pattern validator that also carries a predefined
- * message
- * @example
- * >>> validator = patternWithMessage(/foo/, "Can only be foo");
- * >>> validator(invalidFormField);
- * <pre>
- * {
- *   message: "Can only be foo",
- *   requiredPattern: "foo",
- *   actualValue: "bar"
- * }
- * </pre>
+ * Builds the validators configured for form fields (`validators` of their schema)
+ * from the registered {@link FieldValidator} rules.
  */
-export function patternWithMessage(
-  pattern: string | RegExp,
-  message: string,
-): ValidatorFn {
-  const patternValidator = Validators.pattern(pattern);
-
-  return (control: AbstractControl) => {
-    const errors = patternValidator(control);
-    if (errors !== null) {
-      Object.assign(errors.pattern, {
-        message: message,
-      });
-    }
-    return errors;
-  };
-}
-
-/** the field (of a record) that validators are built for */
-interface ValidatorContext {
-  /** the record that the form is editing */
-  entity: Entity;
-  /** the field's config as in the form (extended from the schema), e.g. for the record types a link field offers */
-  field?: FormFieldConfig;
-  /** false if the form does not edit one single record (e.g. in bulk edit), so there is no record to compare with */
-  singleRecord: boolean;
-}
-
 @Injectable({
   providedIn: "root",
 })
 export class DynamicValidatorsService {
-  private entityMapper = inject(EntityMapperService);
-  private readonly placeholderService = inject(DynamicPlaceholderValueService);
-  private readonly filterService = inject(FilterService);
+  private readonly rules = new Map(
+    (inject(FieldValidator) as unknown as FieldValidator[]).map((rule) => [
+      rule.key,
+      rule,
+    ]),
+  );
 
-  /**
-   * The validator for one key of the config,
-   * or `null` if its value switches it off (e.g. `required: false`) or there is no such validator.
-   */
-  private getValidator(
-    key: DynamicValidator,
-    config: FormValidatorConfig,
-    { entity, field, singleRecord }: ValidatorContext,
-  ):
-    | { async?: false; fn: ValidatorFn }
-    | {
-        async: true;
-        fn: AsyncPromiseValidatorFn;
-        /** run on every change of the value, not only when leaving the field (see `buildValidators`) */
-        updateOnChange?: boolean;
-      }
-    | null {
-    const value = config[key];
-    const fieldId = field?.id;
-    switch (key) {
-      case "min":
-        return { fn: Validators.min(value as number) };
-      case "max":
-        return { fn: Validators.max(value as number) };
-      case "minDate": {
-        return { fn: minDateValidator(value) };
-      }
-      case "maxDate": {
-        return { fn: maxDateValidator(value) };
-      }
-      case "minAge":
-        return { fn: minAgeValidator(config) };
-      case "maxAge":
-        return { fn: maxAgeValidator(config) };
-      case "pattern":
-        if (typeof value === "object") {
-          return { fn: patternWithMessage(value.pattern, value.message) };
-        } else {
-          return { fn: Validators.pattern(value as string) };
-        }
-      case "uniqueId":
-        if (!value) {
-          return null;
-        }
+  /** all registered rules */
+  getRules(): FieldValidator[] {
+    return [...this.rules.values()];
+  }
 
-        if (!fieldId) {
-          Logging.warn(
-            "Trying to generate uniqueId validator without fieldId context",
-          );
-          return null;
-        }
-
-        if (entity instanceof EmbeddedEntity) {
-          // not supported (yet) for inner fields of embedded entries: unique among which entries is not decided
-          Logging.debug("Skipping uniqueId validator of an embedded entry", {
-            fieldId,
-          });
-          return null;
-        }
-
-        return this.buildUniqueIdValidator(entity, fieldId);
-      case "required":
-        return value ? { fn: Validators.required } : null;
-      case "readonlyAfterSet":
-        return value ? buildReadonlyValidator(entity) : null;
-      case "withinParent":
-        return value && fieldId
-          ? {
-              async: true,
-              fn: withinParentValidator(
-                value,
-                fieldId,
-                entity,
-                this.entityMapper,
-              ),
-            }
-          : null;
-      case "selectionCondition":
-        return value && fieldId
-          ? {
-              async: true,
-              // selecting a record is a single change (unlike typing a text)
-              updateOnChange: true,
-              fn: selectionConditionValidator(
-                value,
-                // only if the field has no dropdown, which shares the types it offers (see EditEntityComponent)
-                asArray(field.additional ?? []),
-                (control) =>
-                  singleRecord
-                    ? getCurrentRecordOfControl(control, entity)
-                    : undefined,
-                {
-                  entityMapper: this.entityMapper,
-                  placeholderService: this.placeholderService,
-                  filterService: this.filterService,
-                },
-              ),
-            }
-          : null;
-      default:
-        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
-        Logging.debug("Trying to generate a validator that does not exist", {
-          validator: key,
-        });
-        return null;
-    }
+  /** the registered rule for a key of the `validators` config, `undefined` if there is none */
+  getRule(key: string): FieldValidator | undefined {
+    return this.rules.get(key);
   }
 
   /**
@@ -224,24 +67,33 @@ export class DynamicValidatorsService {
       entity,
       field: field ? toFormFieldConfig(field) : undefined,
       singleRecord,
+      config,
     };
 
-    for (const key of Object.keys(config)) {
-      const validator = this.getValidator(
-        key as DynamicValidator,
-        config,
-        context,
-      );
-      if (validator?.async) {
+    for (const [key, value] of Object.entries(config)) {
+      const rule = this.rules.get(key);
+      if (!rule) {
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug("Trying to generate a validator that does not exist", {
+          validator: key,
+        });
+        continue;
+      }
+
+      const validator = rule.build(value, context);
+      if (!validator) {
+        continue;
+      }
+      if (rule.async) {
         formControlOptions.asyncValidators.push((control: FormControl) =>
-          validator
-            .fn(control)
-            .then((errors) => this.addHumanReadableError(key, errors)),
+          (validator as AsyncPromiseValidatorFn)(control).then((errors) =>
+            this.addHumanReadableError(rule, errors),
+          ),
         );
-        updateOnBlur ||= !validator.updateOnChange;
-      } else if (validator) {
+        updateOnBlur ||= !rule.checkOnChange;
+      } else {
         formControlOptions.validators.push((control: FormControl) =>
-          this.addHumanReadableError(key, validator.fn(control)),
+          this.addHumanReadableError(rule, (validator as ValidatorFn)(control)),
         );
       }
     }
@@ -260,13 +112,10 @@ export class DynamicValidatorsService {
    * so that the field is validated again when one of them changes.
    */
   getDependencies(config: FormValidatorConfig | undefined): string[] {
-    const dependencies = new Set<string>(
-      getCurrentRecordPlaceholderFields(config?.selectionCondition),
+    const dependencies = Object.entries(config ?? {}).flatMap(
+      ([key, value]) => this.rules.get(key)?.dependsOn(value) ?? [],
     );
-    if (config?.withinParent?.parentReferenceField) {
-      dependencies.add(config.withinParent.parentReferenceField);
-    }
-    return [...dependencies];
+    return [...new Set(dependencies)];
   }
 
   /**
@@ -300,89 +149,31 @@ export class DynamicValidatorsService {
   }
 
   private addHumanReadableError(
-    validatorType: string,
+    rule: FieldValidator,
     validationResult: ValidationErrors | null,
   ): ValidationErrors {
     if (!validationResult) {
       return validationResult;
     }
 
-    validationResult[validatorType] = {
-      ...validationResult[validatorType],
-      errorMessage: this.descriptionForValidator(
-        validatorType,
-        validationResult[validatorType],
-      ),
+    const error = validationResult[rule.key];
+    validationResult[rule.key] = {
+      ...error,
+      errorMessage: this.messageFor(rule, error),
     };
-
     return validationResult;
   }
 
-  /**
-   * The message for the error of a validator.
-   * The error is specific for a certain validator, e.g. `{ min: 5, actual: 4 }` for the `min` validator.
-   */
-  private descriptionForValidator(
-    validator: string,
-    validationValue: any,
-  ): string {
-    switch (validator) {
-      case "min":
-        return $localize`Must be greater than ${validationValue.min}`;
-      case "max":
-        return $localize`Cannot be greater than ${validationValue.max}`;
-      case "minDate":
-        return descriptionForDateValidator("minDate", validationValue);
-      case "maxDate":
-        return descriptionForDateValidator("maxDate", validationValue);
-      case "minAge":
-        return descriptionForAgeValidator("minAge", validationValue);
-      case "maxAge":
-        return descriptionForAgeValidator("maxAge", validationValue);
-      case "pattern":
-        if (validationValue.message) {
-          return validationValue.message;
-        } else {
-          return $localize`Please enter a valid pattern`;
-        }
-      case "required":
-        return $localize`This field is required`;
-      default:
-        // e.g. withinParent, selectionCondition, uniqueId: their errors carry their own message
-        if (validationValue?.errorMessage) {
-          return validationValue.errorMessage;
-        }
-        // not thrown: a rejected async validator would leave the field pending, so the form could not be saved
-        Logging.error("No description defined for validator", {
-          validator,
-          validationValue,
-        });
-        return $localize`Invalid input`;
+  private messageFor(rule: FieldValidator, error: unknown): string {
+    const message = rule.message(error);
+    if (message) {
+      return message;
     }
-  }
-
-  private buildUniqueIdValidator(
-    entity: Entity,
-    fieldId: string,
-  ): {
-    async: true;
-    fn: AsyncPromiseValidatorFn;
-  } {
-    return {
-      fn: uniquePropertyValidator({
-        getExistingValues: () =>
-          this.entityMapper
-            .loadType(entity.getType())
-            .then((entities) =>
-              entities
-                .map((existingEntity) => Reflect.get(existingEntity, fieldId))
-                .filter((existingValue) => existingValue !== undefined),
-            ),
-        normalize: false,
-        fieldLabel: $localize`:field label:id`,
-        errorKey: "uniqueId",
-      }),
-      async: true,
-    };
+    // not thrown: a rejected async validator would leave the field pending, so the form could not be saved
+    Logging.error("No description defined for validator", {
+      validator: rule.key,
+      validationValue: error,
+    });
+    return $localize`Invalid input`;
   }
 }

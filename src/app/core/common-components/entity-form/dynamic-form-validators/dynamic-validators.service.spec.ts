@@ -1,10 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
+import { DynamicValidatorsService } from "./dynamic-validators.service";
+import { patternWithMessage } from "./basic-validators";
 import {
-  DynamicValidatorsService,
-  patternWithMessage,
-} from "./dynamic-validators.service";
-import { FormValidatorConfig } from "./form-validator-config";
+  DYNAMIC_VALIDATORS,
+  FormValidatorConfig,
+} from "./form-validator-config";
 import {
   AsyncValidatorFn,
   UntypedFormControl,
@@ -250,6 +251,13 @@ describe("DynamicValidatorsService", () => {
       expect(options.asyncValidators).toEqual([]);
     },
   );
+
+  it("registers a rule for each validator key of the config type", () => {
+    const keys = service.getRules().map((rule) => rule.key);
+
+    expect(new Set(keys)).toEqual(new Set(DYNAMIC_VALIDATORS));
+    expect(keys).toHaveLength(DYNAMIC_VALIDATORS.length);
+  });
 
   describe("withinParent", () => {
     const parent = Object.assign(TestEntity.create("Training"), {

@@ -5,7 +5,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { DefaultValueStrategy } from "../../default-values/default-value-strategy.interface";
-import { DYNAMIC_VALIDATORS } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { DynamicValidatorsService } from "../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { resolveIconDefinition } from "../../common-components/fa-dynamic-icon/fa-icon-utils";
 import { MenuItem } from "../../ui/navigation/menu-item";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -13,9 +13,6 @@ import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
 import { Config } from "../config";
 import { resolveLocaleText } from "../../language/active-locale";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
-import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -140,17 +137,7 @@ export class ConfigValidationService {
       );
     }
 
-    for (const validator of Object.keys(schema.validators ?? {})) {
-      if (!(DYNAMIC_VALIDATORS as readonly string[]).includes(validator)) {
-        problems.push(
-          validator === "regex"
-            ? $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`
-            : $localize`:config validation:Unknown validator "${validator}:validator:", it is ignored.`,
-        );
-      }
-    }
-
-    problems.push(...this.validateSelectionCondition(schema));
+    problems.push(...this.validateValidators(schema));
 
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
@@ -163,36 +150,22 @@ export class ConfigValidationService {
     return problems;
   }
 
-  /** a `selectionCondition` only applies to a field linking to exactly one record type (see `DYNAMIC_VALIDATORS`) */
-  private validateSelectionCondition(schema: EntitySchemaField): string[] {
-    if (!schema.validators?.selectionCondition) {
-      return [];
-    }
-    if (schema.dataType !== EntityDatatype.dataType) {
-      return [
-        this.isEmbeddingDataType(schema.dataType)
-          ? $localize`:config validation:A selection filter ("selectionCondition") does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. "additional.participant.validators").`
-          : $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to records, it is ignored.`,
-      ];
-    }
-    if (asArray(schema.additional ?? []).length !== 1) {
-      return [
-        $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to one record type, it is ignored.`,
-      ];
-    }
-    return [];
-  }
-
-  private isEmbeddingDataType(dataType: string | undefined): boolean {
-    try {
-      return (
-        this.injector
-          .get(EntitySchemaService)
-          .getDatatypeOrDefault(dataType, false) instanceof SchemaEmbedDatatype
-      );
-    } catch {
-      return false;
-    }
+  private validateValidators(schema: EntitySchemaField): string[] {
+    const rules = this.injector.get(DynamicValidatorsService);
+    const datatype = this.injector
+      .get(EntitySchemaService)
+      .getDatatypeOrDefault(schema.dataType);
+    return Object.entries(schema.validators ?? {}).flatMap(([key, value]) => {
+      const rule = rules.getRule(key);
+      if (!rule) {
+        return [
+          key === "regex"
+            ? $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`
+            : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
+        ];
+      }
+      return rule.validateConfig(value, schema, datatype);
+    });
   }
 
   private validateMenuItems(

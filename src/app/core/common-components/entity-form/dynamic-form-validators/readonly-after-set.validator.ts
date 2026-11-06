@@ -1,3 +1,4 @@
+import { Injectable } from "@angular/core";
 import {
   AbstractControl,
   FormControlStatus,
@@ -5,6 +6,7 @@ import {
   ValidatorFn,
 } from "@angular/forms";
 import { Entity } from "../../../entity/model/entity";
+import { FieldValidator, ValidatorContext } from "./field-validator";
 
 /**
  * Validator to ensure a field becomes readonly after it has been saved once.
@@ -47,4 +49,15 @@ export function buildReadonlyValidator(entity: Entity): {
       return null;
     },
   };
+}
+
+/** `readonlyAfterSet: true`: the field can only be edited until the record is saved for the first time */
+@Injectable()
+export class ReadonlyAfterSetValidator extends FieldValidator<boolean> {
+  static override key = "readonlyAfterSet";
+  override readonly warning = "never";
+
+  build(value: boolean, { entity }: ValidatorContext): ValidatorFn | null {
+    return value ? buildReadonlyValidator(entity).fn : null;
+  }
 }

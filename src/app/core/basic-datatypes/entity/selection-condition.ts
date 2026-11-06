@@ -1,3 +1,4 @@
+import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { asArray } from "app/utils/asArray";
 import { Entity } from "../../entity/model/entity";
@@ -10,6 +11,15 @@ import { FilterService } from "../../filter/filter.service";
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { Logging } from "../../logging/logging.service";
 import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dynamic-form-validators/validator-types";
+import {
+  FieldValidator,
+  ValidatorContext,
+} from "../../common-components/entity-form/dynamic-form-validators/field-validator";
+import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { SchemaEmbedDatatype } from "../schema-embed/schema-embed.datatype";
+import { EntityDatatype } from "./entity.datatype";
 
 /**
  * The `selectionCondition` of a field linking to other records,
@@ -192,4 +202,81 @@ export function selectionConditionValidator(
       },
     };
   };
+}
+
+/**
+ * `selectionCondition: { center: "$current_record.center" }`: the linked records should match the condition
+ * (see `DYNAMIC_VALIDATORS`); the dropdown of the field only offers such records.
+ */
+@Injectable()
+export class SelectionConditionValidator extends FieldValidator<
+  DataFilter<Entity>
+> {
+  static override key = "selectionCondition";
+  override readonly warning = "always";
+  override readonly async = true;
+  // selecting a record is a single change (unlike typing a text)
+  override readonly checkOnChange = true;
+
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly placeholderService = inject(DynamicPlaceholderValueService);
+  private readonly filterService = inject(FilterService);
+
+  override appliesTo(
+    datatype: DefaultDatatype,
+    field: EntitySchemaField,
+  ): boolean {
+    return (
+      datatype instanceof EntityDatatype &&
+      asArray(field.additional ?? []).length === 1
+    );
+  }
+
+  build(
+    value: DataFilter<Entity>,
+    { entity, field, singleRecord }: ValidatorContext,
+  ): AsyncPromiseValidatorFn | null {
+    if (!value || !field?.id) {
+      return null;
+    }
+    return selectionConditionValidator(
+      value,
+      // only if the field has no dropdown, which shares the types it offers (see EditEntityComponent)
+      asArray(field.additional ?? []),
+      (control) =>
+        singleRecord ? getCurrentRecordOfControl(control, entity) : undefined,
+      {
+        entityMapper: this.entityMapper,
+        placeholderService: this.placeholderService,
+        filterService: this.filterService,
+      },
+    );
+  }
+
+  override dependsOn(value: DataFilter<Entity>): string[] {
+    return getCurrentRecordPlaceholderFields(value);
+  }
+
+  override validateConfig(
+    value: DataFilter<Entity>,
+    field: EntitySchemaField,
+    datatype: DefaultDatatype,
+  ): string[] {
+    if (!value) {
+      return [];
+    }
+    if (field.dataType !== EntityDatatype.dataType) {
+      return [
+        datatype instanceof SchemaEmbedDatatype
+          ? $localize`:config validation:A selection filter ("selectionCondition") does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. "additional.participant.validators").`
+          : $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to records, it is ignored.`,
+      ];
+    }
+    if (asArray(field.additional ?? []).length !== 1) {
+      return [
+        $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to one record type, it is ignored.`,
+      ];
+    }
+    return [];
+  }
 }
