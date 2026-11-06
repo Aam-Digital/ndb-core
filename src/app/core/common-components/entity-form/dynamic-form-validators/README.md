@@ -6,9 +6,9 @@ Each key is one rule, the value is that rule's setting:
 ```json
 "validators": {
   "required": true,
-  "max": 100,
+  "range": { "min": 0, "max": 100 },
   "pattern": { "pattern": "^[0-9]{10}$", "message": "Enter a 10-digit phone number" },
-  "_warningOnly": ["max"]
+  "_warningOnly": ["range"]
 }
 ```
 

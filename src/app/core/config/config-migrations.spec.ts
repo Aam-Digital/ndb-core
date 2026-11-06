@@ -32,4 +32,46 @@ describe("applyConfigMigrations", () => {
       },
     );
   });
+
+  describe("migrateMinMaxToRangeValidators", () => {
+    it.each([
+      [{ min: 0, max: 100 }, { range: { min: 0, max: 100 } }],
+      [{ maxDate: "$now" }, { dateRange: { max: "$now" } }],
+      [
+        { minAge: 6, maxAge: 18, required: true },
+        { required: true, ageRange: { min: 6, max: 18 } },
+      ],
+      [
+        { min: 0, max: 10, _warningOnly: ["min", "max", "pattern"] },
+        { range: { min: 0, max: 10 }, _warningOnly: ["pattern", "range"] },
+      ],
+      [
+        { min: 0, max: 10, _warningOnly: ["max"] },
+        { range: { min: 0, max: 10 }, _warningOnly: [] },
+      ],
+      [{ range: { min: 1 } }, { range: { min: 1 } }],
+    ])("turns the validators %j into %j", (validators, expected) => {
+      const old = {
+        "entity:X": { attributes: { field: { validators } } },
+      };
+      expect(applyConfigMigrations(old)).toEqual({
+        "entity:X": { attributes: { field: { validators: expected } } },
+      });
+    });
+
+    it("also migrates the validators of inner fields of embedded entries", () => {
+      const old = {
+        attributes: {
+          list: { additional: { count: { validators: { max: 5 } } } },
+        },
+      };
+      expect(applyConfigMigrations(old)).toEqual({
+        attributes: {
+          list: {
+            additional: { count: { validators: { range: { max: 5 } } } },
+          },
+        },
+      });
+    });
+  });
 });

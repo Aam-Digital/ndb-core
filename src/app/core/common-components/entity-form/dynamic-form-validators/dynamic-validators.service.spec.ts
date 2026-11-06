@@ -64,7 +64,7 @@ describe("DynamicValidatorsService", () => {
 
   it("should load validators from the config", async () => {
     const config: FormValidatorConfig = {
-      min: 9,
+      range: { min: 9 },
       pattern: "[a-z]*",
     };
     const validators = service.buildValidators(config, new TestEntity())
@@ -76,16 +76,14 @@ describe("DynamicValidatorsService", () => {
 
   it("generates a correct validator for correct configs", async () => {
     const config: FormValidatorConfig = {
-      min: 9,
-      max: 10,
+      range: { min: 9, max: 10 },
       required: true,
       pattern: "foo",
     };
     const validators = service.buildValidators(config, new TestEntity())
       .asyncValidators as Check[];
     for (const [index, [successState, failureState]] of [
-      [10, 8],
-      [8, 11],
+      [10, 11],
       ["something", undefined],
       ["foo", "bar"],
     ].entries()) {
@@ -113,63 +111,97 @@ describe("DynamicValidatorsService", () => {
     );
   });
 
-  it("should validate minDate and maxDate", async () => {
+  it.each([
+    [{ min: 0, max: 10 }, 0, -1, "between 0 and 10"],
+    [{ min: 0, max: 10 }, 10, 11, "between 0 and 10"],
+    [{ min: 5 }, 5, 4, "at least 5"],
+    [{ max: 5 }, 5, 6, "at most 5"],
+  ])(
+    "checks the number range %j",
+    async (range, inRange, outOfRange, message) => {
+      const [validator] = service.buildValidators({ range }, new TestEntity())
+        .asyncValidators as Check[];
+
+      await testValidator(validator, inRange, outOfRange);
+      const errors = await validator(new UntypedFormControl(outOfRange));
+      expect(errors.range.errorMessage).toContain(message);
+      expect(await validator(new UntypedFormControl(null))).toBeNull();
+    },
+  );
+
+  it("should validate a date range", async () => {
     const config: FormValidatorConfig = {
-      minDate: "2010-01-01",
-      maxDate: "2020-12-31",
+      dateRange: { min: "2010-01-01", max: "2020-12-31" },
     };
 
-    const validators = service.buildValidators(config, new TestEntity())
+    const [validator] = service.buildValidators(config, new TestEntity())
       .asyncValidators as Check[];
 
-    expect(validators).toHaveLength(2);
     await testValidator(
-      validators[0],
+      validator,
       new Date(2010, 0, 1),
       new Date(2009, 11, 31),
     );
     await testValidator(
-      validators[1],
+      validator,
       new Date(2020, 11, 31),
       new Date(2021, 0, 1),
     );
 
-    const invalidDateControl = new UntypedFormControl(new Date(2009, 11, 31));
-    invalidDateControl.markAsDirty();
-    const validationErrors = await validators[0](invalidDateControl);
-    expect(validationErrors.minDate.errorMessage).toContain("on or after");
+    const validationErrors = await validator(
+      new UntypedFormControl(new Date(2009, 11, 31)),
+    );
+    expect(validationErrors.dateRange.errorMessage).toContain(
+      "between 01.01.2010 and 31.12.2020",
+    );
   });
 
-  it("should validate minAge and maxAge", async () => {
+  it.each([
+    [{ min: "2010-01-01" }, new Date(2000, 0, 1), "on or after 01.01.2010"],
+    [{ max: "2010-01-01" }, new Date(2020, 0, 1), "on or before 01.01.2010"],
+  ])(
+    "words the error of a date range with one end %j",
+    async (dateRange, outside, message) => {
+      const [validator] = service.buildValidators(
+        { dateRange },
+        new TestEntity(),
+      ).asyncValidators as Check[];
+
+      const errors = await validator(new UntypedFormControl(outside));
+
+      expect(errors.dateRange.errorMessage).toContain(message);
+    },
+  );
+
+  it("should validate an age range", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 3, 24));
 
     try {
       const config: FormValidatorConfig = {
-        minAge: 9,
-        maxAge: 25,
+        ageRange: { min: 9, max: 25 },
       };
 
-      const validators = service.buildValidators(config, new TestEntity())
+      const [validator] = service.buildValidators(config, new TestEntity())
         .asyncValidators as Check[];
 
-      expect(validators).toHaveLength(2);
       await testValidator(
-        validators[0],
+        validator,
         new Date(2015, 3, 24),
         new Date(2018, 3, 25),
       );
       await testValidator(
-        validators[1],
+        validator,
         new Date(2010, 3, 24),
         new Date(1990, 3, 24),
       );
 
-      const invalidAgeControl = new UntypedFormControl(new Date(1990, 3, 24));
-      invalidAgeControl.markAsDirty();
-      const validationErrors = await validators[1](invalidAgeControl);
-      expect(validationErrors.maxAge.errorMessage).toContain("between");
-      expect(validationErrors.maxAge.errorMessage).toContain("9 and 25");
+      const validationErrors = await validator(
+        new UntypedFormControl(new Date(1990, 3, 24)),
+      );
+      expect(validationErrors.ageRange.errorMessage).toContain(
+        "between 9 and 25",
+      );
     } finally {
       vi.useRealTimers();
     }
@@ -239,8 +271,7 @@ describe("DynamicValidatorsService", () => {
 
   it.each([
     [{ required: true }, null, expect.any(String)],
-    [{ min: 9 }, 8, expect.stringContaining("9")],
-    [{ max: 10 }, 11, expect.stringContaining("10")],
+    [{ range: { min: 9 } }, 8, expect.stringContaining("9")],
     [{ pattern: "[a-z]+" }, "123", expect.any(String)],
   ])(
     "adds a readable message to the error of %o",
@@ -293,8 +324,8 @@ describe("DynamicValidatorsService", () => {
   });
 
   it.each([
-    [{ max: 10, _warningOnly: ["max"] }, 11, "max", true],
-    [{ max: 10 }, 11, "max", undefined],
+    [{ range: { max: 10 }, _warningOnly: ["range"] }, 11, "range", true],
+    [{ range: { max: 10 } }, 11, "range", undefined],
     [
       { required: true, _warningOnly: ["required"] },
       null,
@@ -593,77 +624,20 @@ describe("DynamicValidatorsService", () => {
     });
   });
 
-  it("keeps minDate as a date validator for date-with-age fields", async () => {
-    const entity = new TestEntity();
-    const validators = service.buildValidators(
-      { minDate: "2021-01-12" },
-      entity,
-      "dateOfBirth",
-    ).asyncValidators as Check[];
-
-    expect(validators).toHaveLength(1);
-
-    const tooEarlyDate = new Date(2020, 0, 1);
-    const result = await validators[0](new UntypedFormControl(tooEarlyDate));
-
-    expect(result?.minDate?.minDate).toEqual(new Date(2021, 0, 12));
-    expect(result?.minDate?.errorMessage).toContain("Date must be on or after");
-    expect(result?.minAge).toBeUndefined();
-  });
-
-  it("keeps maxDate as a date validator for date-with-age fields", async () => {
-    const entity = new TestEntity();
-    const validators = service.buildValidators(
-      { maxDate: "2010-01-01" },
-      entity,
-      "dateOfBirth",
-    ).asyncValidators as Check[];
-
-    expect(validators).toHaveLength(1);
-
-    const tooLateDate = new Date(2011, 0, 1);
-    const result = await validators[0](new UntypedFormControl(tooLateDate));
-
-    expect(result?.maxDate?.maxDate).toEqual(new Date(2010, 0, 1));
-    expect(result?.maxDate?.errorMessage).toContain(
-      "Date must be on or before",
+  it("checks the date range and the age range of a date of birth independently", async () => {
+    const control = new UntypedFormControl(
+      new Date(2020, 0, 1),
+      service.buildValidators(
+        { dateRange: { min: "2021-01-12" }, ageRange: { max: 200 } },
+        new TestEntity(),
+        "dateOfBirth",
+      ),
     );
-    expect(result?.maxAge).toBeUndefined();
-  });
+    await vi.waitFor(() => expect(control.pending).toBe(false));
 
-  it("shows a between message when both age bounds are configured", async () => {
-    const entity = new TestEntity();
-    const validators = service.buildValidators(
-      {
-        minAge: 10,
-        maxAge: 15,
-      },
-      entity,
-      "dateOfBirth",
-    ).asyncValidators as Check[];
-
-    const tooOldDate = new Date(2000, 2, 14);
-    const result = await validators[1](new UntypedFormControl(tooOldDate));
-
-    expect(result?.maxAge?.errorMessage).toContain("Age must be between");
-    expect(result?.maxAge?.errorMessage).toContain("and");
-    expect(result?.maxAge?.errorMessage).toContain("years");
-  });
-
-  it("does not convert date validators into age validators for date-with-age fields", async () => {
-    const entity = new TestEntity();
-    const validators = service.buildValidators(
-      { minDate: "2021-01-12", maxDate: "2010-01-01" },
-      entity,
-      "dateOfBirth",
-    ).asyncValidators as Check[];
-
-    expect(validators).toHaveLength(2);
-    const result = await validators[0](
-      new UntypedFormControl(new Date(2020, 0, 1)),
-    );
-    expect(result?.minDate).toBeDefined();
-    expect(result?.minAge).toBeUndefined();
+    expect(control.errors).toEqual({
+      dateRange: expect.objectContaining({ min: new Date(2021, 0, 12) }),
+    });
   });
 });
 

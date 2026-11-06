@@ -182,7 +182,7 @@ describe("EntityFormService", () => {
 
   it("should create forms with the validators included", async () => {
     TestEntity.schema.set("result", {
-      validators: { min: 0, max: 100, required: true },
+      validators: { range: { min: 0, max: 100 }, required: true },
     });
 
     const formFields = [{ id: "name" }, { id: "result" }];

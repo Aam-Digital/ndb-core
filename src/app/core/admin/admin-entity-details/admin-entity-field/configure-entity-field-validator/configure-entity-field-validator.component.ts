@@ -41,6 +41,10 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { MonthDatatype } from "app/core/basic-datatypes/month/month.datatype";
 import { StringDatatype } from "app/core/basic-datatypes/string/string.datatype";
 import { asArray } from "app/utils/asArray";
+import {
+  isEmptyRange,
+  RangeConfig,
+} from "app/core/common-components/entity-form/dynamic-form-validators/range-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
@@ -119,7 +123,7 @@ export class ConfigureEntityFieldValidatorComponent {
     () =>
       new Set(
         Object.entries(this.formValue())
-          .filter(([, value]) => !isUnset(value))
+          .filter(([key, value]) => !isUnsetSetting(key, value))
           .map(([key]) => key),
       ),
   );
@@ -215,12 +219,9 @@ export class ConfigureEntityFieldValidatorComponent {
     }
     return this.fb.group({
       required: [v?.required ?? false],
-      min: [v?.min ?? null],
-      max: [v?.max ?? null],
-      minAge: [v?.minAge ?? null],
-      maxAge: [v?.maxAge ?? null],
-      minDate: [v?.minDate ?? null],
-      maxDate: [v?.maxDate ?? null],
+      range: this.rangeGroup(v?.range),
+      ageRange: this.rangeGroup(v?.ageRange),
+      dateRange: this.rangeGroup(v?.dateRange),
       pattern: [patternText ?? "", validRegexValidator],
       patternMessage: [(isObjectForm ? pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
@@ -235,8 +236,8 @@ export class ConfigureEntityFieldValidatorComponent {
     effect((onCleanup) => {
       const form = this.validatorForm();
 
-      this.normalizeDateControl(form, "minDate");
-      this.normalizeDateControl(form, "maxDate");
+      this.normalizeDateControl(form, "dateRange.min");
+      this.normalizeDateControl(form, "dateRange.max");
       this.syncPatternMessageAvailability(form);
 
       const patternSub = form
@@ -283,6 +284,14 @@ export class ConfigureEntityFieldValidatorComponent {
         this.entitySchemaFieldChanges.emit({ trim: value });
       });
       onCleanup(() => sub.unsubscribe());
+    });
+  }
+
+  /** the controls of a range setting (`range`, `dateRange`, `ageRange`) */
+  private rangeGroup(range: RangeConfig | undefined): FormGroup {
+    return this.fb.group({
+      min: [range?.min ?? null],
+      max: [range?.max ?? null],
     });
   }
 
@@ -381,7 +390,10 @@ export class ConfigureEntityFieldValidatorComponent {
     validators: FormValidatorConfig,
   ): FormValidatorConfig {
     for (let key of Object.keys(validators)) {
-      if (isUnset(validators[key])) {
+      if (RANGE_KEYS.has(key)) {
+        validators[key] = withoutUnsetEnds(validators[key]);
+      }
+      if (isUnsetSetting(key, validators[key])) {
         delete validators[key];
       }
     }
@@ -389,7 +401,23 @@ export class ConfigureEntityFieldValidatorComponent {
   }
 }
 
-/** whether a validator's form control value means it is not set */
+/** keys of the range settings, which have a group of controls for both ends */
+const RANGE_KEYS = new Set(["range", "dateRange", "ageRange"]);
+
+/** whether the value of a validator's form control (or group of controls) means it is not set */
+function isUnsetSetting(key: string, value: unknown): boolean {
+  return RANGE_KEYS.has(key)
+    ? isEmptyRange(value as RangeConfig)
+    : isUnset(value);
+}
+
+/** the range with only the ends that are set */
+function withoutUnsetEnds(range: RangeConfig): RangeConfig {
+  return Object.fromEntries(
+    Object.entries(range ?? {}).filter(([, end]) => !isUnset(end)),
+  );
+}
+
 function isUnset(value: unknown): boolean {
   return (
     value === false ||
