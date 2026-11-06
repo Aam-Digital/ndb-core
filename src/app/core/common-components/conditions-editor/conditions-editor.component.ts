@@ -94,10 +94,10 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   readonly currentRecordType = input<EntityConstructor>();
 
   /**
-   * Offer an embedded field only as a whole, not the properties of its entries,
-   * for conditions evaluated where conditions on entries are not supported (e.g. permissions, notification rules).
+   * The conditions are matched against the stored documents (e.g. permissions, notification rules),
+   * so embedded fields whose entries are stored in another shape are only offered whole (see `FilterService.getConditionFields`).
    */
-  readonly hideEmbeddedFields = input(false);
+  readonly onStoredDocuments = input(false);
 
   @Output() conditionsChange = new EventEmitter<any>();
 
@@ -132,9 +132,10 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
-    const conditionFields = this.hideEmbeddedFields()
-      ? { options: [], excludedFields: [] }
-      : this.filterService.getConditionFields(this.entityConstructor);
+    const conditionFields = this.filterService.getConditionFields(
+      this.entityConstructor,
+      this.onStoredDocuments(),
+    );
     this.fieldOptions = conditionFields.options;
     this.excludedFields = conditionFields.excludedFields;
     this.loadConditions(this.conditions);
@@ -566,7 +567,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
   private storedRows(): any[] {
     return (this.working.$or ?? []).map((row) =>
-      this.entityConstructor && !this.hideEmbeddedFields() && isCompleteRow(row)
+      this.entityConstructor && isCompleteRow(row)
         ? this.filterService.toStoredCondition(this.entityConstructor, row)
         : row,
     );
@@ -574,8 +575,13 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
   private toEditorRow(row: any): any {
-    return this.entityConstructor && !this.hideEmbeddedFields()
-      ? this.filterService.fromStoredCondition(this.entityConstructor, row)
-      : row;
+    if (!this.entityConstructor) return row;
+    const editorRow = this.filterService.fromStoredCondition(
+      this.entityConstructor,
+      row,
+    );
+    // an embedded field offered only whole keeps its condition as stored
+    const [fieldPath] = Object.keys(editorRow ?? {});
+    return this.fieldOptions.some((o) => o.id === fieldPath) ? editorRow : row;
   }
 }

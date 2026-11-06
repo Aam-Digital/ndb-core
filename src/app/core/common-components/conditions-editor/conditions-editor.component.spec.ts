@@ -696,8 +696,22 @@ describe("ConditionsEditorComponent", () => {
       expect(component.excludedFields).toEqual(["log"]);
     });
 
-    it("keeps embedded fields whole when their properties are hidden (e.g. for permissions)", () => {
-      fixture.componentRef.setInput("hideEmbeddedFields", true);
+    it("offers the properties of embedded fields also for conditions on the stored documents (e.g. permissions)", () => {
+      fixture.componentRef.setInput("onStoredDocuments", true);
+      component.ngOnInit();
+
+      expect(component.fieldOptions.map((o) => o.id)).toEqual([
+        "log.status",
+        "log.date",
+      ]);
+    });
+
+    it("keeps an embedded field whole for conditions on the stored documents if its entries are stored in another shape", () => {
+      // like the tuples of an old attendance field
+      const dbPath = vi
+        .spyOn(SchemaEmbedDatatype.prototype, "getEmbeddedFieldDbPath")
+        .mockImplementation((innerProp) => `1.${innerProp}`);
+      fixture.componentRef.setInput("onStoredDocuments", true);
       const stored = { log: { $elemMatch: { status: "M" } } };
       component.conditions = stored;
       component.ngOnInit();
@@ -705,6 +719,7 @@ describe("ConditionsEditorComponent", () => {
       expect(component.fieldOptions).toEqual([]);
       expect(component.excludedFields).toEqual([]);
       expect(component.conditionsArray()).toEqual([stored]);
+      dbPath.mockRestore();
     });
 
     it("offers the properties of embedded fields also when the record type is chosen later", () => {

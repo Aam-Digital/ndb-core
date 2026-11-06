@@ -16,6 +16,8 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -33,6 +35,11 @@ describe("FilterService", () => {
       imports: [CoreTestingModule],
       providers: [
         { provide: ConfigurableEnumService, useValue: mockEnumService },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
       ],
     });
     service = TestBed.inject(FilterService);
@@ -260,6 +267,33 @@ describe("FilterService", () => {
     expect(service.getConditionFields(TestEntity)).toEqual({
       options: [],
       excludedFields: [],
+    });
+  });
+
+  it("keeps an old attendance field whole for conditions on the stored documents, as its entries are stored as tuples", () => {
+    @DatabaseEntity("FilterServiceLegacyAttendanceTest")
+    class LegacyAttendanceEntity extends Entity {
+      @DatabaseField({ label: "Attendance", dataType: "event-attendance-map" })
+      childrenAttendance: any;
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { label: "Status", dataType: "string" } },
+      })
+      log: object[];
+    }
+
+    expect(service.getConditionFields(LegacyAttendanceEntity)).toEqual({
+      options: expect.arrayContaining([
+        expect.objectContaining({ id: "childrenAttendance.participant" }),
+        expect.objectContaining({ id: "log.status" }),
+      ]),
+      excludedFields: ["childrenAttendance", "log"],
+    });
+    expect(service.getConditionFields(LegacyAttendanceEntity, true)).toEqual({
+      options: [expect.objectContaining({ id: "log.status" })],
+      excludedFields: ["log"],
     });
   });
 

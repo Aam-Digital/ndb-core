@@ -48,17 +48,30 @@ export class FilterService {
    * The fields of the entity type that a condition can be set on, for a field select:
    * its own fields and, instead of an embedded field itself, the properties of its entries
    * (with paths like "attendance.status"), as `options` in addition to the record's fields and the `excludedFields`.
+   *
+   * @param onStoredDocuments the conditions are matched against the stored documents (e.g. permissions, notification rules):
+   *    an embedded field whose entries are stored in another shape (like the tuples of an old attendance field) is then kept whole
    */
-  getConditionFields(entityType: EntityConstructor): {
+  getConditionFields(
+    entityType: EntityConstructor,
+    onStoredDocuments = false,
+  ): {
     options: FormFieldConfig[];
     excludedFields: string[];
   } {
-    // like the field select does for the record's own fields
     const embeddedRefs = getEmbeddedFieldRefs(
       this.schemaService,
       entityType,
     ).filter(
-      ({ outerSchema }) => !outerSchema.isInternalField && !!outerSchema.label,
+      ({ outerSchema, innerProp }) =>
+        // like the field select does for the record's own fields
+        !outerSchema.isInternalField &&
+        !!outerSchema.label &&
+        (!onStoredDocuments ||
+          getSchemaEmbedDatatype(
+            this.schemaService,
+            outerSchema,
+          ).getEmbeddedFieldDbPath(innerProp) === innerProp),
     );
     return {
       options: embeddedRefs.map((ref) => ({

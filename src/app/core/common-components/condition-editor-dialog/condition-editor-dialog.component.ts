@@ -27,8 +27,8 @@ export interface ConditionEditorDialogData {
   /** type of the record being edited when the condition is applied, whose fields condition rows can compare with */
   currentRecordType?: EntityConstructor;
 
-  /** offer embedded fields only as a whole, not the properties of their entries (see `ConditionsEditorComponent.hideEmbeddedFields`) */
-  hideEmbeddedFields?: boolean;
+  /** the conditions are matched against the stored documents (see `ConditionsEditorComponent.onStoredDocuments`) */
+  onStoredDocuments?: boolean;
 }
 
 /**

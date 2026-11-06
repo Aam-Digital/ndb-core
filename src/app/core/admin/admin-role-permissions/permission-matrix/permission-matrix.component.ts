@@ -500,7 +500,7 @@ export class PermissionMatrixComponent {
           conditions,
           explanation: this.buildConditionSentence(action, entityLabel),
           showInternalIdField: true,
-          hideEmbeddedFields: true,
+          onStoredDocuments: true,
         } satisfies ConditionEditorDialogData,
       })
       .afterClosed()
