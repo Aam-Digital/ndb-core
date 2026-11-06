@@ -28,8 +28,8 @@ export class AssistantButtonComponent implements OnInit {
 
   async ngOnInit() {
     await this.setupService.waitForConfigReady();
-    if (!this.configService.hasConfig()) {
-      // If we do not have a config yet, we open the setup dialog immediately
+    if (this.configService.isSystemUninitialized()) {
+      // If this system has no config yet, we open the setup dialog immediately
       // to allow the user to select a base config.
       await this.openAssistant();
     }

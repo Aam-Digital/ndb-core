@@ -83,7 +83,9 @@ export class AssistantDialogComponent implements OnInit {
   }
 
   private detectAssistantModes() {
-    if (!this.configService.hasConfig()) {
+    // deliberately not `!hasConfig()`: a config that could not be loaded must not
+    // offer to set up a system that already exists (see isSystemUninitialized())
+    if (this.configService.isSystemUninitialized()) {
       this.assistants.initDemo = true;
     } else {
       this.assistants.initDemo = false;
