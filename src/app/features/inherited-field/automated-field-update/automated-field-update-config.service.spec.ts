@@ -882,15 +882,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
       );
     }
 
-    it("shows them for review directly if there are not too many", async () => {
-      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW);
-
-      await changeCategory(school);
-
-      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
-      expect(mockDialog.open).toHaveBeenCalledOnce();
-    });
-
     it("counts each record once, also if several of its fields are updated", async () => {
       const project = new CycleAction();
       const activities = Array.from({ length: 60 }, () => {
@@ -929,48 +920,46 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(mockDialog.open).toHaveBeenCalledOnce();
     });
 
-    it("asks the user first, and shows them for review if the user chooses so", async () => {
-      const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW + 1);
-      confirmationDialog.getConfirmation.mockResolvedValueOnce("review");
-
-      await changeCategory(school);
-
-      expect(confirmationDialog.getConfirmation).toHaveBeenCalledOnce();
-      expect(mockDialog.open).toHaveBeenCalledOnce();
-    });
-
-    it("updates all of them with the suggested values without showing them, if the user chooses so", async () => {
-      const { school, children } = createSchoolWithChildren(
-        MAX_ENTITIES_TO_REVIEW + 1,
-      );
-      confirmationDialog.getConfirmation.mockResolvedValueOnce("update-all");
-
-      const previousVersions = await changeCategory(school);
-
-      expect(mockDialog.open).not.toHaveBeenCalled();
-      expect(new Set(await loadCategories(children))).toEqual(
-        new Set(["secondary-student"]),
-      );
-      expect(previousVersions).toHaveLength(children.length);
-    });
-
     it.each([
-      ["cancels", false],
-      ["closes the question", undefined],
-    ])("updates none of them if the user %s", async (_, dialogResult) => {
-      const { school, children } = createSchoolWithChildren(
+      // number of records, answer of the user, asked, review dialog opened, all updated (the review dialog confirms all)
+      ["not too many", MAX_ENTITIES_TO_REVIEW, undefined, false, true, true],
+      ["review", MAX_ENTITIES_TO_REVIEW + 1, "review", true, true, true],
+      [
+        "update all",
         MAX_ENTITIES_TO_REVIEW + 1,
-      );
-      confirmationDialog.getConfirmation.mockResolvedValueOnce(dialogResult);
+        "update-all",
+        true,
+        false,
+        true,
+      ],
+      ["cancel", MAX_ENTITIES_TO_REVIEW + 1, false, true, false, false],
+      [
+        "close the question",
+        MAX_ENTITIES_TO_REVIEW + 1,
+        undefined,
+        true,
+        false,
+        false,
+      ],
+    ])(
+      "asks first only if there are too many records, and updates them as chosen (%s)",
+      async (_, count, answer, asked, reviewOpened, allUpdated) => {
+        const { school, children } = createSchoolWithChildren(count);
+        if (asked)
+          confirmationDialog.getConfirmation.mockResolvedValueOnce(answer);
 
-      const previousVersions = await changeCategory(school);
+        const previousVersions = await changeCategory(school);
 
-      expect(mockDialog.open).not.toHaveBeenCalled();
-      expect(new Set(await loadCategories(children))).toEqual(
-        new Set([undefined]),
-      );
-      expect(previousVersions).toEqual([]);
-    });
+        expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(
+          asked ? 1 : 0,
+        );
+        expect(mockDialog.open).toHaveBeenCalledTimes(reviewOpened ? 1 : 0);
+        expect(new Set(await loadCategories(children))).toEqual(
+          new Set([allUpdated ? "secondary-student" : undefined]),
+        );
+        expect(previousVersions).toHaveLength(allUpdated ? count : 0);
+      },
+    );
   });
 
   it("should map each value of a multi-select enum source and remove duplicates", () => {
