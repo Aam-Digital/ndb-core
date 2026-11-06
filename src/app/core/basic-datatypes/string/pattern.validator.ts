@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
-import { NumberDatatype } from "../../../basic-datatypes/number/number.datatype";
-import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
-import { LongTextDatatype } from "../../../basic-datatypes/string/long-text.datatype";
-import { EmailDatatype } from "../../../basic-datatypes/string/email.datatype";
-import { UrlDatatype } from "../../../basic-datatypes/string/url.datatype";
-import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
-import { FieldValidator } from "./field-validator";
+import { FieldValidator } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { StringDatatype } from "./string.datatype";
+import { LongTextDatatype } from "./long-text.datatype";
+import { EmailDatatype } from "./email.datatype";
+import { UrlDatatype } from "./url.datatype";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -37,51 +36,6 @@ export function patternWithMessage(
     }
     return errors;
   };
-}
-
-/** `required: true`: the field must have a value */
-@Injectable()
-export class RequiredValidator extends FieldValidator<boolean> {
-  static override readonly key = "required";
-  override readonly warning = "never";
-
-  build(): ValidatorFn {
-    return Validators.required;
-  }
-
-  override message(): string {
-    return $localize`This field is required`;
-  }
-}
-
-/** `min: 5`: the number must be at least the given value */
-@Injectable()
-export class MinValidator extends FieldValidator<number> {
-  static override readonly key = "min";
-  override readonly datatypesSupported = [NumberDatatype];
-
-  build(value: number): ValidatorFn {
-    return Validators.min(value);
-  }
-
-  override message(error: { min: number }): string {
-    return $localize`Must be greater than ${error.min}`;
-  }
-}
-
-/** `max: 10`: the number must be at most the given value */
-@Injectable()
-export class MaxValidator extends FieldValidator<number> {
-  static override readonly key = "max";
-  override readonly datatypesSupported = [NumberDatatype];
-
-  build(value: number): ValidatorFn {
-    return Validators.max(value);
-  }
-
-  override message(error: { max: number }): string {
-    return $localize`Cannot be greater than ${error.max}`;
-  }
 }
 
 /**

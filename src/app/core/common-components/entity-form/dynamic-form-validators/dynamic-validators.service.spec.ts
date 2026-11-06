@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DynamicValidatorsService } from "./dynamic-validators.service";
-import { patternWithMessage } from "./basic-validators";
+import { patternWithMessage } from "../../../basic-datatypes/string/pattern.validator";
 import {
   DYNAMIC_VALIDATORS,
   FormValidatorConfig,

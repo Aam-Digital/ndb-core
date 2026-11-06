@@ -1,9 +1,6 @@
-import { Injectable } from "@angular/core";
 import { AbstractControl, ValidatorFn } from "@angular/forms";
-import { DateWithAgeDatatype } from "../../../basic-datatypes/date-with-age/date-with-age.datatype";
-import { FieldValidator, ValidatorContext } from "./field-validator";
-import { calculateAge } from "../../../../utils/utils";
-import { parseToDate } from "./date-validators";
+import { calculateAge } from "../../../utils/utils";
+import { parseToDate } from "../date/date-limit";
 
 /** the minimum and maximum age configured for a field (either can be missing) */
 export interface AgeRange {
@@ -15,7 +12,7 @@ export interface AgeRange {
  * Creates the validator for one end of the configured age range.
  * The error also carries the other end, if configured, to word it as a range ("between ... and ...").
  */
-function ageRangeValidator(
+export function ageRangeValidator(
   end: "minAge" | "maxAge",
   ageRange: AgeRange,
 ): ValidatorFn {
@@ -67,35 +64,5 @@ export function descriptionForAgeValidator(
         return $localize`Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years`;
       }
       return $localize`Age must be at most ${validationValue.maxAge} years`;
-  }
-}
-
-/** `minAge: 6`: the age calculated from the date of birth must be at least the given number of years */
-@Injectable()
-export class MinAgeValidator extends FieldValidator {
-  static override readonly key = "minAge";
-  override readonly datatypesSupported = [DateWithAgeDatatype];
-
-  build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
-    return ageRangeValidator("minAge", config);
-  }
-
-  override message(error: unknown): string {
-    return descriptionForAgeValidator("minAge", error);
-  }
-}
-
-/** `maxAge: 18`: the age calculated from the date of birth must be at most the given number of years */
-@Injectable()
-export class MaxAgeValidator extends FieldValidator {
-  static override readonly key = "maxAge";
-  override readonly datatypesSupported = [DateWithAgeDatatype];
-
-  build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
-    return ageRangeValidator("maxAge", config);
-  }
-
-  override message(error: unknown): string {
-    return descriptionForAgeValidator("maxAge", error);
   }
 }

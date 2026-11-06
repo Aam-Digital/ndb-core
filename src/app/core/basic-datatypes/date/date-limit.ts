@@ -1,7 +1,4 @@
-import { Injectable } from "@angular/core";
 import { AbstractControl, ValidatorFn } from "@angular/forms";
-import { DateDatatype } from "../../../basic-datatypes/date/date.datatype";
-import { FieldValidator } from "./field-validator";
 
 /**
  * Parses a value to a Date object.
@@ -129,35 +126,5 @@ export function descriptionForDateValidator(
       return $localize`Date must be on or after ${formatDateAsDayMonthYear(validationValue.minDate)}`;
     case "maxDate":
       return $localize`Date must be on or before ${formatDateAsDayMonthYear(validationValue.maxDate)}`;
-  }
-}
-
-/** `minDate: "2020-01-01"` (or `"$now"`): the date must be on or after the given date */
-@Injectable()
-export class MinDateValidator extends FieldValidator {
-  static override readonly key = "minDate";
-  override readonly datatypesSupported = [DateDatatype];
-
-  build(value: unknown): ValidatorFn {
-    return minDateValidator(value);
-  }
-
-  override message(error: unknown): string {
-    return descriptionForDateValidator("minDate", error);
-  }
-}
-
-/** `maxDate: "$now"` (or a date): the date must be on or before the given date */
-@Injectable()
-export class MaxDateValidator extends FieldValidator {
-  static override readonly key = "maxDate";
-  override readonly datatypesSupported = [DateDatatype];
-
-  build(value: unknown): ValidatorFn {
-    return maxDateValidator(value);
-  }
-
-  override message(error: unknown): string {
-    return descriptionForDateValidator("maxDate", error);
   }
 }
