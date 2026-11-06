@@ -1980,6 +1980,48 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ]);
       });
 
+      it.each([
+        [
+          "their shared value if they agree",
+          ["active", "active"],
+          "in-mentorship",
+          undefined,
+        ],
+        [
+          "the current value with a note if they differ",
+          ["active", "finished"],
+          "waiting",
+          "conflict",
+        ],
+      ])(
+        "suggests %s to a record that several changed records pass their value to",
+        async (_, statuses, expectedValue, expectedNoCommonValue) => {
+          const mentee = new Mentee();
+          mentee.status = "waiting";
+          const mentorships = statuses.map(() => {
+            const mentorship = new Mentorship();
+            mentorship.mentee = mentee.getId();
+            return mentorship;
+          });
+          entityMapper.addAll([mentee, ...mentorships]);
+          const before = mentorships.map((mentorship) => mentorship.copy());
+          mentorships.forEach(
+            (mentorship, i) =>
+              (mentorship.status = TEST_MENTORSHIP_ENUM.find(
+                (status) => status.id === statuses[i],
+              )),
+          );
+          mockDialog.open.mockClear();
+
+          await service.applyRulesToDependentEntities(mentorships, before);
+
+          const rows = mockDialog.open.mock.calls[0][1].data.entities;
+          expect(
+            rows.map((row) => [row.id, row.newValue, row.noCommonValue]),
+          ).toEqual([[mentee.getId(), expectedValue, expectedNoCommonValue]]);
+        },
+      );
+
       it("calculates a record that many changed records link to only until its value settles, not again for each of them", async () => {
         const workPackage = createAction(["health"]);
         const activities = Array.from({ length: 20 }, () =>

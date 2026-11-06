@@ -5,7 +5,7 @@ import { differenceWith, isEqual, uniq } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import { addAndRemoveValues } from "../add-missing-values";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
-import { isSameValue } from "../get-common-value";
+import { getCommonValue, isSameValue } from "../get-common-value";
 import {
   DefaultValueConfigInheritedField,
   isCollectingFromLinkedRecords,
@@ -383,7 +383,7 @@ export class AffectedEntitiesCalculation {
     } else if (isCollectingFromLinkedRecords(entityType.schema.get(fieldId))) {
       newValue = await this.loadCollectedValue(target, affectedRule);
     } else {
-      newValue = this.getValueOfChangedRecord(target, rule);
+      newValue = this.getValueOfChangedRecord(target, affectedRule);
     }
     return newValue
       ? this.toAffectedEntity(target, affectedRule, source, newValue)
@@ -448,21 +448,22 @@ export class AffectedEntitiesCalculation {
   }
 
   /**
-   * Get the new value of a field that takes the value of a linked record: the value of a changed record linking to it,
+   * Get the new value of a field that takes the value of a linked record: the value of the changed records linking to it,
    * if that value changed or the link is new (then only if there is a value, instead of clearing the existing one).
+   * If several changed records (e.g. of a bulk edit) pass on different values, the current value is kept.
    * @return undefined if no changed record passes on its value
    */
   private getValueOfChangedRecord(
     target: Entity,
-    rule: DefaultValueConfigInheritedField,
+    { rule, fieldId }: AffectedRule,
   ): NewValue | undefined {
-    const source = this.changeSet
+    const values = this.changeSet
       .changedRecordsLinkingTo(
         rule.sourceReferenceEntity,
         rule.sourceReferenceField,
         target.getId(),
       )
-      .find(
+      .filter(
         (record) =>
           this.changeSet.isChanged(record, rule.sourceValueField) ||
           (!isLinkedTo(
@@ -471,10 +472,19 @@ export class AffectedEntitiesCalculation {
             target.getId(),
           ) &&
             !isEmptyValue(this.context.calculateNewValue(record, rule))),
-      );
-    return source
-      ? { value: this.context.calculateNewValue(source, rule) }
-      : undefined;
+      )
+      .map((record) => this.context.calculateNewValue(record, rule));
+    if (values.length === 0) return undefined;
+
+    const { value, isConflict } = getCommonValue(values);
+    if (isConflict) {
+      return {
+        value: this.context.getDatabaseValue(target, fieldId),
+        noCommonValue: "conflict",
+      };
+    }
+    // if all of them cleared their value, the empty value as they pass it on
+    return { value: value ?? values[0] };
   }
 
   /**
