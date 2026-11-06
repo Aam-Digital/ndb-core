@@ -67,6 +67,27 @@ describe("ConfigValidationService", () => {
   });
 
   it.each([
+    [{ max: 10, _warningOnly: ["max"] }, []],
+    [{ required: true, _warningOnly: ["required"] }, ['"required"']],
+    [{ max: 10, _warningOnly: ["min"] }, ['"min"']],
+  ])(
+    "reports validators in _warningOnly that are not set or cannot be a warning: %o",
+    (validators, problemsAbout) => {
+      const problems = service.validate({
+        "entity:TestEntity": {
+          attributes: { other: { dataType: "number", validators } },
+        },
+      });
+
+      expect(problems).toEqual(
+        problemsAbout.map((about) =>
+          expect.objectContaining({ message: expect.stringContaining(about) }),
+        ),
+      );
+    },
+  );
+
+  it.each([
     ["a field not linking to records", { dataType: "string" }, "linking"],
     [
       "a field linking to several record types",

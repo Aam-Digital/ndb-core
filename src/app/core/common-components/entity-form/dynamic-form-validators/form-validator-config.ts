@@ -58,6 +58,9 @@ export const DYNAMIC_VALIDATORS = [
  */
 export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
 
+/** key of the setting in a {@link FormValidatorConfig} listing the validators that are only a warning */
+export const WARNING_ONLY_KEY = "_warningOnly";
+
 /**
  * the validators config. This is an object where the key
  * must be one of the `DynamicValidators`. The value to that key
@@ -88,6 +91,13 @@ export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
  */
 export type FormValidatorConfig = {
   [key in DynamicValidator]?: any;
+} & {
+  /**
+   * keys of the validators of this config whose errors are only a warning:
+   * the field shows the error, but users can still save after confirming it
+   * (keys starting with "_" are settings, not validators)
+   */
+  _warningOnly?: string[];
 };
 
 /** config of the `withinParent` validator (for "date-range" fields) */

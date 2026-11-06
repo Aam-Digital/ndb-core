@@ -6,6 +6,11 @@ import { EntityConfig } from "../../entity/entity-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { DefaultValueStrategy } from "../../default-values/default-value-strategy.interface";
 import { DynamicValidatorsService } from "../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import {
+  FormValidatorConfig,
+  WARNING_ONLY_KEY,
+} from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { asArray } from "#src/app/utils/asArray";
 import { resolveIconDefinition } from "../../common-components/fa-dynamic-icon/fa-icon-utils";
 import { MenuItem } from "../../ui/navigation/menu-item";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -156,6 +161,9 @@ export class ConfigValidationService {
       .get(EntitySchemaService)
       .getDatatypeOrDefault(schema.dataType);
     return Object.entries(schema.validators ?? {}).flatMap(([key, value]) => {
+      if (key === WARNING_ONLY_KEY) {
+        return this.validateWarningOnly(schema.validators, rules);
+      }
       const rule = rules.getRule(key);
       if (!rule) {
         return [
@@ -166,6 +174,22 @@ export class ConfigValidationService {
       }
       return rule.validateConfig(value, schema, datatype);
     });
+  }
+
+  /** `_warningOnly` lists validators of the field that can be only a warning */
+  private validateWarningOnly(
+    validators: FormValidatorConfig,
+    rules: DynamicValidatorsService,
+  ): string[] {
+    return asArray(validators[WARNING_ONLY_KEY] ?? [])
+      .filter(
+        (key) =>
+          !(key in validators) || rules.getRule(key)?.warning !== "optional",
+      )
+      .map(
+        (key) =>
+          $localize`:config validation:"${key}:validator:" is listed in "_warningOnly", but is not a validator of this field that can be only a warning. It is ignored there.`,
+      );
   }
 
   private validateMenuItems(

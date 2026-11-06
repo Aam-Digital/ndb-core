@@ -18,6 +18,10 @@ import { distinctUntilChanged } from "rxjs/operators";
 import { isEqual } from "lodash-es";
 import { ColumnConfig, toFormFieldConfig } from "../FormConfig";
 import { FieldValidator, ValidatorContext } from "./field-validator";
+import { asArray } from "#src/app/utils/asArray";
+
+/** keys of a `validators` config starting with this are settings (e.g. `_warningOnly`), not validators */
+export const SETTING_PREFIX = "_";
 
 /**
  * Builds the validators configured for form fields (`validators` of their schema)
@@ -70,7 +74,11 @@ export class DynamicValidatorsService {
       config,
     };
 
+    const warningOnly = new Set(asArray(config._warningOnly ?? []));
     for (const [key, value] of Object.entries(config)) {
+      if (key.startsWith(SETTING_PREFIX)) {
+        continue;
+      }
       const rule = this.rules.get(key);
       if (!rule) {
         // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
@@ -84,16 +92,21 @@ export class DynamicValidatorsService {
       if (!validator) {
         continue;
       }
+      const onlyWarns = rule.warning === "optional" && warningOnly.has(key);
       if (rule.async) {
         formControlOptions.asyncValidators.push((control: FormControl) =>
           (validator as AsyncPromiseValidatorFn)(control).then((errors) =>
-            this.addHumanReadableError(rule, errors),
+            this.addHumanReadableError(rule, errors, onlyWarns),
           ),
         );
         updateOnBlur ||= !rule.checkOnChange;
       } else {
         formControlOptions.validators.push((control: FormControl) =>
-          this.addHumanReadableError(rule, (validator as ValidatorFn)(control)),
+          this.addHumanReadableError(
+            rule,
+            (validator as ValidatorFn)(control),
+            onlyWarns,
+          ),
         );
       }
     }
@@ -151,6 +164,7 @@ export class DynamicValidatorsService {
   private addHumanReadableError(
     rule: FieldValidator,
     validationResult: ValidationErrors | null,
+    onlyWarns: boolean,
   ): ValidationErrors {
     if (!validationResult) {
       return validationResult;
@@ -160,6 +174,7 @@ export class DynamicValidatorsService {
     validationResult[rule.key] = {
       ...error,
       errorMessage: this.messageFor(rule, error),
+      ...(onlyWarns && { warning: true }),
     };
     return validationResult;
   }

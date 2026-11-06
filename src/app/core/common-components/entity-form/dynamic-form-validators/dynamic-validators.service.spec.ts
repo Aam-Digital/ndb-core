@@ -272,6 +272,27 @@ describe("DynamicValidatorsService", () => {
     expect(options.validators).toEqual([]);
   });
 
+  it.each([
+    [{ max: 10, _warningOnly: ["max"] }, 11, "max", true],
+    [{ max: 10 }, 11, "max", undefined],
+    [
+      { required: true, _warningOnly: ["required"] },
+      null,
+      "required",
+      undefined,
+    ],
+  ])(
+    "makes an error only a warning if _warningOnly lists a validator that can be one: %o",
+    (config: FormValidatorConfig, invalidValue, key, warning) => {
+      const validator = service.buildValidators(config, new TestEntity())
+        .validators[0];
+
+      const errors = validator(new UntypedFormControl(invalidValue));
+
+      expect(errors[key].warning).toBe(warning);
+    },
+  );
+
   it("registers a rule for each validator key of the config type", () => {
     const keys = service.getRules().map((rule) => rule.key);
 
