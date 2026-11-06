@@ -3,6 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { EntityAbility } from "./entity-ability";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { FilterService } from "../../filter/filter.service";
+import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 import { EntityActionPermission } from "../permission-types";
 
@@ -189,6 +191,40 @@ describe("EntityAbility", () => {
         ),
       ).toBe(true);
     });
+  });
+
+  describe("conditions in the stored format", () => {
+    const entity = TestEntity.create({
+      category: { id: "M", label: "male" },
+      ref: "Child:1",
+      refMixed: ["Note:1", "Todo:2"],
+      dateOfBirth: new DateWithAge(2012, 4, 3),
+      rating: 10,
+    });
+
+    it.each([
+      [{ category: "M" }, true],
+      [{ category: "F" }, false],
+      [{ category: { $in: ["F", "M"] } }, true],
+      [{ category: { $nin: ["F"] } }, true],
+      [{ ref: "Child:1" }, true],
+      [{ refMixed: { $elemMatch: { $eq: "Todo:2" } } }, true],
+      [{ refMixed: { $elemMatch: { $in: ["Child:1"] } } }, false],
+      [{ dateOfBirth: { $gte: "2012-05-03" } }, true],
+      [{ dateOfBirth: { $lt: "2012-05-03" } }, false],
+      [{ rating: { $gt: 5 } }, true],
+      [{ other: { $exists: false } }, true],
+    ])(
+      "are matched by permissions like in memory: %j",
+      (conditions, expected) => {
+        allowReadWhere(conditions);
+        const matchesInMemory =
+          TestBed.inject(FilterService).getFilterPredicate(conditions);
+
+        expect(ability.can("read", entity)).toBe(expected);
+        expect(matchesInMemory(entity)).toBe(expected);
+      },
+    );
   });
 
   describe("embedded entries", () => {

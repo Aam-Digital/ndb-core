@@ -87,6 +87,7 @@ import { TodosModule } from "./features/todos/todos.module";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES } from "./core/config/config.app-initializer";
+import { APP_INITIALIZER_COLOR_CONDITIONS } from "./core/filter/color-conditions.app-initializer";
 import { ImportModule } from "./core/import/import.module";
 import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
 import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
@@ -198,6 +199,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
       deps: [LoginStateSubject],
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
+    APP_INITIALIZER_COLOR_CONDITIONS,
     provideHttpClient(
       withXhr(),
       withInterceptorsFromDi(),

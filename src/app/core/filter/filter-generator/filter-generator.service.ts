@@ -45,6 +45,10 @@ import {
   getEmbeddedFieldLabel,
   resolveEmbeddedField,
 } from "../../entity/schema/embedded-schema-field.util";
+import {
+  conditionOnEmbeddedField,
+  emptyValueFilterOfEmbeddedField,
+} from "../embedded-field-filter";
 
 @Injectable({
   providedIn: "root",
@@ -252,36 +256,9 @@ export class FilterGeneratorService {
     includeEmptyArray = false,
     embedded?: EmbeddedFieldRef,
   ): FilterSelectionOption<T> {
-    let filter: DataFilter<T>;
-    if (embedded) {
-      const innerIsArray = embedded.innerSchema.isArray === true;
-      const innerEmpty = createEmptyValueFilter<T>(
-        embedded.innerProp,
-        includeNestedId,
-        innerIsArray,
-      );
-      filter = embedded.isArray
-        ? ({
-            // an entry counts as "not defined" if there are no embedded items at all,
-            // or if at least one of the items does not have a value for this property
-            $or: [
-              { [embedded.outerProp]: { $exists: false } },
-              { [embedded.outerProp]: { $size: 0 } },
-              this.wrapInElemMatch<T>(innerEmpty, embedded.outerProp),
-            ],
-          } as DataFilter<T>)
-        : createEmptyValueFilter<T>(
-            `${embedded.outerProp}.${embedded.innerProp}`,
-            includeNestedId,
-            innerIsArray,
-          );
-    } else {
-      filter = createEmptyValueFilter(
-        fieldName,
-        includeNestedId,
-        includeEmptyArray,
-      );
-    }
+    const filter: DataFilter<T> = embedded
+      ? emptyValueFilterOfEmbeddedField<T>(embedded, includeNestedId)
+      : createEmptyValueFilter(fieldName, includeNestedId, includeEmptyArray);
 
     return {
       key: EMPTY_FILTER_OPTION_KEY,
@@ -305,7 +282,7 @@ export class FilterGeneratorService {
   /**
    * Adapt the filter built for a property nested inside an embedded field
    * (built as if `filterId` were a normal, flat field) so that its query actually matches
-   * against the outer, embedding field - see {@link wrapEmbeddedDataFilter}.
+   * against the outer, embedding field - see {@link conditionOnEmbeddedField}.
    *
    * This works generically for any {@link Filter} produced by {@link generate}, regardless of its
    * concrete type: for a {@link SelectableFilter} (and its subclasses), each option's query is
@@ -317,7 +294,7 @@ export class FilterGeneratorService {
     embedded: EmbeddedFieldRef,
   ): void {
     const rewrap = (query: DataFilter<T> | undefined) =>
-      this.wrapEmbeddedDataFilter(query, filterId, embedded);
+      conditionOnEmbeddedField(query, filterId, embedded);
 
     if (filter instanceof SelectableFilter) {
       // the empty/"not defined" option is already built directly against the embedded
@@ -343,88 +320,6 @@ export class FilterGeneratorService {
           : rewrap(originalGetFilter.call(this));
       };
     }
-  }
-
-  /**
-   * Adapt a query built for the full id of a property nested inside an embedded field
-   * (e.g. "childrenAttendance.participant") into a query that matches against the outer,
-   * embedding field instead:
-   * - if the outer field holds an array of embedded objects, using `$elemMatch`
-   *   (e.g. `{ childrenAttendance: { $elemMatch: { participant: id } } }`,
-   *   matching if *any* of the entries has this value)
-   * - if the outer field holds a single embedded object, using a flat dot-path query
-   *   (e.g. `{ "phoneNumber.type": "mobile" }`)
-   */
-  private wrapEmbeddedDataFilter<T extends Entity>(
-    query: DataFilter<T> | undefined,
-    filterId: string,
-    embedded: EmbeddedFieldRef,
-  ): DataFilter<T> | undefined {
-    if (!query || Object.keys(query).length === 0) {
-      return query;
-    }
-
-    if (!embedded.isArray) {
-      return this.rewriteEmbeddedKeys(
-        query,
-        filterId,
-        `${embedded.outerProp}.${embedded.innerProp}`,
-      ) as DataFilter<T>;
-    }
-
-    const rewritten = this.rewriteEmbeddedKeys(
-      query,
-      filterId,
-      embedded.innerProp,
-    );
-    return this.wrapInElemMatch<T>(rewritten, embedded.outerProp);
-  }
-
-  /**
-   * Wrap a per-item query in `$elemMatch` to match against an array field, matching if *any*
-   * item satisfies it - hoisting a top-level `$or` out of `$elemMatch` first (e.g. turning
-   * `{ $elemMatch: { $or: [A, B] } }` into `{ $or: [{ $elemMatch: A }, { $elemMatch: B }] }`),
-   * since a compound operator like `$or` directly inside `$elemMatch` is not supported by the
-   * mongo2js query parser used here. Both forms are logically equivalent for `$elemMatch`
-   * (an item matching A-or-B exists iff an item matching A exists, or one matching B exists).
-   * The same goes for `$and`, which cannot be hoisted that way: a filter with several conditions on one item
-   * has to state them as keys of one object instead (see the overlap query of {@link DateFilter}).
-   */
-  private wrapInElemMatch<T extends Entity>(
-    query: any,
-    outerProp: string,
-  ): DataFilter<T> {
-    if (query && typeof query === "object" && Array.isArray(query.$or)) {
-      return {
-        $or: query.$or.map((branch: any) =>
-          this.wrapInElemMatch<T>(branch, outerProp),
-        ),
-      } as DataFilter<T>;
-    }
-    return { [outerProp]: { $elemMatch: query } } as DataFilter<T>;
-  }
-
-  /**
-   * Recursively replace `fromKey` with `toKey` in the keys of a DataFilter query object,
-   * also where it starts a path into the value (e.g. `fromKey + ".id"` of configurable-enum values,
-   * or `fromKey + ".start"` of a date range).
-   */
-  private rewriteEmbeddedKeys(query: any, fromKey: string, toKey: string): any {
-    if (Array.isArray(query)) {
-      return query.map((q) => this.rewriteEmbeddedKeys(q, fromKey, toKey));
-    }
-    if (query && typeof query === "object") {
-      const result: any = {};
-      for (const [key, value] of Object.entries(query)) {
-        const newKey =
-          key === fromKey || key.startsWith(`${fromKey}.`)
-            ? toKey + key.substring(fromKey.length)
-            : key;
-        result[newKey] = this.rewriteEmbeddedKeys(value, fromKey, toKey);
-      }
-      return result;
-    }
-    return query;
   }
 
   /**

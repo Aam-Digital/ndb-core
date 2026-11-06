@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AttendanceItem } from "../model/attendance-item";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
-import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
-import type { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
  * Holds a full register of EventAttendance entries.
@@ -40,17 +38,7 @@ export class EventAttendanceMapDatatype extends SchemaEmbedDatatype {
   }
 
   /**
-   * Path of an {@link AttendanceItem} property within the stored tuple
-   * `[participantId, {status, remarks}]` (see {@link getReferenceSelector} for why an
-   * integer path segment works on both query engines).
-   */
-  override getEmbeddedFieldDbPath(innerProp: string): string {
-    return innerProp === "participant" ? "0" : `1.${innerProp}`;
-  }
-
-  /**
-   * Unlike the embedded objects of the `attendance` datatype, this one stores each entry as a
-   * two-element tuple `[participantId, {status, remarks}]` (see {@link transformToDatabaseFormat}),
+   * Path of an {@link AttendanceItem} property within the stored tuple `[participantId, {status, remarks}]`,
    * so the participant is matched by its *index* in that tuple rather than by a property name.
    *
    * `{$elemMatch: {"0": id}}` is the spelling that works on both query engines:
@@ -59,13 +47,8 @@ export class EventAttendanceMapDatatype extends SchemaEmbedDatatype {
    * `{$elemMatch: {$elemMatch: {$eq: id}}}`, silently matches nothing in pouchdb-find, which
    * treats the inner `$elemMatch` as a field name.
    */
-  override getReferenceSelector(
-    fieldId: string,
-    schemaField: EntitySchemaField,
-    referencedId: string,
-  ): DataFilter<any>[] {
-    const participantPath = this.getEmbeddedFieldDbPath("participant");
-    return [{ [fieldId]: { $elemMatch: { [participantPath]: referencedId } } }];
+  override getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp === "participant" ? "0" : `1.${innerProp}`;
   }
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {

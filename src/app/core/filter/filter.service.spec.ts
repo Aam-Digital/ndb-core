@@ -10,8 +10,14 @@ import { buildEnumValueFilter } from "./filters/configurableEnumFilter";
 import { EntityFilter } from "./filters/entityFilter";
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
+import { matchColorConditionsInStoredFormat } from "./color-conditions.app-initializer";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -21,12 +27,19 @@ describe("FilterService", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnumValues: vi.fn(),
+      preLoadEnums: vi.fn(),
     };
     mockEnumService.getEnumValues.mockReturnValue(defaultInteractionTypes);
 
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
         { provide: ConfigurableEnumService, useValue: mockEnumService },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
       ],
     });
     service = TestBed.inject(FilterService);
@@ -119,18 +132,24 @@ describe("FilterService", () => {
     expect(relation.childId).toBe(child.getId());
   });
 
-  it("should support patching with date values", () => {
-    const filter = { date: "2022-02-03" } as DataFilter<Note>;
-    const predicate = service.getFilterPredicate(filter);
-    const note = new Note();
+  it.each(["date", "date-only"])(
+    "patches a %s field with the day of the filter in local time",
+    (dataType) => {
+      @DatabaseEntity(`DatePatchTestEntity-${dataType}`)
+      class DatePatchTestEntity extends Entity {}
+      DatePatchTestEntity.schema.set("day", { dataType });
+      const filter = { day: "2022-02-03" } as DataFilter<DatePatchTestEntity>;
+      const predicate = service.getFilterPredicate(filter);
+      const record = new DatePatchTestEntity();
 
-    expect(predicate(note)).toBe(false);
+      expect(predicate(record)).toBe(false);
 
-    service.alignEntityWithFilter(note, filter);
+      service.alignEntityWithFilter(record, filter);
 
-    expect(note.date).toBeInstanceOf(Date);
-    expect(predicate(note)).toBe(true);
-  });
+      expect(record["day"]).toEqual(moment("2022-02-03").toDate());
+      expect(predicate(record)).toBe(true);
+    },
+  );
 
   it("should support patching with array values", () => {
     const child = new TestEntity();
@@ -167,6 +186,19 @@ describe("FilterService", () => {
     [
       "nothing, if an $in list offers multiple options",
       { subject: { $in: ["A", "B"] } },
+      "subject",
+      undefined,
+    ],
+    [
+      "nothing, for an empty value (of a 'not defined' condition)",
+      { subject: { $eq: null } },
+      "subject",
+      undefined,
+    ],
+    ["nothing, for an empty text", { subject: "" }, "subject", undefined],
+    [
+      "nothing, for a list as value",
+      { subject: ["A", "B"] },
       "subject",
       undefined,
     ],
@@ -208,6 +240,12 @@ describe("FilterService", () => {
       date: { $gte: "2022-01-02", $lt: "2022-01-04" },
     } as DataFilter<Note>);
     expect(notes.filter(predicate)).toEqual([n2, n3]);
+
+    // e.g. the date of the edited record, as a resolved `$current_record` placeholder
+    predicate = service.getFilterPredicate({
+      date: moment("2022-01-02").toDate(),
+    } as DataFilter<Note>);
+    expect(notes.filter(predicate)).toEqual([n2]);
   });
 
   it("should skip filters without a selection when combining them", () => {
@@ -223,5 +261,108 @@ describe("FilterService", () => {
       service.combineFilters([asFilter({}), asFilter(selected)]),
       "one of two selected",
     ).toEqual(selected);
+  });
+
+  it("offers no condition fields inside internal embedded fields, like the created and updated metadata", () => {
+    expect(service.getConditionFields(TestEntity)).toEqual({
+      options: [],
+      excludedFields: [],
+    });
+  });
+
+  it("keeps an old attendance field whole for conditions on the stored documents, as its entries are stored as tuples", () => {
+    @DatabaseEntity("FilterServiceLegacyAttendanceTest")
+    class LegacyAttendanceEntity extends Entity {
+      @DatabaseField({ label: "Attendance", dataType: "event-attendance-map" })
+      childrenAttendance: any;
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { label: "Status", dataType: "string" } },
+      })
+      log: object[];
+    }
+
+    expect(service.getConditionFields(LegacyAttendanceEntity)).toEqual({
+      options: expect.arrayContaining([
+        expect.objectContaining({ id: "childrenAttendance.participant" }),
+        expect.objectContaining({ id: "log.status" }),
+      ]),
+      excludedFields: ["childrenAttendance", "log"],
+    });
+    expect(service.getConditionFields(LegacyAttendanceEntity, true)).toEqual({
+      options: [expect.objectContaining({ id: "log.status" })],
+      excludedFields: ["log"],
+    });
+  });
+
+  describe("conditional colors", () => {
+    afterEach(() => Entity.matchColorConditionsWith(undefined));
+
+    it("match records in the stored format, like all other conditions", () => {
+      // like an attendance entry, the entity keeps the status behind a getter, the stored entry has it as property
+      class Entry {
+        private readonly _status = "absent";
+        get status() {
+          return this._status;
+        }
+      }
+      @DatabaseEntity("ColorConditionTest")
+      class ColorConditionTest extends Entity {
+        static override readonly color = [
+          {
+            condition: { log: { $elemMatch: { status: { $exists: true } } } },
+            color: "red",
+          },
+        ];
+        @DatabaseField({
+          dataType: "schema-embed",
+          isArray: true,
+          additional: { status: { dataType: "string" } },
+        })
+        log: Entry[];
+      }
+      const record = new ColorConditionTest();
+      record.log = [new Entry()];
+
+      TestBed.runInInjectionContext(matchColorConditionsInStoredFormat);
+
+      expect(record.getColor()).toBe("red");
+    });
+  });
+
+  describe("matching records in the stored format", () => {
+    function testRecord() {
+      return TestEntity.create({
+        category: { id: "M", label: "male" },
+        dateOfBirth: new DateWithAge(moment().subtract(10, "years").toDate()),
+      });
+    }
+
+    it.each([
+      [{ category: "M" }, true],
+      [{ "category.id": "M" }, true],
+      [{ "dateOfBirth.age": { $gte: 9 } }, true],
+      [{ isNew: true }, true],
+      [{ other: { $exists: false } }, true],
+      [{ category: { $exists: false } }, false],
+    ])("matches %j like the database", (condition, expected) => {
+      const matches = service.getFilterPredicate(condition);
+
+      expect(matches(testRecord())).toBe(expected);
+    });
+
+    it("converts a saved record again once it has a new revision", () => {
+      const record = testRecord();
+      record._rev = "1-a";
+      const matches = service.getFilterPredicate({ category: "F" });
+      expect(matches(record)).toBe(false);
+
+      record.category = { id: "F", label: "female" };
+      record._rev = "2-b";
+
+      expect(matches(record)).toBe(true);
+    });
   });
 });
