@@ -816,7 +816,7 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId",
+                        "linkedSchool",
                         "projectSchool",
                         "projectPeriod"
                       ]
@@ -1404,7 +1404,7 @@
         "image": "photo",
         "fields": [
           "phone",
-          "schoolId",
+          "linkedSchool",
           "schoolClass"
         ]
       },
@@ -1431,7 +1431,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown",
               "valueMapping": {
                 "C1": "1",
@@ -1447,7 +1447,7 @@
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
         },
-        "schoolId": {
+        "linkedSchool": {
           "dataType": "entity",
           "additional": "School",
           "label": "Linked School",
@@ -1460,7 +1460,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown"
             }
           },
@@ -1634,7 +1634,7 @@
             "mode": "inherited-field",
             "config": {
               "sourceReferenceEntity": "Child",
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "center",
               "aggregation": "add"
             }

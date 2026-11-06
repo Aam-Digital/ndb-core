@@ -425,3 +425,26 @@ function applyStoredRevisions(entities: Entity[], results: any[]) {
     }
   }
 }
+
+/**
+ * The records that were stored although the save as a whole was rejected.
+ *
+ * A rejected save reports what became of the records (see `Database.putAll`): the
+ * results array when individual records failed, a {@link PartialBulkWriteError} when
+ * the write stopped partway. Any other rejection means nothing was stored.
+ */
+export function storedRecordsOf(records: Entity[], error: unknown): Entity[] {
+  let results: any[];
+  if (Array.isArray(error)) {
+    results = error;
+  } else if (error instanceof PartialBulkWriteError) {
+    results = error.storedResults;
+  } else {
+    return [];
+  }
+
+  const storedIds = new Set(
+    results.filter((result) => result?.ok).map((result) => result.id),
+  );
+  return records.filter((entity) => storedIds.has(entity.getId()));
+}

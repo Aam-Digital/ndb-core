@@ -6,14 +6,18 @@ import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.s
 import { Entity } from "#src/app/core/entity/model/entity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { AutomatedFieldUpdateComponent } from "./automated-field-update.component";
-import { AffectedEntity, EnteredValue } from "./automated-field-update.types";
+import {
+  AffectedEntity,
+  EnteredValue,
+  UpdateTrigger,
+} from "./automated-field-update.types";
 
 /** The fields of the changed entity and the ids of the rows of each group, to compare them */
 function summarizeGroups(
   groups: ReturnType<AutomatedFieldUpdateComponent["groups"]>,
 ) {
   return groups.map((group) => ({
-    fields: group.changes.map((change) => change.field.id),
+    fields: group.triggers[0].changes().map((change) => change.field.id),
     rows: group.rows.map((row) => row.id),
   }));
 }
@@ -81,10 +85,13 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   function initDialog(
     entities: AffectedEntity[],
-    trigger = {
-      entity: new Entity("trigger"),
-      before: new Entity("trigger"),
-    },
+    triggers: UpdateTrigger[] = [
+      {
+        entity: new Entity("trigger"),
+        before: new Entity("trigger"),
+        changedFields: [],
+      },
+    ],
   ) {
     TestBed.configureTestingModule({
       providers: [
@@ -92,7 +99,7 @@ describe("AutomatedFieldUpdateComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: {
             entities,
-            trigger,
+            triggers,
             recalculate,
           },
         },
@@ -358,19 +365,27 @@ describe("AutomatedFieldUpdateComponent", () => {
     const B = { id: "b", label: "B" };
     const C = { id: "c", label: "C" };
 
-    function change(before: unknown, after: unknown, isArray: boolean) {
+    /** a change of the center of a record (in entity format) */
+    function centerChange(id: string, before: unknown, after: unknown) {
       const trigger = {
-        entity: new Entity("trigger"),
-        before: new Entity("trigger"),
+        entity: new Entity(id),
+        before: new Entity(id),
+        changedFields: ["center"],
       };
       Object.assign(trigger.before, { center: before });
       Object.assign(trigger.entity, { center: after });
+      return trigger;
+    }
+
+    function change(before: unknown, after: unknown, isArray: boolean) {
       fieldConfigs["center"] = { id: "center", isArray };
       initDialog(
         [{ ...affected(FIRST, ["a"], 1), sourceFieldId: "center" }],
-        trigger,
+        [centerChange("trigger", before, after)],
       );
-      const { isChanged, removed, added } = component.groups()[0].changes[0];
+      const { isChanged, removed, added } = component
+        .groups()[0]
+        .triggers[0].changes()[0];
       return {
         isChanged,
         removed: removed?.["center"],
@@ -410,8 +425,60 @@ describe("AutomatedFieldUpdateComponent", () => {
       },
     );
 
-    it("should show neither removed nor added values if the field did not change", () => {
-      const result = change([A], [A], true);
+    it("should show the change of each changed record that the affected records are reached from", () => {
+      fieldConfigs["center"] = { id: "center" };
+      initDialog(
+        [
+          {
+            ...affected(FIRST, ["new"], 1),
+            sourceFieldId: "center",
+            via: ["Entity:first-child", "Entity:second-child"],
+          },
+        ],
+        [
+          centerChange("first-child", "old", "new"),
+          centerChange("second-child", "other", "new"),
+          // e.g. a record of a bulk edit that does not link to any record the rule updates
+          centerChange("unlinked-child", "old", "new"),
+        ],
+      );
+
+      expect(
+        component
+          .groups()[0]
+          .triggers.map(({ trigger, changes }) => [
+            trigger.entity.getId(),
+            changes()[0].removed?.["center"],
+            changes()[0].added?.["center"],
+          ]),
+      ).toEqual([
+        ["Entity:first-child", "old", "new"],
+        ["Entity:second-child", "other", "new"],
+      ]);
+    });
+
+    it("should calculate the change of a changed record only when it is shown", () => {
+      fieldConfigs["center"] = { id: "center" };
+      initDialog(
+        [{ ...affected(FIRST, ["new"], 1), sourceFieldId: "center" }],
+        [centerChange("trigger", "old", "new")],
+      );
+      const extendFormFieldConfig = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "extendFormFieldConfig",
+      );
+
+      const [item] = component.groups()[0].triggers;
+      expect(extendFormFieldConfig).not.toHaveBeenCalled();
+
+      expect(item.changes()[0].added?.["center"]).toBe("new");
+    });
+
+    it.each([
+      ["the field did not change", [A]],
+      ["only the label of its value changed", [{ id: "a", label: "A (new)" }]],
+    ])("should show the field as unchanged if %s", (_, after) => {
+      const result = change([A], after, true);
 
       expect(result).toEqual({
         isChanged: false,
@@ -419,6 +486,32 @@ describe("AutomatedFieldUpdateComponent", () => {
         added: undefined,
       });
     });
+
+    it.each([
+      ["links to other records", "p2", ["center", "parent"]],
+      // e.g. a single link that was saved as a list
+      ["still links to the same records", "p1", ["center"]],
+    ])(
+      "should list the link to the affected records only if it %s",
+      (_, linkAfter, expectedFields) => {
+        const trigger = centerChange("trigger", "old", "new");
+        Object.assign(trigger.before, { parent: ["p1"] });
+        Object.assign(trigger.entity, { parent: linkAfter });
+        initDialog(
+          [
+            {
+              ...affected(FIRST, ["new"], 1),
+              sourceFieldId: "center",
+              relatedReferenceFieldEntityType: Entity,
+            },
+          ],
+          [trigger],
+        );
+
+        const changes = component.groups()[0].triggers[0].changes();
+        expect(changes.map((c) => c.field.id)).toEqual(expectedFields);
+      },
+    );
   });
 
   describe("removed values", () => {
