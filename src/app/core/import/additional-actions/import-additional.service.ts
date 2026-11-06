@@ -19,6 +19,7 @@ import { EntityRelationsService } from "../../entity/entity-mapper/entity-relati
 import { asArray } from "../../../utils/asArray";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 import { Logging } from "../../logging/logging.service";
+import { entityToFieldReferenceLabel } from "../../entity/schema/entity-field-reference-label";
 
 /**
  * Service to handle additional import actions
@@ -356,15 +357,8 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
-    const sourceType = this.entityRegistry.get(importAction.sourceType);
-    const targetTypes = importAction["targetType"]
-      ? asArray(importAction["targetType"]).map((type) =>
-          this.entityRegistry.get(type),
-        )
-      : [];
-    const relationshipType = importAction["relationshipEntityType"]
-      ? this.entityRegistry.get(importAction["relationshipEntityType"])
-      : null;
+    const { sourceType, targetTypes, relationshipType } =
+      this.resolveActionTypes(importAction);
 
     // normally just one type; join with " / " if several
     const targetTypeLabel = targetTypes.map((t) => t.toString()).join(" / ");
@@ -383,6 +377,42 @@ export class ImportAdditionalService {
     );
 
     return label;
+  }
+
+  createGroupedActionLabel(importAction: AdditionalImportAction): string {
+    const { sourceType, targetTypes, relationshipType } =
+      this.resolveActionTypes(importAction);
+
+    const sourceLabel = sourceType.toString(true);
+    // the parent menu item already names the record, so the target types are only
+    // added where they tell two actions of the same relationship type apart
+    const baseLabel =
+      targetTypes.length > 1
+        ? $localize`${sourceLabel}:recordTypes: for ${targetTypes.map((t) => t.toString()).join(" / ")}:targetTypes:`
+        : sourceLabel;
+
+    return (
+      baseLabel +
+      this.getAdditionalContextDetailsForActionLabel(
+        importAction,
+        targetTypes,
+        relationshipType,
+      )
+    );
+  }
+
+  private resolveActionTypes(importAction: AdditionalImportAction) {
+    return {
+      sourceType: this.entityRegistry.get(importAction.sourceType),
+      targetTypes: importAction["targetType"]
+        ? asArray(importAction["targetType"]).map((type) =>
+            this.entityRegistry.get(type),
+          )
+        : [],
+      relationshipType: importAction["relationshipEntityType"]
+        ? this.entityRegistry.get(importAction["relationshipEntityType"])
+        : null,
+    };
   }
 
   private getAdditionalContextDetailsForActionLabel(
@@ -411,7 +441,16 @@ export class ImportAdditionalService {
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
       relationshipType?.label
     ) {
-      labelExtension = ` (through ${relationshipType?.toString(true)})`;
+      const relationshipLabel = relationshipType.toString(true);
+      const targetFieldLabel = relationshipType.schema.get(
+        (importAction as AdditionalIndirectLinkAction)
+          .relationshipTargetProperty,
+      )?.label;
+      labelExtension = ` (through ${
+        targetFieldLabel
+          ? entityToFieldReferenceLabel(relationshipLabel, targetFieldLabel)
+          : relationshipLabel
+      })`;
     }
 
     return labelExtension;

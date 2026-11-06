@@ -2,3 +2,8 @@
   display: flex;
   align-items: center;
 }
+
+/* labels must wrap, not truncate: their suffix tells the grouped actions apart */
+::ng-deep .mat-mdc-menu-panel.entity-actions-menu-panel {
+  max-width: min(32rem, 90vw);
+}
