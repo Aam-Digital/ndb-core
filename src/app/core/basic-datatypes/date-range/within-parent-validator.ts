@@ -17,7 +17,7 @@ import {
 
 /**
  * Validator for a date range that should lie within the range of the parent record(s) it links to.
- * Its error is only a warning (`warning: true`): the record can still be saved after confirming it.
+ * Its error is only a warning (see `WithinParentValidator.warning`): the record can still be saved after confirming it.
  * The parent link is taken from the form, or from the saved record if the form has no field for it.
  */
 export function withinParentValidator(
@@ -46,7 +46,6 @@ export function withinParentValidator(
     }
     return {
       withinParent: {
-        warning: true,
         errorMessage: $localize`Outside the period of ${parentName}`,
       },
     };
@@ -60,16 +59,15 @@ export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
   override readonly datatypesSupported = [DateRangeDatatype];
   override readonly warning = "always";
   override readonly async = true;
+  override readonly requiresFieldId = true;
 
   private readonly entityMapper = inject(EntityMapperService);
 
   build(
     value: WithinParentConfig,
     { entity, field }: ValidatorContext,
-  ): AsyncPromiseValidatorFn | null {
-    return field?.id
-      ? withinParentValidator(value, field.id, entity, this.entityMapper)
-      : null;
+  ): AsyncPromiseValidatorFn {
+    return withinParentValidator(value, field.id, entity, this.entityMapper);
   }
 
   override dependsOn(value: WithinParentConfig): string[] {

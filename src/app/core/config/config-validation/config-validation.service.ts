@@ -164,7 +164,7 @@ export class ConfigValidationService {
       if (key === WARNING_ONLY_KEY) {
         return this.validateWarningOnly(schema.validators, rules);
       }
-      const rule = rules.getRule(key);
+      const rule = rules.rules.get(key);
       if (!rule) {
         return [
           key === "regex"
@@ -172,7 +172,19 @@ export class ConfigValidationService {
             : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
         ];
       }
-      return rule.validateConfig(value, schema, datatype);
+      const problems = rule.validateConfig(value, schema, datatype);
+      // without a dataType (e.g. overriding a field of the record type's code) the type is not known here
+      if (
+        problems.length === 0 &&
+        schema.dataType &&
+        !rule.isSwitchedOff(value) &&
+        !rule.appliesTo(datatype, schema)
+      ) {
+        problems.push(
+          $localize`:config validation:The validator "${key}:validator:" does not fit the type of this field ("${schema.dataType}:dataType:"). It is removed once an admin edits the field's validation settings.`,
+        );
+      }
+      return problems;
     });
   }
 
@@ -184,7 +196,7 @@ export class ConfigValidationService {
     return asArray(validators[WARNING_ONLY_KEY] ?? [])
       .filter(
         (key) =>
-          !(key in validators) || rules.getRule(key)?.warning !== "optional",
+          !(key in validators) || rules.rules.get(key)?.warning !== "optional",
       )
       .map(
         (key) =>

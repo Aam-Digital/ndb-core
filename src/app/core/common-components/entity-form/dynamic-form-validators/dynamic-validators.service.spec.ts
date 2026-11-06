@@ -317,7 +317,7 @@ describe("DynamicValidatorsService", () => {
   );
 
   it("registers a rule for each validator key of the config type", () => {
-    const keys = service.getRules().map((rule) => rule.key);
+    const keys = [...service.rules.keys()];
 
     expect(new Set(keys)).toEqual(new Set(DYNAMIC_VALIDATORS));
     expect(keys).toHaveLength(DYNAMIC_VALIDATORS.length);

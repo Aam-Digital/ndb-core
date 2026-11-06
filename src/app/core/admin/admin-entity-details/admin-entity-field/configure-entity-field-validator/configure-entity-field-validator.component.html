@@ -1,5 +1,5 @@
 <form class="validator-form-cell flex-column" [formGroup]="validatorForm()">
-  @if (applies("min")) {
+  @if (applicableValidators().has("min")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field class="number-field">
         <mat-label i18n>Minimum Value</mat-label>
@@ -10,7 +10,7 @@
       />
     </div>
   }
-  @if (applies("max")) {
+  @if (applicableValidators().has("max")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field class="number-field">
         <mat-label i18n>Maximum Value</mat-label>
@@ -22,7 +22,7 @@
     </div>
   }
 
-  @if (applies("minAge")) {
+  @if (applicableValidators().has("minAge")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         <mat-label i18n>Minimum Age (Years)</mat-label>
@@ -38,7 +38,7 @@
       />
     </div>
   }
-  @if (applies("maxAge")) {
+  @if (applicableValidators().has("maxAge")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         <mat-label i18n>Maximum Age (Years)</mat-label>
@@ -55,7 +55,7 @@
     </div>
   }
 
-  @if (applies("minDate")) {
+  @if (applicableValidators().has("minDate")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         @if (isMonthType()) {
@@ -71,7 +71,7 @@
       />
     </div>
   }
-  @if (applies("maxDate")) {
+  @if (applicableValidators().has("maxDate")) {
     <div class="flex-row flex-wrap align-center gap-regular">
       <mat-form-field floatLabel="always">
         @if (isMonthType()) {
@@ -127,7 +127,7 @@
     </div>
   }
 
-  @if (applies("pattern")) {
+  @if (applicableValidators().has("pattern")) {
     <div class="flex-row flex-wrap align-center gap-small">
       <mat-form-field floatLabel="always" class="flex-grow">
         <mat-label i18n>Pattern (Regex)</mat-label>
@@ -207,10 +207,10 @@
 </form>
 
 <ng-template #onlyWarning let-key>
-  @if (hasValue(key)) {
+  @if (setValidators().has(key)) {
     <div>
       <mat-checkbox
-        [checked]="isWarningOnly(key)"
+        [checked]="warningOnlyValidators().has(key)"
         (change)="setWarningOnly(key, $event.checked)"
         i18n
         >Only a warning</mat-checkbox

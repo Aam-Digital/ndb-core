@@ -3,6 +3,8 @@ import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
 import { NumberDatatype } from "../../../basic-datatypes/number/number.datatype";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { LongTextDatatype } from "../../../basic-datatypes/string/long-text.datatype";
+import { EmailDatatype } from "../../../basic-datatypes/string/email.datatype";
+import { UrlDatatype } from "../../../basic-datatypes/string/url.datatype";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { FieldValidator } from "./field-validator";
 
@@ -94,9 +96,12 @@ export class PatternValidator extends FieldValidator<
 
   override appliesTo(datatype: DefaultDatatype): boolean {
     // not by inheritance: link and file fields extend the StringDatatype as they store ids
-    return [StringDatatype.dataType, LongTextDatatype.dataType].includes(
-      datatype.dataType,
-    );
+    return [
+      StringDatatype.dataType,
+      LongTextDatatype.dataType,
+      EmailDatatype.dataType,
+      UrlDatatype.dataType,
+    ].includes(datatype.dataType);
   }
 
   build(

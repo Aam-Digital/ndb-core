@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   computed,
+  signal,
   untracked,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
@@ -38,26 +39,12 @@ import {
 import { DynamicValidatorsService } from "app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { MonthDatatype } from "app/core/basic-datatypes/month/month.datatype";
+import { StringDatatype } from "app/core/basic-datatypes/string/string.datatype";
 import { asArray } from "app/utils/asArray";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
 import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
-
-/** the value of each validator's form control while it is not set */
-const UNSET_VALUES: FormValidatorConfig = {
-  required: false,
-  min: null,
-  max: null,
-  minAge: null,
-  maxAge: null,
-  minDate: null,
-  maxDate: null,
-  pattern: "",
-  uniqueId: "",
-  readonlyAfterSet: false,
-  withinParent: null,
-};
 
 /** an option of the date ranges a date range field can be checked against */
 interface ParentRangeOption {
@@ -108,8 +95,8 @@ export class ConfigureEntityFieldValidatorComponent {
     () => this.dataType() ?? this.entitySchemaField()?.dataType,
   );
 
-  /** keys of the validators that fit the data type selected for the field */
-  private readonly applicableValidators = computed(() => {
+  /** keys of the validators that fit the data type selected for the field, so that their settings are shown */
+  protected readonly applicableValidators = computed(() => {
     const datatype = this.schemaService.getDatatypeOrDefault(
       this.fieldDataType(),
     );
@@ -118,18 +105,29 @@ export class ConfigureEntityFieldValidatorComponent {
       dataType: this.fieldDataType(),
     };
     return new Set(
-      this.validators
-        .getRules()
+      [...this.validators.rules.values()]
         .filter((rule) => rule.appliesTo(datatype, field))
         .map((rule) => rule.key),
     );
   });
 
-  /** the data type the validators were last shown for, to remove the ones not fitting a newly selected type */
-  private shownDataType: string | undefined | null = null;
+  /** the current values of {@link validatorForm} */
+  private readonly formValue = signal<FormValidatorConfig>({});
 
-  /** settings were reset when the field was opened, so the config still has them until the form emits */
-  private resetWithoutEmitting = false;
+  /** keys of the validators that are set, so that they can be made only a warning */
+  protected readonly setValidators = computed(
+    () =>
+      new Set(
+        Object.entries(this.formValue())
+          .filter(([, value]) => !isUnset(value))
+          .map(([key]) => key),
+      ),
+  );
+
+  /** keys of the validators that are only a warning */
+  protected readonly warningOnlyValidators = computed(
+    () => new Set(asArray(this.formValue()[WARNING_ONLY_KEY] ?? [])),
+  );
 
   /**
    * the record type a link field links to, if it is exactly one (as needed for a `selectionCondition`);
@@ -246,43 +244,36 @@ export class ConfigureEntityFieldValidatorComponent {
         .valueChanges.subscribe(() =>
           this.syncPatternMessageAvailability(form),
         );
-      const sub = form.valueChanges.subscribe(() =>
-        this.entityValidatorChanges.emit(this.validatorConfig(form)),
-      );
+      this.formValue.set(form.getRawValue());
+      const sub = form.valueChanges.subscribe(() => {
+        this.formValue.set(form.getRawValue());
+        this.entityValidatorChanges.emit(this.validatorConfig(form));
+      });
       onCleanup(() => {
         patternSub.unsubscribe();
         sub.unsubscribe();
       });
     });
 
+    // settings not fitting a newly selected type are not shown, so they are removed from the config right away
+    let shownDataType: string | undefined;
+    let firstRun = true;
     effect(() => {
-      const form = this.validatorForm();
       const dataType = this.fieldDataType();
-      const applicable = this.applicableValidators();
       untracked(() => {
-        // the settings of validators not fitting the type are not shown, so they would stay in the config unnoticed
-        const typeChanged =
-          this.shownDataType !== null && this.shownDataType !== dataType;
-        this.shownDataType = dataType;
-        let reset = false;
-        for (const [key, unset] of Object.entries(UNSET_VALUES)) {
-          if (!applicable.has(key) && !isUnset(form.get(key).value)) {
-            // only removed from the config when the admin changes something, not just by opening the field
-            form.get(key).setValue(unset, { emitEvent: typeChanged });
-            reset = true;
-          }
+        if (!firstRun && dataType !== shownDataType) {
+          this.entityValidatorChanges.emit(
+            this.validatorConfig(this.validatorForm()),
+          );
+          const keepsNoTrim =
+            dataType === StringDatatype.dataType &&
+            this.trimControl().value === false;
+          this.entitySchemaFieldChanges.emit({
+            trim: keepsNoTrim ? false : undefined,
+          });
         }
-        if (reset) {
-          this.syncPatternMessageAvailability(form);
-        }
-        if (!typeChanged) {
-          this.resetWithoutEmitting ||= reset;
-        } else if (this.resetWithoutEmitting) {
-          this.resetWithoutEmitting = false;
-          if (!reset) {
-            form.updateValueAndValidity();
-          }
-        }
+        firstRun = false;
+        shownDataType = dataType;
       });
     });
 
@@ -308,20 +299,6 @@ export class ConfigureEntityFieldValidatorComponent {
     }
   }
 
-  /** whether the validator fits the data type selected for the field, so that its setting is shown */
-  applies(key: string): boolean {
-    return this.applicableValidators().has(key);
-  }
-
-  /** whether the validator is set, so that it can be made only a warning */
-  hasValue(key: string): boolean {
-    return !isUnset(this.validatorForm().get(key).value);
-  }
-
-  isWarningOnly(key: string): boolean {
-    return this.validatorForm().get(WARNING_ONLY_KEY).value.includes(key);
-  }
-
   setWarningOnly(key: string, warningOnly: boolean) {
     const control = this.validatorForm().get(WARNING_ONLY_KEY);
     const others = control.value.filter((other: string) => other !== key);
@@ -330,7 +307,7 @@ export class ConfigureEntityFieldValidatorComponent {
 
   /**
    * The validators config of the form:
-   * the set validators (see {@link removeDefaultValuesFromValidatorConfig}),
+   * the set validators fitting the selected data type (see {@link removeDefaultValuesFromValidatorConfig}),
    * the keys of the config without a setting here (e.g. of other modules) kept as they are.
    */
   private validatorConfig(form: FormGroup): FormValidatorConfig {
@@ -343,10 +320,16 @@ export class ConfigureEntityFieldValidatorComponent {
       ...Object.fromEntries(notInForm),
       ...this.removeDefaultValuesFromValidatorConfig(values),
     };
+    const applicable = this.applicableValidators();
+    for (const key of Object.keys(config)) {
+      if (this.validators.rules.has(key) && !applicable.has(key)) {
+        delete config[key];
+      }
+    }
 
     const warningOnly = asArray(config[WARNING_ONLY_KEY] ?? []).filter(
       (key) =>
-        key in config && this.validators.getRule(key)?.warning === "optional",
+        key in config && this.validators.rules.get(key)?.warning === "optional",
     );
     delete config[WARNING_ONLY_KEY];
     if (warningOnly.length > 0) {
@@ -406,7 +389,7 @@ export class ConfigureEntityFieldValidatorComponent {
   }
 }
 
-/** whether a validator's value means it is not set (see {@link UNSET_VALUES}) */
+/** whether a validator's form control value means it is not set */
 function isUnset(value: unknown): boolean {
   return (
     value === false ||

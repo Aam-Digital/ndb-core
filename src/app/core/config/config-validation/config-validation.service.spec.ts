@@ -66,6 +66,25 @@ describe("ConfigValidationService", () => {
     ]);
   });
 
+  it("should report validators not fitting the type of the field", () => {
+    const problems = service.validate({
+      "entity:TestEntity": {
+        attributes: {
+          count: { dataType: "number", validators: { pattern: "[0-9]+" } },
+          mail: { dataType: "email", validators: { pattern: "@x\\.org$" } },
+          overridden: { validators: { pattern: "[0-9]+" } },
+        },
+      },
+    });
+
+    expect(problems).toEqual([
+      expect.objectContaining({
+        field: "count",
+        message: expect.stringContaining('"pattern"'),
+      }),
+    ]);
+  });
+
   it.each([
     [{ max: 10, _warningOnly: ["max"] }, []],
     [{ required: true, _warningOnly: ["required"] }, ['"required"']],

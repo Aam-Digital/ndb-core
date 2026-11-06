@@ -15,12 +15,14 @@ Each key is one rule, the value is that rule's setting:
 Keys starting with `_` are settings, not rules:
 `_warningOnly` lists the rules whose errors are only a warning.
 The field shows the error, but users can still save after confirming "Save anyway?".
+`required` and `readonlyAfterSet` cannot be only a warning (their `warning` is `"never"`):
+a field that may stay empty is simply not required. The config check reports them in `_warningOnly`.
 
 Every rule is a service extending `FieldValidator`, registered through Angular DI as a multi-provider
 (like datatypes and default-value strategies).
 `DynamicValidatorsService` builds the validators of a field from the registered rules,
-the config check (`ConfigValidationService`) and the admin "Validation" tab ask them too,
-so a new rule needs no change in any of them.
+and the config check (`ConfigValidationService`) asks them too, so a new rule needs no change in either.
+The admin "Validation" tab is still written by hand per rule (see [Add a new rule](#add-a-new-rule)).
 
 Besides the configured rules, a form field also gets
 the `internalValidators` of its datatype (see [basic-datatypes](../../../basic-datatypes/README.md))
@@ -61,17 +63,19 @@ export class MaxLengthValidator extends FieldValidator<number> {
 }
 ```
 
-| Member                                   | What it does                                                                                                                                                                                                                                                                                         |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `static readonly key`                    | Key of the rule in `validators`, also the key of its error                                                                                                                                                                                                                                           |
-| `build(value, context)`                  | The Angular validator, or `null` if it cannot be built. It is not called for a setting that switches the rule off (`false`, `null` or an empty text, e.g. `required: false`). The `context` holds the record, the field, the whole `validators` config and whether the form edits one single record. |
-| `message(error)`                         | The readable message for the rule's error. By default the `errorMessage` the error carries.                                                                                                                                                                                                          |
-| `datatypesSupported`                     | The datatypes the rule fits, including their subtypes (e.g. `DateDatatype` also covers date only, date of birth and month). Empty: all datatypes. The admin "Validation" tab only shows the setting for these.                                                                                       |
-| `appliesTo(datatype, field)`             | Overrides `datatypesSupported` when the type alone is not enough. For example, `pattern` lists its types explicitly, as link and file fields extend the `StringDatatype` too.                                                                                                                        |
-| `warning`                                | `"optional"` (default): admins can make it only a warning. `"always"`: its errors are always only a warning (set `warning: true` in the error). `"never"`: it always blocks saving.                                                                                                                  |
-| `async`, `checkOnChange`                 | `async`: `build` returns an `AsyncPromiseValidatorFn` (e.g. to load other records). The field is then only checked when the user leaves it, unless `checkOnChange` is set.                                                                                                                           |
-| `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                                                                                                             |
-| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config.                                                                                                                                                                                                                      |
+| Member                                   | What it does                                                                                                                                                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `static readonly key`                    | Key of the rule in `validators`, also the key of its error                                                                                                                                                                                                      |
+| `build(value, context)`                  | The Angular validator, or `null` if it cannot be built. It is not called for a setting that switches the rule off (see `isSwitchedOff`). The `context` holds the record, the field, the whole `validators` config and whether the form edits one single record. |
+| `isSwitchedOff(value)`                   | Whether the setting switches the rule off. By default `false`, `null` or an empty text (e.g. `required: false`).                                                                                                                                                |
+| `requiresFieldId`                        | The rule needs the field's id (e.g. to compare with other records), so it is not built for a form field without one.                                                                                                                                            |
+| `message(error)`                         | The readable message for the rule's error. By default the `errorMessage` the error carries.                                                                                                                                                                     |
+| `datatypesSupported`                     | The datatypes the rule fits, including their subtypes (e.g. `DateDatatype` also covers date only, date of birth and month). Empty: all datatypes. The admin "Validation" tab only shows the setting for these.                                                  |
+| `appliesTo(datatype, field)`             | Overrides `datatypesSupported` when the type alone is not enough. For example, `pattern` lists its types explicitly, as link and file fields extend the `StringDatatype` too.                                                                                   |
+| `warning`                                | `"optional"` (default): admins can make it only a warning. `"always"`: its errors are always only a warning. `"never"`: it always blocks saving.                                                                                                                |
+| `async`, `checkOnChange`                 | `async`: `build` returns an `AsyncPromiseValidatorFn` (e.g. to load other records). The field is then only checked when the user leaves it, unless `checkOnChange` is set.                                                                                      |
+| `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                                                                        |
+| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config.                                                                                                                                                                                 |
 
 A rule that needs services injects them like any other service (`inject(EntityMapperService)`).
 Do not inject the `EntityFormService`, as it uses the rules itself.
@@ -84,8 +88,10 @@ providers: [{ provide: FieldValidator, useClass: MaxLengthValidator, multi: true
 
 The rules of the core module are in `standardFieldValidatorProviders`, and their keys are typed in `DYNAMIC_VALIDATORS`
 for configs written in code.
-A rule of the core module also needs its setting in the admin "Validation" tab (`ConfigureEntityFieldValidatorComponent`),
-shown only if the rule `applies` to the type selected there.
+The admin "Validation" tab (`ConfigureEntityFieldValidatorComponent`) has a setting only for the rules of the core module,
+each shown only if the rule `appliesTo` the type selected there.
+A rule of another module can be set in the config, and the tab keeps it as it is.
+To give it a setting in the tab, add it there by hand, as for the core rules.
 
 Unit-test the logic of the rule's check. Messages, warnings and checking a field again when the fields it depends on change
 are handled centrally by `DynamicValidatorsService`.

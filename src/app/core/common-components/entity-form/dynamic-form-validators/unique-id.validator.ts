@@ -11,6 +11,7 @@ import { AsyncPromiseValidatorFn } from "./validator-types";
 export class UniqueIdValidator extends FieldValidator<boolean> {
   static override readonly key = "uniqueId";
   override readonly async = true;
+  override readonly requiresFieldId = true;
 
   private readonly entityMapper = inject(EntityMapperService);
 
@@ -18,13 +19,7 @@ export class UniqueIdValidator extends FieldValidator<boolean> {
     _value: boolean,
     { entity, field }: ValidatorContext,
   ): AsyncPromiseValidatorFn | null {
-    const fieldId = field?.id;
-    if (!fieldId) {
-      Logging.warn(
-        "Trying to generate uniqueId validator without fieldId context",
-      );
-      return null;
-    }
+    const fieldId = field.id;
     if (entity instanceof EmbeddedEntity) {
       // not supported (yet) for inner fields of embedded entries: unique among which entries is not decided
       Logging.debug("Skipping uniqueId validator of an embedded entry", {

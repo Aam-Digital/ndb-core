@@ -23,13 +23,6 @@ import { asArray } from "#src/app/utils/asArray";
 /** keys of a `validators` config starting with this are settings (e.g. `_warningOnly`), not validators */
 export const SETTING_PREFIX = "_";
 
-/** whether the value of a validator in the config switches it off (e.g. `required: false`) */
-function isSwitchedOff(value: unknown): boolean {
-  return (
-    value === false || value === null || value === undefined || value === ""
-  );
-}
-
 /**
  * Builds the validators configured for form fields (`validators` of their schema)
  * from the registered {@link FieldValidator} rules.
@@ -38,22 +31,13 @@ function isSwitchedOff(value: unknown): boolean {
   providedIn: "root",
 })
 export class DynamicValidatorsService {
-  private readonly rules = new Map(
+  /** the registered rules by their key in the `validators` config */
+  readonly rules: ReadonlyMap<string, FieldValidator> = new Map(
     (inject(FieldValidator) as unknown as FieldValidator[]).map((rule) => [
       rule.key,
       rule,
     ]),
   );
-
-  /** all registered rules */
-  getRules(): FieldValidator[] {
-    return [...this.rules.values()];
-  }
-
-  /** the registered rule for a key of the `validators` config, `undefined` if there is none */
-  getRule(key: string): FieldValidator | undefined {
-    return this.rules.get(key);
-  }
 
   /**
    * The validators configured for a field, as options for its form control.
@@ -82,12 +66,14 @@ export class DynamicValidatorsService {
     const warningOnly = new Set(asArray(config._warningOnly ?? []));
 
     for (const [key, value] of Object.entries(config)) {
-      const rule = this.ruleToBuild(key, value);
+      const rule = this.ruleToBuild(key, value, context);
       const validator = rule?.build(value, context);
       if (!validator) {
         continue;
       }
-      const onlyWarns = rule.warning === "optional" && warningOnly.has(key);
+      const onlyWarns =
+        rule.warning === "always" ||
+        (rule.warning === "optional" && warningOnly.has(key));
       if (rule.async || onlyWarns) {
         formControlOptions.asyncValidators.push(
           this.asyncWithMessage(rule, validator, onlyWarns),
@@ -106,9 +92,16 @@ export class DynamicValidatorsService {
     return formControlOptions;
   }
 
-  /** the registered rule to build for a key of the config, `undefined` for a setting, a switched-off or unknown validator */
-  private ruleToBuild(key: string, value: unknown): FieldValidator | undefined {
-    if (key.startsWith(SETTING_PREFIX) || isSwitchedOff(value)) {
+  /**
+   * The registered rule to build for a key of the config,
+   * `undefined` for a setting, an unknown or switched-off validator, or one that cannot be built for the field.
+   */
+  private ruleToBuild(
+    key: string,
+    value: unknown,
+    context: ValidatorContext,
+  ): FieldValidator | undefined {
+    if (key.startsWith(SETTING_PREFIX)) {
       return undefined;
     }
     const rule = this.rules.get(key);
@@ -117,6 +110,16 @@ export class DynamicValidatorsService {
       Logging.debug("Trying to generate a validator that does not exist", {
         validator: key,
       });
+      return undefined;
+    }
+    if (rule.isSwitchedOff(value)) {
+      return undefined;
+    }
+    if (rule.requiresFieldId && !context.field?.id) {
+      Logging.warn("Trying to generate a validator without field id", {
+        validator: key,
+      });
+      return undefined;
     }
     return rule;
   }

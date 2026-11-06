@@ -12,74 +12,38 @@ export interface AgeRange {
 }
 
 /**
- * Creates an age range validator (min or max age).
- * @param rangeConfig both configured ages, only to word the error as a range ("between ... and ...")
+ * Creates the validator for one end of the configured age range.
+ * The error also carries the other end, if configured, to word it as a range ("between ... and ...").
  */
-export function createAgeComparisonValidator(
-  ageParamValue: unknown,
-  comparator: (age: number, param: number) => boolean,
-  errorKey: string,
-  paramName: "minAge" | "maxAge",
-  rangeConfig?: AgeRange,
+function ageRangeValidator(
+  end: "minAge" | "maxAge",
+  ageRange: AgeRange,
 ): ValidatorFn {
-  const paramNum = Number(ageParamValue);
-  if (!Number.isFinite(paramNum)) {
+  const limit = Number(ageRange[end]);
+  if (!Number.isFinite(limit)) {
     return () => null;
   }
-
-  const configuredMinAge = Number(rangeConfig?.minAge);
-  const configuredMaxAge = Number(rangeConfig?.maxAge);
-  const hasMin = Number.isFinite(configuredMinAge);
-  const hasMax = Number.isFinite(configuredMaxAge);
+  const configuredMinAge = Number(ageRange.minAge);
+  const configuredMaxAge = Number(ageRange.maxAge);
 
   return (control: AbstractControl) => {
     const controlDate = parseToDate(control.value);
     if (!controlDate) {
       return null;
     }
-
     const age = calculateAge(controlDate);
-    if (comparator(age, paramNum)) {
+    const fits = end === "minAge" ? age >= limit : age <= limit;
+    if (fits) {
       return null;
     }
-
     return {
-      [errorKey]: {
-        [paramName]: paramNum,
+      [end]: {
         currentAge: age,
-        ...(hasMin ? { minAge: configuredMinAge } : {}),
-        ...(hasMax ? { maxAge: configuredMaxAge } : {}),
+        ...(Number.isFinite(configuredMinAge) && { minAge: configuredMinAge }),
+        ...(Number.isFinite(configuredMaxAge) && { maxAge: configuredMaxAge }),
       },
     };
   };
-}
-
-/**
- * Validator for the minimum age of the range.
- * The maximum age only words the error as a range, if both are configured.
- */
-export function minAgeValidator(ageRange: AgeRange): ValidatorFn {
-  return createAgeComparisonValidator(
-    ageRange.minAge,
-    (age, param) => age >= param,
-    "minAge",
-    "minAge",
-    ageRange,
-  );
-}
-
-/**
- * Validator for the maximum age of the range.
- * The minimum age only words the error as a range, if both are configured.
- */
-export function maxAgeValidator(ageRange: AgeRange): ValidatorFn {
-  return createAgeComparisonValidator(
-    ageRange.maxAge,
-    (age, param) => age <= param,
-    "maxAge",
-    "maxAge",
-    ageRange,
-  );
 }
 
 export function descriptionForAgeValidator(
@@ -113,7 +77,7 @@ export class MinAgeValidator extends FieldValidator {
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
-    return minAgeValidator(config);
+    return ageRangeValidator("minAge", config);
   }
 
   override message(error: unknown): string {
@@ -128,7 +92,7 @@ export class MaxAgeValidator extends FieldValidator {
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
-    return maxAgeValidator(config);
+    return ageRangeValidator("maxAge", config);
   }
 
   override message(error: unknown): string {

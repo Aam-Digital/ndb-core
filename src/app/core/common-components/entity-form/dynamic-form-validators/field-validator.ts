@@ -25,7 +25,7 @@ export interface ValidatorContext {
  * `{ provide: FieldValidator, useClass: MyValidator, multi: true }`.
  * See the README of this folder.
  */
-export abstract class FieldValidator<Config = any> {
+export abstract class FieldValidator<Config = unknown> {
   /** key of the rule in a field's `validators` config */
   static readonly key: string;
 
@@ -50,6 +50,16 @@ export abstract class FieldValidator<Config = any> {
   /** an async check runs on every change of the value (e.g. a selection), not only when leaving the field */
   readonly checkOnChange: boolean = false;
 
+  /** the rule compares the field's value across records or reads its schema, so it is not built without a field id */
+  readonly requiresFieldId: boolean = false;
+
+  /** whether the configured value switches the rule off (by default `false`, `null` or an empty text, e.g. `required: false`) */
+  isSwitchedOff(value: Config): boolean {
+    return (
+      value === false || value === null || value === undefined || value === ""
+    );
+  }
+
   /** whether the rule is offered for a field of the given datatype */
   appliesTo(datatype: DefaultDatatype, _field: EntitySchemaField): boolean {
     return (
@@ -60,7 +70,8 @@ export abstract class FieldValidator<Config = any> {
 
   /**
    * The validator for the configured value, or `null` if it cannot be built.
-   * Not called for a value that switches the rule off (`false`, `null` or an empty text, e.g. `required: false`).
+   * Not called for a value that switches the rule off (see {@link isSwitchedOff}),
+   * nor without `context.field.id` if the rule {@link requiresFieldId}.
    */
   abstract build(
     value: Config,
@@ -68,8 +79,8 @@ export abstract class FieldValidator<Config = any> {
   ): ValidatorFn | AsyncPromiseValidatorFn | null;
 
   /** the readable message for an error of the rule (by default the `errorMessage` it carries) */
-  message(error: any): string | undefined {
-    return error?.errorMessage;
+  message(error: unknown): string | undefined {
+    return (error as { errorMessage?: string } | undefined)?.errorMessage;
   }
 
   /** other fields of the record the rule reads, so that the field is checked again when one of them changes */
