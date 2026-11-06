@@ -23,10 +23,10 @@ import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
 export const MAX_HIERARCHY_LEVELS = 10;
 
 /**
- * Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop).
- * The changes that start the calculation (e.g. of a bulk edit) come on top of it.
+ * Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop):
+ * how often the same record is calculated again, regardless of how many records are reached in total.
  */
-const MAX_STEPS = 1000;
+export const MAX_CALCULATIONS_PER_RECORD = 1000;
 
 /** An entity whose fields changed, so that the entities based on them have to be calculated (again) */
 export interface QueuedChange {
@@ -189,11 +189,14 @@ export class AffectedEntitiesCalculation {
       }),
     );
 
-    let steps = 0;
+    const calculations = new Map<string, number>();
     while (queue.length > 0) {
-      if (steps++ >= MAX_STEPS + this.triggers.length) {
+      const id = queue[0].entity.getId();
+      const count = (calculations.get(id) ?? 0) + 1;
+      calculations.set(id, count);
+      if (count > MAX_CALCULATIONS_PER_RECORD) {
         Logging.warn(
-          "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
+          "AutomatedFieldUpdateConfigService: Stopped looking for affected entities because a record was calculated too often",
           {
             entityType: this.triggers[0]?.entity.getType(),
             changedRecords: this.triggers.length,

@@ -2077,7 +2077,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockDialog.open).not.toHaveBeenCalled();
       });
 
-      it("reaches the levels above also if more records changed than the calculation takes steps at most", async () => {
+      it("reaches the levels above also if very many records changed", async () => {
         const project = createAction(["health"]);
         const workPackage = createAction(["health"], project);
         const activities = Array.from({ length: 1001 }, () =>
@@ -2091,6 +2091,26 @@ describe("AutomatedFieldUpdateConfigService", () => {
           [workPackage.getId(), ["water"]],
           [project.getId(), ["water"]],
         ]);
+      });
+
+      it("finds the linked record of each changed record, however many records are reached in total", async () => {
+        const workPackages = Array.from({ length: 1001 }, () =>
+          createAction(["health"]),
+        );
+        const activities = workPackages.map((workPackage) =>
+          createAction(["health"], workPackage),
+        );
+        entityMapper.addAll([...workPackages, ...activities]);
+        const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+        // too many to review them directly
+        confirmationDialog.getConfirmation.mockResolvedValueOnce("review");
+
+        const data = await changeAllTags(activities, ["water"]);
+
+        expect(data.entities.map((e) => e.id).sort()).toEqual(
+          workPackages.map((workPackage) => workPackage.getId()).sort(),
+        );
+        expect(warn).not.toHaveBeenCalled();
       });
 
       it("returns the updated records as they were before the update, so that it can be undone", async () => {
