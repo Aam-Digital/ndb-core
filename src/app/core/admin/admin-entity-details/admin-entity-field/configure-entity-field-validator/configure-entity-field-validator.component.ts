@@ -128,6 +128,9 @@ export class ConfigureEntityFieldValidatorComponent {
   /** the data type the validators were last shown for, to remove the ones not fitting a newly selected type */
   private shownDataType: string | undefined | null = null;
 
+  /** settings were reset when the field was opened, so the config still has them until the form emits */
+  private resetWithoutEmitting = false;
+
   /**
    * the record type a link field links to, if it is exactly one (as needed for a `selectionCondition`);
    * it can change while editing the field, the parent then removes the `selectionCondition` from the field's validators
@@ -205,7 +208,9 @@ export class ConfigureEntityFieldValidatorComponent {
     // read again when the linked type changes, as the parent then removes the `selectionCondition`
     this.linkedEntityType();
     const v = this.entitySchemaField()?.validators;
-    const isObjectForm = typeof v?.pattern === "object";
+    const pattern = v?.pattern;
+    const isObjectForm =
+      !!pattern && typeof pattern === "object" && !(pattern instanceof RegExp);
     return this.fb.group({
       required: [v?.required ?? false],
       min: [v?.min ?? null],
@@ -215,10 +220,14 @@ export class ConfigureEntityFieldValidatorComponent {
       minDate: [v?.minDate ?? null],
       maxDate: [v?.maxDate ?? null],
       pattern: [
-        (isObjectForm ? v.pattern.pattern : v?.pattern) ?? "",
+        (isObjectForm
+          ? pattern.pattern
+          : pattern instanceof RegExp
+            ? pattern.source
+            : pattern) ?? "",
         validRegexValidator,
       ],
-      patternMessage: [(isObjectForm ? v.pattern.message : "") ?? ""],
+      patternMessage: [(isObjectForm ? pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
       withinParent: [v?.withinParent ?? null],
@@ -258,9 +267,23 @@ export class ConfigureEntityFieldValidatorComponent {
         const typeChanged =
           this.shownDataType !== null && this.shownDataType !== dataType;
         this.shownDataType = dataType;
+        let reset = false;
         for (const [key, unset] of Object.entries(UNSET_VALUES)) {
           if (!applicable.has(key) && !isUnset(form.get(key).value)) {
+            // only removed from the config when the admin changes something, not just by opening the field
             form.get(key).setValue(unset, { emitEvent: typeChanged });
+            reset = true;
+          }
+        }
+        if (reset) {
+          this.syncPatternMessageAvailability(form);
+        }
+        if (!typeChanged) {
+          this.resetWithoutEmitting ||= reset;
+        } else if (this.resetWithoutEmitting) {
+          this.resetWithoutEmitting = false;
+          if (!reset) {
+            form.updateValueAndValidity();
           }
         }
       });
@@ -316,20 +339,23 @@ export class ConfigureEntityFieldValidatorComponent {
   private validatorConfig(form: FormGroup): FormValidatorConfig {
     const values = form.getRawValue();
     this.transformPatternValue(values);
-    const config = this.removeDefaultValuesFromValidatorConfig(values);
-    const warningOnly = (config[WARNING_ONLY_KEY] ?? []).filter(
-      (key: string) =>
+    const notInForm = Object.entries(
+      this.entitySchemaField()?.validators ?? {},
+    ).filter(([key]) => !(key in form.controls));
+    const config: FormValidatorConfig = {
+      ...Object.fromEntries(notInForm),
+      ...this.removeDefaultValuesFromValidatorConfig(values),
+    };
+
+    const warningOnly = asArray(config[WARNING_ONLY_KEY] ?? []).filter(
+      (key) =>
         key in config && this.validators.getRule(key)?.warning === "optional",
     );
     delete config[WARNING_ONLY_KEY];
     if (warningOnly.length > 0) {
       config[WARNING_ONLY_KEY] = warningOnly;
     }
-
-    const notInForm = Object.entries(
-      this.entitySchemaField()?.validators ?? {},
-    ).filter(([key]) => !(key in form.controls));
-    return { ...Object.fromEntries(notInForm), ...config };
+    return config;
   }
 
   /**

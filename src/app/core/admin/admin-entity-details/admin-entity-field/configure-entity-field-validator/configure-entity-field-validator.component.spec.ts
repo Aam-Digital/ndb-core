@@ -31,6 +31,8 @@ import { TranslatableText } from "../../../../config/multi-lingual-config";
 import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
 import { By } from "@angular/platform-browser";
 import { CoreTestingModule } from "../../../../../utils/core-testing.module";
+import { DynamicValidatorsService } from "../../../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { FieldValidator } from "../../../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 @DatabaseEntity("ValidatorTestProject")
@@ -181,13 +183,59 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ required: true });
     });
 
-    it("keeps validators the tab has no setting for", () => {
-      const emitted = renderField({ customRule: 5 } as FormValidatorConfig);
+    it("keeps validators the tab has no setting for, also as only a warning", () => {
+      const validators = TestBed.inject(DynamicValidatorsService);
+      const getRule = validators.getRule.bind(validators);
+      vi.spyOn(validators, "getRule").mockImplementation((key) =>
+        key === "customRule"
+          ? ({ warning: "optional" } as FieldValidator)
+          : getRule(key),
+      );
+      const emitted = renderField({
+        customRule: 5,
+        _warningOnly: ["customRule"],
+      } as FormValidatorConfig);
 
       component.validatorForm().get("required").setValue(true);
 
-      expect(emitted.at(-1)).toEqual({ customRule: 5, required: true });
+      expect(emitted.at(-1)).toEqual({
+        customRule: 5,
+        required: true,
+        _warningOnly: ["customRule"],
+      });
     });
+
+    it("removes settings not fitting the type from the config once the type is changed, not when only opening the field", () => {
+      const newFixture = TestBed.createComponent(
+        ConfigureEntityFieldValidatorComponent,
+      );
+      newFixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+        validators: { min: 5 },
+      });
+      const emitted: FormValidatorConfig[] = [];
+      newFixture.componentInstance.entityValidatorChanges.subscribe((v) =>
+        emitted.push(v),
+      );
+
+      newFixture.detectChanges();
+      expect(emitted).toEqual([]);
+
+      newFixture.componentRef.setInput("dataType", "number");
+      newFixture.detectChanges();
+      expect(emitted.at(-1)).toEqual({});
+    });
+
+    it.each([null, /^[0-9]+$/])(
+      "shows a pattern given as %s in the config",
+      (pattern) => {
+        renderField({ pattern });
+
+        expect(component.validatorForm().get("pattern").value).toBe(
+          pattern?.source ?? "",
+        );
+      },
+    );
 
     it("saves the validators that are only a warning, as long as they are set", () => {
       const emitted = renderField({ pattern: "[a-z]+" });
