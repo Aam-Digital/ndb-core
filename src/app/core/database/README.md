@@ -97,5 +97,6 @@ The migration is tracked as usage analytics events (category `indexeddb_adapter_
 - `db-name-helpers.ts` — the new and the legacy names of the local databases
 - `pouchdb/pouch-database.ts` — `PouchDatabase`, the PouchDB-backed implementation
 - `pouchdb/database-exception.ts`, `pouchdb/pouchdb-errors.ts` — converting the errors of PouchDB and IndexedDB into typed errors (see the logging README); `pouchdb/database-errors.ts` — the typed errors of the database (`WriteConflictError`, `LocalStorageError`)
+- `pouchdb/pouchdb-corruption-recovery.service.ts` — recognizes a corrupted local database (seen after using the app in several tabs) and offers the user to reset it; `pouchdb/indexeddb-sequence-check.ts` checks the `indexeddb` adapter's stored state for it, as PouchDB reports the failing writes only as "transaction was aborted"
 - `query-data-source.ts` — data source that runs a query and exposes its results
 - `../entity/schema/entity-schema.service.ts` — `loadDataIntoEntity()` used to turn raw query rows into entity instances
