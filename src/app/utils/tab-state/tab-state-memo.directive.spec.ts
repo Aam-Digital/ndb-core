@@ -14,7 +14,13 @@ describe("TabStateService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [TestAppComponent, NoopAnimationsModule, RouterTestingModule],
+      imports: [
+        TestAppComponent,
+        NoopAnimationsModule,
+        RouterTestingModule.withRoutes([
+          { path: "**", component: EmptyRouteComponent },
+        ]),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestAppComponent);
@@ -48,6 +54,41 @@ describe("TabStateService", () => {
 
     const selected = await tabGroupHarness.getSelectedTab();
     expect(await selected.getLabel()).toBe("C");
+  });
+
+  it("should switch to the first tab when navigating to another page reusing the component without a tabIndex", async () => {
+    const tabGroupHarness = await TestbedHarnessEnvironment.harnessForFixture(
+      fixture,
+      MatTabGroupHarness,
+    );
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl("/child/1?_tabIndex=2");
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(await (await tabGroupHarness.getSelectedTab()).getLabel()).toBe("C");
+
+    // e.g. "go to details" of a related record from a popup on the details page
+    await router.navigateByUrl("/child/2");
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(await (await tabGroupHarness.getSelectedTab()).getLabel()).toBe("A");
+  });
+
+  it("should keep the selected tab when only other query params of the same page change", async () => {
+    const tabGroupHarness = await TestbedHarnessEnvironment.harnessForFixture(
+      fixture,
+      MatTabGroupHarness,
+    );
+    const router = TestBed.inject(Router);
+    await tabGroupHarness.selectTab({ label: "C" });
+    await fixture.whenStable();
+
+    await router.navigate([], { queryParams: { status: "active" } });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(await (await tabGroupHarness.getSelectedTab()).getLabel()).toBe("C");
   });
 
   it("updates a two-way bound selectedIndex to the tab restored from the URL", async () => {
@@ -105,3 +146,6 @@ class TestAppComponent {}
 class TwoWayBoundTestComponent {
   selectedIndex = signal(0);
 }
+
+@Component({ template: "" })
+class EmptyRouteComponent {}
