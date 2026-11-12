@@ -756,6 +756,7 @@ export class AffectedEntityValueComponent implements OnInit {
                 </p>
                 <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
 @use &quot;variables/sizes&quot;;
+@use &quot;mixins/strike-through&quot;;
 
 :host {
   display: block;
@@ -781,9 +782,7 @@ app-entity-field-edit + .hint-text {
   gap: sizes.$small;
   color: colors.$error;
 
-  app-entity-field-view {
-    text-decoration: line-through;
-  }
+  @include strike-through.removed-values;
 }
 </code></pre>
     </div>

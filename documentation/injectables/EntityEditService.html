@@ -293,8 +293,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -393,8 +393,8 @@ and edit the entity if the user confirms.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="69"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -717,6 +717,7 @@ import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { EntityActionsService } from &quot;#src/app/core/entity/entity-actions/entity-actions.service&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
+import { AutomatedFieldUpdateConfigService } from &quot;#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service&quot;;
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -728,6 +729,9 @@ export class EntityEditService extends CascadingEntityAction {
   private readonly matDialog &#x3D; inject(MatDialog);
   private readonly entityActionsService &#x3D; inject(EntityActionsService);
   private readonly bulkOperationState &#x3D; inject(BulkOperationStateService);
+  private readonly automatedFieldUpdateConfigService &#x3D; inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   /**
    * Shows a confirmation dialog to the user
@@ -752,12 +756,18 @@ export class EntityEditService extends CascadingEntityAction {
     if (action) {
       const result &#x3D; await this.editEntity(action, entitiesToEdit);
       await this.bulkOperationState.waitForBulkOperationToFinish();
+      // as editing a single record does; undo also reverts the related records that were updated
+      const updatedRelatedRecords &#x3D;
+        await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+          result.newEntities,
+          result.originalEntities,
+        );
       this.entityActionsService.showSnackbarConfirmationWithUndo(
         this.entityActionsService.generateMessageForConfirmationWithUndo(
           entities,
           $localize&#x60;:Entity action confirmation message verb:edited&#x60;,
         ),
-        result.originalEntities,
+        [...result.originalEntities, ...updatedRelatedRecords],
       );
     }
     return true;

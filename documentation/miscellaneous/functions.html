@@ -263,6 +263,9 @@
                             <a href="#changedFieldsOf" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>changedFieldsOf</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#changesValue" title="src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>changesValue</b>&nbsp;&nbsp;&nbsp;(src/.../automated-field-update-config.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#classifyError" title="src/app/core/logging/error-classification.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>classifyError</b>&nbsp;&nbsp;&nbsp;(src/.../error-classification.ts)</span></a>
                         </li>
                         <li>
@@ -1400,7 +1403,7 @@
                             <a href="#statusClass" title="src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>statusClass</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-calendar.component.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#storedRecordsOf" title="src/app/core/import/import.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>storedRecordsOf</b>&nbsp;&nbsp;&nbsp;(src/.../import.service.ts)</span></a>
+                            <a href="#storedRecordsOf" title="src/app/core/entity/entity-mapper/entity-mapper.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>storedRecordsOf</b>&nbsp;&nbsp;&nbsp;(src/.../entity-mapper.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#subtreeLength" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>subtreeLength</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
@@ -5636,6 +5639,77 @@ response cannot shift revisions onto other entities.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="storedRecordsOf"></a>
+                    <span class="name">
+                        <span ><b>storedRecordsOf</b></span>
+                        <a href="#storedRecordsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>storedRecordsOf(records, error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The records that were stored although the save as a whole was rejected.</p>
+<p>A rejected save reports what became of the records (see <code>Database.putAll</code>): the
+results array when individual records failed, a <a href="../classes/PartialBulkWriteError.html">PartialBulkWriteError</a> when
+the write stopped partway. Any other rejection means nothing was stored.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>records</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
     <h3>src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts</h3>
     <section data-compodoc="block-methods">
@@ -8952,6 +9026,72 @@ or another <code>401</code> (e.g. an invalid token signature), which must keep b
                                     <tbody>
                                         <tr>
                                                 <td>err</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changesValue"></a>
+                    <span class="name">
+                        <span ><b>changesValue</b></span>
+                        <a href="#changesValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>changesValue(update: <a href="../interfaces/AffectedEntity.html" target="_self">AffectedEntity</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the update changes the value of the record (not only listed to note that there is no value in common).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>update</td>
+                                            <td>
+                                                            <code><a href="../interfaces/AffectedEntity.html" target="_self" >AffectedEntity</a></code>
+                                            </td>
 
                                             <td>
                                                     No
@@ -16623,77 +16763,6 @@ in remote monitoring (see #4174) or in a message shown to the user.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>unknown</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="storedRecordsOf"></a>
-                    <span class="name">
-                        <span ><b>storedRecordsOf</b></span>
-                        <a href="#storedRecordsOf"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>storedRecordsOf(records, error)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>The records that were stored although the save as a whole was rejected.</p>
-<p>A rejected save reports what became of the records (see <code>Database.putAll</code>): the
-results array when individual records failed, a <a href="../classes/PartialBulkWriteError.html">PartialBulkWriteError</a> when
-the write stopped partway. Any other rejection means nothing was stored.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>records</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>error</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
 
                         </div>
                             <div class="io-description">

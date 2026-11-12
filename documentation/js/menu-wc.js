@@ -1943,6 +1943,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/PartialImportError.html" data-type="entity-link" >PartialImportError</a>
                             </li>
                             <li class="link">
+                                <a href="classes/PartiallySavedUpdatesError.html" data-type="entity-link" >PartiallySavedUpdatesError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/PouchDatabase.html" data-type="entity-link" >PouchDatabase</a>
                             </li>
                             <li class="link">
@@ -3261,6 +3264,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/SqlReportRow.html" data-type="entity-link" >SqlReportRow</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/StartingChange.html" data-type="entity-link" >StartingChange</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/TemplateExportComplement.html" data-type="entity-link" >TemplateExportComplement</a>
                             </li>
                             <li class="link">
@@ -3280,6 +3286,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/TriggerChange.html" data-type="entity-link" >TriggerChange</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/TriggerWithChanges.html" data-type="entity-link" >TriggerWithChanges</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TypedErrorOptions.html" data-type="entity-link" >TypedErrorOptions</a>

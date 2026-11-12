@@ -253,8 +253,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -334,8 +334,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -415,8 +415,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="103"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:103</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -496,8 +496,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -577,8 +577,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -658,8 +658,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -751,8 +751,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="86"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:86</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -832,8 +832,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -925,8 +925,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -1012,7 +1012,7 @@ import { differenceWith, isEqual, uniq } from &quot;lodash-es&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import { addAndRemoveValues } from &quot;../add-missing-values&quot;;
 import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
-import { isSameValue } from &quot;../get-common-value&quot;;
+import { getCommonValue, isSameValue } from &quot;../get-common-value&quot;;
 import {
   DefaultValueConfigInheritedField,
   isCollectingFromLinkedRecords,
@@ -1024,18 +1024,16 @@ import {
   EnteredValue,
   UpdateTrigger,
 } from &quot;./automated-field-update.types&quot;;
-import {
-  ChangeSet,
-  ChangeSetState,
-  getChangedFields,
-  isLinkedTo,
-} from &quot;./change-set&quot;;
+import { ChangeSet, ChangeSetState, isLinkedTo } from &quot;./change-set&quot;;
 
 /** Number of levels above the changed entity that are included in one update dialog. */
 export const MAX_HIERARCHY_LEVELS &#x3D; 10;
 
-/** Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop) */
-const MAX_STEPS &#x3D; 1000;
+/**
+ * Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop):
+ * how often the same record is calculated again, regardless of how many records are reached in total.
+ */
+export const MAX_CALCULATIONS_PER_RECORD &#x3D; 1000;
 
 /** An entity whose fields changed, so that the entities based on them have to be calculated (again) */
 export interface QueuedChange {
@@ -1139,9 +1137,10 @@ function getLinkedIds(
  * It collects its result while it runs, so use a new instance for each calculation.
  */
 export class AffectedEntitiesCalculation {
-  private readonly changedFields: string[];
+  /** the fields of each changed record that are passed on, by the id of the record */
+  private readonly changedFields: Map&lt;string, string[]&gt;;
 
-  /** the changed entity and the entities with a suggested value, which the entities above are calculated from */
+  /** the changed entities and the entities with a suggested value, which the entities above are calculated from */
   private readonly changeSet: ChangeSet;
 
   /** the affected entities found so far, by entity id and field */
@@ -1154,24 +1153,33 @@ export class AffectedEntitiesCalculation {
   private readonly loadedRecords &#x3D; new Map&lt;string, Promise&lt;Entity[]&gt;&gt;();
 
   /**
+   * The suggestions calculated so far, by entity id and field, with the version of the change set they are based on.
+   * Many changed records can lead to the same entity (e.g. all children of a school in a bulk edit),
+   * which is only calculated again once the change set changed.
+   */
+  private readonly suggestions &#x3D; new Map&lt;
+    string,
+    { version: number; suggestion: Suggestion | undefined }
+  &gt;();
+
+  /**
    * @param context the rules, records and permissions that the calculation works with
-   * @param trigger the change that starts the update
+   * @param triggers the changes that start the update (several for a bulk edit)
    * @param enteredValues values the user entered for affected entities (database format),
    *   which the entities above are based on instead of the suggestions
    */
   constructor(
     private readonly context: AffectedEntitiesContext,
-    private readonly trigger: UpdateTrigger,
+    private readonly triggers: UpdateTrigger[],
     private readonly enteredValues: EnteredValue[] &#x3D; [],
   ) {
-    this.changedFields &#x3D; trigger.fieldId
-      ? [trigger.fieldId]
-      : getChangedFields(trigger.entity, trigger.before);
-    this.changeSet &#x3D; new ChangeSet(
-      trigger.entity,
-      trigger.before,
-      this.changedFields,
+    this.changedFields &#x3D; new Map(
+      triggers.map((trigger) &#x3D;&gt; [
+        trigger.entity.getId(),
+        trigger.changedFields,
+      ]),
     );
+    this.changeSet &#x3D; new ChangeSet(triggers);
   }
 
   /**
@@ -1179,21 +1187,27 @@ export class AffectedEntitiesCalculation {
    * @return the affected entities, ordered by level
    */
   async run(): Promise&lt;AffectedEntity[]&gt; {
-    const queue: QueuedChange[] &#x3D; [
-      {
-        entity: this.trigger.entity,
+    const queue: QueuedChange[] &#x3D; this.triggers.map(
+      ({ entity, changedFields, onlyLinkedEntities }) &#x3D;&gt; ({
+        entity,
         level: 0,
-        changedFields: this.changedFields,
-        onlyLinkedEntities: !!this.trigger.fieldId,
-      },
-    ];
+        changedFields,
+        onlyLinkedEntities,
+      }),
+    );
 
-    let steps &#x3D; 0;
+    const calculations &#x3D; new Map&lt;string, number&gt;();
     while (queue.length &gt; 0) {
-      if (steps++ &gt;&#x3D; MAX_STEPS) {
+      const id &#x3D; queue[0].entity.getId();
+      const count &#x3D; (calculations.get(id) ?? 0) + 1;
+      calculations.set(id, count);
+      if (count &gt; MAX_CALCULATIONS_PER_RECORD) {
         Logging.warn(
-          &quot;AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps&quot;,
-          { entityType: this.trigger.entity.getType() },
+          &quot;AutomatedFieldUpdateConfigService: Stopped looking for affected entities because a record was calculated too often&quot;,
+          {
+            entityType: this.triggers[0]?.entity.getType(),
+            changedRecords: this.triggers.length,
+          },
         );
         break;
       }
@@ -1237,17 +1251,16 @@ export class AffectedEntitiesCalculation {
     source: Entity,
     { level, sourceFieldId }: Pick&lt;QueuedChange, &quot;level&quot; | &quot;sourceFieldId&quot;&gt;,
   ): Promise&lt;boolean&gt; {
-    // the field that was changed is never offered again, and the chain ends at an entity the user may not update
+    // a field that was changed is never offered again, and the chain ends at an entity the user may not update
     const isChangedField &#x3D;
-      target.getId() &#x3D;&#x3D;&#x3D; this.trigger.entity.getId() &amp;&amp;
-      this.changedFields.includes(rule.fieldId);
+      this.changedFields.get(target.getId())?.includes(rule.fieldId) ?? false;
     if (isChangedField || !this.context.canUpdate(target, rule.fieldId)) {
       return false;
     }
 
     const key &#x3D; &#x60;${target.getId()}|${rule.fieldId}&#x60;;
     const existing &#x3D; this.affectedEntities.get(key);
-    const suggestion &#x3D; await this.suggestValue(target, rule, source);
+    const suggestion &#x3D; await this.getSuggestion(key, target, rule, source);
     if (suggestion) {
       this.affectedEntities.set(key, {
         ...suggestion,
@@ -1345,6 +1358,23 @@ export class AffectedEntitiesCalculation {
     return true;
   }
 
+  /** The suggested value of the affected entity (see {@link suggestions}) */
+  private async getSuggestion(
+    key: string,
+    target: Entity,
+    affectedRule: AffectedRule,
+    source: Entity,
+  ): Promise&lt;Suggestion | undefined&gt; {
+    const version &#x3D; this.changeSet.version;
+    const cached &#x3D; this.suggestions.get(key);
+    if (cached?.version &#x3D;&#x3D;&#x3D; version) {
+      return cached.suggestion;
+    }
+    const suggestion &#x3D; await this.suggestValue(target, affectedRule, source);
+    this.suggestions.set(key, { version, suggestion });
+    return suggestion;
+  }
+
   /**
    * Calculate the suggested value of an affected entity from its linked records after the change.
    * @param target the affected entity as it is saved
@@ -1363,7 +1393,7 @@ export class AffectedEntitiesCalculation {
     } else if (isCollectingFromLinkedRecords(entityType.schema.get(fieldId))) {
       newValue &#x3D; await this.loadCollectedValue(target, affectedRule);
     } else {
-      newValue &#x3D; this.getValueOfChangedRecord(target, rule);
+      newValue &#x3D; this.getValueOfChangedRecord(target, affectedRule);
     }
     return newValue
       ? this.toAffectedEntity(target, affectedRule, source, newValue)
@@ -1428,21 +1458,22 @@ export class AffectedEntitiesCalculation {
   }
 
   /**
-   * Get the new value of a field that takes the value of a linked record: the value of a changed record linking to it,
+   * Get the new value of a field that takes the value of a linked record: the value of the changed records linking to it,
    * if that value changed or the link is new (then only if there is a value, instead of clearing the existing one).
+   * If several changed records (e.g. of a bulk edit) pass on different values, the current value is kept.
    * @return undefined if no changed record passes on its value
    */
   private getValueOfChangedRecord(
     target: Entity,
-    rule: DefaultValueConfigInheritedField,
+    { rule, fieldId }: AffectedRule,
   ): NewValue | undefined {
-    const source &#x3D; this.changeSet
+    const values &#x3D; this.changeSet
       .changedRecordsLinkingTo(
         rule.sourceReferenceEntity,
         rule.sourceReferenceField,
         target.getId(),
       )
-      .find(
+      .filter(
         (record) &#x3D;&gt;
           this.changeSet.isChanged(record, rule.sourceValueField) ||
           (!isLinkedTo(
@@ -1451,10 +1482,19 @@ export class AffectedEntitiesCalculation {
             target.getId(),
           ) &amp;&amp;
             !isEmptyValue(this.context.calculateNewValue(record, rule))),
-      );
-    return source
-      ? { value: this.context.calculateNewValue(source, rule) }
-      : undefined;
+      )
+      .map((record) &#x3D;&gt; this.context.calculateNewValue(record, rule));
+    if (values.length &#x3D;&#x3D;&#x3D; 0) return undefined;
+
+    const { value, isConflict } &#x3D; getCommonValue(values);
+    if (isConflict) {
+      return {
+        value: this.context.getDatabaseValue(target, fieldId),
+        noCommonValue: &quot;conflict&quot;,
+      };
+    }
+    // if all of them cleared their value, the empty value as they pass it on
+    return { value: value ?? values[0] };
   }
 
   /**

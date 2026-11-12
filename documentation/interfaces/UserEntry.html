@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:55</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:56</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:61</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:62</a></div>
                                 </td>
                             </tr>
 
@@ -325,7 +325,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:59</a></div>
                                 </td>
                             </tr>
 
@@ -349,6 +349,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  Signal,
   signal,
 } from &quot;@angular/core&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
@@ -369,7 +370,7 @@ import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-for
 import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
 import { HelpButtonComponent } from &quot;#src/app/core/common-components/help-button/help-button.component&quot;;
 import { EntityFieldLabelPipe } from &quot;#src/app/core/entity/entity-field-label/entity-field-label.pipe&quot;;
-import { differenceWith, isEqual, uniq } from &quot;lodash-es&quot;;
+import { differenceWith, groupBy, isEqual, uniq, uniqWith } from &quot;lodash-es&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import {
   catchError,
@@ -381,7 +382,7 @@ import {
   switchMap,
 } from &quot;rxjs&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
-import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
 import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
 import { isSameValue } from &quot;../get-common-value&quot;;
 import { AffectedEntityValueComponent } from &quot;./affected-entity-value/affected-entity-value.component&quot;;
@@ -417,10 +418,17 @@ interface TriggerChange {
   added?: Entity;
 }
 
-/** The affected entities that are based on the same field of the changed entity */
+/** A changed entity that caused an update, with the changes of the fields that the update is based on */
+interface TriggerWithChanges {
+  trigger: UpdateTrigger;
+  /** calculated only when shown, as a bulk edit can change many entities */
+  changes: Signal&lt;TriggerChange[]&gt;;
+}
+
+/** The affected entities that are based on the same field of the changed entities */
 interface UpdateGroup {
   sourceFieldId: string;
-  changes: TriggerChange[];
+  triggers: TriggerWithChanges[];
   rows: DialogRow[];
 }
 
@@ -464,7 +472,8 @@ function getRowKey(row: AffectedEntity): string {
 export class AutomatedFieldUpdateComponent {
   data &#x3D; inject&lt;{
     entities: AffectedEntity[];
-    trigger?: UpdateTrigger;
+    /** the changes that opened the dialog (several for a bulk edit) */
+    triggers?: UpdateTrigger[];
     /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
     recalculate?: (enteredValues: EnteredValue[]) &#x3D;&gt; Promise&lt;AffectedEntity[]&gt;;
   }&gt;(MAT_DIALOG_DATA);
@@ -515,6 +524,16 @@ export class AutomatedFieldUpdateComponent {
   readonly groups &#x3D; computed(() &#x3D;&gt; this.groupByTriggerField(this.rows()));
 
   /**
+   * The change of a field of a changed entity, by entity id and field, which does not depend on the values
+   * the user enters, so that it is calculated once although the groups are made again for each entered value.
+   */
+  private readonly triggerChanges &#x3D; new Map&lt;string, TriggerChange&gt;();
+
+  /** The name of the type of the changed entities, to show how many of them caused the update */
+  readonly triggerTypeLabel &#x3D;
+    this.data.triggers?.[0]?.entity.getConstructor().labelPlural;
+
+  /**
    * Whether all entities directly linked to the changed entity are linked through the same field
    * (otherwise each of them shows how it is linked).
    */
@@ -528,53 +547,79 @@ export class AutomatedFieldUpdateComponent {
     );
 
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
-    const groups &#x3D; new Map&lt;string, DialogRow[]&gt;();
-    for (const row of rows) {
-      groups.set(row.sourceFieldId, [
-        ...(groups.get(row.sourceFieldId) ?? []),
-        row,
-      ]);
-    }
-    return [...groups].map(([sourceFieldId, groupRows]) &#x3D;&gt; ({
-      sourceFieldId,
-      changes: this.getTriggerChanges(sourceFieldId, groupRows),
-      rows: groupRows,
-    }));
+    const groups &#x3D; groupBy(rows, (row) &#x3D;&gt; row.sourceFieldId);
+    return Object.entries(groups).map(([sourceFieldId, groupRows]) &#x3D;&gt; {
+      const reachedFrom &#x3D; new Set(groupRows.flatMap((row) &#x3D;&gt; row.via ?? []));
+      const links &#x3D; uniqWith(
+        groupRows
+          .filter((row) &#x3D;&gt; row.level &#x3D;&#x3D;&#x3D; 1)
+          .map((row) &#x3D;&gt; ({
+            fieldId: row.relatedReferenceField,
+            entityType: row.relatedReferenceFieldEntityType,
+          })),
+        isEqual,
+      );
+      return {
+        sourceFieldId,
+        // a changed entity that the rows are not reached from did not cause their update
+        triggers: (this.data.triggers ?? [])
+          .filter((trigger) &#x3D;&gt; reachedFrom.has(trigger.entity.getId()))
+          .map((trigger) &#x3D;&gt; ({
+            trigger,
+            changes: computed(() &#x3D;&gt;
+              this.getTriggerChanges(trigger, sourceFieldId, links),
+            ),
+          })),
+        rows: groupRows,
+      };
+    });
   }
 
-  /** The fields of the changed entity that caused the update of the given rows, to show what changed */
+  /**
+   * The fields of the changed entity that caused the update of the rows of a group, to show what changed
+   * @param links the fields that link the first level of the rows to the changed entities
+   */
   private getTriggerChanges(
+    trigger: UpdateTrigger,
     sourceFieldId: string,
-    groupRows: DialogRow[],
+    links: { fieldId: string; entityType: EntityConstructor }[],
   ): TriggerChange[] {
-    const trigger &#x3D; this.data.trigger;
-    if (!trigger) return [];
-
     const entityType &#x3D; trigger.entity.getConstructor();
-    const isChanged &#x3D; (fieldId: string) &#x3D;&gt;
-      isFieldChanged(trigger.entity, trigger.before, fieldId);
-    const firstLevel &#x3D; groupRows.filter((entity) &#x3D;&gt; entity.level &#x3D;&#x3D;&#x3D; 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds &#x3D; uniq([
       sourceFieldId,
-      ...firstLevel
+      ...links
         .filter(
-          (entity) &#x3D;&gt; entity.relatedReferenceFieldEntityType &#x3D;&#x3D;&#x3D; entityType,
+          (link) &#x3D;&gt;
+            link.entityType &#x3D;&#x3D;&#x3D; entityType &amp;&amp;
+            isFieldChanged(trigger.entity, trigger.before, link.fieldId),
         )
-        .map((entity) &#x3D;&gt; entity.relatedReferenceField)
-        .filter(isChanged),
+        .map((link) &#x3D;&gt; link.fieldId),
     ]).filter((fieldId) &#x3D;&gt; !!fieldId);
-    return fieldIds.map((fieldId) &#x3D;&gt; {
-      const field &#x3D; this.entityFormService.extendFormFieldConfig(
-        fieldId,
-        entityType,
+    return fieldIds
+      .map((fieldId) &#x3D;&gt; {
+        const key &#x3D; &#x60;${trigger.entity.getId()}|${fieldId}&#x60;;
+        if (!this.triggerChanges.has(key)) {
+          this.triggerChanges.set(key, this.getTriggerChange(trigger, fieldId));
+        }
+        return this.triggerChanges.get(key);
+      })
+      .filter(
+        (change) &#x3D;&gt; change.field.id &#x3D;&#x3D;&#x3D; sourceFieldId || change.isChanged,
       );
-      return {
-        field,
-        isChanged: isChanged(fieldId),
-        ...this.getRemovedAndAdded(trigger, field),
-      };
-    });
+  }
+
+  private getTriggerChange(
+    trigger: UpdateTrigger,
+    fieldId: string,
+  ): TriggerChange {
+    const field &#x3D; this.entityFormService.extendFormFieldConfig(
+      fieldId,
+      trigger.entity.getConstructor(),
+    );
+    const { removed, added } &#x3D; this.getRemovedAndAdded(trigger, field);
+    // the saved value can differ without a change of the shown values (e.g. a single link saved as a list)
+    return { field, isChanged: !!(removed || added), removed, added };
   }
 
   /** What a change of the changed entity removed from the old value of the field, and what it added */

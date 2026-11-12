@@ -156,7 +156,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>The records that an update changes: the changed record that started it, and the records with
+                <p>The records that an update changes: the changed records that started it, and the records with
 a suggested value that is not saved yet. All other records are the same before and after the change.</p>
 <p>This allows to calculate the value of an affected record from all its linked records in both states,
 instead of from the change of one linked record only.</p>
@@ -171,6 +171,23 @@ instead of from the change of one linked record only.</p>
     <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#version" >version</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <table class="table table-sm table-bordered index-table">
             <tbody>
@@ -218,12 +235,12 @@ instead of from the change of one linked record only.</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, before: <a href="../classes/Entity.html" target="_self">Entity</a>, changedFields: string[])</code>
+<code>constructor(changes: <a href="../interfaces/StartingChange.html" target="_self">StartingChange[]</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:67</a></div>
                             </td>
                         </tr>
 
@@ -237,57 +254,20 @@ instead of from the change of one linked record only.</p>
                                                 <td>Name</td>
                                                     <td>Type</td>
                                                 <td>Optional</td>
-                                                    <td>Description</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                                 <tr>
-                                                        <td>entity</td>
+                                                        <td>changes</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                                                        <code><a href="../interfaces/StartingChange.html" target="_self" >StartingChange[]</a></code>
                                                         </td>
                                                   
                                                     <td>
                                                             No
                                                     </td>
                                                     
-                                                        <td>
-                                                                <p>the changed record (already saved)</p>
-
-                                                        </td>
-                                                </tr>
-                                                <tr>
-                                                        <td>before</td>
-                                                  
-                                                        <td>
-                                                                        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
-                                                        </td>
-                                                  
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-                                                        <td>
-                                                                <p>the changed record before the change</p>
-
-                                                        </td>
-                                                </tr>
-                                                <tr>
-                                                        <td>changedFields</td>
-                                                  
-                                                        <td>
-                                                                    <code>string[]</code>
-                                                        </td>
-                                                  
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-                                                        <td>
-                                                                <p>the fields of the changed record that are passed on</p>
-
-                                                        </td>
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -298,6 +278,49 @@ instead of from the change of one linked record only.</p>
         </table>
 </section>
 
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="version"></a>
+                    <span class="name">
+                        <span ><b>version</b></span>
+                        <a href="#version"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:67</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Increases whenever a value is set, so that what is calculated from the records stays valid until then</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
 
             <section data-compodoc="block-methods">
     
@@ -324,8 +347,8 @@ instead of from the change of one linked record only.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="158"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:158</a></div>
                         </td>
                     </tr>
 
@@ -417,8 +440,8 @@ instead of from the change of one linked record only.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="74"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:74</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -499,8 +522,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="89"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -578,8 +601,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:137</a></div>
                         </td>
                     </tr>
 
@@ -716,8 +739,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="102"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:102</a></div>
                         </td>
                     </tr>
 
@@ -874,8 +897,18 @@ interface ChangedRecord {
   changedFields: Set&lt;string&gt;;
 }
 
+/** A changed record that starts an update */
+export interface StartingChange {
+  /** the changed record (already saved) */
+  entity: Entity;
+  /** the changed record before the change */
+  before: Entity;
+  /** the fields of the changed record that are passed on */
+  changedFields: string[];
+}
+
 /**
- * The records that an update changes: the changed record that started it, and the records with
+ * The records that an update changes: the changed records that started it, and the records with
  * a suggested value that is not saved yet. All other records are the same before and after the change.
  *
  * This allows to calculate the value of an affected record from all its linked records in both states,
@@ -884,18 +917,18 @@ interface ChangedRecord {
 export class ChangeSet {
   private readonly records &#x3D; new Map&lt;string, ChangedRecord&gt;();
 
-  /**
-   * @param entity the changed record (already saved)
-   * @param before the changed record before the change
-   * @param changedFields the fields of the changed record that are passed on
-   */
-  constructor(entity: Entity, before: Entity, changedFields: string[]) {
-    this.records.set(entity.getId(), {
-      before: before.isNew ? undefined : before,
-      // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
-      after: entity.copy(),
-      changedFields: new Set(changedFields),
-    });
+  /** Increases whenever a value is set, so that what is calculated from the records stays valid until then */
+  version &#x3D; 0;
+
+  constructor(changes: StartingChange[]) {
+    for (const { entity, before, changedFields } of changes) {
+      this.records.set(entity.getId(), {
+        before: before.isNew ? undefined : before,
+        // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
+        after: entity.copy(),
+        changedFields: new Set(changedFields),
+      });
+    }
   }
 
   /**
@@ -926,6 +959,7 @@ export class ChangeSet {
     value: unknown,
     isSavedValue: boolean,
   ): void {
+    this.version++;
     const id &#x3D; saved.getId();
     const record &#x3D; this.records.get(id) ?? {
       before: saved,

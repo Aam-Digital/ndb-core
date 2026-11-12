@@ -263,6 +263,7 @@ It finds dependent entities and updates their fields based on changes in the sou
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#updateLinkedRecords" >updateLinkedRecords</a>
                             </li>
                         </ul>
@@ -299,23 +300,26 @@ It finds dependent entities and updates their fields based on changes in the sou
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>applyRulesToDependentEntities(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, entityBeforeChanges: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                    <code>applyRulesToDependentEntities(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>, entitiesBeforeChanges: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:99</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Applies rules to dependent entities based on changes in the provided entity.
-Also prompts user confirmation and saves updates if any changes were made.</p>
+                        <div class="io-description"><p>Applies rules to dependent entities based on changes in the provided entities.
+Also prompts user confirmation and saves updates if any changes were made.
+Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
+A failure is reported and shown to the user here, as the changed entities themselves are already saved.
+  (in the same order)</p>
 </div>
 
                             <div class="io-description">
@@ -332,9 +336,9 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>entity</td>
+                                                <td>entities</td>
                                             <td>
-                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | Entity[]</a></code>
                                             </td>
 
                                             <td>
@@ -344,15 +348,15 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                                             <td>
                                                     <ul>
-<li>The source entity whose changes should trigger updates</li>
+<li>The source entities whose changes should trigger updates</li>
 </ul>
 
                                             </td>
                                         </tr>
                                         <tr>
-                                                <td>entityBeforeChanges</td>
+                                                <td>entitiesBeforeChanges</td>
                                             <td>
-                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | Entity[]</a></code>
                                             </td>
 
                                             <td>
@@ -361,7 +365,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
 
                                             <td>
-                                                    <p>The state of the entity before changes were applied to identify what has changed</p>
+                                                    <p>The state of the entities before changes were applied to identify what has changed
+(in the same order)</p>
 
                                             </td>
                                         </tr>
@@ -369,11 +374,12 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>the updated entities as they were before the update (to undo it), without the given entities themselves</p>
+
                             </div>
                 </td>
             </tr>
@@ -401,8 +407,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="295"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:295</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="375"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:375</a></div>
                         </td>
                     </tr>
 
@@ -485,8 +491,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="269"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:269</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="349"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:349</a></div>
                         </td>
                     </tr>
 
@@ -578,8 +584,8 @@ Transforms to database format for consistent handling of all datatypes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="146"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:146</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="226"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:226</a></div>
                         </td>
                     </tr>
 
@@ -662,8 +668,8 @@ Until the permissions are loaded, this is not known (the server checks them anyw
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="365"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:365</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="445"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:445</a></div>
                         </td>
                     </tr>
 
@@ -746,8 +752,8 @@ Until the permissions are loaded, this is not known (the server checks them anyw
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="350"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:350</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="430"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:430</a></div>
                         </td>
                     </tr>
 
@@ -840,8 +846,8 @@ Until the permissions are loaded, this is not known (the server checks them anyw
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="242"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:242</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="322"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:322</a></div>
                         </td>
                     </tr>
 
@@ -923,8 +929,8 @@ Until the permissions are loaded, this is not known (the server checks them anyw
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="202"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:202</a></div>
                         </td>
                     </tr>
 
@@ -1005,8 +1011,8 @@ Until the permissions are loaded, this is not known (the server checks them anyw
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:155</a></div>
                         </td>
                     </tr>
 
@@ -1090,8 +1096,8 @@ by an automation rule (e.g. a sub-item&#39;s field that updates its linked paren
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="316"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:316</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="396"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:396</a></div>
                         </td>
                     </tr>
 
@@ -1209,8 +1215,8 @@ If any of them cannot be loaded (e.g. the user has no permission to read it), no
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="499"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:499</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="579"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:579</a></div>
                         </td>
                     </tr>
 
@@ -1302,8 +1308,8 @@ if undefined, each entity is loaded as the type of its id prefix</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="384"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:384</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="464"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:464</a></div>
                         </td>
                     </tr>
 
@@ -1402,8 +1408,8 @@ all records of the type are loaded and checked instead.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="252"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:252</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -1497,8 +1503,8 @@ all records of the type are loaded and checked instead.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="468"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:468</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="548"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:548</a></div>
                         </td>
                     </tr>
 
@@ -1607,6 +1613,7 @@ This finds the field schema from the source entity and applies the transformatio
                     <a name="updateLinkedRecords"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
                         <span ><b>updateLinkedRecords</b></span>
                         <a href="#updateLinkedRecords"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -1622,8 +1629,8 @@ This finds the field schema from the source entity and applies the transformatio
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="93"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:93</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="169"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:169</a></div>
                         </td>
                     </tr>
 
@@ -1694,9 +1701,14 @@ regardless of whether the field was changed recently.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
-import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  EntityMapperService,
+  storedRecordsOf,
+} from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { ConfirmationDialogButton } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import {
   AffectedEntity,
   AffectedRule,
@@ -1705,14 +1717,16 @@ import {
   UpdateTrigger,
 } from &quot;./automated-field-update.types&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
+import { groupBy } from &quot;lodash-es&quot;;
 import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { AlertService } from &quot;#src/app/core/alerts/alert.service&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 import { DatabaseIndexingService } from &quot;#src/app/core/entity/database-indexing/database-indexing.service&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import { addMissingValues } from &quot;../add-missing-values&quot;;
 import { CommonValue, getCommonValue, isSameValue } from &quot;../get-common-value&quot;;
-import { ChangeSet } from &quot;./change-set&quot;;
+import { ChangeSet, getChangedFields } from &quot;./change-set&quot;;
 import { EntityAbility } from &quot;#src/app/core/permissions/ability/entity-ability&quot;;
 import { SessionSubject } from &quot;#src/app/core/session/auth/session-info&quot;;
 import {
@@ -1721,10 +1735,33 @@ import {
   QueuedChange,
 } from &quot;./affected-entities-calculation&quot;;
 
+/** Above this number of affected records, the dialog to review them can take long to show, so the user is asked first */
+export const MAX_ENTITIES_TO_REVIEW &#x3D; 100;
+
+/** Whether the update changes the value of the record (not only listed to note that there is no value in common). */
+function changesValue(update: AffectedEntity): boolean {
+  return !isSameValue(update.newValue, update.savedValue);
+}
+
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty &#x3D; Parameters&lt;
   DatabaseIndexingService[&quot;generateIndexOnProperty&quot;]
 &gt;[2];
+
+/**
+ * Saving the updated records failed after some of them were already stored.
+ * Carries their previous versions, so that the caller can still undo what was saved.
+ */
+class PartiallySavedUpdatesError extends Error {
+  constructor(
+    readonly previousVersions: Entity[],
+    cause: unknown,
+  ) {
+    super(&quot;Some of the updated records were saved before the failure&quot;, {
+      cause,
+    });
+  }
+}
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -1735,9 +1772,11 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly dialog &#x3D; inject(MatDialog);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
   private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
   private readonly ability &#x3D; inject(EntityAbility, { optional: true });
+  private readonly alertService &#x3D; inject(AlertService);
   private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
@@ -1749,21 +1788,65 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly processedRevisions &#x3D; new Set&lt;string&gt;();
 
   /**
-   * Applies rules to dependent entities based on changes in the provided entity.
+   * Applies rules to dependent entities based on changes in the provided entities.
    * Also prompts user confirmation and saves updates if any changes were made.
-   * @param entity - The source entity whose changes should trigger updates
-   * @param entityBeforeChanges The state of the entity before changes were applied to identify what has changed
+   * Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
+   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
+   * @param entities - The source entities whose changes should trigger updates
+   * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
+   *   (in the same order)
+   * @return the updated entities as they were before the update (to undo it), without the given entities themselves
    */
   public async applyRulesToDependentEntities(
-    entity: Entity,
-    entityBeforeChanges: Entity,
-  ): Promise&lt;void&gt; {
-    if (this.checkRefAlreadyProcessed(entity)) return;
+    entities: Entity | Entity[],
+    entitiesBeforeChanges: Entity | Entity[],
+  ): Promise&lt;Entity[]&gt; {
+    try {
+      return await this.updateEntitiesDependingOn(
+        asArray(entities),
+        asArray(entitiesBeforeChanges),
+      );
+    } catch (error) {
+      const failure &#x3D;
+        error instanceof PartiallySavedUpdatesError ? error.cause : error;
+      Logging.error(
+        &quot;AutomatedFieldUpdateConfigService: Could not update the linked records after saving&quot;,
+        failure,
+      );
+      this.alertService.addDanger(
+        $localize&#x60;The linked records could not be updated.&#x60;,
+      );
+      // the records that were saved before the failure can still be undone
+      const givenIds &#x3D; new Set(asArray(entities).map((e) &#x3D;&gt; e.getId()));
+      return error instanceof PartiallySavedUpdatesError
+        ? error.previousVersions.filter((e) &#x3D;&gt; !givenIds.has(e.getId()))
+        : [];
+    }
+  }
 
-    await this.confirmAndSaveAffectedEntities({
-      entity,
-      before: entityBeforeChanges,
-    });
+  private async updateEntitiesDependingOn(
+    entities: Entity[],
+    before: Entity[],
+  ): Promise&lt;Entity[]&gt; {
+    // only the entities with a change that is passed on (saving also changes e.g. the update time)
+    const triggers: UpdateTrigger[] &#x3D; entities
+      .map((entity, i) &#x3D;&gt; ({
+        entity,
+        before: before[i],
+        changedFields: getChangedFields(entity, before[i]),
+      }))
+      .filter(
+        (trigger) &#x3D;&gt;
+          this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
+            .length &gt; 0 &amp;&amp; !this.checkRefAlreadyProcessed(trigger.entity),
+      );
+    if (triggers.length &#x3D;&#x3D;&#x3D; 0) return [];
+
+    const { previousVersions } &#x3D;
+      await this.confirmAndSaveAffectedEntities(triggers);
+    // the caller has the given entities as they were before their change
+    const givenIds &#x3D; new Set(entities.map((entity) &#x3D;&gt; entity.getId()));
+    return previousVersions.filter((entity) &#x3D;&gt; !givenIds.has(entity.getId()));
   }
 
   /**
@@ -1784,30 +1867,34 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * regardless of whether the field was changed recently.
    * @return whether there were any linked entities to update
    */
-  public updateLinkedRecords(
+  public async updateLinkedRecords(
     entity: Entity,
     fieldId: string,
   ): Promise&lt;boolean&gt; {
-    return this.confirmAndSaveAffectedEntities({
-      entity,
-      before: entity,
-      fieldId,
-    });
+    const { hasAffectedEntities } &#x3D; await this.confirmAndSaveAffectedEntities([
+      {
+        entity,
+        before: entity,
+        changedFields: [fieldId],
+        onlyLinkedEntities: true,
+      },
+    ]);
+    return hasAffectedEntities;
   }
 
   /**
    * Find the entities that the rules would update, level by level up the hierarchy
    * (see {@link AffectedEntitiesCalculation}).
-   * @param trigger the change that starts the update
+   * @param triggers the changes that start the update
    * @param enteredValues values the user entered for affected entities (database format),
    *   which the entities above are based on instead of the suggestions
    * @return the affected entities, ordered by level
    */
   private findAffectedEntities(
-    trigger: UpdateTrigger,
+    triggers: UpdateTrigger[],
     enteredValues: EnteredValue[] &#x3D; [],
   ): Promise&lt;AffectedEntity[]&gt; {
-    return new AffectedEntitiesCalculation(this, trigger, enteredValues).run();
+    return new AffectedEntitiesCalculation(this, triggers, enteredValues).run();
   }
 
   /**
@@ -2240,37 +2327,42 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   /**
    * Find the entities affected by the change and open a dialog to confirm their updates with the user.
    * Saves entities only if the user confirms the changes.
-   * @return whether there were any affected entities
+   * @return whether there were any affected entities, and the saved entities as they were before (to undo the update)
    */
   private async confirmAndSaveAffectedEntities(
-    trigger: UpdateTrigger,
-  ): Promise&lt;boolean&gt; {
-    const affectedEntities &#x3D; await this.findAffectedEntities(trigger);
-    if (affectedEntities.length &#x3D;&#x3D;&#x3D; 0) return false;
+    triggers: UpdateTrigger[],
+  ): Promise&lt;{ hasAffectedEntities: boolean; previousVersions: Entity[] }&gt; {
+    const affectedEntities &#x3D; await this.findAffectedEntities(triggers);
+    if (affectedEntities.length &#x3D;&#x3D;&#x3D; 0) {
+      return { hasAffectedEntities: false, previousVersions: [] };
+    }
 
-    const userConfirmed &#x3D; await this.showConfirmationDialog(
-      affectedEntities,
-      trigger,
-    );
-    if (!userConfirmed) return true;
+    const userConfirmed &#x3D; await this.confirmUpdates(affectedEntities, triggers);
+    const previousVersions &#x3D; userConfirmed
+      ? await this.saveUpdates(userConfirmed)
+      : [];
+    return { hasAffectedEntities: true, previousVersions };
+  }
 
+  /**
+   * Save the confirmed values of the affected entities.
+   * @return the updated entities as they were before (to undo the update)
+   */
+  private async saveUpdates(updates: AffectedEntity[]): Promise&lt;Entity[]&gt; {
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
-    const updatesByEntityId &#x3D; new Map&lt;string, AffectedEntity[]&gt;();
-    userConfirmed.forEach((update) &#x3D;&gt; {
-      const existing &#x3D; updatesByEntityId.get(update.id) || [];
-      existing.push(update);
-      updatesByEntityId.set(update.id, existing);
-    });
+    const updatesByEntityId &#x3D; groupBy(updates, (update) &#x3D;&gt; update.id);
 
     const entitiesToSave: Entity[] &#x3D; [];
-    updatesByEntityId.forEach((updates) &#x3D;&gt; {
+    const previousVersions: Entity[] &#x3D; [];
+    Object.values(updatesByEntityId).forEach((updates) &#x3D;&gt; {
       const entity &#x3D; updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes &#x3D; updates.filter(
-        (update) &#x3D;&gt; entity &amp;&amp; !isSameValue(update.newValue, update.savedValue),
+        (update) &#x3D;&gt; entity &amp;&amp; changesValue(update),
       );
       if (changes.length &gt; 0) {
+        previousVersions.push(entity.copy());
         changes.forEach((update) &#x3D;&gt; {
           entity[update.targetFieldId] &#x3D;
             this.entitySchemaService.valueToEntityFormat(
@@ -2283,8 +2375,64 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     });
 
     // together, so that none of them is saved if the user may not save one of them
-    await this.entityMapper.saveAll(entitiesToSave);
-    return true;
+    try {
+      await this.entityMapper.saveAll(entitiesToSave);
+    } catch (error) {
+      const storedIds &#x3D; new Set(
+        storedRecordsOf(entitiesToSave, error).map((e) &#x3D;&gt; e.getId()),
+      );
+      if (storedIds.size &#x3D;&#x3D;&#x3D; 0) throw error;
+      throw new PartiallySavedUpdatesError(
+        previousVersions.filter((e) &#x3D;&gt; storedIds.has(e.getId())),
+        error,
+      );
+    }
+    return previousVersions;
+  }
+
+  /**
+   * Lets the user confirm the updates. If there are too many to show them quickly for review,
+   * the user can also update all of them with the suggested values without reviewing them.
+   */
+  private async confirmUpdates(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise&lt;AffectedEntity[] | null&gt; {
+    // an entity is listed once for each of its fields that is updated
+    const count &#x3D; new Set(
+      entitiesToUpdate.filter(changesValue).map((entity) &#x3D;&gt; entity.id),
+    ).size;
+    if (count &gt; MAX_ENTITIES_TO_REVIEW) {
+      const choice &#x3D; await this.askHowToConfirmMany(count, triggers.length &gt; 1);
+      if (choice &#x3D;&#x3D;&#x3D; &quot;update-all&quot;) return entitiesToUpdate;
+      if (choice !&#x3D;&#x3D; &quot;review&quot;) return null;
+    }
+    return this.showConfirmationDialog(entitiesToUpdate, triggers);
+  }
+
+  private askHowToConfirmMany(
+    count: number,
+    afterBulkEdit: boolean,
+  ): Promise&lt;boolean | string | undefined&gt; {
+    let text &#x3D; $localize&#x60;Showing all of them for review may take a while. You can also update all of them with the suggested values directly.&#x60;;
+    if (afterBulkEdit) {
+      text +&#x3D;
+        &quot;\n\n&quot; + $localize&#x60;If this is too slow, edit fewer records at once.&#x60;;
+    }
+    const buttons: ConfirmationDialogButton[] &#x3D; [
+      {
+        text: $localize&#x60;:button to show the related records for review:Review&#x60;,
+        dialogResult: &quot;review&quot;,
+        click() {},
+      },
+      { text: $localize&#x60;Update all&#x60;, dialogResult: &quot;update-all&quot;, click() {} },
+      { text: $localize&#x60;Do not update&#x60;, dialogResult: false, click() {} },
+    ];
+    return this.confirmationDialog.getConfirmation(
+      $localize&#x60;Update ${count}:count: related records?&#x60;,
+      text,
+      buttons,
+    );
   }
 
   /**
@@ -2293,7 +2441,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
-    trigger: UpdateTrigger,
+    triggers: UpdateTrigger[],
   ): Promise&lt;AffectedEntity[] | null&gt; {
     // loaded lazily to avoid a circular import (dialog -&gt; field edit -&gt; inherited value button -&gt; this service)
     const { AutomatedFieldUpdateComponent } &#x3D;
@@ -2302,9 +2450,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       maxHeight: &quot;90vh&quot;,
       data: {
         entities: entitiesToUpdate,
-        trigger,
+        triggers,
         recalculate: (enteredValues: EnteredValue[]) &#x3D;&gt;
-          this.findAffectedEntities(trigger, enteredValues),
+          this.findAffectedEntities(triggers, enteredValues),
       },
     });
     return await lastValueFrom(dialogRef.afterClosed());

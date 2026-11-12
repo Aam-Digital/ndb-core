@@ -1,0 +1,1126 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >PartiallySavedUpdatesError</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Saving the updated records failed after some of them were already stored.
+Carries their previous versions, so that the caller can still undo what was saved.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>Error</code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>Error</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(previousVersions: <a href="../classes/Entity.html" target="_self">Entity[]</a>, cause: unknown)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:54</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>previousVersions</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>cause</td>
+                                                  
+                                                        <td>
+                                                                    <code>unknown</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import {
+  EntityMapperService,
+  storedRecordsOf,
+} from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { ConfirmationDialogButton } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import {
+  AffectedEntity,
+  AffectedRule,
+  CommonValueOfParents,
+  EnteredValue,
+  UpdateTrigger,
+} from &quot;./automated-field-update.types&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { groupBy } from &quot;lodash-es&quot;;
+import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { AlertService } from &quot;#src/app/core/alerts/alert.service&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import { DatabaseIndexingService } from &quot;#src/app/core/entity/database-indexing/database-indexing.service&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import { addMissingValues } from &quot;../add-missing-values&quot;;
+import { CommonValue, getCommonValue, isSameValue } from &quot;../get-common-value&quot;;
+import { ChangeSet, getChangedFields } from &quot;./change-set&quot;;
+import { EntityAbility } from &quot;#src/app/core/permissions/ability/entity-ability&quot;;
+import { SessionSubject } from &quot;#src/app/core/session/auth/session-info&quot;;
+import {
+  AffectedEntitiesCalculation,
+  AffectedEntitiesContext,
+  QueuedChange,
+} from &quot;./affected-entities-calculation&quot;;
+
+/** Above this number of affected records, the dialog to review them can take long to show, so the user is asked first */
+export const MAX_ENTITIES_TO_REVIEW &#x3D; 100;
+
+/** Whether the update changes the value of the record (not only listed to note that there is no value in common). */
+function changesValue(update: AffectedEntity): boolean {
+  return !isSameValue(update.newValue, update.savedValue);
+}
+
+/** the property of an entity that a reference index can be created for */
+type IndexedProperty &#x3D; Parameters&lt;
+  DatabaseIndexingService[&quot;generateIndexOnProperty&quot;]
+&gt;[2];
+
+/**
+ * Saving the updated records failed after some of them were already stored.
+ * Carries their previous versions, so that the caller can still undo what was saved.
+ */
+class PartiallySavedUpdatesError extends Error {
+  constructor(
+    readonly previousVersions: Entity[],
+    cause: unknown,
+  ) {
+    super(&quot;Some of the updated records were saved before the failure&quot;, {
+      cause,
+    });
+  }
+}
+
+/**
+ * Service to automatically update related entities based on configured rules.
+ * It finds dependent entities and updates their fields based on changes in the source entity.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContext {
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly dialog &#x3D; inject(MatDialog);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+  private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
+  private readonly ability &#x3D; inject(EntityAbility, { optional: true });
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
+
+  /** ids of the reference indexes that were already requested in this session */
+  private readonly requestedReferenceIndexes &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
+   */
+  private readonly processedRevisions &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * Applies rules to dependent entities based on changes in the provided entities.
+   * Also prompts user confirmation and saves updates if any changes were made.
+   * Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
+   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
+   * @param entities - The source entities whose changes should trigger updates
+   * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
+   *   (in the same order)
+   * @return the updated entities as they were before the update (to undo it), without the given entities themselves
+   */
+  public async applyRulesToDependentEntities(
+    entities: Entity | Entity[],
+    entitiesBeforeChanges: Entity | Entity[],
+  ): Promise&lt;Entity[]&gt; {
+    try {
+      return await this.updateEntitiesDependingOn(
+        asArray(entities),
+        asArray(entitiesBeforeChanges),
+      );
+    } catch (error) {
+      const failure &#x3D;
+        error instanceof PartiallySavedUpdatesError ? error.cause : error;
+      Logging.error(
+        &quot;AutomatedFieldUpdateConfigService: Could not update the linked records after saving&quot;,
+        failure,
+      );
+      this.alertService.addDanger(
+        $localize&#x60;The linked records could not be updated.&#x60;,
+      );
+      // the records that were saved before the failure can still be undone
+      const givenIds &#x3D; new Set(asArray(entities).map((e) &#x3D;&gt; e.getId()));
+      return error instanceof PartiallySavedUpdatesError
+        ? error.previousVersions.filter((e) &#x3D;&gt; !givenIds.has(e.getId()))
+        : [];
+    }
+  }
+
+  private async updateEntitiesDependingOn(
+    entities: Entity[],
+    before: Entity[],
+  ): Promise&lt;Entity[]&gt; {
+    // only the entities with a change that is passed on (saving also changes e.g. the update time)
+    const triggers: UpdateTrigger[] &#x3D; entities
+      .map((entity, i) &#x3D;&gt; ({
+        entity,
+        before: before[i],
+        changedFields: getChangedFields(entity, before[i]),
+      }))
+      .filter(
+        (trigger) &#x3D;&gt;
+          this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
+            .length &gt; 0 &amp;&amp; !this.checkRefAlreadyProcessed(trigger.entity),
+      );
+    if (triggers.length &#x3D;&#x3D;&#x3D; 0) return [];
+
+    const { previousVersions } &#x3D;
+      await this.confirmAndSaveAffectedEntities(triggers);
+    // the caller has the given entities as they were before their change
+    const givenIds &#x3D; new Set(entities.map((entity) &#x3D;&gt; entity.getId()));
+    return previousVersions.filter((entity) &#x3D;&gt; !givenIds.has(entity.getId()));
+  }
+
+  /**
+   * Whether the given field of the entity is passed on to other entities that the entity links to
+   * by an automation rule (e.g. a sub-item&#x27;s field that updates its linked parent).
+   */
+  public hasLinkedRecordsToUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !entity.isNew &amp;&amp;
+      this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).some(
+        ({ rule }) &#x3D;&gt; asArray(entity[rule.sourceReferenceField] ?? []).length,
+      )
+    );
+  }
+
+  /**
+   * Open the dialog to update the entities linked by the given entity with the value of the given field,
+   * regardless of whether the field was changed recently.
+   * @return whether there were any linked entities to update
+   */
+  public async updateLinkedRecords(
+    entity: Entity,
+    fieldId: string,
+  ): Promise&lt;boolean&gt; {
+    const { hasAffectedEntities } &#x3D; await this.confirmAndSaveAffectedEntities([
+      {
+        entity,
+        before: entity,
+        changedFields: [fieldId],
+        onlyLinkedEntities: true,
+      },
+    ]);
+    return hasAffectedEntities;
+  }
+
+  /**
+   * Find the entities that the rules would update, level by level up the hierarchy
+   * (see {@link AffectedEntitiesCalculation}).
+   * @param triggers the changes that start the update
+   * @param enteredValues values the user entered for affected entities (database format),
+   *   which the entities above are based on instead of the suggestions
+   * @return the affected entities, ordered by level
+   */
+  private findAffectedEntities(
+    triggers: UpdateTrigger[],
+    enteredValues: EnteredValue[] &#x3D; [],
+  ): Promise&lt;AffectedEntity[]&gt; {
+    return new AffectedEntitiesCalculation(this, triggers, enteredValues).run();
+  }
+
+  /**
+   * The rules that pass on the changed fields of the source entity.
+   */
+  public getTriggeredRules(
+    source: Entity,
+    { changedFields, onlyLinkedEntities }: QueuedChange,
+  ): AffectedRule[] {
+    const isChanged &#x3D; (fieldId: string) &#x3D;&gt; changedFields.includes(fieldId);
+    const directRules &#x3D; this.getInheritanceRulesFromDirectEntity(
+      source.getConstructor(),
+    ).filter(
+      ({ rule }) &#x3D;&gt;
+        isChanged(rule.sourceValueField) ||
+        isChanged(rule.sourceReferenceField),
+    );
+    const indirectRules &#x3D; onlyLinkedEntities
+      ? []
+      : this.getInheritanceRulesReferencingThisEntity(
+          source.getConstructor(),
+        ).filter(({ rule }) &#x3D;&gt; isChanged(rule.sourceValueField));
+    return [...directRules, ...indirectRules];
+  }
+
+  /**
+   * Whether the user may change the field of the entity.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  public canUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !this.ability?.initialized || this.ability.can(&quot;update&quot;, entity, fieldId)
+    );
+  }
+
+  /**
+   * Whether the user may read records of the type.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canRead(entityType: EntityConstructor): boolean {
+    return !this.ability?.initialized || this.ability.can(&quot;read&quot;, entityType);
+  }
+
+  private getRulesUsingFieldAsSource(
+    entityType: EntityConstructor,
+    fieldId: string,
+  ): AffectedRule[] {
+    return this.getInheritanceRulesFromDirectEntity(entityType).filter(
+      ({ rule }) &#x3D;&gt; rule.sourceValueField &#x3D;&#x3D;&#x3D; fieldId,
+    );
+  }
+
+  /**
+   * skip if already processed this specific entity revision
+   * Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
+   */
+  private checkRefAlreadyProcessed(entity: Entity): boolean {
+    const entityKey &#x3D; &#x60;${entity.getId()}-${entity._rev}&#x60;;
+    const alreadyProcessed &#x3D; this.processedRevisions.has(entityKey);
+    this.processedRevisions.add(entityKey);
+    return alreadyProcessed;
+  }
+
+  /**
+   * Find all Inheritance Rules on other entity types that list the given sourceReferenceEntity.
+   *
+   * For example:
+   * Given the method parameter sourceReferenceEntity &#x3D; School
+   * Return any Rule in Child entity type, which refers to sourceReferenceEntity &#x3D; School
+   * (as well as any other such rule in any entity type)
+   */
+  private getInheritanceRulesFromDirectEntity(
+    sourceReferenceEntity: EntityConstructor,
+  ): AffectedRule[] {
+    return this.getAllRules().filter(
+      ({ rule }) &#x3D;&gt;
+        rule?.sourceReferenceEntity &#x3D;&#x3D;&#x3D; sourceReferenceEntity.ENTITY_TYPE,
+    );
+  }
+
+  /**
+   * Find all Inheritance Rules where the sourceReferenceField&#x27;s entity type (in &quot;additional&quot;) matches the given sourceReferenceEntity.
+   *
+   * For example:
+   * Given the method parameter sourceReferenceEntity &#x3D; School
+   * Return any Rule in Child entity type, which has an undefined sourceReferenceEntity
+   *      and the sourceReferenceField (on the Child entity) has an &quot;additional&quot; &#x3D; School dataType
+   * (as well as any other such rule in any entity type)
+   */
+  private getInheritanceRulesReferencingThisEntity(
+    sourceReferenceEntity: EntityConstructor,
+  ): AffectedRule[] {
+    return this.getAllRules().filter(({ rule, entityType }) &#x3D;&gt; {
+      // For inheritance rules: sourceReferenceEntity is undefined
+      if (rule?.sourceReferenceEntity || !rule?.sourceReferenceField) {
+        return false;
+      }
+
+      // Check if the sourceReferenceField is configured to reference our entity type
+      const referenceFieldConfig &#x3D; entityType.schema.get(
+        rule.sourceReferenceField,
+      );
+      return (
+        referenceFieldConfig?.dataType &#x3D;&#x3D;&#x3D; &quot;entity&quot; &amp;&amp;
+        referenceFieldConfig?.additional &#x3D;&#x3D;&#x3D; sourceReferenceEntity.ENTITY_TYPE
+      );
+    });
+  }
+
+  /**
+   * Get the inheritance and automation rules defined in the field schemas of all entity types.
+   */
+  private getAllRules(): AffectedRule[] {
+    return [...this.entityRegistry.values()].flatMap((entityType) &#x3D;&gt;
+      [...entityType.schema.entries()]
+        .filter(([, field]) &#x3D;&gt; field.defaultValue?.mode &#x3D;&#x3D;&#x3D; &quot;inherited-field&quot;)
+        .map(([fieldId, field]) &#x3D;&gt; ({
+          rule: field.defaultValue.config as DefaultValueConfigInheritedField,
+          entityType,
+          fieldId,
+        })),
+    );
+  }
+
+  /** The value of the field of the entity in database format */
+  public getDatabaseValue(entity: Entity, fieldId: string): any {
+    return this.transformSourceValueToDatabaseFormat(
+      entity[fieldId],
+      entity,
+      fieldId,
+      this.entitySchemaService,
+    );
+  }
+
+  /** A value of a field of the entity type, converted from database format to entity format */
+  public toEntityFormat(
+    value: unknown,
+    entityType: EntityConstructor,
+    fieldId: string,
+  ): unknown {
+    return this.entitySchemaService.valueToEntityFormat(value, {
+      ...entityType.schema.get(fieldId),
+      id: fieldId,
+    });
+  }
+
+  /**
+   * Calculate the new value from source entity with value mapping applied.
+   * Transforms to database format for consistent handling of all datatypes.
+   * @param sourceEntity The entity containing the source value
+   * @param rule The inheritance rule configuration
+   */
+  public calculateNewValue(
+    sourceEntity: Entity,
+    rule: DefaultValueConfigInheritedField,
+  ): any {
+    const sourceValue &#x3D; this.transformSourceValueToDatabaseFormat(
+      sourceEntity?.[rule.sourceValueField],
+      sourceEntity,
+      rule.sourceValueField,
+      this.entitySchemaService,
+    );
+
+    if (!rule.valueMapping) {
+      return sourceValue;
+    }
+
+    const mapValue &#x3D; (value: string) &#x3D;&gt; rule.valueMapping[value] ?? value;
+    // flatMap: mapped values are arrays if the target field is multi-select
+    return Array.isArray(sourceValue)
+      ? [...new Set(sourceValue.flatMap(mapValue))]
+      : mapValue(sourceValue);
+  }
+
+  /**
+   * Calculate the new value that all given source entities have in common
+   * (see {@link calculateNewValue}), ignoring empty values.
+   */
+  public calculateCommonValue(
+    sourceEntities: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): CommonValue {
+    return getCommonValue(
+      sourceEntities.map((entity) &#x3D;&gt; this.calculateNewValue(entity, rule)),
+    );
+  }
+
+  /**
+   * Load the linked parent records and get the value they all have in common
+   * (see {@link calculateCommonValue}).
+   * If any of them cannot be loaded (e.g. the user has no permission to read it), no common value can be determined.
+   * @param parentIds The ids of the linked parent records to load
+   * @param rule The inheritance rule
+   * @param options.parentType The entity type of the parent records
+   *   (ids of other types are not loaded, ids without type prefix are loaded as this type);
+   *   if not given, each record is loaded as the type of its id prefix
+   * @param options.loadedParents Further linked parents that are already loaded (not in parentIds)
+   * @param options.changeSet Changes that are not saved yet, used instead of the saved records
+   */
+  public async loadCommonValue(
+    parentIds: string[],
+    rule: DefaultValueConfigInheritedField,
+    options: {
+      parentType?: EntityConstructor;
+      loadedParents?: Entity[];
+      changeSet?: ChangeSet;
+    } &#x3D; {},
+  ): Promise&lt;CommonValueOfParents&gt; {
+    const loaded &#x3D; await this.loadEntitiesByIds(options.parentType, parentIds);
+    // without all linked parents available, no shared value can be determined
+    if (loaded.length !&#x3D;&#x3D; parentIds.length) {
+      return { noCommonValue: &quot;unavailable&quot; };
+    }
+
+    const parents &#x3D; options.changeSet
+      ? loaded.map((parent) &#x3D;&gt; options.changeSet.get(parent, &quot;after&quot;))
+      : loaded;
+    const commonValue &#x3D; this.calculateCommonValue(
+      [...(options.loadedParents ?? []), ...parents],
+      rule,
+    );
+    return commonValue.isConflict
+      ? { noCommonValue: &quot;conflict&quot; }
+      : { value: commonValue.value };
+  }
+
+  /**
+   * Collect the values of all records that link to the given entity as defined by the automation rule
+   * (e.g. the cities of all children linking to a school), skipping duplicates.
+   * @param entity The record that the related records link to
+   * @param rule The automation rule (with sourceReferenceEntity)
+   * @return the combined values in database format
+   */
+  public async collectValuesOfLinkedRecords(
+    entity: Entity,
+    rule: DefaultValueConfigInheritedField,
+  ): Promise&lt;any[]&gt; {
+    return this.collectValues(
+      await this.loadRecordsLinkingTo(
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        entity.getId(),
+      ),
+      rule,
+    );
+  }
+
+  /** The values of the given records as defined by the automation rule, skipping duplicates (database format). */
+  public collectValues(
+    records: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any[] {
+    return records.reduce(
+      (values, record) &#x3D;&gt;
+        addMissingValues(values, this.calculateNewValue(record, rule)),
+      [],
+    );
+  }
+
+  /**
+   * Load the records of the given type that reference the given entity in the given field
+   * (a single reference or a list of references) through a database index,
+   * instead of loading and checking all records of the type.
+   * If the index cannot be used (e.g. it cannot be created in online-only mode,
+   * or for a visitor without an account, who the server does not let query indexes),
+   * all records of the type are loaded and checked instead.
+   */
+  public async loadRecordsLinkingTo(
+    entityType: string | EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise&lt;Entity[]&gt; {
+    const ctor &#x3D;
+      typeof entityType &#x3D;&#x3D;&#x3D; &quot;string&quot;
+        ? this.entityRegistry.get(entityType)
+        : entityType;
+    if (!ctor?.schema.has(referenceField) || !this.canRead(ctor)) {
+      return [];
+    }
+
+    if (this.sessionInfo &amp;&amp; !this.sessionInfo.value) {
+      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
+    }
+
+    try {
+      return await this.queryLinkingRecordsIndex(
+        ctor,
+        referenceField,
+        entityId,
+      );
+    } catch (error) {
+      // the expected fallback described above, which still finds all linked records
+      Logging.debug(
+        &quot;AutomatedFieldUpdateConfigService: Could not use the index of linked records, loading all records of the type instead&quot;,
+        { entityType: ctor.ENTITY_TYPE, referenceField },
+        error,
+      );
+      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
+    }
+  }
+
+  private async loadAllRecordsLinkingTo(
+    ctor: EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise&lt;Entity[]&gt; {
+    return (await this.entityMapper.loadType(ctor)).filter((record) &#x3D;&gt;
+      asArray(record[referenceField]).includes(entityId),
+    );
+  }
+
+  private async queryLinkingRecordsIndex(
+    ctor: EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise&lt;Entity[]&gt; {
+    const indexId &#x3D; &#x60;linking_${ctor.ENTITY_TYPE}_${referenceField}&#x60;;
+    if (!this.requestedReferenceIndexes.has(indexId)) {
+      this.requestedReferenceIndexes.add(indexId);
+      // the query below waits until the index is ready
+      this.dbIndexing
+        .generateIndexOnProperty(
+          indexId,
+          ctor,
+          referenceField as IndexedProperty,
+        )
+        .catch((error) &#x3D;&gt;
+          Logging.warn(
+            &quot;AutomatedFieldUpdateConfigService: Could not create the index of linked records&quot;,
+            error,
+            { indexId },
+          ),
+        );
+    }
+
+    return this.dbIndexing.queryIndexDocs(
+      ctor,
+      &#x60;${indexId}/by_${referenceField}&#x60;,
+      entityId,
+    );
+  }
+
+  /**
+   * Transform a source field value to database format for inherited field operations.
+   * This finds the field schema from the source entity and applies the transformation.
+   *
+   * @param value The value to transform
+   * @param sourceEntity The entity containing the value
+   * @param sourceFieldId The field ID where the value comes from
+   * @param entitySchemaService The schema service for transformations
+   */
+  public transformSourceValueToDatabaseFormat(
+    value: any,
+    sourceEntity: Entity,
+    sourceFieldId: string,
+    entitySchemaService: EntitySchemaService,
+  ): any {
+    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
+      return value;
+    }
+
+    const sourceFieldConfig &#x3D; sourceEntity
+      .getConstructor()
+      .schema.get(sourceFieldId);
+
+    if (!sourceFieldConfig) {
+      return value;
+    }
+
+    return entitySchemaService.valueToDatabaseFormat(
+      value,
+      sourceFieldConfig,
+      sourceEntity,
+    );
+  }
+
+  /**
+   * Load entities by their IDs, skipping those that cannot be loaded.
+   * @param entityType The type of entities to load (ids of other types are skipped);
+   *   if undefined, each entity is loaded as the type of its id prefix
+   * @param entityIds
+   */
+  public async loadEntitiesByIds(
+    entityType: EntityConstructor | undefined,
+    entityIds: string[],
+  ): Promise&lt;Entity[]&gt; {
+    // The reference field can hold ids of several entity types. Ids without any type prefix
+    // are still loaded, because the mapper adds the prefix of the given type itself.
+    const idsToLoad &#x3D; entityType
+      ? entityIds.filter(
+          (id) &#x3D;&gt;
+            String(id).startsWith(&#x60;${entityType.ENTITY_TYPE}:&#x60;) ||
+            !String(id).includes(&quot;:&quot;),
+        )
+      : entityIds;
+
+    const loadedEntities &#x3D; await Promise.all(
+      idsToLoad.map((id) &#x3D;&gt; this.loadEntity(id, entityType)),
+    );
+
+    return loadedEntities.filter((entity) &#x3D;&gt; entity);
+  }
+
+  /**
+   * Load an entity, logging why it could not be loaded.
+   * @param entityId
+   * @param entityType The type of the entity; if not given, the type of the id prefix
+   * @return the entity, or undefined if it could not be loaded
+   */
+  private async loadEntity(
+    entityId: string,
+    entityType?: EntityConstructor,
+  ): Promise&lt;Entity | undefined&gt; {
+    try {
+      return await this.entityMapper.load(
+        entityType ?? Entity.extractTypeFromId(entityId),
+        entityId,
+      );
+    } catch (error) {
+      // e.g. no read access to the linked entity - expected for some roles
+      Logging.warn(
+        &quot;AutomatedFieldUpdateConfigService: Failed to load linked entity&quot;,
+        error,
+        { entityType: entityType?.ENTITY_TYPE, entityId },
+      );
+      return undefined;
+    }
+  }
+
+  /**
+   * Find the entities affected by the change and open a dialog to confirm their updates with the user.
+   * Saves entities only if the user confirms the changes.
+   * @return whether there were any affected entities, and the saved entities as they were before (to undo the update)
+   */
+  private async confirmAndSaveAffectedEntities(
+    triggers: UpdateTrigger[],
+  ): Promise&lt;{ hasAffectedEntities: boolean; previousVersions: Entity[] }&gt; {
+    const affectedEntities &#x3D; await this.findAffectedEntities(triggers);
+    if (affectedEntities.length &#x3D;&#x3D;&#x3D; 0) {
+      return { hasAffectedEntities: false, previousVersions: [] };
+    }
+
+    const userConfirmed &#x3D; await this.confirmUpdates(affectedEntities, triggers);
+    const previousVersions &#x3D; userConfirmed
+      ? await this.saveUpdates(userConfirmed)
+      : [];
+    return { hasAffectedEntities: true, previousVersions };
+  }
+
+  /**
+   * Save the confirmed values of the affected entities.
+   * @return the updated entities as they were before (to undo the update)
+   */
+  private async saveUpdates(updates: AffectedEntity[]): Promise&lt;Entity[]&gt; {
+    // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
+    // we need a proper UI to show the same entity and field with multiple values
+    const updatesByEntityId &#x3D; groupBy(updates, (update) &#x3D;&gt; update.id);
+
+    const entitiesToSave: Entity[] &#x3D; [];
+    const previousVersions: Entity[] &#x3D; [];
+    Object.values(updatesByEntityId).forEach((updates) &#x3D;&gt; {
+      const entity &#x3D; updates[0].affectedEntity;
+      // e.g. records only listed to note that their linked records have no value in common
+      const changes &#x3D; updates.filter(
+        (update) &#x3D;&gt; entity &amp;&amp; changesValue(update),
+      );
+      if (changes.length &gt; 0) {
+        previousVersions.push(entity.copy());
+        changes.forEach((update) &#x3D;&gt; {
+          entity[update.targetFieldId] &#x3D;
+            this.entitySchemaService.valueToEntityFormat(
+              update.newValue,
+              update.selectedField,
+            );
+        });
+        entitiesToSave.push(entity);
+      }
+    });
+
+    // together, so that none of them is saved if the user may not save one of them
+    try {
+      await this.entityMapper.saveAll(entitiesToSave);
+    } catch (error) {
+      const storedIds &#x3D; new Set(
+        storedRecordsOf(entitiesToSave, error).map((e) &#x3D;&gt; e.getId()),
+      );
+      if (storedIds.size &#x3D;&#x3D;&#x3D; 0) throw error;
+      throw new PartiallySavedUpdatesError(
+        previousVersions.filter((e) &#x3D;&gt; storedIds.has(e.getId())),
+        error,
+      );
+    }
+    return previousVersions;
+  }
+
+  /**
+   * Lets the user confirm the updates. If there are too many to show them quickly for review,
+   * the user can also update all of them with the suggested values without reviewing them.
+   */
+  private async confirmUpdates(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise&lt;AffectedEntity[] | null&gt; {
+    // an entity is listed once for each of its fields that is updated
+    const count &#x3D; new Set(
+      entitiesToUpdate.filter(changesValue).map((entity) &#x3D;&gt; entity.id),
+    ).size;
+    if (count &gt; MAX_ENTITIES_TO_REVIEW) {
+      const choice &#x3D; await this.askHowToConfirmMany(count, triggers.length &gt; 1);
+      if (choice &#x3D;&#x3D;&#x3D; &quot;update-all&quot;) return entitiesToUpdate;
+      if (choice !&#x3D;&#x3D; &quot;review&quot;) return null;
+    }
+    return this.showConfirmationDialog(entitiesToUpdate, triggers);
+  }
+
+  private askHowToConfirmMany(
+    count: number,
+    afterBulkEdit: boolean,
+  ): Promise&lt;boolean | string | undefined&gt; {
+    let text &#x3D; $localize&#x60;Showing all of them for review may take a while. You can also update all of them with the suggested values directly.&#x60;;
+    if (afterBulkEdit) {
+      text +&#x3D;
+        &quot;\n\n&quot; + $localize&#x60;If this is too slow, edit fewer records at once.&#x60;;
+    }
+    const buttons: ConfirmationDialogButton[] &#x3D; [
+      {
+        text: $localize&#x60;:button to show the related records for review:Review&#x60;,
+        dialogResult: &quot;review&quot;,
+        click() {},
+      },
+      { text: $localize&#x60;Update all&#x60;, dialogResult: &quot;update-all&quot;, click() {} },
+      { text: $localize&#x60;Do not update&#x60;, dialogResult: false, click() {} },
+    ];
+    return this.confirmationDialog.getConfirmation(
+      $localize&#x60;Update ${count}:count: related records?&#x60;,
+      text,
+      buttons,
+    );
+  }
+
+  /**
+   * Opens the confirmation dialog to let user to approve or update the changes.
+   * @param entitiesToUpdate - List of entities with pending updates
+   */
+  private async showConfirmationDialog(
+    entitiesToUpdate: AffectedEntity[],
+    triggers: UpdateTrigger[],
+  ): Promise&lt;AffectedEntity[] | null&gt; {
+    // loaded lazily to avoid a circular import (dialog -&gt; field edit -&gt; inherited value button -&gt; this service)
+    const { AutomatedFieldUpdateComponent } &#x3D;
+      await import(&quot;./automated-field-update.component&quot;);
+    const dialogRef &#x3D; this.dialog.open(AutomatedFieldUpdateComponent, {
+      maxHeight: &quot;90vh&quot;,
+      data: {
+        entities: entitiesToUpdate,
+        triggers,
+        recalculate: (enteredValues: EnteredValue[]) &#x3D;&gt;
+          this.findAffectedEntities(triggers, enteredValues),
+      },
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'PartiallySavedUpdatesError.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/import/import.service.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/import/import.service.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/import/import.service.ts:34</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/import/import.service.ts:37</a></div>
                                 </td>
                             </tr>
 
@@ -287,7 +287,10 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
-import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  EntityMapperService,
+  storedRecordsOf,
+} from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity, EntityConstructor } from &quot;../entity/model/entity&quot;;
 import { ImportMetadata, ImportSettings } from &quot;./import-metadata&quot;;
 import { ColumnMapping } from &quot;./column-mapping&quot;;
@@ -320,29 +323,6 @@ export interface ImportTransformationResult {
   entities: Entity[];
   /** Errors that occurred during value transformation (affected cells were skipped) */
   errors: ImportCellError[];
-}
-
-/**
- * The records that were stored although the save as a whole was rejected.
- *
- * A rejected save reports what became of the records (see &#x60;Database.putAll&#x60;): the
- * results array when individual records failed, a {@link PartialBulkWriteError} when
- * the write stopped partway. Any other rejection means nothing was stored.
- */
-function storedRecordsOf(records: Entity[], error: unknown): Entity[] {
-  let results: any[];
-  if (Array.isArray(error)) {
-    results &#x3D; error;
-  } else if (error instanceof PartialBulkWriteError) {
-    results &#x3D; error.storedResults;
-  } else {
-    return [];
-  }
-
-  const storedIds &#x3D; new Set(
-    results.filter((result) &#x3D;&gt; result?.ok).map((result) &#x3D;&gt; result.id),
-  );
-  return records.filter((entity) &#x3D;&gt; storedIds.has(entity.getId()));
 }
 
 /**
