@@ -242,6 +242,33 @@ describe("DynamicValidatorsService", () => {
     expect(control.errors).toBeNull();
   });
 
+  it("leaves no error on a field that was disabled while it was checked", async () => {
+    const control = new UntypedFormControl(
+      -5,
+      service.buildValidators({ min: 0 }, new TestEntity()),
+    );
+
+    control.disable();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(control.errors).toBeNull();
+  });
+
+  it("locks an empty required field with readonlyAfterSet of a saved record right away", async () => {
+    const entity = new TestEntity();
+    entity["_rev"] = "1-abc";
+    const control = new UntypedFormControl(
+      null,
+      service.buildValidators(
+        { required: true, readonlyAfterSet: true },
+        entity,
+        "name",
+      ),
+    );
+
+    await vi.waitFor(() => expect(control.disabled).toBe(true));
+  });
+
   it("skips the uniqueId validator for inner fields of embedded entries", async () => {
     const entry = createEmbeddedEntity(new Map(), {
       record: new Entity("record"),

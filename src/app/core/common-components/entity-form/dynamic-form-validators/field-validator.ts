@@ -41,6 +41,7 @@ export abstract class FieldValidator<Config = unknown> {
   /**
    * Whether an error of the rule only warns, so that users can still save after confirming it:
    * "optional" if admins can make it a warning, "always" or "never".
+   * A rule that never warns runs as a sync validator, so its {@link build} must not return a promise.
    */
   readonly warning: "optional" | "always" | "never" = "optional";
 
@@ -54,9 +55,8 @@ export abstract class FieldValidator<Config = unknown> {
   readonly requiresFieldId: boolean = false;
 
   /**
-   * Angular's own validator that form fields look for (e.g. `Validators.required` marks a field as required).
-   * The rule then runs this validator as a sync validator instead of the one from {@link build},
-   * so only set it for a rule whose {@link warning} is "never".
+   * Angular's own validator that form fields look for (e.g. `Validators.required` marks a field as required),
+   * added to the field as it is, next to the rule's check. Only for a rule whose {@link warning} is "never".
    */
   readonly angularValidator?: ValidatorFn;
 

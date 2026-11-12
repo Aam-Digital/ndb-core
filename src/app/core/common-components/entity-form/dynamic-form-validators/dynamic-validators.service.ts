@@ -122,10 +122,11 @@ export class DynamicValidatorsService {
 
   /**
    * Adds the rule's check with readable messages to the options of the form control.
-   * All rules run as async validators, so that rules need not care about it,
+   * Rules that can be only a warning run as async validators, so that rules need not care about it,
    * and as Angular skips the async validators of a field while one of its sync validators fails.
-   * Only the {@link FieldValidator.angularValidator} of a rule runs as sync validator, so that form fields find it:
-   * the error with the message replaces the one of the Angular validator itself.
+   * Rules that always block saving (`warning: "never"`) run as sync validators,
+   * so that they also run while another check of the field fails (e.g. `readonlyAfterSet` of an empty required field).
+   * The {@link FieldValidator.angularValidator} of a rule is added as it is, so that form fields find it.
    */
   private addCheck(
     options: ValidatorOptions,
@@ -133,10 +134,13 @@ export class DynamicValidatorsService {
     validator: ValidatorFn | AsyncPromiseValidatorFn,
     onlyWarns: boolean,
   ) {
-    const angularValidator = rule.angularValidator;
-    if (angularValidator) {
-      options.validators.push(angularValidator, (control) =>
-        this.addHumanReadableError(rule, angularValidator(control), onlyWarns),
+    if (rule.angularValidator) {
+      options.validators.push(rule.angularValidator);
+    }
+    if (rule.warning === "never") {
+      const check = validator as ValidatorFn;
+      options.validators.push((control) =>
+        this.addHumanReadableError(rule, check(control), onlyWarns),
       );
     } else {
       options.asyncValidators.push(
@@ -152,11 +156,11 @@ export class DynamicValidatorsService {
   ): AsyncValidatorFn {
     return async (control: FormControl) => {
       try {
-        return this.addHumanReadableError(
-          rule,
-          await validator(control),
-          onlyWarns,
-        );
+        const errors = await validator(control);
+        // Angular sets the errors also if the field was disabled meanwhile (e.g. hidden by its display condition)
+        return control.disabled
+          ? null
+          : this.addHumanReadableError(rule, errors, onlyWarns);
       } catch (error) {
         // a rejected check would leave the field pending, so the form could not be saved
         Logging.error(
