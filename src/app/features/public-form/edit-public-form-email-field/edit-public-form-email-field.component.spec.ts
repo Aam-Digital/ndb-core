@@ -67,7 +67,7 @@ describe("EditPublicFormEmailFieldComponent", () => {
   });
 
   it("offers nothing while the form has no record type to take fields from", () => {
-    setConfiguredRecordType(undefined);
+    setConfiguredRecordType();
 
     expect(offeredFieldIds()).toEqual([]);
   });
