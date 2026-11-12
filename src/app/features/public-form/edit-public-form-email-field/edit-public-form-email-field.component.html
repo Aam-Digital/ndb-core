@@ -1,0 +1,8 @@
+<app-entity-field-select
+  (click)="onContainerClick($event)"
+  [formControl]="formControl"
+  [entityType]="entityType()"
+  [hideOption]="hideNonEmailFields"
+  placeholder="Select an email field of this form"
+  i18n-placeholder
+></app-entity-field-select>

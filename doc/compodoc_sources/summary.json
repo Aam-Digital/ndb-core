@@ -78,6 +78,10 @@
       {
         "title": "Reports",
         "file": "../../src/app/features/reporting/README.md"
+      },
+      {
+        "title": "Public Forms",
+        "file": "../../src/app/features/public-form/README.md"
       }
     ]
   },
