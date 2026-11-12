@@ -816,7 +816,7 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId",
+                        "linkedSchool",
                         "projectSchool",
                         "projectPeriod"
                       ]
@@ -1404,7 +1404,7 @@
         "image": "photo",
         "fields": [
           "phone",
-          "schoolId",
+          "linkedSchool",
           "schoolClass"
         ]
       },
@@ -1431,7 +1431,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown",
               "valueMapping": {
                 "C1": "1",
@@ -1447,7 +1447,7 @@
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
         },
-        "schoolId": {
+        "linkedSchool": {
           "dataType": "entity",
           "additional": "School",
           "label": "Linked School",
@@ -1460,7 +1460,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown"
             }
           },
@@ -1529,7 +1529,16 @@
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number"
+          "label": "Phone Number",
+          "validators": {
+            "pattern": {
+              "pattern": "^[+0-9 ()/-]+$",
+              "message": "Enter a valid phone number"
+            },
+            "_warningOnly": [
+              "pattern"
+            ]
+          }
         },
         "address": {
           "dataType": "location",
@@ -1634,7 +1643,7 @@
             "mode": "inherited-field",
             "config": {
               "sourceReferenceEntity": "Child",
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "center",
               "aggregation": "add"
             }
@@ -1861,7 +1870,7 @@
             "mode": "inherited-field",
             "config": {
               "sourceReferenceEntity": "Child",
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "identificationDocuments",
               "aggregation": "add"
             }

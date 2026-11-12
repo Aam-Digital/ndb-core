@@ -2,6 +2,7 @@ import { Logging } from "#src/app/core/logging/logging.service";
 import { inject, Injectable } from "@angular/core";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { EntityActionGroup } from "app/core/entity-details/entity-actions-menu/entity-action.interface";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import {
@@ -13,6 +14,12 @@ import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
+
+const PUBLIC_FORM_LINKS_GROUP: EntityActionGroup = {
+  id: "public-form-links",
+  label: $localize`:entity context menu:Copy Custom Form link`,
+  icon: "link",
+};
 
 @Injectable({
   providedIn: "root",
@@ -55,6 +62,8 @@ export class PublicFormsService {
           permission: "read",
           icon: "link",
           label: $localize`Copy Custom Form (${formTitle})`,
+          shortLabel: formTitle,
+          group: PUBLIC_FORM_LINKS_GROUP,
           tooltip: $localize`Copy link to public form "${formTitle}" that will connect submissions to this individual record.`,
           visible: (entity) =>
             this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),

@@ -147,12 +147,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
           untilDestroyed(this),
           filter((event) => event instanceof EntityFormSavedEvent),
         )
-        .subscribe((event: EntityFormSavedEvent) =>
-          this.automatedFieldUpdateConfigService.applyRulesAfterSave(
+        .subscribe(async (event: EntityFormSavedEvent) => {
+          // reports and shows a failure itself
+          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
             event.newEntity,
             event.previousEntity,
-          ),
-        );
+          );
+        });
       onCleanup(() => sub.unsubscribe());
     });
 

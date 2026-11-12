@@ -40,7 +40,10 @@ test("Update related records over several levels: child, school and parent schoo
     },
   });
   const child = generateChild({ name: CHILD_NAME });
-  Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    center: CENTER_ALIPORE,
+  });
 
   await loadApp(page, [...generateUsers(), child, school, parentSchool]);
 
@@ -124,7 +127,7 @@ test("Collect the embedded entries of sub-records in their parent record", async
   Object.assign(school, { name: DOCS_SCHOOL_NAME });
   const child = generateChild({ name: DOCS_CHILD_NAME });
   Object.assign(child, {
-    schoolId: school.getId(),
+    linkedSchool: school.getId(),
     identificationDocuments: [],
   });
 

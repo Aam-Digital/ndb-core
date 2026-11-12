@@ -6,7 +6,10 @@ import {
   ChangeDetectionStrategy,
   effect,
   computed,
+  signal,
+  untracked,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import {
   AbstractControl,
@@ -30,8 +33,14 @@ import { DateRangeDatatype } from "app/core/basic-datatypes/date-range/date-rang
 import { resolveLocaleText } from "app/core/language/active-locale";
 import {
   FormValidatorConfig,
+  WARNING_ONLY_KEY,
   WithinParentConfig,
 } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { DynamicValidatorsService } from "app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { MonthDatatype } from "app/core/basic-datatypes/month/month.datatype";
+import { StringDatatype } from "app/core/basic-datatypes/string/string.datatype";
+import { asArray } from "app/utils/asArray";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
@@ -57,6 +66,7 @@ interface ParentRangeOption {
     EditMonthComponent,
     MatSelectModule,
     AdminDisplayConditionButtonComponent,
+    NgTemplateOutlet,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
@@ -64,6 +74,8 @@ interface ParentRangeOption {
 export class ConfigureEntityFieldValidatorComponent {
   private fb = inject(FormBuilder);
   private readonly entityRelations = inject(EntityRelationsService);
+  private readonly validators = inject(DynamicValidatorsService);
+  private readonly schemaService = inject(EntitySchemaService);
 
   /**
    * the field definition with the currently existing validator settings to be edited
@@ -79,8 +91,49 @@ export class ConfigureEntityFieldValidatorComponent {
    */
   dataType = input<string>();
 
-  private readonly fieldDataType = computed(
+  protected readonly fieldDataType = computed(
     () => this.dataType() ?? this.entitySchemaField()?.dataType,
+  );
+
+  /**
+   * the `additional` currently selected for the field (e.g. the record types of a link field), if it can change while editing
+   * (a change of `entitySchemaField.additional` in place is not noticed)
+   */
+  additional = input<unknown>();
+
+  /** keys of the validators that fit the data type selected for the field, so that their settings are shown */
+  protected readonly applicableValidators = computed(() => {
+    const datatype = this.schemaService.getDatatypeOrDefault(
+      this.fieldDataType(),
+    );
+    const field = {
+      ...this.entitySchemaField(),
+      dataType: this.fieldDataType(),
+      additional: this.additional() ?? this.entitySchemaField()?.additional,
+    };
+    return new Set(
+      [...this.validators.rules.values()]
+        .filter((rule) => rule.appliesTo(datatype, field))
+        .map((rule) => rule.key),
+    );
+  });
+
+  /** the current values of {@link validatorForm} */
+  private readonly formValue = signal<FormValidatorConfig>({});
+
+  /** keys of the validators that are set, so that they can be made only a warning */
+  protected readonly setValidators = computed(
+    () =>
+      new Set(
+        Object.entries(this.formValue())
+          .filter(([, value]) => !isUnset(value))
+          .map(([key]) => key),
+      ),
+  );
+
+  /** keys of the validators that are only a warning */
+  protected readonly warningOnlyValidators = computed(
+    () => new Set(asArray(this.formValue()[WARNING_ONLY_KEY] ?? [])),
   );
 
   /**
@@ -160,7 +213,13 @@ export class ConfigureEntityFieldValidatorComponent {
     // read again when the linked type changes, as the parent then removes the `selectionCondition`
     this.linkedEntityType();
     const v = this.entitySchemaField()?.validators;
-    const isObjectForm = typeof v?.pattern === "object";
+    const pattern = v?.pattern;
+    const isObjectForm =
+      !!pattern && typeof pattern === "object" && !(pattern instanceof RegExp);
+    let patternText = isObjectForm ? pattern.pattern : pattern;
+    if (patternText instanceof RegExp) {
+      patternText = patternText.source;
+    }
     return this.fb.group({
       required: [v?.required ?? false],
       min: [v?.min ?? null],
@@ -169,15 +228,13 @@ export class ConfigureEntityFieldValidatorComponent {
       maxAge: [v?.maxAge ?? null],
       minDate: [v?.minDate ?? null],
       maxDate: [v?.maxDate ?? null],
-      pattern: [
-        (isObjectForm ? v.pattern.pattern : v?.pattern) ?? "",
-        validRegexValidator,
-      ],
-      patternMessage: [(isObjectForm ? v.pattern.message : "") ?? ""],
+      pattern: [patternText ?? "", validRegexValidator],
+      patternMessage: [(isObjectForm ? pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
       withinParent: [v?.withinParent ?? null],
       selectionCondition: [v?.selectionCondition ?? null],
+      [WARNING_ONLY_KEY]: [asArray(v?.[WARNING_ONLY_KEY] ?? [])],
     });
   });
 
@@ -194,12 +251,10 @@ export class ConfigureEntityFieldValidatorComponent {
         .valueChanges.subscribe(() =>
           this.syncPatternMessageAvailability(form),
         );
+      this.formValue.set(form.getRawValue());
       const sub = form.valueChanges.subscribe(() => {
-        const rawValues = form.getRawValue();
-        this.transformPatternValue(rawValues);
-        const cleanedValues =
-          this.removeDefaultValuesFromValidatorConfig(rawValues);
-        this.entityValidatorChanges.emit(cleanedValues);
+        this.formValue.set(form.getRawValue());
+        this.entityValidatorChanges.emit(this.validatorConfig(form));
       });
       onCleanup(() => {
         patternSub.unsubscribe();
@@ -207,15 +262,45 @@ export class ConfigureEntityFieldValidatorComponent {
       });
     });
 
+    // settings not fitting the selected type are not shown, so an invalid value in them must not block saving
     effect(() => {
-      const withinParent = this.validatorForm().get("withinParent");
-      // only offered for date ranges, so it would stay in the config without being visible anywhere
-      if (
-        this.fieldDataType() !== DateRangeDatatype.dataType &&
-        withinParent.value
-      ) {
-        withinParent.setValue(null);
-      }
+      const form = this.validatorForm();
+      const applicable = this.applicableValidators();
+      untracked(() => {
+        for (const [key, control] of Object.entries(form.controls)) {
+          if (!this.validators.rules.has(key)) {
+            continue;
+          }
+          if (applicable.has(key)) {
+            control.enable({ emitEvent: false });
+          } else {
+            control.disable({ emitEvent: false });
+          }
+        }
+        this.syncPatternMessageAvailability(form);
+      });
+    });
+
+    // settings not fitting a newly selected type are not shown, so they are removed from the config right away
+    let shownDataType: string | undefined;
+    let firstRun = true;
+    effect(() => {
+      const dataType = this.fieldDataType();
+      untracked(() => {
+        if (!firstRun && dataType !== shownDataType) {
+          this.entityValidatorChanges.emit(
+            this.validatorConfig(this.validatorForm()),
+          );
+          const keepsNoTrim =
+            dataType === StringDatatype.dataType &&
+            this.trimControl().value === false;
+          this.entitySchemaFieldChanges.emit({
+            trim: keepsNoTrim ? false : undefined,
+          });
+        }
+        firstRun = false;
+        shownDataType = dataType;
+      });
     });
 
     effect((onCleanup) => {
@@ -233,22 +318,52 @@ export class ConfigureEntityFieldValidatorComponent {
    */
   private syncPatternMessageAvailability(form: FormGroup) {
     const messageControl = form.get("patternMessage");
-    if (form.get("pattern").value) {
+    const patternControl = form.get("pattern");
+    if (patternControl.enabled && patternControl.value) {
       messageControl.enable({ emitEvent: false });
     } else {
       messageControl.disable({ emitEvent: false });
     }
   }
 
-  isDateLikeValidatorType = computed(() => {
-    return ["date", "date-only", "date-with-age", "month"].includes(
-      this.entitySchemaField()?.dataType,
-    );
-  });
+  setWarningOnly(key: string, warningOnly: boolean) {
+    const control = this.validatorForm().get(WARNING_ONLY_KEY);
+    const others = control.value.filter((other: string) => other !== key);
+    control.setValue(warningOnly ? [...others, key] : others);
+  }
 
-  isStringType = computed(() => {
-    return ["string", "long-text"].includes(this.entitySchemaField()?.dataType);
-  });
+  /**
+   * The validators config of the form:
+   * the set validators fitting the selected data type (see {@link removeDefaultValuesFromValidatorConfig}),
+   * the keys of the config without a setting here (e.g. of other modules) kept as they are.
+   */
+  private validatorConfig(form: FormGroup): FormValidatorConfig {
+    const values = form.getRawValue();
+    this.transformPatternValue(values);
+    const notInForm = Object.entries(
+      this.entitySchemaField()?.validators ?? {},
+    ).filter(([key]) => !(key in form.controls));
+    const config: FormValidatorConfig = {
+      ...Object.fromEntries(notInForm),
+      ...this.removeDefaultValuesFromValidatorConfig(values),
+    };
+    const applicable = this.applicableValidators();
+    for (const key of Object.keys(config)) {
+      if (this.validators.rules.has(key) && !applicable.has(key)) {
+        delete config[key];
+      }
+    }
+
+    const warningOnly = asArray(config[WARNING_ONLY_KEY] ?? []).filter(
+      (key) =>
+        key in config && this.validators.rules.get(key)?.warning === "optional",
+    );
+    delete config[WARNING_ONLY_KEY];
+    if (warningOnly.length > 0) {
+      config[WARNING_ONLY_KEY] = warningOnly;
+    }
+    return config;
+  }
 
   /**
    * Replaces the raw pattern and patternMessage inputs with a config value for the "pattern" validator:
@@ -272,13 +387,7 @@ export class ConfigureEntityFieldValidatorComponent {
     }
   }
 
-  isDateWithAgeType = computed(() => {
-    return this.entitySchemaField()?.dataType === "date-with-age";
-  });
-
-  isMonthType = computed(() => {
-    return this.entitySchemaField()?.dataType === "month";
-  });
+  isMonthType = computed(() => this.fieldDataType() === MonthDatatype.dataType);
 
   private normalizeDateControl(form: FormGroup, controlName: string): void {
     const ctrl = form.get(controlName);
@@ -299,17 +408,23 @@ export class ConfigureEntityFieldValidatorComponent {
     validators: FormValidatorConfig,
   ): FormValidatorConfig {
     for (let key of Object.keys(validators)) {
-      if (isDefaultValue(validators[key])) {
+      if (isUnset(validators[key])) {
         delete validators[key];
       }
     }
-
-    function isDefaultValue(value): boolean {
-      return value === false || value === "" || value === null;
-    }
-
     return validators;
   }
+}
+
+/** whether a validator's form control value means it is not set */
+function isUnset(value: unknown): boolean {
+  return (
+    value === false ||
+    value === "" ||
+    value === null ||
+    value === undefined ||
+    (Array.isArray(value) && value.length === 0)
+  );
 }
 
 function isValidRegex(pattern: string): boolean {

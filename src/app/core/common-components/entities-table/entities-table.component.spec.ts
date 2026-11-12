@@ -20,7 +20,9 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "../../logging/logging.service";
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { RowOptions } from "./data-source/entities-table-data-source";
 import { MatTableModule } from "@angular/material/table";
 import { Angulartics2Module } from "angulartics2";
 
@@ -106,6 +108,10 @@ describe("EntitiesTableComponent", () => {
 
     expect(component.recordsDataSource().sort.direction).toBe("desc");
     expect(component.recordsDataSource().sort.active).toBe("date");
+    expect(component.recordsDataSource().effectiveSort()).toEqual({
+      active: "date",
+      direction: "desc",
+    });
   });
 
   it("should use input defaultSort if defined", () => {
@@ -267,7 +273,7 @@ describe("EntitiesTableComponent", () => {
     fixture.detectChanges();
 
     component.selectedRecords.set(entities);
-    component.recordsDataSource().filter = "1";
+    component.recordsDataSource().searchText.set("1");
 
     fixture.detectChanges();
 
@@ -283,7 +289,7 @@ describe("EntitiesTableComponent", () => {
     const matching = TestEntity.create("Matching");
     const other = TestEntity.create("Other");
     component.recordsDataSource().allRecords.set([matching, other]);
-    component.recordsDataSource().filter = "matching";
+    component.recordsDataSource().searchText.set("matching");
     fixture.detectChanges();
 
     const selectAllCheckbox = fixture.nativeElement.querySelector(
@@ -579,4 +585,232 @@ describe("EntitiesTableComponent", () => {
 
     expect(fpSpy).toHaveBeenCalled();
   });
+
+  describe("extension points of the data source", () => {
+    let dataSource: ExtendedTestDataSource;
+
+    beforeEach(async () => {
+      const registry = TestBed.inject(ComponentRegistry);
+      registry.add("TestRowPrefix", async () => TestRowPrefixComponent);
+      registry.add("TestRowSuffix", async () => TestRowSuffixComponent);
+      // the registry is shared by all specs of a test worker
+      onTestFinished(() => {
+        registry.delete("TestRowPrefix");
+        registry.delete("TestRowSuffix");
+      });
+      dataSource = TestBed.runInInjectionContext(
+        () => new ExtendedTestDataSource(),
+      );
+      fixture.componentRef.setInput("recordsDataSource", dataSource);
+      fixture.componentRef.setInput("entityType", TestEntity);
+      fixture.componentRef.setInput("columnsToDisplay", ["name", "other"]);
+      fixture.componentRef.setInput("sortBy", {
+        active: "name",
+        direction: "asc",
+      });
+      fixture.componentRef.setInput("selectable", true);
+      fixture.componentRef.setInput("editable", true);
+      fixture.detectChanges();
+    });
+
+    function renderedRow(record: TestEntity): HTMLElement {
+      const index = dataSource.renderedRows().indexOf(record);
+      return fixture.nativeElement.querySelectorAll("tr[mat-row]")[index];
+    }
+
+    it("renders the components and CSS class of the row options", async () => {
+      const [decorated, plain] = ["A", "B"].map((name) =>
+        TestEntity.create(name),
+      );
+      dataSource.allRecords.set([decorated, plain]);
+      dataSource.optionsById.set(
+        new Map([
+          [
+            decorated.getId(),
+            {
+              prefix: { component: "TestRowPrefix" },
+              suffix: { component: "TestRowSuffix" },
+              cssClass: "decorated",
+            },
+          ],
+        ]),
+      );
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const prefixCell = renderedRow(decorated)
+        .querySelector("app-test-row-prefix")
+        ?.closest("td");
+      // the first column holding record data, after the select and "+" columns
+      expect(prefixCell?.classList).toContain("mat-column-name");
+      const prefixContainer = prefixCell.querySelector(
+        "app-test-row-prefix",
+      ).parentElement;
+      // side by side in the cell: prefix, the field, suffix
+      expect(
+        [...prefixContainer.children].map((child) => child.localName),
+      ).toEqual([
+        "app-test-row-prefix",
+        "app-entity-field-view",
+        "app-test-row-suffix",
+      ]);
+      // the prefix can span the full height of the row and draw over the row divider
+      expect(getComputedStyle(prefixContainer).height).toBe("100%");
+      expect(getComputedStyle(prefixCell).overflow).toBe("visible");
+      expect(renderedRow(decorated).classList).toContain("decorated");
+      expect(renderedRow(decorated).classList).toContain("table-row");
+      expect(
+        renderedRow(plain).querySelector("app-test-row-prefix"),
+      ).toBeNull();
+      expect(renderedRow(plain).classList).not.toContain("decorated");
+    });
+
+    it("keeps the field view of the first cell when its prefix comes or goes", async () => {
+      const record = TestEntity.create("A");
+      dataSource.allRecords.set([record]);
+      fixture.detectChanges();
+      const fieldView = () =>
+        renderedRow(record).querySelector(
+          "td.mat-column-name app-entity-field-view",
+        );
+      const initialFieldView = fieldView();
+
+      dataSource.optionsById.set(
+        new Map([[record.getId(), { prefix: { component: "TestRowPrefix" } }]]),
+      );
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(
+        renderedRow(record).querySelector("app-test-row-prefix"),
+      ).not.toBeNull();
+      expect(fieldView()).toBe(initialFieldView);
+    });
+
+    it("never selects a row whose row options mark it as not selectable", () => {
+      const [a, locked, c] = ["A", "B", "C"].map((name) =>
+        TestEntity.create(name),
+      );
+      dataSource.allRecords.set([a, locked, c]);
+      dataSource.optionsById.set(
+        new Map([[locked.getId(), { selectable: false }]]),
+      );
+      fixture.detectChanges();
+
+      const checkbox = (record: TestEntity) =>
+        renderedRow(record).querySelector<HTMLInputElement>(
+          "td mat-checkbox input",
+        );
+      expect(checkbox(locked).disabled).toBe(true);
+
+      component.onRowMouseDown(new MouseEvent("mousedown"), a);
+      component.onRowMouseDown(
+        new MouseEvent("mousedown", { shiftKey: true }),
+        c,
+      );
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a, c]);
+
+      component.onRowMouseDown(new MouseEvent("mousedown"), locked);
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a, c]);
+
+      // also when the host selects it
+      component.selectedRecords.set([a, locked]);
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a]);
+
+      component.selectedRecords.set([]);
+      fixture.detectChanges();
+      fixture.nativeElement
+        .querySelector("th[mat-header-cell] mat-checkbox input")
+        .click();
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a, c]);
+      // all selectable rows are selected
+      expect(
+        fixture.nativeElement.querySelector(
+          "th[mat-header-cell] mat-checkbox input",
+        ).checked,
+      ).toBe(true);
+    });
+
+    it("shows all rows and no paginator while the data source does not use pagination", () => {
+      const unpaged = TestBed.runInInjectionContext(
+        () => new UnpagedTestDataSource(),
+      );
+      fixture.componentRef.setInput("recordsDataSource", unpaged);
+      unpaged.allRecords.set(
+        Array.from({ length: 12 }, (_, i) => TestEntity.create(`R${i}`)),
+      );
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector("mat-paginator")).toBeNull();
+      expect(
+        fixture.nativeElement.querySelectorAll("tr[mat-row]"),
+      ).toHaveLength(12);
+
+      unpaged.usesPagination.set(true);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement.querySelector("mat-paginator"),
+      ).not.toBeNull();
+      expect(
+        fixture.nativeElement.querySelectorAll("tr[mat-row]"),
+      ).toHaveLength(10);
+
+      // the removed paginator does not keep paging the data source
+      unpaged.usesPagination.set(false);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement.querySelectorAll("tr[mat-row]"),
+      ).toHaveLength(12);
+    });
+
+    it("keeps the data source paged while the table is destroyed", () => {
+      dataSource.allRecords.set(
+        Array.from({ length: 12 }, (_, i) => TestEntity.create(`R${i}`)),
+      );
+      fixture.detectChanges();
+
+      fixture.destroy();
+
+      // rendering all rows once during teardown is slow for a long list
+      expect(dataSource.renderedRows()).toHaveLength(10);
+    });
+
+    it("unselects a selected record once its row options make it not selectable", () => {
+      const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
+      dataSource.allRecords.set([a, b]);
+      fixture.detectChanges();
+      component.selectedRecords.set([a, b]);
+
+      dataSource.optionsById.set(new Map([[b.getId(), { selectable: false }]]));
+      fixture.detectChanges();
+
+      expect(component.selectedRecords()).toEqual([a]);
+    });
+  });
 });
+
+/** a data source of a feature module, with row options */
+class ExtendedTestDataSource extends InMemoryDataSource<TestEntity> {
+  readonly optionsById = signal<ReadonlyMap<string, RowOptions>>(new Map());
+
+  override rowOptionsOf(record: TestEntity): RowOptions | undefined {
+    return this.optionsById().get(record.getId());
+  }
+}
+
+/** a data source of a feature module that shows all rows at once */
+class UnpagedTestDataSource extends InMemoryDataSource<TestEntity> {
+  override readonly usesPagination = signal(false);
+}
+
+@Component({ selector: "app-test-row-prefix", template: "&gt;" })
+class TestRowPrefixComponent {}
+
+@Component({ selector: "app-test-row-suffix", template: "(3)" })
+class TestRowSuffixComponent {}

@@ -181,9 +181,9 @@ describe("EmbeddedArrayDataComponent", () => {
     return vi
       .spyOn(
         TestBed.inject(AutomatedFieldUpdateConfigService),
-        "applyRulesAfterSave",
+        "applyRulesToDependentEntities",
       )
-      .mockImplementation(() => {});
+      .mockResolvedValue([]);
   }
 
   it("saves the entity with the changed entry, displays the entries and updates the linked records", async () => {

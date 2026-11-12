@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { Router, ActivatedRoute } from "@angular/router";
-import { TableStateUrlService } from "./table-state-url.service";
+import { UrlStateService } from "./url-state.service";
 import type { Mock } from "vitest";
 
 type RouterMock = {
@@ -25,8 +25,8 @@ type ActivatedRouteSnapshotStub = {
   readonly queryParamMap: QueryParamMapMock;
 };
 
-describe("TableStateUrlService", () => {
-  let service: TableStateUrlService;
+describe("UrlStateService", () => {
+  let service: UrlStateService;
   let routerSpy: RouterMock;
   let activatedRouteStub: { snapshot: ActivatedRouteSnapshotStub };
   let queryParamMapMock: QueryParamMapMock;
@@ -56,7 +56,7 @@ describe("TableStateUrlService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        TableStateUrlService,
+        UrlStateService,
         { provide: Router, useValue: routerSpy },
         {
           provide: ActivatedRoute,
@@ -64,7 +64,7 @@ describe("TableStateUrlService", () => {
         },
       ],
     });
-    service = TestBed.inject(TableStateUrlService);
+    service = TestBed.inject(UrlStateService);
   });
 
   it("should add/update query params and call router.navigate", () => {
@@ -101,38 +101,17 @@ describe("TableStateUrlService", () => {
     expect(service.getAllUrlParams()).toEqual({ foo: "bar", baz: "qux" });
   });
 
-  it("should call updateUrlParams with replaceUrl false for updateFilterParam", () => {
-    vi.spyOn(service, "updateUrlParams");
-    service.updateFilterParam("filter", "val");
-    expect(service.updateUrlParams).toHaveBeenCalledWith(
-      { filter: "val" },
-      false,
-    );
-  });
-
-  it("should exclude sortBy and sortOrder in getFilterParams", () => {
-    activatedRouteStub.snapshot.queryParams = {
-      foo: "bar",
-      sortBy: "name",
-      sortOrder: "asc",
-      filter: "val",
-    };
-    expect(service.getFilterParams()).toEqual({ foo: "bar", filter: "val" });
-  });
-
-  it("should remove specified filter keys and call router.navigate in clearFilterParams", () => {
+  it("should remove the given keys and call router.navigate in removeUrlParams", () => {
     activatedRouteStub.snapshot.queryParams = {
       foo: "bar",
       filter1: "a",
       filter2: "b",
     };
-    service.clearFilterParams(["filter1", "filter2"]);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({
-        queryParams: { foo: "bar" },
-      }),
-    );
+    service.removeUrlParams(["filter1", "filter2"], false);
+    expect(routerSpy.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteStub,
+      queryParams: { foo: "bar" },
+    });
   });
 
   it("should remove the longest filter option if URL length exceeds maximum", () => {

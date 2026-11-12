@@ -151,12 +151,13 @@ export class EmbeddedArrayDataComponent {
           ),
           takeUntilDestroyed(saveScope.get(DestroyRef)),
         )
-        .subscribe((event) =>
-          this.automatedFieldUpdateConfigService.applyRulesAfterSave(
+        .subscribe(async (event) => {
+          // reports and shows a failure itself
+          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
             event.newEntity,
             event.previousEntity,
-          ),
-        );
+          );
+        });
 
       const saved = await this.entityFormService
         .saveChanges(entityForm, entity)

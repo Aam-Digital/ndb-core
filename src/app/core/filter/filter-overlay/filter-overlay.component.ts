@@ -5,6 +5,7 @@ import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { FilterComponent } from "../filter/filter.component";
 import { MatButtonModule } from "@angular/material/button";
 import { DataFilter } from "../filters/filters";
+import { EntitiesTableDataSource } from "../../common-components/entities-table/data-source/entities-table-data-source";
 
 export interface FilterOverlayData<T extends Entity> {
   filterConfig: FilterConfig[];
@@ -12,6 +13,8 @@ export interface FilterOverlayData<T extends Entity> {
   entities: T[];
   useUrlQueryParams: true;
   filterObjChange: (filter: DataFilter<T>) => void;
+  /** the data source of the filtered table, so that "Clear" also resets its free-text search */
+  dataSource?: EntitiesTableDataSource<T>;
 }
 
 /**

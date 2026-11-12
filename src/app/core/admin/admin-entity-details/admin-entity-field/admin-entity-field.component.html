@@ -31,7 +31,10 @@
               ></app-translatable-text-input>
               @if (schemaFieldsForm.get("label").hasError("uniqueProperty")) {
                 <mat-error>
-                  {{ schemaFieldsForm.get("label").getError("uniqueProperty") }}
+                  {{
+                    schemaFieldsForm.get("label").getError("uniqueProperty")
+                      .errorMessage
+                  }}
                 </mat-error>
               }
             </mat-form-field>
@@ -101,7 +104,7 @@
               }
               @if (fieldIdForm.hasError("uniqueProperty")) {
                 <mat-error>
-                  {{ fieldIdForm.getError("uniqueProperty") }}
+                  {{ fieldIdForm.getError("uniqueProperty").errorMessage }}
                 </mat-error>
               }
             </mat-form-field>
@@ -293,6 +296,7 @@
               [entitySchemaField]="data.entitySchemaField"
               [entityType]="data.entityType"
               [dataType]="selectedDataType()"
+              [additional]="additionalValue()"
               [linkedEntityType]="selectionConditionTargetType()"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
               (entitySchemaFieldChanges)="onEntitySchemaFieldChanges($event)"

@@ -31,7 +31,9 @@ describe("UniquePropertyValidator", () => {
     formControl.markAsDirty();
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
+    expect(validationResult).toEqual({
+      uniqueProperty: { errorMessage: expect.any(String) },
+    });
   });
 
   it("should allow to keep unchanged value (to not refuse saving an existing entity with unchanged value)", async () => {
@@ -53,7 +55,9 @@ describe("UniquePropertyValidator", () => {
     formControl.setValue("existing label"); // lowercase
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
+    expect(validationResult).toEqual({
+      uniqueProperty: { errorMessage: expect.any(String) },
+    });
   });
 
   it("should compare multi-lingual texts by the active language, not as raw maps", async () => {
@@ -68,7 +72,7 @@ describe("UniquePropertyValidator", () => {
     // a different map holding the same text of the active language is a duplicate
     formControl.setValue({ [DEFAULT_LANGUAGE]: "existing label" });
     expect(await validator(formControl)).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
 
     formControl.setValue({ [DEFAULT_LANGUAGE]: "Another Label" });
@@ -91,6 +95,8 @@ describe("UniquePropertyValidator", () => {
     // Should still reject other duplicates
     formControl.setValue("Another Label");
     validationResult = await validator(formControl);
-    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
+    expect(validationResult).toEqual({
+      uniqueProperty: { errorMessage: expect.any(String) },
+    });
   });
 });

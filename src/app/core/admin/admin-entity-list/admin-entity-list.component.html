@@ -11,6 +11,10 @@
 </app-view-title>
 
 <div>
+  @for (settings of featureSettings(); track settings.component) {
+    <ng-container [appDynamicComponent]="settings"></ng-container>
+  }
+
   <app-admin-list-manager
     [items]="filters()"
     [additionalFields]="filterAdditionalFields()"

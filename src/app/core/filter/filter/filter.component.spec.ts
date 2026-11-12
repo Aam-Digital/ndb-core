@@ -9,6 +9,8 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { Logging } from "../../logging/logging.service";
+import { InMemoryDataSource } from "../../common-components/entities-table/data-source/in-memory-data-source";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -167,17 +169,16 @@ describe("FilterComponent", () => {
   });
 
   it("should encode filter values containing commas before storing them in the url", () => {
-    const tableStateUrl = (component as any).tableStateUrl;
-    const updateFilterParamSpy = vi.spyOn(tableStateUrl, "updateFilterParam");
+    const urlState = TestBed.inject(UrlStateService);
+    const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
     fixture.componentRef.setInput("useUrlQueryParams", true);
     fixture.detectChanges();
 
     const filter = new StringFilter("other", "Other");
     component.filterOptionSelected(filter, ["Doe, John"]);
 
-    expect(updateFilterParamSpy).toHaveBeenCalledWith(
-      "other",
-      encodeURIComponent("Doe, John"),
+    expect(updateUrlParamsSpy).toHaveBeenCalledWith(
+      { other: encodeURIComponent("Doe, John") },
       false,
     );
   });
@@ -346,5 +347,24 @@ describe("FilterComponent", () => {
     expect(component.filterSelections()).toEqual([]);
     expect(errorLog).toHaveBeenCalled();
     errorLog.mockRestore();
+  });
+
+  it("clears the free-text search of the data source with the other filters", async () => {
+    const dataSource = TestBed.runInInjectionContext(
+      () => new InMemoryDataSource<Note>(),
+    );
+    fixture.componentRef.setInput("dataSource", dataSource);
+    await setComponentInputs({ entityType: Note, filterConfig: [] });
+    const clearButton = () =>
+      Array.from<HTMLElement>(
+        fixture.nativeElement.querySelectorAll("button"),
+      ).find((button) => button.textContent.includes("Clear"));
+    expect(clearButton()).toBeUndefined();
+
+    dataSource.searchText.set("Alipore");
+    fixture.detectChanges();
+    clearButton().click();
+
+    expect(dataSource.searchText()).toBe("");
   });
 });

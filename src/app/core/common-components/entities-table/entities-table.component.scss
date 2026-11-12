@@ -42,6 +42,18 @@
   border-top: none;
 }
 
+/* The content of the first data cell fills the whole cell and may draw over the row divider,
+   so that the prefix of a row's options can span the full height of the row (e.g. lines connecting rows). */
+.first-data-cell {
+  /* a cell grows to the height of its row anyway, this lets the content's percentage height resolve against it */
+  height: 1px;
+  overflow: visible;
+}
+
+.first-data-cell-content {
+  height: 100%;
+}
+
 .inactive-row {
   color: colors.$inactive;
 }

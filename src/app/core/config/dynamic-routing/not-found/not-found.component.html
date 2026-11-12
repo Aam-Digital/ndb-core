@@ -7,6 +7,11 @@
       permissions to view this page.
     </p>
     <button mat-stroked-button routerLink="" i18n>Go to Dashboard</button>
+  } @else if (configUnavailable) {
+    <p i18n>
+      The configuration of your system could not be loaded. Please check your
+      internet connection and try again, or contact your tech support.
+    </p>
   } @else {
     <p i18n>No configuration available yet.</p>
   }

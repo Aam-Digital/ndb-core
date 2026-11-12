@@ -116,6 +116,10 @@
         "file": "../../src/app/core/basic-datatypes/README.md"
       },
       {
+        "title": "Add a Form Validator",
+        "file": "../../src/app/core/common-components/entity-form/dynamic-form-validators/README.md"
+      },
+      {
         "title": "End-to-end tests",
         "file": "../../e2e/README.md"
       },
@@ -126,6 +130,10 @@
       {
         "title": "Display Related Entities",
         "file": "how-to-guides/entity-subrecord-component.md"
+      },
+      {
+        "title": "Extend Entity Lists and Tables",
+        "file": "../../src/app/core/common-components/entities-table/README.md"
       },
       {
         "title": "Log Errors",

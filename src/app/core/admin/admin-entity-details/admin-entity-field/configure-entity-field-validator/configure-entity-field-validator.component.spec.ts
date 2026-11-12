@@ -30,6 +30,9 @@ import {
 import { TranslatableText } from "../../../../config/multi-lingual-config";
 import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
 import { By } from "@angular/platform-browser";
+import { CoreTestingModule } from "../../../../../utils/core-testing.module";
+import { DynamicValidatorsService } from "../../../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { FieldValidator } from "../../../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 @DatabaseEntity("ValidatorTestProject")
@@ -72,6 +75,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         ReactiveFormsModule,
         BrowserAnimationsModule,
         FontAwesomeTestingModule,
+        CoreTestingModule,
       ],
       providers: [
         FormBuilder,
@@ -154,6 +158,148 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     patternControl.setValue("");
     expect(emitted).toEqual({});
     expect(messageControl.disabled).toBe(true); // message only editable while a pattern is set
+  });
+
+  describe("validators fitting the selected type", () => {
+    function renderField(validators: FormValidatorConfig) {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+        validators,
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+      return emitted;
+    }
+
+    it("drops the validators not fitting a newly selected type, and keeps the others", () => {
+      const emitted = renderField({ required: true, pattern: "[a-z]+" });
+
+      fixture.componentRef.setInput("dataType", "number");
+      fixture.detectChanges();
+
+      const labels = fixture.nativeElement.textContent;
+      expect(labels).not.toContain("Pattern (Regex)");
+      expect(labels).toContain("Maximum Value");
+      expect(emitted.at(-1)).toEqual({ required: true });
+    });
+
+    it("keeps a setting not fitting the type when opening the field, and saves it if the type is changed to one it fits", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "number",
+        validators: { pattern: "[0-9]+" },
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      fixture.componentRef.setInput("dataType", "string");
+      fixture.detectChanges();
+
+      expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
+    });
+
+    it("keeps the pattern of an email field when another setting is changed", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "email",
+        validators: { pattern: "@example\\.org$" },
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      component.validatorForm().get("required").setValue(true);
+
+      expect(emitted.at(-1)).toEqual({
+        required: true,
+        pattern: "@example\\.org$",
+      });
+    });
+
+    it("removes a disabled trimming once the type is changed to one without trimming", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+        trim: false,
+      });
+      fixture.detectChanges();
+      const emitted: Partial<EntitySchemaField>[] = [];
+      component.entitySchemaFieldChanges.subscribe((v) => emitted.push(v));
+
+      fixture.componentRef.setInput("dataType", "long-text");
+      fixture.detectChanges();
+      expect(emitted.at(-1)).toEqual({ trim: undefined });
+
+      fixture.componentRef.setInput("dataType", "string");
+      fixture.detectChanges();
+      expect(emitted.at(-1)).toEqual({ trim: false });
+    });
+
+    it("keeps validators the tab has no setting for, also as only a warning", () => {
+      const validators = TestBed.inject(DynamicValidatorsService);
+      const getRule = validators.rules.get.bind(validators.rules);
+      vi.spyOn(validators.rules, "get").mockImplementation((key) =>
+        key === "customRule"
+          ? ({ warning: "optional" } as FieldValidator)
+          : getRule(key),
+      );
+      const emitted = renderField({
+        customRule: 5,
+        _warningOnly: ["customRule"],
+      } as FormValidatorConfig);
+
+      component.validatorForm().get("required").setValue(true);
+
+      expect(emitted.at(-1)).toEqual({
+        customRule: 5,
+        required: true,
+        _warningOnly: ["customRule"],
+      });
+    });
+
+    it("removes settings not fitting the type from the config once the type is changed, not when only opening the field", () => {
+      const newFixture = TestBed.createComponent(
+        ConfigureEntityFieldValidatorComponent,
+      );
+      newFixture.componentRef.setInput("entitySchemaField", {
+        dataType: "number",
+        validators: { min: 5, pattern: "[0-9]+" },
+      });
+      const emitted: FormValidatorConfig[] = [];
+      newFixture.componentInstance.entityValidatorChanges.subscribe((v) =>
+        emitted.push(v),
+      );
+
+      newFixture.detectChanges();
+      expect(emitted).toEqual([]);
+
+      newFixture.componentRef.setInput("dataType", "string");
+      newFixture.detectChanges();
+      expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
+    });
+
+    it.each([null, /^\d+$/])(
+      "shows a pattern given as %s in the config",
+      (pattern) => {
+        renderField({ pattern });
+
+        expect(component.validatorForm().get("pattern").value).toBe(
+          pattern?.source ?? "",
+        );
+      },
+    );
+
+    it("saves the validators that are only a warning, as long as they are set", () => {
+      const emitted = renderField({ pattern: "[a-z]+" });
+
+      component.setWarningOnly("pattern", true);
+      expect(emitted.at(-1)).toEqual({
+        pattern: "[a-z]+",
+        _warningOnly: ["pattern"],
+      });
+
+      component.validatorForm().get("pattern").setValue("");
+      expect(emitted.at(-1)).toEqual({});
+    });
   });
 
   it("should flag invalid regex input as control error and not emit it", () => {
@@ -335,5 +481,33 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       button().conditionChange.emit(null);
       expect(emitted.at(-1)).toEqual({});
     });
+
+    it("keeps a condition on a record type chosen in the dialog", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      fixture.componentRef.setInput("dataType", "entity");
+      fixture.componentRef.setInput("additional", "ValidatorTestProject");
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTestProject);
+      fixture.detectChanges();
+      component.validatorForm().get("selectionCondition").setValue(condition);
+
+      expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
+    });
+  });
+
+  it("does not block saving with an invalid setting that is hidden for the selected type", () => {
+    fixture.componentRef.setInput("entitySchemaField", { dataType: "string" });
+    fixture.detectChanges();
+    component.validatorForm().get("pattern").setValue("[a-z");
+
+    fixture.componentRef.setInput("dataType", "number");
+    fixture.detectChanges();
+
+    expect(component.validatorForm().invalid).toBe(false);
   });
 });

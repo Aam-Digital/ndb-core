@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   ComponentRef,
   Directive,
   Input,
@@ -27,7 +26,6 @@ import { Logging } from "../../logging/logging.service";
 export class DynamicComponentDirective implements OnChanges, OnDestroy {
   viewContainerRef = inject(ViewContainerRef);
   private components = inject(ComponentRegistry);
-  private changeDetector = inject(ChangeDetectorRef);
   private isDestroyed = false;
   /**
    * Tracks the latest async load request.
@@ -102,7 +100,10 @@ export class DynamicComponentDirective implements OnChanges, OnDestroy {
     if (this.shouldAbortLoad(currentLoad)) {
       return;
     }
-    this.changeDetector.detectChanges();
+    // Check only the new component: the ChangeDetectorRef of this directive belongs to the
+    // component that declares it, e.g. a whole table for a component in each row of it,
+    // and checking that once for every loaded component makes long tables very slow.
+    componentRef.changeDetectorRef.detectChanges();
   }
 
   private setInputProperties(
