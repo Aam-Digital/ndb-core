@@ -231,7 +231,7 @@ so that both check the same record types and the validator does not load records
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:71</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -276,7 +276,7 @@ so that both check the same record types and the validator does not load records
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,8 @@ so that both check the same record types and the validator does not load records
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AbstractControl } from &quot;@angular/forms&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { AbstractControl } from &quot;@angular/forms&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
@@ -305,6 +306,15 @@ import { FilterService } from &quot;../../filter/filter.service&quot;;
 import { DynamicPlaceholderValueService } from &quot;../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { AsyncPromiseValidatorFn } from &quot;../../common-components/entity-form/dynamic-form-validators/validator-types&quot;;
+import {
+  FieldValidator,
+  ValidatorContext,
+} from &quot;../../common-components/entity-form/dynamic-form-validators/field-validator&quot;;
+import { getCurrentRecordOfControl } from &quot;../../common-components/entity-form/current-record-state&quot;;
+import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { SchemaEmbedDatatype } from &quot;../schema-embed/schema-embed.datatype&quot;;
+import { EntityDatatype } from &quot;./entity.datatype&quot;;
 
 /**
  * The &#x60;selectionCondition&#x60; of a field linking to other records,
@@ -348,13 +358,6 @@ export function matchesSelectionCondition&lt;E extends Entity&gt;(
     Logging.debug(&quot;[ENTITY_SELECT] Invalid selectionCondition.&quot;, err);
     return () &#x3D;&gt; true;
   }
-}
-
-/** the services the &#x60;selectionCondition&#x60; validator uses */
-export interface SelectionConditionServices {
-  entityMapper: EntityMapperService;
-  placeholderService: DynamicPlaceholderValueService;
-  filterService: FilterService;
 }
 
 /**
@@ -411,82 +414,132 @@ export async function loadLinkedRecord&lt;E extends Entity&gt;(
 }
 
 /**
- * Validator for a field linking to other records, for selected records that do not match the field&#x27;s &#x60;selectionCondition&#x60;.
- * Its error is only a warning (&#x60;warning: true&#x60;): the record can still be saved after confirming it.
+ * &#x60;selectionCondition: { center: &quot;$current_record.center&quot; }&#x60;: the linked records should match the condition;
+ * the dropdown of the field only offers such records.
+ *
  * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
  * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
  * Selected records that cannot be loaded are not checked.
- *
  * The record types and the records already loaded are taken from the dropdown editing the field
  * (see {@link registerLinkedRecordsSource}), only records it has not loaded are loaded here.
- *
- * @param fieldEntityTypes the record types the field links to (from its config),
- *   if the field is not edited with a dropdown sharing its record types
- * @param getCurrentRecord the record being edited, with the current values of its form,
- *   to resolve the placeholders referring to it (&#x60;undefined&#x60; if the form edits several records at once)
  */
-export function selectionConditionValidator(
-  condition: DataFilter&lt;Entity&gt;,
-  fieldEntityTypes: string[],
-  getCurrentRecord: (control: AbstractControl) &#x3D;&gt; Entity | undefined,
-  {
-    entityMapper,
-    placeholderService,
-    filterService,
-  }: SelectionConditionServices,
-): AsyncPromiseValidatorFn {
-  const referencedFields &#x3D; getCurrentRecordPlaceholderFields(condition);
-  return async (control) &#x3D;&gt; {
-    const changed &#x3D;
-      control.dirty ||
-      referencedFields.some((field) &#x3D;&gt; control.parent?.get(field)?.dirty);
-    if (!changed) {
-      return null;
-    }
-    const selectedIds &#x3D; asArray&lt;string&gt;(control.value ?? []).filter(
-      (id) &#x3D;&gt; !!id,
-    );
-    if (selectedIds.length &#x3D;&#x3D;&#x3D; 0) {
-      return null;
-    }
-    const source &#x3D; linkedRecordsSources.get(control);
-    const dropdownTypes &#x3D; source?.entityTypes() ?? [];
-    const entityTypes &#x3D;
-      dropdownTypes.length &gt; 0 ? dropdownTypes : fieldEntityTypes;
-    const resolved &#x3D; resolveSelectionCondition(
-      condition,
-      entityTypes,
-      getCurrentRecord(control),
-      placeholderService,
-    );
-    if (!resolved) {
-      return null;
-    }
+@Injectable()
+export class SelectionConditionValidator extends FieldValidator&lt;
+  DataFilter&lt;Entity&gt;
+&gt; {
+  static override readonly key &#x3D; &quot;selectionCondition&quot;;
+  override readonly warning &#x3D; &quot;always&quot;;
+  override readonly requiresFieldId &#x3D; true;
 
-    const matches &#x3D; matchesSelectionCondition(resolved, filterService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly placeholderService &#x3D; inject(DynamicPlaceholderValueService);
+  private readonly filterService &#x3D; inject(FilterService);
+
+  override appliesTo(
+    datatype: DefaultDatatype,
+    field: EntitySchemaField,
+  ): boolean {
+    return (
+      datatype instanceof EntityDatatype &amp;&amp;
+      asArray(field.additional ?? []).length &#x3D;&#x3D;&#x3D; 1
+    );
+  }
+
+  build(
+    condition: DataFilter&lt;Entity&gt;,
+    { entity, field, singleRecord }: ValidatorContext,
+  ): AsyncPromiseValidatorFn {
+    const referencedFields &#x3D; getCurrentRecordPlaceholderFields(condition);
+    // only used if the field has no dropdown, which shares the types it offers (see EditEntityComponent)
+    const fieldEntityTypes &#x3D; asArray(field.additional ?? []);
+    return async (control) &#x3D;&gt; {
+      const changed &#x3D;
+        control.dirty ||
+        referencedFields.some((id) &#x3D;&gt; control.parent?.get(id)?.dirty);
+      const selectedIds &#x3D; asArray&lt;string&gt;(control.value ?? []).filter(
+        (id) &#x3D;&gt; !!id,
+      );
+      if (!changed || selectedIds.length &#x3D;&#x3D;&#x3D; 0) {
+        return null;
+      }
+      const source &#x3D; linkedRecordsSources.get(control);
+      const dropdownTypes &#x3D; source?.entityTypes() ?? [];
+      const entityTypes &#x3D;
+        dropdownTypes.length &gt; 0 ? dropdownTypes : fieldEntityTypes;
+      const resolved &#x3D; resolveSelectionCondition(
+        condition,
+        entityTypes,
+        singleRecord ? getCurrentRecordOfControl(control, entity) : undefined,
+        this.placeholderService,
+      );
+      if (!resolved) {
+        return null;
+      }
+      const names &#x3D; await this.notMatchingNames(
+        resolved,
+        entityTypes[0],
+        selectedIds,
+        source,
+      );
+      return names
+        ? {
+            selectionCondition: {
+              errorMessage: $localize&#x60;Not matching the selection conditions of this field: ${names}&#x60;,
+            },
+          }
+        : null;
+    };
+  }
+
+  /** the names of the selected records not matching the resolved condition, &#x60;&quot;&quot;&#x60; if all match */
+  private async notMatchingNames(
+    resolved: DataFilter&lt;Entity&gt;,
+    entityType: string,
+    selectedIds: string[],
+    source: LinkedRecordsSource | undefined,
+  ): Promise&lt;string&gt; {
+    const matches &#x3D; matchesSelectionCondition(resolved, this.filterService);
     const records &#x3D; await Promise.all(
       selectedIds.map((id) &#x3D;&gt; {
-        const fullId &#x3D; Entity.createPrefixedId(entityTypes[0], id);
+        const fullId &#x3D; Entity.createPrefixedId(entityType, id);
         return (
           source?.getLoaded(fullId) ??
-          loadLinkedRecord(entityMapper, entityTypes[0], fullId)
+          loadLinkedRecord(this.entityMapper, entityType, fullId)
         );
       }),
     );
-    const notMatching &#x3D; records
+    return records
       .filter((record) &#x3D;&gt; record &amp;&amp; !matches(record))
-      .map((record) &#x3D;&gt; record.toString());
-    if (notMatching.length &#x3D;&#x3D;&#x3D; 0) {
-      return null;
+      .map((record) &#x3D;&gt; record.toString())
+      .join(&quot;, &quot;);
+  }
+
+  override dependsOn(value: DataFilter&lt;Entity&gt;): string[] {
+    return getCurrentRecordPlaceholderFields(value);
+  }
+
+  override validateConfig(
+    value: DataFilter&lt;Entity&gt;,
+    field: EntitySchemaField,
+    datatype: DefaultDatatype,
+  ): string[] {
+    if (!value) {
+      return [];
     }
-    const names &#x3D; notMatching.join(&quot;, &quot;);
-    return {
-      selectionCondition: {
-        warning: true,
-        errorMessage: $localize&#x60;Not matching the selection conditions of this field: ${names}&#x60;,
-      },
-    };
-  };
+    if (field.dataType !&#x3D;&#x3D; EntityDatatype.dataType) {
+      return [
+        datatype instanceof SchemaEmbedDatatype
+          ? $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. &quot;additional.participant.validators&quot;).&#x60;
+          : $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to records, it is ignored.&#x60;,
+      ];
+    }
+    if (asArray(field.additional ?? []).length !&#x3D;&#x3D; 1) {
+      return [
+        $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to one record type, it is ignored.&#x60;,
+      ];
+    }
+    return [];
+  }
 }
 </code></pre>
     </div>

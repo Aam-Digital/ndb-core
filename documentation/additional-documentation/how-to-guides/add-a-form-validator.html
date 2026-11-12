@@ -1,0 +1,291 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Form Validators</h1>
+<p>A field can have validation rules in its schema, under <code>validators</code>.
+Each key is one rule, the value is that rule&#39;s setting:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;validators&quot;: {
+  &quot;required&quot;: true,
+  &quot;max&quot;: 100,
+  &quot;pattern&quot;: { &quot;pattern&quot;: &quot;^[0-9]{10}$&quot;, &quot;message&quot;: &quot;Enter a 10-digit phone number&quot; },
+  &quot;_warningOnly&quot;: [&quot;max&quot;]
+}</code></pre></div><p>Keys starting with <code>_</code> are settings, not rules:
+<code>_warningOnly</code> lists the rules whose errors are only a warning.
+The field shows the error, but users can still save after confirming &quot;Save anyway?&quot;.
+<code>required</code> and <code>readonlyAfterSet</code> cannot be only a warning (their <code>warning</code> is <code>&quot;never&quot;</code>):
+a field that may stay empty is simply not required. The config check reports them in <code>_warningOnly</code>.</p>
+<p>Every rule is a service extending <code>FieldValidator</code>, registered through Angular DI as a multi-provider
+(like datatypes and default-value strategies).
+<code>DynamicValidatorsService</code> builds the validators of a field from the registered rules,
+and the config check (<code>ConfigValidationService</code>) asks them too, so a new rule needs no change in either.
+The admin &quot;Validation&quot; tab is still written by hand per rule (see <a href="#add-a-new-rule">Add a new rule</a>).</p>
+<p>Besides the configured rules, a form field also gets
+the <code>internalValidators</code> of its datatype (see <a href="../../../basic-datatypes/README.md">basic-datatypes</a>)
+and the conditions of the user&#39;s permission rules.</p>
+<h2>Use validators in a record type</h2>
+<p>Set them in the schema, in code or in the config:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">&#64;DatabaseField({
+  label: &quot;Phone&quot;,
+  validators: { required: true, pattern: &quot;^[0-9]{10}$&quot; },
+})
+phone: string;</code></pre></div><p>Every form built by the <code>EntityFormService</code> applies them.
+A form of your own gets the same validators from <code>DynamicValidatorsService.buildValidators(field.validators, entity, field.id)</code>.</p>
+<h2>Add a new rule</h2>
+<p>Extend <code>FieldValidator&lt;Config&gt;</code>, where <code>Config</code> is the type of the rule&#39;s setting in <code>validators</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">&#64;Injectable()
+export class MaxLengthValidator extends FieldValidator&lt;number&gt; {
+  static override readonly key = &quot;maxLength&quot;;
+  override readonly datatypesSupported = [LongTextDatatype];
+
+  build(maxLength: number): ValidatorFn {
+    return (control) =&gt; (typeof control.value === &quot;string&quot; &amp;&amp; control.value.length &gt; maxLength ? { maxLength: { actual: control.value.length } } : null);
+  }
+
+  override message(): string {
+    return $localize`Too long`;
+  }
+}</code></pre></div><table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>Member</th><th>What it does</th></tr>
+</thead>
+<tbody>
+<tr><td><code>static readonly key</code></td><td>Key of the rule in <code>validators</code>, also the key of its error</td></tr>
+<tr><td><code>build(value, context)</code></td><td>The Angular validator, or <code>null</code> if it cannot be built. It is not called for a setting that switches the rule off (see <code>isSwitchedOff</code>). The <code>context</code> holds the record, the field, the whole <code>validators</code> config and whether the form edits one single record.</td></tr>
+<tr><td><code>isSwitchedOff(value)</code></td><td>Whether the setting switches the rule off. By default <code>false</code>, <code>null</code> or an empty text (e.g. <code>required: false</code>).</td></tr>
+<tr><td><code>requiresFieldId</code></td><td>The rule needs the field&#39;s id (e.g. to compare with other records), so it is not built for a form field without one.</td></tr>
+<tr><td><code>message(error)</code></td><td>The readable message for the rule&#39;s error. By default the <code>errorMessage</code> the error carries.</td></tr>
+<tr><td><code>datatypesSupported</code></td><td>The datatypes the rule fits, including their subtypes (e.g. <code>DateDatatype</code> also covers date only, date of birth and month). Empty: all datatypes. The admin &quot;Validation&quot; tab only shows the setting for these.</td></tr>
+<tr><td><code>appliesTo(datatype, field)</code></td><td>Overrides <code>datatypesSupported</code> when the type alone is not enough. For example, <code>pattern</code> lists its types explicitly, as link and file fields extend the <code>StringDatatype</code> too.</td></tr>
+<tr><td><code>warning</code></td><td><code>&quot;optional&quot;</code> (default): admins can make it only a warning. <code>&quot;always&quot;</code>: its errors are always only a warning. <code>&quot;never&quot;</code>: it always blocks saving, and runs as a sync validator, so <code>build</code> must not return a promise.</td></tr>
+<tr><td><code>checkOnBlur</code></td><td>The check is expensive (e.g. it loads other records), so the field is only checked when the user leaves it. <code>build</code> may return a sync validator or one returning a promise: rules that can be only a warning run as async validators.</td></tr>
+<tr><td><code>angularValidator</code></td><td>Angular&#39;s own validator that form fields look for (e.g. <code>Validators.required</code> marks a field as required). It is added to the field as it is, next to the rule&#39;s check. Only for a rule whose <code>warning</code> is <code>&quot;never&quot;</code>.</td></tr>
+<tr><td><code>dependsOn(value)</code></td><td>Other fields of the record the rule reads (e.g. the parent link of <code>withinParent</code>). The field is checked again when one of them changes.</td></tr>
+<tr><td><code>validateConfig(value, field, datatype)</code></td><td>Problems of the setting, which admins are told about when they save the config.</td></tr>
+</tbody>
+</table>
+<p>A rule that needs services injects them like any other service (<code>inject(EntityMapperService)</code>).
+Do not inject the <code>EntityFormService</code>, as it uses the rules itself.</p>
+<p>Register the rule in the providers of a module that the <code>AppModule</code> imports:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">providers: [{ provide: FieldValidator, useClass: MaxLengthValidator, multi: true }];</code></pre></div><p>The rules of the core module are in <code>standardFieldValidatorProviders</code>, and their keys are typed in <code>DYNAMIC_VALIDATORS</code>
+for configs written in code.
+The admin &quot;Validation&quot; tab (<code>ConfigureEntityFieldValidatorComponent</code>) has a setting only for the rules of the core module,
+each shown only if the rule <code>appliesTo</code> the type selected there.
+A rule of another module can be set in the config, and the tab keeps it, unless the field&#39;s type is changed to one the rule does not fit.
+To give it a setting in the tab, add it there by hand, as for the core rules.</p>
+<p>Unit-test the logic of the rule&#39;s check. Messages, warnings and checking a field again when the fields it depends on change
+are handled centrally by <code>DynamicValidatorsService</code>.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'add-a-form-validator.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

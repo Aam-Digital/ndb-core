@@ -231,7 +231,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts:96</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts:106</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts:102</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts:112</a></div>
                                 </td>
                             </tr>
 
@@ -355,6 +355,9 @@
  */
 export type DynamicValidator &#x3D; (typeof DYNAMIC_VALIDATORS)[number];
 
+/** key of the setting in a {@link FormValidatorConfig} listing the validators that are only a warning */
+export const WARNING_ONLY_KEY &#x3D; &quot;_warningOnly&quot;;
+
 /**
  * the validators config. This is an object where the key
  * must be one of the &#x60;DynamicValidators&#x60;. The value to that key
@@ -385,6 +388,13 @@ export type DynamicValidator &#x3D; (typeof DYNAMIC_VALIDATORS)[number];
  */
 export type FormValidatorConfig &#x3D; {
   [key in DynamicValidator]?: any;
+} &amp; {
+  /**
+   * keys of the validators of this config whose errors are only a warning:
+   * the field shows the error, but users can still save after confirming it
+   * (keys starting with &quot;_&quot; are settings, not validators)
+   */
+  _warningOnly?: string[];
 };
 
 /** config of the &#x60;withinParent&#x60; validator (for &quot;date-range&quot; fields) */

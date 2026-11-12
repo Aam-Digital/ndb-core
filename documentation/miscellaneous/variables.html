@@ -887,6 +887,9 @@
                             <a href="#SEQ_INDEX" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SEQ_INDEX</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#SETTING_PREFIX" title="src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SETTING_PREFIX</b>&nbsp;&nbsp;&nbsp;(src/.../dynamic-validators.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#SETUP_WIZARD_CONFIG_KEY" title="src/app/core/admin/setup-wizard/setup-wizard-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SETUP_WIZARD_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../setup-wizard-config.ts)</span></a>
                         </li>
                         <li>
@@ -909,6 +912,9 @@
                         </li>
                         <li>
                             <a href="#STALE_THRESHOLD_SECONDS" title="src/app/features/reporting/reporting/reporting.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>STALE_THRESHOLD_SECONDS</b>&nbsp;&nbsp;&nbsp;(src/.../reporting.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#standardFieldValidatorProviders" title="src/app/core/common-components/entity-form/dynamic-form-validators/standard-field-validators.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>standardFieldValidatorProviders</b>&nbsp;&nbsp;&nbsp;(src/.../standard-field-validators.ts)</span></a>
                         </li>
                         <li>
                             <a href="#STORED_BY_ID_DATATYPES" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>STORED_BY_ID_DATATYPES</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
@@ -1008,6 +1014,9 @@
                         </li>
                         <li>
                             <a href="#WARNING_LEVEL_ENUM_ID" title="src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>WARNING_LEVEL_ENUM_ID</b>&nbsp;&nbsp;&nbsp;(src/.../important-notes-index.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#WARNING_ONLY_KEY" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>WARNING_ONLY_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</span></a>
                         </li>
                         <li>
                             <a href="#warningLevels" title="src/app/child-dev-project/warning-level.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>warningLevels</b>&nbsp;&nbsp;&nbsp;(src/.../warning-level.ts)</span></a>
@@ -6845,8 +6854,40 @@ Add further providers to your modules or the AppModule to extend.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>All validator names supported in a <a href="../miscellaneous/typealiases.html#FormValidatorConfig">FormValidatorConfig</a>
-(also used to validate the config when an admin saves it).</p>
+                    <div class="io-description"><p>The keys of the validators of the core module in a <a href="../miscellaneous/typealiases.html#FormValidatorConfig">FormValidatorConfig</a>,
+to type configs written in code. Each is implemented by a registered <code>FieldValidator</code>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="WARNING_ONLY_KEY"></a>
+                    <span class="name">
+                        <span ><b>WARNING_ONLY_KEY</b></span>
+                        <a href="#WARNING_ONLY_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;_warningOnly&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>key of the setting in a <a href="../miscellaneous/typealiases.html#FormValidatorConfig">FormValidatorConfig</a> listing the validators that are only a warning</p>
 </div>
                 </td>
             </tr>
@@ -12377,6 +12418,41 @@ Scopes not listed here are shown with the description provided by the backend.</
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SETTING_PREFIX"></a>
+                    <span class="name">
+                        <span ><b>SETTING_PREFIX</b></span>
+                        <a href="#SETTING_PREFIX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;_&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>keys of a <code>validators</code> config starting with this are settings (e.g. <code>_warningOnly</code>), not validators</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/common-components/entities-table/entities-table-sort.store.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -12466,6 +12542,55 @@ Scopes not listed here are shown with the description provided by the backend.</
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>A shown calculation older than this (seconds) is treated as stale/outdated.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/standard-field-validators.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="standardFieldValidatorProviders"></a>
+                    <span class="name">
+                        <span ><b>standardFieldValidatorProviders</b></span>
+                        <a href="#standardFieldValidatorProviders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Provider[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  RequiredValidator,
+  MinValidator,
+  MaxValidator,
+  PatternValidator,
+  MinDateValidator,
+  MaxDateValidator,
+  MinAgeValidator,
+  MaxAgeValidator,
+  UniqueIdValidator,
+  ReadonlyAfterSetValidator,
+  WithinParentValidator,
+  SelectionConditionValidator,
+].map((useClass) &#x3D;&gt; ({ provide: FieldValidator, useClass, multi: true }))</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The validation rules of the core module.
+Add further providers to your modules to extend.</p>
 </div>
                 </td>
             </tr>
@@ -13059,7 +13184,7 @@ Callers read the response (e.g. its body) of either with <code>failedHttpRespons
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                        <i>Type : </i>    <code>miscellaneous</code>
 
                     </td>
                 </tr>

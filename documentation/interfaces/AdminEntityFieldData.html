@@ -510,7 +510,7 @@ export class AdminEntityFieldComponent implements OnInit {
   readonly additionalForm: FormControl &#x3D; this.fb.control(
     this.data.entitySchemaField.additional,
   );
-  private readonly additionalValue &#x3D; toSignal(
+  protected readonly additionalValue &#x3D; toSignal(
     this.additionalForm.valueChanges,
     { initialValue: this.additionalForm.value },
   );

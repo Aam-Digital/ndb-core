@@ -237,7 +237,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:28</a></div>
                                 </td>
                             </tr>
 
@@ -287,7 +287,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:30</a></div>
                                 </td>
                             </tr>
 
@@ -332,7 +332,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:32</a></div>
                                 </td>
                             </tr>
 
@@ -356,7 +356,12 @@ import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&
 import { EntityConfig } from &quot;../../entity/entity-config&quot;;
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 import { DefaultValueStrategy } from &quot;../../default-values/default-value-strategy.interface&quot;;
-import { DYNAMIC_VALIDATORS } from &quot;../../common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
+import { DynamicValidatorsService } from &quot;../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service&quot;;
+import {
+  FormValidatorConfig,
+  WARNING_ONLY_KEY,
+} from &quot;../../common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import { resolveIconDefinition } from &quot;../../common-components/fa-dynamic-icon/fa-icon-utils&quot;;
 import { MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
@@ -364,9 +369,6 @@ import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { Config } from &quot;../config&quot;;
 import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
-import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
-import { SchemaEmbedDatatype } from &quot;../../basic-datatypes/schema-embed/schema-embed.datatype&quot;;
-import { asArray } from &quot;#src/app/utils/asArray&quot;;
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -491,17 +493,7 @@ export class ConfigValidationService {
       );
     }
 
-    for (const validator of Object.keys(schema.validators ?? {})) {
-      if (!(DYNAMIC_VALIDATORS as readonly string[]).includes(validator)) {
-        problems.push(
-          validator &#x3D;&#x3D;&#x3D; &quot;regex&quot;
-            ? $localize&#x60;:config validation:Unknown validator &quot;regex&quot;, it is ignored. Use &quot;pattern&quot; instead.&#x60;
-            : $localize&#x60;:config validation:Unknown validator &quot;${validator}:validator:&quot;, it is ignored.&#x60;,
-        );
-      }
-    }
-
-    problems.push(...this.validateSelectionCondition(schema));
+    problems.push(...this.validateValidators(schema));
 
     if (schema.defaultValue &amp;&amp; !this.isKnownDefaultValueMode(schema)) {
       problems.push(
@@ -514,36 +506,53 @@ export class ConfigValidationService {
     return problems;
   }
 
-  /** a &#x60;selectionCondition&#x60; only applies to a field linking to exactly one record type (see &#x60;DYNAMIC_VALIDATORS&#x60;) */
-  private validateSelectionCondition(schema: EntitySchemaField): string[] {
-    if (!schema.validators?.selectionCondition) {
-      return [];
-    }
-    if (schema.dataType !&#x3D;&#x3D; EntityDatatype.dataType) {
-      return [
-        this.isEmbeddingDataType(schema.dataType)
-          ? $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. &quot;additional.participant.validators&quot;).&#x60;
-          : $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to records, it is ignored.&#x60;,
-      ];
-    }
-    if (asArray(schema.additional ?? []).length !&#x3D;&#x3D; 1) {
-      return [
-        $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to one record type, it is ignored.&#x60;,
-      ];
-    }
-    return [];
+  private validateValidators(schema: EntitySchemaField): string[] {
+    const rules &#x3D; this.injector.get(DynamicValidatorsService);
+    const datatype &#x3D; this.injector
+      .get(EntitySchemaService)
+      .getDatatypeOrDefault(schema.dataType);
+    return Object.entries(schema.validators ?? {}).flatMap(([key, value]) &#x3D;&gt; {
+      if (key &#x3D;&#x3D;&#x3D; WARNING_ONLY_KEY) {
+        return this.validateWarningOnly(schema.validators, rules);
+      }
+      const rule &#x3D; rules.rules.get(key);
+      if (!rule) {
+        return [
+          key &#x3D;&#x3D;&#x3D; &quot;regex&quot;
+            ? $localize&#x60;:config validation:Unknown validator &quot;regex&quot;, it is ignored. Use &quot;pattern&quot; instead.&#x60;
+            : $localize&#x60;:config validation:Unknown validator &quot;${key}:validator:&quot;, it is ignored.&#x60;,
+        ];
+      }
+      const problems &#x3D; rule.validateConfig(value, schema, datatype);
+      // without a dataType (e.g. overriding a field of the record type&#x27;s code) the type is not known here
+      if (
+        problems.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp;
+        schema.dataType &amp;&amp;
+        !rule.isSwitchedOff(value) &amp;&amp;
+        !rule.appliesTo(datatype, schema)
+      ) {
+        problems.push(
+          $localize&#x60;:config validation:The validator &quot;${key}:validator:&quot; does not fit the type of this field (&quot;${schema.dataType}:dataType:&quot;). It is removed once an admin edits the field&#x27;s validation settings.&#x60;,
+        );
+      }
+      return problems;
+    });
   }
 
-  private isEmbeddingDataType(dataType: string | undefined): boolean {
-    try {
-      return (
-        this.injector
-          .get(EntitySchemaService)
-          .getDatatypeOrDefault(dataType, false) instanceof SchemaEmbedDatatype
+  /** &#x60;_warningOnly&#x60; lists validators of the field that can be only a warning */
+  private validateWarningOnly(
+    validators: FormValidatorConfig,
+    rules: DynamicValidatorsService,
+  ): string[] {
+    return asArray(validators[WARNING_ONLY_KEY] ?? [])
+      .filter(
+        (key) &#x3D;&gt;
+          !(key in validators) || rules.rules.get(key)?.warning !&#x3D;&#x3D; &quot;optional&quot;,
+      )
+      .map(
+        (key) &#x3D;&gt;
+          $localize&#x60;:config validation:&quot;${key}:validator:&quot; is listed in &quot;_warningOnly&quot;, but is not a validator of this field that can be only a warning. It is ignored there.&#x60;,
       );
-    } catch {
-      return false;
-    }
   }
 
   private validateMenuItems(

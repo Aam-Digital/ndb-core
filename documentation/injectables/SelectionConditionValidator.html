@@ -1,0 +1,1418 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SelectionConditionValidator</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/basic-datatypes/entity/selection-condition.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p><code>selectionCondition: { center: &quot;$current_record.center&quot; }</code>: the linked records should match the condition;
+the dropdown of the field only offers such records.</p>
+<p>Only checked once this field or a field of the record that the condition refers to is changed (dirty),
+so that records linked before (e.g. before the condition was configured) do not ask again on every save.
+Selected records that cannot be loaded are not checked.
+The record types and the records already loaded are taken from the dropdown editing the field
+(see <a href="../miscellaneous/functions.html#registerLinkedRecordsSource">registerLinkedRecordsSource</a>), only records it has not loaded are loaded here.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >FieldValidator&lt;
+  DataFilter&lt;Entity&gt;
+&gt;</a></code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >FieldValidator&lt;
+  DataFilter&lt;Entity&gt;
+&gt;</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#key" >key</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#requiresFieldId" >requiresFieldId</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#warning" >warning</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#angularValidator" >angularValidator</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#checkOnBlur" >checkOnBlur</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#datatypesSupported" >datatypesSupported</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#appliesTo" >appliesTo</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#build" >build</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#dependsOn" >dependsOn</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#validateConfig" >validateConfig</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#isSwitchedOff" >isSwitchedOff</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#message" >message</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="appliesTo"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>appliesTo</b></span>
+                        <a href="#appliesTo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>appliesTo(datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>, field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:143</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>datatype</td>
+                                            <td>
+                                                            <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="build"></a>
+                    <span class="name">
+                        <span ><b>build</b></span>
+                        <a href="#build"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>build(condition: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>, : <a href="../interfaces/ValidatorContext.html" target="_self">ValidatorContext</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:153</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>condition</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                            <code><a href="../interfaces/ValidatorContext.html" target="_self" >ValidatorContext</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#AsyncPromiseValidatorFn" target="_self" >AsyncPromiseValidatorFn</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dependsOn"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>dependsOn</b></span>
+                        <a href="#dependsOn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>dependsOn(value: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:222</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateConfig"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>validateConfig</b></span>
+                        <a href="#validateConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateConfig(value: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>, field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:226</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>datatype</td>
+                                            <td>
+                                                            <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSwitchedOff"></a>
+                    <span class="name">
+                        <span ><b>isSwitchedOff</b></span>
+                        <a href="#isSwitchedOff"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isSwitchedOff(value: <a href="../classes/Config.html" target="_self">Config</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:64</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>whether the configured value switches the rule off (by default <code>false</code>, <code>null</code> or an empty text, e.g. <code>required: false</code>)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="../classes/Config.html" target="_self" >Config</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="message"></a>
+                    <span class="name">
+                        <span ><b>message</b></span>
+                        <a href="#message"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>message(error: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:89</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>the readable message for an error of the rule (by default the <code>errorMessage</code> it carries)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="key"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>key</b></span>
+                        <a href="#key"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;selectionCondition&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:135</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="requiresFieldId"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>requiresFieldId</b></span>
+                        <a href="#requiresFieldId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:137</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="warning"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>warning</b></span>
+                        <a href="#warning"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;always&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:136</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="angularValidator"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>angularValidator</b></span>
+                        <a href="#angularValidator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.dev/api/forms/ValidatorFn" target="_blank" >ValidatorFn</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:61</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Angular&#39;s own validator that form fields look for (e.g. <code>Validators.required</code> marks a field as required),
+added to the field as it is, next to the rule&#39;s check. Only for a rule whose <a href="warning">warning</a> is &quot;never&quot;.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkOnBlur"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>checkOnBlur</b></span>
+                        <a href="#checkOnBlur"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:52</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The check is expensive (e.g. it loads records), so the field is only checked when the user leaves it,
+not on every change of its value.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="datatypesSupported"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>datatypesSupported</b></span>
+                        <a href="#datatypesSupported"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>(unknown)[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/FieldValidator.html" target="_self" >FieldValidator</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:37</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>the datatypes the rule is offered for, including their subtypes; empty for all datatypes</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { AbstractControl } from &quot;@angular/forms&quot;;
+import { asArray } from &quot;app/utils/asArray&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  DataFilter,
+  getCurrentRecordPlaceholderFields,
+} from &quot;../../filter/filters/filters&quot;;
+import { FilterService } from &quot;../../filter/filter.service&quot;;
+import { DynamicPlaceholderValueService } from &quot;../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { AsyncPromiseValidatorFn } from &quot;../../common-components/entity-form/dynamic-form-validators/validator-types&quot;;
+import {
+  FieldValidator,
+  ValidatorContext,
+} from &quot;../../common-components/entity-form/dynamic-form-validators/field-validator&quot;;
+import { getCurrentRecordOfControl } from &quot;../../common-components/entity-form/current-record-state&quot;;
+import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { SchemaEmbedDatatype } from &quot;../schema-embed/schema-embed.datatype&quot;;
+import { EntityDatatype } from &quot;./entity.datatype&quot;;
+
+/**
+ * The &#x60;selectionCondition&#x60; of a field linking to other records,
+ * with its placeholders referring to the record being edited resolved,
+ * or &#x60;undefined&#x60; if it does not apply: none is configured, none of its rows can be applied,
+ * or the field links to several record types (with different fields).
+ */
+export function resolveSelectionCondition&lt;E extends Entity&gt;(
+  condition: DataFilter&lt;E&gt; | undefined,
+  entityTypes: string[],
+  record: Entity | undefined,
+  placeholderService: DynamicPlaceholderValueService,
+): DataFilter&lt;E&gt; | undefined {
+  if (
+    !condition ||
+    Object.keys(condition).length &#x3D;&#x3D;&#x3D; 0 ||
+    entityTypes.length !&#x3D;&#x3D; 1
+  ) {
+    return undefined;
+  }
+
+  const resolved &#x3D; placeholderService.resolveRecordPlaceholders(
+    condition,
+    record,
+  );
+  return Object.keys(resolved).length &gt; 0 ? resolved : undefined;
+}
+
+/** Whether a record matches a resolved &#x60;selectionCondition&#x60; (any record does if the condition is invalid). */
+export function matchesSelectionCondition&lt;E extends Entity&gt;(
+  condition: DataFilter&lt;E&gt; | undefined,
+  filterService: FilterService,
+): (record: E) &#x3D;&gt; boolean {
+  if (!condition) {
+    return () &#x3D;&gt; true;
+  }
+  try {
+    return filterService.getFilterPredicate(condition);
+  } catch (err) {
+    // an instance config problem and the resolved condition contains record data: not for remote monitoring
+    Logging.debug(&quot;[ENTITY_SELECT] Invalid selectionCondition.&quot;, err);
+    return () &#x3D;&gt; true;
+  }
+}
+
+/**
+ * What the dropdown editing a link field (&#x60;EditEntityComponent&#x60;) shares with the field&#x27;s validator,
+ * so that both check the same record types and the validator does not load records again.
+ */
+export interface LinkedRecordsSource {
+  /** the record types the dropdown offers */
+  entityTypes: () &#x3D;&gt; string[];
+  /** a record (by its full id) the dropdown has already loaded, &#x60;undefined&#x60; if it has not */
+  getLoaded: (id: string) &#x3D;&gt; Entity | undefined;
+}
+
+const linkedRecordsSources &#x3D; new WeakMap&lt;
+  AbstractControl,
+  LinkedRecordsSource
+&gt;();
+
+/**
+ * Share the records a dropdown has loaded with the validators of its form control.
+ * @returns a function to call when the dropdown is not bound to the control anymore
+ */
+export function registerLinkedRecordsSource(
+  control: AbstractControl,
+  source: LinkedRecordsSource,
+): () &#x3D;&gt; void {
+  linkedRecordsSources.set(control, source);
+  return () &#x3D;&gt; {
+    if (linkedRecordsSources.get(control) &#x3D;&#x3D;&#x3D; source) {
+      linkedRecordsSources.delete(control);
+    }
+  };
+}
+
+/**
+ * Load a record that a link field refers to, &#x60;undefined&#x60; if it cannot be loaded
+ * (not found or not permitted, which is not reported as a problem).
+ */
+export async function loadLinkedRecord&lt;E extends Entity&gt;(
+  entityMapper: EntityMapperService,
+  entityType: string,
+  id: string,
+): Promise&lt;E | undefined&gt; {
+  return entityMapper
+    .load&lt;E&gt;(entityType, id)
+    .catch((err: { status?: number } | undefined) &#x3D;&gt; {
+      if (err?.status &#x3D;&#x3D;&#x3D; 404) {
+        Logging.debug(&quot;[ENTITY_SELECT] Selected entity not found.&quot;, id);
+      } else {
+        Logging.warn(&quot;[ENTITY_SELECT] Error loading selected entity.&quot;, err, id);
+      }
+      return undefined;
+    });
+}
+
+/**
+ * &#x60;selectionCondition: { center: &quot;$current_record.center&quot; }&#x60;: the linked records should match the condition;
+ * the dropdown of the field only offers such records.
+ *
+ * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
+ * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
+ * Selected records that cannot be loaded are not checked.
+ * The record types and the records already loaded are taken from the dropdown editing the field
+ * (see {@link registerLinkedRecordsSource}), only records it has not loaded are loaded here.
+ */
+@Injectable()
+export class SelectionConditionValidator extends FieldValidator&lt;
+  DataFilter&lt;Entity&gt;
+&gt; {
+  static override readonly key &#x3D; &quot;selectionCondition&quot;;
+  override readonly warning &#x3D; &quot;always&quot;;
+  override readonly requiresFieldId &#x3D; true;
+
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly placeholderService &#x3D; inject(DynamicPlaceholderValueService);
+  private readonly filterService &#x3D; inject(FilterService);
+
+  override appliesTo(
+    datatype: DefaultDatatype,
+    field: EntitySchemaField,
+  ): boolean {
+    return (
+      datatype instanceof EntityDatatype &amp;&amp;
+      asArray(field.additional ?? []).length &#x3D;&#x3D;&#x3D; 1
+    );
+  }
+
+  build(
+    condition: DataFilter&lt;Entity&gt;,
+    { entity, field, singleRecord }: ValidatorContext,
+  ): AsyncPromiseValidatorFn {
+    const referencedFields &#x3D; getCurrentRecordPlaceholderFields(condition);
+    // only used if the field has no dropdown, which shares the types it offers (see EditEntityComponent)
+    const fieldEntityTypes &#x3D; asArray(field.additional ?? []);
+    return async (control) &#x3D;&gt; {
+      const changed &#x3D;
+        control.dirty ||
+        referencedFields.some((id) &#x3D;&gt; control.parent?.get(id)?.dirty);
+      const selectedIds &#x3D; asArray&lt;string&gt;(control.value ?? []).filter(
+        (id) &#x3D;&gt; !!id,
+      );
+      if (!changed || selectedIds.length &#x3D;&#x3D;&#x3D; 0) {
+        return null;
+      }
+      const source &#x3D; linkedRecordsSources.get(control);
+      const dropdownTypes &#x3D; source?.entityTypes() ?? [];
+      const entityTypes &#x3D;
+        dropdownTypes.length &gt; 0 ? dropdownTypes : fieldEntityTypes;
+      const resolved &#x3D; resolveSelectionCondition(
+        condition,
+        entityTypes,
+        singleRecord ? getCurrentRecordOfControl(control, entity) : undefined,
+        this.placeholderService,
+      );
+      if (!resolved) {
+        return null;
+      }
+      const names &#x3D; await this.notMatchingNames(
+        resolved,
+        entityTypes[0],
+        selectedIds,
+        source,
+      );
+      return names
+        ? {
+            selectionCondition: {
+              errorMessage: $localize&#x60;Not matching the selection conditions of this field: ${names}&#x60;,
+            },
+          }
+        : null;
+    };
+  }
+
+  /** the names of the selected records not matching the resolved condition, &#x60;&quot;&quot;&#x60; if all match */
+  private async notMatchingNames(
+    resolved: DataFilter&lt;Entity&gt;,
+    entityType: string,
+    selectedIds: string[],
+    source: LinkedRecordsSource | undefined,
+  ): Promise&lt;string&gt; {
+    const matches &#x3D; matchesSelectionCondition(resolved, this.filterService);
+    const records &#x3D; await Promise.all(
+      selectedIds.map((id) &#x3D;&gt; {
+        const fullId &#x3D; Entity.createPrefixedId(entityType, id);
+        return (
+          source?.getLoaded(fullId) ??
+          loadLinkedRecord(this.entityMapper, entityType, fullId)
+        );
+      }),
+    );
+    return records
+      .filter((record) &#x3D;&gt; record &amp;&amp; !matches(record))
+      .map((record) &#x3D;&gt; record.toString())
+      .join(&quot;, &quot;);
+  }
+
+  override dependsOn(value: DataFilter&lt;Entity&gt;): string[] {
+    return getCurrentRecordPlaceholderFields(value);
+  }
+
+  override validateConfig(
+    value: DataFilter&lt;Entity&gt;,
+    field: EntitySchemaField,
+    datatype: DefaultDatatype,
+  ): string[] {
+    if (!value) {
+      return [];
+    }
+    if (field.dataType !&#x3D;&#x3D; EntityDatatype.dataType) {
+      return [
+        datatype instanceof SchemaEmbedDatatype
+          ? $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. &quot;additional.participant.validators&quot;).&#x60;
+          : $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to records, it is ignored.&#x60;,
+      ];
+    }
+    if (asArray(field.additional ?? []).length !&#x3D;&#x3D; 1) {
+      return [
+        $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to one record type, it is ignored.&#x60;,
+      ];
+    }
+    return [];
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SelectionConditionValidator.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

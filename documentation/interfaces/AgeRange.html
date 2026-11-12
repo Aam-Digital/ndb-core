@@ -123,12 +123,12 @@
   <li class="breadcrumb-item">Interfaces</li>
   <li class="breadcrumb-item"
   >
-  SelectionConditionServices</li>
+  AgeRange</li>
 </ol>
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/core/basic-datatypes/entity/selection-condition.ts</code>
+    <code>src/app/core/basic-datatypes/date-with-age/age-limit.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -159,7 +159,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>the services the <code>selectionCondition</code> validator uses</p>
+                <p>the minimum and maximum age configured for a field (either can be missing)</p>
 
             </p>
 
@@ -177,18 +177,15 @@
                 <td class="col-md-9">
                     <ul class="index-list">
                         <li>
-                                <a href="#entityMapper" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityMapper</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#maxAge" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">maxAge</span>
                                 </a>
                         </li>
                         <li>
-                                <a href="#filterService" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">filterService</span>
-                                </a>
-                        </li>
-                        <li>
-                                <a href="#placeholderService" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">placeholderService</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#minAge" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">minAge</span>
                                 </a>
                         </li>
                     </ul>
@@ -206,9 +203,9 @@
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="entityMapper"></a>
-                                <span class="name "><b>entityMapper</b>
-                                    <a href="#entityMapper">
+                                <a name="maxAge"></a>
+                                <span class="name "><b>maxAge</b>
+                                    <a href="#maxAge">
                                         <span class="icon ion-ios-link"></span>
                                     </a>
                                 </span>
@@ -216,7 +213,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>entityMapper:         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                <code>maxAge:     <code>unknown</code>
 </code>
                             </td>
                         </tr>
@@ -224,18 +221,23 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                    <i>Type : </i>    <code>unknown</code>
 
                                 </td>
                             </tr>
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
 
 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/core/basic-datatypes/date-with-age/age-limit.ts:8</a></div>
                                 </td>
                             </tr>
 
@@ -245,9 +247,9 @@
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="filterService"></a>
-                                <span class="name "><b>filterService</b>
-                                    <a href="#filterService">
+                                <a name="minAge"></a>
+                                <span class="name "><b>minAge</b>
+                                    <a href="#minAge">
                                         <span class="icon ion-ios-link"></span>
                                     </a>
                                 </span>
@@ -255,7 +257,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>filterService:         <code><a href="../injectables/FilterService.html" target="_self" >FilterService</a></code>
+                                <code>minAge:     <code>unknown</code>
 </code>
                             </td>
                         </tr>
@@ -263,57 +265,23 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="../injectables/FilterService.html" target="_self" >FilterService</a></code>
+                                    <i>Type : </i>    <code>unknown</code>
 
                                 </td>
                             </tr>
 
 
-
-
-
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:62</a></div>
-                                </td>
-                            </tr>
-
-                </tbody>
-            </table>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="placeholderService"></a>
-                                <span class="name "><b>placeholderService</b>
-                                    <a href="#placeholderService">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>placeholderService:         <code><a href="../injectables/DynamicPlaceholderValueService.html" target="_self" >DynamicPlaceholderValueService</a></code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="../injectables/DynamicPlaceholderValueService.html" target="_self" >DynamicPlaceholderValueService</a></code>
-
+                                    <i>Optional</i>
                                 </td>
                             </tr>
 
 
 
-
-
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/basic-datatypes/entity/selection-condition.ts:61</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/app/core/basic-datatypes/date-with-age/age-limit.ts:7</a></div>
                                 </td>
                             </tr>
 
@@ -324,200 +292,73 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AbstractControl } from &quot;@angular/forms&quot;;
-import { asArray } from &quot;app/utils/asArray&quot;;
-import { Entity } from &quot;../../entity/model/entity&quot;;
-import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
-import {
-  DataFilter,
-  getCurrentRecordPlaceholderFields,
-} from &quot;../../filter/filters/filters&quot;;
-import { FilterService } from &quot;../../filter/filter.service&quot;;
-import { DynamicPlaceholderValueService } from &quot;../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
-import { Logging } from &quot;../../logging/logging.service&quot;;
-import { AsyncPromiseValidatorFn } from &quot;../../common-components/entity-form/dynamic-form-validators/validator-types&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AbstractControl, ValidatorFn } from &quot;@angular/forms&quot;;
+import { calculateAge } from &quot;../../../utils/utils&quot;;
+import { parseToDate } from &quot;../date/date-limit&quot;;
+
+/** the minimum and maximum age configured for a field (either can be missing) */
+export interface AgeRange {
+  minAge?: unknown;
+  maxAge?: unknown;
+}
 
 /**
- * The &#x60;selectionCondition&#x60; of a field linking to other records,
- * with its placeholders referring to the record being edited resolved,
- * or &#x60;undefined&#x60; if it does not apply: none is configured, none of its rows can be applied,
- * or the field links to several record types (with different fields).
+ * Creates the validator for one end of the configured age range.
+ * The error also carries the other end, if configured, to word it as a range (&quot;between ... and ...&quot;).
  */
-export function resolveSelectionCondition&lt;E extends Entity&gt;(
-  condition: DataFilter&lt;E&gt; | undefined,
-  entityTypes: string[],
-  record: Entity | undefined,
-  placeholderService: DynamicPlaceholderValueService,
-): DataFilter&lt;E&gt; | undefined {
-  if (
-    !condition ||
-    Object.keys(condition).length &#x3D;&#x3D;&#x3D; 0 ||
-    entityTypes.length !&#x3D;&#x3D; 1
-  ) {
-    return undefined;
+export function ageRangeValidator(
+  end: &quot;minAge&quot; | &quot;maxAge&quot;,
+  ageRange: AgeRange,
+): ValidatorFn {
+  const limit &#x3D; Number(ageRange[end]);
+  if (!Number.isFinite(limit)) {
+    return () &#x3D;&gt; null;
   }
+  const configuredMinAge &#x3D; Number(ageRange.minAge);
+  const configuredMaxAge &#x3D; Number(ageRange.maxAge);
 
-  const resolved &#x3D; placeholderService.resolveRecordPlaceholders(
-    condition,
-    record,
-  );
-  return Object.keys(resolved).length &gt; 0 ? resolved : undefined;
-}
-
-/** Whether a record matches a resolved &#x60;selectionCondition&#x60; (any record does if the condition is invalid). */
-export function matchesSelectionCondition&lt;E extends Entity&gt;(
-  condition: DataFilter&lt;E&gt; | undefined,
-  filterService: FilterService,
-): (record: E) &#x3D;&gt; boolean {
-  if (!condition) {
-    return () &#x3D;&gt; true;
-  }
-  try {
-    return filterService.getFilterPredicate(condition);
-  } catch (err) {
-    // an instance config problem and the resolved condition contains record data: not for remote monitoring
-    Logging.debug(&quot;[ENTITY_SELECT] Invalid selectionCondition.&quot;, err);
-    return () &#x3D;&gt; true;
-  }
-}
-
-/** the services the &#x60;selectionCondition&#x60; validator uses */
-export interface SelectionConditionServices {
-  entityMapper: EntityMapperService;
-  placeholderService: DynamicPlaceholderValueService;
-  filterService: FilterService;
-}
-
-/**
- * What the dropdown editing a link field (&#x60;EditEntityComponent&#x60;) shares with the field&#x27;s validator,
- * so that both check the same record types and the validator does not load records again.
- */
-export interface LinkedRecordsSource {
-  /** the record types the dropdown offers */
-  entityTypes: () &#x3D;&gt; string[];
-  /** a record (by its full id) the dropdown has already loaded, &#x60;undefined&#x60; if it has not */
-  getLoaded: (id: string) &#x3D;&gt; Entity | undefined;
-}
-
-const linkedRecordsSources &#x3D; new WeakMap&lt;
-  AbstractControl,
-  LinkedRecordsSource
-&gt;();
-
-/**
- * Share the records a dropdown has loaded with the validators of its form control.
- * @returns a function to call when the dropdown is not bound to the control anymore
- */
-export function registerLinkedRecordsSource(
-  control: AbstractControl,
-  source: LinkedRecordsSource,
-): () &#x3D;&gt; void {
-  linkedRecordsSources.set(control, source);
-  return () &#x3D;&gt; {
-    if (linkedRecordsSources.get(control) &#x3D;&#x3D;&#x3D; source) {
-      linkedRecordsSources.delete(control);
-    }
-  };
-}
-
-/**
- * Load a record that a link field refers to, &#x60;undefined&#x60; if it cannot be loaded
- * (not found or not permitted, which is not reported as a problem).
- */
-export async function loadLinkedRecord&lt;E extends Entity&gt;(
-  entityMapper: EntityMapperService,
-  entityType: string,
-  id: string,
-): Promise&lt;E | undefined&gt; {
-  return entityMapper
-    .load&lt;E&gt;(entityType, id)
-    .catch((err: { status?: number } | undefined) &#x3D;&gt; {
-      if (err?.status &#x3D;&#x3D;&#x3D; 404) {
-        Logging.debug(&quot;[ENTITY_SELECT] Selected entity not found.&quot;, id);
-      } else {
-        Logging.warn(&quot;[ENTITY_SELECT] Error loading selected entity.&quot;, err, id);
-      }
-      return undefined;
-    });
-}
-
-/**
- * Validator for a field linking to other records, for selected records that do not match the field&#x27;s &#x60;selectionCondition&#x60;.
- * Its error is only a warning (&#x60;warning: true&#x60;): the record can still be saved after confirming it.
- * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
- * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
- * Selected records that cannot be loaded are not checked.
- *
- * The record types and the records already loaded are taken from the dropdown editing the field
- * (see {@link registerLinkedRecordsSource}), only records it has not loaded are loaded here.
- *
- * @param fieldEntityTypes the record types the field links to (from its config),
- *   if the field is not edited with a dropdown sharing its record types
- * @param getCurrentRecord the record being edited, with the current values of its form,
- *   to resolve the placeholders referring to it (&#x60;undefined&#x60; if the form edits several records at once)
- */
-export function selectionConditionValidator(
-  condition: DataFilter&lt;Entity&gt;,
-  fieldEntityTypes: string[],
-  getCurrentRecord: (control: AbstractControl) &#x3D;&gt; Entity | undefined,
-  {
-    entityMapper,
-    placeholderService,
-    filterService,
-  }: SelectionConditionServices,
-): AsyncPromiseValidatorFn {
-  const referencedFields &#x3D; getCurrentRecordPlaceholderFields(condition);
-  return async (control) &#x3D;&gt; {
-    const changed &#x3D;
-      control.dirty ||
-      referencedFields.some((field) &#x3D;&gt; control.parent?.get(field)?.dirty);
-    if (!changed) {
+  return (control: AbstractControl) &#x3D;&gt; {
+    const controlDate &#x3D; parseToDate(control.value);
+    if (!controlDate) {
       return null;
     }
-    const selectedIds &#x3D; asArray&lt;string&gt;(control.value ?? []).filter(
-      (id) &#x3D;&gt; !!id,
-    );
-    if (selectedIds.length &#x3D;&#x3D;&#x3D; 0) {
+    const age &#x3D; calculateAge(controlDate);
+    const fits &#x3D; end &#x3D;&#x3D;&#x3D; &quot;minAge&quot; ? age &gt;&#x3D; limit : age &lt;&#x3D; limit;
+    if (fits) {
       return null;
     }
-    const source &#x3D; linkedRecordsSources.get(control);
-    const dropdownTypes &#x3D; source?.entityTypes() ?? [];
-    const entityTypes &#x3D;
-      dropdownTypes.length &gt; 0 ? dropdownTypes : fieldEntityTypes;
-    const resolved &#x3D; resolveSelectionCondition(
-      condition,
-      entityTypes,
-      getCurrentRecord(control),
-      placeholderService,
-    );
-    if (!resolved) {
-      return null;
-    }
-
-    const matches &#x3D; matchesSelectionCondition(resolved, filterService);
-    const records &#x3D; await Promise.all(
-      selectedIds.map((id) &#x3D;&gt; {
-        const fullId &#x3D; Entity.createPrefixedId(entityTypes[0], id);
-        return (
-          source?.getLoaded(fullId) ??
-          loadLinkedRecord(entityMapper, entityTypes[0], fullId)
-        );
-      }),
-    );
-    const notMatching &#x3D; records
-      .filter((record) &#x3D;&gt; record &amp;&amp; !matches(record))
-      .map((record) &#x3D;&gt; record.toString());
-    if (notMatching.length &#x3D;&#x3D;&#x3D; 0) {
-      return null;
-    }
-    const names &#x3D; notMatching.join(&quot;, &quot;);
     return {
-      selectionCondition: {
-        warning: true,
-        errorMessage: $localize&#x60;Not matching the selection conditions of this field: ${names}&#x60;,
+      [end]: {
+        currentAge: age,
+        ...(Number.isFinite(configuredMinAge) &amp;&amp; { minAge: configuredMinAge }),
+        ...(Number.isFinite(configuredMaxAge) &amp;&amp; { maxAge: configuredMaxAge }),
       },
     };
   };
+}
+
+export function descriptionForAgeValidator(
+  validator: &quot;minAge&quot; | &quot;maxAge&quot;,
+  validationValue: any,
+): string {
+  switch (validator) {
+    case &quot;minAge&quot;:
+      if (
+        Number.isFinite(validationValue?.minAge) &amp;&amp;
+        Number.isFinite(validationValue?.maxAge)
+      ) {
+        return $localize&#x60;Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years&#x60;;
+      }
+      return $localize&#x60;Age must be at least ${validationValue.minAge} years&#x60;;
+    case &quot;maxAge&quot;:
+      if (
+        Number.isFinite(validationValue?.minAge) &amp;&amp;
+        Number.isFinite(validationValue?.maxAge)
+      ) {
+        return $localize&#x60;Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years&#x60;;
+      }
+      return $localize&#x60;Age must be at most ${validationValue.maxAge} years&#x60;;
+  }
 }
 </code></pre>
     </div>
@@ -556,7 +397,7 @@ export function selectionConditionValidator(
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'SelectionConditionServices.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'AgeRange.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

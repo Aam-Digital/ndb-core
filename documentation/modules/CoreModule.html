@@ -613,6 +613,7 @@ import { EmailDatatype } from &quot;./basic-datatypes/string/email.datatype&quot
 import { SchemaEmbedDatatype } from &quot;./basic-datatypes/schema-embed/schema-embed.datatype&quot;;
 import { SchemaEmbedArrayDatatype } from &quot;./basic-datatypes/schema-embed/schema-embed-array.datatype&quot;;
 import { EntityActionsService } from &quot;./entity/entity-actions/entity-actions.service&quot;;
+import { standardFieldValidatorProviders } from &quot;./common-components/entity-form/dynamic-form-validators/standard-field-validators&quot;;
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -647,6 +648,7 @@ import { EntityActionsService } from &quot;./entity/entity-actions/entity-action
     { provide: DefaultDatatype, useClass: PercentageDatatype, multi: true },
     { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
+    ...standardFieldValidatorProviders,
   ],
   imports: [CommonModule],
 })
