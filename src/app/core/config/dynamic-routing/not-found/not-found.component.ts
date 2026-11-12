@@ -23,10 +23,15 @@ export class NotFoundComponent implements OnInit {
 
   isConfigReady: boolean = false;
 
+  /** the config is missing because it could not be loaded, not because this system is new */
+  configUnavailable: boolean = false;
+
   ngOnInit() {
     // If user is logged in and config is ready, allow the 404 message to show
     if (this.configService.hasConfig()) {
       this.isConfigReady = true;
+    } else {
+      this.configUnavailable = !this.configService.isSystemUninitialized();
     }
 
     if (!this.location.pathname.endsWith("/404")) {
