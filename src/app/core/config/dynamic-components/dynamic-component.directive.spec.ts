@@ -1,10 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import {
-  ChangeDetectorRef,
-  Component,
-  ViewContainerRef,
-  input,
-} from "@angular/core";
+import { Component, ViewContainerRef, input } from "@angular/core";
 import { DynamicComponentDirective } from "./dynamic-component.directive";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { Logging } from "../../logging/logging.service";
@@ -24,12 +19,12 @@ describe("DynamicComponentDirective", () => {
   let mockRegistry: any;
 
   beforeEach(() => {
-    mockContainer = {
-      clear: vi.fn(),
-      createComponent: vi.fn(),
-    };
     mockDetector = {
       detectChanges: vi.fn(),
+    };
+    mockContainer = {
+      clear: vi.fn(),
+      createComponent: vi.fn(() => ({ changeDetectorRef: mockDetector })),
     };
     mockRegistry = {
       get: vi.fn(),
@@ -37,7 +32,6 @@ describe("DynamicComponentDirective", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ViewContainerRef, useValue: mockContainer },
-        { provide: ChangeDetectorRef, useValue: mockDetector },
         { provide: ComponentRegistry, useValue: mockRegistry },
         DynamicComponentDirective,
       ],
@@ -54,6 +48,8 @@ describe("DynamicComponentDirective", () => {
 
     expect(mockRegistry.get).toHaveBeenCalledWith("TestComp");
     expect(mockContainer.createComponent).toHaveBeenCalledWith(comp);
+    // only the new component is checked, not the (possibly large) view declaring the directive
+    expect(mockDetector.detectChanges).toHaveBeenCalled();
   });
 
   it("should assign the properties to the component", async () => {
@@ -78,6 +74,7 @@ describe("DynamicComponentDirective", () => {
     const compRef: any = {
       componentType: comp,
       setInput: setInputSpy,
+      changeDetectorRef: mockDetector,
     };
     mockRegistry.get.mockReturnValue(() => Promise.resolve(comp));
     mockContainer.createComponent.mockReturnValue(compRef);

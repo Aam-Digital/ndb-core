@@ -133,6 +133,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EditUrl",
   "EmbeddedArrayData",
   "EntityList",
+  "FreeTextFilter",
   "ImportantNotesDashboard",
   "ImportantNotesDashboardSettings",
   "NotesDashboardSettings",

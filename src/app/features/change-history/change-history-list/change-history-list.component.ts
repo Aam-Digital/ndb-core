@@ -28,7 +28,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { AuditRecord } from "../model/audit-record";
-import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
+import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import {
   authorFilterOptions,
   AUDIT_BASE_FILTER,
@@ -96,7 +96,7 @@ export class ChangeHistoryListComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly tableStateUrl = inject(TableStateUrlService);
+  private readonly urlState = inject(UrlStateService);
   private readonly dialog = inject(MatDialog);
 
   /** backend feature flag (undefined while loading, then true/false) */
@@ -288,10 +288,11 @@ export class ChangeHistoryListComponent {
       // matching by substring rather than exactly, labelled by its field name,
       // and narrowing a query the related-record view does not apply it to
       const stillOffered = new Set(this.filterConfig().map((c) => c.id));
-      this.tableStateUrl.clearFilterParams(
+      this.urlState.removeUrlParams(
         this.allFilterConfigs()
           .map((c) => c.id)
           .filter((id) => !stillOffered.has(id)),
+        false,
       );
     }
     this.applyRelatedRecord();

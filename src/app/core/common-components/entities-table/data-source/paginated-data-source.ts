@@ -62,15 +62,19 @@ export class PaginatedDataSource<
   }
 
   private page: { size?: number; index?: number } = {};
-  override set paginator(paginator: MatPaginator) {
+  override set paginator(paginator: MatPaginator | null) {
     super.paginator = paginator;
+    if (!paginator) {
+      // the paginator was removed (see ListPaginatorComponent)
+      return;
+    }
     merge(paginator.initialized, paginator.page).subscribe(() => {
       this.page.size = paginator.pageSize;
       this.page.index = paginator.pageIndex;
       this.setRecords();
     });
   }
-  override get paginator(): MatPaginator {
+  override get paginator(): MatPaginator | null {
     return super.paginator;
   }
 

@@ -40,7 +40,10 @@ test("Update related records over several levels: child, school and parent schoo
     },
   });
   const child = generateChild({ name: CHILD_NAME });
-  Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    center: CENTER_ALIPORE,
+  });
 
   await loadApp(page, [...generateUsers(), child, school, parentSchool]);
 
