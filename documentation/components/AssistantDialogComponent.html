@@ -420,8 +420,8 @@ depending on the current system state.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="94"
-                                    class="link-to-prism">src/app/core/setup/assistant-dialog/assistant-dialog.component.ts:94</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/setup/assistant-dialog/assistant-dialog.component.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -487,8 +487,8 @@ depending on the current system state.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/setup/assistant-dialog/assistant-dialog.component.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/setup/assistant-dialog/assistant-dialog.component.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -718,7 +718,9 @@ export class AssistantDialogComponent implements OnInit {
   }
 
   private detectAssistantModes() {
-    if (!this.configService.hasConfig()) {
+    // deliberately not &#x60;!hasConfig()&#x60;: a config that could not be loaded must not
+    // offer to set up a system that already exists (see isSystemUninitialized())
+    if (this.configService.isSystemUninitialized()) {
       this.assistants.initDemo &#x3D; true;
     } else {
       this.assistants.initDemo &#x3D; false;
