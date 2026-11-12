@@ -13,6 +13,7 @@ import {
   UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
+  Validators,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
@@ -78,7 +79,6 @@ describe("DynamicValidatorsService", () => {
     const config: FormValidatorConfig = {
       min: 9,
       max: 10,
-      required: true,
       pattern: "foo",
     };
     const validators = service.buildValidators(config, new TestEntity())
@@ -86,7 +86,6 @@ describe("DynamicValidatorsService", () => {
     for (const [index, [successState, failureState]] of [
       [10, 8],
       [8, 11],
-      ["something", undefined],
       ["foo", "bar"],
     ].entries()) {
       await testValidator(validators[index], successState, failureState);
@@ -221,6 +220,28 @@ describe("DynamicValidatorsService", () => {
     });
   });
 
+  it("lets form fields see that a field is required", () => {
+    const control = new UntypedFormControl(
+      null,
+      service.buildValidators({ required: true }, new TestEntity()),
+    );
+
+    expect(control.hasValidator(Validators.required)).toBe(true);
+  });
+
+  it("does not leave a field pending when a check fails", async () => {
+    mockedEntityMapper.loadType.mockRejectedValue(new Error("not loaded"));
+    const control = new UntypedFormControl(
+      "",
+      service.buildValidators({ uniqueId: true }, new TestEntity(), "name"),
+    );
+
+    control.setValue("abc");
+    await vi.waitFor(() => expect(control.pending).toBe(false));
+
+    expect(control.errors).toBeNull();
+  });
+
   it("skips the uniqueId validator for inner fields of embedded entries", async () => {
     const entry = createEmbeddedEntity(new Map(), {
       record: new Entity("record"),
@@ -245,17 +266,20 @@ describe("DynamicValidatorsService", () => {
   ])(
     "adds a readable message to the error of %o",
     async (config: FormValidatorConfig, invalidValue, message) => {
-      const validator = service.buildValidators(config, new TestEntity())
-        .asyncValidators[0] as Check;
+      const control = new UntypedFormControl(
+        invalidValue,
+        service.buildValidators(config, new TestEntity()),
+      );
+      await vi.waitFor(() => expect(control.pending).toBe(false));
 
-      const errors = await validator(new UntypedFormControl(invalidValue));
-
-      expect(errors[Object.keys(config)[0]].errorMessage).toEqual(message);
+      expect(control.errors[Object.keys(config)[0]].errorMessage).toEqual(
+        message,
+      );
     },
   );
 
   it.each([
-    [{ unknownRule: 5, required: true }, 1],
+    [{ unknownRule: 5, max: 5 }, 1],
     [{ required: false, uniqueId: false, readonlyAfterSet: false }, 0],
   ])(
     "builds only the validators that exist and are switched on: %o",

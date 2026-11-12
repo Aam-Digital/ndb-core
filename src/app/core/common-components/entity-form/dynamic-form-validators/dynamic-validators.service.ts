@@ -20,6 +20,11 @@ import { ColumnConfig, toFormFieldConfig } from "../FormConfig";
 import { FieldValidator, ValidatorContext } from "./field-validator";
 import { asArray } from "#src/app/utils/asArray";
 
+type ValidatorOptions = FormControlOptions & {
+  validators: ValidatorFn[];
+  asyncValidators: AsyncValidatorFn[];
+};
+
 /** keys of a `validators` config starting with this are settings (e.g. `_warningOnly`), not validators */
 export const SETTING_PREFIX = "_";
 
@@ -53,9 +58,10 @@ export class DynamicValidatorsService {
     field?: ColumnConfig,
     singleRecord = true,
   ): FormControlOptions {
-    const formControlOptions: FormControlOptions & {
-      asyncValidators: AsyncValidatorFn[];
-    } = { asyncValidators: [] };
+    const formControlOptions: ValidatorOptions = {
+      validators: [],
+      asyncValidators: [],
+    };
     const context: ValidatorContext = {
       entity,
       field: field ? toFormFieldConfig(field) : undefined,
@@ -73,9 +79,7 @@ export class DynamicValidatorsService {
       const onlyWarns =
         rule.warning === "always" ||
         (rule.warning === "optional" && warningOnly.has(key));
-      formControlOptions.asyncValidators.push(
-        this.withMessage(rule, validator, onlyWarns),
-      );
+      this.addCheck(formControlOptions, rule, validator, onlyWarns);
       if (rule.checkOnBlur) {
         formControlOptions.updateOn = "blur";
       }
@@ -117,17 +121,52 @@ export class DynamicValidatorsService {
   }
 
   /**
-   * The rule's check as an async validator with readable messages.
+   * Adds the rule's check with readable messages to the options of the form control.
    * All rules run as async validators, so that rules need not care about it,
    * and as Angular skips the async validators of a field while one of its sync validators fails.
+   * Only the {@link FieldValidator.angularValidator} of a rule runs as sync validator, so that form fields find it:
+   * the error with the message replaces the one of the Angular validator itself.
    */
+  private addCheck(
+    options: ValidatorOptions,
+    rule: FieldValidator,
+    validator: ValidatorFn | AsyncPromiseValidatorFn,
+    onlyWarns: boolean,
+  ) {
+    const angularValidator = rule.angularValidator;
+    if (angularValidator) {
+      options.validators.push(angularValidator, (control) =>
+        this.addHumanReadableError(rule, angularValidator(control), onlyWarns),
+      );
+    } else {
+      options.asyncValidators.push(
+        this.withMessage(rule, validator, onlyWarns),
+      );
+    }
+  }
+
   private withMessage(
     rule: FieldValidator,
     validator: ValidatorFn | AsyncPromiseValidatorFn,
     onlyWarns: boolean,
   ): AsyncValidatorFn {
-    return async (control: FormControl) =>
-      this.addHumanReadableError(rule, await validator(control), onlyWarns);
+    return async (control: FormControl) => {
+      try {
+        return this.addHumanReadableError(
+          rule,
+          await validator(control),
+          onlyWarns,
+        );
+      } catch (error) {
+        // a rejected check would leave the field pending, so the form could not be saved
+        Logging.error(
+          "A form field validator failed",
+          { validator: rule.key },
+          error,
+        );
+        return null;
+      }
+    };
   }
 
   /**

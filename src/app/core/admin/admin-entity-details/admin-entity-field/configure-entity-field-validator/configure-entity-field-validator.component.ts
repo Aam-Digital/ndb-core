@@ -95,6 +95,12 @@ export class ConfigureEntityFieldValidatorComponent {
     () => this.dataType() ?? this.entitySchemaField()?.dataType,
   );
 
+  /**
+   * the `additional` currently selected for the field (e.g. the record types of a link field), if it can change while editing
+   * (a change of `entitySchemaField.additional` in place is not noticed)
+   */
+  additional = input<unknown>();
+
   /** keys of the validators that fit the data type selected for the field, so that their settings are shown */
   protected readonly applicableValidators = computed(() => {
     const datatype = this.schemaService.getDatatypeOrDefault(
@@ -103,6 +109,7 @@ export class ConfigureEntityFieldValidatorComponent {
     const field = {
       ...this.entitySchemaField(),
       dataType: this.fieldDataType(),
+      additional: this.additional() ?? this.entitySchemaField()?.additional,
     };
     return new Set(
       [...this.validators.rules.values()]
@@ -255,6 +262,25 @@ export class ConfigureEntityFieldValidatorComponent {
       });
     });
 
+    // settings not fitting the selected type are not shown, so an invalid value in them must not block saving
+    effect(() => {
+      const form = this.validatorForm();
+      const applicable = this.applicableValidators();
+      untracked(() => {
+        for (const [key, control] of Object.entries(form.controls)) {
+          if (!this.validators.rules.has(key)) {
+            continue;
+          }
+          if (applicable.has(key)) {
+            control.enable({ emitEvent: false });
+          } else {
+            control.disable({ emitEvent: false });
+          }
+        }
+        this.syncPatternMessageAvailability(form);
+      });
+    });
+
     // settings not fitting a newly selected type are not shown, so they are removed from the config right away
     let shownDataType: string | undefined;
     let firstRun = true;
@@ -292,7 +318,8 @@ export class ConfigureEntityFieldValidatorComponent {
    */
   private syncPatternMessageAvailability(form: FormGroup) {
     const messageControl = form.get("patternMessage");
-    if (form.get("pattern").value) {
+    const patternControl = form.get("pattern");
+    if (patternControl.enabled && patternControl.value) {
       messageControl.enable({ emitEvent: false });
     } else {
       messageControl.disable({ emitEvent: false });

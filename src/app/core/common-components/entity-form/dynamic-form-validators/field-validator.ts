@@ -53,6 +53,13 @@ export abstract class FieldValidator<Config = unknown> {
   /** the rule compares the field's value across records or reads its schema, so it is not built without a field id */
   readonly requiresFieldId: boolean = false;
 
+  /**
+   * Angular's own validator that form fields look for (e.g. `Validators.required` marks a field as required).
+   * The rule then runs this validator as a sync validator instead of the one from {@link build},
+   * so only set it for a rule whose {@link warning} is "never".
+   */
+  readonly angularValidator?: ValidatorFn;
+
   /** whether the configured value switches the rule off (by default `false`, `null` or an empty text, e.g. `required: false`) */
   isSwitchedOff(value: Config): boolean {
     return (

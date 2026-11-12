@@ -73,7 +73,8 @@ export class MaxLengthValidator extends FieldValidator<number> {
 | `datatypesSupported`                     | The datatypes the rule fits, including their subtypes (e.g. `DateDatatype` also covers date only, date of birth and month). Empty: all datatypes. The admin "Validation" tab only shows the setting for these.                                                  |
 | `appliesTo(datatype, field)`             | Overrides `datatypesSupported` when the type alone is not enough. For example, `pattern` lists its types explicitly, as link and file fields extend the `StringDatatype` too.                                                                                   |
 | `warning`                                | `"optional"` (default): admins can make it only a warning. `"always"`: its errors are always only a warning. `"never"`: it always blocks saving.                                                                                                                |
-| `checkOnBlur`                            | The check is expensive (e.g. it loads other records), so the field is only checked when the user leaves it. `build` may return a sync validator or one returning a promise: all rules run as async validators.                                                  |
+| `checkOnBlur`                            | The check is expensive (e.g. it loads other records), so the field is only checked when the user leaves it. `build` may return a sync validator or one returning a promise: rules run as async validators.                                                      |
+| `angularValidator`                       | Angular's own validator that form fields look for (e.g. `Validators.required` marks a field as required). It then runs as a sync validator instead of the one from `build`, so set it only for a rule whose `warning` is `"never"`.                             |
 | `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                                                                        |
 | `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config.                                                                                                                                                                                 |
 
@@ -90,7 +91,7 @@ The rules of the core module are in `standardFieldValidatorProviders`, and their
 for configs written in code.
 The admin "Validation" tab (`ConfigureEntityFieldValidatorComponent`) has a setting only for the rules of the core module,
 each shown only if the rule `appliesTo` the type selected there.
-A rule of another module can be set in the config, and the tab keeps it as it is.
+A rule of another module can be set in the config, and the tab keeps it, unless the field's type is changed to one the rule does not fit.
 To give it a setting in the tab, add it there by hand, as for the core rules.
 
 Unit-test the logic of the rule's check. Messages, warnings and checking a field again when the fields it depends on change

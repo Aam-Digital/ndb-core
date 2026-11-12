@@ -481,5 +481,33 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       button().conditionChange.emit(null);
       expect(emitted.at(-1)).toEqual({});
     });
+
+    it("keeps a condition on a record type chosen in the dialog", () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      fixture.componentRef.setInput("dataType", "entity");
+      fixture.componentRef.setInput("additional", "ValidatorTestProject");
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTestProject);
+      fixture.detectChanges();
+      component.validatorForm().get("selectionCondition").setValue(condition);
+
+      expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
+    });
+  });
+
+  it("does not block saving with an invalid setting that is hidden for the selected type", () => {
+    fixture.componentRef.setInput("entitySchemaField", { dataType: "string" });
+    fixture.detectChanges();
+    component.validatorForm().get("pattern").setValue("[a-z");
+
+    fixture.componentRef.setInput("dataType", "number");
+    fixture.detectChanges();
+
+    expect(component.validatorForm().invalid).toBe(false);
   });
 });

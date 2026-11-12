@@ -7,6 +7,7 @@ import { FieldValidator } from "./field-validator";
 export class RequiredValidator extends FieldValidator<boolean> {
   static override readonly key = "required";
   override readonly warning = "never";
+  override readonly angularValidator = Validators.required;
 
   build(): ValidatorFn {
     return Validators.required;
