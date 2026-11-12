@@ -154,6 +154,25 @@ Saving an entry in this panel saves the entity directly, as the panel is not par
 button. Users without the permission to update the field only see the entries (read-only). See the full example in
 [`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
 
+**Records linked through an inner entity field**
+
+If an inner field references other records (`"dataType": "entity"`), the `RelatedEntities` section of the referenced
+record lists the records whose entries link it. For example, a School has the embedded table "contactPersons" with the
+inner fields `user` (a User) and `role`: the details view of a User can list the Schools where that User is a contact
+person. A column id `"<field>.<inner field>"` shows the inner field of the entries linking the User (not those of other
+contact persons), e.g. the User's role at each School. Such a column cannot be sorted
+(see `DisplayRelatedEmbeddedFieldComponent`):
+
+```json
+{
+  "component": "RelatedEntities",
+  "config": {
+    "entityType": "School",
+    "columns": ["name", "contactPersons.role"]
+  }
+}
+```
+
 **Export**
 
 Exports format each inner field like a top-level field of the same type (e.g. names of referenced records, option

@@ -26,6 +26,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { resolveEmbeddedField } from "../../entity/schema/embedded-schema-field.util";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
@@ -44,6 +46,7 @@ import { DataSourceConfig } from "#src/app/core/common-components/entities-table
 })
 export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
+  private readonly entitySchemaService = inject(EntitySchemaService);
   protected filterService = inject(FilterService);
   private readonly injector = inject(Injector);
 
@@ -92,7 +95,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   readonly _columns = computed(() => {
     const entity = this.entity();
-    const rawCols = this.getColumns(this.columns());
+    const rawCols = this.getColumns(this.columns()).map((column) =>
+      this.toRelatedEmbeddedFieldColumn(column),
+    );
     if (!entity) return rawCols;
     return rawCols.map((column) => {
       if (typeof column.additional === "object" && column.additional !== null) {
@@ -300,6 +305,38 @@ export class RelatedEntitiesComponent<E extends Entity> {
           this.fieldReferencesType(inner, entityType),
       )
       .map(([key]) => key);
+  }
+
+  /**
+   * A column id referencing a property inside an embedded field (e.g. "contactPersons.role")
+   * shows that property of the embedded entries that link the record to the current entity,
+   * through the {@link DisplayRelatedEmbeddedFieldComponent}.
+   */
+  private toRelatedEmbeddedFieldColumn(
+    column: FormFieldConfig,
+  ): FormFieldConfig {
+    const entityCtr = this.entityCtr();
+    if (!entityCtr || column.viewComponent) {
+      return column;
+    }
+    const ref = resolveEmbeddedField(
+      this.entitySchemaService,
+      entityCtr,
+      column.id,
+    );
+    if (!ref) {
+      return column;
+    }
+    return {
+      label: ref.innerSchema.label,
+      labelShort: ref.innerSchema.labelShort,
+      description: ref.innerSchema.description,
+      ...column,
+      viewComponent: "DisplayRelatedEmbeddedField",
+      // the value is not a property of the record, so the table cannot sort by it
+      noSorting: true,
+      additional: {},
+    };
   }
 
   createNewRecordFactory() {

@@ -305,6 +305,45 @@ describe("RelatedEntitiesComponent", () => {
     });
   });
 
+  it("shows an embedded column (e.g. contactPersons.role) through the entries linking the current entity", async () => {
+    @DatabaseEntity("EmbedColumnTest")
+    class EmbedColumnTest extends Entity {}
+
+    EmbedColumnTest.schema.set("name", { dataType: "string" });
+    EmbedColumnTest.schema.set("contactPersons", {
+      dataType: "schema-embed-array",
+      isArray: true,
+      additional: {
+        role: { dataType: "string", label: "Role" },
+        person: {
+          dataType: EntityDatatype.dataType,
+          additional: TestEntity.ENTITY_TYPE,
+        },
+      },
+    });
+
+    const user = new TestEntity();
+    fixture.componentRef.setInput("entityType", EmbedColumnTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("entity", user);
+    fixture.componentRef.setInput("columns", ["name", "contactPersons.role"]);
+    await initComponent();
+
+    expect(component.filterObj()).toEqual({
+      contactPersons: { $elemMatch: { person: user.getId() } },
+    });
+    const [nameColumn, roleColumn] = component._columns();
+    expect(nameColumn.viewComponent).toBeUndefined();
+    expect(roleColumn).toEqual(
+      expect.objectContaining({
+        id: "contactPersons.role",
+        label: "Role",
+        viewComponent: "DisplayRelatedEmbeddedField",
+        noSorting: true,
+        additional: { relatedEntitiesParent: user },
+      }),
+    );
+  });
+
   it("it calls children service with id from passed child", async () => {
     const child = createEntityOfType("Child");
     mockLoaderService.loadDataFor.mockResolvedValue([]);

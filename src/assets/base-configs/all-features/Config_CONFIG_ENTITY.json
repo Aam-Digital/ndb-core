@@ -690,6 +690,22 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Schools",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "School",
+                  "property": "contactPersons",
+                  "columns": [
+                    "name",
+                    "contactPersons.role"
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -1843,6 +1859,22 @@
               "label": "embedded item period"
             }
           }
+        },
+        "contactPersons": {
+          "id": "contactPersons",
+          "label": "Contact Persons",
+          "dataType": "schema-embed-array",
+          "additional": {
+            "user": {
+              "dataType": "entity",
+              "additional": "User",
+              "label": "User"
+            },
+            "role": {
+              "dataType": "string",
+              "label": "Role"
+            }
+          }
         }
       },
       "hasPII": false
@@ -1935,7 +1967,8 @@
                         "eventAttendanceField",
                         "eventAttendanceMapField",
                         "templateExportFileField",
-                        "embeddedArrayOfObjects"
+                        "embeddedArrayOfObjects",
+                        "contactPersons"
                       ]
                     }
                   ]
