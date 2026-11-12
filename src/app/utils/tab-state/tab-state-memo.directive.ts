@@ -63,7 +63,9 @@ export class TabStateMemoDirective implements OnInit {
       return;
     }
 
-    let currentPath = getPath(this.router.url);
+    // The router updates its url before it creates the components of a navigation,
+    // so this already is the path of the page this tab group is created for.
+    let currentPath = this.getPath(this.router.url);
 
     // React to NavigationEnd (not just snapshot) so that navigating to
     // ?_tabIndex=N while already on this page also updates the tab.
@@ -80,7 +82,7 @@ export class TabStateMemoDirective implements OnInit {
 
         const previousPath = currentPath;
         if (navigationEvent) {
-          currentPath = getPath(navigationEvent.urlAfterRedirects);
+          currentPath = this.getPath(navigationEvent.urlAfterRedirects);
         }
         if (tabIndexParam === null && currentPath !== previousPath) {
           // The router reuses this component for another page of the same route
@@ -136,9 +138,12 @@ export class TabStateMemoDirective implements OnInit {
 
     this.urlState.updateUrlParams({ [this.tabIndexKey]: String(value) });
   }
-}
 
-/** The path of a URL, without query params and fragment. */
-function getPath(url: string): string {
-  return url.split(/[?#]/)[0];
+  /** The path of a URL, without query params and fragment. */
+  private getPath(url: string): string {
+    const urlTree = this.router.parseUrl(url);
+    urlTree.queryParams = {};
+    urlTree.fragment = null;
+    return this.router.serializeUrl(urlTree);
+  }
 }

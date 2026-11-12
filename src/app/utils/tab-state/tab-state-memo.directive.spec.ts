@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
-import { RouterTestingModule } from "@angular/router/testing";
+import {
+  RouterTestingHarness,
+  RouterTestingModule,
+} from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Component, signal } from "@angular/core";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -120,6 +123,55 @@ describe("TabStateService", () => {
 
     expect(boundFixture.componentInstance.selectedIndex()).toBe(2);
   });
+});
+
+describe("TabStateMemoDirective in a routed component", () => {
+  let harness: RouterTestingHarness;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule,
+        RouterTestingModule.withRoutes([
+          { path: "child/:id", component: TestAppComponent },
+        ]),
+      ],
+    });
+    harness = await RouterTestingHarness.create();
+  });
+
+  async function navigateAndGetSelectedTab(url: string): Promise<string> {
+    await harness.navigateByUrl(url);
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    const tabGroup = await TestbedHarnessEnvironment.harnessForFixture(
+      harness.fixture,
+      MatTabGroupHarness,
+    );
+    return (await tabGroup.getSelectedTab()).getLabel();
+  }
+
+  it.each([
+    ["/child/1?_tabIndex=2", "C"],
+    ["/child/1", "A"],
+  ])(
+    "selects the tab from the URL when the navigation to %s creates the component",
+    async (url, expectedTab) => {
+      expect(await navigateAndGetSelectedTab(url)).toBe(expectedTab);
+    },
+  );
+
+  it.each([
+    ["/child/2?_tabIndex=1", "B"],
+    ["/child/2", "A"],
+  ])(
+    "selects the tab from the URL when navigating to %s reuses the component",
+    async (url, expectedTab) => {
+      await navigateAndGetSelectedTab("/child/1?_tabIndex=2");
+
+      expect(await navigateAndGetSelectedTab(url)).toBe(expectedTab);
+    },
+  );
 });
 
 @Component({
