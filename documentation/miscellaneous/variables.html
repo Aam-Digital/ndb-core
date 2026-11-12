@@ -149,6 +149,9 @@
                             <a href="#ABORTED_REQUEST_NAME" title="src/app/core/database/pouchdb/pouchdb-errors.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ABORTED_REQUEST_NAME</b>&nbsp;&nbsp;&nbsp;(src/.../pouchdb-errors.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ABORTED_TRANSACTION_REASON" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ABORTED_TRANSACTION_REASON</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#actions" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>actions</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
@@ -396,6 +399,9 @@
                         </li>
                         <li>
                             <a href="#demoDataGeneratorProviders" title="src/app/core/demo-data/demo-data.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>demoDataGeneratorProviders</b>&nbsp;&nbsp;&nbsp;(src/.../demo-data.module.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#DOC_STORE" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DOC_STORE</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
                         </li>
                         <li>
                             <a href="#dropoutTypes" title="src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dropoutTypes</b>&nbsp;&nbsp;&nbsp;(src/.../dropout-types.ts)</span></a>
@@ -680,6 +686,12 @@
                             <a href="#menuItemTree" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>menuItemTree</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#META_RECORD_ID" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>META_RECORD_ID</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#META_STORE" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>META_STORE</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#migrateDashboardDefaultEntityType" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateDashboardDefaultEntityType</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
@@ -870,6 +882,9 @@
                         </li>
                         <li>
                             <a href="#sentryEventCounts" title="src/app/core/logging/report-once.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>sentryEventCounts</b>&nbsp;&nbsp;&nbsp;(src/.../report-once.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#SEQ_INDEX" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SEQ_INDEX</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
                         </li>
                         <li>
                             <a href="#SETUP_WIZARD_CONFIG_KEY" title="src/app/core/admin/setup-wizard/setup-wizard-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SETUP_WIZARD_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../setup-wizard-config.ts)</span></a>
@@ -1379,6 +1394,151 @@ document too deeply nested to store), not to a broken database.</p>
 </div>
                 </td>
             </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/indexeddb-sequence-check.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ABORTED_TRANSACTION_REASON"></a>
+                    <span class="name">
+                        <span ><b>ABORTED_TRANSACTION_REASON</b></span>
+                        <a href="#ABORTED_TRANSACTION_REASON"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;transaction was aborted&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>PouchDB&#39;s reason for a write whose IndexedDB transaction was aborted, whatever the cause.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DOC_STORE"></a>
+                    <span class="name">
+                        <span ><b>DOC_STORE</b></span>
+                        <a href="#DOC_STORE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;docs&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The <code>indexeddb</code> adapter&#39;s object stores, metadata record and index (see <code>pouchdb-adapter-indexeddb</code>).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="META_RECORD_ID"></a>
+                    <span class="name">
+                        <span ><b>META_RECORD_ID</b></span>
+                        <a href="#META_RECORD_ID"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;meta&quot;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="META_STORE"></a>
+                    <span class="name">
+                        <span ><b>META_STORE</b></span>
+                        <a href="#META_STORE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;meta&quot;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SEQ_INDEX"></a>
+                    <span class="name">
+                        <span ><b>SEQ_INDEX</b></span>
+                        <a href="#SEQ_INDEX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;seq&quot;</code>
+                    </td>
+                </tr>
+
 
         </tbody>
     </table>

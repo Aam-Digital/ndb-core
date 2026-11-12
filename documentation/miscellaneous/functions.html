@@ -791,6 +791,9 @@
                             <a href="#hasOrdinalValue" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasOrdinalValue</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#hasOutdatedSequenceCounter" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasOutdatedSequenceCounter</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#hasPushApis" title="src/app/features/notification/firebase-messaging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasPushApis</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging.service.ts)</span></a>
                         </li>
                         <li>
@@ -831,6 +834,9 @@
                         </li>
                         <li>
                             <a href="#insertChild" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>insertChild</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isAbortedTransaction" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isAbortedTransaction</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isAlreadyReported" title="src/app/core/logging/report-once.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isAlreadyReported</b>&nbsp;&nbsp;&nbsp;(src/.../report-once.ts)</span></a>
@@ -1151,6 +1157,9 @@
                             <a href="#normalizeValue" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeValue</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#openExistingDatabase" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>openExistingDatabase</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#operationFilterOptions" title="src/app/features/change-history/audit-filter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>operationFilterOptions</b>&nbsp;&nbsp;&nbsp;(src/.../audit-filter.ts)</span></a>
                         </li>
                         <li>
@@ -1248,6 +1257,9 @@
                         </li>
                         <li>
                             <a href="#reportUsesDateRange" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>reportUsesDateRange</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#request" title="src/app/core/database/pouchdb/indexeddb-sequence-check.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>request</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-sequence-check.ts)</span></a>
                         </li>
                         <li>
                             <a href="#requestMethod" title="src/app/core/database/pouchdb/remote-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>requestMethod</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</span></a>
@@ -18352,7 +18364,8 @@ properties, e.g. in the result array of a <code>bulkDocs</code>.</p>
 is used in multiple tabs with concurrent writes.</p>
 <p>Only signals specific to this corruption are matched, as it leads to offering
 a reset of the local data: a &quot;transaction was aborted&quot; or an <code>unknown_error</code>
-also follows other failures, e.g. a document too deeply nested to store.</p>
+also follows other failures, e.g. a document too deeply nested to store.
+For those, the database itself is checked (see <code>hasOutdatedSequenceCounter</code>).</p>
 </div>
 
                             <div class="io-description">
@@ -26959,6 +26972,264 @@ ordering of values is <em>not</em> the natural order of these values.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#EnumValue" target="_self" >Array&lt;EnumValue&lt;T&gt;&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/indexeddb-sequence-check.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasOutdatedSequenceCounter"></a>
+                    <span class="name">
+                        <span ><b>hasOutdatedSequenceCounter</b></span>
+                        <a href="#hasOutdatedSequenceCounter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasOutdatedSequenceCounter(db)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the local database&#39;s stored sequence counter is behind the sequence
+numbers of its documents, so that every write fails (see above).
+Only reads the database; <code>false</code> for other adapters or if it cannot be read.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>db</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isAbortedTransaction"></a>
+                    <span class="name">
+                        <span ><b>isAbortedTransaction</b></span>
+                        <a href="#isAbortedTransaction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isAbortedTransaction(error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether PouchDB rejected the call because its IndexedDB transaction was aborted.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openExistingDatabase"></a>
+                    <span class="name">
+                        <span ><b>openExistingDatabase</b></span>
+                        <a href="#openExistingDatabase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openExistingDatabase(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open the IndexedDB at its current version, without creating it if it does not
+exist (as the version change of a new database is aborted).
+The connection closes itself if PouchDB opens the database at a new version
+(as it does on every reopen), so that it never blocks the adapter.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Database.html" target="_self" >Promise&lt;IDBDatabase&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="request"></a>
+                    <span class="name">
+                        <span ><b>request</b></span>
+                        <a href="#request"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>request&lt;T&gt;(idbRequest: IDBRequest)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>idbRequest</td>
+                                            <td>
+                                                        <code>IDBRequest</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T&gt;</code>
 
                         </div>
                             <div class="io-description">

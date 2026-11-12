@@ -232,7 +232,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="576" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:576</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="579" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:579</a></div>
                             </td>
                         </tr>
 
@@ -523,7 +523,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
       const failure &#x3D; toTypedDatabaseError(err);
-      this.handleSyncFailure(failure, []);
+      await this.handleSyncFailure(failure, []);
       throw failure;
     }
     if (isFirstSync) {
@@ -602,7 +602,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
-      .catch((err) &#x3D;&gt; {
+      .catch(async (err) &#x3D;&gt; {
         // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
         if (this.isNotificationsDatabase() &amp;&amp; err?.status &#x3D;&#x3D;&#x3D; 404) {
           Logging.debug(
@@ -615,7 +615,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
         // the replication fails with a copy of the error, which loses the class of a typed error
         const failure &#x3D; toTypedDatabaseError(err);
-        this.handleSyncFailure(failure, lastSyncedDocIds);
+        await this.handleSyncFailure(failure, lastSyncedDocIds);
         throw failure;
       })
       .finally(() &#x3D;&gt; {
@@ -649,12 +649,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Log a failed sync according to its cause (only once: callers like
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
-  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
-    this.logSyncFailure(err, lastSyncedDocIds);
+  private async handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    await this.logSyncFailure(err, lastSyncedDocIds);
     this.syncState.next(SyncState.FAILED);
   }
 
-  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+  private async logSyncFailure(err: any, lastSyncedDocIds: string[]) {
     const context &#x3D; {
       db: this.dbName,
       ...lastSyncedBatchContext(lastSyncedDocIds),
@@ -670,10 +670,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     // reported (with the offer to reset the local data) by the recovery service
     const reportedAsCorruption &#x3D;
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
         context,
+        this.pouchDB,
       );
     if (reportedAsCorruption) {
       return;
@@ -687,10 +688,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
     try {
       return await super.put(object, forceOverwrite);
     } catch (err) {
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         &quot;put failed: likely multi-tab IndexedDB corruption&quot;,
         { db: this.dbName },
+        this.pouchDB,
       );
       throw err;
     }
@@ -700,11 +702,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
     fun: string | ((doc: any, emit: any) &#x3D;&gt; void),
     options: QueryOptions,
   ): Promise&lt;any&gt; {
-    return super.query(fun, options).catch((err) &#x3D;&gt; {
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+    return super.query(fun, options).catch(async (err) &#x3D;&gt; {
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         &quot;query failed: likely multi-tab IndexedDB corruption&quot;,
         { db: this.dbName },
+        this.pouchDB,
       );
       throw err;
     });
