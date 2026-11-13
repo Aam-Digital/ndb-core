@@ -1,15 +1,12 @@
 import { Injectable } from "@angular/core";
 import { ValidatorFn, Validators } from "@angular/forms";
-import { FieldValidator } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
-import { NumberDatatype } from "./number.datatype";
+import { NumberLimitValidator } from "./number-limit.validator";
 
 /** `min: 5`: the number must be at least the given value */
 @Injectable()
-export class MinValidator extends FieldValidator<number> {
+export class MinValidator extends NumberLimitValidator {
   static override readonly key = "min";
   readonly label = $localize`Minimum Value`;
-  override readonly configComponent = "NumberValidatorSetting";
-  override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {
     return Validators.min(value);

@@ -1,15 +1,12 @@
 import { Injectable } from "@angular/core";
 import { ValidatorFn, Validators } from "@angular/forms";
-import { FieldValidator } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
-import { NumberDatatype } from "./number.datatype";
+import { NumberLimitValidator } from "./number-limit.validator";
 
 /** `max: 10`: the number must be at most the given value */
 @Injectable()
-export class MaxValidator extends FieldValidator<number> {
+export class MaxValidator extends NumberLimitValidator {
   static override readonly key = "max";
   readonly label = $localize`Maximum Value`;
-  override readonly configComponent = "NumberValidatorSetting";
-  override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {
     return Validators.max(value);
