@@ -18,6 +18,8 @@ export interface UniquePropertyValidatorConfig {
    * The error message will be: "A record with this {fieldLabel} already exists."
    */
   fieldLabel: string;
+  /** key of the error in the form control's errors (default: {@link UNIQUE_PROPERTY_ERROR_KEY}) */
+  errorKey?: string;
 }
 
 function normalizeValue(value: unknown): unknown {
@@ -76,7 +78,9 @@ export function uniquePropertyValidator(
 
     return hasDuplicate
       ? {
-          uniqueProperty: $localize`:form field validation error:A record with this ${config.fieldLabel} already exists.`,
+          [config.errorKey ?? UNIQUE_PROPERTY_ERROR_KEY]: {
+            errorMessage: $localize`:form field validation error:A record with this ${config.fieldLabel} already exists.`,
+          },
         }
       : null;
   };

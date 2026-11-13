@@ -33,7 +33,7 @@ You can use Angular's dependency injection to access any other services, if need
    - `label`: To allow admin users to select this type in the form builder under this human-readable name
    - `viewComponent`: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables
    - `editComponent`: The string ID for the EditComponent (see below) used for form field UI of the value in detail views
-   - `internalValidators`: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the `validators` configured for the field)
+   - `internalValidators`: Rules that every value of the type has to pass, added to every entity form field of this type (independent of the edit component and in addition to the `validators` configured for the field, see [Form Validators](../common-components/entity-form/dynamic-form-validators/README.md))
    - `storedFormat`: How the database format of a value relates to the entity's value (as is, a plain value for an object like a `Date`, or the id of what it refers to), which conditions on the field depend on (see the [filter module](../filter/README.md))
 5. Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)
 6. **Register the datatype** as a "multi" provider so the platform picks it up (see [Registering the new Datatype](#registering-the-new-datatype) below).
@@ -152,7 +152,9 @@ related records. Its config is:
 ```
 
 Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a "Save"
-button. Users without the permission to update the field only see the entries (read-only). See the full example in
+button. Like a save of the form, this then offers to update the linked records whose automation rules (inherited
+fields) use this field, e.g. a parent record collecting the entries of its sub-records with `"aggregation": "add"`.
+Users without the permission to update the field only see the entries (read-only). See the full example in
 [`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
 
 **Export**

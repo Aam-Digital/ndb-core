@@ -394,8 +394,29 @@ describe("ConfigService", () => {
         await vi.advanceTimersByTimeAsync(0);
 
         expect(service.hasConfig()).toBe(false);
+        expect(service.isSystemUninitialized()).toBe(true);
         expect(window.alert).not.toHaveBeenCalled();
         expect(reloadMock).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
+
+    it("should not report the system as uninitialized when the config could not be loaded", async () => {
+      vi.useFakeTimers();
+      try {
+        await setupReloadTest();
+
+        // an existing system whose server answers 50*: a missing config here only
+        // means we could not find out, so the setup must not be offered
+        entityMapper.load.mockRejectedValue({ status: 503 });
+
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.hasConfig()).toBe(false);
+        expect(service.isSystemUninitialized()).toBe(false);
       } finally {
         vi.useRealTimers();
         vi.restoreAllMocks();

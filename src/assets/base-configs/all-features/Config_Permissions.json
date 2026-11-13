@@ -1,0 +1,57 @@
+{
+  "_id": "Config:Permissions",
+  "data": {
+    "_public": [
+      {
+        "subject": [
+          "Config",
+          "SiteSettings",
+          "PublicFormConfig",
+          "ConfigurableEnum"
+        ],
+        "action": "read"
+      },
+      {
+        "subject": "participantSurvey",
+        "action": "create"
+      }
+    ],
+    "_default": [
+      {
+        "subject": [
+          "Config",
+          "SiteSettings",
+          "PublicFormConfig",
+          "ConfigurableEnum"
+        ],
+        "action": "read"
+      },
+      {
+        "subject": [
+          "NotificationConfig",
+          "NotificationEvent"
+        ],
+        "action": "manage"
+      },
+      {
+        "subject": "UserSettings",
+        "action": "manage",
+        "conditions": {
+          "userId": "${user.id}"
+        }
+      }
+    ],
+    "user_app": [
+      {
+        "subject": "all",
+        "action": "manage"
+      }
+    ],
+    "admin_app": [
+      {
+        "subject": "all",
+        "action": "manage"
+      }
+    ]
+  }
+}

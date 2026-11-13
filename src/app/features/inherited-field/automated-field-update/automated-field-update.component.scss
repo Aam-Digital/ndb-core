@@ -1,5 +1,6 @@
 @use "variables/colors";
 @use "variables/sizes";
+@use "mixins/strike-through";
 
 .title {
   display: flex;
@@ -33,6 +34,15 @@
     &:not(:last-child) {
       margin-bottom: sizes.$small;
     }
+
+    // under the record it belongs to, if several records were changed
+    &.of-record {
+      margin-inline-start: sizes.$regular;
+    }
+  }
+
+  .trigger-record {
+    display: block;
   }
 
   // the change as removed and added values, in the style of the values that the suggestions add and remove
@@ -46,9 +56,7 @@
   .trigger-removed {
     color: colors.$error;
 
-    app-entity-field-view {
-      text-decoration: line-through;
-    }
+    @include strike-through.removed-values;
   }
 
   .trigger-added app-fa-dynamic-icon {
