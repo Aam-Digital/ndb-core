@@ -142,7 +142,7 @@ export class EntityRelationsService {
     entityType: EntityConstructor,
     fieldPath: string,
     referencedId: string,
-  ): DataFilter<any>[] {
+  ): DataFilter<Entity>[] {
     const condition = { $or: referenceIdConditions(fieldPath, referencedId) };
     const embedded = resolveEmbeddedField(
       this.schemaService,
@@ -256,7 +256,7 @@ export class EntityRelationsService {
       return this.entityMapper.loadType(refType);
     }
 
-    const conditions: DataFilter<any>[] = [];
+    const conditions: DataFilter<Entity>[] = [];
     for (const refProperty of refProperties) {
       const propertyConditions = this.fieldReferenceConditions(
         refType,
@@ -296,7 +296,7 @@ export class EntityRelationsService {
     refType: EntityConstructor,
     refProperty: FormFieldConfig,
     referencedId: string,
-  ): DataFilter<any>[] | undefined {
+  ): DataFilter<Entity>[] | undefined {
     if (refProperty.dataType === EntityDatatype.dataType) {
       return this.referenceConditions(refType, refProperty.id, referencedId);
     }
