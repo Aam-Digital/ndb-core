@@ -257,12 +257,28 @@ export class FilterService {
       );
       if (value !== undefined) {
         entity[fieldId] = this.schemaService.valueToEntityFormat(
-          field.isArray ? [value] : value,
+          field.isArray
+            ? this.storedValuesWith(entity[fieldId], field, value)
+            : value,
           field,
           entity,
         );
       }
     }
+  }
+
+  /** the stored values of a multi-value field with the value added, as several parts of a condition can each require one */
+  private storedValuesWith(
+    current: unknown,
+    field: EntitySchemaField,
+    value: unknown,
+  ): unknown[] {
+    const stored = asArray(
+      this.schemaService.valueToDatabaseFormat(current ?? [], field) ?? [],
+    );
+    return stored.some((storedValue) => isEqual(storedValue, value))
+      ? stored
+      : [...stored, value];
   }
 
   /**

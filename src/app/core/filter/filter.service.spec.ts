@@ -166,6 +166,20 @@ describe("FilterService", () => {
     },
   );
 
+  it("patches a multi-value field with every value the parts of a condition require", () => {
+    const note = new Note();
+
+    service.alignEntityWithFilter(note, {
+      $and: [
+        { relatedEntities: { $elemMatch: { $eq: "Child:1" } } },
+        { relatedEntities: { $elemMatch: { $eq: "Child:2" } } },
+        { relatedEntities: { $elemMatch: { $eq: "Child:1" } } },
+      ],
+    } as DataFilter<Note>);
+
+    expect(note.relatedEntities).toEqual(["Child:1", "Child:2"]);
+  });
+
   it("should support patching with array values", () => {
     const child = new TestEntity();
     // uses `relatedEntities` rather than the removed legacy `children` field
