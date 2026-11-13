@@ -17,6 +17,8 @@ import { LanguageSelectComponent } from "app/core/language/language-select/langu
 import { LanguageService } from "app/core/language/language.service";
 import { availableLocales } from "app/core/language/languages";
 import { AVAILABLE_LOCALE_IDS } from "app/core/language/available-locales";
+import { baseLanguage } from "app/core/config/multi-lingual-config";
+import { UrlStateService } from "app/utils/url-state/url-state.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatCheckbox } from "@angular/material/checkbox";
@@ -54,6 +56,7 @@ export class SystemInitAssistantComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly siteSettings = inject(SiteSettingsService);
   private readonly alertService = inject(AlertService);
+  private readonly urlState = inject(UrlStateService);
   private readonly languageSelect = viewChild(LanguageSelectComponent);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
@@ -78,6 +81,11 @@ export class SystemInitAssistantComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();
+
+    // before loading anything: a switch reloads the app and starts over
+    if (await this.switchToQueryParamLocale()) {
+      return;
+    }
 
     this.availableUseCases.set(
       await this.setupService.getAvailableBaseConfig(),
@@ -141,20 +149,32 @@ export class SystemInitAssistantComponent implements OnInit {
   }
 
   /**
-   * The system can be opened in a pre-selected language: ?locale=localeId (e.g. "de").
-   * Unknown locales are ignored.
-   *
-   * Switching reloads the app (the query params are kept), so the setup continues
-   * afterwards with the language already active.
+   * The system can be opened in a pre-selected language: ?locale=localeId
+   * (e.g. "de", or "en" for "en-US" as partners type these links by hand).
+   * The param is removed from the URL right away, as it would otherwise override
+   * the language select on every reload. The other query params are kept.
    *
    * @returns true if the app is being reloaded to switch the language
    */
-  private switchToQueryParamLocale(): boolean {
+  private async switchToQueryParamLocale(): Promise<boolean> {
     const requested = this.route.snapshot.queryParamMap.get("locale");
-    const locale = AVAILABLE_LOCALE_IDS.find(
-      (id) => id.toLowerCase() === requested?.toLowerCase(),
-    );
-    if (!locale || locale === this.languageService.getCurrentLocale()) {
+    if (!requested) {
+      return false;
+    }
+    await this.urlState.removeUrlParams(["locale"]);
+
+    const locale =
+      AVAILABLE_LOCALE_IDS.find(
+        (id) => id.toLowerCase() === requested.toLowerCase(),
+      ) ??
+      AVAILABLE_LOCALE_IDS.find(
+        (id) => baseLanguage(id) === baseLanguage(requested),
+      );
+    if (!locale) {
+      Logging.warn("Ignoring unknown locale from URL", { requested });
+      return false;
+    }
+    if (locale === this.languageService.getCurrentLocale()) {
       return false;
     }
 
@@ -164,14 +184,9 @@ export class SystemInitAssistantComponent implements OnInit {
 
   /**
    * The system can be opened with a pre-selected use case: ?useCase=useCaseId
-   * (and optionally a language: ?locale=localeId, see {@link switchToQueryParamLocale}).
    * @private
    */
   private async initFromQueryParamAutomatically() {
-    if (this.switchToQueryParamLocale()) {
-      return;
-    }
-
     const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
     if (!preSelectedUseCase) {
       return;

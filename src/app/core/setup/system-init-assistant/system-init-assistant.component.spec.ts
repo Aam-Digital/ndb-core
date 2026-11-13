@@ -10,6 +10,7 @@ import { SetupService } from "../setup.service";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { AlertService } from "../../alerts/alert.service";
 import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
+import { UrlStateService } from "../../../utils/url-state/url-state.service";
 
 describe("SystemInitAssistantComponent", () => {
   let component: SystemInitAssistantComponent;
@@ -26,6 +27,7 @@ describe("SystemInitAssistantComponent", () => {
   };
   let siteSettings: { setDefaultLanguage: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
+  let urlState: { removeUrlParams: ReturnType<typeof vi.fn> };
 
   async function configureComponent(currentLocale?: string) {
     mockSetupService = {
@@ -45,6 +47,7 @@ describe("SystemInitAssistantComponent", () => {
     };
     siteSettings = { setDefaultLanguage: vi.fn().mockResolvedValue(undefined) };
     alertService = { addDanger: vi.fn() };
+    urlState = { removeUrlParams: vi.fn().mockResolvedValue(true) };
     await TestBed.configureTestingModule({
       imports: [SystemInitAssistantComponent, MockedTestingModule.withState()],
       providers: [
@@ -57,6 +60,7 @@ describe("SystemInitAssistantComponent", () => {
         { provide: LanguageService, useValue: languageService },
         { provide: SiteSettingsService, useValue: siteSettings },
         { provide: AlertService, useValue: alertService },
+        { provide: UrlStateService, useValue: urlState },
         { provide: LOCATION_TOKEN, useValue: { pathname: "/some/path" } },
         { provide: SetupService, useValue: mockSetupService },
       ],
@@ -97,31 +101,30 @@ describe("SystemInitAssistantComponent", () => {
       await component.ngOnInit();
     }
 
-    it("switches the language first and waits for the reload before setting up", async () => {
-      await openWithParams({ useCase: "basic_setup", locale: "de" }, "en-US");
+    it.each([
+      ["switches before setting up", "de", "en-US", "de", false],
+      ["sets up once the language is active", "de", "de", null, true],
+      ["matches the id case-insensitively", "EN-us", "de", "en-US", false],
+      ["matches the base language", "en", "de", "en-US", false],
+      ["ignores an unknown locale", "xx", "en-US", null, true],
+    ])(
+      "%s (?locale=%s while running %s)",
+      async (_, locale, currentLocale, expectedSwitch, expectedSetup) => {
+        await openWithParams({ useCase: "basic_setup", locale }, currentLocale);
 
-      expect(languageService.switchLocale).toHaveBeenCalledWith("de");
-      expect(mockSetupService.initSystemWithBaseConfig).not.toHaveBeenCalled();
-    });
+        expect(languageService.switchLocale.mock.calls).toEqual(
+          expectedSwitch ? [[expectedSwitch]] : [],
+        );
+        expect(mockSetupService.initSystemWithBaseConfig).toHaveBeenCalledTimes(
+          expectedSetup ? 1 : 0,
+        );
+      },
+    );
 
-    it("sets up the use case once the requested language is active", async () => {
-      await openWithParams({ useCase: "basic_setup", locale: "de" }, "de");
+    it("removes the param from the URL so it cannot override the language select later", async () => {
+      await openWithParams({ locale: "de" }, "de");
 
-      expect(languageService.switchLocale).not.toHaveBeenCalled();
-      expect(mockSetupService.initSystemWithBaseConfig).toHaveBeenCalled();
-    });
-
-    it("matches the locale case-insensitively", async () => {
-      await openWithParams({ locale: "EN-us" }, "de");
-
-      expect(languageService.switchLocale).toHaveBeenCalledWith("en-US");
-    });
-
-    it("ignores an unknown locale", async () => {
-      await openWithParams({ useCase: "basic_setup", locale: "xx" }, "en-US");
-
-      expect(languageService.switchLocale).not.toHaveBeenCalled();
-      expect(mockSetupService.initSystemWithBaseConfig).toHaveBeenCalled();
+      expect(urlState.removeUrlParams).toHaveBeenCalledWith(["locale"]);
     });
   });
 
