@@ -25,12 +25,16 @@ This module holds the filter UI of lists and the shared code to evaluate these q
 the id of a dropdown option (`{ "gender": "F" }`), the id of a referenced record,
 `"YYYY-MM-DD"` for a `date-only` field and `"YYYY-MM"` for a `month` field.
 Records are matched in this format everywhere, also in memory (see [Engines](#engines)).
-Older configs address dropdown options by their object (`{ "gender.id": "F" }`), which still works.
+Older configs address dropdown options by their object (`{ "gender.id": "F" }`), which still works,
+except in permissions: they are matched on the stored document as it is, so use the stored path (`{ "gender": "F" }`) there.
 Values that only the entity has, like a getter of the entity class or the `age` of a date of birth
-(`{ "dateOfBirth.age": { "$gte": 18 } }`), can be used in memory, but not in a database query.
+(`{ "dateOfBirth.age": { "$gte": 18 } }`), can be used in memory, but not in a database query,
+and not for the properties of embedded fields, whose entries are only matched in the stored format.
 
-**Dates are compared by day.** For a `date` field (a timestamp), compare with a day (`"YYYY-MM-DD"`):
-a date matches if it falls on that day in local time (see `toStoredDateBound`). A `month` counts as its first day.
+**Dates are compared by day.** For a `date` field (a timestamp), compare with a day (`"YYYY-MM-DD"`) using `$gte`, `$gt`, `$lte` or `$lt`:
+the day becomes the start or end of that day in local time (see `toStoredDayBound` of the datatypes). A `month` counts as its first day.
+For one day, use both bounds (`{ "date": { "$gte": "2024-01-15", "$lte": "2024-01-15" } }`):
+an equality (`{ "date": "2024-01-15" }`) matches by day in memory, but not in a database query.
 
 **Multi-value fields** match if one of their values matches: `{ "category": { "$elemMatch": { "$eq": "A" } } }`
 or `{ "category": { "$elemMatch": { "$in": ["A", "B"] } } }`.
