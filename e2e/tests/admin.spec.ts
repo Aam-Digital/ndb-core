@@ -531,11 +531,11 @@ test("Admin: edit details view config (panels, field label, required validator) 
 
   await expect(fieldDialog).toBeVisible();
   await fieldDialog.getByRole("tab", { name: "Validation" }).click();
-  const requiredCheckbox = fieldDialog.getByRole("checkbox", {
-    name: /Required Field/,
-  });
-  await requiredCheckbox.check();
-  await expect(requiredCheckbox).toBeChecked();
+  await fieldDialog
+    .getByRole("combobox", { name: "Add validation rule" })
+    .click();
+  await page.getByRole("option", { name: "Required Field" }).click();
+  await expect(fieldDialog.getByText("Required Field")).toBeVisible();
   await fieldDialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(fieldDialog).not.toBeVisible();
 
@@ -597,9 +597,7 @@ test("Admin: edit details view config (panels, field label, required validator) 
   await phoneFieldAfterSave.getByRole("button", { name: "Edit Field" }).click();
   await expect(fieldDialog).toBeVisible();
   await fieldDialog.getByRole("tab", { name: "Validation" }).click();
-  await expect(
-    fieldDialog.getByRole("checkbox", { name: /Required Field/ }),
-  ).toBeChecked();
+  await expect(fieldDialog.getByText("Required Field")).toBeVisible();
   await fieldDialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(fieldDialog).not.toBeVisible();
 

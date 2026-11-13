@@ -22,7 +22,7 @@ Every rule is a service extending `FieldValidator`, registered through Angular D
 (like datatypes and default-value strategies).
 `DynamicValidatorsService` builds the validators of a field from the registered rules,
 and the config check (`ConfigValidationService`) asks them too, so a new rule needs no change in either.
-The admin "Validation" tab is still written by hand per rule (see [Add a new rule](#add-a-new-rule)).
+The admin "Validation" tab is built from the registered rules too (see [Admin settings](#admin-settings-of-a-rule)).
 
 Besides the configured rules, a form field also gets
 the `internalValidators` of its datatype (see [basic-datatypes](../../../basic-datatypes/README.md))
@@ -51,6 +51,8 @@ Extend `FieldValidator<Config>`, where `Config` is the type of the rule's settin
 @Injectable()
 export class MaxLengthValidator extends FieldValidator<number> {
   static override readonly key = "maxLength";
+  readonly label = $localize`Maximum length`;
+  override readonly configComponent = "NumberValidatorSetting";
   override readonly datatypesSupported = [LongTextDatatype];
 
   build(maxLength: number): ValidatorFn {
@@ -66,6 +68,9 @@ export class MaxLengthValidator extends FieldValidator<number> {
 | Member                                   | What it does                                                                                                                                                                                                                                                    |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `static readonly key`                    | Key of the rule in `validators`, also the key of its error                                                                                                                                                                                                      |
+| `label`                                  | Name of the rule in the admin "Validation" tab, in its list and in the dropdown "Add validation rule". Use `labelFor(datatype)` to name it differently for a datatype (e.g. a limit of a month field).                                                          |
+| `description`                            | Optional. Explains the rule to admins, as a help text next to its name.                                                                                                                                                                                         |
+| `configComponent`                        | Optional. The admin component that edits the rule's setting (see [Admin settings](#admin-settings-of-a-rule)). Without one, the rule is only switched on or off.                                                                                                |
 | `build(value, context)`                  | The Angular validator, or `null` if it cannot be built. It is not called for a setting that switches the rule off (see `isSwitchedOff`). The `context` holds the record, the field, the whole `validators` config and whether the form edits one single record. |
 | `isSwitchedOff(value)`                   | Whether the setting switches the rule off. By default `false`, `null` or an empty text (e.g. `required: false`).                                                                                                                                                |
 | `requiresFieldId`                        | The rule needs the field's id (e.g. to compare with other records), so it is not built for a form field without one.                                                                                                                                            |
@@ -89,10 +94,23 @@ providers: [{ provide: FieldValidator, useClass: MaxLengthValidator, multi: true
 
 The rules of the core module are in `standardFieldValidatorProviders`, and their keys are typed in `DYNAMIC_VALIDATORS`
 for configs written in code.
-The admin "Validation" tab (`ConfigureEntityFieldValidatorComponent`) has a setting only for the rules of the core module,
-each shown only if the rule `appliesTo` the type selected there.
-A rule of another module can be set in the config, and the tab keeps it, unless the field's type is changed to one the rule does not fit.
-To give it a setting in the tab, add it there by hand, as for the core rules.
+
+## Admin settings of a rule
+
+The admin "Validation" tab (`ConfigureEntityFieldValidatorComponent`) lists the rules that are set for the field,
+and a dropdown "Add validation rule" offers the registered rules that fit the type selected there (those that `appliesTo` it).
+A rule only needs its `label`: it then appears in the dropdown and can be switched on or off.
+
+If the rule has a setting (a number, a date, a pattern …), name a component for it in `configComponent`.
+The core module has components for the common settings, reuse them before writing one:
+`NumberValidatorSetting`, `DateValidatorSetting`, `PatternValidatorSetting`.
+Your own component gets the `formControl` with the rule's value (`null` while it is not set),
+and the inputs of `ValidatorSettingInputs` that it declares: `label`, `description`, the `field` being edited with its currently selected type,
+the `entityType` of the field and, for a link field, the `linkedEntityType`.
+Register it in the component registry like other dynamic components (`@DynamicComponent("MyValidatorSetting")` and `components.addAll` in your module).
+
+A rule of a module that is not loaded in the admin area can still be set in the config, and the tab keeps it,
+unless the field's type is changed to one the rule does not fit.
 
 Unit-test the logic of the rule's check. Messages, warnings and checking a field again when the fields it depends on change
 are handled centrally by `DynamicValidatorsService`.

@@ -1,197 +1,70 @@
-<form class="validator-form-cell flex-column" [formGroup]="validatorForm()">
-  @if (applicableValidators().has("min")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field class="number-field">
-        <mat-label i18n>Minimum Value</mat-label>
-        <input formControlName="min" matInput type="number" />
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'min' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("max")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field class="number-field">
-        <mat-label i18n>Maximum Value</mat-label>
-        <input formControlName="max" matInput type="number" />
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'max' }"
-      />
-    </div>
-  }
-
-  @if (applicableValidators().has("minAge")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field floatLabel="always">
-        <mat-label i18n>Minimum Age (Years)</mat-label>
-        <input formControlName="minAge" matInput type="number" />
-        <app-help-button
-          matSuffix
-          text="Enter the minimum allowed age in years. This is independent from the date limits."
-          i18n-text
-        ></app-help-button>
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'minAge' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("maxAge")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field floatLabel="always">
-        <mat-label i18n>Maximum Age (Years)</mat-label>
-        <input formControlName="maxAge" matInput type="number" />
-        <app-help-button
-          matSuffix
-          text="Enter the maximum allowed age in years. This is independent from the date limits."
-          i18n-text
-        ></app-help-button>
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'maxAge' }"
-      />
-    </div>
-  }
-
-  @if (applicableValidators().has("minDate")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field floatLabel="always">
-        @if (isMonthType()) {
-          <mat-label i18n>Minimum Month</mat-label>
-          <app-edit-month formControlName="minDate"></app-edit-month>
-        } @else {
-          <mat-label i18n>Minimum Date</mat-label>
-          <app-edit-date formControlName="minDate"></app-edit-date>
-        }
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'minDate' }"
-      />
-    </div>
-  }
-  @if (applicableValidators().has("maxDate")) {
-    <div class="flex-row flex-wrap align-center gap-regular">
-      <mat-form-field floatLabel="always">
-        @if (isMonthType()) {
-          <mat-label i18n>Maximum Month</mat-label>
-          <app-edit-month formControlName="maxDate"></app-edit-month>
-        } @else {
-          <mat-label i18n>Maximum Date</mat-label>
-          <app-edit-date formControlName="maxDate"></app-edit-date>
-        }
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'maxDate' }"
-      />
-    </div>
-  }
-
-  @if (parentRangeOptions().length) {
-    <mat-form-field floatLabel="always">
-      <mat-label i18n>Must lie within the period of a linked record</mat-label>
-      <mat-select
-        formControlName="withinParent"
-        [compareWith]="isSameParentRange"
+<div class="flex-column">
+  @for (rule of rows(); track rule.key) {
+    <div class="validator-row flex-row align-center gap-small">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="removeRule(rule)"
+        matTooltip="Remove"
+        i18n-matTooltip
+        [attr.aria-label]="removeLabel(rule)"
       >
-        <mat-option [value]="null" i18n>none</mat-option>
-        @for (option of parentRangeOptions(); track option.label) {
-          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        <app-fa-dynamic-icon icon="xmark"></app-fa-dynamic-icon>
+      </button>
+
+      <div class="validator-setting flex-grow">
+        @if (settingComponents().get(rule.key); as setting) {
+          <ng-template [appDynamicComponent]="setting"></ng-template>
+        } @else {
+          <span>{{ ruleLabel(rule) }}</span>
+          @if (rule.description) {
+            <app-help-button [text]="rule.description"></app-help-button>
+          }
+        }
+      </div>
+
+      <div class="validator-warning">
+        @if (rule.warning === "always") {
+          <span class="hint-text" i18n
+            >Only a warning: users can still save.</span
+          >
+        } @else if (rule.warning === "optional" && setRules().has(rule.key)) {
+          <mat-checkbox
+            [checked]="warningOnlyRules().has(rule.key)"
+            (change)="setWarningOnly(rule.key, $event.checked)"
+            i18n
+            >Only a warning</mat-checkbox
+          >
+          <app-help-button
+            text="Users see the error, but can still save after confirming it."
+            i18n-text
+          ></app-help-button>
+        }
+      </div>
+    </div>
+  } @empty {
+    <div class="hint-text" i18n>no validation rules</div>
+  }
+
+  @if (hiddenRuleLabels().length > 0) {
+    <div class="hint-text" i18n>
+      Not used for this type of field: {{ hiddenRuleLabels().join(", ") }}
+    </div>
+  }
+
+  @if (addableRules().length > 0) {
+    <mat-form-field class="add-rule-field">
+      <mat-label i18n>Add validation rule</mat-label>
+      <mat-select
+        #addRuleSelect
+        (selectionChange)="addRule($event.value); addRuleSelect.value = null"
+      >
+        @for (rule of addableRules(); track rule.key) {
+          <mat-option [value]="rule">{{ ruleLabel(rule) }}</mat-option>
         }
       </mat-select>
-      <mat-hint i18n>Only a warning: users can still save.</mat-hint>
     </mat-form-field>
   }
-
-  @if (linkedEntityType(); as linkedType) {
-    <div>
-      <app-admin-display-condition-button
-        target="field"
-        [showLabel]="true"
-        [entityType]="linkedType"
-        [currentRecordType]="entityType()"
-        createLabel="Create Selection Filter"
-        i18n-createLabel
-        editLabel="Edit Selection Filter"
-        i18n-editLabel
-        tooltip="Only offer records matching a condition for selection in this field, e.g. based on the values of the record being edited. Selecting another record shows a warning, but users can still save."
-        i18n-tooltip
-        explanation="The selection dropdown shows only records that match the condition below (users can choose an option to also see other records)."
-        i18n-explanation
-        [condition]="validatorForm().get('selectionCondition').value"
-        (conditionChange)="
-          validatorForm().get('selectionCondition').setValue($event)
-        "
-      ></app-admin-display-condition-button>
-    </div>
-  }
-
-  @if (applicableValidators().has("pattern")) {
-    <div class="flex-row flex-wrap align-center gap-small">
-      <mat-form-field floatLabel="always" class="flex-grow">
-        <mat-label i18n>Pattern (Regex)</mat-label>
-        <input formControlName="pattern" matInput />
-        <app-help-button
-          matSuffix
-          text="Define a format (-> regular expression) that text values have to match to be valid."
-          i18n-text
-        ></app-help-button>
-        <mat-error i18n>Not a valid regular expression</mat-error>
-        <mat-hint align="start" i18n>
-          Learn about regular expressions at
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
-            target="_blank"
-            rel="noopener"
-          >
-            developer.mozilla.org
-          </a>
-        </mat-hint>
-      </mat-form-field>
-
-      <mat-form-field floatLabel="always" class="flex-grow">
-        <mat-label i18n>Validation Error Text for Pattern</mat-label>
-        <input formControlName="patternMessage" matInput />
-        <app-help-button
-          matSuffix
-          text="Optional custom message shown to users when their input does not match the pattern. If empty, a generic error message is displayed."
-          i18n-text
-        ></app-help-button>
-        <mat-hint align="start" i18n>
-          Shown when the entered value does not match the pattern above
-        </mat-hint>
-      </mat-form-field>
-      <ng-container
-        *ngTemplateOutlet="onlyWarning; context: { $implicit: 'pattern' }"
-      />
-    </div>
-  }
-
-  <div>
-    <mat-checkbox i18n formControlName="required">
-      Required Field
-    </mat-checkbox>
-    <app-help-button
-      text="Users always must provide a value in this field"
-      i18n-text
-    ></app-help-button>
-  </div>
-
-  <div class="flex-row flex-wrap align-center gap-regular">
-    <div>
-      <mat-checkbox i18n formControlName="uniqueId">
-        Unique ID [experimental]</mat-checkbox
-      >
-      <app-help-button
-        text="Ensures the value is not used as an ID for another existing record already. (Experimental Feature: Does not support advanced edge cases)"
-        i18n-text
-      ></app-help-button>
-    </div>
-    <ng-container
-      *ngTemplateOutlet="onlyWarning; context: { $implicit: 'uniqueId' }"
-    />
-  </div>
 
   @if (fieldDataType() === "string") {
     <div>
@@ -204,21 +77,4 @@
       ></app-help-button>
     </div>
   }
-</form>
-
-<ng-template #onlyWarning let-key>
-  @if (setValidators().has(key)) {
-    <div>
-      <mat-checkbox
-        [checked]="warningOnlyValidators().has(key)"
-        (change)="setWarningOnly(key, $event.checked)"
-        i18n
-        >Only a warning</mat-checkbox
-      >
-      <app-help-button
-        text="Users see the error, but can still save after confirming it."
-        i18n-text
-      ></app-help-button>
-    </div>
-  }
-</ng-template>
+</div>
