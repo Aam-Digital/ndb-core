@@ -300,39 +300,66 @@ describe("FilterService", () => {
   describe("conditional colors", () => {
     afterEach(() => Entity.matchColorConditionsWith(undefined));
 
-    it("match records in the stored format, like all other conditions", () => {
-      // like an attendance entry, the entity keeps the status behind a getter, the stored entry has it as property
-      class Entry {
-        private readonly _status = "absent";
-        get status() {
-          return this._status;
-        }
-      }
+    it("are matched like all other conditions, in the stored format", () => {
       @DatabaseEntity("ColorConditionTest")
       class ColorConditionTest extends Entity {
         static override readonly color = [
-          {
-            condition: { log: { $elemMatch: { status: { $exists: true } } } },
-            color: "red",
-          },
+          { condition: { name: "other name" }, color: "red" },
         ];
-        @DatabaseField({
-          dataType: "schema-embed",
-          isArray: true,
-          additional: { status: { dataType: "string" } },
-        })
-        log: Entry[];
+        @DatabaseField() name: string;
       }
+      const matchesInStoredFormat = vi.fn().mockReturnValue(true);
+      vi.spyOn(service, "getFilterPredicate").mockReturnValue(
+        matchesInStoredFormat,
+      );
       const record = new ColorConditionTest();
-      record.log = [new Entry()];
 
       TestBed.runInInjectionContext(matchColorConditionsInStoredFormat);
 
       expect(record.getColor()).toBe("red");
+      expect(service.getFilterPredicate).toHaveBeenCalledWith({
+        name: "other name",
+      });
+      expect(matchesInStoredFormat).toHaveBeenCalledWith(record);
     });
   });
 
   describe("matching records in the stored format", () => {
+    // like an attendance entry, the entry keeps its status behind a getter, the stored entry has it as property
+    class EntryWithGetter {
+      private readonly _status = "absent";
+      get status() {
+        return this._status;
+      }
+    }
+    @DatabaseEntity("StoredFormatGetterTest")
+    class StoredFormatGetterTest extends Entity {
+      @DatabaseField({
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { dataType: "string" } },
+      })
+      log: EntryWithGetter[];
+    }
+
+    it.each([
+      [{ $exists: true }, true],
+      // a "not defined" condition, which matched every such entry before
+      [{ $exists: false }, false],
+      [{ $eq: "absent" }, true],
+    ])(
+      "finds a value that an embedded entry keeps behind a getter: %j",
+      (statusCondition, expected) => {
+        const record = new StoredFormatGetterTest();
+        record.log = [new EntryWithGetter()];
+        const matches = service.getFilterPredicate({
+          log: { $elemMatch: { status: statusCondition } },
+        });
+
+        expect(matches(record)).toBe(expected);
+      },
+    );
+
     function testRecord() {
       return TestEntity.create({
         category: { id: "M", label: "male" },

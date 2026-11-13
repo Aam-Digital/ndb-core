@@ -57,6 +57,8 @@ import { expectArrayWithExactContents } from "../../../utils/test-utils/array-te
 import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
+import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -102,6 +104,7 @@ describe("FilterGeneratorService", () => {
           useClass: SchemaEmbedDatatype,
           multi: true,
         },
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
         // EntityDatatype only uses this to offer entity actions, which filters don't
         { provide: EntityActionsService, useValue: {} },
       ],
@@ -867,6 +870,49 @@ describe("FilterGeneratorService", () => {
         (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
       );
       expect(filter(allEntities, emptyOption)).toEqual([e3]);
+    });
+
+    it("matches the status of attendance entries, which they keep behind a getter, also for 'not defined'", async () => {
+      @DatabaseEntity("EmbeddedAttendanceStatusTestEntity")
+      class EmbeddedAttendanceStatusTestEntity extends Entity {}
+      EmbeddedAttendanceStatusTestEntity.schema.set("attendance", {
+        dataType: "attendance",
+        isArray: true,
+        label: "Attendance",
+      });
+      const statusOf = (id: string) =>
+        defaultAttendanceStatusTypes.find((status) => status.id === id);
+      const withAttendance = (...entries: AttendanceItem[]) =>
+        Object.assign(new EmbeddedAttendanceStatusTestEntity(), {
+          attendance: entries,
+        });
+
+      const allRecorded = withAttendance(
+        new AttendanceItem(statusOf("PRESENT")),
+        new AttendanceItem(statusOf("ABSENT")),
+      );
+      const oneWithoutStatus = withAttendance(
+        new AttendanceItem(statusOf("PRESENT")),
+        new AttendanceItem(),
+      );
+      const noEntries = withAttendance();
+      const allEntities = [allRecorded, oneWithoutStatus, noEntries];
+
+      const statusFilter = (
+        await service.generate(
+          [{ id: "attendance.status" }],
+          EmbeddedAttendanceStatusTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedAttendanceStatusTestEntity>;
+      const optionOf = (key: string) =>
+        statusFilter.options.find((option) => option.key === key);
+
+      expect(filter(allEntities, optionOf("ABSENT"))).toEqual([allRecorded]);
+      expect(filter(allEntities, optionOf(EMPTY_FILTER_OPTION_KEY))).toEqual([
+        oneWithoutStatus,
+        noEntries,
+      ]);
     });
 
     it("filters a multi-value property nested in an embedded array field by its single values, counting an empty list as not defined", async () => {

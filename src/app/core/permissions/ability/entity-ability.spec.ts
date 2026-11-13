@@ -7,6 +7,13 @@ import { FilterService } from "../../filter/filter.service";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { createEmbeddedEntity } from "../../entity/model/embedded-entity";
 import { EntityActionPermission } from "../permission-types";
+import { Entity } from "../../entity/model/entity";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 
 describe("EntityAbility", () => {
   let ability: EntityAbility;
@@ -14,7 +21,10 @@ describe("EntityAbility", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [EntityAbility],
+      providers: [
+        EntityAbility,
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
+      ],
     });
     ability = TestBed.inject(EntityAbility);
   });
@@ -223,6 +233,72 @@ describe("EntityAbility", () => {
 
         expect(ability.can("read", entity)).toBe(expected);
         expect(matchesInMemory(entity)).toBe(expected);
+      },
+    );
+  });
+
+  describe("conditions on the properties of embedded fields", () => {
+    @DatabaseEntity("EntityAbilityEmbeddedFieldsTest")
+    class EmbeddedFieldsTest extends Entity {
+      @DatabaseField({
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { dataType: "string" } },
+      })
+      log: object[];
+
+      @DatabaseField({
+        dataType: "schema-embed",
+        additional: { type: { dataType: "string" } },
+      })
+      contact: object;
+
+      // its entries keep the status behind a getter, which only the stored format has as a property
+      @DatabaseField({ dataType: "attendance", isArray: true })
+      attendance: AttendanceItem[];
+    }
+
+    const statusOf = (id: string) =>
+      defaultAttendanceStatusTypes.find((status) => status.id === id);
+    const entity = Object.assign(new EmbeddedFieldsTest(), {
+      log: [{ status: "done" }, { status: "open" }],
+      contact: { type: "mobile" },
+      attendance: [
+        new AttendanceItem(statusOf("PRESENT")),
+        new AttendanceItem(statusOf("ABSENT")),
+      ],
+    });
+
+    it.each([
+      [{ "log.status": "done" }, true],
+      [{ "log.status": "cancelled" }, false],
+      // "is not" on a list of entries: at least one entry is not "done"
+      [{ "log.status": { $not: { $eq: "done" } } }, true],
+      [{ "log.status": { $in: ["cancelled", "open"] } }, true],
+      [{ "contact.type": "mobile" }, true],
+      [{ "contact.type": "home" }, false],
+      [{ "attendance.status": "ABSENT" }, true],
+      [{ "attendance.status": "LATE" }, false],
+    ])(
+      "are matched by permissions like in memory, as the conditions editor saves them: %j",
+      (editorRow, expected) => {
+        const filterService = TestBed.inject(FilterService);
+        const conditions = filterService.toStoredCondition(
+          EmbeddedFieldsTest,
+          editorRow,
+        );
+        ability.update([
+          {
+            subject: EmbeddedFieldsTest.ENTITY_TYPE,
+            action: "read",
+            conditions,
+          },
+        ]);
+
+        expect(ability.can("read", entity)).toBe(expected);
+        expect(filterService.getFilterPredicate(conditions)(entity)).toBe(
+          expected,
+        );
       },
     );
   });
