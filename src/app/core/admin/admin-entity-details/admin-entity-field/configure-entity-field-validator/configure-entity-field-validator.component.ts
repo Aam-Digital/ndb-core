@@ -145,13 +145,22 @@ export class ConfigureEntityFieldValidatorComponent {
    * The keys of the rules that are shown in the list: those that are set, and those that the admin added.
    * A rule of another type stays here, so that it comes back if the type is changed back.
    */
-  private readonly shownKeys = linkedSignal<string[]>(() => {
-    const form = this.validatorForm();
-    return Object.keys(this.entitySchemaField()?.validators ?? {}).filter(
-      (key) =>
-        this.validators.rules.has(key) &&
-        !this.validators.rules.get(key).isSwitchedOff(form.get(key).value),
-    );
+  private readonly shownKeys = linkedSignal<FormGroup, string[]>({
+    source: this.validatorForm,
+    computation: (form, previous) => {
+      const set = Object.keys(
+        this.entitySchemaField()?.validators ?? {},
+      ).filter(
+        (key) =>
+          this.validators.rules.has(key) &&
+          !this.validators.rules.get(key).isSwitchedOff(form.get(key).value),
+      );
+      // the form is rebuilt when the linked type changes: rows added but not filled in yet stay
+      return [
+        ...set,
+        ...(previous?.value.filter((key) => !set.includes(key)) ?? []),
+      ];
+    },
   });
 
   /** the shown rules that fit the selected type, with the texts the list shows for them */
@@ -210,7 +219,7 @@ export class ConfigureEntityFieldValidatorComponent {
             config: {
               ...inputs,
               formControl: form.get(rule.key),
-              label: rule.labelFor(this.datatype()),
+              label: this.labelOf(rule),
               description: rule.description,
             },
           },
@@ -294,15 +303,20 @@ export class ConfigureEntityFieldValidatorComponent {
   }
 
   protected removeRule(rule: FieldValidator) {
-    this.setWarningOnly(rule.key, false);
+    // silently, so that the config is emitted once, by the change of the setting
+    this.setWarningOnly(rule.key, false, false);
     this.shownKeys.update((keys) => keys.filter((key) => key !== rule.key));
     this.validatorForm().get(rule.key).setValue(null);
   }
 
-  protected setWarningOnly(key: string, warningOnly: boolean) {
+  protected setWarningOnly(
+    key: string,
+    warningOnly: boolean,
+    emitEvent = true,
+  ) {
     const control = this.validatorForm().get(WARNING_ONLY_KEY);
     const others = control.value.filter((other: string) => other !== key);
-    control.setValue(warningOnly ? [...others, key] : others);
+    control.setValue(warningOnly ? [...others, key] : others, { emitEvent });
   }
 
   /**

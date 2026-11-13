@@ -2,7 +2,6 @@ import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { asArray } from "app/utils/asArray";
 import { Entity } from "../../entity/model/entity";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
   DataFilter,
@@ -140,7 +139,6 @@ export class SelectionConditionValidator extends FieldValidator<
   override readonly warning = "always";
   override readonly requiresFieldId = true;
 
-  private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly placeholderService = inject(DynamicPlaceholderValueService);
   private readonly filterService = inject(FilterService);
@@ -149,11 +147,9 @@ export class SelectionConditionValidator extends FieldValidator<
     datatype: DefaultDatatype,
     field: EntitySchemaField,
   ): boolean {
-    const types = asArray(field.additional ?? []);
     return (
       datatype instanceof EntityDatatype &&
-      types.length === 1 &&
-      this.entityRegistry.has(types[0])
+      asArray(field.additional ?? []).length === 1
     );
   }
 

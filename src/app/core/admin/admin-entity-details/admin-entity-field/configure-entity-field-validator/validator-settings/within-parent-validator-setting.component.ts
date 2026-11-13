@@ -42,6 +42,7 @@ interface ParentRangeOption {
         </mat-select>
       </mat-form-field>
     } @else {
+      <span>{{ label() }}</span>
       <span class="hint-text" i18n>
         No linked record type of this record has a date range field to compare
         with.

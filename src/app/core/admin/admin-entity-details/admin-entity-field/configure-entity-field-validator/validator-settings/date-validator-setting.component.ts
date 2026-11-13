@@ -5,6 +5,7 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EditDateComponent } from "#src/app/core/basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "#src/app/core/basic-datatypes/month/edit-month/edit-month.component";
 import { MonthDatatype } from "#src/app/core/basic-datatypes/month/month.datatype";
+import { parseToDate } from "#src/app/core/basic-datatypes/date/date-limit";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { ValidatorSettingComponent } from "./validator-setting";
 
@@ -40,13 +41,20 @@ export class DateValidatorSettingComponent
     () => this.field()?.dataType === MonthDatatype.dataType,
   );
 
+  /**
+   * The config stores the date as a text. This has to run before the control is bound to the date input
+   * for the first time (an effect runs after it and would show the text unparsed for a moment).
+   */
   ngOnInit() {
-    // the config stores the date as a text, before it is bound to the date input
     const control = this.formControl();
     const value = control.value;
-    if (typeof value === "string" || typeof value === "number") {
-      const parsed = new Date(value);
-      if (!Number.isNaN(parsed.getTime())) {
+    // "$now" is a date relative to today, which stays as it is
+    if (
+      value !== "$now" &&
+      (typeof value === "string" || typeof value === "number")
+    ) {
+      const parsed = parseToDate(value);
+      if (parsed) {
         control.setValue(parsed, { emitEvent: false });
       }
     }

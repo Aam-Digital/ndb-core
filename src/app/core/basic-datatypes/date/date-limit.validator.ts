@@ -9,6 +9,9 @@ export abstract class DateLimitValidator extends FieldValidator {
   override readonly datatypesSupported = [DateDatatype];
   override readonly configComponent = "DateValidatorSetting";
 
+  /** the key of the rule */
+  protected abstract readonly limit: "minDate" | "maxDate";
+
   /** the name of the rule for a month field */
   protected abstract readonly monthLabel: string;
 
@@ -17,9 +20,6 @@ export abstract class DateLimitValidator extends FieldValidator {
   }
 
   override message(error: unknown): string {
-    return descriptionForDateValidator(
-      this.key as "minDate" | "maxDate",
-      error,
-    );
+    return descriptionForDateValidator(this.limit, error);
   }
 }

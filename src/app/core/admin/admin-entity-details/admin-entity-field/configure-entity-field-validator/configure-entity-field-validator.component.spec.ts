@@ -152,6 +152,24 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     expect(await addableRules()).toContain("Maximum Value");
   });
 
+  it("does not mark a rule as only a warning again after it was removed and added again", async () => {
+    await render({
+      dataType: "number",
+      validators: { max: 5, _warningOnly: ["max"] },
+    });
+    rows()[0].querySelector("button").click();
+    await settle();
+    expect(emitted).toHaveLength(1);
+
+    await addRule("Maximum Value");
+    const input = await loader().getHarness(
+      MatInputHarness.with({ ancestor: ".validator-row" }),
+    );
+    await input.setValue("7");
+
+    expect(emitted.at(-1)).toEqual({ max: 7 });
+  });
+
   it("offers 'Only a warning' only for rules that can be one", async () => {
     await render({
       dataType: "date-range",
@@ -310,16 +328,34 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
     });
 
-    it.each<[string, string | string[]]>([
-      ["several record types", ["A", "B"]],
-      ["a record type that does not exist", "NotARegisteredType"],
-    ])(
-      "offers the condition only for a link to exactly one record type (%s)",
-      async (_, additional) => {
-        await render({ dataType: "entity", additional });
+    it("offers the condition only for a link to exactly one record type", async () => {
+      await render({ dataType: "entity", additional: ["A", "B"] });
 
-        expect(await addableRules()).not.toContain("Selection Filter");
-      },
-    );
+      expect(await addableRules()).not.toContain("Selection Filter");
+    });
+
+    it("shows the name of a rule whose setting has nothing to offer", async () => {
+      await render({ dataType: "entity", additional: "NotARegisteredType" });
+
+      await addRule("Selection Filter");
+
+      await vi.waitFor(() =>
+        expect(rows()[0].textContent).toContain("Selection Filter"),
+      );
+    });
+
+    it("keeps a row that is not filled in yet when the linked type changes", async () => {
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTabTestRecord);
+      await render({
+        dataType: "entity",
+        additional: "ValidatorTabTestRecord",
+      });
+      await addRule("Selection Filter");
+
+      fixture.componentRef.setInput("linkedEntityType", undefined);
+      await settle();
+
+      expect(rows()).toHaveLength(1);
+    });
   });
 });

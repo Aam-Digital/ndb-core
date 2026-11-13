@@ -208,6 +208,18 @@ describe("settings components of the validation rules", () => {
       },
     );
 
+    it("shows the name of the rule when no linked record type has a date range", () => {
+      const { fixture } = render(
+        ValidatorSettingProject.schema.get("plannedPeriod"),
+      );
+      fixture.componentRef.setInput("entityType", ValidatorSettingProject);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain(
+        "Must lie within the period",
+      );
+    });
+
     it("shows the saved setting", async () => {
       const { select } = render(period, {
         parentReferenceField: "project",
@@ -259,14 +271,20 @@ describe("settings components of the validation rules", () => {
   });
 
   describe("DateValidatorSettingComponent", () => {
-    it("reads the date of the setting, which the config stores as a text", () => {
-      const control = new FormControl<Date | string | null>("2020-03-01");
-      const fixture = TestBed.createComponent(DateValidatorSettingComponent);
-      fixture.componentRef.setInput("formControl", control);
-      fixture.componentRef.setInput("label", "Minimum Date");
-      fixture.detectChanges();
+    it.each<[string, Date | string]>([
+      ["2020-03-01", new Date(2020, 2, 1)],
+      ["$now", "$now"],
+    ])(
+      "reads the date %s, which the config stores as a text",
+      (text, expected) => {
+        const control = new FormControl<Date | string | null>(text);
+        const fixture = TestBed.createComponent(DateValidatorSettingComponent);
+        fixture.componentRef.setInput("formControl", control);
+        fixture.componentRef.setInput("label", "Minimum Date");
+        fixture.detectChanges();
 
-      expect(control.value).toEqual(new Date("2020-03-01"));
-    });
+        expect(control.value).toEqual(expected);
+      },
+    );
   });
 });

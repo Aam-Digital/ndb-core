@@ -7,6 +7,7 @@ import { minDateValidator } from "./date-limit";
 @Injectable()
 export class MinDateValidator extends DateLimitValidator {
   static override readonly key = "minDate";
+  protected readonly limit = "minDate";
   readonly label = $localize`Minimum Date`;
   protected readonly monthLabel = $localize`Minimum Month`;
 

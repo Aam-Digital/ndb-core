@@ -31,6 +31,8 @@ import { ValidatorSettingComponent } from "./validator-setting";
         [condition]="formControl().value"
         (conditionChange)="formControl().setValue($event)"
       />
+    } @else {
+      <span>{{ label() }}</span>
     }
   `,
 })
@@ -39,6 +41,7 @@ export class SelectionConditionValidatorSettingComponent implements ValidatorSet
 > {
   readonly formControl =
     input.required<FormControl<DataFilter<Entity> | null>>();
+  readonly label = input<string>();
   readonly description = input<string>();
   readonly entityType = input<EntityConstructor>();
   readonly linkedEntityType = input<EntityConstructor>();

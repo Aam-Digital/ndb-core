@@ -7,6 +7,7 @@ import { maxDateValidator } from "./date-limit";
 @Injectable()
 export class MaxDateValidator extends DateLimitValidator {
   static override readonly key = "maxDate";
+  protected readonly limit = "maxDate";
   readonly label = $localize`Maximum Date`;
   protected readonly monthLabel = $localize`Maximum Month`;
 
