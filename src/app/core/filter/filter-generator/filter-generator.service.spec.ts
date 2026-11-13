@@ -16,7 +16,7 @@ import {
   FilterSelectionOption,
   SelectableFilter,
 } from "../filters/filters";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   DatabaseEntity,
   entityRegistry,
@@ -880,22 +880,19 @@ describe("FilterGeneratorService", () => {
         isArray: true,
         label: "Attendance",
       });
-      const statusOf = (id: string) =>
-        defaultAttendanceStatusTypes.find((status) => status.id === id);
-      const withAttendance = (...entries: AttendanceItem[]) =>
-        Object.assign(new EmbeddedAttendanceStatusTestEntity(), {
-          attendance: entries,
-        });
-
-      const allRecorded = withAttendance(
-        new AttendanceItem(statusOf("PRESENT")),
-        new AttendanceItem(statusOf("ABSENT")),
+      const allRecorded = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+        new AttendanceItem(attendanceStatus("PRESENT")),
+        new AttendanceItem(attendanceStatus("ABSENT")),
       );
-      const oneWithoutStatus = withAttendance(
-        new AttendanceItem(statusOf("PRESENT")),
+      const oneWithoutStatus = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+        new AttendanceItem(attendanceStatus("PRESENT")),
         new AttendanceItem(),
       );
-      const noEntries = withAttendance();
+      const noEntries = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+      );
       const allEntities = [allRecorded, oneWithoutStatus, noEntries];
 
       const statusFilter = (
@@ -905,14 +902,15 @@ describe("FilterGeneratorService", () => {
           allEntities,
         )
       )[0] as ConfigurableEnumFilter<EmbeddedAttendanceStatusTestEntity>;
-      const optionOf = (key: string) =>
-        statusFilter.options.find((option) => option.key === key);
-
-      expect(filter(allEntities, optionOf("ABSENT"))).toEqual([allRecorded]);
-      expect(filter(allEntities, optionOf(EMPTY_FILTER_OPTION_KEY))).toEqual([
-        oneWithoutStatus,
-        noEntries,
-      ]);
+      expect(
+        filter(allEntities, optionWithKey(statusFilter, "ABSENT")),
+      ).toEqual([allRecorded]);
+      expect(
+        filter(
+          allEntities,
+          optionWithKey(statusFilter, EMPTY_FILTER_OPTION_KEY),
+        ),
+      ).toEqual([oneWithoutStatus, noEntries]);
     });
 
     it("filters a multi-value property nested in an embedded array field by its single values, counting an empty list as not defined", async () => {
@@ -1189,5 +1187,23 @@ describe("FilterGeneratorService", () => {
     option: FilterSelectionOption<T>,
   ): T[] {
     return data.filter(filterService.getFilterPredicate(option.filter));
+  }
+
+  function optionWithKey<T extends Entity>(
+    selectable: ConfigurableEnumFilter<T>,
+    key: string,
+  ): FilterSelectionOption<T> {
+    return selectable.options.find((option) => option.key === key);
+  }
+
+  function attendanceStatus(id: string) {
+    return defaultAttendanceStatusTypes.find((status) => status.id === id);
+  }
+
+  function recordWithAttendance<E extends Entity>(
+    type: EntityConstructor<E>,
+    ...entries: AttendanceItem[]
+  ): E {
+    return Object.assign(new type(), { attendance: entries });
   }
 });

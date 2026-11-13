@@ -19,6 +19,7 @@ import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import { DateDatatype } from "../basic-datatypes/date/date.datatype";
 import { Injectable } from "@angular/core";
+// qlty-ignore: radarlint-js:typescript:S1874 - covers records still stored with the deprecated attendance datatype
 import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
 
 @Injectable()
@@ -44,6 +45,7 @@ describe("FilterService", () => {
         { provide: ConfigurableEnumService, useValue: mockEnumService },
         {
           provide: DefaultDatatype,
+          // qlty-ignore: radarlint-js:typescript:S1874 - covers records still stored with the deprecated attendance datatype
           useClass: EventAttendanceMapDatatype,
           multi: true,
         },
