@@ -11,6 +11,9 @@ import { ageRangeValidator, descriptionForAgeValidator } from "./age-limit";
 @Injectable()
 export class MaxAgeValidator extends FieldValidator {
   static override readonly key = "maxAge";
+  readonly label = $localize`Maximum Age (Years)`;
+  override readonly description = $localize`Enter the maximum allowed age in years. This is independent from the date limits.`;
+  override readonly configComponent = "NumberValidatorSetting";
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {

@@ -7,6 +7,8 @@ import { NumberDatatype } from "./number.datatype";
 @Injectable()
 export class MaxValidator extends FieldValidator<number> {
   static override readonly key = "max";
+  readonly label = $localize`Maximum Value`;
+  override readonly configComponent = "NumberValidatorSetting";
   override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {

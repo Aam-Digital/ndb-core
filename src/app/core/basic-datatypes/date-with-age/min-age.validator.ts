@@ -11,6 +11,9 @@ import { ageRangeValidator, descriptionForAgeValidator } from "./age-limit";
 @Injectable()
 export class MinAgeValidator extends FieldValidator {
   static override readonly key = "minAge";
+  readonly label = $localize`Minimum Age (Years)`;
+  override readonly description = $localize`Enter the minimum allowed age in years. This is independent from the date limits.`;
+  override readonly configComponent = "NumberValidatorSetting";
   override readonly datatypesSupported = [DateWithAgeDatatype];
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {

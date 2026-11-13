@@ -47,6 +47,9 @@ export class PatternValidator extends FieldValidator<
   string | RegExp | { pattern: string; message: string }
 > {
   static override readonly key = "pattern";
+  readonly label = $localize`Pattern (Regex)`;
+  override readonly description = $localize`Define a format (-> regular expression) that text values have to match to be valid.`;
+  override readonly configComponent = "PatternValidatorSetting";
 
   override appliesTo(datatype: DefaultDatatype): boolean {
     // not by inheritance: link and file fields extend the StringDatatype as they store ids

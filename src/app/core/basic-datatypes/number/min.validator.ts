@@ -7,6 +7,8 @@ import { NumberDatatype } from "./number.datatype";
 @Injectable()
 export class MinValidator extends FieldValidator<number> {
   static override readonly key = "min";
+  readonly label = $localize`Minimum Value`;
+  override readonly configComponent = "NumberValidatorSetting";
   override readonly datatypesSupported = [NumberDatatype];
 
   build(value: number): ValidatorFn {

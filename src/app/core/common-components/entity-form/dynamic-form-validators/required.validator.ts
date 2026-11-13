@@ -6,6 +6,8 @@ import { FieldValidator } from "./field-validator";
 @Injectable()
 export class RequiredValidator extends FieldValidator<boolean> {
   static override readonly key = "required";
+  readonly label = $localize`Required Field`;
+  override readonly description = $localize`Users always must provide a value in this field`;
   override readonly warning = "never";
   override readonly angularValidator = Validators.required;
 
