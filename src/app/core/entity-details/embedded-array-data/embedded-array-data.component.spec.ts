@@ -12,6 +12,7 @@ import {
   SchemaEmbedArrayEntryChange,
   SchemaEmbedArrayEntryConflictError,
 } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array-entry-change";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 
 @DatabaseEntity("EmbeddedArrayDataTest")
 class EmbeddedArrayDataTest extends Entity {}
@@ -176,8 +177,18 @@ describe("EmbeddedArrayDataComponent", () => {
     expect(table().readonly()).toBe(true);
   });
 
-  it("saves the entity with the changed entry and displays the entries", async () => {
+  function spyOnAutomatedUpdates() {
+    return vi
+      .spyOn(
+        TestBed.inject(AutomatedFieldUpdateConfigService),
+        "applyRulesToDependentEntities",
+      )
+      .mockResolvedValue([]);
+  }
+
+  it("saves the entity with the changed entry, displays the entries and updates the linked records", async () => {
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+    const applyRules = spyOnAutomatedUpdates();
     await render();
 
     await table().applyChange()({
@@ -191,6 +202,13 @@ describe("EmbeddedArrayDataComponent", () => {
       { documentType: "Visa", documentNumber: "B2" },
     ];
     expect(saveSpy.mock.lastCall[0]["documents"]).toEqual(expected);
+    // like a save of the form, the rules of fields that this field is the source of are applied
+    const [savedEntity, entityBefore] = applyRules.mock.lastCall;
+    expect(savedEntity["documents"]).toEqual(expected);
+    expect(entityBefore["documents"]).toEqual([
+      { documentType: "Passport", documentNumber: "A1" },
+      { documentType: "ID Card", documentNumber: "B2" },
+    ]);
     await waitForRowTexts([
       ["Passport", "A1"],
       ["Visa", "B2"],
@@ -245,10 +263,11 @@ describe("EmbeddedArrayDataComponent", () => {
     expect(saveSpy).not.toHaveBeenCalled();
   });
 
-  it("keeps displaying the previous entries and passes on the error if saving fails", async () => {
+  it("keeps displaying the previous entries, updates no linked records and passes on the error if saving fails", async () => {
     vi.spyOn(TestBed.inject(EntityMapperService), "save").mockRejectedValue(
       new Error("save failed"),
     );
+    const applyRules = spyOnAutomatedUpdates();
     await render();
 
     await expect(
@@ -256,6 +275,7 @@ describe("EmbeddedArrayDataComponent", () => {
         entry: { documentType: "Visa", documentNumber: "C3" },
       }),
     ).rejects.toThrow("save failed");
+    expect(applyRules).not.toHaveBeenCalled();
 
     fixture.detectChanges();
     await waitForRowTexts([
