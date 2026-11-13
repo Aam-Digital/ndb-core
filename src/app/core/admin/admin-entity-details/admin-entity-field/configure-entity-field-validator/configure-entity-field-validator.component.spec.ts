@@ -206,6 +206,17 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
     });
 
+    it("keeps a pattern given as a regular expression as a text", async () => {
+      await render({ dataType: "string", validators: { pattern: /^\d+$/ } });
+
+      await addRule("Required Field");
+
+      expect(emitted.at(-1)).toEqual({
+        required: true,
+        pattern: String.raw`^\d+$`,
+      });
+    });
+
     it("keeps the pattern of an email field when another setting is changed", async () => {
       await render({
         dataType: "email",
@@ -299,10 +310,16 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
     });
 
-    it("offers the condition only for a link to exactly one record type", async () => {
-      await render({ dataType: "entity", additional: ["A", "B"] });
+    it.each<[string, string | string[]]>([
+      ["several record types", ["A", "B"]],
+      ["a record type that does not exist", "NotARegisteredType"],
+    ])(
+      "offers the condition only for a link to exactly one record type (%s)",
+      async (_, additional) => {
+        await render({ dataType: "entity", additional });
 
-      expect(await addableRules()).not.toContain("Selection Filter");
-    });
+        expect(await addableRules()).not.toContain("Selection Filter");
+      },
+    );
   });
 });

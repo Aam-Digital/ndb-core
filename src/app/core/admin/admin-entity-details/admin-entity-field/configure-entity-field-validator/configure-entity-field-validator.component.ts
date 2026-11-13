@@ -127,7 +127,11 @@ export class ConfigureEntityFieldValidatorComponent {
     const validators = this.entitySchemaField()?.validators;
     const controls: Record<string, FormControl> = {};
     for (const rule of this.validators.rules.values()) {
-      controls[rule.key] = new FormControl(validators?.[rule.key] ?? null);
+      const value = validators?.[rule.key] ?? null;
+      // a rule defined in code can have a regular expression, which a config cannot store
+      controls[rule.key] = new FormControl(
+        value instanceof RegExp ? value.source : value,
+      );
     }
     controls[WARNING_ONLY_KEY] = new FormControl(
       asArray(validators?.[WARNING_ONLY_KEY] ?? []),
@@ -150,22 +154,28 @@ export class ConfigureEntityFieldValidatorComponent {
     );
   });
 
-  /** the shown rules that fit the selected type */
+  /** the shown rules that fit the selected type, with the texts the list shows for them */
   protected readonly rows = computed(() =>
     this.shownKeys()
       .filter((key) => this.applicableKeys().has(key))
-      .map((key) => this.validators.rules.get(key)),
+      .map((key) => {
+        const rule = this.validators.rules.get(key);
+        const label = this.labelOf(rule);
+        return { rule, label, removeLabel: $localize`Remove ${label}:rule:` };
+      }),
   );
 
   protected readonly hiddenRuleLabels = computed(() =>
     this.shownKeys()
       .filter((key) => !this.applicableKeys().has(key))
-      .map((key) => this.validators.rules.get(key).labelFor(this.datatype())),
+      .map((key) => this.labelOf(this.validators.rules.get(key))),
   );
 
   protected readonly addableRules = computed(() => {
     const shown = new Set(this.shownKeys());
-    return this.applicableRules().filter((rule) => !shown.has(rule.key));
+    return this.applicableRules()
+      .filter((rule) => !shown.has(rule.key))
+      .map((rule) => ({ rule, label: this.labelOf(rule) }));
   });
 
   /** only a rule that is set can be made only a warning */
@@ -271,12 +281,8 @@ export class ConfigureEntityFieldValidatorComponent {
     });
   }
 
-  protected ruleLabel(rule: FieldValidator): string {
+  private labelOf(rule: FieldValidator): string {
     return rule.labelFor(this.datatype());
-  }
-
-  protected removeLabel(rule: FieldValidator): string {
-    return $localize`Remove ${this.ruleLabel(rule)}:rule:`;
   }
 
   /** Add a rule to the list. A rule without setting is switched on right away. */

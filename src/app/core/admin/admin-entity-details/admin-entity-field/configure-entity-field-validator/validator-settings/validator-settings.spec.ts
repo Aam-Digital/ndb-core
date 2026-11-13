@@ -115,6 +115,17 @@ describe("settings components of the validation rules", () => {
       expect(await (await input("pattern")).getValue()).toBe(shown);
     });
 
+    it("shows the error of an invalid pattern when the dialog marks all fields as touched", () => {
+      const { control } = render("[a-z");
+
+      control.markAllAsTouched();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain(
+        "Not a valid regular expression",
+      );
+    });
+
     it("marks the setting as invalid while the pattern is not a regular expression", async () => {
       const { control, input } = render(null);
 

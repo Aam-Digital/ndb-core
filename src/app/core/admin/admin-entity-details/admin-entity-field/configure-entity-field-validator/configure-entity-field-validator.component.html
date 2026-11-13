@@ -1,39 +1,39 @@
 <div class="flex-column">
-  @for (rule of rows(); track rule.key) {
+  @for (row of rows(); track row.rule.key) {
     <div class="validator-row flex-row align-center gap-small">
       <button
         mat-icon-button
         type="button"
-        (click)="removeRule(rule)"
+        (click)="removeRule(row.rule)"
         matTooltip="Remove"
         i18n-matTooltip
-        [attr.aria-label]="removeLabel(rule)"
+        [attr.aria-label]="row.removeLabel"
       >
         <app-fa-dynamic-icon icon="xmark"></app-fa-dynamic-icon>
       </button>
 
       <div class="validator-setting flex-grow">
-        @if (settingComponents().get(rule.key); as setting) {
+        @if (settingComponents().get(row.rule.key); as setting) {
           <ng-template [appDynamicComponent]="setting"></ng-template>
         } @else {
-          <span>{{ ruleLabel(rule) }}</span>
-          @if (rule.description) {
-            <app-help-button [text]="rule.description"></app-help-button>
+          <span>{{ row.label }}</span>
+          @if (row.rule.description) {
+            <app-help-button [text]="row.rule.description"></app-help-button>
           }
         }
       </div>
 
       <div class="validator-warning">
-        @if (rule.warning === "always") {
+        @if (row.rule.warning === "always") {
           <span class="hint-text" i18n
             >Only a warning: users can still save.</span
           >
         } @else if (
-          rule.warning === "optional" && setRuleKeys().has(rule.key)
+          row.rule.warning === "optional" && setRuleKeys().has(row.rule.key)
         ) {
           <mat-checkbox
-            [checked]="warningOnlyRuleKeys().has(rule.key)"
-            (change)="setWarningOnly(rule.key, $event.checked)"
+            [checked]="warningOnlyRuleKeys().has(row.rule.key)"
+            (change)="setWarningOnly(row.rule.key, $event.checked)"
             i18n
             >Only a warning</mat-checkbox
           >
@@ -61,8 +61,8 @@
         #addRuleSelect
         (selectionChange)="addRule($event.value); addRuleSelect.value = null"
       >
-        @for (rule of addableRules(); track rule.key) {
-          <mat-option [value]="rule">{{ ruleLabel(rule) }}</mat-option>
+        @for (item of addableRules(); track item.rule.key) {
+          <mat-option [value]="item.rule">{{ item.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

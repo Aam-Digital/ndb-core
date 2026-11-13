@@ -1,9 +1,17 @@
-import { Component, effect, input, untracked } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+  input,
+  untracked,
+} from "@angular/core";
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  TouchedChangeEvent,
   ValidationErrors,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -65,6 +73,8 @@ type PatternSetting = string | RegExp | { pattern: string; message?: string };
   `,
 })
 export class PatternValidatorSettingComponent implements ValidatorSettingComponent<PatternSetting> {
+  private readonly changeDetector = inject(ChangeDetectorRef);
+
   readonly formControl = input.required<FormControl<PatternSetting | null>>();
   readonly label = input.required<string>();
   readonly description = input<string>();
@@ -89,8 +99,16 @@ export class PatternValidatorSettingComponent implements ValidatorSettingCompone
         control.setValue(joinPattern(this.parts.getRawValue()));
         control.markAsDirty();
       });
+      // the dialog marks the control of the rule as touched to show its errors, which does not reach `parts`
+      const touchedSub = control.events.subscribe((event) => {
+        if (event instanceof TouchedChangeEvent && event.touched) {
+          this.parts.markAllAsTouched();
+          this.changeDetector.markForCheck();
+        }
+      });
       onCleanup(() => {
         sub.unsubscribe();
+        touchedSub.unsubscribe();
         control.removeValidators(validPatternSetting);
       });
     });
