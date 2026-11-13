@@ -20,7 +20,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
@@ -41,6 +41,7 @@ import {
 import { FilterService } from "../../filter/filter.service";
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
+  DataFilter,
   isCurrentRecordPlaceholder,
   placeholderFieldId,
 } from "../../filter/filters/filters";
@@ -207,7 +208,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     return this.rowReferences()[conditionIndex]?.referencedField;
   }
 
-  private referenceOf(condition: any): {
+  private referenceOf(condition: Record<string, unknown>): {
     isReference: boolean;
     referencedField?: string;
   } {
@@ -565,7 +566,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   }
 
   /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
-  private storedRows(): any[] {
+  private storedRows(): DataFilter<Entity>[] {
     return (this.working.$or ?? []).map((row) =>
       this.entityConstructor && isCompleteRow(row)
         ? this.filterService.toStoredCondition(this.entityConstructor, row)
@@ -574,7 +575,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   }
 
   /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
-  private toEditorRow(row: any): any {
+  private toEditorRow(row: DataFilter<Entity>): DataFilter<Entity> {
     if (!this.entityConstructor) return row;
     const editorRow = this.filterService.fromStoredCondition(
       this.entityConstructor,

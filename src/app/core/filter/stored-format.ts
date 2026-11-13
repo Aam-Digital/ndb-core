@@ -6,6 +6,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { getSchemaEmbedDatatype } from "../entity/schema/embedded-schema-field.util";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
 import { isPlainObject } from "../../utils/filter-compare-utils";
+import { DataFilter } from "./filters/filters";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 
 /**
@@ -27,13 +28,17 @@ const ENTITY_VALUES_KEY = "__entity__";
  * @param inMemory whether the condition is matched in memory against a record from {@link toStoredFormatRecord},
  *   which also gives access to values that only the entity has (like `dateOfBirth.age`)
  */
-export function toStoredFormatCondition(
-  condition: unknown,
+export function toStoredFormatCondition<T>(
+  condition: DataFilter<T>,
   schema: EntitySchema | undefined,
   schemaService: EntitySchemaService,
   inMemory = false,
-): any {
-  return toStoredSelector(condition, { schema, inMemory }, schemaService);
+): DataFilter<T> {
+  return toStoredSelector(
+    condition,
+    { schema, inMemory },
+    schemaService,
+  ) as DataFilter<T>;
 }
 
 /**
@@ -89,7 +94,7 @@ function toStoredSelector(
   query: unknown,
   ctx: SchemaContext,
   schemaService: EntitySchemaService,
-): any {
+): unknown {
   if (Array.isArray(query)) {
     return query.map((q) => toStoredSelector(q, ctx, schemaService));
   }

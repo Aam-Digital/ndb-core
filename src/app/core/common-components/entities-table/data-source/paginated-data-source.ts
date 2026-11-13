@@ -3,7 +3,6 @@ import { MatSort } from "@angular/material/sort";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
 import { effect, inject, signal } from "@angular/core";
-import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { merge } from "rxjs";
 import {
@@ -205,7 +204,7 @@ export class PaginatedDataSource<
     this.resetPaginationCache();
   }
 
-  private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
+  private processFilterForDB(filter: DataFilter<T>): DataFilter<T> {
     // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
     return toStoredFormatCondition(
       convertToCouchRegex(filter),
