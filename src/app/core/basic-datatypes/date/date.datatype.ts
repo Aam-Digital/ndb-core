@@ -38,6 +38,7 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
   DBFormat
 > {
   static override dataType = "date";
+  static override readonly storedFormat = "plain";
   // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
   // static override label: string = $localize`:datatype-label:date (with time)`;
 
@@ -63,6 +64,22 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
 
   override viewComponent = "DisplayDate";
   override editComponent = "EditDate";
+
+  /** a date is a UTC timestamp, so the day becomes its first or last moment in local time */
+  override toStoredDayBound(day: string, atEndOfDay: boolean): string {
+    if (atEndOfDay) {
+      return moment(day).endOf("day").toISOString();
+    }
+    // a date stored without time ("YYYY-MM-DD") counts as midnight UTC but sorts right before that timestamp,
+    // so where the day starts at midnight UTC, only the day itself as bound treats it like in memory
+    const startOfDay = moment(day).startOf("day").toISOString();
+    return startOfDay === `${day}T00:00:00.000Z` ? day : startOfDay;
+  }
+
+  /** a date is a timestamp, so a day becomes its start in local time, like the matching compares it */
+  override toStoredDay(day: string): string {
+    return moment(day).toISOString();
+  }
 
   override transformToDatabaseFormat(value: Date) {
     return value as any;

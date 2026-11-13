@@ -28,12 +28,13 @@ import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
 import { DataFilter } from "../../filter/filters/filters";
-import {
-  allInterpreters,
-  allParsingInstructions,
-  createFactory,
-} from "@ucast/mongo2js";
-import { extendedCompare } from "../../../utils/filter-compare-utils";
+import { createFilterPredicate } from "../../../utils/filter-compare-utils";
+
+/** whether an entity matches a condition of its conditional colors (see {@link Entity.matchColorConditionsWith}) */
+export type ColorConditionMatcher = (
+  entity: Entity,
+  condition: DataFilter<any>,
+) => boolean;
 
 /**
  * This represents a static class of type <T>.
@@ -170,6 +171,19 @@ export class Entity {
    * - An array of ColorMapping objects for conditional colors based on entity properties
    */
   static color: string | ColorMapping[];
+
+  /** see {@link matchColorConditionsWith} */
+  private static colorConditionMatcher?: ColorConditionMatcher;
+
+  /**
+   * Match the conditions of conditional colors (see {@link color}) with the given function.
+   * The app sets the matching of the `FilterService` at its start, in the stored format like all other conditions
+   * (see `matchColorConditionsInStoredFormat`), as an entity cannot inject that service.
+   * Without a function, the entity is matched as it is.
+   */
+  static matchColorConditionsWith(matcher: ColorConditionMatcher | undefined) {
+    Entity.colorConditionMatcher = matcher;
+  }
 
   /**
    * Base route of the entity (list/details) view for this entity type.
@@ -402,11 +416,6 @@ export class Entity {
     // Handle conditional colors array
     if (Array.isArray(colorConfig) && colorConfig.length > 0) {
       try {
-        const interpret = createFactory(
-          allParsingInstructions,
-          allInterpreters,
-          { compare: extendedCompare },
-        );
         let fallbackColor: string | null = null;
 
         for (const mapping of colorConfig) {
@@ -422,8 +431,12 @@ export class Entity {
           }
 
           try {
-            const test = interpret(mapping.condition as any);
-            if (test(entity)) return mapping.color;
+            const matches =
+              Entity.colorConditionMatcher ??
+              ((record, condition) => createFilterPredicate(condition)(record));
+            if (matches(entity, mapping.condition)) {
+              return mapping.color;
+            }
           } catch (e) {
             Logging.debug(
               "Error evaluating color condition",

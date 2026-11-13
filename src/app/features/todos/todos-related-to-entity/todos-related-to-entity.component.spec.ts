@@ -55,7 +55,12 @@ describe("TodosRelatedToEntityComponent", () => {
     expect(component.filterObj()).toEqual({
       $and: [
         TODO_NOT_COMPLETED_FILTER,
-        { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
+        {
+          $or: [
+            { relatedEntities: child.getId() },
+            { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
+          ],
+        },
       ],
     });
     expect(component.recordsDataSource().allRecords()).toEqual([relatedTodo]);
@@ -100,12 +105,10 @@ describe("TodosRelatedToEntityComponent", () => {
         TODO_NOT_COMPLETED_FILTER,
         {
           $or: [
-            {
-              assignedTo: { $elemMatch: { $eq: user.getId() } },
-            },
-            {
-              relatedEntities: { $elemMatch: { $eq: user.getId() } },
-            },
+            { assignedTo: user.getId() },
+            { assignedTo: { $elemMatch: { $eq: user.getId() } } },
+            { relatedEntities: user.getId() },
+            { relatedEntities: { $elemMatch: { $eq: user.getId() } } },
           ],
         },
       ],

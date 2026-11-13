@@ -77,11 +77,13 @@ export interface ExportColumnMapping<EntityType = any> {
   ) => Promise<any> | any;
 }
 
+/** see {@link DefaultDatatype.storedFormat} */
+export type StoredFormat = "as-is" | "plain" | "id";
+
 /**
- * The Mango conditions matching the given document path against a reference id,
- * covering both shapes it may have been stored in: the id itself or an array containing it.
- *
- * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ * The conditions matching the given path against an id (of a referenced record or a dropdown option),
+ * covering both shapes it may have been stored in: the id itself or an array containing it
+ * (data saved while the field was a single-value or a multi-value field).
  */
 export function referenceIdConditions(
   path: string,
@@ -175,6 +177,20 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
 
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
+  }
+
+  /**
+   * How the database format of a value relates to the value the entity holds,
+   * which conditions on the field depend on (see the README of the filter module):
+   * - `"as-is"`: the database holds the value as the entity does
+   * - `"plain"`: the database holds a plain value (like a text) for an object of the entity (like a `Date`),
+   *   so a condition on a property of the value (like `dateOfBirth.age`) can only be matched against the entity, in memory
+   * - `"id"`: the database holds the id of what the value refers to (a record or a dropdown option) as a plain value,
+   *   so a condition on `<field>.id` means that id in the database format
+   */
+  static readonly storedFormat: StoredFormat = "as-is";
+  get storedFormat(): StoredFormat {
+    return (this.constructor as typeof DefaultDatatype).storedFormat;
   }
 
   /**
@@ -394,38 +410,27 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * A day ("YYYY-MM-DD") that a condition compares a value with (`$gte`, `$gt`, `$lte`, `$lt`), in the database format,
+   * so that the database compares by day like the matching in memory does.
+   *
+   * @param atEndOfDay whether the value is compared with the end of the day (`$lte`, `$gt`) instead of its start
+   */
+  toStoredDayBound(day: string, atEndOfDay: boolean): unknown {
+    return day;
+  }
+
+  /** A day ("YYYY-MM-DD") as a value of this datatype in the database format, e.g. to pre-fill a field with the day a condition requires. */
+  toStoredDay(day: string): unknown {
+    return day;
+  }
+
+  /**
    * Return a comparable primitive for sorting this field's value in a list column.
    * Return `undefined` to fall through to the default sort logic.
    * Override this in datatypes that store arrays or complex objects where the
    * raw value cannot be sorted meaningfully.
    */
   sortValue(_fieldValue: EntityType): number | string | undefined {
-    return undefined;
-  }
-
-  /**
-   * Mango conditions matching documents whose `fieldId` references the given entity id,
-   * used to query related entities instead of loading a whole entity type (see
-   * {@link EntityRelationsService.loadAllLinkingToEntity}).
-   *
-   * The conditions are matched against the *database* format, so only the datatype that
-   * writes that format can build them - which is why this lives here rather than in the
-   * calling service. Return every shape the value may have been stored in rather than
-   * branching on `schemaField.isArray`: existing documents may have been written while the
-   * field had the other setting (see {@link FilterService} and {@link EntityFilter}).
-   *
-   * The caller treats these as candidates only and still post-filters in memory, so
-   * matching too much is harmless - matching too little silently loses references.
-   *
-   * @returns the conditions to OR together, or `undefined` if this datatype's stored format
-   *          cannot be expressed as a query, which makes the caller load the whole type.
-   *          Never return an empty array: `{$or: []}` matches nothing.
-   */
-  getReferenceSelector(
-    fieldId: string,
-    schemaField: EntitySchemaField,
-    referencedId: string,
-  ): DataFilter<any>[] | undefined {
     return undefined;
   }
 

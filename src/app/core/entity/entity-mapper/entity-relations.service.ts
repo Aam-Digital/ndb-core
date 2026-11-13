@@ -6,7 +6,15 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { getEmbeddedEntityReferenceFields } from "../schema/embedded-schema-field.util";
+import {
+  getEmbeddedEntityReferenceFields,
+  getSchemaEmbedDatatype,
+  resolveEmbeddedField,
+} from "../schema/embedded-schema-field.util";
+import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields";
+import { referenceIdConditions } from "../default-datatype/default.datatype";
+import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
+import { toStoredFormatCondition } from "../../filter/stored-format";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
@@ -89,23 +97,93 @@ export class EntityRelationsService {
   }
 
   /**
-   * Check whether a schema field references the given entity type,
-   * including nested references inside embedded schemas (e.g. attendance fields).
+   * The fields of the entity type that link to records of the referenced type, as paths:
+   * the id of a field linking to a record, or `<field>.<inner field>` for the link inside the entries
+   * of an embedded field (e.g. "attendance.participant").
    */
-  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    if (asArray(field.additional).includes(type)) {
-      return true;
-    }
-
-    return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
-      ([, inner]) => asArray(inner.additional).includes(type),
+  getReferencingFieldPaths(
+    entityType: EntityConstructor,
+    referencedType: string,
+  ): string[] {
+    return [...entityType.schema].flatMap(([fieldId, field]) =>
+      isEntityLinkTo(field, referencedType)
+        ? [fieldId]
+        : this.innerFieldsLinkingTo(field, referencedType).map(
+            (innerId) => `${fieldId}.${innerId}`,
+          ),
     );
   }
 
   /**
-   * Find all entities that reference the given entity.
-   * @param entity The entity to find references to
-   * @returns An array of objects containing an entity referencing the given entity and its specific fields that reference it
+   * The path of a field linking to records of the referenced type, for a field given by its id alone:
+   * an embedded field with one inner field linking to that type is resolved to the path of that inner field
+   * (e.g. "attendance" to "attendance.participant").
+   */
+  resolveReferencingFieldPath(
+    entityType: EntityConstructor,
+    fieldPath: string,
+    referencedType: string,
+  ): string {
+    const field = entityType.schema.get(fieldPath);
+    if (!field) {
+      return fieldPath;
+    }
+    const innerIds = this.innerFieldsLinkingTo(field, referencedType);
+    return innerIds.length === 1 ? `${fieldPath}.${innerIds[0]}` : fieldPath;
+  }
+
+  /**
+   * The conditions (to combine with `$or`) that the field at the path (see {@link getReferencingFieldPaths})
+   * links to the record with the id, in any of the shapes it may be stored in:
+   * a single id or a list of them, and for a field inside the entries of an embedded field,
+   * a list of entries or a single one (saved while the field had the other setting).
+   */
+  referenceConditions(
+    entityType: EntityConstructor,
+    fieldPath: string,
+    referencedId: string,
+  ): DataFilter<Entity>[] {
+    const condition = { $or: referenceIdConditions(fieldPath, referencedId) };
+    const embedded = resolveEmbeddedField(
+      this.schemaService,
+      entityType,
+      fieldPath,
+    );
+    if (!embedded) {
+      return condition.$or;
+    }
+    return [true, false].flatMap((isArray) => {
+      const onEmbeddedField = conditionOnEmbeddedField(condition, fieldPath, {
+        ...embedded,
+        isArray,
+      });
+      return onEmbeddedField["$or"] ?? [onEmbeddedField];
+    });
+  }
+
+  /** ids of the inner fields of an embedded field linking to records of the type */
+  private innerFieldsLinkingTo(
+    field: EntitySchemaField,
+    referencedType: string,
+  ): string[] {
+    return getEmbeddedEntityReferenceFields(this.schemaService, field)
+      .filter(([, inner]) => isEntityLinkTo(inner, referencedType))
+      .map(([innerId]) => innerId);
+  }
+
+  /**
+   * Check whether a schema field references the given entity type,
+   * including nested references inside embedded schemas (e.g. attendance fields).
+   */
+  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
+    return (
+      asArray(field.additional).includes(type) ||
+      this.innerFieldsLinkingTo(field, type).length > 0
+    );
+  }
+
+  /**
+   * The records referencing the given entity, each with its fields that reference it.
    */
   async loadAllLinkingToEntity(
     entity: Entity,
@@ -129,11 +207,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * Search through all entities of the given type and find those that reference the given entity.
-   * @param primaryEntity The entity to which the other entities include a reference
-   * @param refType The entity type of the entities to search for references to primaryEntity
-   * @param refProperties The fields of the refType entities that may contain a reference (based on the refType's schema)
-   * @private
+   * The records of the type referencing the primary entity through one of the given fields (of the type's schema).
    */
   private async loadLinkedEntitiesOfType(
     primaryEntity: Entity,
@@ -182,13 +256,10 @@ export class EntityRelationsService {
       return this.entityMapper.loadType(refType);
     }
 
-    const conditions: DataFilter<any>[] = [];
+    const conditions: DataFilter<Entity>[] = [];
     for (const refProperty of refProperties) {
-      const datatype = this.schemaService.getDatatypeOrDefault(
-        refProperty.dataType,
-      );
-      const propertyConditions = datatype.getReferenceSelector(
-        refProperty.id,
+      const propertyConditions = this.fieldReferenceConditions(
+        refType,
         refProperty,
         primaryEntity.getId(),
       );
@@ -206,7 +277,43 @@ export class EntityRelationsService {
     if (conditions.length === 0) {
       return [];
     }
-    return this.entityMapper.findAllType(refType, { $or: conditions });
+    return this.entityMapper.findAllType(
+      refType,
+      toStoredFormatCondition(
+        { $or: conditions },
+        refType.schema,
+        this.schemaService,
+      ),
+    );
+  }
+
+  /**
+   * The conditions that the given field of a record references the id, in any of the shapes it may be stored in,
+   * also inside the entries of an embedded field.
+   * `undefined` if the field's datatype does not hold the reference in a way a query can match.
+   */
+  private fieldReferenceConditions(
+    refType: EntityConstructor,
+    refProperty: FormFieldConfig,
+    referencedId: string,
+  ): DataFilter<Entity>[] | undefined {
+    if (refProperty.dataType === EntityDatatype.dataType) {
+      return this.referenceConditions(refType, refProperty.id, referencedId);
+    }
+
+    const container = getSchemaEmbedDatatype(this.schemaService, refProperty);
+    if (!container) {
+      return undefined;
+    }
+    return getInnerEntityReferenceFields(
+      container.getEffectiveSchema(refProperty),
+    ).flatMap(([innerProp]) =>
+      this.referenceConditions(
+        refType,
+        `${refProperty.id}.${innerProp}`,
+        referencedId,
+      ),
+    );
   }
 
   /**
@@ -242,11 +349,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * Return the fields of entity that contain the given refId.
-   * If there is no such referenced ID, the array will be empty.
-   * @param entity
-   * @param refId
-   * @param relevantFields The entity fields to check for the refId
+   * The fields of the entity (out of the relevant ones) that contain the id.
    */
   private fieldsIncludingId(
     entity: Entity,
@@ -259,4 +362,12 @@ export class EntityRelationsService {
       ),
     );
   }
+}
+
+/** whether the field links to records of the type */
+function isEntityLinkTo(field: EntitySchemaField, type: string): boolean {
+  return (
+    field.dataType === EntityDatatype.dataType &&
+    asArray(field.additional).includes(type)
+  );
 }

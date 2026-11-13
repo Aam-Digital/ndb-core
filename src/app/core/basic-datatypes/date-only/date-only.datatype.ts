@@ -34,6 +34,14 @@ export class DateOnlyDatatype extends DateDatatype<string> {
   static override dataType = "date-only";
   static override label: string = $localize`:datatype-label:date`;
 
+  override toStoredDayBound(day: string): string {
+    return day;
+  }
+
+  override toStoredDay(day: string): string {
+    return day;
+  }
+
   override transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {
       return undefined;

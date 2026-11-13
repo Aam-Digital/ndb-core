@@ -1,36 +1,138 @@
 import { inject, Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { Entity } from "../entity/model/entity";
-import {
-  allInterpreters,
-  allParsingInstructions,
-  createFactory,
-  Filter,
-} from "@ucast/mongo2js";
-import moment from "moment";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 import {
   combineFilterConditions,
   DataFilter,
   Filter as EntityFilter,
 } from "./filters/filters";
-import { MongoQuery } from "@casl/ability";
-import { extendedCompare } from "../../utils/filter-compare-utils";
+import {
+  createFilterPredicate,
+  isPlainObject,
+} from "../../utils/filter-compare-utils";
+import { isEqual } from "lodash-es";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { EntitySchema } from "../entity/schema/entity-schema";
+import { toStoredFormatCondition, toStoredFormatRecord } from "./stored-format";
+import {
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+  getSchemaEmbedDatatype,
+  resolveEmbeddedField,
+} from "../entity/schema/embedded-schema-field.util";
+import { conditionOnEmbeddedField } from "./embedded-field-filter";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
+import { asArray } from "../../utils/asArray";
+import { Logging } from "../logging/logging.service";
+import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
+import { requiredEntry, requiredStoredValue } from "./required-values";
 
 /**
- * Utility service to help handling and aligning filters with entities.
+ * Works with conditions on records: matches records in memory, offers the fields a condition can be set on,
+ * and pre-fills a new record so that it matches a condition.
  */
 @Injectable({
   providedIn: "root",
 })
 export class FilterService {
-  private enumService = inject(ConfigurableEnumService);
+  private readonly schemaService = inject(EntitySchemaService);
 
-  private filterFactory = createFactory(
-    allParsingInstructions,
-    allInterpreters,
-    { compare: extendedCompare },
-  ) as Filter;
+  /** the records in the stored format, kept per saved revision (see {@link toStoredFormat}) */
+  private readonly storedFormatCache = new WeakMap<
+    Entity,
+    { rev: string; record: object }
+  >();
+
+  /**
+   * The fields of the entity type that a condition can be set on, for a field select:
+   * its own fields and, instead of an embedded field itself, the properties of its entries
+   * (with paths like "attendance.status"), as `options` in addition to the record's fields and the `excludedFields`.
+   *
+   * @param onStoredDocuments the conditions are matched against the stored documents (e.g. permissions, notification rules):
+   *    an embedded field whose entries are stored in another shape (like the tuples of an old attendance field) is then kept whole
+   */
+  getConditionFields(
+    entityType: EntityConstructor,
+    onStoredDocuments = false,
+  ): {
+    options: FormFieldConfig[];
+    excludedFields: string[];
+  } {
+    const embeddedRefs = getEmbeddedFieldRefs(
+      this.schemaService,
+      entityType,
+    ).filter(
+      ({ outerSchema, innerProp }) =>
+        // like the field select does for the record's own fields
+        !outerSchema.isInternalField &&
+        !!outerSchema.label &&
+        (!onStoredDocuments ||
+          getSchemaEmbedDatatype(
+            this.schemaService,
+            outerSchema,
+          ).getEmbeddedFieldDbPath(innerProp) === innerProp),
+    );
+    return {
+      options: embeddedRefs.map((ref) => ({
+        ...ref.innerSchema,
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      })),
+      excludedFields: [...new Set(embeddedRefs.map((ref) => ref.outerProp))],
+    };
+  }
+
+  /** The schema of the field at the path (see {@link getConditionFields}). */
+  getFieldAtPath(
+    entityType: EntityConstructor,
+    fieldPath: string,
+  ): EntitySchemaField | undefined {
+    return (
+      entityType.schema.get(fieldPath) ??
+      resolveEmbeddedField(this.schemaService, entityType, fieldPath)
+        ?.innerSchema
+    );
+  }
+
+  /**
+   * A condition on a field path (see {@link getConditionFields}) as it is stored:
+   * one on a property of an embedded field is a condition on one of its entries
+   * (e.g. `{ "attendance.status": "A" }` becomes `{ attendance: { $elemMatch: { status: "A" } } }`).
+   */
+  toStoredCondition<T extends Entity>(
+    entityType: EntityConstructor,
+    condition: DataFilter<T>,
+  ): DataFilter<T> {
+    const [fieldPath] = Object.keys(condition ?? {});
+    const embedded =
+      fieldPath &&
+      resolveEmbeddedField(this.schemaService, entityType, fieldPath);
+    return embedded
+      ? conditionOnEmbeddedField(condition, fieldPath, embedded)
+      : condition;
+  }
+
+  /** The reverse of {@link toStoredCondition}: a condition on one entry of an embedded field becomes one on the path of the property. */
+  fromStoredCondition<T extends Entity>(
+    entityType: EntityConstructor,
+    condition: DataFilter<T>,
+  ): DataFilter<T> {
+    const fields = Object.keys(condition ?? {});
+    // a row with conditions on several fields stays as it is, so that none of them gets lost
+    const fieldId = fields.length === 1 ? fields[0] : undefined;
+    const entryCondition = condition?.[fieldId]?.$elemMatch;
+    const innerKeys = isPlainObject(entryCondition)
+      ? Object.keys(entryCondition)
+      : [];
+    if (innerKeys.length !== 1 || innerKeys[0].startsWith("$")) {
+      return condition;
+    }
+    const fieldPath = `${fieldId}.${innerKeys[0]}`;
+    return resolveEmbeddedField(this.schemaService, entityType, fieldPath)
+      ? ({ [fieldPath]: entryCondition[innerKeys[0]] } as DataFilter<T>)
+      : condition;
+  }
 
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],
@@ -43,108 +145,179 @@ export class FilterService {
   }
 
   /**
-   * Builds a predicate for a given filter object.
-   * This predicate can be used to filter arrays of objects.
-   * ```javascript
-   * const predicate = this.filterService.getFilterPredicate(filterObj);
-   * const filtered = this.data.filter(predicate)
-   * ```
-   * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
+   * A function telling whether a record matches the condition, e.g. to filter a list of records.
+   * Records are matched in the stored format, like the database matches them
+   * (see the README of the filter module).
+   *
+   * @throws if the condition cannot be parsed
    */
-  getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>((filter ?? {}) as MongoQuery<T>);
+  getFilterPredicate<T extends Entity>(
+    filter: DataFilter<T>,
+  ): (record: T) => boolean {
+    const matchesAsIs = createFilterPredicate<T>(filter);
+    const matchesPerSchema = new Map<
+      EntitySchema,
+      (record: object) => boolean
+    >();
+    return (record: T) => {
+      if (!(record instanceof Entity)) {
+        return matchesAsIs(record);
+      }
+      const schema = record.getSchema();
+      let matches = matchesPerSchema.get(schema);
+      if (!matches) {
+        matches = createFilterPredicate(
+          toStoredFormatCondition(filter, schema, this.schemaService, true),
+        );
+        matchesPerSchema.set(schema, matches);
+      }
+      return matches(this.toStoredFormat(record));
+    };
   }
 
   /**
-   * Patches an entity with values required to pass the filter query.
-   * This patch happens in-place.
-   * @param entity the entity to be patched
-   * @param filter the filter which the entity should pass afterward
+   * The record as the database stores it (see {@link toStoredFormatRecord}).
+   *
+   * Saved records are converted once per revision. A record without revision (e.g. a new record) is converted every time,
+   * as it may still change. A copy with unsaved changes (like the current state of a form) is a new object and converted anew.
+   */
+  private toStoredFormat(record: Entity): object {
+    const cached = this.storedFormatCache.get(record);
+    if (record._rev && cached?.rev === record._rev) {
+      return cached.record;
+    }
+
+    let storedRecord: object;
+    try {
+      storedRecord = toStoredFormatRecord(record, this.schemaService);
+    } catch (err) {
+      // a value that cannot be converted is a data problem of this record, not a reason to fail the whole list
+      Logging.debug(
+        "[FILTER] could not convert record to the stored format",
+        err,
+      );
+      return record;
+    }
+    if (record._rev) {
+      this.storedFormatCache.set(record, {
+        rev: record._rev,
+        record: storedRecord,
+      });
+    }
+    return storedRecord;
+  }
+
+  /**
+   * Set the values the condition requires on the entity (in place), so that it matches the condition afterwards.
+   *
+   * Only conditions requiring one specific value are applied, like `{ category: "A" }`, `{ category: { $in: ["A"] } }`
+   * or `{ tags: { $elemMatch: { $eq: "A" } } }` (only for a multi-value field), every branch of `$or` and `$and`.
+   * A condition on an entry of an embedded field (like `{ attendance: { $elemMatch: { participant: "Child:1" } } }`)
+   * adds such an entry. The values are converted from the stored format through the datatype of the field.
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
-    const schema = entity.getSchema();
-    Object.entries(filter ?? {}).forEach(([key, value]) => {
-      if (key === "$or" && Array.isArray(value)) {
-        // for $or filters, try each branch
-        for (const branch of value) {
-          this.alignEntityWithFilter(entity, branch);
-        }
-      } else if (typeof value !== "object") {
-        // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
-        this.assignValueToEntity(key, value, schema, entity);
-      } else if (value["$elemMatch"]?.["$eq"]) {
-        // e.g. { children: { $elemMatch: { $eq: "Child:some-id" } } }
-        this.assignValueToEntity(
-          key,
-          value["$elemMatch"]["$eq"],
-          schema,
-          entity,
-          true,
+    for (const [key, condition] of Object.entries(filter ?? {})) {
+      if ((key === "$or" || key === "$and") && Array.isArray(condition)) {
+        // apply each branch of the alternatives ($or) or required parts ($and)
+        condition.forEach((branch) =>
+          this.alignEntityWithFilter(entity, branch),
         );
-      } else if (isSingleOptionList(value?.["$in"])) {
-        // e.g. { category: { $in: ["GUARDIAN_TALK"] } } (as saved by the conditions editor)
-        this.assignValueToEntity(key, value["$in"][0], schema, entity);
-      } else if (isSingleOptionList(value?.["$elemMatch"]?.["$in"])) {
-        this.assignValueToEntity(
-          key,
-          value["$elemMatch"]["$in"][0],
-          schema,
+      } else {
+        this.alignFieldCondition(entity, key, condition);
+      }
+    }
+  }
+
+  /** Set the value a condition on one field (or on a property of an embedded field) requires. */
+  private alignFieldCondition(entity: Entity, key: string, condition: unknown) {
+    const schema = entity.getSchema();
+    const [path, storedCondition] = Object.entries(
+      toStoredFormatCondition({ [key]: condition }, schema, this.schemaService),
+    )[0];
+    const [fieldId, ...innerPath] = path.split(".");
+    const field = schema.get(fieldId);
+    const container = getSchemaEmbedDatatype(this.schemaService, field);
+
+    if (container && innerPath.length > 0) {
+      // a single embedded object, e.g. { "phone.type": "mobile" }
+      this.addEmbeddedEntry(entity, fieldId, field, container, {
+        [innerPath.join(".")]: storedCondition,
+      });
+    } else if (container && isPlainObject(storedCondition?.["$elemMatch"])) {
+      this.addEmbeddedEntry(
+        entity,
+        fieldId,
+        field,
+        container,
+        storedCondition["$elemMatch"],
+      );
+    } else if (field && innerPath.length === 0) {
+      const value = requiredStoredValue(
+        storedCondition,
+        field,
+        this.schemaService,
+      );
+      if (value !== undefined) {
+        entity[fieldId] = this.schemaService.valueToEntityFormat(
+          field.isArray
+            ? this.storedValuesWith(entity[fieldId], field, value)
+            : value,
+          field,
           entity,
-          true,
         );
       }
-    });
+    }
+  }
+
+  /** the stored values of a multi-value field with the value added, as several parts of a condition can each require one */
+  private storedValuesWith(
+    current: unknown,
+    field: EntitySchemaField,
+    value: unknown,
+  ): unknown[] {
+    const stored = asArray(
+      this.schemaService.valueToDatabaseFormat(current ?? [], field) ?? [],
+    );
+    return stored.some((storedValue) => isEqual(storedValue, value))
+      ? stored
+      : [...stored, value];
   }
 
   /**
-   * @param isElemMatch whether the value comes from an `$elemMatch` filter condition.
+   * Add the entry required by the conditions on the inner properties of an embedded field
+   * to its list of entries, or into its single embedded object.
    */
-  private assignValueToEntity<T extends Entity>(
-    key: string,
-    value,
-    schema: Map<string, EntitySchemaField>,
-    newEntity: T,
-    isElemMatch = false,
+  private addEmbeddedEntry(
+    entity: Entity,
+    fieldId: string,
+    field: EntitySchemaField,
+    container: SchemaEmbedDatatype,
+    innerConditions: object,
   ) {
-    if (key.includes(".")) {
-      // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)
-      [key, value] = this.transformNestedKey(key, value);
-    }
-    const property = schema.get(key);
-
-    if (!property) {
-      // not a schema property
-      return;
-    }
-    if (isElemMatch && !property.isArray) {
-      // Filter options (e.g. of ConfigurableEnumFilter, EntityFilter) offer a plain equality and an
-      // `$elemMatch` variant side by side to also match data saved while the field had the other
-      // (single / multi select) setting. Only the variant fitting the current field applies here.
+    const storedEntry = requiredEntry(
+      container,
+      field,
+      innerConditions,
+      this.schemaService,
+    );
+    if (!storedEntry) {
       return;
     }
 
-    if (property?.dataType === "configurable-enum") {
-      value = this.parseConfigurableEnumValue(property, value);
+    if (container.holdsArray(field)) {
+      const entries = asArray(entity[fieldId] ?? []);
+      const [newEntry] = asArray(
+        this.schemaService.valueToEntityFormat([storedEntry], field, entity),
+      );
+      // the alternatives of a condition (like the shapes a field may be stored in) can require the same entry
+      if (!entries.some((entry) => isEqual(entry, newEntry))) {
+        entity[fieldId] = [...entries, newEntry];
+      }
+    } else {
+      entity[fieldId] = {
+        ...(entity[fieldId] ?? {}),
+        ...this.schemaService.valueToEntityFormat(storedEntry, field, entity),
+      };
     }
-    if (property?.dataType.includes("date")) {
-      value = moment(value).toDate();
-    }
-    newEntity[key] = property.isArray ? [value] : value;
   }
-
-  private transformNestedKey(key: string, value): any[] {
-    const [first, second] = key.split(".");
-    return [first, { [second]: value }];
-  }
-
-  private parseConfigurableEnumValue(property: EntitySchemaField, value) {
-    const enumValues = this.enumService.getEnumValues(property.additional);
-    const valueId = typeof value === "string" ? value : value["id"];
-    return enumValues.find(({ id }) => id === valueId);
-  }
-}
-
-/** a list with exactly one option, which can be applied as plain value */
-function isSingleOptionList(value: unknown): value is [unknown] {
-  return Array.isArray(value) && value.length === 1;
 }

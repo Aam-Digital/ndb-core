@@ -8,11 +8,12 @@ import { Ordering } from "../configurable-enum-ordering";
 @Injectable()
 export class ConfigurableEnumDatatype extends DiscreteDatatype<
   ConfigurableEnumValue,
-  string
+  string | string[]
 > {
   private enumService = inject(ConfigurableEnumService);
 
   static override dataType = "configurable-enum";
+  static override readonly storedFormat = "id";
   static override label: string = $localize`:datatype-label:dropdown option`;
 
   public override readonly viewComponent = "DisplayConfigurableEnum";
@@ -22,8 +23,11 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
    * transforms Objects of InteractionType to strings to save in DB
    * @param value Object to be saved as specified in config file; e.g. `{id: 'CALL', label:'Phone Call', color:'#FFFFFF'}`
    */
-  public transformToDatabaseFormat(value: ConfigurableEnumValue): string {
-    return value?.id;
+  public transformToDatabaseFormat(
+    value: ConfigurableEnumValue | ConfigurableEnumValue[],
+  ): string | string[] {
+    // a list saved while the field allowed several options stays a list
+    return Array.isArray(value) ? value.map((option) => option?.id) : value?.id;
   }
 
   /**

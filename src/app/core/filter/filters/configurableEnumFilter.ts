@@ -2,6 +2,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 import { Entity } from "../../entity/model/entity";
 
 import { DataFilter, FilterSelectionOption, SelectableFilter } from "./filters";
+import { referenceIdConditions } from "../../entity/default-datatype/default.datatype";
 
 export class ConfigurableEnumFilter<
   T extends Entity,
@@ -42,9 +43,6 @@ export function buildEnumValueFilter<T extends Entity>(
   enumValueId: string,
 ): DataFilter<T> {
   return {
-    $or: [
-      { [name + ".id"]: enumValueId },
-      { [name + ".id"]: { $elemMatch: { $eq: enumValueId } } },
-    ],
+    $or: referenceIdConditions(name + ".id", enumValueId),
   } as DataFilter<T>;
 }

@@ -10,8 +10,22 @@ import { buildEnumValueFilter } from "./filters/configurableEnumFilter";
 import { EntityFilter } from "./filters/entityFilter";
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
+import { matchColorConditionsInStoredFormat } from "./color-conditions.app-initializer";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { DateDatatype } from "../basic-datatypes/date/date.datatype";
+import { Injectable } from "@angular/core";
+// qlty-ignore: radarlint-js:typescript:S1874 - covers records still stored with the deprecated attendance datatype
+import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
+
+@Injectable()
+class TimestampTestDatatype extends DateDatatype {
+  static override readonly dataType = "timestamp-test";
+}
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -21,12 +35,25 @@ describe("FilterService", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnumValues: vi.fn(),
+      preLoadEnums: vi.fn(),
     };
     mockEnumService.getEnumValues.mockReturnValue(defaultInteractionTypes);
 
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
         { provide: ConfigurableEnumService, useValue: mockEnumService },
+        {
+          provide: DefaultDatatype,
+          // qlty-ignore: radarlint-js:typescript:S1874 - covers records still stored with the deprecated attendance datatype
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: TimestampTestDatatype,
+          multi: true,
+        },
       ],
     });
     service = TestBed.inject(FilterService);
@@ -119,17 +146,38 @@ describe("FilterService", () => {
     expect(relation.childId).toBe(child.getId());
   });
 
-  it("should support patching with date values", () => {
-    const filter = { date: "2022-02-03" } as DataFilter<Note>;
-    const predicate = service.getFilterPredicate(filter);
+  it.each([
+    ["date", moment("2022-02-03").toDate()],
+    ["date-only", moment("2022-02-03").toDate()],
+    ["month", moment("2022-02-01").toDate()],
+    // any datatype storing timestamps, like the `date` it extends
+    [TimestampTestDatatype.dataType, moment("2022-02-03").toDate()],
+  ])(
+    "patches a %s field with the day of the filter in local time",
+    (dataType, expected) => {
+      @DatabaseEntity(`DatePatchTestEntity-${dataType}`)
+      class DatePatchTestEntity extends Entity {}
+      DatePatchTestEntity.schema.set("day", { dataType });
+      const record = new DatePatchTestEntity();
+
+      service.alignEntityWithFilter(record, { day: "2022-02-03" });
+
+      expect(record["day"]).toEqual(expected);
+    },
+  );
+
+  it("patches a multi-value field with every value the parts of a condition require", () => {
     const note = new Note();
 
-    expect(predicate(note)).toBe(false);
+    service.alignEntityWithFilter(note, {
+      $and: [
+        { relatedEntities: { $elemMatch: { $eq: "Child:1" } } },
+        { relatedEntities: { $elemMatch: { $eq: "Child:2" } } },
+        { relatedEntities: { $elemMatch: { $eq: "Child:1" } } },
+      ],
+    } as DataFilter<Note>);
 
-    service.alignEntityWithFilter(note, filter);
-
-    expect(note.date).toBeInstanceOf(Date);
-    expect(predicate(note)).toBe(true);
+    expect(note.relatedEntities).toEqual(["Child:1", "Child:2"]);
   });
 
   it("should support patching with array values", () => {
@@ -167,6 +215,19 @@ describe("FilterService", () => {
     [
       "nothing, if an $in list offers multiple options",
       { subject: { $in: ["A", "B"] } },
+      "subject",
+      undefined,
+    ],
+    [
+      "nothing, for an empty value (of a 'not defined' condition)",
+      { subject: { $eq: null } },
+      "subject",
+      undefined,
+    ],
+    ["nothing, for an empty text", { subject: "" }, "subject", undefined],
+    [
+      "nothing, for a list as value",
+      { subject: ["A", "B"] },
       "subject",
       undefined,
     ],
@@ -208,6 +269,12 @@ describe("FilterService", () => {
       date: { $gte: "2022-01-02", $lt: "2022-01-04" },
     } as DataFilter<Note>);
     expect(notes.filter(predicate)).toEqual([n2, n3]);
+
+    // e.g. the date of the edited record, as a resolved `$current_record` placeholder
+    predicate = service.getFilterPredicate({
+      date: moment("2022-01-02").toDate(),
+    } as DataFilter<Note>);
+    expect(notes.filter(predicate)).toEqual([n2]);
   });
 
   it("should skip filters without a selection when combining them", () => {
@@ -223,5 +290,135 @@ describe("FilterService", () => {
       service.combineFilters([asFilter({}), asFilter(selected)]),
       "one of two selected",
     ).toEqual(selected);
+  });
+
+  it("offers no condition fields inside internal embedded fields, like the created and updated metadata", () => {
+    expect(service.getConditionFields(TestEntity)).toEqual({
+      options: [],
+      excludedFields: [],
+    });
+  });
+
+  it("keeps an old attendance field whole for conditions on the stored documents, as its entries are stored as tuples", () => {
+    @DatabaseEntity("FilterServiceLegacyAttendanceTest")
+    class LegacyAttendanceEntity extends Entity {
+      @DatabaseField({ label: "Attendance", dataType: "event-attendance-map" })
+      childrenAttendance: any;
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { label: "Status", dataType: "string" } },
+      })
+      log: object[];
+    }
+
+    expect(service.getConditionFields(LegacyAttendanceEntity)).toEqual({
+      options: expect.arrayContaining([
+        expect.objectContaining({ id: "childrenAttendance.participant" }),
+        expect.objectContaining({ id: "log.status" }),
+      ]),
+      excludedFields: ["childrenAttendance", "log"],
+    });
+    expect(service.getConditionFields(LegacyAttendanceEntity, true)).toEqual({
+      options: [expect.objectContaining({ id: "log.status" })],
+      excludedFields: ["log"],
+    });
+  });
+
+  describe("conditional colors", () => {
+    afterEach(() => Entity.matchColorConditionsWith(undefined));
+
+    it("are matched like all other conditions, in the stored format", () => {
+      @DatabaseEntity("ColorConditionTest")
+      class ColorConditionTest extends Entity {
+        static override readonly color = [
+          { condition: { name: "other name" }, color: "red" },
+        ];
+        @DatabaseField() name: string;
+      }
+      const matchesInStoredFormat = vi.fn().mockReturnValue(true);
+      vi.spyOn(service, "getFilterPredicate").mockReturnValue(
+        matchesInStoredFormat,
+      );
+      const record = new ColorConditionTest();
+
+      TestBed.runInInjectionContext(matchColorConditionsInStoredFormat);
+
+      expect(record.getColor()).toBe("red");
+      expect(service.getFilterPredicate).toHaveBeenCalledWith({
+        name: "other name",
+      });
+      expect(matchesInStoredFormat).toHaveBeenCalledWith(record);
+    });
+  });
+
+  describe("matching records in the stored format", () => {
+    // like an attendance entry, the entry keeps its status behind a getter, the stored entry has it as property
+    class EntryWithGetter {
+      private readonly _status = "absent";
+      get status() {
+        return this._status;
+      }
+    }
+    @DatabaseEntity("StoredFormatGetterTest")
+    class StoredFormatGetterTest extends Entity {
+      @DatabaseField({
+        dataType: "schema-embed",
+        isArray: true,
+        additional: { status: { dataType: "string" } },
+      })
+      log: EntryWithGetter[];
+    }
+
+    it.each([
+      [{ $exists: true }, true],
+      // a "not defined" condition, which matched every such entry before
+      [{ $exists: false }, false],
+      [{ $eq: "absent" }, true],
+    ])(
+      "finds a value that an embedded entry keeps behind a getter: %j",
+      (statusCondition, expected) => {
+        const record = new StoredFormatGetterTest();
+        record.log = [new EntryWithGetter()];
+        const matches = service.getFilterPredicate({
+          log: { $elemMatch: { status: statusCondition } },
+        });
+
+        expect(matches(record)).toBe(expected);
+      },
+    );
+
+    function testRecord() {
+      return TestEntity.create({
+        category: { id: "M", label: "male" },
+        dateOfBirth: new DateWithAge(moment().subtract(10, "years").toDate()),
+      });
+    }
+
+    it.each([
+      [{ category: "M" }, true],
+      [{ "category.id": "M" }, true],
+      [{ "dateOfBirth.age": { $gte: 9 } }, true],
+      [{ isNew: true }, true],
+      [{ other: { $exists: false } }, true],
+      [{ category: { $exists: false } }, false],
+    ])("matches %j like the database", (condition, expected) => {
+      const matches = service.getFilterPredicate(condition);
+
+      expect(matches(testRecord())).toBe(expected);
+    });
+
+    it("converts a saved record again once it has a new revision", () => {
+      const record = testRecord();
+      record._rev = "1-a";
+      const matches = service.getFilterPredicate({ category: "F" });
+      expect(matches(record)).toBe(false);
+
+      record.category = { id: "F", label: "female" };
+      record._rev = "2-b";
+
+      expect(matches(record)).toBe(true);
+    });
   });
 });
