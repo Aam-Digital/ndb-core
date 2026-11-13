@@ -24,7 +24,7 @@ import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated
 
 @Injectable()
 class TimestampTestDatatype extends DateDatatype {
-  static override dataType = "timestamp-test";
+  static override readonly dataType = "timestamp-test";
 }
 
 describe("FilterService", () => {
