@@ -118,7 +118,9 @@ export class FilterService {
     entityType: EntityConstructor,
     condition: DataFilter<T>,
   ): DataFilter<T> {
-    const [fieldId] = Object.keys(condition ?? {});
+    const fields = Object.keys(condition ?? {});
+    // a row with conditions on several fields stays as it is, so that none of them gets lost
+    const fieldId = fields.length === 1 ? fields[0] : undefined;
     const entryCondition = condition?.[fieldId]?.$elemMatch;
     const innerKeys = isPlainObject(entryCondition)
       ? Object.keys(entryCondition)
