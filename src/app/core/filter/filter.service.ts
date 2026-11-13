@@ -10,7 +10,6 @@ import {
   createFilterPredicate,
   isPlainObject,
 } from "../../utils/filter-compare-utils";
-import moment from "moment";
 import { isEqual } from "lodash-es";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
@@ -27,6 +26,7 @@ import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { asArray } from "../../utils/asArray";
 import { Logging } from "../logging/logging.service";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
+import { requiredEntry, requiredStoredValue } from "./required-values";
 
 /**
  * Works with conditions on records: matches records in memory, offers the fields a condition can be set on,
@@ -214,56 +214,53 @@ export class FilterService {
    * adds such an entry. The values are converted from the stored format through the datatype of the field.
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
-    const schema = entity.getSchema();
     for (const [key, condition] of Object.entries(filter ?? {})) {
       if ((key === "$or" || key === "$and") && Array.isArray(condition)) {
         // apply each branch of the alternatives ($or) or required parts ($and)
-        for (const branch of condition) {
-          this.alignEntityWithFilter(entity, branch);
-        }
-        continue;
+        condition.forEach((branch) =>
+          this.alignEntityWithFilter(entity, branch),
+        );
+      } else {
+        this.alignFieldCondition(entity, key, condition);
       }
+    }
+  }
 
-      const [path, storedCondition] = Object.entries(
-        toStoredFormatCondition(
-          { [key]: condition },
-          schema,
-          this.schemaService,
-        ),
-      )[0];
-      const [fieldId, ...innerPath] = path.split(".");
-      const field = schema.get(fieldId);
-      if (!field) {
-        continue;
-      }
+  /** Set the value a condition on one field (or on a property of an embedded field) requires. */
+  private alignFieldCondition(entity: Entity, key: string, condition: unknown) {
+    const schema = entity.getSchema();
+    const [path, storedCondition] = Object.entries(
+      toStoredFormatCondition({ [key]: condition }, schema, this.schemaService),
+    )[0];
+    const [fieldId, ...innerPath] = path.split(".");
+    const field = schema.get(fieldId);
+    const container = getSchemaEmbedDatatype(this.schemaService, field);
 
-      const container = getSchemaEmbedDatatype(this.schemaService, field);
-      if (container && innerPath.length > 0) {
-        // a single embedded object, e.g. { "phone.type": "mobile" }
-        this.addEmbeddedEntry(entity, fieldId, field, container, {
-          [innerPath.join(".")]: storedCondition,
-        });
-      } else if (container && isPlainObject(storedCondition?.["$elemMatch"])) {
-        this.addEmbeddedEntry(
+    if (container && innerPath.length > 0) {
+      // a single embedded object, e.g. { "phone.type": "mobile" }
+      this.addEmbeddedEntry(entity, fieldId, field, container, {
+        [innerPath.join(".")]: storedCondition,
+      });
+    } else if (container && isPlainObject(storedCondition?.["$elemMatch"])) {
+      this.addEmbeddedEntry(
+        entity,
+        fieldId,
+        field,
+        container,
+        storedCondition["$elemMatch"],
+      );
+    } else if (field && innerPath.length === 0) {
+      const value = requiredStoredValue(
+        storedCondition,
+        field,
+        this.schemaService,
+      );
+      if (value !== undefined) {
+        entity[fieldId] = this.schemaService.valueToEntityFormat(
+          field.isArray ? [value] : value,
+          field,
           entity,
-          fieldId,
-          field,
-          container,
-          storedCondition["$elemMatch"],
         );
-      } else if (innerPath.length === 0) {
-        const value = requiredStoredValue(
-          storedCondition,
-          field,
-          this.schemaService,
-        );
-        if (value !== undefined) {
-          entity[fieldId] = this.schemaService.valueToEntityFormat(
-            field.isArray ? [value] : value,
-            field,
-            entity,
-          );
-        }
       }
     }
   }
@@ -305,100 +302,4 @@ export class FilterService {
       };
     }
   }
-}
-
-/**
- * The entry of an embedded field, in the stored format, with the values required by the conditions on its inner properties,
- * or `undefined` if they require none.
- */
-function requiredEntry(
-  container: SchemaEmbedDatatype,
-  field: EntitySchemaField,
-  innerConditions: object,
-  schemaService: EntitySchemaService,
-): object | undefined {
-  // the conditions use the paths of the inner properties in the stored value (e.g. "0" in a tuple)
-  const innerFieldOfPath = new Map(
-    [...container.getEffectiveSchema(field)].map(([innerId, innerField]) => [
-      container.getEmbeddedFieldDbPath(innerId),
-      innerField,
-    ]),
-  );
-
-  const entry: object = Object.keys(innerConditions).some((p) => /^\d/.test(p))
-    ? []
-    : {};
-  // an entry stored with nested parts (like the tuple of an old attendance field) needs all of them
-  for (const innerPath of innerFieldOfPath.keys()) {
-    parentOfPath(entry, innerPath);
-  }
-  let hasValue = false;
-  for (const [innerPath, innerCondition] of Object.entries(innerConditions)) {
-    const value = requiredStoredValue(
-      innerCondition,
-      innerFieldOfPath.get(innerPath),
-      schemaService,
-    );
-    if (value !== undefined) {
-      parentOfPath(entry, innerPath)[innerPath.split(".").at(-1)] = value;
-      hasValue = true;
-    }
-  }
-  return hasValue ? entry : undefined;
-}
-
-/**
- * The one value a condition requires, in the stored format of the field, or `undefined` if it allows several or none:
- * a plain value, `$eq` or a single option of `$in`; for a multi-value field also these inside `$elemMatch`.
- * An empty value (of a "not defined" condition) or a list is not one value to set.
- *
- * @param ofList whether the condition is on the list of a multi-value field, of which `$elemMatch` addresses one value
- */
-function requiredStoredValue(
-  condition: unknown,
-  field: EntitySchemaField | undefined,
-  schemaService: EntitySchemaService,
-  ofList = field?.isArray,
-): unknown {
-  if (isPlainObject(condition)) {
-    if ("$eq" in condition) {
-      return requiredStoredValue(condition["$eq"], field, schemaService, false);
-    }
-    if (Array.isArray(condition["$in"]) && condition["$in"].length === 1) {
-      return requiredStoredValue(
-        condition["$in"][0],
-        field,
-        schemaService,
-        false,
-      );
-    }
-    if (ofList && isPlainObject(condition["$elemMatch"])) {
-      return requiredStoredValue(
-        condition["$elemMatch"],
-        field,
-        schemaService,
-        false,
-      );
-    }
-    return undefined;
-  }
-  if (condition === null || condition === "" || Array.isArray(condition)) {
-    return undefined;
-  }
-
-  // a day ("YYYY-MM-DD") becomes a value of the field's datatype (e.g. the timestamp of a date)
-  return typeof condition === "string" &&
-    moment(condition, "YYYY-MM-DD", true).isValid()
-    ? schemaService.getDatatypeOrDefault(field?.dataType).toStoredDay(condition)
-    : condition;
-}
-
-/** the object holding the last segment of the path, created where missing */
-function parentOfPath(target: object, path: string): object {
-  let current = target;
-  for (const segment of path.split(".").slice(0, -1)) {
-    current[segment] ??= {};
-    current = current[segment];
-  }
-  return current;
 }
