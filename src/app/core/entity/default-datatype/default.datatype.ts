@@ -419,6 +419,11 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     return day;
   }
 
+  /** A day ("YYYY-MM-DD") as a value of this datatype in the database format, e.g. to pre-fill a field with the day a condition requires. */
+  toStoredDay(day: string): unknown {
+    return day;
+  }
+
   /**
    * Return a comparable primitive for sorting this field's value in a list column.
    * Return `undefined` to fall through to the default sort logic.

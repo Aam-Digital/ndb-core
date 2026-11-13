@@ -28,6 +28,10 @@ export class MonthDatatype extends DateDatatype {
     ).format("YYYY-MM");
   }
 
+  override toStoredDay(day: string): string {
+    return moment(day).format("YYYY-MM");
+  }
+
   override transformToDatabaseFormat(value) {
     if (!(value instanceof Date)) {
       value = new Date(value);

@@ -38,6 +38,10 @@ export class DateOnlyDatatype extends DateDatatype<string> {
     return day;
   }
 
+  override toStoredDay(day: string): string {
+    return day;
+  }
+
   override transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {
       return undefined;

@@ -252,7 +252,11 @@ export class FilterService {
           storedCondition["$elemMatch"],
         );
       } else if (innerPath.length === 0) {
-        const value = requiredStoredValue(storedCondition, field);
+        const value = requiredStoredValue(
+          storedCondition,
+          field,
+          this.schemaService,
+        );
         if (value !== undefined) {
           entity[fieldId] = this.schemaService.valueToEntityFormat(
             field.isArray ? [value] : value,
@@ -275,7 +279,12 @@ export class FilterService {
     container: SchemaEmbedDatatype,
     innerConditions: object,
   ) {
-    const storedEntry = requiredEntry(container, field, innerConditions);
+    const storedEntry = requiredEntry(
+      container,
+      field,
+      innerConditions,
+      this.schemaService,
+    );
     if (!storedEntry) {
       return;
     }
@@ -306,6 +315,7 @@ function requiredEntry(
   container: SchemaEmbedDatatype,
   field: EntitySchemaField,
   innerConditions: object,
+  schemaService: EntitySchemaService,
 ): object | undefined {
   // the conditions use the paths of the inner properties in the stored value (e.g. "0" in a tuple)
   const innerFieldOfPath = new Map(
@@ -327,6 +337,7 @@ function requiredEntry(
     const value = requiredStoredValue(
       innerCondition,
       innerFieldOfPath.get(innerPath),
+      schemaService,
     );
     if (value !== undefined) {
       parentOfPath(entry, innerPath)[innerPath.split(".").at(-1)] = value;
@@ -346,17 +357,28 @@ function requiredEntry(
 function requiredStoredValue(
   condition: unknown,
   field: EntitySchemaField | undefined,
+  schemaService: EntitySchemaService,
   ofList = field?.isArray,
 ): unknown {
   if (isPlainObject(condition)) {
     if ("$eq" in condition) {
-      return requiredStoredValue(condition["$eq"], field, false);
+      return requiredStoredValue(condition["$eq"], field, schemaService, false);
     }
     if (Array.isArray(condition["$in"]) && condition["$in"].length === 1) {
-      return requiredStoredValue(condition["$in"][0], field, false);
+      return requiredStoredValue(
+        condition["$in"][0],
+        field,
+        schemaService,
+        false,
+      );
     }
     if (ofList && isPlainObject(condition["$elemMatch"])) {
-      return requiredStoredValue(condition["$elemMatch"], field, false);
+      return requiredStoredValue(
+        condition["$elemMatch"],
+        field,
+        schemaService,
+        false,
+      );
     }
     return undefined;
   }
@@ -364,12 +386,11 @@ function requiredStoredValue(
     return undefined;
   }
 
-  if (field?.dataType !== "date" || typeof condition !== "string") {
-    return condition;
-  }
-  // a day for a `date` field (a timestamp) is the start of that day in local time, like the matching compares it
-  const day = moment(condition, "YYYY-MM-DD", true);
-  return day.isValid() ? day.toISOString() : condition;
+  // a day ("YYYY-MM-DD") becomes a value of the field's datatype (e.g. the timestamp of a date)
+  return typeof condition === "string" &&
+    moment(condition, "YYYY-MM-DD", true).isValid()
+    ? schemaService.getDatatypeOrDefault(field?.dataType).toStoredDay(condition)
+    : condition;
 }
 
 /** the object holding the last segment of the path, created where missing */

@@ -76,6 +76,11 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
     return startOfDay === `${day}T00:00:00.000Z` ? day : startOfDay;
   }
 
+  /** a date is a timestamp, so a day becomes its start in local time, like the matching compares it */
+  override toStoredDay(day: string): string {
+    return moment(day).toISOString();
+  }
+
   override transformToDatabaseFormat(value: Date) {
     return value as any;
   }

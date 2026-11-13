@@ -17,7 +17,14 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { DateDatatype } from "../basic-datatypes/date/date.datatype";
+import { Injectable } from "@angular/core";
 import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
+
+@Injectable()
+class TimestampTestDatatype extends DateDatatype {
+  static override dataType = "timestamp-test";
+}
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -38,6 +45,11 @@ describe("FilterService", () => {
         {
           provide: DefaultDatatype,
           useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: TimestampTestDatatype,
           multi: true,
         },
       ],
@@ -132,22 +144,23 @@ describe("FilterService", () => {
     expect(relation.childId).toBe(child.getId());
   });
 
-  it.each(["date", "date-only"])(
+  it.each([
+    ["date", moment("2022-02-03").toDate()],
+    ["date-only", moment("2022-02-03").toDate()],
+    ["month", moment("2022-02-01").toDate()],
+    // any datatype storing timestamps, like the `date` it extends
+    [TimestampTestDatatype.dataType, moment("2022-02-03").toDate()],
+  ])(
     "patches a %s field with the day of the filter in local time",
-    (dataType) => {
+    (dataType, expected) => {
       @DatabaseEntity(`DatePatchTestEntity-${dataType}`)
       class DatePatchTestEntity extends Entity {}
       DatePatchTestEntity.schema.set("day", { dataType });
-      const filter = { day: "2022-02-03" } as DataFilter<DatePatchTestEntity>;
-      const predicate = service.getFilterPredicate(filter);
       const record = new DatePatchTestEntity();
 
-      expect(predicate(record)).toBe(false);
+      service.alignEntityWithFilter(record, { day: "2022-02-03" });
 
-      service.alignEntityWithFilter(record, filter);
-
-      expect(record["day"]).toEqual(moment("2022-02-03").toDate());
-      expect(predicate(record)).toBe(true);
+      expect(record["day"]).toEqual(expected);
     },
   );
 
