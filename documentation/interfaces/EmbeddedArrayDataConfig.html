@@ -242,7 +242,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:38</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@ If not set, all inner fields are displayed.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:45</a></div>
                                 </td>
                             </tr>
 
@@ -338,7 +338,7 @@ If not set, all inner fields are displayed.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/entity-details/embedded-array-data/embedded-array-data.component.ts:36</a></div>
                                 </td>
                             </tr>
 
@@ -366,6 +366,8 @@ If not set, all inner fields are displayed.</p>
   linkedSignal,
 } from &quot;@angular/core&quot;;
 import { AbstractControl } from &quot;@angular/forms&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { filter } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import {
   ColumnConfig,
@@ -375,11 +377,13 @@ import { DynamicComponent } from &quot;../../config/dynamic-components/dynamic-c
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { EntityFormService } from &quot;../../common-components/entity-form/entity-form.service&quot;;
+import { EntityFormSavedEvent } from &quot;../../common-components/entity-form/entity-form&quot;;
 import { InvalidFormFieldError } from &quot;../../common-components/entity-form/invalid-form-field.error&quot;;
 import { getSchemaEmbedArrayColumns } from &quot;../../basic-datatypes/schema-embed/schema-embed-array-columns&quot;;
 import { SchemaEmbedArrayTableComponent } from &quot;../../basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component&quot;;
 import { SchemaEmbedArrayApplyChange } from &quot;../../basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component&quot;;
 import { applySchemaEmbedArrayEntryChange } from &quot;../../basic-datatypes/schema-embed/schema-embed-array-entry-change&quot;;
+import { AutomatedFieldUpdateConfigService } from &quot;#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service&quot;;
 
 /**
  * Config format that the EmbeddedArrayDataComponent handles.
@@ -416,6 +420,9 @@ export class EmbeddedArrayDataComponent {
   private readonly entityFormService &#x3D; inject(EntityFormService);
   private readonly ability &#x3D; inject(EntityAbility);
   private readonly environmentInjector &#x3D; inject(EnvironmentInjector);
+  private readonly automatedFieldUpdateConfigService &#x3D; inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   /** currently viewed/main entity holding the embedded entries */
   entity &#x3D; input&lt;Entity&gt;();
@@ -492,6 +499,22 @@ export class EmbeddedArrayDataComponent {
       );
       const control &#x3D; entityForm.formGroup.get(property);
       control.setValue(entries);
+      // like a save of the main form (see EntityFormComponent), until all form saves run the rules (#4537)
+      entityForm.onFormStateChange
+        .pipe(
+          filter(
+            (event): event is EntityFormSavedEvent &#x3D;&gt;
+              event instanceof EntityFormSavedEvent,
+          ),
+          takeUntilDestroyed(saveScope.get(DestroyRef)),
+        )
+        .subscribe(async (event) &#x3D;&gt; {
+          // reports and shows a failure itself
+          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+            event.newEntity,
+            event.previousEntity,
+          );
+        });
 
       const saved &#x3D; await this.entityFormService
         .saveChanges(entityForm, entity)
