@@ -132,7 +132,10 @@ function joinPattern(parts: {
     : parts.pattern;
 }
 
-function isValidRegex(pattern: string): boolean {
+function isValidRegex(pattern: string | null): boolean {
+  if (!pattern) {
+    return true;
+  }
   try {
     new RegExp(pattern);
     return true;
@@ -143,15 +146,13 @@ function isValidRegex(pattern: string): boolean {
 
 /** Marks the control as invalid if its value cannot be compiled as a regular expression. */
 function validRegex(control: AbstractControl): ValidationErrors | null {
-  return !control.value || isValidRegex(control.value)
-    ? null
-    : { invalidPattern: true };
+  return isValidRegex(control.value) ? null : { invalidPattern: true };
 }
 
 function validPatternSetting(
   control: AbstractControl,
 ): ValidationErrors | null {
-  return validRegex({
-    value: splitPattern(control.value).pattern,
-  } as AbstractControl);
+  return isValidRegex(splitPattern(control.value).pattern)
+    ? null
+    : { invalidPattern: true };
 }

@@ -110,11 +110,14 @@ export class ConfigureEntityFieldValidatorComponent {
     this.schemaService.getDatatypeOrDefault(this.fieldDataType()),
   );
 
-  /** the registered rules that fit the data type selected for the field */
   private readonly applicableRules = computed(() =>
     [...this.validators.rules.values()].filter((rule) =>
       rule.appliesTo(this.datatype(), this.currentField()),
     ),
+  );
+
+  private readonly applicableKeys = computed(
+    () => new Set(this.applicableRules().map((rule) => rule.key)),
   );
 
   /** one form control for the setting of each registered rule, and the rules that are only a warning */
@@ -132,7 +135,6 @@ export class ConfigureEntityFieldValidatorComponent {
     return new FormGroup(controls);
   });
 
-  /** the current values of {@link validatorForm} */
   private readonly formValue = signal<FormValidatorConfig>({});
 
   /**
@@ -148,32 +150,26 @@ export class ConfigureEntityFieldValidatorComponent {
     );
   });
 
-  /** the rules in the list: the shown rules that fit the selected type */
-  protected readonly rows = computed(() => {
-    const applicable = new Map(
-      this.applicableRules().map((rule) => [rule.key, rule]),
-    );
-    return this.shownKeys()
-      .map((key) => applicable.get(key))
-      .filter((rule): rule is FieldValidator => !!rule);
-  });
+  /** the shown rules that fit the selected type */
+  protected readonly rows = computed(() =>
+    this.shownKeys()
+      .filter((key) => this.applicableKeys().has(key))
+      .map((key) => this.validators.rules.get(key)),
+  );
 
-  /** the names of the rules that are set but do not fit the selected type, so they are not used */
-  protected readonly hiddenRuleLabels = computed(() => {
-    const applicable = new Set(this.applicableRules().map((rule) => rule.key));
-    return this.shownKeys()
-      .filter((key) => !applicable.has(key))
-      .map((key) => this.validators.rules.get(key).labelFor(this.datatype()));
-  });
+  protected readonly hiddenRuleLabels = computed(() =>
+    this.shownKeys()
+      .filter((key) => !this.applicableKeys().has(key))
+      .map((key) => this.validators.rules.get(key).labelFor(this.datatype())),
+  );
 
-  /** the rules that fit the selected type and are not in the list yet */
   protected readonly addableRules = computed(() => {
     const shown = new Set(this.shownKeys());
     return this.applicableRules().filter((rule) => !shown.has(rule.key));
   });
 
-  /** keys of the rules that are set, so that they can be made only a warning */
-  protected readonly setRules = computed(
+  /** only a rule that is set can be made only a warning */
+  protected readonly setRuleKeys = computed(
     () =>
       new Set(
         this.applicableRules()
@@ -182,12 +178,11 @@ export class ConfigureEntityFieldValidatorComponent {
       ),
   );
 
-  /** keys of the rules that are only a warning */
-  protected readonly warningOnlyRules = computed(
+  protected readonly warningOnlyRuleKeys = computed(
     () => new Set(asArray(this.formValue()[WARNING_ONLY_KEY] ?? [])),
   );
 
-  /** the component of each rule that edits its setting, with the inputs it is given (stable, so they are not recreated) */
+  /** created once per change of the inputs, as a new object recreates the component of the row */
   protected readonly settingComponents = computed(() => {
     const form = this.validatorForm();
     const inputs: Omit<ValidatorSettingInputs, "formControl" | "label"> = {
@@ -232,7 +227,7 @@ export class ConfigureEntityFieldValidatorComponent {
     // settings not fitting the selected type are not shown, so an invalid value in them must not block saving
     effect(() => {
       const form = this.validatorForm();
-      const applicable = new Set(this.applicableRules().map((r) => r.key));
+      const applicable = this.applicableKeys();
       untracked(() => {
         for (const rule of this.validators.rules.values()) {
           const control = form.get(rule.key);
@@ -276,7 +271,6 @@ export class ConfigureEntityFieldValidatorComponent {
     });
   }
 
-  /** the name of the rule for the selected type of the field */
   protected ruleLabel(rule: FieldValidator): string {
     return rule.labelFor(this.datatype());
   }
@@ -293,7 +287,6 @@ export class ConfigureEntityFieldValidatorComponent {
     }
   }
 
-  /** Remove a rule from the list, and with it its setting. */
   protected removeRule(rule: FieldValidator) {
     this.setWarningOnly(rule.key, false);
     this.shownKeys.update((keys) => keys.filter((key) => key !== rule.key));

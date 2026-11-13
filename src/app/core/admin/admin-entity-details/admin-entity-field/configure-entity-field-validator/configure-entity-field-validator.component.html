@@ -28,9 +28,11 @@
           <span class="hint-text" i18n
             >Only a warning: users can still save.</span
           >
-        } @else if (rule.warning === "optional" && setRules().has(rule.key)) {
+        } @else if (
+          rule.warning === "optional" && setRuleKeys().has(rule.key)
+        ) {
           <mat-checkbox
-            [checked]="warningOnlyRules().has(rule.key)"
+            [checked]="warningOnlyRuleKeys().has(rule.key)"
             (change)="setWarningOnly(rule.key, $event.checked)"
             i18n
             >Only a warning</mat-checkbox
