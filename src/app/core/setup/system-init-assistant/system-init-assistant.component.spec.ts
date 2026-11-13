@@ -82,6 +82,49 @@ describe("SystemInitAssistantComponent", () => {
     expect(component.initializeSystem).toHaveBeenCalled();
   });
 
+  describe("?locale= query param", () => {
+    async function openWithParams(
+      params: Record<string, string>,
+      currentLocale: string,
+    ) {
+      await configureComponent(currentLocale);
+      mockSetupService.getAvailableBaseConfig.mockResolvedValue([
+        { id: "basic_setup" },
+      ]);
+      (TestBed.inject(ActivatedRoute) as any).snapshot = {
+        queryParamMap: new Map(Object.entries(params)),
+      };
+      await component.ngOnInit();
+    }
+
+    it("switches the language first and waits for the reload before setting up", async () => {
+      await openWithParams({ useCase: "basic_setup", locale: "de" }, "en-US");
+
+      expect(languageService.switchLocale).toHaveBeenCalledWith("de");
+      expect(mockSetupService.initSystemWithBaseConfig).not.toHaveBeenCalled();
+    });
+
+    it("sets up the use case once the requested language is active", async () => {
+      await openWithParams({ useCase: "basic_setup", locale: "de" }, "de");
+
+      expect(languageService.switchLocale).not.toHaveBeenCalled();
+      expect(mockSetupService.initSystemWithBaseConfig).toHaveBeenCalled();
+    });
+
+    it("matches the locale case-insensitively", async () => {
+      await openWithParams({ locale: "EN-us" }, "de");
+
+      expect(languageService.switchLocale).toHaveBeenCalledWith("en-US");
+    });
+
+    it("ignores an unknown locale", async () => {
+      await openWithParams({ useCase: "basic_setup", locale: "xx" }, "en-US");
+
+      expect(languageService.switchLocale).not.toHaveBeenCalled();
+      expect(mockSetupService.initSystemWithBaseConfig).toHaveBeenCalled();
+    });
+  });
+
   it("makes the selected language the default language after importing the use case", async () => {
     await configureComponent("de");
     mockSetupService.getAvailableBaseConfig.mockResolvedValue([{}]);

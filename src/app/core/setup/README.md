@@ -91,6 +91,9 @@ the scenarios. Ticking it clears the dropdown, which then reads "empty system".
 - Setup can be driven entirely by a `?useCase=<id>` URL parameter, skipping the picker — this is how
   e2e tests bootstrap a system. Any new step must work on this fully-automated path too. An unknown id
   fails silently (the picker just stays on screen), by design.
+  `&locale=<id>` (e.g. `?useCase=education&locale=de`) opens the setup in that language: the app switches
+  to it and reloads before anything is imported, the query params are kept. An unknown locale is ignored.
+  A use case is not filtered by locale on this path, so combine it with a use case that exists in that language.
 - Config-derived entity types and metadata (e.g. the `User` entity type) only exist once the app has
   finished reacting to the new config — code that reads config-derived entity info needs to wait for
   that, not just for the config document itself.
