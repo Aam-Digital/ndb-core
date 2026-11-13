@@ -28,6 +28,7 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { RegistryLookupError } from "../../config/registry/dynamic-registry";
 import { SessionSubject } from "../../session/auth/session-info";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconButton } from "@angular/material/button";
@@ -106,7 +107,19 @@ export class DashboardComponent {
   }
 
   private async hasEntityPermission(widget: DynamicComponentConfig) {
-    const comp = (await this.components.get(widget.component)()) as {
+    let loadComponent: ReturnType<ComponentRegistry["get"]>;
+    try {
+      loadComponent = this.components.get(widget.component);
+    } catch (e) {
+      if (e instanceof RegistryLookupError) {
+        // e.g. a widget removed from the code but still in the config:
+        // keep it, so the dynamic component directive reports it, instead of
+        // failing the permission check and with it the whole dashboard.
+        return true;
+      }
+      throw e;
+    }
+    const comp = (await loadComponent()) as {
       getRequiredEntities?: (config: unknown) => string | string[];
     };
     let entity: string | string[] | undefined;
