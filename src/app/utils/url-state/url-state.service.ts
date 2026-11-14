@@ -68,8 +68,8 @@ export class UrlStateService {
   private navigateWithParams(
     queryParams: Record<string, any>,
     replaceUrl: boolean,
-  ) {
-    this.router.navigate([], {
+  ): Promise<boolean> {
+    return this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
       ...(replaceUrl ? { replaceUrl: true } : {}),
@@ -92,12 +92,13 @@ export class UrlStateService {
 
   /**
    * Remove the given query params from the URL.
+   * @returns resolves once the URL is updated, e.g. before reloading the page
    */
-  removeUrlParams(keys: string[], replaceUrl = true) {
+  removeUrlParams(keys: string[], replaceUrl = true): Promise<boolean> {
     const queryParams = this.getAllUrlParams();
     for (const key of keys) {
       delete queryParams[key];
     }
-    this.navigateWithParams(queryParams, replaceUrl);
+    return this.navigateWithParams(queryParams, replaceUrl);
   }
 }
