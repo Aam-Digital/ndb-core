@@ -36,6 +36,11 @@ export const DYNAMIC_VALIDATORS = [
    * (with the "any" combinator, `$or`, the whole condition then is not applied).
    * The same applies if there is no single record, like in bulk edit.
    *
+   * A placeholder can also refer to a field of a record that the edited record links to (one level only),
+   * like `"$current_record.parentAction.locations"`: the values of all records linked in `parentAction`.
+   * For example `{ "_id": { "$in": ["$current_record.parentAction.locations"] } }` only offers the locations of the parent.
+   * A linked record that cannot be loaded (e.g. without read permission) counts as not linked.
+   *
    * Only applies to a field referencing a single record type and edited with the entity dropdown
    * (or an edit component using it), not if a form layout sets another `editComponent`.
    * A `schema-embed` field (e.g. `attendance`) takes it in the config of its embedded

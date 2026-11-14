@@ -5,6 +5,7 @@ import {
   EventEmitter,
   OnInit,
   inject,
+  Injector,
   computed,
   input,
   signal,
@@ -41,6 +42,9 @@ import {
   placeholderFieldId,
 } from "../../filter/filters/filters";
 import { asArray } from "app/utils/asArray";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -89,6 +93,31 @@ export class ConditionsEditorComponent implements OnInit {
    */
   readonly currentRecordType = input<EntityConstructor>();
 
+  /**
+   * The fields of the records that the current record links to ("link field › field"),
+   * which a row can compare with like with a field of the current record itself.
+   */
+  readonly linkedRecordFields = computed<FormFieldConfig[]>(() => {
+    const recordType = this.currentRecordType();
+    if (!recordType) return [];
+
+    // only needed (with the services it depends on) where conditions refer to a current record
+    return this.injector
+      .get(EntityRelationsService)
+      .getFieldsOfLinkedTypes(recordType)
+      .flatMap(({ linkId, link, fields }) =>
+        fields
+          .filter(([, field]) => !field.isInternalField && !!field.label)
+          .map(([fieldId, field]) => ({
+            ...field,
+            id: `${linkId}.${fieldId}`,
+            label: `${resolveLocaleText(link.label) ?? linkId} › ${resolveLocaleText(field.label)}`,
+            // the values of all linked records
+            isArray: !!link.isArray || !!field.isArray,
+          })),
+      );
+  });
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
@@ -113,6 +142,7 @@ export class ConditionsEditorComponent implements OnInit {
   private readonly referenceRows = new WeakSet<object>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly injector = inject(Injector);
   private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
@@ -218,13 +248,14 @@ export class ConditionsEditorComponent implements OnInit {
     if (!actualRecordFieldId || !fieldConfig) return;
 
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
-    const recordFieldIsArray =
-      !!this.currentRecordType()?.schema.get(actualRecordFieldId)?.isArray;
+    const recordField =
+      this.currentRecordType()?.schema.get(actualRecordFieldId) ??
+      this.linkedRecordFields().find(({ id }) => id === actualRecordFieldId);
     const conditionFieldConfig = {
       ...fieldConfig,
       // the placeholder resolves to all values of a multi-value record field, which only match in a list (`$in`)
       isArray:
-        recordFieldIsArray ||
+        !!recordField?.isArray ||
         this.shouldUseMultiSelectCondition(
           fieldConfig,
           this.entitySchemaService.getComponent(fieldConfig, "edit"),
@@ -358,13 +389,21 @@ export class ConditionsEditorComponent implements OnInit {
       isArray: isDropdownMultiSelect,
     } as FormFieldConfig);
 
+    // the record itself ("_id") is compared with the fields linking to records of its type
+    const comparedWith: EntitySchemaField =
+      fieldKey === "_id"
+        ? {
+            dataType: EntityDatatype.dataType,
+            additional: this.entityConstructor.ENTITY_TYPE,
+          }
+        : fieldConfig;
     const sameOptions = (a: EntitySchemaField) =>
       JSON.stringify(asArray(a.additional ?? [])) ===
-      JSON.stringify(asArray(fieldConfig.additional ?? []));
+      JSON.stringify(asArray(comparedWith.additional ?? []));
     this.referenceFieldFilters.set(
       key,
       (recordField) =>
-        recordField.dataType !== fieldConfig.dataType ||
+        recordField.dataType !== comparedWith.dataType ||
         !sameOptions(recordField),
     );
   }

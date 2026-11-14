@@ -117,6 +117,95 @@ describe("DynamicPlaceholderValueService", () => {
       );
     });
 
+    describe("referring to a field of a linked record", () => {
+      const berlin = TestEntity.create({ other: "BERLIN" });
+      const hamburg = TestEntity.create({
+        other: "HAMBURG",
+        refMixed: ["Note:1", "Note:2"],
+      });
+      const alsoHamburg = TestEntity.create({
+        other: "HAMBURG",
+        refMixed: ["Note:2", "Note:3"],
+      });
+      const linkedRecords = new Map(
+        [berlin, hamburg, alsoHamburg].map((r) => [r.getId(), r]),
+      );
+
+      it.each([
+        [
+          "the value of the record linked in a single-value field",
+          { other: "$current_record.ref.other" },
+          { ref: berlin.getId() },
+          { other: "BERLIN" },
+        ],
+        [
+          "all values of a multi-value field of the linked record",
+          { _id: { $in: ["$current_record.ref.refMixed"] } },
+          { ref: hamburg.getId() },
+          { _id: { $in: ["Note:1", "Note:2"] } },
+        ],
+        [
+          "the values of all linked records, each only once",
+          { _id: { $in: ["$current_record.refMixed.refMixed"] } },
+          { refMixed: [hamburg.getId(), alsoHamburg.getId()] },
+          { _id: { $in: ["Note:1", "Note:2", "Note:3"] } },
+        ],
+        [
+          "the values of the linked records that are available only",
+          { other: { $in: ["$current_record.refMixed.other"] } },
+          { refMixed: [berlin.getId(), "TestEntity:not-loaded"] },
+          { other: { $in: ["BERLIN"] } },
+        ],
+        [
+          "the linked record itself",
+          { ref: "$current_record.ref._id" },
+          { ref: berlin.getId() },
+          { ref: berlin.getId() },
+        ],
+      ])("uses %s", (_, linkedCondition, values, expected) => {
+        const record = TestEntity.create(values as Partial<TestEntity>);
+
+        expect(
+          service.resolveRecordPlaceholders(
+            linkedCondition,
+            record,
+            linkedRecords,
+          ),
+        ).toEqual(expected);
+      });
+
+      it.each([
+        ["no record is linked", {}],
+        ["the linked record is not available", { ref: "TestEntity:other" }],
+        ["the field of the linked record is empty", { ref: berlin.getId() }],
+      ])("leaves out the row if %s", (_, values) => {
+        const record = TestEntity.create(values);
+
+        expect(
+          service.resolveRecordPlaceholders(
+            {
+              _id: { $in: ["$current_record.ref.refMixed"] },
+              name: "fixed",
+            },
+            record,
+            linkedRecords,
+          ),
+        ).toEqual({ name: "fixed" });
+      });
+
+      it("does not follow more than one link", () => {
+        const record = TestEntity.create({ ref: hamburg.getId() });
+
+        expect(
+          service.resolveRecordPlaceholders(
+            { other: "$current_record.ref.ref.other" },
+            record,
+            linkedRecords,
+          ),
+        ).toEqual({});
+      });
+    });
+
     const recordValues = {
       location: "BERLIN",
       locations: ["BERLIN", "HAMBURG"],

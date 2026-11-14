@@ -68,22 +68,72 @@ export function isCurrentRecordPlaceholder(value: unknown): value is string {
   );
 }
 
-/** the id of the field that a `$current_record.<fieldId>` placeholder refers to */
+/**
+ * What a `$current_record.<fieldId>` placeholder refers to (without the prefix):
+ * the id of a field of the current record, or a path through a link field
+ * to a field of the linked record(s), e.g. `parentAction.locations`.
+ */
 export function placeholderFieldId(placeholder: string): string {
   return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
 }
 
-/** the ids of the fields that the `$current_record.<fieldId>` placeholders in a condition refer to */
-export function getCurrentRecordPlaceholderFields(
-  condition: unknown,
-): string[] {
+/**
+ * The parts of what a placeholder refers to (see {@link placeholderFieldId}):
+ * the field of the current record and, if it goes through that (link) field, the field of the linked record(s).
+ */
+export function splitPlaceholderFieldId(fieldId: string): {
+  fieldId: string;
+  linkedFieldId?: string;
+} {
+  const separator = fieldId.indexOf(".");
+  return separator < 0
+    ? { fieldId }
+    : {
+        fieldId: fieldId.substring(0, separator),
+        linkedFieldId: fieldId.substring(separator + 1),
+      };
+}
+
+/** what the `$current_record.<fieldId>` placeholders in a condition refer to (see {@link placeholderFieldId}) */
+function getPlaceholderFieldIds(condition: unknown): string[] {
   if (isCurrentRecordPlaceholder(condition)) {
     return [placeholderFieldId(condition)];
   }
   if (condition && typeof condition === "object") {
-    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
+    return Object.values(condition).flatMap(getPlaceholderFieldIds);
   }
   return [];
+}
+
+/**
+ * The ids of the fields of the current record that the `$current_record.<fieldId>` placeholders in a condition refer to
+ * (the link field, if a placeholder refers to a field of a linked record).
+ */
+export function getCurrentRecordPlaceholderFields(
+  condition: unknown,
+): string[] {
+  return unique(
+    getPlaceholderFieldIds(condition).map(
+      (id) => splitPlaceholderFieldId(id).fieldId,
+    ),
+  );
+}
+
+/**
+ * The ids of the link fields of the current record through which placeholders in a condition
+ * refer to a field of the linked record(s), e.g. `parentAction` for `"$current_record.parentAction.locations"`.
+ */
+export function getLinkedRecordPlaceholderFields(condition: unknown): string[] {
+  return unique(
+    getPlaceholderFieldIds(condition)
+      .map(splitPlaceholderFieldId)
+      .filter(({ linkedFieldId }) => !!linkedFieldId)
+      .map(({ fieldId }) => fieldId),
+  );
+}
+
+function unique<T>(values: T[]): T[] {
+  return [...new Set(values)];
 }
 
 export function createEmptyValueFilter<T extends Entity>(

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { FormControl, NgControl } from "@angular/forms";
+import { FormControl, FormGroup, NgControl } from "@angular/forms";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { of } from "rxjs";
 import { By } from "@angular/platform-browser";
@@ -549,6 +549,74 @@ describe("EditEntityComponent", () => {
       fixture.detectChanges();
 
       await expectOfferedNames(["Abc", "Abd"]);
+    });
+
+    describe("referring to a field of a linked record", () => {
+      const condition = { _id: { $in: ["$current_record.ref.refMixed"] } };
+      let parent: TestEntity;
+      let otherParent: TestEntity;
+
+      beforeEach(() => {
+        [parent, otherParent] = test2Entities;
+        parent.refMixed = [test1Entities[0].getId(), test1Entities[2].getId()];
+        otherParent.refMixed = [test1Entities[1].getId()];
+      });
+
+      it("only offers the records selected in the linked record and follows a change of the link", async () => {
+        editRecordWithCondition(condition, { ref: parent.getId() });
+        await expectOfferedNames(["Abc", "Abd"]);
+
+        changeRecord({ ref: otherParent.getId() });
+        fixture.detectChanges();
+
+        await expectOfferedNames(["Bcd"]);
+      });
+
+      it("offers all records if the linked record cannot be loaded", async () => {
+        editRecordWithCondition(condition, { ref: "Test2Entity:unknown" });
+
+        await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+      });
+
+      it("does not load the linked record again when another field of the record changes", async () => {
+        const loadSpy = vi.mocked(TestBed.inject(EntityMapperService).load);
+        editRecordWithCondition(condition, { ref: parent.getId() });
+        await expectOfferedNames(["Abc", "Abd"]);
+        loadSpy.mockClear();
+
+        changeRecord({ ref: parent.getId(), other: "changed" });
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(loadSpy).not.toHaveBeenCalled();
+        await expectOfferedNames(["Abc", "Abd"]);
+      });
+
+      it("warns about a selected record that the linked record does not have", async () => {
+        const record = TestEntity.create({ ref: parent.getId() });
+        const form = new FormGroup({
+          ref: new FormControl(parent.getId()),
+          linked: new FormControl(test1Entities[1].getId()),
+        });
+        form.controls.linked.markAsDirty();
+        const validator = TestBed.runInInjectionContext(
+          () => new SelectionConditionValidator(),
+        ).build(condition, {
+          entity: record,
+          field: { id: "linked", additional: TestEntity.ENTITY_TYPE },
+          singleRecord: true,
+          config: { selectionCondition: condition },
+        });
+
+        expect(await validator(form.controls.linked)).toEqual({
+          selectionCondition: expect.objectContaining({
+            errorMessage: expect.stringContaining(test1Entities[1].toString()),
+          }),
+        });
+
+        form.controls.linked.setValue(test1Entities[0].getId());
+        expect(await validator(form.controls.linked)).toBeNull();
+      });
     });
 
     it("does not apply references to the record if it edits several records at once (no record)", async () => {

@@ -38,7 +38,9 @@
           <app-entity-field-select
             [entityType]="entityConstructor"
             [value]="getConditionField(condition)"
-            [showInternalIdField]="showInternalIdField()"
+            [showInternalIdField]="
+              showInternalIdField() || !!currentRecordType()
+            "
             (valueChange)="onConditionFieldChange(conditionId, $event)"
           ></app-entity-field-select>
         </mat-form-field>
@@ -64,6 +66,7 @@
               <mat-label i18n>Field of the edited record</mat-label>
               <app-entity-field-select
                 [entityType]="currentRecordType()"
+                [options]="linkedRecordFields()"
                 [value]="getReferencedField(conditionId)"
                 [hideOption]="referenceFieldFilters.get(conditionId + '')"
                 (valueChange)="onReferencedFieldChange(conditionId, $event)"

@@ -59,6 +59,19 @@ describe("FilterService", () => {
     expect(note.category).toEqual(guardianTalk);
   });
 
+  it("should not patch the id of an entity from a filter selecting records by id", () => {
+    const note = new Note();
+    const id = note.getId();
+
+    service.alignEntityWithFilter(note, {
+      _id: { $in: ["Note:existing"] },
+      subject: "Test",
+    } as DataFilter<Note>);
+
+    expect(note.getId()).toBe(id);
+    expect(note.subject).toBe("Test");
+  });
+
   it("should support patching with the filter of a ConfigurableEnumFilter option", () => {
     const guardianTalk = defaultInteractionTypes.find(
       ({ id }) => id === "GUARDIAN_TALK",
