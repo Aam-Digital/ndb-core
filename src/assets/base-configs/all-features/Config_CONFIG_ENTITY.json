@@ -699,6 +699,7 @@
                 "config": {
                   "entityType": "School",
                   "property": "contactPersons",
+                  "editable": false,
                   "columns": [
                     "name",
                     "contactPersons.role"

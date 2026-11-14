@@ -1,13 +1,8 @@
-import { Component, computed, inject } from "@angular/core";
+import { Component, computed } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import {
-  getEmbeddedEntityReferenceFields,
-  resolveEmbeddedField,
-} from "#src/app/core/entity/schema/embedded-schema-field.util";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { asArray } from "#src/app/utils/asArray";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
@@ -19,6 +14,12 @@ import { isEmptyValue } from "#src/app/utils/is-empty-value";
 export interface RelatedEmbeddedFieldConfig {
   /** the entity whose details view shows the related records (e.g. the User) */
   relatedEntitiesParent?: Entity;
+  /** the embedded (outer) field holding the entries, e.g. "contactPersons" */
+  outerProp: string;
+  /** the inner properties of the entries that reference the parent, e.g. ["user"] */
+  linkProps: string[];
+  /** the inner field to display, extended with its view component */
+  innerField: FormFieldConfig;
 }
 
 /**
@@ -44,12 +45,7 @@ export interface RelatedEmbeddedFieldConfig {
         <ng-container
           [appDynamicComponent]="{
             component: field.viewComponent,
-            config: {
-              value: value,
-              id: field.id,
-              entity: entity(),
-              formFieldConfig: field,
-            },
+            config: { value: value, formFieldConfig: field },
           }"
         ></ng-container>
       }
@@ -60,53 +56,28 @@ export class DisplayRelatedEmbeddedFieldComponent extends ViewDirective<
   unknown,
   RelatedEmbeddedFieldConfig
 > {
-  private readonly schemaService = inject(EntitySchemaService);
-
-  private readonly embeddedField = computed(() => {
-    const entityCtr = this.entity()?.getConstructor();
-    const id = this.id();
-    if (!entityCtr || !id) {
-      return undefined;
-    }
-    return resolveEmbeddedField(this.schemaService, entityCtr, id);
-  });
-
-  /** the inner field, extended with its view component */
-  readonly innerField = computed<FormFieldConfig | undefined>(() => {
-    const ref = this.embeddedField();
-    if (!ref) {
-      return undefined;
-    }
-    return this.schemaService.addSchemaToFormField(
-      { id: ref.innerProp },
-      ref.innerSchema,
-    );
-  });
+  readonly innerField = computed(() => this.config()?.innerField);
 
   /** the values of the inner field in all entries that reference the parent entity */
   readonly values = computed<unknown[]>(() => {
-    const ref = this.embeddedField();
-    const parentId = this.config()?.relatedEntitiesParent?.getId();
+    const config = this.config();
+    const parentId = config?.relatedEntitiesParent?.getId();
     const entity = this.entity();
-    if (!ref || !parentId || !entity) {
+    if (!config?.innerField || !parentId || !entity) {
       return [];
     }
 
-    const referenceProps = getEmbeddedEntityReferenceFields(
-      this.schemaService,
-      ref.outerSchema,
-    ).map(([innerProp]) => innerProp);
     const entries: Record<string, unknown>[] = asArray(
-      entity[ref.outerProp] ?? [],
+      entity[config.outerProp] ?? [],
     );
 
     return entries
       .filter((entry) =>
-        referenceProps.some((prop) =>
+        config.linkProps.some((prop) =>
           asArray(entry?.[prop] ?? []).includes(parentId),
         ),
       )
-      .map((entry) => entry[ref.innerProp])
+      .map((entry) => entry[config.innerField.id])
       .filter((value) => !isEmptyValue(value));
   });
 }

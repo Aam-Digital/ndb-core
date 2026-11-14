@@ -327,15 +327,32 @@ export class RelatedEntitiesComponent<E extends Entity> {
     if (!ref) {
       return column;
     }
+    const innerField = this.entitySchemaService.addSchemaToFormField(
+      { id: ref.innerProp },
+      ref.innerSchema,
+    );
+    // only the entries linking the entity through the property that selects the records
+    const linkProps = [this.relationProperty()]
+      .flat()
+      .map((property) => property.split(".", 2))
+      .filter(
+        ([outerProp, innerProp]) => outerProp === ref.outerProp && innerProp,
+      )
+      .map(([, innerProp]) => innerProp);
     return {
-      label: ref.innerSchema.label,
-      labelShort: ref.innerSchema.labelShort,
-      description: ref.innerSchema.description,
+      label: innerField.label,
+      labelShort: innerField.labelShort,
+      description: innerField.description,
       ...column,
       viewComponent: "DisplayRelatedEmbeddedField",
       // the value is not a property of the record, so the table cannot sort by it
       noSorting: true,
-      additional: {},
+      additional: {
+        ...(typeof column.additional === "object" ? column.additional : {}),
+        outerProp: ref.outerProp,
+        linkProps,
+        innerField,
+      },
     };
   }
 

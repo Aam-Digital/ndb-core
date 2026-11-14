@@ -9,6 +9,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity } from "../../entity/model/entity";
+import { DisplayRelatedEmbeddedFieldComponent } from "./display-related-embedded-field/display-related-embedded-field.component";
 import { RelatedEntitiesComponent } from "./related-entities.component";
 
 describe("RelatedEntitiesComponent", () => {
@@ -305,43 +306,217 @@ describe("RelatedEntitiesComponent", () => {
     });
   });
 
-  it("shows an embedded column (e.g. contactPersons.role) through the entries linking the current entity", async () => {
+  describe("columns of an embedded field", () => {
     @DatabaseEntity("EmbedColumnTest")
     class EmbedColumnTest extends Entity {}
 
+    const reference = {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
     EmbedColumnTest.schema.set("name", { dataType: "string" });
     EmbedColumnTest.schema.set("contactPersons", {
       dataType: "schema-embed-array",
       isArray: true,
       additional: {
         role: { dataType: "string", label: "Role" },
-        person: {
-          dataType: EntityDatatype.dataType,
-          additional: TestEntity.ENTITY_TYPE,
-        },
+        level: { dataType: "number", label: "Level" },
+        person: reference,
+        supervisor: reference,
+        mentors: { ...reference, isArray: true },
+      },
+    });
+    EmbedColumnTest.schema.set("mainContact", {
+      dataType: "schema-embed",
+      additional: {
+        role: { dataType: "string", label: "Main role" },
+        person: reference,
       },
     });
 
-    const user = new TestEntity();
-    fixture.componentRef.setInput("entityType", EmbedColumnTest.ENTITY_TYPE);
-    fixture.componentRef.setInput("entity", user);
-    fixture.componentRef.setInput("columns", ["name", "contactPersons.role"]);
-    await initComponent();
+    async function initWithColumns(
+      columns: unknown[],
+      property?: string,
+    ): Promise<TestEntity> {
+      const user = new TestEntity();
+      fixture.componentRef.setInput("entityType", EmbedColumnTest.ENTITY_TYPE);
+      fixture.componentRef.setInput("entity", user);
+      fixture.componentRef.setInput("columns", columns);
+      if (property) {
+        fixture.componentRef.setInput("property", property);
+      }
+      await initComponent();
+      return user;
+    }
 
-    expect(component.filterObj()).toEqual({
-      contactPersons: { $elemMatch: { person: user.getId() } },
+    function createCell(rowData: object, columnId: string) {
+      const column = component._columns().find((c) => c.id === columnId);
+      const cell = TestBed.createComponent(
+        DisplayRelatedEmbeddedFieldComponent,
+      );
+      cell.componentRef.setInput(
+        "entity",
+        Object.assign(new EmbedColumnTest(), rowData),
+      );
+      cell.componentRef.setInput("id", columnId);
+      cell.componentRef.setInput("formFieldConfig", column);
+      return cell;
+    }
+
+    it("shows the inner field of the entries linking the current entity, not sortable", async () => {
+      const user = await initWithColumns(["name", "contactPersons.role"]);
+
+      const [nameColumn, roleColumn] = component._columns();
+      expect(nameColumn.viewComponent).toBeUndefined();
+      expect(roleColumn).toEqual(
+        expect.objectContaining({
+          id: "contactPersons.role",
+          label: "Role",
+          viewComponent: "DisplayRelatedEmbeddedField",
+          noSorting: true,
+          additional: expect.objectContaining({
+            relatedEntitiesParent: user,
+            outerProp: "contactPersons",
+            innerField: expect.objectContaining({ id: "role", label: "Role" }),
+          }),
+        }),
+      );
     });
-    const [nameColumn, roleColumn] = component._columns();
-    expect(nameColumn.viewComponent).toBeUndefined();
-    expect(roleColumn).toEqual(
-      expect.objectContaining({
-        id: "contactPersons.role",
-        label: "Role",
-        viewComponent: "DisplayRelatedEmbeddedField",
-        noSorting: true,
-        additional: { relatedEntitiesParent: user },
-      }),
-    );
+
+    it("keeps the additional config and the view component set for a column", async () => {
+      const user = await initWithColumns([
+        { id: "contactPersons.role", additional: { custom: true } },
+        { id: "contactPersons.level", viewComponent: "DisplayText" },
+      ]);
+
+      const [roleColumn, levelColumn] = component._columns();
+      expect(roleColumn.additional).toEqual(
+        expect.objectContaining({ custom: true, relatedEntitiesParent: user }),
+      );
+      expect(levelColumn.viewComponent).toBe("DisplayText");
+      expect(levelColumn.additional).toBeUndefined();
+    });
+
+    it("limits the filter and the shown entries to the given relation property", async () => {
+      const user = await initWithColumns(
+        ["contactPersons.role"],
+        "contactPersons.supervisor",
+      );
+
+      expect(component.filterObj()).toEqual({
+        contactPersons: { $elemMatch: { supervisor: user.getId() } },
+      });
+      expect(component._columns()[0].additional.linkProps).toEqual([
+        "supervisor",
+      ]);
+    });
+
+    it.each([
+      [
+        "ignores the entries of other records",
+        "contactPersons.role",
+        (id: string) => ({
+          contactPersons: [
+            { person: "TestEntity:other", role: "A" },
+            { person: id, role: "B" },
+          ],
+        }),
+        ["B"],
+      ],
+      [
+        "skips empty values of the linking entries",
+        "contactPersons.role",
+        (id: string) => ({
+          contactPersons: [
+            { person: id, role: "A" },
+            { person: id },
+            { supervisor: id, role: "" },
+            { person: id, role: "C" },
+          ],
+        }),
+        ["A", "C"],
+      ],
+      [
+        "keeps a falsy value that is set",
+        "contactPersons.level",
+        (id: string) => ({ contactPersons: [{ person: id, level: 0 }] }),
+        [0],
+      ],
+      [
+        "finds the record in a reference holding several records",
+        "contactPersons.role",
+        (id: string) => ({
+          contactPersons: [
+            { mentors: ["TestEntity:other", id], role: "Mentor" },
+          ],
+        }),
+        ["Mentor"],
+      ],
+      [
+        "reads a single embedded object",
+        "mainContact.role",
+        (id: string) => ({ mainContact: { person: id, role: "Lead" } }),
+        ["Lead"],
+      ],
+      [
+        "shows nothing if no entry links the entity",
+        "contactPersons.role",
+        () => ({
+          contactPersons: [{ person: "TestEntity:other", role: "A" }],
+        }),
+        [],
+      ],
+    ])("cell %s", async (_, columnId, rowData, expected) => {
+      const user = await initWithColumns([
+        "contactPersons.role",
+        "contactPersons.level",
+        "mainContact.role",
+      ]);
+
+      const cell = createCell(rowData(user.getId()), columnId);
+
+      expect(cell.componentInstance.values()).toEqual(expected);
+    });
+
+    it("cell shows only the entries of the explicit relation property", async () => {
+      const user = await initWithColumns(
+        ["contactPersons.role"],
+        "contactPersons.supervisor",
+      );
+
+      const cell = createCell(
+        {
+          contactPersons: [
+            { person: user.getId(), role: "Teacher" },
+            { supervisor: user.getId(), role: "Head" },
+          ],
+        },
+        "contactPersons.role",
+      );
+
+      expect(cell.componentInstance.values()).toEqual(["Head"]);
+    });
+
+    it("cell lists several values comma separated", async () => {
+      const user = await initWithColumns(["contactPersons.role"]);
+
+      const cell = createCell(
+        {
+          contactPersons: [
+            { person: user.getId(), role: "Teacher" },
+            { person: user.getId(), role: "Coach" },
+          ],
+        },
+        "contactPersons.role",
+      );
+      cell.detectChanges();
+
+      await vi.waitFor(() =>
+        expect(cell.nativeElement.textContent.replace(/\s+/g, " ").trim()).toBe(
+          "Teacher, Coach",
+        ),
+      );
+    });
   });
 
   it("it calls children service with id from passed child", async () => {
