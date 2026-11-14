@@ -1876,6 +1876,38 @@
               "label": "Role"
             }
           }
+        },
+        "childrenIdDocuments": {
+          "id": "childrenIdDocuments",
+          "label": "Identification Documents of Children",
+          "description": "Collects the Identification Documents of all children linked to this school",
+          "dataType": "schema-embed-array",
+          "additional": {
+            "documentType": {
+              "dataType": "string",
+              "label": "Document Type"
+            },
+            "documentNumber": {
+              "dataType": "string",
+              "label": "Document Number"
+            },
+            "issueDate": {
+              "dataType": "date",
+              "label": "Issue Date",
+              "validators": {
+                "readonlyAfterSet": true
+              }
+            }
+          },
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "Child",
+              "sourceReferenceField": "linkedSchool",
+              "sourceValueField": "identificationDocuments",
+              "aggregation": "add"
+            }
+          }
         }
       },
       "hasPII": false
@@ -1933,6 +1965,7 @@
                         "childrenCenter",
                         "parentSchool",
                         "allCenters",
+                        "childrenIdDocuments",
                         "numberField",
                         "longTextField",
                         "percentageField",

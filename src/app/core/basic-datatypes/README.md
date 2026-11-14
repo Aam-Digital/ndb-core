@@ -151,7 +151,9 @@ related records. Its config is:
 ```
 
 Saving an entry in this panel saves the entity directly, as the panel is not part of an entity form with a "Save"
-button. Users without the permission to update the field only see the entries (read-only). See the full example in
+button. Like a save of the form, this then offers to update the linked records whose automation rules (inherited
+fields) use this field, e.g. a parent record collecting the entries of its sub-records with `"aggregation": "add"`.
+Users without the permission to update the field only see the entries (read-only). See the full example in
 [`Config_CONFIG_ENTITY.json`](../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json).
 
 **Records linked through an inner entity field**
