@@ -69,6 +69,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
       ),
   ],
   [
+    "EditPublicFormEmailField",
+    () =>
+      import("app/features/public-form/edit-public-form-email-field/edit-public-form-email-field.component").then(
+        (c) => c.EditPublicFormEmailFieldComponent,
+      ),
+  ],
+  [
     "PublicFormPermissionWarning",
     () =>
       import("app/features/public-form/public-form-permission-warning/public-form-permission-warning.component").then(
@@ -136,6 +143,8 @@ const viewConfigs: ViewConfig[] = [
                       },
                       "logo",
                       "showSubmitAnotherButton",
+                      "sendConfirmationEmail",
+                      "confirmationEmailField",
                     ],
                   },
                 ],
