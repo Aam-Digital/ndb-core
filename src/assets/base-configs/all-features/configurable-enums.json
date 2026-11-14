@@ -18,5 +18,24 @@
         "color": "#94DDFF"
       }
     ]
+  },
+  {
+    "_id": "ConfigurableEnum:action-status",
+    "values": [
+      {
+        "id": "PLANNED",
+        "label": "Planned"
+      },
+      {
+        "id": "IN_PROGRESS",
+        "label": "In progress",
+        "color": "#FFF3C4"
+      },
+      {
+        "id": "DONE",
+        "label": "Done",
+        "color": "#C8E6C9"
+      }
+    ]
   }
 ]

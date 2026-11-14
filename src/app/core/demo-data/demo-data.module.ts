@@ -33,6 +33,7 @@ import { DemoHealthCheckGeneratorService } from "../../child-dev-project/childre
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
+import { DemoActionGeneratorService } from "#src/app/features/hierarchy/demo-data/demo-action-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoUserGeneratorService.provider(),
@@ -57,6 +58,7 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
+  ...DemoActionGeneratorService.provider(),
 ];
 
 /**
