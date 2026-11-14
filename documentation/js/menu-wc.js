@@ -1092,6 +1092,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/DisplayRecurringIntervalComponent.html" data-type="entity-link" >DisplayRecurringIntervalComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/DisplayRelatedEmbeddedFieldComponent.html" data-type="entity-link" >DisplayRelatedEmbeddedFieldComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/DisplaySchemaEmbedArrayComponent.html" data-type="entity-link" >DisplaySchemaEmbedArrayComponent</a>
                             </li>
                             <li class="link">
@@ -3217,6 +3220,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/RecordMatching.html" data-type="entity-link" >RecordMatching</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RelatedEmbeddedFieldConfig.html" data-type="entity-link" >RelatedEmbeddedFieldConfig</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/RelatedEntitiesComponentConfig.html" data-type="entity-link" >RelatedEntitiesComponentConfig</a>

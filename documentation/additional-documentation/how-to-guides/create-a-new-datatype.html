@@ -257,7 +257,20 @@ button. Like a save of the form, this then offers to update the linked records w
 fields) use this field, e.g. a parent record collecting the entries of its sub-records with <code>&quot;aggregation&quot;: &quot;add&quot;</code>.
 Users without the permission to update the field only see the entries (read-only). See the full example in
 <a href="../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json"><code>Config_CONFIG_ENTITY.json</code></a>.</p>
-<p><strong>Export</strong></p>
+<p><strong>Records linked through an inner entity field</strong></p>
+<p>If an inner field references other records (<code>&quot;dataType&quot;: &quot;entity&quot;</code>), the <code>RelatedEntities</code> section of the referenced
+record lists the records whose entries link it. For example, a School has the embedded table &quot;contactPersons&quot; with the
+inner fields <code>user</code> (a User) and <code>role</code>: the details view of a User can list the Schools where that User is a contact
+person. A column id <code>&quot;&lt;field&gt;.&lt;inner field&gt;&quot;</code> shows the inner field of the entries linking the User (not those of other
+contact persons), e.g. the User&#39;s role at each School. Such a column cannot be sorted
+(see <code>DisplayRelatedEmbeddedFieldComponent</code>):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;component&quot;: &quot;RelatedEntities&quot;,
+  &quot;config&quot;: {
+    &quot;entityType&quot;: &quot;School&quot;,
+    &quot;columns&quot;: [&quot;name&quot;, &quot;contactPersons.role&quot;]
+  }
+}</code></pre></div><p><strong>Export</strong></p>
 <p>Exports format each inner field like a top-level field of the same type (e.g. names of referenced records, option
 labels, dates). An embedded table offers these columns (&quot;preselected&quot;: selected by default in the export dialog when
 the field is shown in the list):</p>
