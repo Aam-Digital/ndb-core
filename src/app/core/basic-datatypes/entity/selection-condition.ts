@@ -6,6 +6,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import {
   DataFilter,
   getCurrentRecordPlaceholderFields,
+  getLinkedRecordPlaceholderFields,
 } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
@@ -26,12 +27,16 @@ import { EntityDatatype } from "./entity.datatype";
  * with its placeholders referring to the record being edited resolved,
  * or `undefined` if it does not apply: none is configured, none of its rows can be applied,
  * or the field links to several record types (with different fields).
+ *
+ * @param linkedRecords the records that the record links to, for placeholders referring to their fields
+ *   (see {@link loadPlaceholderLinkedRecords})
  */
 export function resolveSelectionCondition<E extends Entity>(
   condition: DataFilter<E> | undefined,
   entityTypes: string[],
   record: Entity | undefined,
   placeholderService: DynamicPlaceholderValueService,
+  linkedRecords?: Map<string, Entity>,
 ): DataFilter<E> | undefined {
   if (
     !condition ||
@@ -44,6 +49,7 @@ export function resolveSelectionCondition<E extends Entity>(
   const resolved = placeholderService.resolveRecordPlaceholders(
     condition,
     record,
+    linkedRecords,
   );
   return Object.keys(resolved).length > 0 ? resolved : undefined;
 }
@@ -119,8 +125,46 @@ export async function loadLinkedRecord<E extends Entity>(
 }
 
 /**
+ * The ids of the records that the given record links to in the fields through which placeholders of the condition
+ * refer to a field of a linked record (e.g. the parent for `"$current_record.parentAction.locations"`).
+ */
+export function getPlaceholderLinkedRecordIds(
+  condition: DataFilter<Entity> | undefined,
+  record: Entity | undefined,
+): string[] {
+  if (!record) {
+    return [];
+  }
+  const ids = getLinkedRecordPlaceholderFields(condition).flatMap((linkId) =>
+    asArray<unknown>(record[linkId] ?? []),
+  );
+  return [
+    ...new Set(
+      ids.filter((id): id is string => !!id && typeof id === "string"),
+    ),
+  ];
+}
+
+/** Load the given records by their (full) ids, leaving out the ones that cannot be loaded. */
+export async function loadPlaceholderLinkedRecords(
+  entityMapper: EntityMapperService,
+  ids: string[],
+): Promise<Map<string, Entity>> {
+  const records = await Promise.all(
+    ids.map((id) =>
+      loadLinkedRecord(entityMapper, Entity.extractTypeFromId(id), id),
+    ),
+  );
+  return new Map(
+    records.filter((record) => !!record).map((r) => [r.getId(), r]),
+  );
+}
+
+/**
  * `selectionCondition: { center: "$current_record.center" }`: the linked records should match the condition;
  * the dropdown of the field only offers such records.
+ * A placeholder can also refer to a field of a record that the edited record links to,
+ * e.g. `{ _id: { $in: ["$current_record.parentAction.locations"] } }`.
  *
  * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
  * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
@@ -171,11 +215,18 @@ export class SelectionConditionValidator extends FieldValidator<
       const dropdownTypes = source?.entityTypes() ?? [];
       const entityTypes =
         dropdownTypes.length > 0 ? dropdownTypes : fieldEntityTypes;
+      const record = singleRecord
+        ? getCurrentRecordOfControl(control, entity)
+        : undefined;
       const resolved = resolveSelectionCondition(
         condition,
         entityTypes,
-        singleRecord ? getCurrentRecordOfControl(control, entity) : undefined,
+        record,
         this.placeholderService,
+        await loadPlaceholderLinkedRecords(
+          this.entityMapper,
+          getPlaceholderLinkedRecordIds(condition, record),
+        ),
       );
       if (!resolved) {
         return null;

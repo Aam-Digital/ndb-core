@@ -12,6 +12,7 @@ import {
   DataFilter,
   isCurrentRecordPlaceholder,
   placeholderFieldId,
+  splitPlaceholderFieldId,
 } from "../../filter/filters/filters";
 import {
   AdminDefaultValueContext,
@@ -19,6 +20,7 @@ import {
 } from "../default-value-strategy.interface";
 import { DefaultValueConfigDynamic } from "./default-value-config-dynamic";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -97,23 +99,53 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
    * If one of the alternatives of `$or` cannot be applied at all, the whole `$or` is left out
    * (that alternative does not restrict anything, so neither does the `$or`).
    *
+   * A placeholder can go through a link field to a field of the linked record(s),
+   * e.g. `$current_record.parentAction.locations` (one level only): it is replaced by the values of all linked records
+   * given in `linkedRecords`. `_id` as the field of the linked record stands for that record itself.
+   * Linked records that are not given (e.g. because they cannot be loaded) are skipped.
+   *
    * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
    * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
+   * @param linkedRecords The records that the record links to (by id), as far as placeholders go through them.
    * @returns The resolved condition, which is empty if no row is left to apply.
    */
   resolveRecordPlaceholders<T>(
     condition: DataFilter<T>,
     record: Entity | undefined,
+    linkedRecords?: Map<string, Entity>,
   ): DataFilter<T> {
-    const getValue = (fieldId: string) => {
-      const value = record?.[fieldId];
-      const schemaField = record?.getSchema().get(fieldId);
-      if (value === undefined || value === null || !schemaField) {
-        return value;
+    const getValue = (placeholderField: string) => {
+      const { fieldId, linkedFieldId } =
+        splitPlaceholderFieldId(placeholderField);
+      if (!linkedFieldId) {
+        return this.getDatabaseValue(record, fieldId);
       }
-      return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
+
+      const linkValue = record?.[fieldId];
+      const values = asArray<string>(linkValue ?? [])
+        .map((id) => linkedRecords?.get(id))
+        .map((linked) => this.getDatabaseValue(linked, linkedFieldId))
+        .filter((value) => !isEmptyValue(value));
+      if (!Array.isArray(linkValue)) {
+        return values[0];
+      }
+      // the values of all linked records, each of them only once
+      return [...new Set(values.flat())];
     };
     return resolveCondition(condition ?? {}, getValue) as DataFilter<T>;
+  }
+
+  /** the value of a record's field in database format, like the values of the records a condition is applied to */
+  private getDatabaseValue(record: Entity | undefined, fieldId: string) {
+    if (fieldId === "_id") {
+      return record?.getId();
+    }
+    const value = record?.[fieldId];
+    const schemaField = record?.getSchema().get(fieldId);
+    if (value === undefined || value === null || !schemaField) {
+      return value;
+    }
+    return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
   }
 }
 
@@ -123,7 +155,7 @@ const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
 /** marks a value that cannot be resolved, because it references an empty field */
 const UNRESOLVED = Symbol("unresolved");
 
-/** returns the value of the given field of the current record (in database format) */
+/** returns the value that a placeholder refers to (see `placeholderFieldId`), in database format */
 type FieldValueGetter = (fieldId: string) => unknown;
 
 /** the rows of a condition that can be applied, with their placeholders resolved */

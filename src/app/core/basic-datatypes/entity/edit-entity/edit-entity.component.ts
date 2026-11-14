@@ -52,7 +52,9 @@ import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
 import {
+  getPlaceholderLinkedRecordIds,
   loadLinkedRecord,
+  loadPlaceholderLinkedRecords,
   matchesSelectionCondition,
   registerLinkedRecordsSource,
   resolveSelectionCondition,
@@ -244,6 +246,30 @@ export class EditEntityComponent<
     return ownId ? entities.filter((e) => e.getId() !== ownId) : entities;
   });
 
+  /** the ids of the records that the record being edited links to and whose fields the `selectionCondition` refers to */
+  private readonly placeholderLinkedIds: Signal<string[]> = computed(
+    () =>
+      getPlaceholderLinkedRecordIds(
+        this.formFieldConfig()?.validators?.selectionCondition,
+        this.currentRecord(),
+      ),
+    // only load them again when a link changes, not on every change of other fields in the form
+    { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
+  );
+
+  private readonly placeholderLinkedRecords: Resource<Map<string, Entity>> =
+    resourceWithRetention({
+      defaultValue: new Map<string, Entity>(),
+      params: () => ({
+        ids: this.placeholderLinkedIds(),
+        entityMapper: this.entityMapperService,
+      }),
+      loader: ({ params }) =>
+        params.ids.length === 0
+          ? Promise.resolve(new Map<string, Entity>())
+          : loadPlaceholderLinkedRecords(params.entityMapper, params.ids),
+    });
+
   /**
    * The configured `selectionCondition` with placeholders resolved,
    * or `undefined` if no condition applies.
@@ -256,6 +282,7 @@ export class EditEntityComponent<
           this.entityType(),
           this.currentRecord(),
           this.placeholderService,
+          this.placeholderLinkedRecords.value(),
         ),
       // only notify of an actual change, not of every change of other fields in the form
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },

@@ -39,6 +39,12 @@ class ConditionsEditorRecordTestEntity extends Entity {
     additional: "genders",
   })
   recordGender: string;
+  @DatabaseField({
+    label: "Parent",
+    dataType: "entity",
+    additional: "ConditionsEditorRecordTestEntity",
+  })
+  parent: string;
 }
 
 describe("ConditionsEditorComponent", () => {
@@ -433,6 +439,22 @@ describe("ConditionsEditorComponent", () => {
 
       expect(component.conditionsArray()[0]).toEqual(expected);
       expect(component.getReferencedField(0)).toBe(recordField);
+    });
+
+    it("offers the fields of linked records and saves the comparison with one of them", () => {
+      expect(component.linkedRecordFields()).toContainEqual(
+        expect.objectContaining({
+          id: "parent.recordNames",
+          label: "Parent › Record names",
+        }),
+      );
+
+      compareRowWithRecordField("name", "parent.recordNames");
+
+      expect(component.conditionsArray()[0]).toEqual({
+        name: { $in: ["$current_record.parent.recordNames"] },
+      });
+      expect(component.getReferencedField(0)).toBe("parent.recordNames");
     });
 
     it("keeps 'is not' when the compared record field changes", () => {
