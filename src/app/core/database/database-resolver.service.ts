@@ -211,6 +211,11 @@ export class DatabaseResolverService {
             adapter: dbConfig.adapter,
             lastSyncCompleted: lastSyncTime,
             existingDbs: existingDbs.map((db) => db.name),
+            // checkStorageHealth() runs only after this check, so read the
+            // persistence state here (persisted() never prompts the user)
+            storagePersisted: await this.navigator?.storage
+              ?.persisted?.()
+              .catch(() => undefined),
           },
         );
         this.alertService.addWarning(
