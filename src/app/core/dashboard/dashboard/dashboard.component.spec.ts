@@ -7,6 +7,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionSubject } from "../../session/auth/session-info";
 import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { RegistryLookupError } from "../../config/registry/dynamic-registry";
 import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 
 @Component({
@@ -67,6 +68,9 @@ describe("DashboardComponent", () => {
       (name: string) => {
         if (mockedWidgets[name]) {
           return mockedWidgets[name];
+        }
+        if (name === "RemovedDashboard") {
+          throw new RegistryLookupError("ComponentRegistry", name);
         }
 
         try {
@@ -141,6 +145,19 @@ describe("DashboardComponent", () => {
     // All read permissions
     ability.update([{ subject: "all", action: "manage" }]);
     await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toEqual(widgets),
+    );
+  });
+
+  it("should still show the other widgets if one widget is not registered", async () => {
+    const widgets: DynamicComponentConfig[] = [
+      { component: "RemovedDashboard" },
+      { component: "ShortcutDashboard", config: { shortcuts: [] } },
+    ];
+
+    await setWidgetsAndStabilize(widgets);
+
     await vi.waitFor(() =>
       expect(component.permittedWidgets.value() ?? []).toEqual(widgets),
     );
