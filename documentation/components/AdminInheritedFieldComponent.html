@@ -486,7 +486,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:133</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:134</a></div>
                             </td>
                         </tr>
 
@@ -512,7 +512,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:66</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:67</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -533,7 +533,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:65</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:66</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -772,8 +772,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -841,8 +841,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="160"
-                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:160</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:161</a></div>
                         </td>
                     </tr>
 
@@ -1529,7 +1529,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -1567,7 +1567,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:126</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts:127</a></div>
                         </td>
                     </tr>
 
@@ -2085,6 +2085,7 @@ import {
   entityToFieldReferenceLabel,
   fieldToEntityReferenceLabel,
 } from &quot;../../../core/entity/schema/entity-field-reference-label&quot;;
+import { resolveLocaleText } from &quot;../../../core/language/active-locale&quot;;
 
 interface InheritanceOption {
   type: &quot;inherit&quot; | &quot;automated&quot;;
@@ -2293,7 +2294,7 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective&lt;
 
     if (!fieldId || !entityType?.schema) return fieldId;
     const fieldConfig &#x3D; entityType.schema.get(fieldId);
-    return fieldConfig?.label || fieldId;
+    return resolveLocaleText(fieldConfig?.label) || fieldId;
   }
 
   private getEntityLabel(entityType: EntityConstructor): string {

@@ -690,7 +690,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:40</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:41</a></code>
 </div>
                             </td>
                         </tr>
@@ -712,7 +712,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:59</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -744,7 +744,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:66</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:67</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -785,7 +785,7 @@ offered instead, or because the field doesn&#39;t make sense to pick directly, s
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:43</a></code>
+                                    <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:44</a></code>
 </div>
                             </td>
                         </tr>
@@ -812,7 +812,7 @@ offered instead, or because the field doesn&#39;t make sense to pick directly, s
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:55</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/entity/entity-field-select/entity-field-select.component.ts:56</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -851,7 +851,7 @@ Useful for import contexts where matching by UUID is needed.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:47</a></code>
+                                    <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:48</a></code>
 </div>
                             </td>
                         </tr>
@@ -3157,7 +3157,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:94</a></code>
+                                <div class="io-line">        <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:95</a></code>
 </div>
                         </td>
                     </tr>
@@ -4462,6 +4462,7 @@ import { FormFieldConfig } from &quot;../../common-components/entity-form/FormCo
 import { EntityRegistry } from &quot;../database-entity.decorator&quot;;
 import { EntityConstructor } from &quot;../model/entity&quot;;
 import { EntitySchema } from &quot;../schema/entity-schema&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * Dropdown field offering all fields of a given entity type
@@ -4561,7 +4562,11 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent&lt;
           (!fieldSchema.isInternalField &amp;&amp; !!fieldSchema.label) ||
           (this.showInternalIdField() &amp;&amp; prop &#x3D;&#x3D;&#x3D; &quot;_id&quot;),
       )
-      .map(([name, fieldSchema]) &#x3D;&gt; ({ ...fieldSchema, id: name }));
+      .map(([name, fieldSchema]) &#x3D;&gt; ({
+        ...fieldSchema,
+        id: name,
+        label: resolveLocaleText(fieldSchema.label),
+      }));
   }
 }
 </code></pre>
