@@ -16,6 +16,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DataFilter } from "../../../filter/filters/filters";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
@@ -267,6 +268,24 @@ describe("DynamicValidatorsService", () => {
     );
 
     await vi.waitFor(() => expect(control.disabled).toBe(true));
+  });
+
+  it("gives every registered rule a label for the admin tab", () => {
+    for (const rule of service.rules.values()) {
+      expect(rule.label, rule.key).toBeTruthy();
+    }
+  });
+
+  it.each([
+    ["minDate", "date", "Minimum Date"],
+    ["minDate", "month", "Minimum Month"],
+    ["maxDate", "date-only", "Maximum Date"],
+    ["maxDate", "month", "Maximum Month"],
+  ])("names the %s limit of a %s field %s", (key, dataType, label) => {
+    const datatype =
+      TestBed.inject(EntitySchemaService).getDatatypeOrDefault(dataType);
+
+    expect(service.rules.get(key).labelFor(datatype)).toBe(label);
   });
 
   it("skips the uniqueId validator for inner fields of embedded entries", async () => {

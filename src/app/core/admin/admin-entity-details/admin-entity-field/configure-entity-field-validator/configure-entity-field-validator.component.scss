@@ -1,4 +1,19 @@
-.validator-form-cell {
-  width: 100%;
-  gap: 1rem;
+.validator-row {
+  flex-wrap: wrap;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.validator-setting {
+  flex-basis: 360px;
+  min-width: 0;
+}
+
+.validator-warning {
+  flex: 0 0 200px;
+}
+
+.add-rule-field {
+  max-width: 360px;
+  margin-top: var(--space-regular);
 }

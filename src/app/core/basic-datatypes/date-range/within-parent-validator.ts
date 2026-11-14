@@ -56,6 +56,8 @@ export function withinParentValidator(
 @Injectable()
 export class WithinParentValidator extends FieldValidator<WithinParentConfig> {
   static override readonly key = "withinParent";
+  readonly label = $localize`Must lie within the period of a linked record`;
+  override readonly configComponent = "WithinParentValidatorSetting";
   override readonly datatypesSupported = [DateRangeDatatype];
   override readonly warning = "always";
   override readonly checkOnBlur = true;

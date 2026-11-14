@@ -133,6 +133,9 @@ export class SelectionConditionValidator extends FieldValidator<
   DataFilter<Entity>
 > {
   static override readonly key = "selectionCondition";
+  readonly label = $localize`Selection Filter`;
+  override readonly description = $localize`Only offer records matching a condition for selection in this field, e.g. based on the values of the record being edited. Selecting another record shows a warning, but users can still save.`;
+  override readonly configComponent = "SelectionConditionValidatorSetting";
   override readonly warning = "always";
   override readonly requiresFieldId = true;
 

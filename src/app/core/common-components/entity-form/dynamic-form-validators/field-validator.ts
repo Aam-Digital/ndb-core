@@ -33,6 +33,23 @@ export abstract class FieldValidator<Config = unknown> {
     return (this.constructor as typeof FieldValidator).key;
   }
 
+  /** name of the rule in the admin "Validation" tab, in its list and in the dropdown "Add validation rule" */
+  abstract readonly label: string;
+
+  /** explains the rule to admins, as the help text next to its name */
+  readonly description?: string;
+
+  /**
+   * Name in the `ComponentRegistry` of the admin component that edits the rule's setting
+   * (see `ValidatorSettingComponent`). Without one, the rule is only switched on or off (the setting is `true`).
+   */
+  readonly configComponent?: string;
+
+  /** the name of the rule for a field of the given datatype (by default its {@link label}) */
+  labelFor(_datatype: DefaultDatatype): string {
+    return this.label;
+  }
+
   /** the datatypes the rule is offered for, including their subtypes; empty for all datatypes */
   readonly datatypesSupported: (abstract new (
     ...args: any[]

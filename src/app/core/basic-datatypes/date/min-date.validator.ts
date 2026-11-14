@@ -1,20 +1,17 @@
 import { Injectable } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
-import { FieldValidator } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
-import { DateDatatype } from "./date.datatype";
-import { descriptionForDateValidator, minDateValidator } from "./date-limit";
+import { DateLimitValidator } from "./date-limit.validator";
+import { minDateValidator } from "./date-limit";
 
 /** `minDate: "2020-01-01"` (or `"$now"`): the date must be on or after the given date */
 @Injectable()
-export class MinDateValidator extends FieldValidator {
+export class MinDateValidator extends DateLimitValidator {
   static override readonly key = "minDate";
-  override readonly datatypesSupported = [DateDatatype];
+  protected readonly limit = "minDate";
+  readonly label = $localize`Minimum Date`;
+  protected readonly monthLabel = $localize`Minimum Month`;
 
   build(value: unknown): ValidatorFn {
     return minDateValidator(value);
-  }
-
-  override message(error: unknown): string {
-    return descriptionForDateValidator("minDate", error);
   }
 }

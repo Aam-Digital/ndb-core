@@ -1,214 +1,247 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator.component";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatCheckboxHarness } from "@angular/material/checkbox/testing";
+import { MatInputHarness } from "@angular/material/input/testing";
+import { MatSelectHarness } from "@angular/material/select/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatSelectHarness } from "@angular/material/select/testing";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator.component";
+import { AdminModule } from "../../../admin.module";
 import {
   DatabaseEntity,
   EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
-import { DatabaseField } from "../../../../entity/database-field.decorator";
-import { Entity, EntityConstructor } from "../../../../entity/model/entity";
+import { Entity } from "../../../../entity/model/entity";
 import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
-import {
-  FormValidatorConfig,
-  WithinParentConfig,
-} from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
-import { TranslatableText } from "../../../../config/multi-lingual-config";
-import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
-import { By } from "@angular/platform-browser";
-import { CoreTestingModule } from "../../../../../utils/core-testing.module";
+import { FormValidatorConfig } from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { DynamicValidatorsService } from "../../../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { FieldValidator } from "../../../../common-components/entity-form/dynamic-form-validators/field-validator";
-import { AdminDisplayConditionButtonComponent } from "../../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
+import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
+import { CoreTestingModule } from "../../../../../utils/core-testing.module";
 
-@DatabaseEntity("ValidatorTestProject")
-class ValidatorTestProject extends Entity {
-  @DatabaseField({ dataType: "date-range", label: "Planned period" })
-  plannedPeriod: unknown;
-  @DatabaseField({ dataType: "date", label: "Start" }) start: Date;
-}
-
-@DatabaseEntity("ValidatorTestAction")
-class ValidatorTestAction extends Entity {
-  @DatabaseField({
-    dataType: "entity",
-    additional: "ValidatorTestAction",
-    label: "Parent",
-  })
-  parent: string;
-  @DatabaseField({
-    dataType: "entity",
-    additional: "ValidatorTestProject",
-    label: "Project",
-  })
-  project: string;
-  @DatabaseField({ dataType: "date-range", label: "Period" }) period: unknown;
-}
+@DatabaseEntity("ValidatorTabTestRecord")
+class ValidatorTabTestRecord extends Entity {}
 
 describe("ConfigureEntityFieldValidatorComponent", () => {
   let component: ConfigureEntityFieldValidatorComponent;
   let fixture: ComponentFixture<ConfigureEntityFieldValidatorComponent>;
+  let emitted: FormValidatorConfig[];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        FontAwesomeModule,
-        FormsModule,
-        ReactiveFormsModule,
         BrowserAnimationsModule,
         FontAwesomeTestingModule,
         CoreTestingModule,
       ],
       providers: [
-        FormBuilder,
         { provide: EntityRegistry, useValue: entityRegistry },
         ...mockEntityMapperProvider(),
       ],
     }).compileComponents();
+    // the components that edit the settings of the rules
+    TestBed.runInInjectionContext(() => new AdminModule());
 
     fixture = TestBed.createComponent(ConfigureEntityFieldValidatorComponent);
     component = fixture.componentInstance;
-
-    fixture.componentRef.setInput("entitySchemaField", {
-      validators: { required: false },
-    });
-
-    fixture.detectChanges();
+    emitted = [];
+    component.entityValidatorChanges.subscribe((v) => emitted.push(v));
   });
 
-  it("should remove unchanged default values before emitting output", () => {
-    // set up
-    const testFormValues = {
-      required: true,
-      min: null,
-      max: 100,
-      minAge: null,
-      maxAge: 12,
-      minDate: null,
-      maxDate: new Date(2010, 0, 1),
-      pattern: "abc",
-      uniqueId: "",
-    };
-
-    // execute
-    const actualResult =
-      component.removeDefaultValuesFromValidatorConfig(testFormValues);
-
-    // check result
-    const expectedResult = {
-      required: true,
-      max: 100,
-      maxAge: 12,
-      maxDate: new Date(2010, 0, 1),
-      pattern: "abc",
-    };
-    expect(actualResult).toEqual(expectedResult);
-  });
-
-  it("should load existing pattern config and emit edited pattern and custom message under the 'pattern' key", () => {
-    fixture.componentRef.setInput("entitySchemaField", {
-      dataType: "string",
-      validators: { pattern: { pattern: "[0-9]{10}", message: "custom msg" } },
-    });
-    fixture.detectChanges();
-
-    const patternControl = component
-      .validatorForm()
-      .get("pattern") as AbstractControl;
-    const messageControl = component
-      .validatorForm()
-      .get("patternMessage") as AbstractControl;
-    expect(patternControl?.value).toBe("[0-9]{10}");
-    expect(messageControl?.value).toBe("custom msg");
-
-    let emitted;
-    component.entityValidatorChanges.subscribe((v) => (emitted = v));
-
-    patternControl.setValue("[a-z]+");
-    expect(emitted).toEqual({
-      pattern: { pattern: "[a-z]+", message: "custom msg" },
-    });
-
-    messageControl.setValue("");
-    expect(emitted).toEqual({ pattern: "[a-z]+" });
-
-    messageControl.setValue("only lowercase letters");
-    expect(emitted).toEqual({
-      pattern: { pattern: "[a-z]+", message: "only lowercase letters" },
-    });
-
-    patternControl.setValue("");
-    expect(emitted).toEqual({});
-    expect(messageControl.disabled).toBe(true); // message only editable while a pattern is set
-  });
-
-  describe("validators fitting the selected type", () => {
-    function renderField(validators: FormValidatorConfig) {
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "string",
-        validators,
-      });
-      fixture.detectChanges();
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
-      return emitted;
+  /** show the tab for a field, and wait until the settings components are loaded */
+  async function render(field: EntitySchemaField, dataType?: string) {
+    fixture.componentRef.setInput("entitySchemaField", field);
+    if (dataType) {
+      fixture.componentRef.setInput("dataType", dataType);
     }
+    await settle();
+  }
 
-    it("drops the validators not fitting a newly selected type, and keeps the others", () => {
-      const emitted = renderField({ required: true, pattern: "[a-z]+" });
+  async function settle() {
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  const loader = () => TestbedHarnessEnvironment.loader(fixture);
+  const text = () => fixture.nativeElement.textContent as string;
+  const rows = () =>
+    [
+      ...fixture.nativeElement.querySelectorAll(".validator-row"),
+    ] as HTMLElement[];
+
+  async function addRuleSelect() {
+    return loader().getHarness(
+      MatSelectHarness.with({ ancestor: ".add-rule-field" }),
+    );
+  }
+
+  async function addRule(label: string) {
+    const select = await addRuleSelect();
+    await select.clickOptions({ text: label });
+    await settle();
+  }
+
+  async function addableRules() {
+    const select = await addRuleSelect();
+    await select.open();
+    const options = await select.getOptions();
+    return Promise.all(options.map((option) => option.getText()));
+  }
+
+  it("lists the rules that are set and offers the others in the dropdown", async () => {
+    await render({
+      dataType: "string",
+      validators: { required: true, pattern: "[a-z]+" },
+    });
+
+    // the setting of a rule is loaded when it is needed
+    await vi.waitFor(() => expect(text()).toContain("Pattern (Regex)"));
+    expect(rows().map((row) => row.textContent)).toEqual([
+      expect.stringContaining("Required Field"),
+      expect.stringContaining("Pattern (Regex)"),
+    ]);
+    expect(await addableRules()).toEqual([
+      "Unique ID [experimental]",
+      "Read-only after it is saved",
+    ]);
+  });
+
+  it("shows that there are no rules for a field without any", async () => {
+    await render({ dataType: "string" });
+
+    expect(rows()).toHaveLength(0);
+    expect(text()).toContain("no validation rules");
+  });
+
+  it("switches a rule without setting on as soon as it is added", async () => {
+    await render({ dataType: "string" });
+
+    await addRule("Unique ID [experimental]");
+
+    expect(emitted.at(-1)).toEqual({ uniqueId: true });
+    expect(await addableRules()).not.toContain("Unique ID [experimental]");
+  });
+
+  it("saves a rule with a setting only once the setting has a value", async () => {
+    await render({ dataType: "number" });
+
+    await addRule("Maximum Value");
+    expect(emitted).toEqual([]);
+    expect(rows()).toHaveLength(1);
+
+    const input = await loader().getHarness(
+      MatInputHarness.with({ ancestor: ".validator-row" }),
+    );
+    await input.setValue("5");
+    expect(emitted.at(-1)).toEqual({ max: 5 });
+  });
+
+  it("removes a rule with its setting and its mark as only a warning, and offers it again", async () => {
+    await render({
+      dataType: "number",
+      validators: { min: 1, max: 5, _warningOnly: ["max"] },
+    });
+
+    rows()[1].querySelector("button").click();
+    await settle();
+
+    expect(emitted.at(-1)).toEqual({ min: 1 });
+    expect(rows()).toHaveLength(1);
+    expect(await addableRules()).toContain("Maximum Value");
+  });
+
+  it("does not mark a rule as only a warning again after it was removed and added again", async () => {
+    await render({
+      dataType: "number",
+      validators: { max: 5, _warningOnly: ["max"] },
+    });
+    rows()[0].querySelector("button").click();
+    await settle();
+    expect(emitted).toHaveLength(1);
+
+    await addRule("Maximum Value");
+    const input = await loader().getHarness(
+      MatInputHarness.with({ ancestor: ".validator-row" }),
+    );
+    await input.setValue("7");
+
+    expect(emitted.at(-1)).toEqual({ max: 7 });
+  });
+
+  it("offers 'Only a warning' only for rules that can be one", async () => {
+    await render({
+      dataType: "date-range",
+      validators: {
+        required: true,
+        withinParent: { parentReferenceField: "x" },
+      },
+    });
+    const [required, withinParent] = rows();
+
+    expect(required.textContent).not.toContain("Only a warning");
+    expect(withinParent.textContent).toContain(
+      "Only a warning: users can still save.",
+    );
+
+    await render({ dataType: "number", validators: { max: 5 } }, "number");
+    const checkbox = await loader().getHarness(
+      MatCheckboxHarness.with({ label: "Only a warning" }),
+    );
+    await checkbox.check();
+    expect(emitted.at(-1)).toEqual({ max: 5, _warningOnly: ["max"] });
+  });
+
+  describe("rules fitting the selected type", () => {
+    it("shows only the rules that fit the type, and drops the others from the config when the type is changed", async () => {
+      await render({
+        dataType: "string",
+        validators: { required: true, pattern: "[a-z]+" },
+      });
 
       fixture.componentRef.setInput("dataType", "number");
-      fixture.detectChanges();
+      await settle();
 
-      const labels = fixture.nativeElement.textContent;
-      expect(labels).not.toContain("Pattern (Regex)");
-      expect(labels).toContain("Maximum Value");
+      expect(rows().map((row) => row.textContent)).toEqual([
+        expect.stringContaining("Required Field"),
+      ]);
+      expect(text()).toContain(
+        "Not used for this type of field: Pattern (Regex)",
+      );
+      expect(await addableRules()).toContain("Maximum Value");
       expect(emitted.at(-1)).toEqual({ required: true });
     });
 
-    it("keeps a setting not fitting the type when opening the field, and saves it if the type is changed to one it fits", () => {
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "number",
-        validators: { pattern: "[0-9]+" },
-      });
-      fixture.detectChanges();
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+    it("shows a rule again when the type is changed back, and saves it if the type is changed to one it fits", async () => {
+      await render({ dataType: "number", validators: { pattern: "[0-9]+" } });
+      expect(rows()).toHaveLength(0);
 
       fixture.componentRef.setInput("dataType", "string");
-      fixture.detectChanges();
+      await settle();
 
+      expect(rows()).toHaveLength(1);
       expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
     });
 
-    it("keeps the pattern of an email field when another setting is changed", () => {
-      fixture.componentRef.setInput("entitySchemaField", {
+    it("keeps a pattern given as a regular expression as a text", async () => {
+      await render({ dataType: "string", validators: { pattern: /^\d+$/ } });
+
+      await addRule("Required Field");
+
+      expect(emitted.at(-1)).toEqual({
+        required: true,
+        pattern: String.raw`^\d+$`,
+      });
+    });
+
+    it("keeps the pattern of an email field when another setting is changed", async () => {
+      await render({
         dataType: "email",
         validators: { pattern: "@example\\.org$" },
       });
-      fixture.detectChanges();
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
 
-      component.validatorForm().get("required").setValue(true);
+      await addRule("Required Field");
 
       expect(emitted.at(-1)).toEqual({
         required: true,
@@ -216,25 +249,45 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       });
     });
 
-    it("removes a disabled trimming once the type is changed to one without trimming", () => {
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "string",
-        trim: false,
+    it("does not change the config when only opening the field", async () => {
+      await render({
+        dataType: "number",
+        validators: { min: 5, pattern: "[0-9]+" },
       });
-      fixture.detectChanges();
-      const emitted: Partial<EntitySchemaField>[] = [];
-      component.entitySchemaFieldChanges.subscribe((v) => emitted.push(v));
 
-      fixture.componentRef.setInput("dataType", "long-text");
-      fixture.detectChanges();
-      expect(emitted.at(-1)).toEqual({ trim: undefined });
-
-      fixture.componentRef.setInput("dataType", "string");
-      fixture.detectChanges();
-      expect(emitted.at(-1)).toEqual({ trim: false });
+      expect(emitted).toEqual([]);
     });
 
-    it("keeps validators the tab has no setting for, also as only a warning", () => {
+    it("does not block saving with an invalid setting that is hidden for the selected type", async () => {
+      await render({ dataType: "string" });
+      await addRule("Pattern (Regex)");
+      const input = await loader().getHarness(
+        MatInputHarness.with({ ancestor: ".validator-row" }),
+      );
+      await input.setValue("[a-z");
+      expect(component.validatorForm().invalid).toBe(true);
+
+      fixture.componentRef.setInput("dataType", "number");
+      await settle();
+
+      expect(component.validatorForm().invalid).toBe(false);
+    });
+
+    it("removes a disabled trimming once the type is changed to one without trimming", async () => {
+      const changes: Partial<EntitySchemaField>[] = [];
+      component.entitySchemaFieldChanges.subscribe((v) => changes.push(v));
+      await render({ dataType: "string", trim: false });
+
+      fixture.componentRef.setInput("dataType", "long-text");
+      await settle();
+      expect(changes.at(-1)).toEqual({ trim: undefined });
+
+      fixture.componentRef.setInput("dataType", "string");
+      await settle();
+      expect(changes.at(-1)).toEqual({ trim: false });
+    });
+
+    it("keeps rules the tab has no setting for, also as only a warning", async () => {
       const validators = TestBed.inject(DynamicValidatorsService);
       const getRule = validators.rules.get.bind(validators.rules);
       vi.spyOn(validators.rules, "get").mockImplementation((key) =>
@@ -242,12 +295,15 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
           ? ({ warning: "optional" } as FieldValidator)
           : getRule(key),
       );
-      const emitted = renderField({
-        customRule: 5,
-        _warningOnly: ["customRule"],
-      } as FormValidatorConfig);
+      await render({
+        dataType: "string",
+        validators: {
+          customRule: 5,
+          _warningOnly: ["customRule"],
+        } as FormValidatorConfig,
+      });
 
-      component.validatorForm().get("required").setValue(true);
+      await addRule("Required Field");
 
       expect(emitted.at(-1)).toEqual({
         customRule: 5,
@@ -255,259 +311,51 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         _warningOnly: ["customRule"],
       });
     });
-
-    it("removes settings not fitting the type from the config once the type is changed, not when only opening the field", () => {
-      const newFixture = TestBed.createComponent(
-        ConfigureEntityFieldValidatorComponent,
-      );
-      newFixture.componentRef.setInput("entitySchemaField", {
-        dataType: "number",
-        validators: { min: 5, pattern: "[0-9]+" },
-      });
-      const emitted: FormValidatorConfig[] = [];
-      newFixture.componentInstance.entityValidatorChanges.subscribe((v) =>
-        emitted.push(v),
-      );
-
-      newFixture.detectChanges();
-      expect(emitted).toEqual([]);
-
-      newFixture.componentRef.setInput("dataType", "string");
-      newFixture.detectChanges();
-      expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
-    });
-
-    it.each([null, /^\d+$/])(
-      "shows a pattern given as %s in the config",
-      (pattern) => {
-        renderField({ pattern });
-
-        expect(component.validatorForm().get("pattern").value).toBe(
-          pattern?.source ?? "",
-        );
-      },
-    );
-
-    it("saves the validators that are only a warning, as long as they are set", () => {
-      const emitted = renderField({ pattern: "[a-z]+" });
-
-      component.setWarningOnly("pattern", true);
-      expect(emitted.at(-1)).toEqual({
-        pattern: "[a-z]+",
-        _warningOnly: ["pattern"],
-      });
-
-      component.validatorForm().get("pattern").setValue("");
-      expect(emitted.at(-1)).toEqual({});
-    });
-  });
-
-  it("should flag invalid regex input as control error and not emit it", () => {
-    fixture.componentRef.setInput("entitySchemaField", {
-      dataType: "string",
-      validators: {},
-    });
-    fixture.detectChanges();
-
-    let emitted;
-    component.entityValidatorChanges.subscribe((v) => (emitted = v));
-
-    const patternControl = component
-      .validatorForm()
-      .get("pattern") as AbstractControl;
-    const messageControl = component
-      .validatorForm()
-      .get("patternMessage") as AbstractControl;
-    expect(messageControl.disabled).toBe(true); // disabled while no pattern is set
-
-    patternControl.setValue("[a-z");
-
-    expect(patternControl.hasError("invalidPattern")).toBe(true);
-    expect(emitted).toEqual({});
-    expect(messageControl.enabled).toBe(true); // editable as soon as user types a pattern
-  });
-
-  describe("period of a linked record", () => {
-    async function renderDateRangeField(withinParent?: WithinParentConfig) {
-      const field: EntitySchemaField = {
-        ...ValidatorTestAction.schema.get("period"),
-        validators: withinParent && { withinParent },
-      };
-      fixture.componentRef.setInput("entityType", ValidatorTestAction);
-      fixture.componentRef.setInput("entitySchemaField", field);
-      fixture.detectChanges();
-
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
-      const select =
-        await TestbedHarnessEnvironment.loader(fixture).getHarness(
-          MatSelectHarness,
-        );
-      return { select, emitted };
-    }
-
-    it("offers the date range fields of the linked record types, and this field for a link to the same type", async () => {
-      const { select } = await renderDateRangeField();
-      await select.open();
-
-      const options = await select.getOptions();
-      expect(await Promise.all(options.map((o) => o.getText()))).toEqual([
-        "none",
-        "Parent › Period",
-        "Project › Planned period",
-      ]);
-    });
-
-    it.each<[string, WithinParentConfig | undefined]>([
-      ["Parent › Period", { parentReferenceField: "parent" }],
-      [
-        "Project › Planned period",
-        { parentReferenceField: "project", parentValueField: "plannedPeriod" },
-      ],
-      ["none", undefined],
-    ])(
-      "sets the field's withinParent when selecting %s",
-      async (text, expected) => {
-        const { select, emitted } = await renderDateRangeField({
-          parentReferenceField: "somethingElse",
-        });
-
-        await select.clickOptions({ text });
-
-        expect(emitted.at(-1)?.withinParent).toEqual(expected);
-      },
-    );
-
-    it.each<[string, TranslatableText | undefined, string]>([
-      ["has no label yet (a new field)", undefined, "Parent › this field"],
-      [
-        "has a label in several languages",
-        { en: "Planned period", de: "Geplanter Zeitraum" },
-        "Parent › Planned period",
-      ],
-    ])(
-      "names this field for a link to the same type when it %s",
-      async (_, label, expected) => {
-        fixture.componentRef.setInput("entityType", ValidatorTestAction);
-        fixture.componentRef.setInput("entitySchemaField", {
-          dataType: "date-range",
-          label,
-        } as EntitySchemaField);
-        fixture.detectChanges();
-        const select =
-          await TestbedHarnessEnvironment.loader(fixture).getHarness(
-            MatSelectHarness,
-          );
-        await select.open();
-
-        const options = await select.getOptions({ text: /^Parent/ });
-        expect(await options[0].getText()).toBe(expected);
-      },
-    );
-
-    it("does not keep the setting for a field that is not a date range", async () => {
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "string",
-        validators: { withinParent: { parentReferenceField: "parent" } },
-      });
-      fixture.detectChanges();
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
-
-      component.validatorForm().get("required").setValue(true);
-
-      expect(emitted.at(-1)).toEqual({ required: true });
-    });
-
-    it("drops the setting when the type of the field is changed to another one", async () => {
-      const { emitted } = await renderDateRangeField({
-        parentReferenceField: "parent",
-      });
-
-      fixture.componentRef.setInput("dataType", "string");
-      fixture.detectChanges();
-
-      expect(emitted.at(-1)).toEqual({});
-    });
-
-    it("shows the saved setting", async () => {
-      const { select } = await renderDateRangeField({
-        parentReferenceField: "project",
-        parentValueField: "plannedPeriod",
-      });
-
-      expect(await select.getValueText()).toBe("Project › Planned period");
-    });
   });
 
   describe("selection filter of a link field", () => {
     const condition = { start: { $exists: true } };
 
-    function renderLinkField(linkedEntityType?: EntityConstructor) {
-      fixture.componentRef.setInput("entityType", ValidatorTestAction);
-      fixture.componentRef.setInput("linkedEntityType", linkedEntityType);
-      fixture.componentRef.setInput(
-        "entitySchemaField",
-        ValidatorTestAction.schema.get("project"),
-      );
-      fixture.detectChanges();
-
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
-      const button = () =>
-        fixture.debugElement.query(
-          By.directive(AdminDisplayConditionButtonComponent),
-        )?.componentInstance as AdminDisplayConditionButtonComponent;
-      return { emitted, button };
-    }
-
-    it("offers a condition on the linked record type only if the field links to exactly one type", () => {
-      const { button } = renderLinkField();
-      expect(button()).toBeUndefined();
-
-      fixture.componentRef.setInput("linkedEntityType", ValidatorTestProject);
-      fixture.detectChanges();
-
-      expect(button().entityType()).toBe(ValidatorTestProject);
-      expect(button().currentRecordType()).toBe(ValidatorTestAction);
-    });
-
-    it("saves the condition as the field's selectionCondition, and removes it again", () => {
-      const { emitted, button } = renderLinkField(ValidatorTestProject);
-
-      button().conditionChange.emit(condition);
-      expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
-
-      button().conditionChange.emit(null);
-      expect(emitted.at(-1)).toEqual({});
-    });
-
-    it("keeps a condition on a record type chosen in the dialog", () => {
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "string",
-      });
-      fixture.detectChanges();
-      const emitted: FormValidatorConfig[] = [];
-      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+    it("keeps a condition on a record type chosen in the dialog", async () => {
+      await render({ dataType: "string" });
 
       fixture.componentRef.setInput("dataType", "entity");
-      fixture.componentRef.setInput("additional", "ValidatorTestProject");
-      fixture.componentRef.setInput("linkedEntityType", ValidatorTestProject);
-      fixture.detectChanges();
+      fixture.componentRef.setInput("additional", "ValidatorTabTestRecord");
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTabTestRecord);
+      await settle();
       component.validatorForm().get("selectionCondition").setValue(condition);
 
       expect(emitted.at(-1)).toEqual({ selectionCondition: condition });
     });
-  });
 
-  it("does not block saving with an invalid setting that is hidden for the selected type", () => {
-    fixture.componentRef.setInput("entitySchemaField", { dataType: "string" });
-    fixture.detectChanges();
-    component.validatorForm().get("pattern").setValue("[a-z");
+    it("offers the condition only for a link to exactly one record type", async () => {
+      await render({ dataType: "entity", additional: ["A", "B"] });
 
-    fixture.componentRef.setInput("dataType", "number");
-    fixture.detectChanges();
+      expect(await addableRules()).not.toContain("Selection Filter");
+    });
 
-    expect(component.validatorForm().invalid).toBe(false);
+    it("shows the name of a rule whose setting has nothing to offer", async () => {
+      await render({ dataType: "entity", additional: "NotARegisteredType" });
+
+      await addRule("Selection Filter");
+
+      await vi.waitFor(() =>
+        expect(rows()[0].textContent).toContain("Selection Filter"),
+      );
+    });
+
+    it("keeps a row that is not filled in yet when the linked type changes", async () => {
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTabTestRecord);
+      await render({
+        dataType: "entity",
+        additional: "ValidatorTabTestRecord",
+      });
+      await addRule("Selection Filter");
+
+      fixture.componentRef.setInput("linkedEntityType", undefined);
+      await settle();
+
+      expect(rows()).toHaveLength(1);
+    });
   });
 });

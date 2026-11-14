@@ -48,6 +48,41 @@ export class AdminModule {
             (c) => c.AdminPrimaryActionComponent,
           ),
       ],
+      [
+        "NumberValidatorSetting",
+        () =>
+          import("./admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/number-validator-setting.component").then(
+            (c) => c.NumberValidatorSettingComponent,
+          ),
+      ],
+      [
+        "DateValidatorSetting",
+        () =>
+          import("./admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/date-validator-setting.component").then(
+            (c) => c.DateValidatorSettingComponent,
+          ),
+      ],
+      [
+        "PatternValidatorSetting",
+        () =>
+          import("./admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/pattern-validator-setting.component").then(
+            (c) => c.PatternValidatorSettingComponent,
+          ),
+      ],
+      [
+        "WithinParentValidatorSetting",
+        () =>
+          import("./admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/within-parent-validator-setting.component").then(
+            (c) => c.WithinParentValidatorSettingComponent,
+          ),
+      ],
+      [
+        "SelectionConditionValidatorSetting",
+        () =>
+          import("./admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/selection-condition-validator-setting.component").then(
+            (c) => c.SelectionConditionValidatorSettingComponent,
+          ),
+      ],
     ]);
   }
 }
