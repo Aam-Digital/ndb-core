@@ -126,7 +126,8 @@ describe("EntityActionsMenuService", () => {
       () => {
         throw new Error("Requested item is not registered in EntityRegistry.");
       },
-      () => [
+      // factories may be async, e.g. to load the records defining their actions
+      async () => [
         {
           action: "healthy-factory-action",
           label: "Healthy Factory",

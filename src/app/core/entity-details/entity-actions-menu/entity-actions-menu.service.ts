@@ -20,19 +20,19 @@ export class EntityActionsMenuService {
   private actionsFactories: EntityActionsFactory[] = [];
   private readonly ability = inject(EntityAbility, { optional: true });
 
-  getActions(entity?: Entity): EntityAction[] {
-    const factoryActions = this.actionsFactories.flatMap((factory) => {
+  async getActions(entity?: Entity): Promise<EntityAction[]> {
+    const factoryActions: EntityAction[] = [];
+    for (const factory of this.actionsFactories) {
       try {
-        return factory(entity);
+        factoryActions.push(...(await factory(entity)));
       } catch (err) {
         // a single misbehaving factory must not break the whole context menu
         Logging.warn(
           "EntityActionsMenu: action factory failed; skipping its actions.",
           err,
         );
-        return [];
       }
-    });
+    }
 
     return [...this.actions, ...factoryActions];
   }
@@ -45,7 +45,7 @@ export class EntityActionsMenuService {
     availableFor: "bulk-only" | "individual-only" | "all",
   ): Promise<EntityAction[]> {
     const entity = Array.isArray(entities) ? entities[0] : entities;
-    const actions = this.getActions(entity).filter((action) => {
+    const actions = (await this.getActions(entity)).filter((action) => {
       const avail = action.availableFor ?? "all";
       return avail === availableFor || avail === "all";
     });
@@ -131,4 +131,10 @@ export class EntityActionsMenuService {
   }
 }
 
-export type EntityActionsFactory = (entity: Entity) => EntityAction[];
+/**
+ * Generates the actions for the given entity.
+ * May be async, e.g. to load the records that define the actions.
+ */
+export type EntityActionsFactory = (
+  entity: Entity,
+) => EntityAction[] | Promise<EntityAction[]>;
