@@ -55,17 +55,23 @@ test("Actions list shows sub-actions indented below their parent", async ({
   await page.getByPlaceholder("e.g. name, age").fill("");
 
   // "Depends on" arranges the actions by another link field, "None" shows a flat list with pages
-  await page.getByRole("combobox", { name: "Hierarchy" }).click();
-  await page.getByRole("option", { name: "Depends on" }).click();
+  const hierarchyButton = page.getByRole("button", { name: /^Hierarchy:/ });
+  await expect(hierarchyButton).toHaveAccessibleName(
+    "Hierarchy: Parent action",
+  );
+  await hierarchyButton.click();
+  await page.getByRole("menuitemradio", { name: "Depends on" }).click();
   await expect(page).toHaveURL(/[?&]_hierarchy=dependsOn/);
-  await expect(page.getByRole("listbox")).toBeHidden();
+  await expect(page.getByRole("menu")).toBeHidden();
   expect(await indentOf("Site survey")).toBeLessThan(
     await indentOf("Well in Rampur"),
   );
 
-  await page.getByRole("combobox", { name: "Hierarchy" }).click();
-  await page.getByRole("option", { name: "None (flat list)" }).click();
+  await hierarchyButton.click();
+  await page.getByRole("menuitemradio", { name: "None (flat list)" }).click();
   await expect(page).toHaveURL(/[?&]_hierarchy=none/);
+  await expect(hierarchyButton).toHaveAccessibleName("Hierarchy: Flat list");
+  await expect(page.getByRole("button", { name: "Collapse all" })).toBeHidden();
   await expect(page.locator("app-hierarchy-tree-cell")).toHaveCount(0);
   await expect(page.getByText("1 - 10 of 18")).toBeVisible();
 });

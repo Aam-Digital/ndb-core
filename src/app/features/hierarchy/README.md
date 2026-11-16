@@ -34,7 +34,10 @@ Admins set this in the admin UI of the list view ("Hierarchy displayed by").
 "dataSource": { "name": "hierarchy", "config": { "hierarchyFields": ["parentAction", "dependsOn"] } }
 ```
 
-The user chooses the field (or "None (flat list)") in the "Hierarchy" dropdown above the list.
+The user chooses the field (or "None (flat list)") with the hierarchy button at the end of the filter row
+(icon and the chosen field, opening a menu). It is a button and not a dropdown like the filters,
+as it changes how the list is arranged, not which records it shows; "Collapse all" / "Expand all" is joined to it.
+On mobile, both are icon buttons in the header row.
 The choice is kept in the URL param `_hierarchy` (with the `_` prefix of URL state other than filters, see `UrlStateService`),
 the default field is not written to the URL.
 
@@ -58,8 +61,7 @@ Invalid fields (not a single link to the same type) are ignored without an error
 | `hierarchy-tree-cell/`                       | row options prefix: indentation, connector lines, expand/collapse button, context icon    |
 | `hierarchy-child-count/`                     | row options suffix of a collapsed row: the number of its sub-records                      |
 | `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), included in `styles.scss` |
-| `hierarchy-select/`                          | toolbar control: the "Hierarchy" dropdown                                                 |
-| `hierarchy-expand-all/`                      | toolbar control: "Collapse all" / "Expand all"                                            |
+| `hierarchy-toolbar/`                         | toolbar control: menu to choose the field, joined with "Collapse all" / "Expand all"      |
 | `admin-hierarchy-fields/`                    | admin setting "Hierarchy displayed by" (`ADMIN_ENTITY_LIST_SETTINGS`)                     |
 | `demo-data/demo-action-generator.service.ts` | the sample plan for the "Action" type of demo mode "All Features"                         |
 

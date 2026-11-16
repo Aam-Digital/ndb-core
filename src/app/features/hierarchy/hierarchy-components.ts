@@ -20,17 +20,10 @@ export const hierarchyComponents: ComponentTuple[] = [
       ),
   ],
   [
-    "HierarchySelect",
+    "HierarchyToolbar",
     () =>
-      import("./hierarchy-select/hierarchy-select.component").then(
-        (c) => c.HierarchySelectComponent,
-      ),
-  ],
-  [
-    "HierarchyExpandAll",
-    () =>
-      import("./hierarchy-expand-all/hierarchy-expand-all.component").then(
-        (c) => c.HierarchyExpandAllComponent,
+      import("./hierarchy-toolbar/hierarchy-toolbar.component").then(
+        (c) => c.HierarchyToolbarComponent,
       ),
   ],
   [

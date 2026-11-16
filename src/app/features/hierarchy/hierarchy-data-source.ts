@@ -171,13 +171,13 @@ export class HierarchyDataSource<
     return this.rowOptionsById().get(record.getId());
   }
 
-  private readonly hierarchyControls: DynamicComponentConfig[] = [
-    { component: "HierarchySelect", config: { dataSource: this } },
-    { component: "HierarchyExpandAll", config: { dataSource: this } },
-  ];
+  private readonly hierarchyControl: DynamicComponentConfig = {
+    component: "HierarchyToolbar",
+    config: { dataSource: this },
+  };
   override readonly toolbarControls = computed(() =>
     this.hierarchyFields().length > 0 && !this.rootRecord()
-      ? [this.freeTextFilterControl, ...this.hierarchyControls]
+      ? [this.freeTextFilterControl, this.hierarchyControl]
       : [this.freeTextFilterControl],
   );
 
