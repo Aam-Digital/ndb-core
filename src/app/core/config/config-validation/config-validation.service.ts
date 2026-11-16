@@ -4,8 +4,10 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
 import { DefaultValueStrategy } from "../../default-values/default-value-strategy.interface";
 import { DynamicValidatorsService } from "../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { ConfigValidationContext } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
 import {
   FormValidatorConfig,
   WARNING_ONLY_KEY,
@@ -107,11 +109,15 @@ export class ConfigValidationService {
       });
     }
 
+    const context: ConfigValidationContext = {
+      entityType: configId.substring(ENTITY_CONFIG_PREFIX.length),
+      fieldsOf: (entityType) => this.getFields(entityType, config),
+    };
     for (const [field, schema] of Object.entries(
       entityConfig?.attributes ?? {},
     )) {
       problems.push(
-        ...this.validateField(schema, config).map((message) => ({
+        ...this.validateField(schema, config, context).map((message) => ({
           configId,
           field,
           message,
@@ -121,9 +127,39 @@ export class ConfigValidationService {
     return problems;
   }
 
+  /**
+   * The fields of a record type as the app sets them up from the config (see `EntityConfigService`):
+   * the fields of its code, each replaced by a field of the same id in the checked config.
+   * `undefined` for an unknown record type.
+   */
+  private getFields(
+    entityType: string,
+    config: Record<string, any>,
+  ): Map<string, EntitySchemaField> | undefined {
+    const registry = this.injector.get(EntityRegistry);
+    const entityConfig: EntityConfig | undefined =
+      config[ENTITY_CONFIG_PREFIX + entityType];
+    if (!registry.has(entityType) && !entityConfig) {
+      return undefined;
+    }
+
+    // the check runs before the saved config is applied: a type new in it starts from the type it extends
+    const codeType = registry.has(entityType)
+      ? entityType
+      : entityConfig.extends;
+    const fields = new Map(
+      registry.has(codeType) ? registry.get(codeType).schema : Entity.schema,
+    );
+    for (const [id, field] of Object.entries(entityConfig?.attributes ?? {})) {
+      fields.set(id, field);
+    }
+    return fields;
+  }
+
   private validateField(
     schema: EntitySchemaField,
     config: Record<string, any>,
+    context: ConfigValidationContext,
   ): string[] {
     if (!schema || typeof schema !== "object") {
       return [];
@@ -142,7 +178,7 @@ export class ConfigValidationService {
       );
     }
 
-    problems.push(...this.validateValidators(schema));
+    problems.push(...this.validateValidators(schema, context));
 
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
@@ -155,7 +191,10 @@ export class ConfigValidationService {
     return problems;
   }
 
-  private validateValidators(schema: EntitySchemaField): string[] {
+  private validateValidators(
+    schema: EntitySchemaField,
+    context: ConfigValidationContext,
+  ): string[] {
     const rules = this.injector.get(DynamicValidatorsService);
     const datatype = this.injector
       .get(EntitySchemaService)
@@ -172,7 +211,7 @@ export class ConfigValidationService {
             : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
         ];
       }
-      const problems = rule.validateConfig(value, schema, datatype);
+      const problems = rule.validateConfig(value, schema, datatype, context);
       // without a dataType (e.g. overriding a field of the record type's code) the type is not known here
       if (
         problems.length === 0 &&

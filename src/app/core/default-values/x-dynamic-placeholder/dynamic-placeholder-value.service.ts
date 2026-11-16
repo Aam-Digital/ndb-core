@@ -9,9 +9,10 @@ import { Logging } from "../../logging/logging.service";
 import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
+  CurrentRecordReference,
   DataFilter,
   isCurrentRecordPlaceholder,
-  placeholderFieldId,
+  parseCurrentRecordPlaceholder,
 } from "../../filter/filters/filters";
 import {
   AdminDefaultValueContext,
@@ -19,6 +20,7 @@ import {
 } from "../default-value-strategy.interface";
 import { DefaultValueConfigDynamic } from "./default-value-config-dynamic";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -97,23 +99,55 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
    * If one of the alternatives of `$or` cannot be applied at all, the whole `$or` is left out
    * (that alternative does not restrict anything, so neither does the `$or`).
    *
+   * A placeholder can go through a link field to a field of the linked record(s),
+   * e.g. `$current_record.parentAction.locations` (one level only): it is replaced by the values of all linked records
+   * given in `linkedRecords`. `_id` as the field of the linked record stands for that record itself.
+   * Linked records that are not given (e.g. because they cannot be loaded) are skipped.
+   *
    * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
    * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
+   * @param linkedRecords The records that the record links to, as far as placeholders go through them.
    * @returns The resolved condition, which is empty if no row is left to apply.
    */
   resolveRecordPlaceholders<T>(
     condition: DataFilter<T>,
     record: Entity | undefined,
+    linkedRecords: Entity[] = [],
   ): DataFilter<T> {
-    const getValue = (fieldId: string) => {
-      const value = record?.[fieldId];
-      const schemaField = record?.getSchema().get(fieldId);
-      if (value === undefined || value === null || !schemaField) {
-        return value;
-      }
-      return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
-    };
+    const getValue = ({ fieldId, linkedFieldId }: CurrentRecordReference) =>
+      linkedFieldId === undefined
+        ? this.getDatabaseValue(record, fieldId)
+        : this.getLinkedValues(record?.[fieldId], linkedFieldId, linkedRecords);
     return resolveCondition(condition ?? {}, getValue) as DataFilter<T>;
+  }
+
+  /**
+   * The values of a field of the records linked in a link field (`linkValue`, one id or a list of them):
+   * the value of the one record, or the values of all of them (each value once) for a list.
+   */
+  private getLinkedValues(
+    linkValue: unknown,
+    fieldId: string,
+    linkedRecords: Entity[],
+  ) {
+    const values = asArray(linkValue ?? [])
+      .map((id) => linkedRecords.find((linked) => linked.getId() === id))
+      .map((linked) => this.getDatabaseValue(linked, fieldId))
+      .filter((value) => !isEmptyValue(value));
+    return Array.isArray(linkValue) ? [...new Set(values.flat())] : values[0];
+  }
+
+  /** the value of a record's field in database format, like the values of the records a condition is applied to */
+  private getDatabaseValue(record: Entity | undefined, fieldId: string) {
+    if (fieldId === "_id") {
+      return record?.getId();
+    }
+    const value = record?.[fieldId];
+    const schemaField = record?.getSchema().get(fieldId);
+    if (value === undefined || value === null || !schemaField) {
+      return value;
+    }
+    return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
   }
 }
 
@@ -123,8 +157,8 @@ const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
 /** marks a value that cannot be resolved, because it references an empty field */
 const UNRESOLVED = Symbol("unresolved");
 
-/** returns the value of the given field of the current record (in database format) */
-type FieldValueGetter = (fieldId: string) => unknown;
+/** returns the value that a placeholder refers to, in database format */
+type FieldValueGetter = (reference: CurrentRecordReference) => unknown;
 
 /** the rows of a condition that can be applied, with their placeholders resolved */
 function resolveCondition(condition: object, getValue: FieldValueGetter) {
@@ -172,7 +206,7 @@ function resolveConditionList(
 /** the value with its placeholders resolved (`UNRESOLVED` if one of them references an empty field) */
 function resolveValue(value: unknown, getValue: FieldValueGetter): unknown {
   if (isCurrentRecordPlaceholder(value)) {
-    const fieldValue = getValue(placeholderFieldId(value));
+    const fieldValue = getValue(parseCurrentRecordPlaceholder(value));
     return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
   }
   if (Array.isArray(value)) {

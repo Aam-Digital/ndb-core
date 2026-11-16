@@ -34,17 +34,26 @@ export class MarkdownPageComponent {
     params: () => this.markdownEntityId(),
     loader: async ({ params: markdownEntityId }) => {
       if (!markdownEntityId) return "";
-      const markdownEntity = await this.entityMapper.load(
-        MarkdownContent,
-        markdownEntityId,
-      );
+      const markdownEntity = await this.entityMapper
+        .load(MarkdownContent, markdownEntityId)
+        .catch((err) => {
+          // a config pointing to a not (yet) existing content: show "Content not found"
+          if (err?.status === 404) return undefined;
+          throw err;
+        });
       // the content may be configured per language - show the active one
       return resolveLocaleText(markdownEntity?.content) ?? "";
     },
   });
 
-  /** markdown content string for template use */
-  readonly markdownContent = computed(
-    () => this.markdownContentResource.value() ?? "",
+  /**
+   * markdown content string for template use.
+   * Empty if the entity could not be loaded,
+   * because reading `value()` of a failed resource throws.
+   */
+  readonly markdownContent = computed(() =>
+    this.markdownContentResource.hasValue()
+      ? (this.markdownContentResource.value() ?? "")
+      : "",
   );
 }
