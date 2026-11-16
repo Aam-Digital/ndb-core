@@ -51,7 +51,11 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
-import { loadLinkedRecord, loadLinkedRecords } from "../load-linked-records";
+import {
+  latestLinkedRecords,
+  loadLinkedRecord,
+  loadLinkedRecords,
+} from "../load-linked-records";
 import {
   getPlaceholderLinkedRecordIds,
   matchesSelectionCondition,
@@ -270,6 +274,11 @@ export class EditEntityComponent<
         loadLinkedRecords(params.entityMapper, params.ids),
     });
 
+  /** the records that the `selectionCondition` refers to, in their latest version (e.g. after an automated update) */
+  private readonly latestPlaceholderLinkedRecords = latestLinkedRecords(() =>
+    this.placeholderLinkedRecords.value(),
+  );
+
   /**
    * The configured `selectionCondition` with placeholders resolved,
    * or `undefined` if no condition applies.
@@ -282,7 +291,7 @@ export class EditEntityComponent<
           this.entityType(),
           this.currentRecord(),
           this.placeholderService,
-          this.placeholderLinkedRecords.value(),
+          this.latestPlaceholderLinkedRecords(),
         ),
       // only notify of an actual change, not of every change of other fields in the form
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
@@ -494,7 +503,7 @@ export class EditEntityComponent<
         [
           ...this.allEntities.value(),
           ...this.availableEntitiesResource.value(),
-          ...this.placeholderLinkedRecords.value(),
+          ...this.latestPlaceholderLinkedRecords(),
         ]
           .filter((e) => !(e as { isHidden?: boolean }).isHidden)
           .map((e) => [e.getId(), e]),

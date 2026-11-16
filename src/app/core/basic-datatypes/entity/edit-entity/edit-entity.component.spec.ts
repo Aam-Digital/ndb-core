@@ -622,6 +622,27 @@ describe("EditEntityComponent", () => {
         },
       );
 
+      it("re-checks the selected records with the latest version of the linked record", async () => {
+        editRecordWithCondition(condition, { ref: parent.getId() });
+        formControl.setValue(test1Entities[1].getId());
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect([...component.ineligibleIds()]).toEqual([
+            test1Entities[1].getId(),
+          ]);
+        });
+
+        // e.g. an automated update adds the selected record to the linked record
+        const updatedParent = parent.copy();
+        updatedParent.refMixed = [...parent.refMixed, test1Entities[1].getId()];
+        await TestBed.inject(EntityMapperService).save(updatedParent);
+
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect([...component.ineligibleIds()]).toEqual([]);
+        });
+      });
+
       it("does not load the linked record again when another field of the record changes", async () => {
         editRecordWithCondition(condition, { ref: parent.getId() });
         await expectOfferedNames(["Abc", "Abd"]);

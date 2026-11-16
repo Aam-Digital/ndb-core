@@ -1,3 +1,5 @@
+import { effect, inject, linkedSignal, Signal } from "@angular/core";
+import { filter, merge } from "rxjs";
 import { RegistryLookupError } from "../../config/registry/dynamic-registry";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
@@ -45,4 +47,37 @@ export async function loadLinkedRecords(
       ),
   );
   return records.filter((record) => !!record);
+}
+
+/**
+ * The given records in their latest version: they are replaced while they change in the database
+ * (e.g. a parent record that an automated update changes after a record linking to it is saved),
+ * and left out once deleted.
+ * Must be called in an injection context (e.g. as a field initializer of a component).
+ */
+export function latestLinkedRecords(records: () => Entity[]): Signal<Entity[]> {
+  const entityMapper = inject(EntityMapperService);
+  const latest = linkedSignal(records);
+
+  effect((onCleanup) => {
+    const followed = records();
+    const ids = new Set(followed.map((record) => record.getId()));
+    const types = new Set(followed.map((record) => record.getType()));
+    const subscription = merge(
+      ...[...types].map((type) => entityMapper.receiveUpdates(type)),
+    )
+      .pipe(filter(({ entity }) => ids.has(entity.getId())))
+      .subscribe(({ type, entity }) =>
+        latest.update((current) =>
+          type === "remove"
+            ? current.filter((record) => record.getId() !== entity.getId())
+            : current.map((record) =>
+                record.getId() === entity.getId() ? entity : record,
+              ),
+        ),
+      );
+    onCleanup(() => subscription.unsubscribe());
+  });
+
+  return latest.asReadonly();
 }
