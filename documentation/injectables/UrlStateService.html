@@ -356,8 +356,8 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -413,11 +413,12 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>resolves once the URL is updated, e.g. before reloading the page</p>
+
                             </div>
                 </td>
             </tr>
@@ -587,8 +588,8 @@ export class UrlStateService {
   private navigateWithParams(
     queryParams: Record&lt;string, any&gt;,
     replaceUrl: boolean,
-  ) {
-    this.router.navigate([], {
+  ): Promise&lt;boolean&gt; {
+    return this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
       ...(replaceUrl ? { replaceUrl: true } : {}),
@@ -611,13 +612,14 @@ export class UrlStateService {
 
   /**
    * Remove the given query params from the URL.
+   * @returns resolves once the URL is updated, e.g. before reloading the page
    */
-  removeUrlParams(keys: string[], replaceUrl &#x3D; true) {
+  removeUrlParams(keys: string[], replaceUrl &#x3D; true): Promise&lt;boolean&gt; {
     const queryParams &#x3D; this.getAllUrlParams();
     for (const key of keys) {
       delete queryParams[key];
     }
-    this.navigateWithParams(queryParams, replaceUrl);
+    return this.navigateWithParams(queryParams, replaceUrl);
   }
 }
 </code></pre>
