@@ -191,12 +191,15 @@ describe("DynamicPlaceholderValueService", () => {
         ).toEqual({ name: "fixed" });
       });
 
-      it("does not follow more than one link", () => {
+      it.each([
+        ["goes through more than one link", "$current_record.ref.ref.other"],
+        ["has no field after the link", "$current_record.ref."],
+      ])("leaves out a placeholder that %s", (_, placeholder) => {
         const record = TestEntity.create({ ref: hamburg.getId() });
 
         expect(
           service.resolveRecordPlaceholders(
-            { other: "$current_record.ref.ref.other" },
+            { other: placeholder },
             record,
             linkedRecords,
           ),

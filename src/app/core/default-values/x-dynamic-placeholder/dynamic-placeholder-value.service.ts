@@ -115,9 +115,9 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
     linkedRecords: Entity[] = [],
   ): DataFilter<T> {
     const getValue = ({ fieldId, linkedFieldId }: CurrentRecordReference) =>
-      linkedFieldId
-        ? this.getLinkedValues(record?.[fieldId], linkedFieldId, linkedRecords)
-        : this.getDatabaseValue(record, fieldId);
+      linkedFieldId === undefined
+        ? this.getDatabaseValue(record, fieldId)
+        : this.getLinkedValues(record?.[fieldId], linkedFieldId, linkedRecords);
     return resolveCondition(condition ?? {}, getValue) as DataFilter<T>;
   }
 

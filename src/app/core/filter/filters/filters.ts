@@ -83,7 +83,10 @@ export interface CurrentRecordReference {
   placeholder: string;
   /** the field of the current record */
   fieldId: string;
-  /** the field of the record(s) linked in that field, if the placeholder goes through a link field */
+  /**
+   * the field of the record(s) linked in that field, if the placeholder goes through a link field
+   * (empty for a placeholder ending with the link field and a ".", which refers to no field)
+   */
   linkedFieldId?: string;
 }
 

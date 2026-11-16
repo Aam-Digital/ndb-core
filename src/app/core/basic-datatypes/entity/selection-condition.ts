@@ -121,7 +121,7 @@ export function getPlaceholderLinkedRecordIds(
     return [];
   }
   const ids = getCurrentRecordReferences(condition)
-    .filter(({ linkedFieldId }) => !!linkedFieldId)
+    .filter(({ linkedFieldId }) => linkedFieldId !== undefined)
     .flatMap(({ fieldId }) => asArray<unknown>(record[fieldId] ?? []));
   return [
     ...new Set(
@@ -272,7 +272,7 @@ export class SelectionConditionValidator extends FieldValidator<
     { placeholder, fieldId, linkedFieldId }: CurrentRecordReference,
     context: ConfigValidationContext | undefined,
   ): string[] {
-    if (!linkedFieldId) {
+    if (linkedFieldId === undefined) {
       return [];
     }
     if (linkedFieldId.includes(".")) {

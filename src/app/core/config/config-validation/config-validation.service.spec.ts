@@ -174,6 +174,7 @@ describe("ConfigValidationService", () => {
       ["a field that does not link to records", "other.name", '"other"'],
       ["a field that the record type does not have", "typo.name", '"typo"'],
       ["a field that the linked records do not have", "ref.typo", '"typo"'],
+      ["no field after the link", "ref.", 'no field ""'],
       [
         "a field that the config redefines without linking to records",
         "refMixed.subject",
