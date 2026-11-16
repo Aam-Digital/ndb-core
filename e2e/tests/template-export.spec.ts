@@ -22,7 +22,7 @@ test("Template-export action generates a file in the selected format", async ({
   // The backend names the generated file after the requested format.
   let renderRequest: { convertTo?: string } | undefined;
   await page.route("**/api/v1/export/render/**", (route) => {
-    renderRequest = route.request().postDataJSON();
+    renderRequest = route.request().postDataJSON() as { convertTo?: string };
     return route.fulfill({
       status: 200,
       contentType: "application/octet-stream",
