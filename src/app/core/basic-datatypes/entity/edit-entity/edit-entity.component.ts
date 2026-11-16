@@ -51,10 +51,9 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
-import { loadLinkedRecord } from "../load-linked-records";
+import { loadLinkedRecord, loadLinkedRecords } from "../load-linked-records";
 import {
   getPlaceholderLinkedRecordIds,
-  loadPlaceholderLinkedRecords,
   matchesSelectionCondition,
   registerLinkedRecordsSource,
   resolveSelectionCondition,
@@ -257,17 +256,18 @@ export class EditEntityComponent<
     { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
   );
 
-  private readonly placeholderLinkedRecords: Resource<Map<string, Entity>> =
+  /** the records that the `selectionCondition` refers to, loading while it cannot be applied yet */
+  private readonly placeholderLinkedRecords: Resource<Entity[]> =
     resourceWithRetention({
-      defaultValue: new Map<string, Entity>(),
-      params: () => ({
-        ids: this.placeholderLinkedIds(),
-        entityMapper: this.entityMapperService,
-      }),
+      defaultValue: [],
+      params: () => {
+        const ids = this.placeholderLinkedIds();
+        return ids.length > 0
+          ? { ids, entityMapper: this.entityMapperService }
+          : undefined;
+      },
       loader: ({ params }) =>
-        params.ids.length === 0
-          ? Promise.resolve(new Map<string, Entity>())
-          : loadPlaceholderLinkedRecords(params.entityMapper, params.ids),
+        loadLinkedRecords(params.entityMapper, params.ids),
     });
 
   /**
@@ -291,13 +291,17 @@ export class EditEntityComponent<
   /**
    * Whether a record is offered as an option (besides the selected ones, which always are):
    * only active ones matching the `selectionCondition`, unless the user includes the others.
+   * None while the records that the `selectionCondition` refers to are loading, as it is not known yet which match.
    */
   private readonly isOffered: Signal<
     (e: E, include: OfferedRecordsToggles) => boolean
   > = computed(() => {
     const isEligible = this.isEligible();
+    const isPending = this.placeholderLinkedRecords.isLoading();
     return (e, { includeInactive, includeIneligible }) =>
-      (includeInactive || !e.inactive) && (includeIneligible || isEligible(e));
+      !isPending &&
+      (includeInactive || !e.inactive) &&
+      (includeIneligible || isEligible(e));
   });
 
   private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
@@ -363,7 +367,10 @@ export class EditEntityComponent<
     }));
   });
 
-  loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
+  loading: Signal<boolean> = computed(
+    () =>
+      this.allEntities.isLoading() || this.placeholderLinkedRecords.isLoading(),
+  );
 
   /**
    * The currently selected values (IDs) of the form control.
@@ -480,11 +487,15 @@ export class EditEntityComponent<
 
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
 
-  /** the records loaded for the dropdown (including the selected ones), by id */
-  private readonly loadedRecords: Signal<Map<string, E>> = computed(
+  /** the records loaded for the dropdown (including the selected ones and the ones its `selectionCondition` refers to), by id */
+  private readonly loadedRecords: Signal<Map<string, Entity>> = computed(
     () =>
       new Map(
-        [...this.allEntities.value(), ...this.availableEntitiesResource.value()]
+        [
+          ...this.allEntities.value(),
+          ...this.availableEntitiesResource.value(),
+          ...this.placeholderLinkedRecords.value(),
+        ]
           .filter((e) => !(e as { isHidden?: boolean }).isHidden)
           .map((e) => [e.getId(), e]),
       ),

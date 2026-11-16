@@ -5,7 +5,6 @@ import {
   EventEmitter,
   OnInit,
   inject,
-  Injector,
   computed,
   input,
   signal,
@@ -101,21 +100,23 @@ export class ConditionsEditorComponent implements OnInit {
     const recordType = this.currentRecordType();
     if (!recordType) return [];
 
-    // only needed (with the services it depends on) where conditions refer to a current record
-    return this.injector
-      .get(EntityRelationsService)
-      .getFieldsOfLinkedTypes(recordType)
-      .flatMap(({ linkId, link, fields }) =>
-        fields
-          .filter(([, field]) => !field.isInternalField && !!field.label)
-          .map(([fieldId, field]) => ({
-            ...field,
-            id: `${linkId}.${fieldId}`,
-            label: `${resolveLocaleText(link.label) ?? linkId} › ${resolveLocaleText(field.label)}`,
-            // the values of all linked records
-            isArray: !!link.isArray || !!field.isArray,
-          })),
-      );
+    return (
+      this.entityRelations
+        .getFieldsOfLinkedTypes(recordType)
+        // a link to several record types has no single set of fields
+        .filter(({ link }) => asArray(link.additional ?? []).length === 1)
+        .flatMap(({ linkId, link, fields }) =>
+          fields
+            .filter(([, field]) => !field.isInternalField && !!field.label)
+            .map(([fieldId, field]) => ({
+              ...field,
+              id: `${linkId}.${fieldId}`,
+              label: `${resolveLocaleText(link.label) ?? linkId} › ${resolveLocaleText(field.label)}`,
+              // the values of all linked records
+              isArray: !!link.isArray || !!field.isArray,
+            })),
+        )
+    );
   });
 
   @Output() conditionsChange = new EventEmitter<any>();
@@ -142,7 +143,7 @@ export class ConditionsEditorComponent implements OnInit {
   private readonly referenceRows = new WeakSet<object>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
-  private readonly injector = inject(Injector);
+  private readonly entityRelations = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {

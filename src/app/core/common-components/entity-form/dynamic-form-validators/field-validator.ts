@@ -19,6 +19,15 @@ export interface ValidatorContext {
 }
 
 /**
+ * The fields of a record type as far as they are known while a config is checked
+ * (those of its code and of the checked config): of the record type that the checked field belongs to,
+ * or of the given one. `undefined` for an unknown record type.
+ */
+export type RecordTypeFields = (
+  entityType?: string,
+) => ReadonlyMap<string, EntitySchemaField> | undefined;
+
+/**
  * A validation rule that admins can configure for a field, under its {@link FieldValidator.key} in the field's `validators`.
  *
  * Extend this class and register the implementation in a module imported by the AppModule:
@@ -95,11 +104,15 @@ export abstract class FieldValidator<Config = unknown> {
     return [];
   }
 
-  /** problems of the rule's config for the given field, which admins are told about when saving the config */
+  /**
+   * Problems of the rule's config for the given field, which admins are told about when saving the config.
+   * @param _fieldsOf to check references to other fields (see {@link RecordTypeFields})
+   */
   validateConfig(
     _value: Config,
     _field: EntitySchemaField,
     _datatype: DefaultDatatype,
+    _fieldsOf?: RecordTypeFields,
   ): string[] {
     return [];
   }

@@ -106,13 +106,13 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
    *
    * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
    * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
-   * @param linkedRecords The records that the record links to (by id), as far as placeholders go through them.
+   * @param linkedRecords The records that the record links to, as far as placeholders go through them.
    * @returns The resolved condition, which is empty if no row is left to apply.
    */
   resolveRecordPlaceholders<T>(
     condition: DataFilter<T>,
     record: Entity | undefined,
-    linkedRecords?: Map<string, Entity>,
+    linkedRecords: Entity[] = [],
   ): DataFilter<T> {
     const getValue = (placeholderField: string) => {
       const { fieldId, linkedFieldId } =
@@ -123,7 +123,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
 
       const linkValue = record?.[fieldId];
       const values = asArray<string>(linkValue ?? [])
-        .map((id) => linkedRecords?.get(id))
+        .map((id) => linkedRecords.find((linked) => linked.getId() === id))
         .map((linked) => this.getDatabaseValue(linked, linkedFieldId))
         .filter((value) => !isEmptyValue(value));
       if (!Array.isArray(linkValue)) {

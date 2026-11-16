@@ -127,9 +127,7 @@ describe("DynamicPlaceholderValueService", () => {
         other: "HAMBURG",
         refMixed: ["Note:2", "Note:3"],
       });
-      const linkedRecords = new Map(
-        [berlin, hamburg, alsoHamburg].map((r) => [r.getId(), r]),
-      );
+      const linkedRecords = [berlin, hamburg, alsoHamburg];
 
       it.each([
         [
@@ -163,7 +161,7 @@ describe("DynamicPlaceholderValueService", () => {
           { ref: berlin.getId() },
         ],
       ])("uses %s", (_, linkedCondition, values, expected) => {
-        const record = TestEntity.create(values as Partial<TestEntity>);
+        const record = TestEntity.create(values);
 
         expect(
           service.resolveRecordPlaceholders(

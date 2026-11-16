@@ -4,9 +4,11 @@ import { asArray } from "app/utils/asArray";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
+  CURRENT_RECORD_PLACEHOLDER_PREFIX,
+  CurrentRecordReference,
   DataFilter,
   getCurrentRecordPlaceholderFields,
-  getLinkedRecordPlaceholderFields,
+  getCurrentRecordReferences,
 } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
@@ -14,6 +16,7 @@ import { Logging } from "../../logging/logging.service";
 import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dynamic-form-validators/validator-types";
 import {
   FieldValidator,
+  RecordTypeFields,
   ValidatorContext,
 } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
@@ -21,7 +24,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { SchemaEmbedDatatype } from "../schema-embed/schema-embed.datatype";
 import { EntityDatatype } from "./entity.datatype";
-import { loadLinkedRecord, loadLinkedRecords } from "./load-linked-records";
+import { loadLinkedRecord } from "./load-linked-records";
 
 /**
  * The `selectionCondition` of a field linking to other records,
@@ -30,14 +33,14 @@ import { loadLinkedRecord, loadLinkedRecords } from "./load-linked-records";
  * or the field links to several record types (with different fields).
  *
  * @param linkedRecords the records that the record links to, for placeholders referring to their fields
- *   (see {@link loadPlaceholderLinkedRecords})
+ *   (see {@link getPlaceholderLinkedRecordIds})
  */
 export function resolveSelectionCondition<E extends Entity>(
   condition: DataFilter<E> | undefined,
   entityTypes: string[],
   record: Entity | undefined,
   placeholderService: DynamicPlaceholderValueService,
-  linkedRecords?: Map<string, Entity>,
+  linkedRecords?: Entity[],
 ): DataFilter<E> | undefined {
   if (
     !condition ||
@@ -79,7 +82,10 @@ export function matchesSelectionCondition<E extends Entity>(
 export interface LinkedRecordsSource {
   /** the record types the dropdown offers */
   entityTypes: () => string[];
-  /** a record (by its full id) the dropdown has already loaded, `undefined` if it has not */
+  /**
+   * a record (by its full id) the dropdown has already loaded, `undefined` if it has not:
+   * one of the record types it offers, or one that its `selectionCondition` refers to
+   */
   getLoaded: (id: string) => Entity | undefined;
 }
 
@@ -115,23 +121,14 @@ export function getPlaceholderLinkedRecordIds(
   if (!record) {
     return [];
   }
-  const ids = getLinkedRecordPlaceholderFields(condition).flatMap((linkId) =>
-    asArray<unknown>(record[linkId] ?? []),
-  );
+  const ids = getCurrentRecordReferences(condition)
+    .filter(({ linkedFieldId }) => !!linkedFieldId)
+    .flatMap(({ fieldId }) => asArray<unknown>(record[fieldId] ?? []));
   return [
     ...new Set(
       ids.filter((id): id is string => !!id && typeof id === "string"),
     ),
   ];
-}
-
-/** Load the given records by their (full) ids, leaving out the ones that cannot be loaded. */
-export async function loadPlaceholderLinkedRecords(
-  entityMapper: EntityMapperService,
-  ids: string[],
-): Promise<Map<string, Entity>> {
-  const records = await loadLinkedRecords(entityMapper, ids);
-  return new Map(records.map((record) => [record.getId(), record]));
 }
 
 /**
@@ -197,9 +194,9 @@ export class SelectionConditionValidator extends FieldValidator<
         entityTypes,
         record,
         this.placeholderService,
-        await loadPlaceholderLinkedRecords(
-          this.entityMapper,
+        await this.loadRecords(
           getPlaceholderLinkedRecordIds(condition, record),
+          source,
         ),
       );
       if (!resolved) {
@@ -229,19 +226,32 @@ export class SelectionConditionValidator extends FieldValidator<
     source: LinkedRecordsSource | undefined,
   ): Promise<string> {
     const matches = matchesSelectionCondition(resolved, this.filterService);
-    const records = await Promise.all(
-      selectedIds.map((id) => {
-        const fullId = Entity.createPrefixedId(entityType, id);
-        return (
-          source?.getLoaded(fullId) ??
-          loadLinkedRecord(this.entityMapper, entityType, fullId)
-        );
-      }),
+    const records = await this.loadRecords(
+      selectedIds.map((id) => Entity.createPrefixedId(entityType, id)),
+      source,
     );
     return records
-      .filter((record) => record && !matches(record))
+      .filter((record) => !matches(record))
       .map((record) => record.toString())
       .join(", ");
+  }
+
+  /**
+   * The records with the given (full) ids, without the ones that cannot be loaded:
+   * as the dropdown of the field has loaded them, only the others are loaded here.
+   */
+  private async loadRecords(
+    ids: string[],
+    source: LinkedRecordsSource | undefined,
+  ): Promise<Entity[]> {
+    const records = await Promise.all(
+      ids.map(
+        (id) =>
+          source?.getLoaded(id) ??
+          loadLinkedRecord(this.entityMapper, Entity.extractTypeFromId(id), id),
+      ),
+    );
+    return records.filter((record) => !!record);
   }
 
   override dependsOn(value: DataFilter<Entity>): string[] {
@@ -252,6 +262,7 @@ export class SelectionConditionValidator extends FieldValidator<
     value: DataFilter<Entity>,
     field: EntitySchemaField,
     datatype: DefaultDatatype,
+    fieldsOf?: RecordTypeFields,
   ): string[] {
     if (!value) {
       return [];
@@ -268,6 +279,47 @@ export class SelectionConditionValidator extends FieldValidator<
         $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to one record type, it is ignored.`,
       ];
     }
-    return [];
+    return getCurrentRecordReferences(value).flatMap((reference) =>
+      this.linkedFieldProblems(reference, fieldsOf),
+    );
+  }
+
+  /** problems of a placeholder referring to a field of a linked record, like `$current_record.parentAction.locations` */
+  private linkedFieldProblems(
+    { fieldId, linkedFieldId }: CurrentRecordReference,
+    fieldsOf: RecordTypeFields | undefined,
+  ): string[] {
+    if (!linkedFieldId) {
+      return [];
+    }
+    const placeholder = `${CURRENT_RECORD_PLACEHOLDER_PREFIX}${fieldId}.${linkedFieldId}`;
+    if (linkedFieldId.includes(".")) {
+      return [
+        $localize`:config validation:The selection filter ("selectionCondition") refers to "${placeholder}:placeholder:", which goes through more than one linked record. Only fields of a record linked directly can be used, so this condition is ignored.`,
+      ];
+    }
+    const recordFields = fieldsOf?.();
+    if (!recordFields) {
+      return [];
+    }
+    const link = recordFields.get(fieldId);
+    if (link?.dataType !== EntityDatatype.dataType) {
+      return [
+        $localize`:config validation:The selection filter ("selectionCondition") refers to "${placeholder}:placeholder:", but "${fieldId}:field:" is not a field linking to records. This condition is ignored.`,
+      ];
+    }
+    const linkedTypes = asArray(link.additional ?? []).map((type) =>
+      fieldsOf(type),
+    );
+    // not checked while one of the linked record types is not known here
+    const isMissing =
+      linkedFieldId !== "_id" &&
+      linkedTypes.length > 0 &&
+      linkedTypes.every((fields) => fields && !fields.has(linkedFieldId));
+    return isMissing
+      ? [
+          $localize`:config validation:The selection filter ("selectionCondition") refers to "${placeholder}:placeholder:", but the records linked in "${fieldId}:field:" have no field "${linkedFieldId}:linkedField:". This condition is ignored.`,
+        ]
+      : [];
   }
 }

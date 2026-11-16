@@ -66,7 +66,7 @@ describe("FilterService", () => {
     service.alignEntityWithFilter(note, {
       _id: { $in: ["Note:existing"] },
       subject: "Test",
-    } as DataFilter<Note>);
+    });
 
     expect(note.getId()).toBe(id);
     expect(note.subject).toBe("Test");

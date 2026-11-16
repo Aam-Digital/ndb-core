@@ -144,6 +144,49 @@ describe("ConfigValidationService", () => {
     },
   );
 
+  describe("selectionCondition referring to a field of a linked record", () => {
+    /** check a link field whose selection filter compares with the given placeholder */
+    function validatePlaceholder(placeholder: string) {
+      return service.validate({
+        "entity:OnlyInConfig": { attributes: { city: { dataType: "string" } } },
+        "entity:TestEntity": {
+          attributes: {
+            configLink: { dataType: "entity", additional: "OnlyInConfig" },
+            single: {
+              dataType: "entity",
+              additional: "TestEntity",
+              validators: { selectionCondition: { other: placeholder } },
+            },
+          },
+        },
+      });
+    }
+
+    it.each([
+      ["more than one linked record", "ref.ref.other", "more than one"],
+      ["a field that does not link to records", "other.name", '"other"'],
+      ["a field that the record type does not have", "typo.name", '"typo"'],
+      ["a field that the linked records do not have", "ref.typo", '"typo"'],
+    ])("should report a placeholder going through %s", (_, path, hint) => {
+      expect(validatePlaceholder("$current_record." + path)).toEqual([
+        expect.objectContaining({
+          field: "single",
+          message: expect.stringContaining(hint),
+        }),
+      ]);
+    });
+
+    it.each([
+      ["a field of the record itself", "other"],
+      ["a field of the linked record", "ref.other"],
+      ["the linked record itself", "ref._id"],
+      ["a field that only the config defines", "configLink.city"],
+      ["a general field of a record type of the config", "configLink.inactive"],
+    ])("should accept a placeholder referring to %s", (_, path) => {
+      expect(validatePlaceholder("$current_record." + path)).toEqual([]);
+    });
+  });
+
   it("should report a default value without a valid mode", () => {
     const problems = service.validate({
       "entity:TestEntity": {

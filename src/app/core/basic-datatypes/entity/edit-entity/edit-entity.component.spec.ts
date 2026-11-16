@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import type { MockInstance } from "vitest";
 
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
@@ -12,7 +13,9 @@ import { signal, WritableSignal } from "@angular/core";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
+import { ValidatorContext } from "../../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { RegistryLookupError } from "../../../config/registry/dynamic-registry";
 import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
@@ -439,6 +442,22 @@ describe("EditEntityComponent", () => {
       recordState.set(Object.assign(new TestEntity(), recordValues));
     }
 
+    /** the validator of a field with the given condition (by default a field of one single record) */
+    function buildValidator(
+      condition: DataFilter<any>,
+      context: Partial<ValidatorContext> = {},
+    ) {
+      return TestBed.runInInjectionContext(
+        () => new SelectionConditionValidator(),
+      ).build(condition, {
+        entity: undefined,
+        field: { id: "linked", additional: TestEntity.ENTITY_TYPE },
+        singleRecord: true,
+        config: { selectionCondition: condition },
+        ...context,
+      });
+    }
+
     async function expectOfferedNames(expected: string[]) {
       await vi.waitFor(() => {
         fixture.detectChanges();
@@ -508,16 +527,12 @@ describe("EditEntityComponent", () => {
       await expectOfferedNames(["Abc", "Abd"]);
       const entityMapper = TestBed.inject(EntityMapperService);
       const loadSpy = vi.spyOn(entityMapper, "load");
-      const validator = TestBed.runInInjectionContext(
-        () => new SelectionConditionValidator(),
-      ).build(condition, {
-        entity: undefined,
+      const validator = buildValidator(condition, {
         field: {
           id: "linked",
           additional: [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE],
         },
         singleRecord: false,
-        config: { selectionCondition: condition },
       });
       const hamburg = test1Entities[1];
       formControl.setValue(hamburg.getId());
@@ -555,14 +570,16 @@ describe("EditEntityComponent", () => {
       const condition = { _id: { $in: ["$current_record.ref.refMixed"] } };
       let parent: TestEntity;
       let otherParent: TestEntity;
+      let loadSpy: MockInstance<EntityMapperService["load"]>;
 
       beforeEach(() => {
         [parent, otherParent] = test2Entities;
         parent.refMixed = [test1Entities[0].getId(), test1Entities[2].getId()];
         otherParent.refMixed = [test1Entities[1].getId()];
+        loadSpy = vi.mocked(TestBed.inject(EntityMapperService).load);
       });
 
-      it("only offers the records selected in the linked record and follows a change of the link", async () => {
+      it("only offers the records selected in the record that is linked at the moment", async () => {
         editRecordWithCondition(condition, { ref: parent.getId() });
         await expectOfferedNames(["Abc", "Abd"]);
 
@@ -572,14 +589,40 @@ describe("EditEntityComponent", () => {
         await expectOfferedNames(["Bcd"]);
       });
 
-      it("offers all records if the linked record cannot be loaded", async () => {
-        editRecordWithCondition(condition, { ref: "Test2Entity:unknown" });
+      it("offers no further records while the linked record is loading", async () => {
+        const loading = deferred<Entity>();
+        loadSpy.mockReturnValueOnce(loading.promise);
+        editRecordWithCondition(condition, { ref: parent.getId() });
+        await refreshAvailableEntities();
 
-        await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+        expect(component.availableEntitiesResource.value()).toEqual([]);
+        expect(component.loading()).toBe(true);
+
+        loading.resolve(parent);
+        await expectOfferedNames(["Abc", "Abd"]);
       });
 
+      it.each([
+        ["is not found", Object.assign(new Error(), { status: 404 })],
+        [
+          "has an unknown record type",
+          new RegistryLookupError("EntityRegistry", "Unknown"),
+        ],
+      ])(
+        "offers all records without reporting a problem if the linked record %s",
+        async (_, error) => {
+          const warnSpy = vi.spyOn(Logging, "warn");
+          warnSpy.mockClear();
+          loadSpy.mockRejectedValueOnce(error);
+
+          editRecordWithCondition(condition, { ref: "Unknown:1" });
+
+          await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+          expect(warnSpy).not.toHaveBeenCalled();
+        },
+      );
+
       it("does not load the linked record again when another field of the record changes", async () => {
-        const loadSpy = vi.mocked(TestBed.inject(EntityMapperService).load);
         editRecordWithCondition(condition, { ref: parent.getId() });
         await expectOfferedNames(["Abc", "Abd"]);
         loadSpy.mockClear();
@@ -593,19 +636,13 @@ describe("EditEntityComponent", () => {
       });
 
       it("warns about a selected record that the linked record does not have", async () => {
-        const record = TestEntity.create({ ref: parent.getId() });
         const form = new FormGroup({
           ref: new FormControl(parent.getId()),
           linked: new FormControl(test1Entities[1].getId()),
         });
         form.controls.linked.markAsDirty();
-        const validator = TestBed.runInInjectionContext(
-          () => new SelectionConditionValidator(),
-        ).build(condition, {
-          entity: record,
-          field: { id: "linked", additional: TestEntity.ENTITY_TYPE },
-          singleRecord: true,
-          config: { selectionCondition: condition },
+        const validator = buildValidator(condition, {
+          entity: TestEntity.create({ ref: parent.getId() }),
         });
 
         expect(await validator(form.controls.linked)).toEqual({
@@ -616,6 +653,24 @@ describe("EditEntityComponent", () => {
 
         form.controls.linked.setValue(test1Entities[0].getId());
         expect(await validator(form.controls.linked)).toBeNull();
+      });
+
+      it("checks the selected records with the linked record that the dropdown has loaded", async () => {
+        editRecordWithCondition(condition, { ref: parent.getId() });
+        await expectOfferedNames(["Abc", "Abd"]);
+        const validator = buildValidator(condition, {
+          entity: TestEntity.create({ ref: parent.getId() }),
+        });
+        formControl.setValue(test1Entities[1].getId());
+        formControl.markAsDirty();
+        loadSpy.mockClear();
+
+        expect(await validator(formControl)).toEqual({
+          selectionCondition: expect.objectContaining({
+            errorMessage: expect.stringContaining(test1Entities[1].toString()),
+          }),
+        });
+        expect(loadSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -808,6 +863,13 @@ describe("EditEntityComponent", () => {
     });
   });
 });
+
+/** a promise that a test settles itself, to hold back an async step */
+function deferred<T>() {
+  let resolve: (value: T) => void;
+  const promise = new Promise<T>((res) => (resolve = res));
+  return { promise, resolve };
+}
 
 function sortedNames(entities: Entity[]): string[] {
   return entities.map((e) => e["name"]).sort((a, b) => a.localeCompare(b));

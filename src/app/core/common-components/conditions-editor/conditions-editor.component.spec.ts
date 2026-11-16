@@ -45,6 +45,15 @@ class ConditionsEditorRecordTestEntity extends Entity {
     additional: "ConditionsEditorRecordTestEntity",
   })
   parent: string;
+  @DatabaseField({
+    label: "Related",
+    dataType: "entity",
+    additional: [
+      "ConditionsEditorRecordTestEntity",
+      "ConditionsEditorTestEntity",
+    ],
+  })
+  related: string;
 }
 
 describe("ConditionsEditorComponent", () => {
@@ -434,6 +443,12 @@ describe("ConditionsEditorComponent", () => {
         "recordGender",
         { gender: { $elemMatch: { $in: ["$current_record.recordGender"] } } },
       ],
+      [
+        "a text field with a multi-value field of a linked record in an $in list",
+        "name",
+        "parent.recordNames",
+        { name: { $in: ["$current_record.parent.recordNames"] } },
+      ],
     ])("saves the comparison of %s", (_, field, recordField, expected) => {
       compareRowWithRecordField(field, recordField);
 
@@ -441,20 +456,17 @@ describe("ConditionsEditorComponent", () => {
       expect(component.getReferencedField(0)).toBe(recordField);
     });
 
-    it("offers the fields of linked records and saves the comparison with one of them", () => {
-      expect(component.linkedRecordFields()).toContainEqual(
+    it("offers the fields of the records linked in a field with a single record type", () => {
+      const offered = component.linkedRecordFields();
+
+      expect(offered).toContainEqual(
         expect.objectContaining({
           id: "parent.recordNames",
           label: "Parent › Record names",
         }),
       );
-
-      compareRowWithRecordField("name", "parent.recordNames");
-
-      expect(component.conditionsArray()[0]).toEqual({
-        name: { $in: ["$current_record.parent.recordNames"] },
-      });
-      expect(component.getReferencedField(0)).toBe("parent.recordNames");
+      // a link to several record types has no single set of fields
+      expect(offered.filter(({ id }) => id.startsWith("related."))).toEqual([]);
     });
 
     it("keeps 'is not' when the compared record field changes", () => {
