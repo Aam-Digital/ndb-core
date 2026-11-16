@@ -29,8 +29,9 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
-import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 import { AdminEntityService } from "../admin-entity.service";
+import { AdminEntityLinkedRecordsComponent } from "./admin-entity-linked-records/admin-entity-linked-records.component";
+import { AdminEntitySectionsService } from "./admin-entity-sections.service";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { toSignal } from "@angular/core/rxjs-interop";
 
@@ -47,7 +48,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
     BetaFeatureComponent,
-    AdminEntityPublicFormsComponent,
+    AdminEntityLinkedRecordsComponent,
     AdminNoteDetailsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
@@ -85,8 +86,16 @@ export class AdminEntityComponent {
     this.getEntitySettingsFromConstructor(this.entityConstructor()),
   );
 
-  protected mode = linkedSignal<"details" | "list" | "general" | "publicForm">(
+  /** sections registered by feature modules, shown after the built-in ones */
+  protected readonly sections = inject(AdminEntitySectionsService).sections;
+
+  /** "details", "list", "general" or the id of one of the `sections` */
+  protected mode = linkedSignal<string>(
     () => this.queryParams()["mode"] ?? "details",
+  );
+
+  protected readonly activeSection = computed(() =>
+    this.sections.find((section) => section.id === this.mode()),
   );
 
   @ViewChild(AdminEntityGeneralSettingsComponent)
