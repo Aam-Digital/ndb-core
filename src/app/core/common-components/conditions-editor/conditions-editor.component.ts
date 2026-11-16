@@ -42,7 +42,10 @@ import {
 } from "../../filter/filters/filters";
 import { asArray } from "app/utils/asArray";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
+import {
+  EntityRelationsService,
+  LinkedTypeFields,
+} from "../../entity/entity-mapper/entity-relations.service";
 import { resolveLocaleText } from "../../language/active-locale";
 
 /**
@@ -105,17 +108,7 @@ export class ConditionsEditorComponent implements OnInit {
         .getFieldsOfLinkedTypes(recordType)
         // a link to several record types has no single set of fields
         .filter(({ link }) => asArray(link.additional ?? []).length === 1)
-        .flatMap(({ linkId, link, fields }) =>
-          fields
-            .filter(([, field]) => !field.isInternalField && !!field.label)
-            .map(([fieldId, field]) => ({
-              ...field,
-              id: `${linkId}.${fieldId}`,
-              label: `${resolveLocaleText(link.label) ?? linkId} › ${resolveLocaleText(field.label)}`,
-              // the values of all linked records
-              isArray: !!link.isArray || !!field.isArray,
-            })),
-        )
+        .flatMap(linkedFieldOptions)
     );
   });
 
@@ -549,4 +542,22 @@ export class ConditionsEditorComponent implements OnInit {
       buildConditions(this.combinator(), this.working.$or ?? []),
     );
   }
+}
+
+/** the options for the fields of the records linked in a link field ("link field › field") */
+function linkedFieldOptions({
+  linkId,
+  link,
+  fields,
+}: LinkedTypeFields): FormFieldConfig[] {
+  const linkLabel = resolveLocaleText(link.label) ?? linkId;
+  return fields
+    .filter(([, field]) => !field.isInternalField && !!field.label)
+    .map(([fieldId, field]) => ({
+      ...field,
+      id: `${linkId}.${fieldId}`,
+      label: `${linkLabel} › ${resolveLocaleText(field.label)}`,
+      // the values of all linked records
+      isArray: !!link.isArray || !!field.isArray,
+    }));
 }
