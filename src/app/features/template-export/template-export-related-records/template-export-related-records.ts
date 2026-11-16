@@ -48,7 +48,7 @@ export const RELATED_RECORDS_MAX_LEVELS = 5;
  * Allowed format of {@link TemplateExportRelatedRecords.key},
  * so that it works as part of a placeholder in a template.
  */
-export const RELATED_RECORDS_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+export const RELATED_RECORDS_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
 
 /**
  * Whether the field is a plain entity-reference field (`dataType: "entity"`)

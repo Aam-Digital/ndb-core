@@ -161,6 +161,50 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(step.owner).toBe(owner.getId());
   });
 
+  it("keeps only the id of the record a related record is listed under, but resolves its other links", async () => {
+    const root = action("Root");
+    const other = action("Other");
+    action("Waiting", { blockedBy: [root.getId(), other.getId()] });
+
+    const result = await service.loadRelatedRecords(
+      template({
+        key: "blocking",
+        entityType: "RelatedRecordsAction",
+        property: "blockedBy",
+      }),
+      [root],
+    );
+
+    const [related] = result.get(root.getId()).blocking;
+    expect(related["blockedBy"]).toEqual([
+      { _id: root.getId() },
+      expect.objectContaining({ title: "Other" }),
+    ]);
+  });
+
+  it("loads all records of the type only once for all levels if the database answers no queries", async () => {
+    const root = action("Root");
+    const child = action("Child", { parent: root.getId() });
+    action("Grandchild", { parent: child.getId() });
+    const loadLinking = vi.spyOn(
+      TestBed.inject(EntityRelationsService),
+      "loadLinkingToEntities",
+    );
+
+    const result = await service.loadRelatedRecords(
+      template({ ...SUB_ACTIONS, levels: 3 }),
+      [root],
+    );
+
+    expect(titles(result.get(root.getId()), "subActions")).toEqual([
+      ["Child", [["Grandchild", []]]],
+    ]);
+    const preloaded = loadLinking.mock.calls.map((call) => call[3]);
+    expect(preloaded).toHaveLength(3);
+    expect(new Set(preloaded).size).toBe(1);
+    expect(preloaded[0]).toEqual(expect.arrayContaining([child]));
+  });
+
   it("adds separate lists for several configs, also through fields holding multiple links", async () => {
     const root = action("Root");
     action("Sub", { parent: root.getId() });
@@ -264,6 +308,20 @@ describe("TemplateExportRelatedRecordsService", () => {
 
     expect(result.get(root.getId())).toEqual(expected);
     // reported only once, not for every generated file
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+  it("skips and reports a config using the placeholder name of an earlier one", async () => {
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    const root = action("Root");
+    action("Sub", { parent: root.getId() });
+    action("Waiting", { blockedBy: [root.getId()] });
+
+    const result = await service.loadRelatedRecords(
+      template(SUB_ACTIONS, { ...SUB_ACTIONS, property: "blockedBy" }),
+      [root],
+    );
+
+    expect(titles(result.get(root.getId()), "subActions")).toEqual(["Sub"]);
     expect(warn).toHaveBeenCalledTimes(1);
   });
 });

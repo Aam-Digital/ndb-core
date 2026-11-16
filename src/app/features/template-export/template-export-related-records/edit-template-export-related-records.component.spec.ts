@@ -134,8 +134,9 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     fixture.detectChanges();
 
     expect(control.value).toEqual([{ ...SUB_ACTIONS, levels: 5 }]);
+    // one example per level
     expect(fixture.nativeElement.textContent).toContain(
-      "{d.subActions[i].subActions[i].subject}",
+      "{d.subActions[i].subActions[i].subActions[i].subActions[i].subActions[i].subject}",
     );
 
     component.setLevels(0, "1");
@@ -158,6 +159,11 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     [
       "a placeholder name that breaks the placeholder syntax",
       [{ ...PROJECT_ACTIONS, key: "my actions" }],
+      false,
+    ],
+    [
+      "a placeholder name not starting with a letter",
+      [{ ...PROJECT_ACTIONS, key: "_actions" }],
       false,
     ],
     [

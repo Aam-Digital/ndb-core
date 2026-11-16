@@ -233,7 +233,18 @@ export class EditTemplateExportRelatedRecordsComponent
     this.formControl.markAsTouched();
   }
 
+  /** the options of the record types last asked for, as the validator asks on every change */
+  private optionsCache?: { types: string; options: RelatedRecordsOption[] };
+
   private getOptions(applicableTypes: string[]): RelatedRecordsOption[] {
+    const types = applicableTypes.join();
+    if (this.optionsCache?.types !== types) {
+      this.optionsCache = { types, options: this.findOptions(applicableTypes) };
+    }
+    return this.optionsCache.options;
+  }
+
+  private findOptions(applicableTypes: string[]): RelatedRecordsOption[] {
     const options = new Map<string, RelatedRecordsOption>();
     for (const type of applicableTypes) {
       for (const {
@@ -294,11 +305,13 @@ export class EditTemplateExportRelatedRecordsComponent
 
     const field = getExampleField(this.entityRegistry.get(option.entityType));
     const list = `${config.key}[i]`;
-    const examples = [`{d.${list}.${field}}`];
-    if (levels > 1) {
-      examples.push(`{d.${list}.${list}.${field}}`);
-    }
-    return examples;
+    return Array.from(
+      { length: levels },
+      (_, level) =>
+        `{d.${Array(level + 1)
+          .fill(list)
+          .join(".")}.${field}}`,
+    );
   }
 
   /**

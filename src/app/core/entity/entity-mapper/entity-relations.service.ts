@@ -148,6 +148,8 @@ export class EntityRelationsService {
    * @param referencedIds The ids of the entities to find references to
    * @param refType The entity type of the entities to search for references
    * @param refProperty The field of refType that holds the reference
+   * @param allEntities All entities of refType, if the caller already loaded them
+   *          (e.g. to look up several levels of a hierarchy without loading the type again)
    * @returns A map of each referenced id that has any entity linking to it, to these linking entities.
    *          An entity referencing several of the given ids is listed for each of them.
    */
@@ -155,6 +157,7 @@ export class EntityRelationsService {
     referencedIds: string[],
     refType: EntityConstructor<T>,
     refProperty: string,
+    allEntities?: T[],
   ): Promise<Map<string, T[]>> {
     const linkingEntities = new Map<string, T[]>();
     const idsToFind = new Set(referencedIds);
@@ -163,11 +166,12 @@ export class EntityRelationsService {
       return linkingEntities;
     }
 
-    const candidates = await this.loadCandidatesForIds(
-      [...idsToFind],
-      refType,
-      { ...field, id: refProperty },
-    );
+    const candidates =
+      allEntities ??
+      (await this.loadCandidatesForIds([...idsToFind], refType, {
+        ...field,
+        id: refProperty,
+      }));
 
     for (const candidate of candidates) {
       // a Set, so that a (faulty) field value listing the same id twice counts only once

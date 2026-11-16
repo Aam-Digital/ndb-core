@@ -268,8 +268,8 @@ describe("TemplateExportApiService", () => {
         children: [
           expect.objectContaining({
             name: "Child",
-            // links of the related record are resolved like those of the record itself
-            ref: expect.objectContaining({ name: "Parent" }),
+            // the link back to the record only holds its id, as its details are one level up
+            ref: { _id: parent.getId() },
           }),
         ],
       }),

@@ -1,5 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { EntityRelationResolverService } from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
@@ -40,6 +41,7 @@ interface HierarchyNode {
   providedIn: "root",
 })
 export class TemplateExportRelatedRecordsService {
+  private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRelations = inject(EntityRelationsService);
   private readonly relationResolver = inject(EntityRelationResolverService);
   private readonly entityRegistry = inject(EntityRegistry);
@@ -75,15 +77,41 @@ export class TemplateExportRelatedRecordsService {
       result.set(id, {});
     }
 
-    for (const config of configs) {
-      await this.addRelatedRecords(
-        template,
-        config,
-        [...uniqueRecords.values()],
-        result,
-      );
-    }
+    // each config adds its own key to the records' data, so they can be loaded at the same time
+    await Promise.all(
+      this.withoutDuplicateKeys(template, configs).map((config) =>
+        this.addRelatedRecords(
+          template,
+          config,
+          [...uniqueRecords.values()],
+          result,
+        ),
+      ),
+    );
     return result;
+  }
+
+  /**
+   * Skip (and report) configs that use the placeholder name of an earlier config,
+   * which would otherwise silently replace the earlier list.
+   */
+  private withoutDuplicateKeys(
+    template: TemplateExport,
+    configs: TemplateExportRelatedRecords[],
+  ): TemplateExportRelatedRecords[] {
+    const keys = new Set<string>();
+    return configs.filter((config) => {
+      if (config?.key && keys.has(config.key)) {
+        this.reportInvalidConfig(
+          template,
+          config,
+          "placeholder name is used more than once",
+        );
+        return false;
+      }
+      keys.add(config?.key);
+      return true;
+    });
   }
 
   /**
@@ -138,10 +166,34 @@ export class TemplateExportRelatedRecordsService {
       isFieldLinkingToType(linkField, Entity.extractTypeFromId(parent.id)),
     );
 
+    const loadLinking = this.createLinkingLoader(relatedType, config.property);
     const levels = getRelatedRecordsLevels(config, relatedType);
     for (let level = 1; level <= levels && parents.length > 0; level++) {
-      parents = await this.addLevel(config, relatedType, parents);
+      parents = await this.addLevel(config, loadLinking, parents);
     }
+  }
+
+  /**
+   * Look up the records linking to given ids through the field, level by level.
+   * Without database queries every lookup needs all records of the type,
+   * so these are then loaded only once for all levels.
+   */
+  private createLinkingLoader(
+    relatedType: EntityConstructor,
+    property: string,
+  ): (ids: string[]) => Promise<Map<string, Entity[]>> {
+    let allRecords: Promise<Entity[]> | undefined;
+    return async (ids) => {
+      if (!this.entityMapper.supportsFind(relatedType)) {
+        allRecords ??= this.entityMapper.loadType(relatedType);
+      }
+      return this.entityRelations.loadLinkingToEntities(
+        ids,
+        relatedType,
+        property,
+        await allRecords,
+      );
+    };
   }
 
   /**
@@ -150,14 +202,10 @@ export class TemplateExportRelatedRecordsService {
    */
   private async addLevel(
     config: TemplateExportRelatedRecords,
-    relatedType: EntityConstructor,
+    loadLinking: (ids: string[]) => Promise<Map<string, Entity[]>>,
     parents: HierarchyNode[],
   ): Promise<HierarchyNode[]> {
-    const linking = await this.entityRelations.loadLinkingToEntities(
-      parents.map((parent) => parent.id),
-      relatedType,
-      config.property,
-    );
+    const linking = await loadLinking(parents.map((parent) => parent.id));
 
     const related = new Map<string, Entity>();
     for (const entities of linking.values()) {
@@ -182,7 +230,11 @@ export class TemplateExportRelatedRecordsService {
 
       parent.data[config.key] = childIds.map((id) => {
         // an own copy, as a record linking to several parents gets a separate list of related records for each
-        const child = { id, data: { ...dataById.get(id) }, parent };
+        const child = {
+          id,
+          data: withParentAsId(dataById.get(id), config.property, parent.id),
+          parent,
+        };
         children.push(child);
         return child.data;
       });
@@ -224,6 +276,26 @@ function isInBranch(node: HierarchyNode | undefined, id: string): boolean {
     }
   }
   return false;
+}
+
+/**
+ * A copy of the related record's data in which the link to the record it is listed under
+ * holds only that record's id: its details are already available one level up,
+ * and repeating them in every list item would multiply the size of the request.
+ * Other records linked through the same field stay resolved.
+ */
+function withParentAsId(
+  data: Record<string, unknown>,
+  property: string,
+  parentId: string,
+): Record<string, unknown> {
+  const shorten = (linked: unknown) =>
+    (linked as { _id?: string })?._id === parentId ? { _id: parentId } : linked;
+  const value = data[property];
+  return {
+    ...data,
+    [property]: Array.isArray(value) ? value.map(shorten) : shorten(value),
+  };
 }
 
 function compareByDisplayText(a: Entity, b: Entity): number {
