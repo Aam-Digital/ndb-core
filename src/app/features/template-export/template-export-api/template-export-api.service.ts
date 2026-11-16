@@ -15,7 +15,9 @@ import {
   TemplateExportComplement,
   TemplateExportContextService,
 } from "../template-export-context/template-export-context.service";
+import { asArray } from "../../../utils/asArray";
 import { EntityRelationResolverService } from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
+import { TemplateExportRelatedRecordsService } from "../template-export-related-records/template-export-related-records.service";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -63,6 +65,7 @@ export class TemplateExportApiService extends FileService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private readonly exportContext = inject(TemplateExportContextService);
   private readonly relationResolver = inject(EntityRelationResolverService);
+  private readonly relatedRecords = inject(TemplateExportRelatedRecordsService);
 
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
@@ -133,15 +136,14 @@ export class TemplateExportApiService extends FileService {
    * endpoint URL, the shape of `data`, and the fallback filename.
    */
   private renderTemplate(
+    template: TemplateExport,
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
   ): Observable<TemplateExportResult> {
     const complement = this.exportContext.getComplement();
 
-    // give the template access to details of linked records (e.g. a Note's related
-    // Child) instead of just their id - resolved one level deep, see the service.
-    return from(this.relationResolver.resolveRelations(data)).pipe(
+    return from(this.buildTemplateData(template, data)).pipe(
       switchMap((resolvedData) =>
         this.httpClient.post(
           url,
@@ -181,6 +183,35 @@ export class TemplateExportApiService extends FileService {
   }
 
   /**
+   * Extend the given record(s) with the data of other records that the template can use:
+   * - details of linked records (e.g. a Note's related Child) instead of just their id,
+   *   resolved one level deep (see {@link EntityRelationResolverService})
+   * - lists of records linking to the record (e.g. the sub-tasks of a task),
+   *   if configured for the template (see {@link TemplateExportRelatedRecordsService})
+   */
+  private async buildTemplateData(
+    template: TemplateExport,
+    data: Object | Object[],
+  ): Promise<Object | Object[]> {
+    const [resolved, relatedRecords] = await Promise.all([
+      this.relationResolver.resolveRelations(data),
+      this.relatedRecords.loadRelatedRecords(
+        template,
+        asArray(data).filter((record) => record instanceof Entity),
+      ),
+    ]);
+
+    const addRelatedRecords = (record: Object, resolvedRecord: Object) =>
+      record instanceof Entity && relatedRecords.has(record.getId())
+        ? { ...resolvedRecord, ...relatedRecords.get(record.getId()) }
+        : resolvedRecord;
+
+    return Array.isArray(data)
+      ? data.map((record, i) => addRelatedRecords(record, resolved[i]))
+      : addRelatedRecords(data, resolved);
+  }
+
+  /**
    * Generate a PDF applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
@@ -191,6 +222,7 @@ export class TemplateExportApiService extends FileService {
     data: Object,
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
+      template,
       this.API_URL + "/render/" + template.getId(),
       data,
       resolveLocaleText(template.title),
@@ -216,6 +248,7 @@ export class TemplateExportApiService extends FileService {
     mode: "zip" | "combined" = "zip",
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
+      template,
       this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
       dataList,
       resolveLocaleText(template.title) +

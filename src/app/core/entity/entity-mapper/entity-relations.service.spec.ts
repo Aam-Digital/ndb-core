@@ -157,6 +157,46 @@ describe("EntityRelationsService", () => {
     ]);
   });
 
+  it("groups the entities linking to several entities in one field by the entity they link to", async () => {
+    const other = TestEntity.create("Other");
+    const unlinked = TestEntity.create("Unlinked");
+
+    const eSingle = new EntityWithTestRelations();
+    eSingle.refSingle = primaryEntity.getId();
+    const eBoth = new EntityWithTestRelations();
+    // a duplicate id in the field must not list the entity twice
+    eBoth.refMulti = [primaryEntity.getId(), other.getId(), other.getId()];
+    const eOtherField = new EntityWithTestRelations();
+    eOtherField.refSingle = other.getId();
+
+    (TestBed.inject(EntityMapperService) as MockEntityMapperService).addAll([
+      eSingle,
+      eBoth,
+      eOtherField,
+    ]);
+
+    const result = await service.loadLinkingToEntities(
+      [primaryEntity.getId(), other.getId(), unlinked.getId()],
+      EntityWithTestRelations,
+      "refMulti",
+    );
+
+    expect([...result]).toEqual([
+      [primaryEntity.getId(), [eBoth]],
+      [other.getId(), [eBoth]],
+    ]);
+  });
+
+  it("finds no linking entities for a field that does not exist", async () => {
+    const result = await service.loadLinkingToEntities(
+      [primaryEntity.getId()],
+      EntityWithTestRelations,
+      "removedField",
+    );
+
+    expect(result.size).toBe(0);
+  });
+
   it("discovers an embedded reference whose override only restricts the entity types, inheriting dataType 'entity'", () => {
     @DatabaseEntity("EntityWithPartialAttendanceOverride")
     class EntityWithPartialAttendanceOverride extends Entity {}

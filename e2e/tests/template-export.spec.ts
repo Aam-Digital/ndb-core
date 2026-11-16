@@ -1,6 +1,8 @@
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
+import { TemplateExport } from "#src/app/features/template-export/template-export.entity.js";
 
 const CHILD_NAME = "<TEMPLATE EXPORT CHILD>";
 
@@ -47,4 +49,83 @@ test("Template-export action opens the Generate File dialog", async ({
   ).toBeVisible({ timeout: 10_000 });
 
   await argosScreenshot(page, "template-export-dialog");
+});
+
+test("Related records configured for a template are sent to the export API", async ({
+  page,
+}) => {
+  const TEMPLATE_TITLE = "<TEMPLATE WITH RELATED RECORDS>";
+
+  await page.route("**/actuator/features", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ export: { enabled: true } }),
+    }),
+  );
+  await page.route("**/api/v1/export/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/pdf",
+      body: "%PDF-",
+    }),
+  );
+
+  const users = generateUsers();
+  const child = generateChild({ name: CHILD_NAME });
+  const note = generateNote({ child, author: users[0] });
+  const template = Object.assign(new TemplateExport(), {
+    title: TEMPLATE_TITLE,
+    applicableForEntityTypes: [child.getType()],
+    templateFile: "template.docx",
+    templateId: "template-id",
+    targetFileName: "file_{d.name}",
+  });
+
+  await loadApp(page, [...users, child, note, template]);
+
+  // Admin: include the notes linking to a child in the template
+  await page
+    .getByRole("navigation")
+    .getByText("Admin", { exact: true })
+    .click();
+  await page.getByRole("navigation").getByText("Admin Overview").click();
+  await page.getByRole("button", { name: /^Templates and Forms/ }).click();
+  await page.getByText("Export Templates", { exact: true }).click();
+  await page.getByRole("cell", { name: TEMPLATE_TITLE }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+
+  await page.getByRole("button", { name: "Add related records" }).click();
+  await page.getByRole("combobox", { name: "Related records" }).click();
+  await page.getByRole("option", { name: /^Notes \(linked through/ }).click();
+  const placeholderName = page.getByRole("textbox", {
+    name: "Placeholder name",
+  });
+  await placeholderName.fill("notes");
+  await placeholderName.blur();
+  await expect(page.getByText("{d.notes[i].subject}")).toBeVisible();
+
+  await argosScreenshot(page, "template-export-related-records");
+  await page.getByRole("button", { name: "Save" }).click();
+
+  // User: generate a file for the child
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: CHILD_NAME }).click();
+  await page
+    .locator("app-entity-actions-menu button[mat-icon-button]")
+    .first()
+    .click();
+  await page.getByRole("menuitem", { name: /Generate File/i }).click();
+  await page.getByRole("dialog").locator("app-edit-entity").click();
+  await page.getByRole("option", { name: TEMPLATE_TITLE }).click();
+
+  const renderRequest = page.waitForRequest("**/api/v1/export/render/**");
+  await page.getByRole("button", { name: "Generate File" }).click();
+
+  const { data } = (await renderRequest).postDataJSON() as {
+    data: { name: string; notes: { subject: string }[] };
+  };
+  expect(data.name).toBe(CHILD_NAME);
+  expect(data.notes).toHaveLength(1);
+  expect(data.notes[0].subject).toBe(note.subject);
 });

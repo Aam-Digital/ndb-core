@@ -33,6 +33,12 @@ export class EntityRelationsService {
   private readonly schemaService = inject(EntitySchemaService);
 
   /**
+   * Maximum number of conditions combined into one database query
+   * when looking up the records linking to many entities at once.
+   */
+  private static readonly MAX_QUERY_CONDITIONS = 100;
+
+  /**
    * Get all entity types whose schema includes fields referencing the given type.
    *
    * e.g. given Child -> [Note, ChildSchoolRelation, ...]
@@ -126,6 +132,106 @@ export class EntityRelationsService {
     }
 
     return linkedEntities;
+  }
+
+  /**
+   * Find the entities of one type that reference any of the given entities in one specific field,
+   * grouped by the entity they reference.
+   *
+   * Unlike {@link loadAllLinkingToEntity} this loads a single, known relationship
+   * (e.g. the "Task" records whose `parentTask` is one of the given records)
+   * and does so for many referenced entities at once.
+   *
+   * Only plain entity-reference fields (`dataType: "entity"`) are supported,
+   * not references nested inside embedded objects.
+   *
+   * @param referencedIds The ids of the entities to find references to
+   * @param refType The entity type of the entities to search for references
+   * @param refProperty The field of refType that holds the reference
+   * @returns A map of each referenced id that has any entity linking to it, to these linking entities.
+   *          An entity referencing several of the given ids is listed for each of them.
+   */
+  async loadLinkingToEntities<T extends Entity = Entity>(
+    referencedIds: string[],
+    refType: EntityConstructor<T>,
+    refProperty: string,
+  ): Promise<Map<string, T[]>> {
+    const linkingEntities = new Map<string, T[]>();
+    const idsToFind = new Set(referencedIds);
+    const field = refType.schema.get(refProperty);
+    if (!field || idsToFind.size === 0) {
+      return linkingEntities;
+    }
+
+    const candidates = await this.loadCandidatesForIds(
+      [...idsToFind],
+      refType,
+      { ...field, id: refProperty },
+    );
+
+    for (const candidate of candidates) {
+      // a Set, so that a (faulty) field value listing the same id twice counts only once
+      for (const id of new Set<unknown>(asArray(candidate[refProperty]))) {
+        if (typeof id !== "string" || !idsToFind.has(id)) {
+          continue;
+        }
+        if (!linkingEntities.has(id)) {
+          linkingEntities.set(id, []);
+        }
+        linkingEntities.get(id).push(candidate);
+      }
+    }
+    return linkingEntities;
+  }
+
+  /**
+   * The records of the given type that may reference one of the given ids in the given field.
+   *
+   * Like {@link loadCandidates}, this queries only the matching records where the database
+   * supports it - in batches, to keep each query's selector at a size the database handles well.
+   */
+  private async loadCandidatesForIds<T extends Entity>(
+    referencedIds: string[],
+    refType: EntityConstructor<T>,
+    refProperty: FormFieldConfig,
+  ): Promise<T[]> {
+    if (!this.entityMapper.supportsFind(refType)) {
+      // a local database answers no queries, but its full load is cheap
+      return this.entityMapper.loadType(refType);
+    }
+
+    const datatype = this.schemaService.getDatatypeOrDefault(
+      refProperty.dataType,
+    );
+    const conditions: DataFilter<any>[] = [];
+    for (const id of referencedIds) {
+      const idConditions = datatype.getReferenceSelector(
+        refProperty.id,
+        refProperty,
+        id,
+      );
+      if (!idConditions?.length) {
+        return this.entityMapper.loadType(refType);
+      }
+      conditions.push(...idConditions);
+    }
+
+    const candidates = new Map<string, T>();
+    for (
+      let i = 0;
+      i < conditions.length;
+      i += EntityRelationsService.MAX_QUERY_CONDITIONS
+    ) {
+      const batch = await this.entityMapper.findAllType(refType, {
+        $or: conditions.slice(
+          i,
+          i + EntityRelationsService.MAX_QUERY_CONDITIONS,
+        ),
+      });
+      // a record referencing ids of several batches is returned by each of them
+      batch.forEach((entity) => candidates.set(entity.getId(), entity));
+    }
+    return [...candidates.values()];
   }
 
   /**

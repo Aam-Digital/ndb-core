@@ -6,6 +6,7 @@ import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { FileFieldConfig } from "../file/file.datatype";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
+import { TemplateExportRelatedRecords } from "./template-export-related-records/template-export-related-records";
 
 /**
  * Represents a TemplateExport that can be used to generate PDFs via API,
@@ -74,6 +75,22 @@ export class TemplateExport extends Entity {
     dataType: "boolean",
   })
   arrayReport?: boolean;
+
+  /**
+   * Lists of records linking *to* the exported record (e.g. the sub-tasks of a task)
+   * that are loaded and added to the data available for placeholders in the template.
+   *
+   * Such records are only loaded if configured here explicitly,
+   * to avoid loading (and sending to the server) more data than a template needs.
+   */
+  @DatabaseField({
+    label: $localize`:TemplateExport:Related Records to Include`,
+    labelShort: $localize`:TemplateExport:Related Records`,
+    description: $localize`:TemplateExport:Make records that link to the selected record available in the template (e.g. the sub-tasks of a task). Each list is added under the placeholder name you define here and can be used with carbone's repetition syntax (e.g. {d.subTasks[i].subject}). Archived records are not included.`,
+    editComponent: "EditTemplateExportRelatedRecords",
+    isArray: true,
+  })
+  relatedRecords?: TemplateExportRelatedRecords[];
 
   /**
    * File (storing the file name) of the template uploaded to the server.
