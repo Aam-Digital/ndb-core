@@ -2,10 +2,10 @@ import { inject, resource } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
-import { Logging } from "../../logging/logging.service";
 import { asArray } from "app/utils/asArray";
 import { DateRangeValue } from "./date-range.datatype";
 import { isOutsideRange } from "./is-outside-range";
+import { loadLinkedRecords } from "../entity/load-linked-records";
 
 /** the range of a linked parent record (see {@link WithinParentConfig}) */
 export interface ParentRange {
@@ -39,17 +39,9 @@ export async function loadParentRanges(
   parentIds: string[],
   valueField: string,
 ): Promise<ParentRange[]> {
-  const load = async (id: string): Promise<Entity | undefined> => {
-    try {
-      return await entityMapper.load(Entity.extractTypeFromId(id), id);
-    } catch (e) {
-      Logging.debug("[DATE_RANGE] Could not load parent record.", id, e);
-      return undefined;
-    }
-  };
-  const parents = await Promise.all(parentIds.map((id) => load(id)));
+  const parents = await loadLinkedRecords(entityMapper, parentIds);
   return parents
-    .filter((parent) => !!parent && !parent.anonymized)
+    .filter((parent) => !parent.anonymized)
     .map((parent) => ({
       name: parent.toString(),
       range: parent[valueField],

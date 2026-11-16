@@ -110,6 +110,44 @@ describe("DownloadService", () => {
     document.createElement = oldCreateElement;
   });
 
+  describe("triggerFileDownload", () => {
+    let link: HTMLAnchorElement;
+    let createObjectUrlSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      link = document.createElement("a");
+      vi.spyOn(link, "click").mockImplementation(() => {});
+      vi.spyOn(document, "createElement").mockReturnValue(link);
+      createObjectUrlSpy = vi.spyOn(globalThis.URL, "createObjectURL");
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("downloads a ready-made file unchanged", () => {
+      service.triggerFileDownload(
+        new Uint8Array([80, 75, 3, 4]).buffer,
+        "letter.docx",
+        "docx",
+      );
+
+      expect(link.download).toBe("letter.docx");
+      expect((createObjectUrlSpy.mock.calls[0][0] as Blob).size).toBe(4);
+      expect(link.click).toHaveBeenCalled();
+    });
+
+    it.each([
+      ["letter", "docx", "letter.docx"],
+      ["letter.DOCX", "docx", "letter.DOCX"],
+      ["report.pdf", "zip", "report.pdf.zip"],
+    ])("names %s of type %s as %s", (filename, extension, expectedFilename) => {
+      service.triggerFileDownload(new ArrayBuffer(1), filename, extension);
+
+      expect(link.download).toBe(expectedFilename);
+    });
+  });
+
   it("should contain a column for every property", async () => {
     const docs = [
       { _id: "Test:1", test: 1 },

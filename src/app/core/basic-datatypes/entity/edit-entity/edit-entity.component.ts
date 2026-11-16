@@ -27,6 +27,7 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { asArray } from "app/utils/asArray";
+import { isEqual } from "lodash-es";
 import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import {
   BasicAutocompleteComponent,
@@ -52,7 +53,12 @@ import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
 import {
+  latestLinkedRecords,
   loadLinkedRecord,
+  loadLinkedRecords,
+} from "../load-linked-records";
+import {
+  getPlaceholderLinkedRecordIds,
   matchesSelectionCondition,
   registerLinkedRecordsSource,
   resolveSelectionCondition,
@@ -244,6 +250,36 @@ export class EditEntityComponent<
     return ownId ? entities.filter((e) => e.getId() !== ownId) : entities;
   });
 
+  /** the ids of the records that the record being edited links to and whose fields the `selectionCondition` refers to */
+  private readonly placeholderLinkedIds: Signal<unknown[]> = computed(
+    () =>
+      getPlaceholderLinkedRecordIds(
+        this.formFieldConfig()?.validators?.selectionCondition,
+        this.currentRecord(),
+      ),
+    // only load them again when a link changes, not on every change of other fields in the form
+    { equal: isEqual },
+  );
+
+  /** the records that the `selectionCondition` refers to, loading while it cannot be applied yet */
+  private readonly placeholderLinkedRecords: Resource<Entity[]> =
+    resourceWithRetention({
+      defaultValue: [],
+      params: () => {
+        const ids = this.placeholderLinkedIds();
+        return ids.length > 0
+          ? { ids, entityMapper: this.entityMapperService }
+          : undefined;
+      },
+      loader: ({ params }) =>
+        loadLinkedRecords(params.entityMapper, params.ids),
+    });
+
+  /** the records that the `selectionCondition` refers to, in their latest version (e.g. after an automated update) */
+  private readonly latestPlaceholderLinkedRecords = latestLinkedRecords(() =>
+    this.placeholderLinkedRecords.value(),
+  );
+
   /**
    * The configured `selectionCondition` with placeholders resolved,
    * or `undefined` if no condition applies.
@@ -256,21 +292,26 @@ export class EditEntityComponent<
           this.entityType(),
           this.currentRecord(),
           this.placeholderService,
+          this.latestPlaceholderLinkedRecords(),
         ),
       // only notify of an actual change, not of every change of other fields in the form
-      { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
+      { equal: isEqual },
     );
 
   /**
    * Whether a record is offered as an option (besides the selected ones, which always are):
    * only active ones matching the `selectionCondition`, unless the user includes the others.
+   * None while the records that the `selectionCondition` refers to are loading, as it is not known yet which match.
    */
   private readonly isOffered: Signal<
     (e: E, include: OfferedRecordsToggles) => boolean
   > = computed(() => {
     const isEligible = this.isEligible();
+    const isPending = this.placeholderLinkedRecords.isLoading();
     return (e, { includeInactive, includeIneligible }) =>
-      (includeInactive || !e.inactive) && (includeIneligible || isEligible(e));
+      !isPending &&
+      (includeInactive || !e.inactive) &&
+      (includeIneligible || isEligible(e));
   });
 
   private readonly isEligible: Signal<(e: E) => boolean> = computed(() =>
@@ -336,7 +377,10 @@ export class EditEntityComponent<
     }));
   });
 
-  loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
+  loading: Signal<boolean> = computed(
+    () =>
+      this.allEntities.isLoading() || this.placeholderLinkedRecords.isLoading(),
+  );
 
   /**
    * The currently selected values (IDs) of the form control.
@@ -453,11 +497,15 @@ export class EditEntityComponent<
 
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
 
-  /** the records loaded for the dropdown (including the selected ones), by id */
-  private readonly loadedRecords: Signal<Map<string, E>> = computed(
+  /** the records loaded for the dropdown (including the selected ones and the ones its `selectionCondition` refers to), by id */
+  private readonly loadedRecords: Signal<Map<string, Entity>> = computed(
     () =>
       new Map(
-        [...this.allEntities.value(), ...this.availableEntitiesResource.value()]
+        [
+          ...this.allEntities.value(),
+          ...this.availableEntitiesResource.value(),
+          ...this.latestPlaceholderLinkedRecords(),
+        ]
           .filter((e) => !(e as { isHidden?: boolean }).isHidden)
           .map((e) => [e.getId(), e]),
       ),
