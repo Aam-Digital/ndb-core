@@ -12,6 +12,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { signal, WritableSignal } from "@angular/core";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { deferred } from "../../../../utils/test-utils/deferred";
 import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
 import { ValidatorContext } from "../../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
@@ -884,13 +885,6 @@ describe("EditEntityComponent", () => {
     });
   });
 });
-
-/** a promise that a test settles itself, to hold back an async step */
-function deferred<T>() {
-  let resolve: (value: T) => void;
-  const promise = new Promise<T>((res) => (resolve = res));
-  return { promise, resolve };
-}
 
 function sortedNames(entities: Entity[]): string[] {
   return entities.map((e) => e["name"]).sort((a, b) => a.localeCompare(b));
