@@ -489,11 +489,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       async (ctor: EntityConstructor, indexName: string, key: string) => {
         const field = indexName.split("/by_")[1];
         return entityMapper
-          .getAllData()
-          .filter(
-            (record) =>
-              Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
-          )
+          .getAll(ctor.ENTITY_TYPE)
           .filter((record) => asArray(record[field]).includes(key));
       },
     );
