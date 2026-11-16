@@ -9,6 +9,7 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 @DatabaseEntity("ConditionsEditorTestEntity")
 class ConditionsEditorTestEntity extends Entity {
@@ -45,6 +46,13 @@ class ConditionsEditorRecordTestEntity extends Entity {
     additional: "ConditionsEditorRecordTestEntity",
   })
   parent: string;
+  @DatabaseField({
+    label: "Items",
+    dataType: "entity",
+    additional: "ConditionsEditorTestEntity",
+    isArray: true,
+  })
+  items: string[];
   @DatabaseField({
     label: "Related",
     dataType: "entity",
@@ -449,6 +457,12 @@ describe("ConditionsEditorComponent", () => {
         "parent.recordNames",
         { name: { $in: ["$current_record.parent.recordNames"] } },
       ],
+      [
+        "the record itself with the records linked in a field of a linked record",
+        "_id",
+        "parent.items",
+        { _id: { $in: ["$current_record.parent.items"] } },
+      ],
     ])("saves the comparison of %s", (_, field, recordField, expected) => {
       compareRowWithRecordField(field, recordField);
 
@@ -500,13 +514,42 @@ describe("ConditionsEditorComponent", () => {
     });
 
     it.each([
-      ["the same dropdown options", "configurable-enum", "genders", false],
-      ["other dropdown options", "configurable-enum", "other-enum", true],
-      ["another data type", "string", undefined, true],
+      [
+        "genderSingle",
+        "the same dropdown options",
+        "configurable-enum",
+        "genders",
+        false,
+      ],
+      [
+        "genderSingle",
+        "other dropdown options",
+        "configurable-enum",
+        "other-enum",
+        true,
+      ],
+      ["genderSingle", "another data type", "string", undefined, true],
+      [
+        "_id",
+        "a link to the record type of the condition",
+        "entity",
+        "ConditionsEditorTestEntity",
+        false,
+      ],
+      [
+        "_id",
+        "a link to another record type",
+        "entity",
+        "ConditionsEditorRecordTestEntity",
+        true,
+      ],
+      ["_id", "a field of another data type", "string", undefined, true],
     ])(
-      "offers only record fields with matching values for comparison (%s)",
-      (_, dataType, additional, expectedHidden) => {
-        compareRowWithRecordField("genderSingle", "recordGender");
+      "offers only record fields with values comparable to %s (%s)",
+      (field, _, dataType, additional, expectedHidden) => {
+        component.conditions = { $or: [{ [field]: null }] };
+        component.ngOnInit();
+        component.setReferenceRow(0, true);
         const hideOption = component.referenceFieldFilters.get("0");
 
         expect(hideOption({ id: "x", dataType, additional })).toBe(
@@ -514,6 +557,17 @@ describe("ConditionsEditorComponent", () => {
         );
       },
     );
+
+    it("offers the record itself (_id) as field of a row", () => {
+      component.conditions = { $or: [{ name: null }] };
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      const fieldSelect = fixture.debugElement.query(
+        By.directive(EntityFieldSelectComponent),
+      ).componentInstance as EntityFieldSelectComponent;
+      expect(fieldSelect.showInternalIdField()).toBe(true);
+    });
 
     it("clears the comparison when switching back to a fixed value", () => {
       compareRowWithRecordField("genderSingle", "recordGender");
