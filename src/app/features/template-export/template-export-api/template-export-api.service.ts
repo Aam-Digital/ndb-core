@@ -33,7 +33,8 @@ interface TemplateUploadResponseDto {
  */
 interface TemplateRenderRequestDto {
   /**
-   * target file type (e.g. "pdf")
+   * target file type as its extension: "pdf", or the format of the template file
+   * (e.g. "docx") to get an editable file
    */
   convertTo: string;
 
@@ -54,7 +55,8 @@ export interface TemplateExportResult {
 }
 
 /**
- * Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.
+ * Interact with the Template Export API that uses File Templates to generate custom documents
+ * (as PDF, or as an editable file in the format of the template).
  */
 @Injectable({
   providedIn: "root",
@@ -122,7 +124,7 @@ export class TemplateExportApiService extends FileService {
   }
 
   /*
-  --- PDF Generation API methods ---
+  --- File Generation API methods ---
   */
 
   /**
@@ -136,6 +138,7 @@ export class TemplateExportApiService extends FileService {
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
+    format: string,
   ): Observable<TemplateExportResult> {
     const complement = this.exportContext.getComplement();
 
@@ -146,7 +149,7 @@ export class TemplateExportApiService extends FileService {
         this.httpClient.post(
           url,
           {
-            convertTo: "pdf",
+            convertTo: format,
             data: resolvedData,
             ...(complement ? { complement } : {}),
           } as TemplateRenderRequestDto,
@@ -181,19 +184,23 @@ export class TemplateExportApiService extends FileService {
   }
 
   /**
-   * Generate a PDF applying actual data to an existing template.
+   * Generate a file applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
-   * @return An array buffer of the generated PDF
+   * @param format The file format to generate, as its extension: "pdf" (default) or the
+   *   format of the template file (e.g. "docx") for an editable file
+   * @return An array buffer of the generated file
    */
-  generatePdfFromTemplate(
+  generateFileFromTemplate(
     template: TemplateExport,
     data: Object,
+    format: string = "pdf",
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
       this.API_URL + "/render/" + template.getId(),
       data,
-      resolveLocaleText(template.title),
+      resolveLocaleText(template.title) + "." + format,
+      format,
     );
   }
 
@@ -203,23 +210,28 @@ export class TemplateExportApiService extends FileService {
    * Both modes go through the template engine's native batch rendering — the backend
    * just forwards the request:
    * - `mode: "zip"` (default): N independent files packaged in a ZIP archive.
-   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF.
+   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF
+   *   (only available for the "pdf" format).
    *
    * @param template The TemplateExport entity to render
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
+   * @param format The file format of each generated file, as its extension: "pdf" (default)
+   *   or the format of the template file (e.g. "docx") for editable files
    * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
     template: TemplateExport,
     dataList: Object[],
     mode: "zip" | "combined" = "zip",
+    format: string = "pdf",
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
       this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
       dataList,
       resolveLocaleText(template.title) +
         (mode === "combined" ? ".pdf" : ".zip"),
+      format,
     );
   }
 }

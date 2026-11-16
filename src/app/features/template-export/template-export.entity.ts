@@ -8,7 +8,7 @@ import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-bloc
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
 
 /**
- * Represents a TemplateExport that can be used to generate PDFs via API,
+ * Represents a TemplateExport that can be used to generate files (PDF, or the template's own editable format) via API,
  * replacing placeholders in the file with data from an entity.
  *
  * A TemplateExport entity represents the meta-data of a template and can be added and manage by admin users.
@@ -89,6 +89,14 @@ export class TemplateExport extends Entity {
     } as FileFieldConfig,
   })
   templateFile: string;
+
+  /**
+   * The file format of the uploaded template file as its lower-case extension (e.g. "docx"),
+   * in which a file can be generated as an editable alternative to a PDF.
+   */
+  getTemplateFileFormat(): string | undefined {
+    return /\.([a-z0-9]+)$/i.exec(this.templateFile ?? "")?.[1].toLowerCase();
+  }
 
   /**
    * ID of the template file in the server-side managed API.

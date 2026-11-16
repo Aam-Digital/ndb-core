@@ -38,23 +38,57 @@
           ></app-edit-entity>
         </mat-form-field>
 
+        @if (templateFileFormat(); as fileFormat) {
+          <div
+            id="template-export-format-label"
+            class="option-group-label"
+            i18n
+          >
+            File format
+          </div>
+          <mat-radio-group
+            [attr.aria-labelledby]="'template-export-format-label'"
+            [value]="useTemplateFileFormat()"
+            (change)="useTemplateFileFormat.set($event.value)"
+            class="flex-column"
+          >
+            <mat-radio-button [value]="false" i18n>PDF</mat-radio-button>
+            <mat-radio-button
+              data-testid="use-template-file-format"
+              [value]="true"
+              i18n
+            >
+              Editable file (.{{ fileFormat }})
+            </mat-radio-button>
+          </mat-radio-group>
+        }
+
         @if (isBulk()) {
           @if (selectedTemplateIsArrayReport()) {
             <p data-testid="array-report-note" i18n>
               This template combines all selected records into a single report.
             </p>
           } @else {
+            <div
+              id="template-export-bulk-label"
+              class="option-group-label"
+              i18n
+            >
+              Multiple records
+            </div>
             <mat-radio-group
-              [value]="combineIntoSinglePdf()"
+              [attr.aria-labelledby]="'template-export-bulk-label'"
+              [value]="combineIntoSinglePdf() && canCombine()"
               (change)="combineIntoSinglePdf.set($event.value)"
               class="flex-column"
             >
               <mat-radio-button [value]="false" i18n>
-                Create .zip file with multiple PDFs
+                Create .zip file with one file per record
               </mat-radio-button>
               <mat-radio-button
                 data-testid="combine-into-single-pdf"
                 [value]="true"
+                [disabled]="!canCombine()"
                 i18n
               >
                 Combine all records into a single PDF

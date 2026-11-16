@@ -110,6 +110,24 @@ describe("DownloadService", () => {
     document.createElement = oldCreateElement;
   });
 
+  it("downloads a ready-made file unchanged under the given filename", () => {
+    const link = document.createElement("a");
+    const clickSpy = vi.spyOn(link, "click").mockImplementation(() => {});
+    const createElementSpy = vi
+      .spyOn(document, "createElement")
+      .mockReturnValue(link);
+    const createObjectUrlSpy = vi.spyOn(globalThis.URL, "createObjectURL");
+    const file = new Uint8Array([80, 75, 3, 4]).buffer;
+
+    service.triggerFileDownload(file, "letter.docx");
+
+    expect(link.download).toBe("letter.docx");
+    expect((createObjectUrlSpy.mock.calls[0][0] as Blob).size).toBe(4);
+    expect(clickSpy).toHaveBeenCalled();
+    createElementSpy.mockRestore();
+    createObjectUrlSpy.mockRestore();
+  });
+
   it("should contain a column for every property", async () => {
     const docs = [
       { _id: "Test:1", test: 1 },
