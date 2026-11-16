@@ -15,6 +15,7 @@ import {
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { AdminEntityService } from "#src/app/core/admin/admin-entity.service";
 
 /**
  * Data interface for AdminRelatedEntityDetailsComponent dialog
@@ -50,6 +51,7 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   );
   private readonly data =
     inject<AdminRelatedEntityDetailsData>(MAT_DIALOG_DATA);
+  private readonly adminEntityService = inject(AdminEntityService);
 
   entityConstructor: EntityConstructor;
   currentColumns: string[] = [];
@@ -98,6 +100,7 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
     for (const [key, value] of this.originalSchema.entries()) {
       this.entityConstructor.schema.set(key, value);
     }
+    this.adminEntityService.entitySchemaUpdated.emit();
     this.dialogRef.close();
   }
 
