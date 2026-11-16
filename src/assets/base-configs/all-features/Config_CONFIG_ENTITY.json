@@ -1788,9 +1788,19 @@
         "entityMultiField": {
           "id": "entityMultiField",
           "label": "Entity Multi Field",
+          "description": "Only offers the children linked in \"Entity Multi Field\" of the Parent school (if one is selected)",
           "dataType": "entity",
           "isArray": true,
-          "additional": "Child"
+          "additional": "Child",
+          "validators": {
+            "selectionCondition": {
+              "_id": {
+                "$in": [
+                  "$current_record.parentSchool.entityMultiField"
+                ]
+              }
+            }
+          }
         },
         "percentageField": {
           "id": "percentageField",
