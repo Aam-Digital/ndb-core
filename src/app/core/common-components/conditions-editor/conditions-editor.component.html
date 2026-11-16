@@ -68,8 +68,7 @@
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label i18n>Field of the edited record</mat-label>
               <app-entity-field-select
-                [entityType]="currentRecordType()"
-                [options]="linkedRecordFields()"
+                [options]="referenceFieldOptions()"
                 [value]="getReferencedField(conditionId)"
                 [hideOption]="referenceFieldFilters.get(conditionId + '')"
                 (valueChange)="onReferencedFieldChange(conditionId, $event)"

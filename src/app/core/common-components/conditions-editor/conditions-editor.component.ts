@@ -112,6 +112,20 @@ export class ConditionsEditorComponent implements OnInit {
     );
   });
 
+  /**
+   * The fields a row can compare with: those of the current record itself first,
+   * then those of the records it links to.
+   */
+  readonly referenceFieldOptions = computed<FormFieldConfig[]>(() => {
+    const recordType = this.currentRecordType();
+    if (!recordType) return [];
+
+    return [
+      ...fieldOptions([...recordType.schema.entries()]),
+      ...this.linkedRecordFields(),
+    ];
+  });
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
@@ -544,6 +558,19 @@ export class ConditionsEditorComponent implements OnInit {
   }
 }
 
+/** the options for the given fields that an admin can select (not the internal ones) */
+function fieldOptions(
+  fields: [string, EntitySchemaField][],
+): FormFieldConfig[] {
+  return fields
+    .filter(([, field]) => !field.isInternalField && !!field.label)
+    .map(([id, field]) => ({
+      ...field,
+      id,
+      label: resolveLocaleText(field.label),
+    }));
+}
+
 /** the options for the fields of the records linked in a link field ("link field › field") */
 function linkedFieldOptions({
   linkId,
@@ -551,13 +578,11 @@ function linkedFieldOptions({
   fields,
 }: LinkedTypeFields): FormFieldConfig[] {
   const linkLabel = resolveLocaleText(link.label) ?? linkId;
-  return fields
-    .filter(([, field]) => !field.isInternalField && !!field.label)
-    .map(([fieldId, field]) => ({
-      ...field,
-      id: `${linkId}.${fieldId}`,
-      label: `${linkLabel} › ${resolveLocaleText(field.label)}`,
-      // the values of all linked records
-      isArray: !!link.isArray || !!field.isArray,
-    }));
+  return fieldOptions(fields).map((field) => ({
+    ...field,
+    id: `${linkId}.${field.id}`,
+    label: `${linkLabel} › ${field.label}`,
+    // the values of all linked records
+    isArray: !!link.isArray || !!field.isArray,
+  }));
 }

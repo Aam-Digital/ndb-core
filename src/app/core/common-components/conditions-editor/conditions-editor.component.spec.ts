@@ -558,15 +558,33 @@ describe("ConditionsEditorComponent", () => {
       },
     );
 
+    /** the labels a field select of the first row offers (0: the row's field, 1: the compared field) */
+    function offeredLabels(fieldSelectIndex: number): string[] {
+      fixture.detectChanges();
+      const fieldSelect = fixture.debugElement.queryAll(
+        By.directive(EntityFieldSelectComponent),
+      )[fieldSelectIndex].componentInstance as EntityFieldSelectComponent;
+      fieldSelect.autocompleteForm.setValue("");
+      return fieldSelect.autocompleteOptions().map((o) => o.asString);
+    }
+
     it("offers the record itself (_id) as field of a row", () => {
       component.conditions = { $or: [{ name: null }] };
       component.ngOnInit();
-      fixture.detectChanges();
 
-      const fieldSelect = fixture.debugElement.query(
-        By.directive(EntityFieldSelectComponent),
-      ).componentInstance as EntityFieldSelectComponent;
-      expect(fieldSelect.showInternalIdField()).toBe(true);
+      expect(offeredLabels(0)).toContain("ID (internal unique ID)");
+    });
+
+    it("offers the fields of the edited record before those of its linked records", () => {
+      compareRowWithRecordField("name", "recordName");
+
+      const offered = offeredLabels(1);
+
+      expect(offered).toContain("Parent › Record name");
+      expect(offered.indexOf("Record name")).toBeGreaterThanOrEqual(0);
+      expect(offered.indexOf("Record name")).toBeLessThan(
+        offered.indexOf("Parent › Record name"),
+      );
     });
 
     it("clears the comparison when switching back to a fixed value", () => {
