@@ -127,27 +127,30 @@ export class ConfigValidationService {
   }
 
   /**
-   * The fields of a record type: those of its code (or of every record type, if it only exists in the config)
-   * with those of the checked config. `undefined` for an unknown record type.
+   * The fields of a record type as the app sets them up from the config (see `EntityConfigService`):
+   * the fields of its code, each replaced by a field of the same id in the checked config.
+   * `undefined` for an unknown record type.
    */
   private getFields(
     entityType: string,
     config: Record<string, any>,
   ): Map<string, EntitySchemaField> | undefined {
     const registry = this.injector.get(EntityRegistry);
-    const attributes: Record<string, EntitySchemaField> | undefined =
-      config[ENTITY_CONFIG_PREFIX + entityType]?.attributes;
-    if (!registry.has(entityType) && !attributes) {
+    const entityConfig: EntityConfig | undefined =
+      config[ENTITY_CONFIG_PREFIX + entityType];
+    if (!registry.has(entityType) && !entityConfig) {
       return undefined;
     }
 
+    // the check runs before the saved config is applied: a type new in it starts from the type it extends
+    const codeType = registry.has(entityType)
+      ? entityType
+      : entityConfig.extends;
     const fields = new Map(
-      registry.has(entityType)
-        ? registry.get(entityType).schema
-        : Entity.schema,
+      registry.has(codeType) ? registry.get(codeType).schema : Entity.schema,
     );
-    for (const [id, field] of Object.entries(attributes ?? {})) {
-      fields.set(id, { ...fields.get(id), ...field });
+    for (const [id, field] of Object.entries(entityConfig?.attributes ?? {})) {
+      fields.set(id, field);
     }
     return fields;
   }
