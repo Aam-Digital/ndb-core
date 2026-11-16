@@ -7,7 +7,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { DefaultValueStrategy } from "../../default-values/default-value-strategy.interface";
 import { DynamicValidatorsService } from "../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
-import { RecordTypeFields } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
+import { ConfigValidationContext } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
 import {
   FormValidatorConfig,
   WARNING_ONLY_KEY,
@@ -109,14 +109,15 @@ export class ConfigValidationService {
       });
     }
 
-    const fieldsOf: RecordTypeFields = (
-      entityType = configId.substring(ENTITY_CONFIG_PREFIX.length),
-    ) => this.getFields(entityType, config);
+    const context: ConfigValidationContext = {
+      entityType: configId.substring(ENTITY_CONFIG_PREFIX.length),
+      fieldsOf: (entityType) => this.getFields(entityType, config),
+    };
     for (const [field, schema] of Object.entries(
       entityConfig?.attributes ?? {},
     )) {
       problems.push(
-        ...this.validateField(schema, config, fieldsOf).map((message) => ({
+        ...this.validateField(schema, config, context).map((message) => ({
           configId,
           field,
           message,
@@ -158,7 +159,7 @@ export class ConfigValidationService {
   private validateField(
     schema: EntitySchemaField,
     config: Record<string, any>,
-    fieldsOf: RecordTypeFields,
+    context: ConfigValidationContext,
   ): string[] {
     if (!schema || typeof schema !== "object") {
       return [];
@@ -177,7 +178,7 @@ export class ConfigValidationService {
       );
     }
 
-    problems.push(...this.validateValidators(schema, fieldsOf));
+    problems.push(...this.validateValidators(schema, context));
 
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
@@ -192,7 +193,7 @@ export class ConfigValidationService {
 
   private validateValidators(
     schema: EntitySchemaField,
-    fieldsOf: RecordTypeFields,
+    context: ConfigValidationContext,
   ): string[] {
     const rules = this.injector.get(DynamicValidatorsService);
     const datatype = this.injector
@@ -210,7 +211,7 @@ export class ConfigValidationService {
             : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
         ];
       }
-      const problems = rule.validateConfig(value, schema, datatype, fieldsOf);
+      const problems = rule.validateConfig(value, schema, datatype, context);
       // without a dataType (e.g. overriding a field of the record type's code) the type is not known here
       if (
         problems.length === 0 &&

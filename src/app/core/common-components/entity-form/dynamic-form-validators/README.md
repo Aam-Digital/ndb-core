@@ -76,7 +76,7 @@ export class MaxLengthValidator extends FieldValidator<number> {
 | `checkOnBlur`                            | The check is expensive (e.g. it loads other records), so the field is only checked when the user leaves it. `build` may return a sync validator or one returning a promise: rules that can be only a warning run as async validators.                           |
 | `angularValidator`                       | Angular's own validator that form fields look for (e.g. `Validators.required` marks a field as required). It is added to the field as it is, next to the rule's check. Only for a rule whose `warning` is `"never"`.                                            |
 | `dependsOn(value)`                       | Other fields of the record the rule reads (e.g. the parent link of `withinParent`). The field is checked again when one of them changes.                                                                                                                        |
-| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config. An optional fourth argument gives the fields of record types, to check references to other fields.                                                                              |
+| `validateConfig(value, field, datatype)` | Problems of the setting, which admins are told about when they save the config. An optional fourth argument gives the record type of the field and the fields of record types, to check references to other fields.                                             |
 
 A rule that needs services injects them like any other service (`inject(EntityMapperService)`).
 Do not inject the `EntityFormService`, as it uses the rules itself.

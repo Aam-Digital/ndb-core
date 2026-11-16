@@ -14,8 +14,8 @@ import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-p
 import { Logging } from "../../logging/logging.service";
 import { AsyncPromiseValidatorFn } from "../../common-components/entity-form/dynamic-form-validators/validator-types";
 import {
+  ConfigValidationContext,
   FieldValidator,
-  RecordTypeFields,
   ValidatorContext,
 } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { getCurrentRecordOfControl } from "../../common-components/entity-form/current-record-state";
@@ -245,7 +245,7 @@ export class SelectionConditionValidator extends FieldValidator<
     value: DataFilter<Entity>,
     field: EntitySchemaField,
     datatype: DefaultDatatype,
-    fieldsOf?: RecordTypeFields,
+    context?: ConfigValidationContext,
   ): string[] {
     if (!value) {
       return [];
@@ -263,14 +263,14 @@ export class SelectionConditionValidator extends FieldValidator<
       ];
     }
     return getCurrentRecordReferences(value).flatMap((reference) =>
-      this.linkedFieldProblems(reference, fieldsOf),
+      this.linkedFieldProblems(reference, context),
     );
   }
 
   /** problems of a placeholder referring to a field of a linked record, like `$current_record.parentAction.locations` */
   private linkedFieldProblems(
     { placeholder, fieldId, linkedFieldId }: CurrentRecordReference,
-    fieldsOf: RecordTypeFields | undefined,
+    context: ConfigValidationContext | undefined,
   ): string[] {
     if (!linkedFieldId) {
       return [];
@@ -280,7 +280,7 @@ export class SelectionConditionValidator extends FieldValidator<
         $localize`:config validation:The selection filter ("selectionCondition") refers to "${placeholder}:placeholder:", which goes through more than one linked record. Only fields of a record linked directly can be used, so this condition is ignored.`,
       ];
     }
-    const recordFields = fieldsOf?.();
+    const recordFields = context?.fieldsOf(context.entityType);
     if (!recordFields) {
       return [];
     }
@@ -291,7 +291,7 @@ export class SelectionConditionValidator extends FieldValidator<
       ];
     }
     const linkedTypes = asArray(link.additional ?? []).map((type) =>
-      fieldsOf(type),
+      context.fieldsOf(type),
     );
     // not checked while one of the linked record types is not known here
     const isMissing =
