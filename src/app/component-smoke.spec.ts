@@ -18,6 +18,7 @@ import { fileComponents } from "./features/file/file-components";
 import { locationComponents } from "./features/location/location-components";
 import { matchingEntitiesComponents } from "./features/matching-entities/matching-entities-components";
 import { reportingComponents } from "./features/reporting/reporting-components";
+import { whiteboardComponents } from "./features/whiteboard/whiteboard-components";
 
 import { AddressGpsLocationComponent } from "#src/app/features/location/address-gps-location/address-gps-location.component";
 import { AdminConfigCleanupComponent } from "#src/app/core/admin/config-cleanup/admin-config-cleanup.component";
@@ -97,6 +98,7 @@ const REGISTERED: ComponentTuple[] = [
   ...locationComponents,
   ...matchingEntitiesComponents,
   ...reportingComponents,
+  ...whiteboardComponents,
 ];
 
 /**
@@ -133,6 +135,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EditUrl",
   "EmbeddedArrayData",
   "EntityList",
+  "Whiteboard",
   "FreeTextFilter",
   "ImportantNotesDashboard",
   "ImportantNotesDashboardSettings",

@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>
+  {{ data.title }}
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  <mat-form-field class="full-width">
+    <mat-label i18n>Text</mat-label>
+    @if (data.multiline) {
+      <textarea
+        matInput
+        [formControl]="text"
+        cdkFocusInitial
+        rows="4"
+      ></textarea>
+    } @else {
+      <input
+        matInput
+        [formControl]="text"
+        cdkFocusInitial
+        (keydown.enter)="save()"
+      />
+    }
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (data.allowRemove) {
+    <button mat-button class="margin-end-regular" (click)="remove()" i18n>
+      Remove
+    </button>
+  }
+  <button mat-button mat-dialog-close i18n>Cancel</button>
+  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+</mat-dialog-actions>

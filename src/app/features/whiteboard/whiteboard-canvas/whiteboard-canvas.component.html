@@ -1,0 +1,185 @@
+<div
+  class="viewport pan-area"
+  [class.connecting]="connectingFrom()"
+  (pointerdown)="onBackgroundPointerDown($event)"
+  (pointermove)="onBackgroundPointerMove($event)"
+  (pointerup)="onBackgroundPointerUp()"
+  (pointercancel)="onBackgroundPointerUp()"
+  (wheel)="onWheel($event)"
+  tabindex="-1"
+>
+  <div class="board pan-area" [style.transform]="transform()">
+    <svg class="lines pan-area">
+      <defs>
+        <marker
+          id="whiteboard-arrow"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-head" />
+        </marker>
+      </defs>
+      @for (line of lines(); track $index) {
+        <g
+          class="line"
+          role="img"
+          [attr.aria-label]="getLineLabel(line)"
+          [class.reference]="line.connection.isReference"
+          [class.manual]="!line.connection.isReference"
+          (click)="
+            !line.connection.isReference &&
+              !readonly() &&
+              itemEdit.emit($any(line.connection))
+          "
+        >
+          <path
+            class="line-hit-area"
+            [attr.d]="
+              'M ' +
+              line.start.x +
+              ' ' +
+              line.start.y +
+              ' L ' +
+              line.end.x +
+              ' ' +
+              line.end.y
+            "
+          />
+          <path
+            class="line-path"
+            [attr.d]="
+              'M ' +
+              line.start.x +
+              ' ' +
+              line.start.y +
+              ' L ' +
+              line.end.x +
+              ' ' +
+              line.end.y
+            "
+            [attr.marker-end]="
+              line.connection.isReference ? 'url(#whiteboard-arrow)' : null
+            "
+          />
+          @if (line.connection.label) {
+            <text
+              class="line-label"
+              [attr.x]="line.labelPosition.x"
+              [attr.y]="line.labelPosition.y"
+            >
+              {{ line.connection.label }}
+            </text>
+          }
+        </g>
+      }
+    </svg>
+
+    @for (item of positionedItems(); track item.id) {
+      <div
+        class="item"
+        role="group"
+        [attr.aria-label]="getItemLabel(item)"
+        [class.connecting-source]="connectingFrom() === item.id"
+        [class.connect-target]="
+          connectingFrom() && connectingFrom() !== item.id
+        "
+        cdkDrag
+        [cdkDragFreeDragPosition]="{ x: item.x, y: item.y }"
+        [cdkDragScale]="zoom()"
+        [cdkDragDisabled]="readonly() || !!connectingFrom()"
+        (cdkDragEnded)="onDragEnded(item, $event)"
+        appWhiteboardMeasure
+        (sizeChange)="onSizeChange(item.id, $event)"
+        (click)="onItemClick(item)"
+      >
+        @switch (item.type) {
+          @case ("entity") {
+            <app-whiteboard-entity-card
+              [item]="item"
+              [entity]="entities().get(item.entityId)"
+              [readonly]="readonly()"
+              (addLinked)="addLinkedRecords.emit(item)"
+              (connect)="startConnecting(item)"
+              (remove)="itemRemove.emit(item)"
+            ></app-whiteboard-entity-card>
+          }
+          @case ("group") {
+            <app-whiteboard-group
+              [item]="item"
+              [readonly]="readonly()"
+              [zoom]="zoom()"
+              (edit)="itemEdit.emit(item)"
+              (colorChange)="onColorChange(item, $event)"
+              (connect)="startConnecting(item)"
+              (remove)="itemRemove.emit(item)"
+              (resize)="onResize(item, $event)"
+            ></app-whiteboard-group>
+          }
+          @case ("note") {
+            <app-whiteboard-note
+              [item]="item"
+              [readonly]="readonly()"
+              (edit)="itemEdit.emit(item)"
+              (colorChange)="onColorChange(item, $event)"
+              (connect)="startConnecting(item)"
+              (remove)="itemRemove.emit(item)"
+            ></app-whiteboard-note>
+          }
+          @case ("text") {
+            <app-whiteboard-note
+              [item]="item"
+              [readonly]="readonly()"
+              (edit)="itemEdit.emit(item)"
+              (connect)="startConnecting(item)"
+              (remove)="itemRemove.emit(item)"
+            ></app-whiteboard-note>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  @if (connectingFrom()) {
+    <div class="connecting-hint">
+      <span i18n>Click another item to connect it.</span>
+      <button mat-button (click)="cancelConnecting()" i18n>Cancel</button>
+    </div>
+  }
+
+  <div class="zoom-controls">
+    <button
+      mat-mini-fab
+      (click)="zoomIn()"
+      matTooltip="Zoom in"
+      i18n-matTooltip
+      aria-label="Zoom in"
+      i18n-aria-label
+    >
+      <app-fa-dynamic-icon icon="plus"></app-fa-dynamic-icon>
+    </button>
+    <button
+      mat-mini-fab
+      (click)="zoomOut()"
+      matTooltip="Zoom out"
+      i18n-matTooltip
+      aria-label="Zoom out"
+      i18n-aria-label
+    >
+      <app-fa-dynamic-icon icon="minus"></app-fa-dynamic-icon>
+    </button>
+    <button
+      mat-mini-fab
+      (click)="fitToContent()"
+      matTooltip="Show everything"
+      i18n-matTooltip
+      aria-label="Show everything"
+      i18n-aria-label
+    >
+      <app-fa-dynamic-icon icon="expand"></app-fa-dynamic-icon>
+    </button>
+  </div>
+</div>

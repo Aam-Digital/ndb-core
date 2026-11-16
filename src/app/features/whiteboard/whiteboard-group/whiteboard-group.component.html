@@ -1,0 +1,31 @@
+<div
+  class="group color-{{ item().color }}"
+  [style.width.px]="item().width"
+  [style.height.px]="item().height"
+>
+  <div class="header" (dblclick)="!readonly() && edit.emit()">
+    <span class="label" [class.empty]="!item().label">
+      {{ item().label || placeholder }}
+    </span>
+    @if (!readonly()) {
+      <app-whiteboard-item-menu
+        [editable]="true"
+        [color]="item().color"
+        (edit)="edit.emit()"
+        (colorChange)="colorChange.emit($event)"
+        (connect)="connect.emit()"
+        (remove)="remove.emit()"
+      ></app-whiteboard-item-menu>
+    }
+  </div>
+
+  @if (!readonly()) {
+    <div
+      class="resize-handle"
+      (pointerdown)="startResize($event)"
+      aria-label="Resize group"
+      i18n-aria-label
+      role="presentation"
+    ></div>
+  }
+</div>

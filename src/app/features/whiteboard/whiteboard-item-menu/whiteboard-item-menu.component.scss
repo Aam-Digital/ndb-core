@@ -1,0 +1,30 @@
+@use "variables/sizes";
+@use "variables/colors";
+@use "../whiteboard-colors";
+
+.menu-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  line-height: 32px;
+}
+
+.color-options {
+  display: flex;
+  gap: sizes.$small;
+  padding: sizes.$small sizes.$regular;
+}
+
+.color-option {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+
+  &.active {
+    border-color: colors.$primary;
+  }
+
+  @include whiteboard-colors.background-classes;
+}

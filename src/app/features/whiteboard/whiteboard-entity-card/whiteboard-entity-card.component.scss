@@ -1,0 +1,33 @@
+@use "variables/sizes";
+@use "variables/colors";
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  width: 220px;
+  padding: sizes.$small sizes.$x-small sizes.$small sizes.$small;
+  background: colors.$background;
+  border: 1px solid colors.$border-color;
+  border-inline-start: 4px solid colors.$primary;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.type-label {
+  font-size: 0.75em;
+  color: colors.$hint-text;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.open-link {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  line-height: 32px;
+}

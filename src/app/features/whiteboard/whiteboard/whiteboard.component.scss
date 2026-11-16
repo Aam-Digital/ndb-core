@@ -1,0 +1,29 @@
+@use "variables/sizes";
+@use "variables/colors";
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: sizes.$small;
+  margin-bottom: sizes.$small;
+
+  .active {
+    background-color: colors.$grey-transparent;
+  }
+}
+
+.save-state {
+  font-size: 0.85em;
+  color: colors.$hint-text;
+}
+
+.canvas-container {
+  height: calc(100dvh - var(--toolbar-height) - 190px);
+  min-height: 400px;
+
+  /* the toolbar wraps into several rows on narrow screens */
+  @media (max-width: 599px) {
+    height: calc(100dvh - var(--toolbar-height) - 290px);
+  }
+}

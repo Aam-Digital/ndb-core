@@ -1,0 +1,41 @@
+@use "variables/sizes";
+@use "variables/colors";
+@use "../whiteboard-colors";
+
+.group {
+  position: relative;
+  border: 2px dashed colors.$border-color;
+  border-radius: 8px;
+  opacity: 0.85;
+  @include whiteboard-colors.background-classes;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: sizes.$x-small sizes.$small;
+  font-weight: 500;
+}
+
+.label.empty {
+  color: colors.$hint-text;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.resize-handle {
+  position: absolute;
+  bottom: 0;
+  inset-inline-end: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  border-inline-end: 3px solid colors.$muted;
+  border-bottom: 3px solid colors.$muted;
+  border-end-end-radius: 6px;
+}
+
+:host-context([dir="rtl"]) .resize-handle {
+  cursor: nesw-resize;
+}

@@ -1,0 +1,137 @@
+@use "variables/sizes";
+@use "variables/colors";
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid colors.$border-color;
+  border-radius: 4px;
+  background-color: colors.$grey-light;
+  background-image: radial-gradient(colors.$grey-darker 1px, transparent 1px);
+  background-size: 24px 24px;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.connecting {
+    cursor: crosshair;
+  }
+}
+
+.board {
+  position: absolute;
+  top: 0;
+  left: 0; /* stylelint-disable-line */
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+}
+
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0; /* stylelint-disable-line */
+  overflow: visible;
+  pointer-events: none;
+}
+
+.line {
+  pointer-events: none;
+
+  &.manual {
+    pointer-events: visibleStroke;
+    cursor: pointer;
+  }
+
+  .line-hit-area {
+    stroke: transparent;
+    stroke-width: 14px;
+    fill: none;
+  }
+
+  .line-path {
+    stroke: colors.$text-secondary;
+    stroke-width: 2px;
+    fill: none;
+  }
+
+  &.reference .line-path {
+    stroke: colors.$muted;
+    stroke-dasharray: 6 4;
+  }
+
+  .line-label {
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: colors.$text-secondary;
+    paint-order: stroke;
+    stroke: colors.$grey-light;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  &.manual:hover .line-path {
+    stroke: colors.$primary;
+  }
+}
+
+.arrow-head {
+  fill: colors.$muted;
+}
+
+.item {
+  position: absolute;
+  top: 0;
+  left: 0; /* stylelint-disable-line */
+  cursor: move;
+
+  &.cdk-drag-dragging {
+    z-index: 1;
+  }
+
+  &.connecting-source {
+    outline: 2px solid colors.$primary;
+    outline-offset: 2px;
+  }
+
+  &.connect-target {
+    cursor: crosshair;
+  }
+}
+
+.connecting-hint {
+  position: absolute;
+  top: sizes.$regular;
+  inset-inline: 0;
+  margin-inline: auto;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
+  padding: sizes.$x-small sizes.$regular;
+  background: colors.$background;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: sizes.$regular;
+  inset-inline-end: sizes.$regular;
+  display: flex;
+  flex-direction: column;
+  gap: sizes.$small;
+}
