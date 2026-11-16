@@ -4,6 +4,7 @@ import {
   AutomatedFieldUpdateConfigService,
   MAX_ENTITIES_TO_REVIEW,
 } from "./automated-field-update-config.service";
+import { ChangeSet } from "./change-set";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
@@ -2270,5 +2271,37 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ).toEqual([changed.getId()]);
       });
     });
+  });
+});
+
+describe("ChangeSet", () => {
+  it.each([
+    [
+      "is no longer changed",
+      (changeSet: ChangeSet, record: HierarchyAction) =>
+        changeSet.setValue(record, "tags", record.tags, true),
+    ],
+    [
+      "links to another record now",
+      (changeSet: ChangeSet, record: HierarchyAction) =>
+        changeSet.setValue(record, "parents", ["HierarchyAction:other"], false),
+    ],
+  ])("no longer lists a record linking to a record once it %s", (_, change) => {
+    const parent = new HierarchyAction();
+    const record = new HierarchyAction();
+    record.parents = [parent.getId()];
+    const changeSet = new ChangeSet([]);
+    const linkingToParent = () =>
+      changeSet.changedRecordsLinkingTo(
+        "HierarchyAction",
+        "parents",
+        parent.getId(),
+      );
+    changeSet.setValue(record, "tags", ["water"], false);
+    expect(linkingToParent()).toEqual([changeSet.get(record, "after")]);
+
+    change(changeSet, record);
+
+    expect(linkingToParent()).toEqual([]);
   });
 });
