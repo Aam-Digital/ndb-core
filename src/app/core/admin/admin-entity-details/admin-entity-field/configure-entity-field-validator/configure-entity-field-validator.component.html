@@ -48,9 +48,9 @@
     <div class="hint-text" i18n>no validation rules</div>
   }
 
-  @if (hiddenRuleLabels().length > 0) {
+  @if (hiddenRulesText()) {
     <div class="hint-text" i18n>
-      Not used for this type of field: {{ hiddenRuleLabels().join(", ") }}
+      Not used for this type of field: {{ hiddenRulesText() }}
     </div>
   }
 

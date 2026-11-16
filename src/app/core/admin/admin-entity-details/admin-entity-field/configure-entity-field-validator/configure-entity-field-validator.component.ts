@@ -174,10 +174,11 @@ export class ConfigureEntityFieldValidatorComponent {
       }),
   );
 
-  protected readonly hiddenRuleLabels = computed(() =>
+  protected readonly hiddenRulesText = computed(() =>
     this.shownKeys()
       .filter((key) => !this.applicableKeys().has(key))
-      .map((key) => this.labelOf(this.validators.rules.get(key))),
+      .map((key) => this.labelOf(this.validators.rules.get(key)))
+      .join(", "),
   );
 
   protected readonly addableRules = computed(() => {

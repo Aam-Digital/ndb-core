@@ -17,7 +17,7 @@ import { ValidatorSettingComponent } from "./validator-setting";
     HelpButtonComponent,
   ],
   template: `
-    <mat-form-field floatLabel="always" class="number-field">
+    <mat-form-field floatLabel="always">
       <mat-label>{{ label() }}</mat-label>
       <input matInput type="number" [formControl]="formControl()" />
       @if (description()) {
