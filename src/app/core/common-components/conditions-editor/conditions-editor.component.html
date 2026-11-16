@@ -25,7 +25,10 @@
   <span i18n>of the following conditions match</span>
 </div>
 
-<div class="conditions-container">
+<div
+  class="conditions-container"
+  [class.has-compare-mode]="!!currentRecordType()"
+>
   <div class="conditions-list flex-column">
     @for (
       condition of conditionsArray();
