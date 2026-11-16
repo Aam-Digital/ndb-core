@@ -16,6 +16,7 @@ const CENTER_BARABAZAR = { id: "C3", label: "Barabazar" };
 const CHILD_NAME = "<LEVELS CHILD>";
 const SCHOOL_NAME = "<LEVELS SCHOOL>";
 const PARENT_SCHOOL_NAME = "<LEVELS PARENT SCHOOL>";
+const PARENT_SCHOOL_CHILD_NAME = "<LEVELS CHILD OF PARENT SCHOOL>";
 
 test("Update related records over several levels: child, school and parent school", async ({
   page,
@@ -23,10 +24,13 @@ test("Update related records over several levels: child, school and parent schoo
   // In the all-features config, the school collects the centers of its children ("enum multi")
   // and its parent school collects the centers of its schools ("All centers").
   // A school's "Date Range Field" is checked against the one of its parent school.
+  // A school's "Entity Multi Field" only offers the children selected in the one of its parent school.
+  const parentSchoolChild = generateChild({ name: PARENT_SCHOOL_CHILD_NAME });
   const parentSchool = createEntityOfType("School", "levels-parent-school");
   Object.assign(parentSchool, {
     name: PARENT_SCHOOL_NAME,
     allCenters: [CENTER_ALIPORE],
+    entityMultiField: [parentSchoolChild.getId()],
     dateRangeField: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
   });
   const school = createEntityOfType("School", "levels-school");
@@ -45,7 +49,13 @@ test("Update related records over several levels: child, school and parent schoo
     center: CENTER_ALIPORE,
   });
 
-  await loadApp(page, [...generateUsers(), child, school, parentSchool]);
+  await loadApp(page, [
+    ...generateUsers(),
+    child,
+    parentSchoolChild,
+    school,
+    parentSchool,
+  ]);
 
   // change the center of the child
   await page.getByRole("navigation").getByText("Children").click();
@@ -113,6 +123,23 @@ test("Update related records over several levels: child, school and parent schoo
   await expect(periodWarning).toHaveAccessibleDescription(
     `Outside the period of ${PARENT_SCHOOL_NAME}`,
   );
+
+  // the school's "Entity Multi Field" only offers the children selected in the one of its parent school
+  await page.getByRole("button", { name: "Edit" }).click();
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+  await page
+    .locator("#entity-field__entityMultiField")
+    .locator(".fa-caret-down")
+    .click();
+  await expect(
+    page.getByRole("option", { name: PARENT_SCHOOL_CHILD_NAME }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: CHILD_NAME }),
+  ).not.toBeVisible();
+  // and offers the other children on request
+  await page.getByText(/not matching the selection conditions/).click();
+  await expect(page.getByRole("option", { name: CHILD_NAME })).toBeVisible();
 });
 
 const DOCS_CHILD_NAME = "<DOCS CHILD>";
