@@ -240,7 +240,7 @@ instead of from the change of one linked record only.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:88</a></div>
                             </td>
                         </tr>
 
@@ -307,7 +307,7 @@ instead of from the change of one linked record only.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -347,8 +347,8 @@ instead of from the change of one linked record only.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:189</a></div>
                         </td>
                     </tr>
 
@@ -440,8 +440,8 @@ instead of from the change of one linked record only.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="84"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:84</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -522,8 +522,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="89"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:89</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -601,8 +601,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:161</a></div>
                         </td>
                     </tr>
 
@@ -739,8 +739,8 @@ or undefined if the record did not exist before.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="102"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:102</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/change-set.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -895,6 +895,19 @@ interface ChangedRecord {
   before: Entity | undefined;
   after: Entity;
   changedFields: Set&lt;string&gt;;
+  /** when the record was added, as the records linking to a record are listed in that order */
+  order: number;
+}
+
+/**
+ * The changed records of one type in one state, by the ids they link to in one field
+ * (the linked ids as they are stored, so maybe without type prefix).
+ */
+interface LinkIndex {
+  state: ChangeSetState;
+  entityType: string;
+  referenceField: string;
+  recordIds: Map&lt;string, Set&lt;string&gt;&gt;;
 }
 
 /** A changed record that starts an update */
@@ -916,6 +929,14 @@ export interface StartingChange {
  */
 export class ChangeSet {
   private readonly records &#x3D; new Map&lt;string, ChangedRecord&gt;();
+  private nextOrder &#x3D; 0;
+
+  /**
+   * The indexes of the records linking to a record, built when they are first needed and extended when a value is set,
+   * so that a bulk edit with many changed records does not go through all of them for every affected record.
+   * They only list the records that may link to a record: the records are checked again when they are looked up.
+   */
+  private readonly linkIndexes &#x3D; new Map&lt;string, LinkIndex&gt;();
 
   /** Increases whenever a value is set, so that what is calculated from the records stays valid until then */
   version &#x3D; 0;
@@ -927,6 +948,7 @@ export class ChangeSet {
         // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
         after: entity.copy(),
         changedFields: new Set(changedFields),
+        order: this.nextOrder++,
       });
     }
   }
@@ -965,6 +987,7 @@ export class ChangeSet {
       before: saved,
       after: saved.copy(),
       changedFields: new Set&lt;string&gt;(),
+      order: this.nextOrder++,
     };
     record.after[fieldId] &#x3D; value;
     if (isSavedValue) {
@@ -975,6 +998,7 @@ export class ChangeSet {
 
     if (record.changedFields.size &gt; 0) {
       this.records.set(id, record);
+      this.addToLinkIndexes(id, record);
     } else {
       this.records.delete(id);
     }
@@ -996,12 +1020,19 @@ export class ChangeSet {
     state: ChangeSetState,
   ): Entity[] {
     const savedIds &#x3D; new Set(saved.map((record) &#x3D;&gt; record.getId()));
-    const otherChangedRecords &#x3D; [...this.records.values()]
-      .map((record) &#x3D;&gt; record[state])
-      .filter(
-        (record) &#x3D;&gt;
-          record?.getType() &#x3D;&#x3D;&#x3D; entityType &amp;&amp; !savedIds.has(record.getId()),
-      );
+    const recordIds &#x3D; this.getLinkIndex(state, entityType, referenceField);
+    // a link can be stored without the type prefix of the id
+    const candidateIds &#x3D; new Set([
+      ...(recordIds.get(id) ?? []),
+      ...(recordIds.get(id.slice(id.lastIndexOf(&quot;:&quot;) + 1)) ?? []),
+    ]);
+    const otherChangedRecords &#x3D; [...candidateIds]
+      .filter((recordId) &#x3D;&gt; !savedIds.has(recordId))
+      .map((recordId) &#x3D;&gt; this.records.get(recordId))
+      // the indexes keep the records that are no longer changed or no longer linked
+      .filter((record) &#x3D;&gt; record)
+      .sort((a, b) &#x3D;&gt; a.order - b.order)
+      .map((record) &#x3D;&gt; record[state]);
     return [
       ...saved.map((record) &#x3D;&gt; this.get(record, state)),
       ...otherChangedRecords,
@@ -1015,6 +1046,45 @@ export class ChangeSet {
     id: string,
   ): Entity[] {
     return this.linkingTo([], entityType, referenceField, id, &quot;after&quot;);
+  }
+
+  private getLinkIndex(
+    state: ChangeSetState,
+    entityType: string,
+    referenceField: string,
+  ): Map&lt;string, Set&lt;string&gt;&gt; {
+    const key &#x3D; &#x60;${state}|${entityType}|${referenceField}&#x60;;
+    let index &#x3D; this.linkIndexes.get(key);
+    if (!index) {
+      index &#x3D; { state, entityType, referenceField, recordIds: new Map() };
+      this.linkIndexes.set(key, index);
+      for (const [id, record] of this.records) {
+        addToLinkIndex(index, id, record);
+      }
+    }
+    return index.recordIds;
+  }
+
+  private addToLinkIndexes(id: string, record: ChangedRecord): void {
+    for (const index of this.linkIndexes.values()) {
+      addToLinkIndex(index, id, record);
+    }
+  }
+}
+
+function addToLinkIndex(
+  index: LinkIndex,
+  id: string,
+  record: ChangedRecord,
+): void {
+  const entity &#x3D; record[index.state];
+  if (entity?.getType() !&#x3D;&#x3D; index.entityType) return;
+
+  for (const linkedId of asArray(entity[index.referenceField] ?? [])) {
+    const key &#x3D; String(linkedId);
+    const recordIds &#x3D; index.recordIds.get(key) ?? new Set&lt;string&gt;();
+    recordIds.add(id);
+    index.recordIds.set(key, recordIds);
   }
 }
 </code></pre>

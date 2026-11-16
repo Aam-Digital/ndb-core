@@ -3090,6 +3090,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/LinkExternalProfileDialogData.html" data-type="entity-link" >LinkExternalProfileDialogData</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/LinkIndex.html" data-type="entity-link" >LinkIndex</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/LoadedFirebase.html" data-type="entity-link" >LoadedFirebase</a>
                             </li>
                             <li class="link">
