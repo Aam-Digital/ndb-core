@@ -1,6 +1,9 @@
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
@@ -12,6 +15,8 @@ import {
 } from "#src/app/core/entity/schema/embedded-schema-field.util";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import { asArray } from "#src/app/utils/asArray";
+import { AdminEntityService } from "#src/app/core/admin/admin-entity.service";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 import {
   Component,
@@ -66,6 +71,11 @@ export class AdminEntityPanelComponentComponent {
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
   private readonly schemaService = inject(EntitySchemaService);
+  // every (void) event must count as a change, so that it recomputes the dependent signals
+  private readonly schemaUpdated = toSignal(
+    inject(AdminEntityService).entitySchemaUpdated,
+    { equal: () => false },
+  );
 
   config = input.required<PanelComponent>();
 
@@ -109,7 +119,8 @@ export class AdminEntityPanelComponentComponent {
    * (e.g. "contactPersons.role"), offered as additional columns.
    * The related entities table shows them for the linking entries only.
    */
-  embeddedFieldColumns = computed<ColumnConfig[]>(() => {
+  embeddedFieldColumns = computed<FormFieldConfig[]>(() => {
+    this.schemaUpdated(); // the schema can be edited in place through the "Edit data structure" dialog
     const relatedType = this.entityConstructor();
     if (!relatedType) {
       return [];
