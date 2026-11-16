@@ -15,6 +15,13 @@ export interface UnresolvedEntityStub {
 }
 
 /**
+ * The records loaded to resolve relations, by entity type and id.
+ * Pass the same instance to several {@link EntityRelationResolverService.resolveRelations} calls
+ * to load each type only once for all of them.
+ */
+export type LoadedEntitiesCache = Map<string, Promise<Map<string, Entity>>>;
+
+/**
  * Resolve entity-reference fields (`dataType: "entity"`) within a record's data,
  * replacing the plain id string(s) with the actual referenced {@link Entity} objects.
  *
@@ -41,18 +48,24 @@ export class EntityRelationResolverService {
   /**
    * Resolve entity-reference fields within the given record (or array of records).
    * @param data A single record or an array of records to resolve relations for.
+   * @param loadedEntitiesByType The records already loaded, to share between several calls
+   *          that belong together (e.g. for the levels of a hierarchy).
+   *          By default, each call loads every referenced type (once) itself.
    */
-  async resolveRelations<T = any>(data: T): Promise<T>;
-  async resolveRelations<T = any>(data: T[]): Promise<T[]>;
-  async resolveRelations(data: any): Promise<any> {
-    // cache loaded entities per type for the duration of this call,
-    // so that every referenced type is loaded via `loadType` at most once,
-    // no matter how many records or ids reference it.
-    const loadedEntitiesByType = new Map<
-      string,
-      Promise<Map<string, Entity>>
-    >();
-
+  async resolveRelations<T = any>(
+    data: T,
+    loadedEntitiesByType?: LoadedEntitiesCache,
+  ): Promise<T>;
+  async resolveRelations<T = any>(
+    data: T[],
+    loadedEntitiesByType?: LoadedEntitiesCache,
+  ): Promise<T[]>;
+  async resolveRelations(
+    data: any,
+    // every referenced type is loaded via `loadType` at most once,
+    // no matter how many records or ids reference it
+    loadedEntitiesByType: LoadedEntitiesCache = new Map(),
+  ): Promise<any> {
     if (Array.isArray(data)) {
       return Promise.all(
         data.map((item) => this.resolveValue(item, loadedEntitiesByType)),
@@ -68,7 +81,7 @@ export class EntityRelationResolverService {
    */
   private async resolveValue(
     value: any,
-    loadedEntitiesByType: Map<string, Promise<Map<string, Entity>>>,
+    loadedEntitiesByType: LoadedEntitiesCache,
   ): Promise<any> {
     if (value === null || typeof value !== "object") {
       return value;
@@ -118,7 +131,7 @@ export class EntityRelationResolverService {
   private async resolveReference(
     id: unknown,
     fieldSchema: EntitySchemaField,
-    loadedEntitiesByType: Map<string, Promise<Map<string, Entity>>>,
+    loadedEntitiesByType: LoadedEntitiesCache,
   ): Promise<Entity | UnresolvedEntityStub | unknown> {
     if (typeof id !== "string" || !id) {
       return id;
@@ -180,7 +193,7 @@ export class EntityRelationResolverService {
   private getEntity(
     entityType: string,
     id: string,
-    loadedEntitiesByType: Map<string, Promise<Map<string, Entity>>>,
+    loadedEntitiesByType: LoadedEntitiesCache,
   ): Promise<Entity> {
     if (!loadedEntitiesByType.has(entityType)) {
       loadedEntitiesByType.set(

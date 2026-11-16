@@ -2,7 +2,10 @@ import { inject, Injectable } from "@angular/core";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { EntityRelationResolverService } from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
+import {
+  EntityRelationResolverService,
+  LoadedEntitiesCache,
+} from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { TemplateExport } from "../template-export.entity";
@@ -58,6 +61,8 @@ export class TemplateExportRelatedRecordsService {
    *
    * @param template The template whose `relatedRecords` config defines what to load
    * @param records The records a file is generated for
+   * @param loadedEntities Records already loaded to resolve relations, shared with other calls
+   *          for the same file (each level of a hierarchy refers to the records of the level above)
    * @returns The related records data by the id of the exported record,
    *          holding a (possibly empty) list for each validly configured key.
    *          Empty if the template does not include any related records.
@@ -65,6 +70,7 @@ export class TemplateExportRelatedRecordsService {
   async loadRelatedRecords(
     template: TemplateExport,
     records: Entity[],
+    loadedEntities: LoadedEntitiesCache = new Map(),
   ): Promise<Map<string, RelatedRecordsData>> {
     const result = new Map<string, RelatedRecordsData>();
     const configs = template.relatedRecords ?? [];
@@ -85,6 +91,7 @@ export class TemplateExportRelatedRecordsService {
           config,
           [...uniqueRecords.values()],
           result,
+          loadedEntities,
         ),
       ),
     );
@@ -122,6 +129,7 @@ export class TemplateExportRelatedRecordsService {
     config: TemplateExportRelatedRecords,
     records: Entity[],
     result: Map<string, RelatedRecordsData>,
+    loadedEntities: LoadedEntitiesCache,
   ) {
     if (!RELATED_RECORDS_KEY_PATTERN.test(config?.key ?? "")) {
       this.reportInvalidConfig(template, config, "invalid placeholder name");
@@ -169,7 +177,12 @@ export class TemplateExportRelatedRecordsService {
     const loadLinking = this.createLinkingLoader(relatedType, config.property);
     const levels = getRelatedRecordsLevels(config, relatedType);
     for (let level = 1; level <= levels && parents.length > 0; level++) {
-      parents = await this.addLevel(config, loadLinking, parents);
+      parents = await this.addLevel(
+        config,
+        loadLinking,
+        parents,
+        loadedEntities,
+      );
     }
   }
 
@@ -204,6 +217,7 @@ export class TemplateExportRelatedRecordsService {
     config: TemplateExportRelatedRecords,
     loadLinking: (ids: string[]) => Promise<Map<string, Entity[]>>,
     parents: HierarchyNode[],
+    loadedEntities: LoadedEntitiesCache,
   ): Promise<HierarchyNode[]> {
     const linking = await loadLinking(parents.map((parent) => parent.id));
 
@@ -214,8 +228,11 @@ export class TemplateExportRelatedRecordsService {
         .forEach((entity) => related.set(entity.getId(), entity));
     }
     const sorted = [...related.values()].sort(compareByDisplayText);
-    const resolved: Record<string, unknown>[] =
-      await this.relationResolver.resolveRelations<any>(sorted);
+    // plain copies of the records (with their relations resolved)
+    const resolved = (await this.relationResolver.resolveRelations<unknown>(
+      sorted,
+      loadedEntities,
+    )) as Record<string, unknown>[];
     const dataById = new Map<string, Record<string, unknown>>(
       sorted.map((entity, i) => [entity.getId(), resolved[i]]),
     );

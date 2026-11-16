@@ -16,7 +16,10 @@ import {
   TemplateExportContextService,
 } from "../template-export-context/template-export-context.service";
 import { asArray } from "../../../utils/asArray";
-import { EntityRelationResolverService } from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
+import {
+  EntityRelationResolverService,
+  LoadedEntitiesCache,
+} from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { TemplateExportRelatedRecordsService } from "../template-export-related-records/template-export-related-records.service";
 
 /**
@@ -196,11 +199,15 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     data: Object | Object[],
   ): Promise<Object | Object[]> {
+    // related records link to the exported records (and to each other), so their relations
+    // resolve to the same records: load each type only once for all of them
+    const loadedEntities: LoadedEntitiesCache = new Map();
     const [resolved, relatedRecords] = await Promise.all([
-      this.relationResolver.resolveRelations(data),
+      this.relationResolver.resolveRelations(data, loadedEntities),
       this.relatedRecords.loadRelatedRecords(
         template,
         asArray(data).filter((record) => record instanceof Entity),
+        loadedEntities,
       ),
     ]);
 

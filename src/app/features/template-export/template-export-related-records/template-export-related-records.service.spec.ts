@@ -205,6 +205,37 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(preloaded[0]).toEqual(expect.arrayContaining([child]));
   });
 
+  it("loads the records linked from related records only once for all levels", async () => {
+    const owner = Object.assign(new Person(), { name: "Owner" });
+    entityMapper.add(owner);
+    const root = action("Root");
+    const child = action("Child", {
+      parent: root.getId(),
+      owner: owner.getId(),
+    });
+    action("Grandchild", { parent: child.getId(), owner: owner.getId() });
+    const loadType = vi.spyOn(entityMapper, "loadType");
+
+    const result = await service.loadRelatedRecords(
+      template({ ...SUB_ACTIONS, levels: 3 }),
+      [root],
+    );
+
+    const grandchild = (
+      result.get(root.getId()).subActions[0].subActions as Record<
+        string,
+        unknown
+      >[]
+    )[0];
+    expect(grandchild.owner).toEqual(
+      expect.objectContaining({ name: "Owner" }),
+    );
+    const personLoads = loadType.mock.calls.filter(
+      ([type]) => type === Person.ENTITY_TYPE || type === Person,
+    );
+    expect(personLoads).toHaveLength(1);
+  });
+
   it("adds separate lists for several configs, also through fields holding multiple links", async () => {
     const root = action("Root");
     action("Sub", { parent: root.getId() });
