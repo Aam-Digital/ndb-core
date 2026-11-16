@@ -3,6 +3,15 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import {
+  EmbeddedFieldRef,
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+} from "#src/app/core/entity/schema/embedded-schema-field.util";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
+import { asArray } from "#src/app/utils/asArray";
 
 import {
   Component,
@@ -56,6 +65,7 @@ export class AdminEntityPanelComponentComponent {
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
+  private readonly schemaService = inject(EntitySchemaService);
 
   config = input.required<PanelComponent>();
 
@@ -93,6 +103,33 @@ export class AdminEntityPanelComponentComponent {
       typeof col === "string" ? col : col.id,
     ),
   );
+
+  /**
+   * Inner fields of the embedded entries that link a record to the current entity type
+   * (e.g. "contactPersons.role"), offered as additional columns.
+   * The related entities table shows them for the linking entries only.
+   */
+  embeddedFieldColumns = computed<ColumnConfig[]>(() => {
+    const relatedType = this.entityConstructor();
+    if (!relatedType) {
+      return [];
+    }
+    const parentType = this.entityType().ENTITY_TYPE;
+    const linksParent = (ref: EmbeddedFieldRef) =>
+      ref.innerSchema.dataType === EntityDatatype.dataType &&
+      asArray(ref.innerSchema.additional).includes(parentType);
+
+    const refs = getEmbeddedFieldRefs(this.schemaService, relatedType);
+    const linkingFields = new Set(
+      refs.filter(linksParent).map((ref) => ref.outerProp),
+    );
+    return refs
+      .filter((ref) => linkingFields.has(ref.outerProp) && !linksParent(ref))
+      .map((ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }));
+  });
 
   /**
    * List of entity types that reference the current entity type.
