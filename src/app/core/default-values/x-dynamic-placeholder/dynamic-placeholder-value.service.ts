@@ -9,10 +9,10 @@ import { Logging } from "../../logging/logging.service";
 import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
+  CurrentRecordReference,
   DataFilter,
   isCurrentRecordPlaceholder,
-  placeholderFieldId,
-  splitPlaceholderFieldId,
+  parseCurrentRecordPlaceholder,
 } from "../../filter/filters/filters";
 import {
   AdminDefaultValueContext,
@@ -114,9 +114,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
     record: Entity | undefined,
     linkedRecords: Entity[] = [],
   ): DataFilter<T> {
-    const getValue = (placeholderField: string) => {
-      const { fieldId, linkedFieldId } =
-        splitPlaceholderFieldId(placeholderField);
+    const getValue = ({ fieldId, linkedFieldId }: CurrentRecordReference) => {
       if (!linkedFieldId) {
         return this.getDatabaseValue(record, fieldId);
       }
@@ -155,8 +153,8 @@ const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
 /** marks a value that cannot be resolved, because it references an empty field */
 const UNRESOLVED = Symbol("unresolved");
 
-/** returns the value that a placeholder refers to (see `placeholderFieldId`), in database format */
-type FieldValueGetter = (fieldId: string) => unknown;
+/** returns the value that a placeholder refers to, in database format */
+type FieldValueGetter = (reference: CurrentRecordReference) => unknown;
 
 /** the rows of a condition that can be applied, with their placeholders resolved */
 function resolveCondition(condition: object, getValue: FieldValueGetter) {
@@ -204,7 +202,7 @@ function resolveConditionList(
 /** the value with its placeholders resolved (`UNRESOLVED` if one of them references an empty field) */
 function resolveValue(value: unknown, getValue: FieldValueGetter): unknown {
   if (isCurrentRecordPlaceholder(value)) {
-    const fieldValue = getValue(placeholderFieldId(value));
+    const fieldValue = getValue(parseCurrentRecordPlaceholder(value));
     return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
   }
   if (Array.isArray(value)) {

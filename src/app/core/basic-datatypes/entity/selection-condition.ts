@@ -4,7 +4,6 @@ import { asArray } from "app/utils/asArray";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
-  CURRENT_RECORD_PLACEHOLDER_PREFIX,
   CurrentRecordReference,
   DataFilter,
   getCurrentRecordPlaceholderFields,
@@ -270,13 +269,12 @@ export class SelectionConditionValidator extends FieldValidator<
 
   /** problems of a placeholder referring to a field of a linked record, like `$current_record.parentAction.locations` */
   private linkedFieldProblems(
-    { fieldId, linkedFieldId }: CurrentRecordReference,
+    { placeholder, fieldId, linkedFieldId }: CurrentRecordReference,
     fieldsOf: RecordTypeFields | undefined,
   ): string[] {
     if (!linkedFieldId) {
       return [];
     }
-    const placeholder = `${CURRENT_RECORD_PLACEHOLDER_PREFIX}${fieldId}.${linkedFieldId}`;
     if (linkedFieldId.includes(".")) {
       return [
         $localize`:config validation:The selection filter ("selectionCondition") refers to "${placeholder}:placeholder:", which goes through more than one linked record. Only fields of a record linked directly can be used, so this condition is ignored.`,

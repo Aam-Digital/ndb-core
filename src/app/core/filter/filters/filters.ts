@@ -79,22 +79,26 @@ export function placeholderFieldId(placeholder: string): string {
 
 /** what a `$current_record.<fieldId>` placeholder refers to (see {@link placeholderFieldId}) */
 export interface CurrentRecordReference {
+  /** the placeholder itself, e.g. `"$current_record.parentAction.locations"` */
+  placeholder: string;
   /** the field of the current record */
   fieldId: string;
   /** the field of the record(s) linked in that field, if the placeholder goes through a link field */
   linkedFieldId?: string;
 }
 
-/** the parts of what a placeholder refers to (see {@link placeholderFieldId}), split at the first "." */
-export function splitPlaceholderFieldId(
-  fieldId: string,
+/** what a `$current_record.<fieldId>` placeholder refers to, with its path split at the first "." */
+export function parseCurrentRecordPlaceholder(
+  placeholder: string,
 ): CurrentRecordReference {
-  const separator = fieldId.indexOf(".");
+  const path = placeholderFieldId(placeholder);
+  const separator = path.indexOf(".");
   return separator < 0
-    ? { fieldId }
+    ? { placeholder, fieldId: path }
     : {
-        fieldId: fieldId.substring(0, separator),
-        linkedFieldId: fieldId.substring(separator + 1),
+        placeholder,
+        fieldId: path.substring(0, separator),
+        linkedFieldId: path.substring(separator + 1),
       };
 }
 
@@ -103,7 +107,7 @@ export function getCurrentRecordReferences(
   condition: unknown,
 ): CurrentRecordReference[] {
   if (isCurrentRecordPlaceholder(condition)) {
-    return [splitPlaceholderFieldId(placeholderFieldId(condition))];
+    return [parseCurrentRecordPlaceholder(condition)];
   }
   if (condition && typeof condition === "object") {
     return Object.values(condition).flatMap(getCurrentRecordReferences);
