@@ -52,8 +52,9 @@
           <mat-label i18n>Placeholder name</mat-label>
           <input
             matInput
+            #keyInput
             [value]="row.config.key ?? ''"
-            (change)="setKey(i, $any($event.target).value)"
+            (change)="keyInput.value = setKey(i, keyInput.value)"
             [disabled]="!enabled()"
             placeholder="e.g. subTasks"
             i18n-placeholder
@@ -72,8 +73,11 @@
               type="number"
               min="1"
               [max]="maxLevels"
+              #levelsInput
               [value]="row.levels"
-              (change)="setLevels(i, $any($event.target).value)"
+              (change)="
+                levelsInput.value = '' + setLevels(i, levelsInput.value)
+              "
               [disabled]="!enabled()"
               matTooltip="How many levels of the hierarchy to include: 1 for the directly linked records only, 2 to also include the records linked to those, and so on."
               i18n-matTooltip

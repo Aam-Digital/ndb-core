@@ -143,6 +143,19 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     expect(control.value).toEqual([SUB_ACTIONS]);
   });
 
+  it("shows the saved levels in the input, also when an entered value is limited to the same value again", () => {
+    setup([Action.ENTITY_TYPE], [{ ...SUB_ACTIONS, levels: 5 }]);
+    const levelsInput: HTMLInputElement =
+      fixture.nativeElement.querySelector("input[type=number]");
+
+    levelsInput.value = "10";
+    levelsInput.dispatchEvent(new Event("change"));
+    fixture.detectChanges();
+
+    expect(control.value).toEqual([{ ...SUB_ACTIONS, levels: 5 }]);
+    expect(levelsInput.value).toBe("5");
+  });
+
   it.each<[string, TemplateExportRelatedRecords[], boolean]>([
     ["no related records", [], true],
     ["a complete entry", [PROJECT_ACTIONS], true],

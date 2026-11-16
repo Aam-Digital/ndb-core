@@ -194,19 +194,30 @@ export class EditTemplateExportRelatedRecordsComponent
     });
   }
 
-  setKey(index: number, key: string) {
-    this.updateRow(index, (config) => ({ ...config, key: key.trim() }));
+  /**
+   * @returns the placeholder name as saved, to show in the input
+   * (the input keeps the entered text if the saved value does not change)
+   */
+  setKey(index: number, value: string): string {
+    const key = value.trim();
+    this.updateRow(index, (config) => ({ ...config, key }));
+    return key;
   }
 
-  setLevels(index: number, value: string) {
+  /**
+   * @returns the number of levels as saved (limited to the supported range), to show in the input
+   * (the input keeps the entered number if the saved value does not change)
+   */
+  setLevels(index: number, value: string): number {
+    const levels = Math.min(
+      Math.max(Math.floor(Number(value)) || 1, 1),
+      RELATED_RECORDS_MAX_LEVELS,
+    );
     this.updateRow(index, (config) => {
       const { levels: _previous, ...updated } = config;
-      const levels = Math.min(
-        Math.max(Math.floor(Number(value)) || 1, 1),
-        RELATED_RECORDS_MAX_LEVELS,
-      );
       return levels > 1 ? { ...updated, levels } : updated;
     });
+    return levels;
   }
 
   private currentValue(): TemplateExportRelatedRecords[] {
@@ -353,19 +364,19 @@ export class EditTemplateExportRelatedRecordsComponent
 
     for (const config of configs) {
       if (!getOptionId(config) || !config.key) {
-        return $localize`:TemplateExport:Select related records and a placeholder name for each entry, or remove it.`;
+        return $localize`Select related records and a placeholder name for each entry, or remove it.`;
       }
       if (!availableOptions.has(getOptionId(config))) {
-        return $localize`:TemplateExport:Some related records do not link to the applicable record types.`;
+        return $localize`Some related records do not link to the applicable record types.`;
       }
       if (!RELATED_RECORDS_KEY_PATTERN.test(config.key)) {
-        return $localize`:TemplateExport:Placeholder name "${config.key}:name:" must start with a letter and only contain letters, digits and underscores.`;
+        return $localize`Placeholder name "${config.key}:name:" must start with a letter and only contain letters, digits and underscores.`;
       }
       if (fieldIds.has(config.key)) {
-        return $localize`:TemplateExport:Placeholder name "${config.key}:name:" is already the ID of a field of the record type.`;
+        return $localize`Placeholder name "${config.key}:name:" is already the ID of a field of the record type.`;
       }
       if (keys.has(config.key)) {
-        return $localize`:TemplateExport:Placeholder name "${config.key}:name:" is used more than once.`;
+        return $localize`Placeholder name "${config.key}:name:" is used more than once.`;
       }
       keys.add(config.key);
     }
