@@ -78,7 +78,7 @@
             </div>
             <mat-radio-group
               [attr.aria-labelledby]="'template-export-bulk-label'"
-              [value]="combineIntoSinglePdf() && canCombine()"
+              [value]="combineRecords()"
               (change)="combineIntoSinglePdf.set($event.value)"
               class="flex-column"
             >

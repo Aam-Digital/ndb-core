@@ -28,7 +28,6 @@ test("Template-export action generates a file in the selected format", async ({
       contentType: "application/octet-stream",
       headers: {
         "Content-Disposition": `attachment; filename="letter.${renderRequest.convertTo}"`,
-        "Access-Control-Expose-Headers": "Content-Disposition",
       },
       body: "generated file",
     });
@@ -64,7 +63,7 @@ test("Template-export action generates a file in the selected format", async ({
 
   // A template uploaded as .docx can be filled in as an editable .docx
   // instead of the default PDF.
-  await page.getByRole("dialog").locator("app-edit-entity").click();
+  await page.getByPlaceholder("Select a file template").first().click();
   await page.getByRole("option", { name: TEMPLATE_TITLE }).click();
   await page.getByRole("radio", { name: "Editable file (.docx)" }).check();
 

@@ -54,7 +54,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   let fixture: ComponentFixture<TemplateExportSelectionDialogComponent>;
 
   let mockDialogRef: DialogRefMock;
-  let mockPdfGeneratorApiService: TemplateExportApiServiceMock;
+  let mockTemplateExportApiService: TemplateExportApiServiceMock;
   let mockDownloadService: DownloadServiceMock;
   let mockAlertService: AlertServiceMock;
   let mockTemplateExportService: TemplateExportServiceMock;
@@ -74,7 +74,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
         { provide: MatDialogRef, useValue: mockDialogRef },
         {
           provide: TemplateExportApiService,
-          useValue: mockPdfGeneratorApiService,
+          useValue: mockTemplateExportApiService,
         },
         { provide: DownloadService, useValue: mockDownloadService },
         {
@@ -105,7 +105,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   beforeEach(async () => {
     testEntity = new TestEntity();
 
-    mockPdfGeneratorApiService = {
+    mockTemplateExportApiService = {
       generateFileFromTemplate: vi.fn(),
       generateBatchFromTemplate: vi.fn(),
     };
@@ -200,7 +200,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       filename: "test.pdf",
       file: new ArrayBuffer(10),
     };
-    mockPdfGeneratorApiService.generateFileFromTemplate.mockReturnValue(
+    mockTemplateExportApiService.generateFileFromTemplate.mockReturnValue(
       of(mockResponse),
     );
     component.templateSelectionForm.setValue("template-1");
@@ -211,11 +211,12 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await component.requestFile();
 
     expect(
-      mockPdfGeneratorApiService.generateFileFromTemplate,
+      mockTemplateExportApiService.generateFileFromTemplate,
     ).toHaveBeenCalled();
     expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledWith(
       mockResponse.file,
       mockResponse.filename,
+      "pdf",
     );
     expect(mockAlertService.addInfo).toHaveBeenCalledWith(
       "Files generated successfully.",
@@ -229,7 +230,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       filename: "test.docx",
       file: new ArrayBuffer(10),
     };
-    mockPdfGeneratorApiService.generateFileFromTemplate.mockReturnValue(
+    mockTemplateExportApiService.generateFileFromTemplate.mockReturnValue(
       of(mockResponse),
     );
     component.templateSelectionForm.setValue("template-1");
@@ -245,26 +246,54 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await component.requestFile();
 
     expect(
-      mockPdfGeneratorApiService.generateFileFromTemplate,
+      mockTemplateExportApiService.generateFileFromTemplate,
     ).toHaveBeenCalledWith(loadedTemplate, testEntity, "docx");
     expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledWith(
       mockResponse.file,
       "test.docx",
+      "docx",
     );
   });
 
-  it("should not offer a file format choice if the template's format is unknown", async () => {
-    loadedTemplate.templateFile = undefined;
+  it.each([
+    ["unknown", undefined],
+    ["a PDF", "form.pdf"],
+    ["a legacy format", "letter.doc"],
+    ["not a document format", "letter.v2"],
+  ])(
+    "should not offer a file format choice if the template's format is %s",
+    async (_case, templateFile) => {
+      loadedTemplate.templateFile = templateFile;
+      component.templateSelectionForm.setValue("template-1");
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(
+        fixture.nativeElement.querySelector(
+          '[data-testid="use-template-file-format"]',
+        ),
+      ).toBeNull();
+      expect(component.outputFormat()).toBe("pdf");
+    },
+  );
+
+  it("should go back to PDF when another template is selected", async () => {
     component.templateSelectionForm.setValue("template-1");
     fixture.detectChanges();
     await fixture.whenStable();
-    fixture.detectChanges();
+    component.useTemplateFileFormat.set(true);
 
-    expect(
-      fixture.nativeElement.querySelector(
-        '[data-testid="use-template-file-format"]',
-      ),
-    ).toBeNull();
+    const otherTemplate = Object.assign(new TemplateExport("template-2"), {
+      title: "Spreadsheet",
+      templateFile: "table.xlsx",
+    });
+    mockEntityMapperLoad.mockResolvedValue(otherTemplate);
+    component.templateSelectionForm.setValue(otherTemplate.getId());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.templateFileFormat()).toBe("xlsx");
     expect(component.outputFormat()).toBe("pdf");
   });
 
@@ -284,7 +313,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(generateButton().disabled).toBe(true);
     await component.requestFile();
     expect(
-      mockPdfGeneratorApiService.generateFileFromTemplate,
+      mockTemplateExportApiService.generateFileFromTemplate,
     ).not.toHaveBeenCalled();
     expect(component.phase()).toBe("select");
 
@@ -296,7 +325,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   });
 
   it("should not trigger download for a failed API request and record the failure", async () => {
-    mockPdfGeneratorApiService.generateFileFromTemplate.mockReturnValue(
+    mockTemplateExportApiService.generateFileFromTemplate.mockReturnValue(
       throwError(() => new Error("boom")),
     );
     component.templateSelectionForm.setValue("template-1");
@@ -307,7 +336,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await component.requestFile();
 
     expect(
-      mockPdfGeneratorApiService.generateFileFromTemplate,
+      mockTemplateExportApiService.generateFileFromTemplate,
     ).toHaveBeenCalled();
     expect(mockDownloadService.triggerFileDownload).not.toHaveBeenCalled();
     expect(component.failures().length).toBe(1);
@@ -354,25 +383,26 @@ describe("TemplateExportSelectionDialogComponent", () => {
         filename: "report.zip",
         file: new ArrayBuffer(16),
       };
-      mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      mockTemplateExportApiService.generateBatchFromTemplate.mockReturnValue(
         of(batchResponse),
       );
 
       await bulkComponent.requestFile();
 
       expect(
-        mockPdfGeneratorApiService.generateFileFromTemplate,
+        mockTemplateExportApiService.generateFileFromTemplate,
       ).not.toHaveBeenCalled();
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).toHaveBeenCalledTimes(1);
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).toHaveBeenCalledWith(loadedTemplate, [entityA, entityB], "zip", "pdf");
       expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledTimes(1);
       expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledWith(
         batchResponse.file,
         "report.zip",
+        "zip",
       );
       expect(bulkComponent.failures()).toEqual([]);
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
@@ -388,14 +418,14 @@ describe("TemplateExportSelectionDialogComponent", () => {
         filename: "combined.pdf",
         file: new ArrayBuffer(16),
       };
-      mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      mockTemplateExportApiService.generateBatchFromTemplate.mockReturnValue(
         of(combinedResponse),
       );
 
       await bulkComponent.requestFile();
 
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).toHaveBeenCalledWith(
         loadedTemplate,
         [entityA, entityB],
@@ -405,6 +435,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledWith(
         combinedResponse.file,
         "combined.pdf",
+        "pdf",
       );
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
         "Files generated successfully.",
@@ -416,7 +447,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       bulkComponent.combineIntoSinglePdf.set(true);
       bulkComponent.useTemplateFileFormat.set(true);
       bulkFixture.detectChanges();
-      mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      mockTemplateExportApiService.generateBatchFromTemplate.mockReturnValue(
         of({ filename: "report.zip", file: new ArrayBuffer(16) }),
       );
 
@@ -428,7 +459,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       await bulkComponent.requestFile();
 
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).toHaveBeenCalledWith(loadedTemplate, [entityA, entityB], "zip", "docx");
     });
 
@@ -464,21 +495,22 @@ describe("TemplateExportSelectionDialogComponent", () => {
         filename: "combined-report.pdf",
         file: new ArrayBuffer(16),
       };
-      mockPdfGeneratorApiService.generateFileFromTemplate.mockReturnValue(
+      mockTemplateExportApiService.generateFileFromTemplate.mockReturnValue(
         of(result),
       );
 
       await bulkComponent.requestFile();
 
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).not.toHaveBeenCalled();
       expect(
-        mockPdfGeneratorApiService.generateFileFromTemplate,
+        mockTemplateExportApiService.generateFileFromTemplate,
       ).toHaveBeenCalledWith(loadedTemplate, [entityA, entityB], "pdf");
       expect(mockDownloadService.triggerFileDownload).toHaveBeenCalledWith(
         result.file,
         "combined-report.pdf",
+        "pdf",
       );
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
         "Files generated successfully.",
@@ -487,14 +519,14 @@ describe("TemplateExportSelectionDialogComponent", () => {
     });
 
     it("should mark all selected entities as failed when the bulk request errors out", async () => {
-      mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      mockTemplateExportApiService.generateBatchFromTemplate.mockReturnValue(
         throwError(() => new Error("Cannot process more than 200 documents")),
       );
 
       await bulkComponent.requestFile();
 
       expect(
-        mockPdfGeneratorApiService.generateBatchFromTemplate,
+        mockTemplateExportApiService.generateBatchFromTemplate,
       ).toHaveBeenCalled();
       expect(bulkComponent.phase()).toBe("done");
       expect(bulkComponent.failures().length).toBe(2);
@@ -524,10 +556,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
     expect(mockAlertService.addWarning).toHaveBeenCalled();
     expect(
-      mockPdfGeneratorApiService.generateFileFromTemplate,
+      mockTemplateExportApiService.generateFileFromTemplate,
     ).not.toHaveBeenCalled();
     expect(
-      mockPdfGeneratorApiService.generateBatchFromTemplate,
+      mockTemplateExportApiService.generateBatchFromTemplate,
     ).not.toHaveBeenCalled();
   });
 });

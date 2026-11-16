@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   input,
+  linkedSignal,
   ChangeDetectionStrategy,
   signal,
   resource,
@@ -124,17 +125,19 @@ export class TemplateExportSelectionDialogComponent {
    * The format of the selected template's file (e.g. "docx"),
    * offered as an editable alternative to the PDF.
    */
-  readonly templateFileFormat = computed(() => {
-    const format = this.selectedTemplate.hasValue()
-      ? this.selectedTemplate.value()?.getTemplateFileFormat()
-      : undefined;
-    return format === "pdf" ? undefined : format;
-  });
+  readonly templateFileFormat = computed(() =>
+    this.selectedTemplate.hasValue()
+      ? this.selectedTemplate.value()?.getEditableOutputFormat()
+      : undefined,
+  );
   /**
    * User-controlled choice to generate an editable file in the format of the template
-   * instead of a PDF.
+   * instead of a PDF. Starts again from PDF whenever another template is selected.
    */
-  readonly useTemplateFileFormat = signal<boolean>(false);
+  readonly useTemplateFileFormat = linkedSignal<string, boolean>({
+    source: this.selectedTemplateId,
+    computation: () => false,
+  });
   /**
    * The file format to generate, as its file extension.
    */
@@ -166,6 +169,12 @@ export class TemplateExportSelectionDialogComponent {
    * Only applies while {@link canCombine}.
    */
   readonly combineIntoSinglePdf = signal<boolean>(false);
+  /**
+   * Whether the records of a bulk selection are actually merged into a single PDF.
+   */
+  readonly combineRecords = computed(
+    () => this.combineIntoSinglePdf() && this.canCombine(),
+  );
 
   readonly succeededCount = computed(
     () => this.totalRecords() - this.failures().length,
@@ -180,6 +189,19 @@ export class TemplateExportSelectionDialogComponent {
     loader: () =>
       this.templateExportService.isExportServerEnabled().catch(() => false),
   });
+
+  /**
+   * Multiple records are packaged in a zip, unless they are combined into one file.
+   */
+  private downloadExtension(
+    template: TemplateExport,
+    recordCount: number,
+    format: string,
+  ): string {
+    const isZip =
+      !template.arrayReport && recordCount > 1 && !this.combineRecords();
+    return isZip ? "zip" : format;
+  }
 
   async requestFile() {
     const entities = this.entities();
@@ -216,14 +238,16 @@ export class TemplateExportSelectionDialogComponent {
           this.templateExportApi.generateBatchFromTemplate(
             template,
             entities,
-            this.combineIntoSinglePdf() && this.canCombine()
-              ? "combined"
-              : "zip",
+            this.combineRecords() ? "combined" : "zip",
             format,
           ),
         );
       }
-      this.downloadService.triggerFileDownload(result.file, result.filename);
+      this.downloadService.triggerFileDownload(
+        result.file,
+        result.filename,
+        this.downloadExtension(template, entities.length, format),
+      );
       this.dialogRef.close(true);
 
       this.alertService.addInfo($localize`Files generated successfully.`);
