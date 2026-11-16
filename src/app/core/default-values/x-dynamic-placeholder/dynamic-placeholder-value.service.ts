@@ -114,23 +114,27 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
     record: Entity | undefined,
     linkedRecords: Entity[] = [],
   ): DataFilter<T> {
-    const getValue = ({ fieldId, linkedFieldId }: CurrentRecordReference) => {
-      if (!linkedFieldId) {
-        return this.getDatabaseValue(record, fieldId);
-      }
-
-      const linkValue = record?.[fieldId];
-      const values = asArray<string>(linkValue ?? [])
-        .map((id) => linkedRecords.find((linked) => linked.getId() === id))
-        .map((linked) => this.getDatabaseValue(linked, linkedFieldId))
-        .filter((value) => !isEmptyValue(value));
-      if (!Array.isArray(linkValue)) {
-        return values[0];
-      }
-      // the values of all linked records, each of them only once
-      return [...new Set(values.flat())];
-    };
+    const getValue = ({ fieldId, linkedFieldId }: CurrentRecordReference) =>
+      linkedFieldId
+        ? this.getLinkedValues(record?.[fieldId], linkedFieldId, linkedRecords)
+        : this.getDatabaseValue(record, fieldId);
     return resolveCondition(condition ?? {}, getValue) as DataFilter<T>;
+  }
+
+  /**
+   * The values of a field of the records linked in a link field (`linkValue`, one id or a list of them):
+   * the value of the one record, or the values of all of them (each value once) for a list.
+   */
+  private getLinkedValues(
+    linkValue: unknown,
+    fieldId: string,
+    linkedRecords: Entity[],
+  ) {
+    const values = asArray(linkValue ?? [])
+      .map((id) => linkedRecords.find((linked) => linked.getId() === id))
+      .map((linked) => this.getDatabaseValue(linked, fieldId))
+      .filter((value) => !isEmptyValue(value));
+    return Array.isArray(linkValue) ? [...new Set(values.flat())] : values[0];
   }
 
   /** the value of a record's field in database format, like the values of the records a condition is applied to */
