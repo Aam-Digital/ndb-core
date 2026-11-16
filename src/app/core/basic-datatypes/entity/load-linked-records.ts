@@ -3,6 +3,7 @@ import { filter, merge } from "rxjs";
 import { RegistryLookupError } from "../../config/registry/dynamic-registry";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
+import { applyUpdate } from "../../entity/model/entity-update";
 import { Logging } from "../../logging/logging.service";
 
 /**
@@ -67,14 +68,8 @@ export function latestLinkedRecords(records: () => Entity[]): Signal<Entity[]> {
       ...[...types].map((type) => entityMapper.receiveUpdates(type)),
     )
       .pipe(filter(({ entity }) => ids.has(entity.getId())))
-      .subscribe(({ type, entity }) =>
-        latest.update((current) =>
-          type === "remove"
-            ? current.filter((record) => record.getId() !== entity.getId())
-            : current.map((record) =>
-                record.getId() === entity.getId() ? entity : record,
-              ),
-        ),
+      .subscribe((update) =>
+        latest.update((current) => applyUpdate(current, update, false)),
       );
     onCleanup(() => subscription.unsubscribe());
   });

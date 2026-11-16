@@ -458,6 +458,14 @@ describe("EditEntityComponent", () => {
       });
     }
 
+    /** the ids of the selected records and options that are marked as not matching the condition */
+    async function expectMarkedAsNotMatching(expected: string[]) {
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect([...component.ineligibleIds()]).toEqual(expected);
+      });
+    }
+
     async function expectOfferedNames(expected: string[]) {
       await vi.waitFor(() => {
         fixture.detectChanges();
@@ -625,22 +633,14 @@ describe("EditEntityComponent", () => {
       it("re-checks the selected records with the latest version of the linked record", async () => {
         editRecordWithCondition(condition, { ref: parent.getId() });
         formControl.setValue(test1Entities[1].getId());
-        await vi.waitFor(() => {
-          fixture.detectChanges();
-          expect([...component.ineligibleIds()]).toEqual([
-            test1Entities[1].getId(),
-          ]);
-        });
+        await expectMarkedAsNotMatching([test1Entities[1].getId()]);
 
         // e.g. an automated update adds the selected record to the linked record
         const updatedParent = parent.copy();
         updatedParent.refMixed = [...parent.refMixed, test1Entities[1].getId()];
         await TestBed.inject(EntityMapperService).save(updatedParent);
 
-        await vi.waitFor(() => {
-          fixture.detectChanges();
-          expect([...component.ineligibleIds()]).toEqual([]);
-        });
+        await expectMarkedAsNotMatching([]);
       });
 
       it("does not load the linked record again when another field of the record changes", async () => {
