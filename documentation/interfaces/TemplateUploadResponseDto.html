@@ -271,7 +271,8 @@ interface TemplateUploadResponseDto {
  */
 interface TemplateRenderRequestDto {
   /**
-   * target file type (e.g. &quot;pdf&quot;)
+   * target file type as its extension: &quot;pdf&quot;, or the format of the template file
+   * (e.g. &quot;docx&quot;) to get an editable file
    */
   convertTo: string;
 
@@ -292,7 +293,8 @@ export interface TemplateExportResult {
 }
 
 /**
- * Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.
+ * Interact with the Template Export API that uses File Templates to generate custom documents
+ * (as PDF, or as an editable file in the format of the template).
  */
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -360,7 +362,7 @@ export class TemplateExportApiService extends FileService {
   }
 
   /*
-  --- PDF Generation API methods ---
+  --- File Generation API methods ---
   */
 
   /**
@@ -374,6 +376,7 @@ export class TemplateExportApiService extends FileService {
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
+    format: string,
   ): Observable&lt;TemplateExportResult&gt; {
     const complement &#x3D; this.exportContext.getComplement();
 
@@ -384,7 +387,7 @@ export class TemplateExportApiService extends FileService {
         this.httpClient.post(
           url,
           {
-            convertTo: &quot;pdf&quot;,
+            convertTo: format,
             data: resolvedData,
             ...(complement ? { complement } : {}),
           } as TemplateRenderRequestDto,
@@ -419,19 +422,23 @@ export class TemplateExportApiService extends FileService {
   }
 
   /**
-   * Generate a PDF applying actual data to an existing template.
+   * Generate a file applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
-   * @return An array buffer of the generated PDF
+   * @param format The file format to generate, as its extension: &quot;pdf&quot; (default) or the
+   *   format of the template file (e.g. &quot;docx&quot;) for an editable file
+   * @return An array buffer of the generated file
    */
-  generatePdfFromTemplate(
+  generateFileFromTemplate(
     template: TemplateExport,
     data: Object,
+    format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
       this.API_URL + &quot;/render/&quot; + template.getId(),
       data,
-      resolveLocaleText(template.title),
+      resolveLocaleText(template.title) + &quot;.&quot; + format,
+      format,
     );
   }
 
@@ -441,23 +448,28 @@ export class TemplateExportApiService extends FileService {
    * Both modes go through the template engine&#x27;s native batch rendering — the backend
    * just forwards the request:
    * - &#x60;mode: &quot;zip&quot;&#x60; (default): N independent files packaged in a ZIP archive.
-   * - &#x60;mode: &quot;combined&quot;&#x60;: N rendered files merged into a single multi-page PDF.
+   * - &#x60;mode: &quot;combined&quot;&#x60;: N rendered files merged into a single multi-page PDF
+   *   (only available for the &quot;pdf&quot; format).
    *
    * @param template The TemplateExport entity to render
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
+   * @param format The file format of each generated file, as its extension: &quot;pdf&quot; (default)
+   *   or the format of the template file (e.g. &quot;docx&quot;) for editable files
    * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
     template: TemplateExport,
     dataList: Object[],
     mode: &quot;zip&quot; | &quot;combined&quot; &#x3D; &quot;zip&quot;,
+    format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
       this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
       dataList,
       resolveLocaleText(template.title) +
         (mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;),
+      format,
     );
   }
 }

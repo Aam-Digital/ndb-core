@@ -152,7 +152,8 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.</p>
+                <p>Interact with the Template Export API that uses File Templates to generate custom documents
+(as PDF, or as an editable file in the format of the template).</p>
 
             </p>
 
@@ -277,7 +278,7 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#generatePdfFromTemplate" >generatePdfFromTemplate</a>
+                                <a href="#generateFileFromTemplate" >generateFileFromTemplate</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -341,15 +342,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>generateBatchFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, dataList: Object[], mode: "zip" | "combined")</code>
+<code>generateBatchFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, dataList: Object[], mode: "zip" | "combined", format: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="213"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:213</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:223</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +361,12 @@
 <p>Both modes go through the template engine&#39;s native batch rendering — the backend
 just forwards the request:</p>
 <ul>
-<li><code>mode: &quot;zip&quot;</code> (default): N independent files packaged in a ZIP archive.</li>
-<li><code>mode: &quot;combined&quot;</code>: N rendered files merged into a single multi-page PDF.</li>
+<li><p><code>mode: &quot;zip&quot;</code> (default): N independent files packaged in a ZIP archive.</p>
+</li>
+<li><p><code>mode: &quot;combined&quot;</code>: N rendered files merged into a single multi-page PDF
+(only available for the &quot;pdf&quot; format).</p>
+<p>or the format of the template file (e.g. &quot;docx&quot;) for editable files</p>
+</li>
 </ul>
 </div>
 
@@ -434,6 +439,26 @@ just forwards the request:</p>
 
                                             </td>
                                         </tr>
+                                        <tr>
+                                                <td>format</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;pdf&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>The file format of each generated file, as its extension: &quot;pdf&quot; (default)
+or the format of the template file (e.g. &quot;docx&quot;) for editable files</p>
+
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -453,31 +478,32 @@ just forwards the request:</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="generatePdfFromTemplate"></a>
+                    <a name="generateFileFromTemplate"></a>
                     <span class="name">
-                        <span ><b>generatePdfFromTemplate</b></span>
-                        <a href="#generatePdfFromTemplate"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>generateFileFromTemplate</b></span>
+                        <a href="#generateFileFromTemplate"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>generatePdfFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, data: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>)</code>
+<code>generateFileFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, data: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>, format: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="189"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:189</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:194</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Generate a PDF applying actual data to an existing template.</p>
+                        <div class="io-description"><p>Generate a file applying actual data to an existing template.
+  format of the template file (e.g. &quot;docx&quot;) for an editable file</p>
 </div>
 
                             <div class="io-description">
@@ -489,6 +515,7 @@ just forwards the request:</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Default value</td>
                                                 <td>Description</td>
                                         </tr>
                                     </thead>
@@ -503,6 +530,8 @@ just forwards the request:</p>
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
                                                     <p>The TemplateExport entity to render</p>
@@ -519,9 +548,31 @@ just forwards the request:</p>
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
                                                     <p>The data object (typically an entity) to be applied to the template</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>format</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;pdf&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>The file format to generate, as its extension: &quot;pdf&quot; (default) or the
+format of the template file (e.g. &quot;docx&quot;) for an editable file</p>
 
                                             </td>
                                         </tr>
@@ -533,7 +584,7 @@ just forwards the request:</p>
 
                         </div>
                             <div class="io-description">
-                                <p>An array buffer of the generated PDF</p>
+                                <p>An array buffer of the generated file</p>
 
                             </div>
                 </td>
@@ -569,7 +620,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:101</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:103</a></code>
 </div>
                         </td>
                     </tr>
@@ -654,7 +705,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:108</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:110</a></code>
 </div>
                         </td>
                     </tr>
@@ -739,7 +790,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:119</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:121</a></code>
 </div>
                         </td>
                     </tr>
@@ -812,7 +863,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:113</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -897,7 +948,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:80</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:82</a></code>
 </div>
                         </td>
                     </tr>
@@ -1193,7 +1244,7 @@ just forwards the request:</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -1555,7 +1606,8 @@ interface TemplateUploadResponseDto {
  */
 interface TemplateRenderRequestDto {
   /**
-   * target file type (e.g. &quot;pdf&quot;)
+   * target file type as its extension: &quot;pdf&quot;, or the format of the template file
+   * (e.g. &quot;docx&quot;) to get an editable file
    */
   convertTo: string;
 
@@ -1576,7 +1628,8 @@ export interface TemplateExportResult {
 }
 
 /**
- * Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.
+ * Interact with the Template Export API that uses File Templates to generate custom documents
+ * (as PDF, or as an editable file in the format of the template).
  */
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -1644,7 +1697,7 @@ export class TemplateExportApiService extends FileService {
   }
 
   /*
-  --- PDF Generation API methods ---
+  --- File Generation API methods ---
   */
 
   /**
@@ -1658,6 +1711,7 @@ export class TemplateExportApiService extends FileService {
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
+    format: string,
   ): Observable&lt;TemplateExportResult&gt; {
     const complement &#x3D; this.exportContext.getComplement();
 
@@ -1668,7 +1722,7 @@ export class TemplateExportApiService extends FileService {
         this.httpClient.post(
           url,
           {
-            convertTo: &quot;pdf&quot;,
+            convertTo: format,
             data: resolvedData,
             ...(complement ? { complement } : {}),
           } as TemplateRenderRequestDto,
@@ -1703,19 +1757,23 @@ export class TemplateExportApiService extends FileService {
   }
 
   /**
-   * Generate a PDF applying actual data to an existing template.
+   * Generate a file applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
-   * @return An array buffer of the generated PDF
+   * @param format The file format to generate, as its extension: &quot;pdf&quot; (default) or the
+   *   format of the template file (e.g. &quot;docx&quot;) for an editable file
+   * @return An array buffer of the generated file
    */
-  generatePdfFromTemplate(
+  generateFileFromTemplate(
     template: TemplateExport,
     data: Object,
+    format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
       this.API_URL + &quot;/render/&quot; + template.getId(),
       data,
-      resolveLocaleText(template.title),
+      resolveLocaleText(template.title) + &quot;.&quot; + format,
+      format,
     );
   }
 
@@ -1725,23 +1783,28 @@ export class TemplateExportApiService extends FileService {
    * Both modes go through the template engine&#x27;s native batch rendering — the backend
    * just forwards the request:
    * - &#x60;mode: &quot;zip&quot;&#x60; (default): N independent files packaged in a ZIP archive.
-   * - &#x60;mode: &quot;combined&quot;&#x60;: N rendered files merged into a single multi-page PDF.
+   * - &#x60;mode: &quot;combined&quot;&#x60;: N rendered files merged into a single multi-page PDF
+   *   (only available for the &quot;pdf&quot; format).
    *
    * @param template The TemplateExport entity to render
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
+   * @param format The file format of each generated file, as its extension: &quot;pdf&quot; (default)
+   *   or the format of the template file (e.g. &quot;docx&quot;) for editable files
    * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
     template: TemplateExport,
     dataList: Object[],
     mode: &quot;zip&quot; | &quot;combined&quot; &#x3D; &quot;zip&quot;,
+    format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
       this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
       dataList,
       resolveLocaleText(template.title) +
         (mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;),
+      format,
     );
   }
 }
