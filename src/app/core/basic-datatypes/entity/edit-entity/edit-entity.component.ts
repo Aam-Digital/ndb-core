@@ -27,6 +27,7 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { asArray } from "app/utils/asArray";
+import { isEqual } from "lodash-es";
 import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import {
   BasicAutocompleteComponent,
@@ -250,14 +251,14 @@ export class EditEntityComponent<
   });
 
   /** the ids of the records that the record being edited links to and whose fields the `selectionCondition` refers to */
-  private readonly placeholderLinkedIds: Signal<string[]> = computed(
+  private readonly placeholderLinkedIds: Signal<unknown[]> = computed(
     () =>
       getPlaceholderLinkedRecordIds(
         this.formFieldConfig()?.validators?.selectionCondition,
         this.currentRecord(),
       ),
     // only load them again when a link changes, not on every change of other fields in the form
-    { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
+    { equal: isEqual },
   );
 
   /** the records that the `selectionCondition` refers to, loading while it cannot be applied yet */
@@ -294,7 +295,7 @@ export class EditEntityComponent<
           this.latestPlaceholderLinkedRecords(),
         ),
       // only notify of an actual change, not of every change of other fields in the form
-      { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
+      { equal: isEqual },
     );
 
   /**

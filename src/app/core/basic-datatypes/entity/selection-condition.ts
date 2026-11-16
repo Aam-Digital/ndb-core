@@ -112,22 +112,19 @@ export function registerLinkedRecordsSource(
 /**
  * The ids of the records that the given record links to in the fields through which placeholders of the condition
  * refer to a field of a linked record (e.g. the parent for `"$current_record.parentAction.locations"`).
+ * Values that are not an id are only left out when loading the records (see {@link loadLinkedRecords}).
  */
 export function getPlaceholderLinkedRecordIds(
   condition: DataFilter<Entity> | undefined,
   record: Entity | undefined,
-): string[] {
+): unknown[] {
   if (!record) {
     return [];
   }
   const ids = getCurrentRecordReferences(condition)
     .filter(({ linkedFieldId }) => linkedFieldId !== undefined)
     .flatMap(({ fieldId }) => asArray<unknown>(record[fieldId] ?? []));
-  return [
-    ...new Set(
-      ids.filter((id): id is string => !!id && typeof id === "string"),
-    ),
-  ];
+  return [...new Set(ids)];
 }
 
 /**
