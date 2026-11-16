@@ -382,20 +382,24 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(
-    () &#x3D;&gt; this.markdownContentResource.value() ?? &quot;&quot;,
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.markdownContentResource.hasValue()
+      ? (this.markdownContentResource.value() ?? &quot;&quot;)
+      : &quot;&quot;,
   )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/markdown-page/markdown-page/markdown-page.component.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/markdown-page/markdown-page/markdown-page.component.ts:54</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>markdown content string for template use</p>
+                    <div class="io-description"><p>markdown content string for template use.
+Empty if the entity could not be loaded,
+because reading <code>value()</code> of a failed resource throws.</p>
 </div>
                 </td>
             </tr>
@@ -426,10 +430,13 @@
     params: () &#x3D;&gt; this.markdownEntityId(),
     loader: async ({ params: markdownEntityId }) &#x3D;&gt; {
       if (!markdownEntityId) return &quot;&quot;;
-      const markdownEntity &#x3D; await this.entityMapper.load(
-        MarkdownContent,
-        markdownEntityId,
-      );
+      const markdownEntity &#x3D; await this.entityMapper
+        .load(MarkdownContent, markdownEntityId)
+        .catch((err) &#x3D;&gt; {
+          // a config pointing to a not (yet) existing content: show &quot;Content not found&quot;
+          if (err?.status &#x3D;&#x3D;&#x3D; 404) return undefined;
+          throw err;
+        });
       // the content may be configured per language - show the active one
       return resolveLocaleText(markdownEntity?.content) ?? &quot;&quot;;
     },
@@ -487,18 +494,27 @@ export class MarkdownPageComponent {
     params: () &#x3D;&gt; this.markdownEntityId(),
     loader: async ({ params: markdownEntityId }) &#x3D;&gt; {
       if (!markdownEntityId) return &quot;&quot;;
-      const markdownEntity &#x3D; await this.entityMapper.load(
-        MarkdownContent,
-        markdownEntityId,
-      );
+      const markdownEntity &#x3D; await this.entityMapper
+        .load(MarkdownContent, markdownEntityId)
+        .catch((err) &#x3D;&gt; {
+          // a config pointing to a not (yet) existing content: show &quot;Content not found&quot;
+          if (err?.status &#x3D;&#x3D;&#x3D; 404) return undefined;
+          throw err;
+        });
       // the content may be configured per language - show the active one
       return resolveLocaleText(markdownEntity?.content) ?? &quot;&quot;;
     },
   });
 
-  /** markdown content string for template use */
-  readonly markdownContent &#x3D; computed(
-    () &#x3D;&gt; this.markdownContentResource.value() ?? &quot;&quot;,
+  /**
+   * markdown content string for template use.
+   * Empty if the entity could not be loaded,
+   * because reading &#x60;value()&#x60; of a failed resource throws.
+   */
+  readonly markdownContent &#x3D; computed(() &#x3D;&gt;
+    this.markdownContentResource.hasValue()
+      ? (this.markdownContentResource.value() ?? &quot;&quot;)
+      : &quot;&quot;,
   );
 }
 </code></pre>
