@@ -64,7 +64,7 @@ test("Template-export action generates a file in the selected format", async ({
 
   // A template uploaded as .docx can be filled in as an editable .docx
   // instead of the default PDF.
-  await page.getByLabel("Template").click();
+  await page.getByRole("dialog").locator("app-edit-entity").click();
   await page.getByRole("option", { name: TEMPLATE_TITLE }).click();
   await page.getByRole("radio", { name: "Editable file (.docx)" }).check();
 
