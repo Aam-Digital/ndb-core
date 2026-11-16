@@ -39,12 +39,11 @@
         "conditions": {
           "userId": "${user.id}"
         }
-      }
-    ],
-    "user_app": [
+      },
       {
         "subject": "all",
-        "action": "manage"
+        "action": "manage",
+        "reason": "Starting point: every logged-in user can access everything. Move this rule into a role before creating roles with restricted access."
       }
     ],
     "admin_app": [

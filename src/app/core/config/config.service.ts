@@ -32,6 +32,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
    */
   private currentConfig: Config;
 
+  /** Whether the database confirmed (404) that this system has no config yet. */
+  private configConfirmedMissing = false;
+
   private readonly defaultConfigMigrations = inject(
     DefaultConfigMigrationRegistryService,
   );
@@ -86,6 +89,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       return entity;
     } catch (err) {
       if (err?.status === HttpStatusCode.NotFound) {
+        this.configConfirmedMissing = true;
         return undefined;
       }
       this.abortWithError(
@@ -155,6 +159,16 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   public hasConfig() {
     return this.currentConfig !== undefined;
+  }
+
+  /**
+   * Whether this system has no config at all and still needs to be set up.
+   * Only true on a confirmed 404, never while the config is still loading or
+   * merely could not be loaded - offering the setup for an existing system
+   * would be destructive.
+   */
+  public isSystemUninitialized() {
+    return !this.hasConfig() && this.configConfirmedMissing;
   }
 
   public saveConfig(config: any): Promise<void> {

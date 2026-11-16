@@ -97,7 +97,7 @@
       "basic/ConfigurableEnum_rating-answer.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
-      "basic/Config_Permissions.json",
+      "all-features/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "education/PublicFormConfig_example.json",
       "education/ReportConfig.json",

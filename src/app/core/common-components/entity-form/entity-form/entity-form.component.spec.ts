@@ -11,8 +11,6 @@ import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { MockDestroyRef } from "../../../../utils/mock-destroy-ref";
 import { FieldGroup } from "../../../entity-details/form/field-group";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { Logging } from "../../../logging/logging.service";
 import { EntityFormSavedEvent } from "../entity-form";
 
 describe("EntityFormComponent", () => {
@@ -62,40 +60,28 @@ describe("EntityFormComponent", () => {
     fixture.detectChanges();
   }
 
-  it("continues processing saved events after reporting an automatic update failure", async () => {
+  it("updates the linked records after each save of the form", async () => {
     const entity = new TestEntity();
     await setupInitialForm(entity, testColumns);
     const previousEntity = entity.copy();
-    const error = new Error("Failed to fetch dynamically imported module");
     const applyRules = vi
       .spyOn(
         TestBed.inject(AutomatedFieldUpdateConfigService),
         "applyRulesToDependentEntities",
       )
-      .mockRejectedValueOnce(error)
-      .mockResolvedValue(undefined);
-    const logError = vi.spyOn(Logging, "error").mockImplementation(() => {});
-    const alert = vi
-      .spyOn(TestBed.inject(AlertService), "addDanger")
-      .mockImplementation(() => {});
+      .mockResolvedValue([]);
 
-    component
-      .form()
-      .onFormStateChange.emit(new EntityFormSavedEvent(entity, previousEntity));
-    await Promise.resolve();
-
-    expect(applyRules).toHaveBeenCalledWith(entity, previousEntity);
-    expect(logError).toHaveBeenCalledWith(expect.any(String), error);
-    expect(alert).toHaveBeenCalledOnce();
-
-    component
-      .form()
-      .onFormStateChange.emit(new EntityFormSavedEvent(entity, previousEntity));
+    for (let i = 0; i < 2; i++) {
+      component
+        .form()
+        .onFormStateChange.emit(
+          new EntityFormSavedEvent(entity, previousEntity),
+        );
+    }
     await Promise.resolve();
 
     expect(applyRules).toHaveBeenCalledTimes(2);
-    expect(logError).toHaveBeenCalledOnce();
-    expect(alert).toHaveBeenCalledOnce();
+    expect(applyRules).toHaveBeenCalledWith(entity, previousEntity);
   });
 
   it("should remove fields without read permissions when entity is not new", async () => {

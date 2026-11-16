@@ -188,14 +188,20 @@ describe("EntityFormService", () => {
     const formFields = [{ id: "name" }, { id: "result" }];
     const form = await createForm(formFields, new TestEntity());
 
+    // the configured validators run as async validators
+    const settled = () =>
+      vi.waitFor(() => expect(form.formGroup.pending).toBe(false));
+    await settled();
     expect(form.formGroup.valid).toBe(false);
 
     // @ts-ignore "result" field was temporarily added for this test
     form.formGroup.patchValue({ result: 100 });
+    await settled();
     expect(form.formGroup.valid).toBe(true);
 
     // @ts-ignore "result" field was temporarily added for this test
     form.formGroup.patchValue({ result: 101 });
+    await settled();
     expect(form.formGroup.valid).toBe(false);
 
     TestEntity.schema.delete("result");

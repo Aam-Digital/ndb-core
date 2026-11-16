@@ -5,6 +5,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  Signal,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -25,7 +26,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
-import { differenceWith, isEqual, uniq } from "lodash-es";
+import { differenceWith, groupBy, isEqual, uniq, uniqWith } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import {
   catchError,
@@ -37,7 +38,7 @@ import {
   switchMap,
 } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { Entity } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
 import { isSameValue } from "../get-common-value";
 import { AffectedEntityValueComponent } from "./affected-entity-value/affected-entity-value.component";
@@ -73,10 +74,17 @@ interface TriggerChange {
   added?: Entity;
 }
 
-/** The affected entities that are based on the same field of the changed entity */
+/** A changed entity that caused an update, with the changes of the fields that the update is based on */
+interface TriggerWithChanges {
+  trigger: UpdateTrigger;
+  /** calculated only when shown, as a bulk edit can change many entities */
+  changes: Signal<TriggerChange[]>;
+}
+
+/** The affected entities that are based on the same field of the changed entities */
 interface UpdateGroup {
   sourceFieldId: string;
-  changes: TriggerChange[];
+  triggers: TriggerWithChanges[];
   rows: DialogRow[];
 }
 
@@ -120,7 +128,8 @@ function getRowKey(row: AffectedEntity): string {
 export class AutomatedFieldUpdateComponent {
   data = inject<{
     entities: AffectedEntity[];
-    trigger?: UpdateTrigger;
+    /** the changes that opened the dialog (several for a bulk edit) */
+    triggers?: UpdateTrigger[];
     /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
     recalculate?: (enteredValues: EnteredValue[]) => Promise<AffectedEntity[]>;
   }>(MAT_DIALOG_DATA);
@@ -171,6 +180,16 @@ export class AutomatedFieldUpdateComponent {
   readonly groups = computed(() => this.groupByTriggerField(this.rows()));
 
   /**
+   * The change of a field of a changed entity, by entity id and field, which does not depend on the values
+   * the user enters, so that it is calculated once although the groups are made again for each entered value.
+   */
+  private readonly triggerChanges = new Map<string, TriggerChange>();
+
+  /** The name of the type of the changed entities, to show how many of them caused the update */
+  readonly triggerTypeLabel =
+    this.data.triggers?.[0]?.entity.getConstructor().labelPlural;
+
+  /**
    * Whether all entities directly linked to the changed entity are linked through the same field
    * (otherwise each of them shows how it is linked).
    */
@@ -184,53 +203,79 @@ export class AutomatedFieldUpdateComponent {
     );
 
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
-    const groups = new Map<string, DialogRow[]>();
-    for (const row of rows) {
-      groups.set(row.sourceFieldId, [
-        ...(groups.get(row.sourceFieldId) ?? []),
-        row,
-      ]);
-    }
-    return [...groups].map(([sourceFieldId, groupRows]) => ({
-      sourceFieldId,
-      changes: this.getTriggerChanges(sourceFieldId, groupRows),
-      rows: groupRows,
-    }));
+    const groups = groupBy(rows, (row) => row.sourceFieldId);
+    return Object.entries(groups).map(([sourceFieldId, groupRows]) => {
+      const reachedFrom = new Set(groupRows.flatMap((row) => row.via ?? []));
+      const links = uniqWith(
+        groupRows
+          .filter((row) => row.level === 1)
+          .map((row) => ({
+            fieldId: row.relatedReferenceField,
+            entityType: row.relatedReferenceFieldEntityType,
+          })),
+        isEqual,
+      );
+      return {
+        sourceFieldId,
+        // a changed entity that the rows are not reached from did not cause their update
+        triggers: (this.data.triggers ?? [])
+          .filter((trigger) => reachedFrom.has(trigger.entity.getId()))
+          .map((trigger) => ({
+            trigger,
+            changes: computed(() =>
+              this.getTriggerChanges(trigger, sourceFieldId, links),
+            ),
+          })),
+        rows: groupRows,
+      };
+    });
   }
 
-  /** The fields of the changed entity that caused the update of the given rows, to show what changed */
+  /**
+   * The fields of the changed entity that caused the update of the rows of a group, to show what changed
+   * @param links the fields that link the first level of the rows to the changed entities
+   */
   private getTriggerChanges(
+    trigger: UpdateTrigger,
     sourceFieldId: string,
-    groupRows: DialogRow[],
+    links: { fieldId: string; entityType: EntityConstructor }[],
   ): TriggerChange[] {
-    const trigger = this.data.trigger;
-    if (!trigger) return [];
-
     const entityType = trigger.entity.getConstructor();
-    const isChanged = (fieldId: string) =>
-      isFieldChanged(trigger.entity, trigger.before, fieldId);
-    const firstLevel = groupRows.filter((entity) => entity.level === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
       sourceFieldId,
-      ...firstLevel
+      ...links
         .filter(
-          (entity) => entity.relatedReferenceFieldEntityType === entityType,
+          (link) =>
+            link.entityType === entityType &&
+            isFieldChanged(trigger.entity, trigger.before, link.fieldId),
         )
-        .map((entity) => entity.relatedReferenceField)
-        .filter(isChanged),
+        .map((link) => link.fieldId),
     ]).filter((fieldId) => !!fieldId);
-    return fieldIds.map((fieldId) => {
-      const field = this.entityFormService.extendFormFieldConfig(
-        fieldId,
-        entityType,
+    return fieldIds
+      .map((fieldId) => {
+        const key = `${trigger.entity.getId()}|${fieldId}`;
+        if (!this.triggerChanges.has(key)) {
+          this.triggerChanges.set(key, this.getTriggerChange(trigger, fieldId));
+        }
+        return this.triggerChanges.get(key);
+      })
+      .filter(
+        (change) => change.field.id === sourceFieldId || change.isChanged,
       );
-      return {
-        field,
-        isChanged: isChanged(fieldId),
-        ...this.getRemovedAndAdded(trigger, field),
-      };
-    });
+  }
+
+  private getTriggerChange(
+    trigger: UpdateTrigger,
+    fieldId: string,
+  ): TriggerChange {
+    const field = this.entityFormService.extendFormFieldConfig(
+      fieldId,
+      trigger.entity.getConstructor(),
+    );
+    const { removed, added } = this.getRemovedAndAdded(trigger, field);
+    // the saved value can differ without a change of the shown values (e.g. a single link saved as a list)
+    return { field, isChanged: !!(removed || added), removed, added };
   }
 
   /** What a change of the changed entity removed from the old value of the field, and what it added */

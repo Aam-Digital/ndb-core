@@ -40,7 +40,10 @@ test("Update related records over several levels: child, school and parent schoo
     },
   });
   const child = generateChild({ name: CHILD_NAME });
-  Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    center: CENTER_ALIPORE,
+  });
 
   await loadApp(page, [...generateUsers(), child, school, parentSchool]);
 
@@ -110,4 +113,91 @@ test("Update related records over several levels: child, school and parent schoo
   await expect(periodWarning).toHaveAccessibleDescription(
     `Outside the period of ${PARENT_SCHOOL_NAME}`,
   );
+});
+
+const DOCS_CHILD_NAME = "<DOCS CHILD>";
+const DOCS_SCHOOL_NAME = "<DOCS SCHOOL>";
+
+test("Collect the embedded entries of sub-records in their parent record", async ({
+  page,
+}) => {
+  // In the all-features config, a school collects the "Identification Documents" of its children
+  // ("Identification Documents of Children": a schema-embed-array with aggregation "add").
+  const school = createEntityOfType("School", "docs-school");
+  Object.assign(school, { name: DOCS_SCHOOL_NAME });
+  const child = generateChild({ name: DOCS_CHILD_NAME });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    identificationDocuments: [],
+  });
+
+  await loadApp(page, [...generateUsers(), child, school]);
+
+  const updateDialog = page.getByRole("dialog", {
+    name: /Update related records/,
+  });
+  const schoolDocsInDialog = updateDialog.locator(
+    "#entity-field__childrenIdDocuments",
+  );
+
+  // an entry added in the child's form is passed on to the school when the form is saved
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: DOCS_CHILD_NAME }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Manage entries" }).click();
+  const entriesDialog = page.getByRole("dialog", {
+    name: "Identification Documents",
+  });
+  await entriesDialog.getByRole("button", { name: "add entry" }).click();
+  const entryDialog = page.getByRole("dialog").last();
+  await entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("<FORM-DOC>");
+  await entryDialog.getByRole("button", { name: "Apply" }).click();
+  await entriesDialog.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+
+  await expect(schoolDocsInDialog).toContainText("1 entry");
+  await updateDialog
+    .getByRole("button", { name: "Update related records", exact: true })
+    .click();
+  await expect(updateDialog).not.toBeVisible();
+
+  // an entry added in the child's "Identification Documents" panel is passed on as well
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  await page.getByRole("button", { name: "add entry" }).click();
+  const panelEntryDialog = page.getByRole("dialog");
+  await panelEntryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("<PANEL-DOC>");
+  await panelEntryDialog
+    .getByRole("button", { name: "Save", exact: true })
+    .click();
+
+  await expect(schoolDocsInDialog).toContainText("2 entries");
+  await updateDialog
+    .getByRole("button", { name: "Update related records", exact: true })
+    .click();
+  await expect(updateDialog).not.toBeVisible();
+
+  // the school holds the entries of its child
+  await page.getByRole("navigation").getByText("Schools").click();
+  await page.getByRole("cell", { name: DOCS_SCHOOL_NAME }).click();
+  await page
+    .locator("#entity-field__childrenIdDocuments")
+    .getByRole("button", { name: "View entries" })
+    .click();
+  const schoolDocs = page.getByRole("dialog", {
+    name: "Identification Documents of Children",
+  });
+  await expect(
+    schoolDocs.getByRole("cell", { name: "<FORM-DOC>" }),
+  ).toBeVisible();
+  await expect(
+    schoolDocs.getByRole("cell", { name: "<PANEL-DOC>" }),
+  ).toBeVisible();
 });

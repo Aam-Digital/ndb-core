@@ -43,8 +43,18 @@ interface ChangedRecord {
   changedFields: Set<string>;
 }
 
+/** A changed record that starts an update */
+export interface StartingChange {
+  /** the changed record (already saved) */
+  entity: Entity;
+  /** the changed record before the change */
+  before: Entity;
+  /** the fields of the changed record that are passed on */
+  changedFields: string[];
+}
+
 /**
- * The records that an update changes: the changed record that started it, and the records with
+ * The records that an update changes: the changed records that started it, and the records with
  * a suggested value that is not saved yet. All other records are the same before and after the change.
  *
  * This allows to calculate the value of an affected record from all its linked records in both states,
@@ -53,18 +63,18 @@ interface ChangedRecord {
 export class ChangeSet {
   private readonly records = new Map<string, ChangedRecord>();
 
-  /**
-   * @param entity the changed record (already saved)
-   * @param before the changed record before the change
-   * @param changedFields the fields of the changed record that are passed on
-   */
-  constructor(entity: Entity, before: Entity, changedFields: string[]) {
-    this.records.set(entity.getId(), {
-      before: before.isNew ? undefined : before,
-      // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
-      after: entity.copy(),
-      changedFields: new Set(changedFields),
-    });
+  /** Increases whenever a value is set, so that what is calculated from the records stays valid until then */
+  version = 0;
+
+  constructor(changes: StartingChange[]) {
+    for (const { entity, before, changedFields } of changes) {
+      this.records.set(entity.getId(), {
+        before: before.isNew ? undefined : before,
+        // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
+        after: entity.copy(),
+        changedFields: new Set(changedFields),
+      });
+    }
   }
 
   /**
@@ -95,6 +105,7 @@ export class ChangeSet {
     value: unknown,
     isSavedValue: boolean,
   ): void {
+    this.version++;
     const id = saved.getId();
     const record = this.records.get(id) ?? {
       before: saved,

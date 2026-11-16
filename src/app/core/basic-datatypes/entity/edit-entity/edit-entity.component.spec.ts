@@ -23,9 +23,7 @@ import {
   applyTextToCreatedEntity,
   EditEntityComponent,
 } from "./edit-entity.component";
-import { selectionConditionValidator } from "../selection-condition";
-import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { FilterService } from "../../../filter/filter.service";
+import { SelectionConditionValidator } from "../selection-condition";
 
 describe("EditEntityComponent", () => {
   let component: EditEntityComponent;
@@ -510,22 +508,25 @@ describe("EditEntityComponent", () => {
       await expectOfferedNames(["Abc", "Abd"]);
       const entityMapper = TestBed.inject(EntityMapperService);
       const loadSpy = vi.spyOn(entityMapper, "load");
-      const validator = selectionConditionValidator(
-        condition,
-        [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE],
-        () => undefined,
-        {
-          entityMapper,
-          placeholderService: TestBed.inject(DynamicPlaceholderValueService),
-          filterService: TestBed.inject(FilterService),
+      const validator = TestBed.runInInjectionContext(
+        () => new SelectionConditionValidator(),
+      ).build(condition, {
+        entity: undefined,
+        field: {
+          id: "linked",
+          additional: [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE],
         },
-      );
+        singleRecord: false,
+        config: { selectionCondition: condition },
+      });
       const hamburg = test1Entities[1];
       formControl.setValue(hamburg.getId());
       formControl.markAsDirty();
 
       expect(await validator(formControl)).toEqual({
-        selectionCondition: expect.objectContaining({ warning: true }),
+        selectionCondition: expect.objectContaining({
+          errorMessage: expect.stringContaining(hamburg.toString()),
+        }),
       });
       expect(loadSpy).not.toHaveBeenCalledWith(
         TestEntity.ENTITY_TYPE,
