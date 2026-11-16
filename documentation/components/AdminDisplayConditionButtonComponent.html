@@ -1003,8 +1003,8 @@ export class AdminDisplayConditionButtonComponent {
               : $localize&#x60;This field is shown only while the record matches...&#x60;),
           currentRecordType: this.currentRecordType(),
         } satisfies ConditionEditorDialogData,
-        // comparing with fields of the current record needs an additional column
-        width: this.currentRecordType() ? &quot;800px&quot; : &quot;600px&quot;,
+        // comparing with fields of the current record needs an additional column, for long names like &quot;Parent action › Locations&quot;
+        width: this.currentRecordType() ? &quot;1000px&quot; : &quot;600px&quot;,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

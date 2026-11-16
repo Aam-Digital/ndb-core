@@ -239,7 +239,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/filter/filters/filters.ts:133</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="179" class="link-to-prism">src/app/core/filter/filters/filters.ts:179</a></div>
                             </td>
                         </tr>
 
@@ -318,7 +318,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/filter/filters/filters.ts:123</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="169" class="link-to-prism">src/app/core/filter/filters/filters.ts:169</a></div>
                         </td>
                     </tr>
 
@@ -351,7 +351,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/filter/filters/filters.ts:137</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="183" class="link-to-prism">src/app/core/filter/filters/filters.ts:183</a></div>
                         </td>
                     </tr>
 
@@ -378,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/filter/filters/filters.ts:136</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="182" class="link-to-prism">src/app/core/filter/filters/filters.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -409,7 +409,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/filter/filters/filters.ts:133</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="179" class="link-to-prism">src/app/core/filter/filters/filters.ts:179</a></div>
                         </td>
                     </tr>
 
@@ -449,7 +449,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/filter/filters/filters.ts:125</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="171" class="link-to-prism">src/app/core/filter/filters/filters.ts:171</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +483,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:186</a></div>
                         </td>
                     </tr>
 
@@ -556,8 +556,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -637,22 +637,68 @@ export function isCurrentRecordPlaceholder(value: unknown): value is string {
   );
 }
 
-/** the id of the field that a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to */
+/**
+ * What a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to (without the prefix):
+ * the id of a field of the current record, or a path through a link field
+ * to a field of the linked record(s), e.g. &#x60;parentAction.locations&#x60;.
+ */
 export function placeholderFieldId(placeholder: string): string {
   return placeholder.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length);
 }
 
-/** the ids of the fields that the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition refer to */
+/** what a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to (see {@link placeholderFieldId}) */
+export interface CurrentRecordReference {
+  /** the placeholder itself, e.g. &#x60;&quot;$current_record.parentAction.locations&quot;&#x60; */
+  placeholder: string;
+  /** the field of the current record */
+  fieldId: string;
+  /**
+   * the field of the record(s) linked in that field, if the placeholder goes through a link field
+   * (empty for a placeholder ending with the link field and a &quot;.&quot;, which refers to no field)
+   */
+  linkedFieldId?: string;
+}
+
+/** what a &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholder refers to, with its path split at the first &quot;.&quot; */
+export function parseCurrentRecordPlaceholder(
+  placeholder: string,
+): CurrentRecordReference {
+  const path &#x3D; placeholderFieldId(placeholder);
+  const separator &#x3D; path.indexOf(&quot;.&quot;);
+  return separator &lt; 0
+    ? { placeholder, fieldId: path }
+    : {
+        placeholder,
+        fieldId: path.substring(0, separator),
+        linkedFieldId: path.substring(separator + 1),
+      };
+}
+
+/** what the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition refer to */
+export function getCurrentRecordReferences(
+  condition: unknown,
+): CurrentRecordReference[] {
+  if (isCurrentRecordPlaceholder(condition)) {
+    return [parseCurrentRecordPlaceholder(condition)];
+  }
+  if (condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    return Object.values(condition).flatMap(getCurrentRecordReferences);
+  }
+  return [];
+}
+
+/**
+ * The ids of the fields of the current record that the &#x60;$current_record.&lt;fieldId&gt;&#x60; placeholders in a condition refer to
+ * (the link field, if a placeholder refers to a field of a linked record).
+ */
 export function getCurrentRecordPlaceholderFields(
   condition: unknown,
 ): string[] {
-  if (isCurrentRecordPlaceholder(condition)) {
-    return [placeholderFieldId(condition)];
-  }
-  if (condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
-    return Object.values(condition).flatMap(getCurrentRecordPlaceholderFields);
-  }
-  return [];
+  return [
+    ...new Set(
+      getCurrentRecordReferences(condition).map(({ fieldId }) &#x3D;&gt; fieldId),
+    ),
+  ];
 }
 
 export function createEmptyValueFilter&lt;T extends Entity&gt;(

@@ -545,6 +545,10 @@ export class FilterService {
   alignEntityWithFilter&lt;T extends Entity&gt;(entity: T, filter: DataFilter&lt;T&gt;) {
     const schema &#x3D; entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) &#x3D;&gt; {
+      if (key &#x3D;&#x3D;&#x3D; &quot;_id&quot;) {
+        // a filter selecting existing records by id does not describe a new record
+        return;
+      }
       if (key &#x3D;&#x3D;&#x3D; &quot;$or&quot; &amp;&amp; Array.isArray(value)) {
         // for $or filters, try each branch
         for (const branch of value) {

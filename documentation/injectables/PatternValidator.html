@@ -542,7 +542,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:94</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:107</a></code>
 </div>
                         </td>
                     </tr>
@@ -617,7 +617,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:64</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:77</a></code>
 </div>
                         </td>
                     </tr>
@@ -679,7 +679,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>validateConfig(_value: <a href="../classes/Config.html" target="_self">Config</a>, _field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, _datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>)</code>
+<code>validateConfig(_value: <a href="../classes/Config.html" target="_self">Config</a>, _field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, _datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>, _context?: <a href="../interfaces/ConfigValidationContext.html" target="_self">ConfigValidationContext</a>)</code>
                 </td>
             </tr>
 
@@ -692,7 +692,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:99</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -700,7 +700,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>problems of the rule&#39;s config for the given field, which admins are told about when saving the config</p>
+                        <div class="io-description"><p>Problems of the rule&#39;s config for the given field, which admins are told about when saving the config.</p>
 </div>
 
                             <div class="io-description">
@@ -712,6 +712,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -726,6 +727,8 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                                             </td>
 
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>_field</td>
@@ -738,6 +741,8 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                                             </td>
 
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>_datatype</td>
@@ -750,6 +755,24 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                                             </td>
 
 
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>_context</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ConfigValidationContext.html" target="_self" >ConfigValidationContext</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>to check references to other fields</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -840,7 +863,7 @@ or <code>pattern: { pattern: &quot;[0-9]{10}&quot;, message: &quot;Enter a 10-di
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:61</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:74</a></code>
 </div>
                         </td>
                     </tr>
@@ -886,7 +909,7 @@ added to the field as it is, next to the rule&#39;s check. Only for a rule whose
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:52</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:65</a></code>
 </div>
                         </td>
                     </tr>
@@ -932,7 +955,7 @@ not on every change of its value.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:37</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -977,7 +1000,7 @@ not on every change of its value.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:55</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:68</a></code>
 </div>
                         </td>
                     </tr>
@@ -1022,7 +1045,7 @@ not on every change of its value.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:46</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:59</a></code>
 </div>
                         </td>
                     </tr>

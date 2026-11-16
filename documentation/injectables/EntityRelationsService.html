@@ -302,7 +302,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getFieldsOfLinkedTypes(entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, dataType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>getFieldsOfLinkedTypes(entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, dataType?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -317,7 +317,7 @@
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get the fields of the given data type in each entity type that the given type links to,
+                        <div class="io-description"><p>Get the fields (of the given data type, if any) in each entity type that the given type links to,
 along with the field linking to it.</p>
 <p>e.g. given Child and &quot;date-range&quot; -&gt; [{ linkId: &quot;projectSchool&quot;, linkedType: School, fields: [[&quot;dateRangeField&quot;, …]] }]</p>
 </div>
@@ -353,7 +353,7 @@ along with the field linking to it.</p>
                                             </td>
 
                                             <td>
-                                                    No
+                                                    Yes
                                             </td>
 
 
@@ -615,14 +615,14 @@ export class EntityRelationsService {
   }
 
   /**
-   * Get the fields of the given data type in each entity type that the given type links to,
+   * Get the fields (of the given data type, if any) in each entity type that the given type links to,
    * along with the field linking to it.
    *
    * e.g. given Child and &quot;date-range&quot; -&gt; [{ linkId: &quot;projectSchool&quot;, linkedType: School, fields: [[&quot;dateRangeField&quot;, …]] }]
    */
   getFieldsOfLinkedTypes(
     entityType: EntityConstructor,
-    dataType: string,
+    dataType?: string,
   ): LinkedTypeFields[] {
     return Array.from(entityType.schema)
       .filter(([, link]) &#x3D;&gt; link.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType)
@@ -636,7 +636,7 @@ export class EntityRelationsService {
               link,
               linkedType,
               fields: Array.from(linkedType.schema).filter(
-                ([, field]) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; dataType,
+                ([, field]) &#x3D;&gt; !dataType || field.dataType &#x3D;&#x3D;&#x3D; dataType,
               ),
             };
           }),

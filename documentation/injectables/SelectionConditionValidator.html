@@ -153,7 +153,9 @@
             </p>
             <p class="comment">
                 <p><code>selectionCondition: { center: &quot;$current_record.center&quot; }</code>: the linked records should match the condition;
-the dropdown of the field only offers such records.</p>
+the dropdown of the field only offers such records.
+A placeholder can also refer to a field of a record that the edited record links to,
+e.g. <code>{ _id: { $in: [&quot;$current_record.parentAction.locations&quot;] } }</code>.</p>
 <p>Only checked once this field or a field of the record that the condition refers to is changed (dirty),
 so that records linked before (e.g. before the condition was configured) do not ask again on every save.
 Selected records that cannot be loaded are not checked.
@@ -329,7 +331,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:143</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:154</a></code>
 </div>
                         </td>
                     </tr>
@@ -414,7 +416,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:153</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:164</a></code>
 </div>
                         </td>
                     </tr>
@@ -500,7 +502,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:222</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:237</a></code>
 </div>
                         </td>
                     </tr>
@@ -562,7 +564,7 @@ The record types and the records already loaded are taken from the dropdown edit
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>validateConfig(value: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>, field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>)</code>
+                    <code>validateConfig(value: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>, field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, datatype: <a href="../classes/DefaultDatatype.html" target="_self">DefaultDatatype</a>, context?: <a href="../interfaces/ConfigValidationContext.html" target="_self">ConfigValidationContext</a>)</code>
                 </td>
             </tr>
 
@@ -575,7 +577,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:226</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:241</a></code>
 </div>
                         </td>
                     </tr>
@@ -632,6 +634,18 @@ The record types and the records already loaded are taken from the dropdown edit
 
 
                                         </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ConfigValidationContext.html" target="_self" >ConfigValidationContext</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -672,7 +686,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:64</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:77</a></code>
 </div>
                         </td>
                     </tr>
@@ -747,7 +761,7 @@ The record types and the records already loaded are taken from the dropdown edit
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:89</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:102</a></code>
 </div>
                         </td>
                     </tr>
@@ -836,7 +850,7 @@ The record types and the records already loaded are taken from the dropdown edit
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:135</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:146</a></code>
 </div>
                         </td>
                     </tr>
@@ -876,7 +890,7 @@ The record types and the records already loaded are taken from the dropdown edit
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:137</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:148</a></code>
 </div>
                         </td>
                     </tr>
@@ -916,7 +930,7 @@ The record types and the records already loaded are taken from the dropdown edit
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:136</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:147</a></code>
 </div>
                         </td>
                     </tr>
@@ -951,7 +965,7 @@ The record types and the records already loaded are taken from the dropdown edit
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:61</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:74</a></code>
 </div>
                         </td>
                     </tr>
@@ -997,7 +1011,7 @@ added to the field as it is, next to the rule&#39;s check. Only for a rule whose
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:52</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:65</a></code>
 </div>
                         </td>
                     </tr>
@@ -1043,7 +1057,7 @@ not on every change of its value.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:37</a></code>
+                                <div class="io-line">        <code><a href="../classess/FieldValidator.html#source" target="_self" >FieldValidator:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -1069,14 +1083,17 @@ import { asArray } from &quot;app/utils/asArray&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import {
+  CurrentRecordReference,
   DataFilter,
   getCurrentRecordPlaceholderFields,
+  getCurrentRecordReferences,
 } from &quot;../../filter/filters/filters&quot;;
 import { FilterService } from &quot;../../filter/filter.service&quot;;
 import { DynamicPlaceholderValueService } from &quot;../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { AsyncPromiseValidatorFn } from &quot;../../common-components/entity-form/dynamic-form-validators/validator-types&quot;;
 import {
+  ConfigValidationContext,
   FieldValidator,
   ValidatorContext,
 } from &quot;../../common-components/entity-form/dynamic-form-validators/field-validator&quot;;
@@ -1085,18 +1102,23 @@ import { DefaultDatatype } from &quot;../../entity/default-datatype/default.data
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { SchemaEmbedDatatype } from &quot;../schema-embed/schema-embed.datatype&quot;;
 import { EntityDatatype } from &quot;./entity.datatype&quot;;
+import { loadLinkedRecords } from &quot;./load-linked-records&quot;;
 
 /**
  * The &#x60;selectionCondition&#x60; of a field linking to other records,
  * with its placeholders referring to the record being edited resolved,
  * or &#x60;undefined&#x60; if it does not apply: none is configured, none of its rows can be applied,
  * or the field links to several record types (with different fields).
+ *
+ * @param linkedRecords the records that the record links to, for placeholders referring to their fields
+ *   (see {@link getPlaceholderLinkedRecordIds})
  */
 export function resolveSelectionCondition&lt;E extends Entity&gt;(
   condition: DataFilter&lt;E&gt; | undefined,
   entityTypes: string[],
   record: Entity | undefined,
   placeholderService: DynamicPlaceholderValueService,
+  linkedRecords?: Entity[],
 ): DataFilter&lt;E&gt; | undefined {
   if (
     !condition ||
@@ -1109,6 +1131,7 @@ export function resolveSelectionCondition&lt;E extends Entity&gt;(
   const resolved &#x3D; placeholderService.resolveRecordPlaceholders(
     condition,
     record,
+    linkedRecords,
   );
   return Object.keys(resolved).length &gt; 0 ? resolved : undefined;
 }
@@ -1137,7 +1160,10 @@ export function matchesSelectionCondition&lt;E extends Entity&gt;(
 export interface LinkedRecordsSource {
   /** the record types the dropdown offers */
   entityTypes: () &#x3D;&gt; string[];
-  /** a record (by its full id) the dropdown has already loaded, &#x60;undefined&#x60; if it has not */
+  /**
+   * a record (by its full id) the dropdown has already loaded, &#x60;undefined&#x60; if it has not:
+   * one of the record types it offers, or one that its &#x60;selectionCondition&#x60; refers to
+   */
   getLoaded: (id: string) &#x3D;&gt; Entity | undefined;
 }
 
@@ -1163,29 +1189,28 @@ export function registerLinkedRecordsSource(
 }
 
 /**
- * Load a record that a link field refers to, &#x60;undefined&#x60; if it cannot be loaded
- * (not found or not permitted, which is not reported as a problem).
+ * The ids of the records that the given record links to in the fields through which placeholders of the condition
+ * refer to a field of a linked record (e.g. the parent for &#x60;&quot;$current_record.parentAction.locations&quot;&#x60;).
+ * Values that are not an id are only left out when loading the records (see {@link loadLinkedRecords}).
  */
-export async function loadLinkedRecord&lt;E extends Entity&gt;(
-  entityMapper: EntityMapperService,
-  entityType: string,
-  id: string,
-): Promise&lt;E | undefined&gt; {
-  return entityMapper
-    .load&lt;E&gt;(entityType, id)
-    .catch((err: { status?: number } | undefined) &#x3D;&gt; {
-      if (err?.status &#x3D;&#x3D;&#x3D; 404) {
-        Logging.debug(&quot;[ENTITY_SELECT] Selected entity not found.&quot;, id);
-      } else {
-        Logging.warn(&quot;[ENTITY_SELECT] Error loading selected entity.&quot;, err, id);
-      }
-      return undefined;
-    });
+export function getPlaceholderLinkedRecordIds(
+  condition: DataFilter&lt;Entity&gt; | undefined,
+  record: Entity | undefined,
+): unknown[] {
+  if (!record) {
+    return [];
+  }
+  const ids &#x3D; getCurrentRecordReferences(condition)
+    .filter(({ linkedFieldId }) &#x3D;&gt; linkedFieldId !&#x3D;&#x3D; undefined)
+    .flatMap(({ fieldId }) &#x3D;&gt; asArray&lt;unknown&gt;(record[fieldId] ?? []));
+  return [...new Set(ids)];
 }
 
 /**
  * &#x60;selectionCondition: { center: &quot;$current_record.center&quot; }&#x60;: the linked records should match the condition;
  * the dropdown of the field only offers such records.
+ * A placeholder can also refer to a field of a record that the edited record links to,
+ * e.g. &#x60;{ _id: { $in: [&quot;$current_record.parentAction.locations&quot;] } }&#x60;.
  *
  * Only checked once this field or a field of the record that the condition refers to is changed (dirty),
  * so that records linked before (e.g. before the condition was configured) do not ask again on every save.
@@ -1236,11 +1261,19 @@ export class SelectionConditionValidator extends FieldValidator&lt;
       const dropdownTypes &#x3D; source?.entityTypes() ?? [];
       const entityTypes &#x3D;
         dropdownTypes.length &gt; 0 ? dropdownTypes : fieldEntityTypes;
+      const record &#x3D; singleRecord
+        ? getCurrentRecordOfControl(control, entity)
+        : undefined;
       const resolved &#x3D; resolveSelectionCondition(
         condition,
         entityTypes,
-        singleRecord ? getCurrentRecordOfControl(control, entity) : undefined,
+        record,
         this.placeholderService,
+        await loadLinkedRecords(
+          this.entityMapper,
+          getPlaceholderLinkedRecordIds(condition, record),
+          source?.getLoaded,
+        ),
       );
       if (!resolved) {
         return null;
@@ -1269,17 +1302,13 @@ export class SelectionConditionValidator extends FieldValidator&lt;
     source: LinkedRecordsSource | undefined,
   ): Promise&lt;string&gt; {
     const matches &#x3D; matchesSelectionCondition(resolved, this.filterService);
-    const records &#x3D; await Promise.all(
-      selectedIds.map((id) &#x3D;&gt; {
-        const fullId &#x3D; Entity.createPrefixedId(entityType, id);
-        return (
-          source?.getLoaded(fullId) ??
-          loadLinkedRecord(this.entityMapper, entityType, fullId)
-        );
-      }),
+    const records &#x3D; await loadLinkedRecords(
+      this.entityMapper,
+      selectedIds.map((id) &#x3D;&gt; Entity.createPrefixedId(entityType, id)),
+      source?.getLoaded,
     );
     return records
-      .filter((record) &#x3D;&gt; record &amp;&amp; !matches(record))
+      .filter((record) &#x3D;&gt; !matches(record))
       .map((record) &#x3D;&gt; record.toString())
       .join(&quot;, &quot;);
   }
@@ -1292,6 +1321,7 @@ export class SelectionConditionValidator extends FieldValidator&lt;
     value: DataFilter&lt;Entity&gt;,
     field: EntitySchemaField,
     datatype: DefaultDatatype,
+    context?: ConfigValidationContext,
   ): string[] {
     if (!value) {
       return [];
@@ -1308,7 +1338,47 @@ export class SelectionConditionValidator extends FieldValidator&lt;
         $localize&#x60;:config validation:A selection filter (&quot;selectionCondition&quot;) only applies to a field linking to one record type, it is ignored.&#x60;,
       ];
     }
-    return [];
+    return getCurrentRecordReferences(value).flatMap((reference) &#x3D;&gt;
+      this.linkedFieldProblems(reference, context),
+    );
+  }
+
+  /** problems of a placeholder referring to a field of a linked record, like &#x60;$current_record.parentAction.locations&#x60; */
+  private linkedFieldProblems(
+    { placeholder, fieldId, linkedFieldId }: CurrentRecordReference,
+    context: ConfigValidationContext | undefined,
+  ): string[] {
+    if (linkedFieldId &#x3D;&#x3D;&#x3D; undefined) {
+      return [];
+    }
+    if (linkedFieldId.includes(&quot;.&quot;)) {
+      return [
+        $localize&#x60;:config validation:The selection filter (&quot;selectionCondition&quot;) refers to &quot;${placeholder}:placeholder:&quot;, which goes through more than one linked record. Only fields of a record linked directly can be used, so this condition is ignored.&#x60;,
+      ];
+    }
+    const recordFields &#x3D; context?.fieldsOf(context.entityType);
+    if (!recordFields) {
+      return [];
+    }
+    const link &#x3D; recordFields.get(fieldId);
+    if (link?.dataType !&#x3D;&#x3D; EntityDatatype.dataType) {
+      return [
+        $localize&#x60;:config validation:The selection filter (&quot;selectionCondition&quot;) refers to &quot;${placeholder}:placeholder:&quot;, but &quot;${fieldId}:field:&quot; is not a field linking to records. This condition is ignored.&#x60;,
+      ];
+    }
+    const linkedTypes &#x3D; asArray(link.additional ?? []).map((type) &#x3D;&gt;
+      context.fieldsOf(type),
+    );
+    // not checked while one of the linked record types is not known here
+    const isMissing &#x3D;
+      linkedFieldId !&#x3D;&#x3D; &quot;_id&quot; &amp;&amp;
+      linkedTypes.length &gt; 0 &amp;&amp;
+      linkedTypes.every((fields) &#x3D;&gt; fields &amp;&amp; !fields.has(linkedFieldId));
+    return isMissing
+      ? [
+          $localize&#x60;:config validation:The selection filter (&quot;selectionCondition&quot;) refers to &quot;${placeholder}:placeholder:&quot;, but the records linked in &quot;${fieldId}:field:&quot; have no field &quot;${linkedFieldId}:linkedField:&quot;. This condition is ignored.&#x60;,
+        ]
+      : [];
   }
 }
 </code></pre>

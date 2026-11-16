@@ -2724,6 +2724,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ConfigureTranslationsResult.html" data-type="entity-link" >ConfigureTranslationsResult</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ConfigValidationContext.html" data-type="entity-link" >ConfigValidationContext</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ConfirmationDialogButton.html" data-type="entity-link" >ConfirmationDialogButton</a>
                             </li>
                             <li class="link">
@@ -2743,6 +2746,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/CrudActionColumn.html" data-type="entity-link" >CrudActionColumn</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/CurrentRecordReference.html" data-type="entity-link" >CurrentRecordReference</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/DashboardConfig.html" data-type="entity-link" >DashboardConfig</a>

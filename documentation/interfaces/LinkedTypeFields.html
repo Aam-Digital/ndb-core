@@ -442,14 +442,14 @@ export class EntityRelationsService {
   }
 
   /**
-   * Get the fields of the given data type in each entity type that the given type links to,
+   * Get the fields (of the given data type, if any) in each entity type that the given type links to,
    * along with the field linking to it.
    *
    * e.g. given Child and &quot;date-range&quot; -&gt; [{ linkId: &quot;projectSchool&quot;, linkedType: School, fields: [[&quot;dateRangeField&quot;, …]] }]
    */
   getFieldsOfLinkedTypes(
     entityType: EntityConstructor,
-    dataType: string,
+    dataType?: string,
   ): LinkedTypeFields[] {
     return Array.from(entityType.schema)
       .filter(([, link]) &#x3D;&gt; link.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType)
@@ -463,7 +463,7 @@ export class EntityRelationsService {
               link,
               linkedType,
               fields: Array.from(linkedType.schema).filter(
-                ([, field]) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; dataType,
+                ([, field]) &#x3D;&gt; !dataType || field.dataType &#x3D;&#x3D;&#x3D; dataType,
               ),
             };
           }),

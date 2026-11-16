@@ -303,7 +303,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:35</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:37</a></code>
 </div>
                         </td>
                     </tr>
@@ -340,8 +340,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="73"
-                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:73</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -408,15 +408,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>resolveRecordPlaceholders&lt;T&gt;(condition: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, record: <a href="../classes/Entity.html" target="_self">Entity | undefined</a>)</code>
+<code>resolveRecordPlaceholders&lt;T&gt;(condition: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, record: <a href="../classes/Entity.html" target="_self">Entity | undefined</a>, linkedRecords: <a href="../classes/Entity.html" target="_self">Entity[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -439,6 +439,10 @@ The values are used in database format, like the values of the records the condi
 cannot be applied and is left out. All other rows still apply.
 If one of the alternatives of <code>$or</code> cannot be applied at all, the whole <code>$or</code> is left out
 (that alternative does not restrict anything, so neither does the <code>$or</code>).</p>
+<p>A placeholder can go through a link field to a field of the linked record(s),
+e.g. <code>$current_record.parentAction.locations</code> (one level only): it is replaced by the values of all linked records
+given in <code>linkedRecords</code>. <code>_id</code> as the field of the linked record stands for that record itself.
+Linked records that are not given (e.g. because they cannot be loaded) are skipped.</p>
 </div>
 
                             <div class="io-description">
@@ -450,6 +454,7 @@ If one of the alternatives of <code>$or</code> cannot be applied at all, the who
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Default value</td>
                                                 <td>Description</td>
                                         </tr>
                                     </thead>
@@ -464,6 +469,8 @@ If one of the alternatives of <code>$or</code> cannot be applied at all, the who
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
                                                     <p>The condition to resolve. It is not changed, a resolved copy is returned.</p>
@@ -480,9 +487,30 @@ If one of the alternatives of <code>$or</code> cannot be applied at all, the who
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
                                                     <p>The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>linkedRecords</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[]</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>The records that the record links to, as far as placeholders go through them.</p>
 
                                             </td>
                                         </tr>
@@ -529,7 +557,7 @@ If one of the alternatives of <code>$or</code> cannot be applied at all, the who
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:49</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:51</a></code>
 </div>
                         </td>
                     </tr>
@@ -807,7 +835,7 @@ so call it in a reactive context (e.g. a <code>computed</code>) to get updates o
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:30</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:32</a></code>
 </div>
                         </td>
                     </tr>
@@ -832,9 +860,10 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import {
+  CurrentRecordReference,
   DataFilter,
   isCurrentRecordPlaceholder,
-  placeholderFieldId,
+  parseCurrentRecordPlaceholder,
 } from &quot;../../filter/filters/filters&quot;;
 import {
   AdminDefaultValueContext,
@@ -842,6 +871,7 @@ import {
 } from &quot;../default-value-strategy.interface&quot;;
 import { DefaultValueConfigDynamic } from &quot;./default-value-config-dynamic&quot;;
 import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -920,23 +950,55 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
    * If one of the alternatives of &#x60;$or&#x60; cannot be applied at all, the whole &#x60;$or&#x60; is left out
    * (that alternative does not restrict anything, so neither does the &#x60;$or&#x60;).
    *
+   * A placeholder can go through a link field to a field of the linked record(s),
+   * e.g. &#x60;$current_record.parentAction.locations&#x60; (one level only): it is replaced by the values of all linked records
+   * given in &#x60;linkedRecords&#x60;. &#x60;_id&#x60; as the field of the linked record stands for that record itself.
+   * Linked records that are not given (e.g. because they cannot be loaded) are skipped.
+   *
    * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
    * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
+   * @param linkedRecords The records that the record links to, as far as placeholders go through them.
    * @returns The resolved condition, which is empty if no row is left to apply.
    */
   resolveRecordPlaceholders&lt;T&gt;(
     condition: DataFilter&lt;T&gt;,
     record: Entity | undefined,
+    linkedRecords: Entity[] &#x3D; [],
   ): DataFilter&lt;T&gt; {
-    const getValue &#x3D; (fieldId: string) &#x3D;&gt; {
-      const value &#x3D; record?.[fieldId];
-      const schemaField &#x3D; record?.getSchema().get(fieldId);
-      if (value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || !schemaField) {
-        return value;
-      }
-      return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
-    };
+    const getValue &#x3D; ({ fieldId, linkedFieldId }: CurrentRecordReference) &#x3D;&gt;
+      linkedFieldId &#x3D;&#x3D;&#x3D; undefined
+        ? this.getDatabaseValue(record, fieldId)
+        : this.getLinkedValues(record?.[fieldId], linkedFieldId, linkedRecords);
     return resolveCondition(condition ?? {}, getValue) as DataFilter&lt;T&gt;;
+  }
+
+  /**
+   * The values of a field of the records linked in a link field (&#x60;linkValue&#x60;, one id or a list of them):
+   * the value of the one record, or the values of all of them (each value once) for a list.
+   */
+  private getLinkedValues(
+    linkValue: unknown,
+    fieldId: string,
+    linkedRecords: Entity[],
+  ) {
+    const values &#x3D; asArray(linkValue ?? [])
+      .map((id) &#x3D;&gt; linkedRecords.find((linked) &#x3D;&gt; linked.getId() &#x3D;&#x3D;&#x3D; id))
+      .map((linked) &#x3D;&gt; this.getDatabaseValue(linked, fieldId))
+      .filter((value) &#x3D;&gt; !isEmptyValue(value));
+    return Array.isArray(linkValue) ? [...new Set(values.flat())] : values[0];
+  }
+
+  /** the value of a record&#x27;s field in database format, like the values of the records a condition is applied to */
+  private getDatabaseValue(record: Entity | undefined, fieldId: string) {
+    if (fieldId &#x3D;&#x3D;&#x3D; &quot;_id&quot;) {
+      return record?.getId();
+    }
+    const value &#x3D; record?.[fieldId];
+    const schemaField &#x3D; record?.getSchema().get(fieldId);
+    if (value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || !schemaField) {
+      return value;
+    }
+    return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
   }
 }
 
@@ -946,8 +1008,8 @@ const CONDITION_LIST_OPERATORS &#x3D; [&quot;$or&quot;, &quot;$and&quot;, &quot;
 /** marks a value that cannot be resolved, because it references an empty field */
 const UNRESOLVED &#x3D; Symbol(&quot;unresolved&quot;);
 
-/** returns the value of the given field of the current record (in database format) */
-type FieldValueGetter &#x3D; (fieldId: string) &#x3D;&gt; unknown;
+/** returns the value that a placeholder refers to, in database format */
+type FieldValueGetter &#x3D; (reference: CurrentRecordReference) &#x3D;&gt; unknown;
 
 /** the rows of a condition that can be applied, with their placeholders resolved */
 function resolveCondition(condition: object, getValue: FieldValueGetter) {
@@ -995,7 +1057,7 @@ function resolveConditionList(
 /** the value with its placeholders resolved (&#x60;UNRESOLVED&#x60; if one of them references an empty field) */
 function resolveValue(value: unknown, getValue: FieldValueGetter): unknown {
   if (isCurrentRecordPlaceholder(value)) {
-    const fieldValue &#x3D; getValue(placeholderFieldId(value));
+    const fieldValue &#x3D; getValue(parseCurrentRecordPlaceholder(value));
     return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
   }
   if (Array.isArray(value)) {

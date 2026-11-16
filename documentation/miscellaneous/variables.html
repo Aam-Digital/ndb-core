@@ -6844,6 +6844,11 @@ Add further providers to your modules or the AppModule to extend.</p>
    * (with the &quot;any&quot; combinator, &#x60;$or&#x60;, the whole condition then is not applied).
    * The same applies if there is no single record, like in bulk edit.
    *
+   * A placeholder can also refer to a field of a record that the edited record links to (one level only),
+   * like &#x60;&quot;$current_record.parentAction.locations&quot;&#x60;: the values of all records linked in &#x60;parentAction&#x60;.
+   * For example &#x60;{ &quot;_id&quot;: { &quot;$in&quot;: [&quot;$current_record.parentAction.locations&quot;] } }&#x60; only offers the locations of the parent.
+   * A linked record that cannot be loaded (e.g. without read permission) counts as not linked.
+   *
    * Only applies to a field referencing a single record type and edited with the entity dropdown
    * (or an edit component using it), not if a form layout sets another &#x60;editComponent&#x60;.
    * A &#x60;schema-embed&#x60; field (e.g. &#x60;attendance&#x60;) takes it in the config of its embedded

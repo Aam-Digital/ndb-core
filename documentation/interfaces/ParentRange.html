@@ -284,10 +284,10 @@
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { WithinParentConfig } from &quot;../../common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
-import { Logging } from &quot;../../logging/logging.service&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import { DateRangeValue } from &quot;./date-range.datatype&quot;;
 import { isOutsideRange } from &quot;./is-outside-range&quot;;
+import { loadLinkedRecords } from &quot;../entity/load-linked-records&quot;;
 
 /** the range of a linked parent record (see {@link WithinParentConfig}) */
 export interface ParentRange {
@@ -321,17 +321,9 @@ export async function loadParentRanges(
   parentIds: string[],
   valueField: string,
 ): Promise&lt;ParentRange[]&gt; {
-  const load &#x3D; async (id: string): Promise&lt;Entity | undefined&gt; &#x3D;&gt; {
-    try {
-      return await entityMapper.load(Entity.extractTypeFromId(id), id);
-    } catch (e) {
-      Logging.debug(&quot;[DATE_RANGE] Could not load parent record.&quot;, id, e);
-      return undefined;
-    }
-  };
-  const parents &#x3D; await Promise.all(parentIds.map((id) &#x3D;&gt; load(id)));
+  const parents &#x3D; await loadLinkedRecords(entityMapper, parentIds);
   return parents
-    .filter((parent) &#x3D;&gt; !!parent &amp;&amp; !parent.anonymized)
+    .filter((parent) &#x3D;&gt; !parent.anonymized)
     .map((parent) &#x3D;&gt; ({
       name: parent.toString(),
       range: parent[valueField],

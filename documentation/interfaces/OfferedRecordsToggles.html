@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="526" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:526</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="574" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:574</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="527" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:527</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="575" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:575</a></div>
                                 </td>
                             </tr>
 
@@ -309,6 +309,7 @@ import { MatSlideToggle } from &quot;@angular/material/slide-toggle&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
+import { isEqual } from &quot;lodash-es&quot;;
 import { lastValueFrom, map, startWith, switchMap } from &quot;rxjs&quot;;
 import {
   BasicAutocompleteComponent,
@@ -334,7 +335,12 @@ import { Logging } from &quot;../../../logging/logging.service&quot;;
 import { EntityAbility } from &quot;../../../permissions/ability/entity-ability&quot;;
 import { EntityBlockComponent } from &quot;../entity-block/entity-block.component&quot;;
 import {
+  latestLinkedRecords,
   loadLinkedRecord,
+  loadLinkedRecords,
+} from &quot;../load-linked-records&quot;;
+import {
+  getPlaceholderLinkedRecordIds,
   matchesSelectionCondition,
   registerLinkedRecordsSource,
   resolveSelectionCondition,
@@ -526,6 +532,36 @@ export class EditEntityComponent&lt;
     return ownId ? entities.filter((e) &#x3D;&gt; e.getId() !&#x3D;&#x3D; ownId) : entities;
   });
 
+  /** the ids of the records that the record being edited links to and whose fields the &#x60;selectionCondition&#x60; refers to */
+  private readonly placeholderLinkedIds: Signal&lt;unknown[]&gt; &#x3D; computed(
+    () &#x3D;&gt;
+      getPlaceholderLinkedRecordIds(
+        this.formFieldConfig()?.validators?.selectionCondition,
+        this.currentRecord(),
+      ),
+    // only load them again when a link changes, not on every change of other fields in the form
+    { equal: isEqual },
+  );
+
+  /** the records that the &#x60;selectionCondition&#x60; refers to, loading while it cannot be applied yet */
+  private readonly placeholderLinkedRecords: Resource&lt;Entity[]&gt; &#x3D;
+    resourceWithRetention({
+      defaultValue: [],
+      params: () &#x3D;&gt; {
+        const ids &#x3D; this.placeholderLinkedIds();
+        return ids.length &gt; 0
+          ? { ids, entityMapper: this.entityMapperService }
+          : undefined;
+      },
+      loader: ({ params }) &#x3D;&gt;
+        loadLinkedRecords(params.entityMapper, params.ids),
+    });
+
+  /** the records that the &#x60;selectionCondition&#x60; refers to, in their latest version (e.g. after an automated update) */
+  private readonly latestPlaceholderLinkedRecords &#x3D; latestLinkedRecords(() &#x3D;&gt;
+    this.placeholderLinkedRecords.value(),
+  );
+
   /**
    * The configured &#x60;selectionCondition&#x60; with placeholders resolved,
    * or &#x60;undefined&#x60; if no condition applies.
@@ -538,21 +574,26 @@ export class EditEntityComponent&lt;
           this.entityType(),
           this.currentRecord(),
           this.placeholderService,
+          this.latestPlaceholderLinkedRecords(),
         ),
       // only notify of an actual change, not of every change of other fields in the form
-      { equal: (a, b) &#x3D;&gt; JSON.stringify(a) &#x3D;&#x3D;&#x3D; JSON.stringify(b) },
+      { equal: isEqual },
     );
 
   /**
    * Whether a record is offered as an option (besides the selected ones, which always are):
    * only active ones matching the &#x60;selectionCondition&#x60;, unless the user includes the others.
+   * None while the records that the &#x60;selectionCondition&#x60; refers to are loading, as it is not known yet which match.
    */
   private readonly isOffered: Signal&lt;
     (e: E, include: OfferedRecordsToggles) &#x3D;&gt; boolean
   &gt; &#x3D; computed(() &#x3D;&gt; {
     const isEligible &#x3D; this.isEligible();
+    const isPending &#x3D; this.placeholderLinkedRecords.isLoading();
     return (e, { includeInactive, includeIneligible }) &#x3D;&gt;
-      (includeInactive || !e.inactive) &amp;&amp; (includeIneligible || isEligible(e));
+      !isPending &amp;&amp;
+      (includeInactive || !e.inactive) &amp;&amp;
+      (includeIneligible || isEligible(e));
   });
 
   private readonly isEligible: Signal&lt;(e: E) &#x3D;&gt; boolean&gt; &#x3D; computed(() &#x3D;&gt;
@@ -618,7 +659,10 @@ export class EditEntityComponent&lt;
     }));
   });
 
-  loading: Signal&lt;boolean&gt; &#x3D; computed(() &#x3D;&gt; this.allEntities.isLoading());
+  loading: Signal&lt;boolean&gt; &#x3D; computed(
+    () &#x3D;&gt;
+      this.allEntities.isLoading() || this.placeholderLinkedRecords.isLoading(),
+  );
 
   /**
    * The currently selected values (IDs) of the form control.
@@ -735,11 +779,15 @@ export class EditEntityComponent&lt;
 
   private autocompleteFilter &#x3D; signal&lt;(o: E) &#x3D;&gt; boolean&gt;(() &#x3D;&gt; true);
 
-  /** the records loaded for the dropdown (including the selected ones), by id */
-  private readonly loadedRecords: Signal&lt;Map&lt;string, E&gt;&gt; &#x3D; computed(
+  /** the records loaded for the dropdown (including the selected ones and the ones its &#x60;selectionCondition&#x60; refers to), by id */
+  private readonly loadedRecords: Signal&lt;Map&lt;string, Entity&gt;&gt; &#x3D; computed(
     () &#x3D;&gt;
       new Map(
-        [...this.allEntities.value(), ...this.availableEntitiesResource.value()]
+        [
+          ...this.allEntities.value(),
+          ...this.availableEntitiesResource.value(),
+          ...this.latestPlaceholderLinkedRecords(),
+        ]
           .filter((e) &#x3D;&gt; !(e as { isHidden?: boolean }).isHidden)
           .map((e) &#x3D;&gt; [e.getId(), e]),
       ),
