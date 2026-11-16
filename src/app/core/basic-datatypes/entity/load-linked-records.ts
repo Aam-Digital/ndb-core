@@ -28,16 +28,20 @@ export async function loadLinkedRecord<E extends Entity>(
 /**
  * Load the records with the given ids (the value of a link field), whatever their record types.
  * Records that cannot be loaded (see {@link loadLinkedRecord}) and values that are not an id are left out.
+ * @param getLoaded a record that is loaded already (e.g. by the dropdown of the field), which is not loaded again
  */
 export async function loadLinkedRecords(
   entityMapper: EntityMapperService,
   ids: unknown[],
+  getLoaded: (id: string) => Entity | undefined = () => undefined,
 ): Promise<Entity[]> {
   const records = await Promise.all(
     ids
       .filter((id): id is string => !!id && typeof id === "string")
-      .map((id) =>
-        loadLinkedRecord(entityMapper, Entity.extractTypeFromId(id), id),
+      .map(
+        (id) =>
+          getLoaded(id) ??
+          loadLinkedRecord(entityMapper, Entity.extractTypeFromId(id), id),
       ),
   );
   return records.filter((record) => !!record);

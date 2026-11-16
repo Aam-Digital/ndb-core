@@ -24,7 +24,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { SchemaEmbedDatatype } from "../schema-embed/schema-embed.datatype";
 import { EntityDatatype } from "./entity.datatype";
-import { loadLinkedRecord } from "./load-linked-records";
+import { loadLinkedRecords } from "./load-linked-records";
 
 /**
  * The `selectionCondition` of a field linking to other records,
@@ -194,9 +194,10 @@ export class SelectionConditionValidator extends FieldValidator<
         entityTypes,
         record,
         this.placeholderService,
-        await this.loadRecords(
+        await loadLinkedRecords(
+          this.entityMapper,
           getPlaceholderLinkedRecordIds(condition, record),
-          source,
+          source?.getLoaded,
         ),
       );
       if (!resolved) {
@@ -226,32 +227,15 @@ export class SelectionConditionValidator extends FieldValidator<
     source: LinkedRecordsSource | undefined,
   ): Promise<string> {
     const matches = matchesSelectionCondition(resolved, this.filterService);
-    const records = await this.loadRecords(
+    const records = await loadLinkedRecords(
+      this.entityMapper,
       selectedIds.map((id) => Entity.createPrefixedId(entityType, id)),
-      source,
+      source?.getLoaded,
     );
     return records
       .filter((record) => !matches(record))
       .map((record) => record.toString())
       .join(", ");
-  }
-
-  /**
-   * The records with the given (full) ids, without the ones that cannot be loaded:
-   * as the dropdown of the field has loaded them, only the others are loaded here.
-   */
-  private async loadRecords(
-    ids: string[],
-    source: LinkedRecordsSource | undefined,
-  ): Promise<Entity[]> {
-    const records = await Promise.all(
-      ids.map(
-        (id) =>
-          source?.getLoaded(id) ??
-          loadLinkedRecord(this.entityMapper, Entity.extractTypeFromId(id), id),
-      ),
-    );
-    return records.filter((record) => !!record);
   }
 
   override dependsOn(value: DataFilter<Entity>): string[] {
