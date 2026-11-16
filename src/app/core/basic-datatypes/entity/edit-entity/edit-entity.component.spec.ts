@@ -225,7 +225,7 @@ describe("EditEntityComponent", () => {
     await refreshAvailableEntities();
     await vi.waitFor(() =>
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining("ENTITY_SELECT"),
+        expect.stringContaining("LINKED_RECORD"),
         expect.anything(),
         expect.anything(),
       ),
@@ -354,7 +354,7 @@ describe("EditEntityComponent", () => {
     await refreshAvailableEntities();
 
     expect(warnSpy).not.toHaveBeenCalledWith(
-      expect.stringContaining("ENTITY_SELECT"),
+      expect.stringContaining("LINKED_RECORD"),
       expect.anything(),
       expect.anything(),
     );

@@ -21,6 +21,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { SchemaEmbedDatatype } from "../schema-embed/schema-embed.datatype";
 import { EntityDatatype } from "./entity.datatype";
+import { loadLinkedRecord, loadLinkedRecords } from "./load-linked-records";
 
 /**
  * The `selectionCondition` of a field linking to other records,
@@ -104,27 +105,6 @@ export function registerLinkedRecordsSource(
 }
 
 /**
- * Load a record that a link field refers to, `undefined` if it cannot be loaded
- * (not found or not permitted, which is not reported as a problem).
- */
-export async function loadLinkedRecord<E extends Entity>(
-  entityMapper: EntityMapperService,
-  entityType: string,
-  id: string,
-): Promise<E | undefined> {
-  return entityMapper
-    .load<E>(entityType, id)
-    .catch((err: { status?: number } | undefined) => {
-      if (err?.status === 404) {
-        Logging.debug("[ENTITY_SELECT] Selected entity not found.", id);
-      } else {
-        Logging.warn("[ENTITY_SELECT] Error loading selected entity.", err, id);
-      }
-      return undefined;
-    });
-}
-
-/**
  * The ids of the records that the given record links to in the fields through which placeholders of the condition
  * refer to a field of a linked record (e.g. the parent for `"$current_record.parentAction.locations"`).
  */
@@ -150,14 +130,8 @@ export async function loadPlaceholderLinkedRecords(
   entityMapper: EntityMapperService,
   ids: string[],
 ): Promise<Map<string, Entity>> {
-  const records = await Promise.all(
-    ids.map((id) =>
-      loadLinkedRecord(entityMapper, Entity.extractTypeFromId(id), id),
-    ),
-  );
-  return new Map(
-    records.filter((record) => !!record).map((r) => [r.getId(), r]),
-  );
+  const records = await loadLinkedRecords(entityMapper, ids);
+  return new Map(records.map((record) => [record.getId(), record]));
 }
 
 /**

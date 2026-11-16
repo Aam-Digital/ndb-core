@@ -51,9 +51,9 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { EntityBlockComponent } from "../entity-block/entity-block.component";
+import { loadLinkedRecord } from "../load-linked-records";
 import {
   getPlaceholderLinkedRecordIds,
-  loadLinkedRecord,
   loadPlaceholderLinkedRecords,
   matchesSelectionCondition,
   registerLinkedRecordsSource,
