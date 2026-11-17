@@ -104,7 +104,10 @@ export class FilterService {
     entityType: EntityConstructor,
     condition: DataFilter<T>,
   ): DataFilter<T> {
-    const [fieldPath] = Object.keys(condition ?? {});
+    const fields = Object.keys(condition ?? {});
+    // a row with conditions on several fields stays as it is, like in {@link fromStoredCondition}:
+    // wrapping it in `$elemMatch` would turn the conditions on other fields into conditions on the entry
+    const fieldPath = fields.length === 1 ? fields[0] : undefined;
     const embedded =
       fieldPath &&
       resolveEmbeddedField(this.schemaService, entityType, fieldPath);

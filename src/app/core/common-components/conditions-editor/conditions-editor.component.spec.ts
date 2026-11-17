@@ -827,18 +827,24 @@ describe("ConditionsEditorComponent", () => {
       expect(component.conditionsArray()).toEqual([stored]);
     });
 
-    it("keeps a row with a condition on an entry and on another field as stored", () => {
-      const row = { log: { $elemMatch: { status: "M" } }, name: "Ann" };
-      component.conditions = { $or: [row] };
-      component.ngOnInit();
-      mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    it.each([
+      [{ log: { $elemMatch: { status: "M" } }, name: "Ann" }],
+      [{ "log.status": "M", name: "Ann" }],
+    ])(
+      "keeps a row with conditions on an embedded field and on another field as stored: %j",
+      (row) => {
+        component.conditions = { $or: [row] };
+        component.ngOnInit();
+        mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
 
-      component.openJsonEditor();
+        component.openJsonEditor();
 
-      expect(mockDialog.open).toHaveBeenCalledWith(JsonEditorDialogComponent, {
-        data: { value: { $or: [row] }, closeButton: true },
-      });
-    });
+        expect(mockDialog.open).toHaveBeenCalledWith(
+          JsonEditorDialogComponent,
+          { data: { value: { $or: [row] }, closeButton: true } },
+        );
+      },
+    );
 
     it("offers the properties of embedded fields also when the record type is chosen later", () => {
       const editor = TestBed.createComponent(ConditionsEditorComponent);
