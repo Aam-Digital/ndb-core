@@ -29,7 +29,6 @@ import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FilterService } from "../../../filter/filter.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { AlertService } from "../../../alerts/alert.service";
 import { LocaleTextPipe } from "../../../language/locale-text.pipe";
 
 /**
@@ -61,7 +60,6 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
   private filterService = inject(FilterService);
-  private alertService = inject(AlertService);
   private automatedFieldUpdateConfigService = inject(
     AutomatedFieldUpdateConfigService,
   );
@@ -150,20 +148,11 @@ export class EntityFormComponent<T extends Entity = Entity> {
           filter((event) => event instanceof EntityFormSavedEvent),
         )
         .subscribe(async (event: EntityFormSavedEvent) => {
-          try {
-            await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
-              event.newEntity,
-              event.previousEntity,
-            );
-          } catch (error) {
-            Logging.error(
-              "EntityForm could not update the linked records after saving",
-              error,
-            );
-            this.alertService.addDanger(
-              $localize`The linked records could not be updated.`,
-            );
-          }
+          // reports and shows a failure itself
+          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+            event.newEntity,
+            event.previousEntity,
+          );
         });
       onCleanup(() => sub.unsubscribe());
     });

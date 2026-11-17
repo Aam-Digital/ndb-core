@@ -15,6 +15,7 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { EntityRegistry } from "../database-entity.decorator";
 import { EntityConstructor } from "../model/entity";
 import { EntitySchema } from "../schema/entity-schema";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * Dropdown field offering all fields of a given entity type
@@ -114,6 +115,10 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
           (!fieldSchema.isInternalField && !!fieldSchema.label) ||
           (this.showInternalIdField() && prop === "_id"),
       )
-      .map(([name, fieldSchema]) => ({ ...fieldSchema, id: name }));
+      .map(([name, fieldSchema]) => ({
+        ...fieldSchema,
+        id: name,
+        label: resolveLocaleText(fieldSchema.label),
+      }));
   }
 }

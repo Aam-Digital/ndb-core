@@ -193,7 +193,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } catch (err) {
       // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
       const failure = toTypedDatabaseError(err);
-      this.handleSyncFailure(failure, []);
+      await this.handleSyncFailure(failure, []);
       throw failure;
     }
     if (isFirstSync) {
@@ -272,7 +272,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
-      .catch((err) => {
+      .catch(async (err) => {
         // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
         if (this.isNotificationsDatabase() && err?.status === 404) {
           Logging.debug(
@@ -285,7 +285,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
         // the replication fails with a copy of the error, which loses the class of a typed error
         const failure = toTypedDatabaseError(err);
-        this.handleSyncFailure(failure, lastSyncedDocIds);
+        await this.handleSyncFailure(failure, lastSyncedDocIds);
         throw failure;
       })
       .finally(() => {
@@ -319,12 +319,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Log a failed sync according to its cause (only once: callers like
    * {@link ensureSynced} rely on this) and mark the sync state as failed.
    */
-  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
-    this.logSyncFailure(err, lastSyncedDocIds);
+  private async handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    await this.logSyncFailure(err, lastSyncedDocIds);
     this.syncState.next(SyncState.FAILED);
   }
 
-  private logSyncFailure(err: any, lastSyncedDocIds: string[]) {
+  private async logSyncFailure(err: any, lastSyncedDocIds: string[]) {
     const context = {
       db: this.dbName,
       ...lastSyncedBatchContext(lastSyncedDocIds),
@@ -340,10 +340,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     // reported (with the offer to reset the local data) by the recovery service
     const reportedAsCorruption =
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "sync failed: likely multi-tab IndexedDB corruption",
         context,
+        this.pouchDB,
       );
     if (reportedAsCorruption) {
       return;
@@ -357,10 +358,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
     try {
       return await super.put(object, forceOverwrite);
     } catch (err) {
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "put failed: likely multi-tab IndexedDB corruption",
         { db: this.dbName },
+        this.pouchDB,
       );
       throw err;
     }
@@ -370,11 +372,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions,
   ): Promise<any> {
-    return super.query(fun, options).catch((err) => {
-      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+    return super.query(fun, options).catch(async (err) => {
+      await this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
         "query failed: likely multi-tab IndexedDB corruption",
         { db: this.dbName },
+        this.pouchDB,
       );
       throw err;
     });

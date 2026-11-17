@@ -8,6 +8,10 @@ import { LocalDeviceResetService } from "../local-device-reset.service";
 import { Logging } from "../../logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
+import {
+  hasOutdatedSequenceCounter,
+  isAbortedTransaction,
+} from "./indexeddb-sequence-check";
 
 /**
  * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
@@ -97,14 +101,24 @@ This can happen after using multiple tabs in parallel.` +
    *   occurrences of the problem in one issue (see `core/logging/README.md`)
    * @param context which database and other varying details, reported as
    *   structured data alongside the message rather than interpolated into it
+   * @param localDb the local database that failed: checked for the corruption
+   *   if PouchDB only reports an aborted transaction (see `indexeddb-sequence-check.ts`)
    * @returns whether it was a known corruption (and so is reported)
    */
-  handleKnownMultiTabCorruption(
+  async handleKnownMultiTabCorruption(
     err: unknown,
     logMessage: string,
     context?: Record<string, unknown>,
-  ): boolean {
-    if (!isKnownMultiTabDatabaseCorruption(err)) {
+    localDb?: PouchDB.Database,
+  ): Promise<boolean> {
+    if (
+      !isKnownMultiTabDatabaseCorruption(err) &&
+      !(
+        localDb &&
+        isAbortedTransaction(err) &&
+        (await hasOutdatedSequenceCounter(localDb))
+      )
+    ) {
       return false;
     }
     Logging.warn(logMessage, err, ...(context ? [context] : []));
@@ -122,6 +136,7 @@ This can happen after using multiple tabs in parallel.` +
  * Only signals specific to this corruption are matched, as it leads to offering
  * a reset of the local data: a "transaction was aborted" or an `unknown_error`
  * also follows other failures, e.g. a document too deeply nested to store.
+ * For those, the database itself is checked (see `hasOutdatedSequenceCounter`).
  */
 export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   const text = errorToText(error).toLowerCase();

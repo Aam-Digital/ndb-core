@@ -8,6 +8,9 @@ import {
 import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
+import { IDBFactory, IDBKeyRange } from "fake-indexeddb";
+import { PouchDatabase } from "./pouch-database";
+import { Logging } from "../../logging/logging.service";
 
 describe("PouchdbCorruptionRecoveryService", () => {
   let service: PouchdbCorruptionRecoveryService;
@@ -96,6 +99,89 @@ describe("PouchdbCorruptionRecoveryService", () => {
     expect(localStorage.getItem("foo")).toBe("bar");
     expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
+  });
+
+  describe("detecting an outdated sequence counter of the local database", () => {
+    const originalIndexedDB = globalThis.indexedDB;
+    const originalIDBKeyRange = globalThis.IDBKeyRange;
+
+    beforeEach(() => {
+      // a real IndexedDB for PouchDB's "indexeddb" adapter (jsdom has none)
+      globalThis.indexedDB = new IDBFactory();
+      globalThis.IDBKeyRange = IDBKeyRange;
+      // the adapter logs the aborted transaction ("Database has a global failure")
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
+      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+      confirmationDialog.getConfirmation.mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      globalThis.indexedDB = originalIndexedDB;
+      globalThis.IDBKeyRange = originalIDBKeyRange;
+      vi.restoreAllMocks();
+    });
+
+    async function openLocalDb(name: string): Promise<PouchDB.Database> {
+      const db = new PouchDatabase(name);
+      db.init();
+      return db.getPouchDB();
+    }
+
+    async function createLocalDbWithDocs(name: string, count: number) {
+      const db = await openLocalDb(name);
+      for (let i = 0; i < count; i++) {
+        await db.put({ _id: `Child:${i}` });
+      }
+      return db;
+    }
+
+    /** What a tab writing its outdated metadata leaves behind (see `indexeddb-sequence-check.ts`). */
+    async function setStoredSequenceCounter(name: string, seq: number) {
+      const idb = await new Promise<IDBDatabase>((resolve) => {
+        const openRequest = indexedDB.open("_pouch_" + name);
+        openRequest.onsuccess = () => resolve(openRequest.result);
+      });
+      const txn = idb.transaction("meta", "readwrite");
+      const store = txn.objectStore("meta");
+      store.get("meta").onsuccess = (e) =>
+        store.put({ ...(e.target as IDBRequest).result, seq });
+      await new Promise((resolve) => (txn.oncomplete = resolve));
+      idb.close();
+    }
+
+    it("reports a write failing on an outdated sequence counter as corruption", async () => {
+      await (await createLocalDbWithDocs("corrupted", 5)).close();
+      await setStoredSequenceCounter("corrupted", 2);
+      const db = await openLocalDb("corrupted");
+
+      // PouchDB rejects every write with nothing but a generic aborted transaction
+      const writeError = await db.put({ _id: "Child:new" }).catch((e) => e);
+      expect(writeError).toMatchObject({
+        name: "unknown_error",
+        reason: "transaction was aborted",
+      });
+
+      await expect(
+        service.handleKnownMultiTabCorruption(writeError, "put failed", {}, db),
+      ).resolves.toBe(true);
+      expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not report an aborted transaction of a consistent database", async () => {
+      const db = await createLocalDbWithDocs("consistent", 5);
+      // e.g. a document too deeply nested to store aborts the transaction as well
+      const writeError = {
+        name: "unknown_error",
+        message: "Database encountered an unknown error",
+        reason: "transaction was aborted",
+        status: 500,
+      };
+
+      await expect(
+        service.handleKnownMultiTabCorruption(writeError, "put failed", {}, db),
+      ).resolves.toBe(false);
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    });
   });
 });
 

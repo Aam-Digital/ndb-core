@@ -60,7 +60,7 @@ const mockTemplateExportService = {
 };
 
 const mockTemplateExportApiService = {
-  generatePdfFromTemplate: (template: TemplateExport, entity: any) => {
+  generateFileFromTemplate: (template: TemplateExport, entity: any) => {
     // Simulate successful generation
     return of({
       file: new Blob(["mock pdf content"], { type: "application/pdf" }),
@@ -82,7 +82,7 @@ const mockTemplateExportApiService = {
 };
 
 const mockTemplateExportApiServiceError = {
-  generatePdfFromTemplate: (_template: TemplateExport, _entity: any) =>
+  generateFileFromTemplate: (_template: TemplateExport, _entity: any) =>
     throwError(() => new Error("Failed to generate PDF")),
   generateBatchFromTemplate: (
     _template: TemplateExport,
@@ -92,8 +92,8 @@ const mockTemplateExportApiServiceError = {
 };
 
 const mockDownloadService = {
-  triggerDownload: (file: Blob, type: string, filename: string) => {
-    console.log(`Download triggered: ${filename}.${type}`);
+  triggerFileDownload: (_file: Blob, filename: string) => {
+    console.log(`Download triggered: ${filename}`);
   },
 };
 

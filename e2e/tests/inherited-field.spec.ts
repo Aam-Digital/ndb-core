@@ -16,6 +16,7 @@ const CENTER_BARABAZAR = { id: "C3", label: "Barabazar" };
 const CHILD_NAME = "<LEVELS CHILD>";
 const SCHOOL_NAME = "<LEVELS SCHOOL>";
 const PARENT_SCHOOL_NAME = "<LEVELS PARENT SCHOOL>";
+const PARENT_SCHOOL_CHILD_NAME = "<LEVELS CHILD OF PARENT SCHOOL>";
 
 test("Update related records over several levels: child, school and parent school", async ({
   page,
@@ -23,10 +24,13 @@ test("Update related records over several levels: child, school and parent schoo
   // In the all-features config, the school collects the centers of its children ("enum multi")
   // and its parent school collects the centers of its schools ("All centers").
   // A school's "Date Range Field" is checked against the one of its parent school.
+  // A school's "Entity Multi Field" only offers the children selected in the one of its parent school.
+  const parentSchoolChild = generateChild({ name: PARENT_SCHOOL_CHILD_NAME });
   const parentSchool = createEntityOfType("School", "levels-parent-school");
   Object.assign(parentSchool, {
     name: PARENT_SCHOOL_NAME,
     allCenters: [CENTER_ALIPORE],
+    entityMultiField: [parentSchoolChild.getId()],
     dateRangeField: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
   });
   const school = createEntityOfType("School", "levels-school");
@@ -40,9 +44,18 @@ test("Update related records over several levels: child, school and parent schoo
     },
   });
   const child = generateChild({ name: CHILD_NAME });
-  Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    center: CENTER_ALIPORE,
+  });
 
-  await loadApp(page, [...generateUsers(), child, school, parentSchool]);
+  await loadApp(page, [
+    ...generateUsers(),
+    child,
+    parentSchoolChild,
+    school,
+    parentSchool,
+  ]);
 
   // change the center of the child
   await page.getByRole("navigation").getByText("Children").click();
@@ -110,4 +123,108 @@ test("Update related records over several levels: child, school and parent schoo
   await expect(periodWarning).toHaveAccessibleDescription(
     `Outside the period of ${PARENT_SCHOOL_NAME}`,
   );
+
+  // the school's "Entity Multi Field" only offers the children selected in the one of its parent school
+  await page.getByRole("button", { name: "Edit" }).click();
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+  await page
+    .locator("#entity-field__entityMultiField")
+    .locator(".fa-caret-down")
+    .click();
+  await expect(
+    page.getByRole("option", { name: PARENT_SCHOOL_CHILD_NAME }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: CHILD_NAME }),
+  ).not.toBeVisible();
+  // and offers the other children on request
+  await page.getByText(/not matching the selection conditions/).click();
+  await expect(page.getByRole("option", { name: CHILD_NAME })).toBeVisible();
+});
+
+const DOCS_CHILD_NAME = "<DOCS CHILD>";
+const DOCS_SCHOOL_NAME = "<DOCS SCHOOL>";
+
+test("Collect the embedded entries of sub-records in their parent record", async ({
+  page,
+}) => {
+  // In the all-features config, a school collects the "Identification Documents" of its children
+  // ("Identification Documents of Children": a schema-embed-array with aggregation "add").
+  const school = createEntityOfType("School", "docs-school");
+  Object.assign(school, { name: DOCS_SCHOOL_NAME });
+  const child = generateChild({ name: DOCS_CHILD_NAME });
+  Object.assign(child, {
+    linkedSchool: school.getId(),
+    identificationDocuments: [],
+  });
+
+  await loadApp(page, [...generateUsers(), child, school]);
+
+  const updateDialog = page.getByRole("dialog", {
+    name: /Update related records/,
+  });
+  const schoolDocsInDialog = updateDialog.locator(
+    "#entity-field__childrenIdDocuments",
+  );
+
+  // an entry added in the child's form is passed on to the school when the form is saved
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: DOCS_CHILD_NAME }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Manage entries" }).click();
+  const entriesDialog = page.getByRole("dialog", {
+    name: "Identification Documents",
+  });
+  await entriesDialog.getByRole("button", { name: "add entry" }).click();
+  const entryDialog = page.getByRole("dialog").last();
+  await entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("<FORM-DOC>");
+  await entryDialog.getByRole("button", { name: "Apply" }).click();
+  await entriesDialog.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+
+  await expect(schoolDocsInDialog).toContainText("1 entry");
+  await updateDialog
+    .getByRole("button", { name: "Update related records", exact: true })
+    .click();
+  await expect(updateDialog).not.toBeVisible();
+
+  // an entry added in the child's "Identification Documents" panel is passed on as well
+  await page
+    .getByRole("tab", { name: "Identification Documents", exact: true })
+    .click();
+  await page.getByRole("button", { name: "add entry" }).click();
+  const panelEntryDialog = page.getByRole("dialog");
+  await panelEntryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill("<PANEL-DOC>");
+  await panelEntryDialog
+    .getByRole("button", { name: "Save", exact: true })
+    .click();
+
+  await expect(schoolDocsInDialog).toContainText("2 entries");
+  await updateDialog
+    .getByRole("button", { name: "Update related records", exact: true })
+    .click();
+  await expect(updateDialog).not.toBeVisible();
+
+  // the school holds the entries of its child
+  await page.getByRole("navigation").getByText("Schools").click();
+  await page.getByRole("cell", { name: DOCS_SCHOOL_NAME }).click();
+  await page
+    .locator("#entity-field__childrenIdDocuments")
+    .getByRole("button", { name: "View entries" })
+    .click();
+  const schoolDocs = page.getByRole("dialog", {
+    name: "Identification Documents of Children",
+  });
+  await expect(
+    schoolDocs.getByRole("cell", { name: "<FORM-DOC>" }),
+  ).toBeVisible();
+  await expect(
+    schoolDocs.getByRole("cell", { name: "<PANEL-DOC>" }),
+  ).toBeVisible();
 });

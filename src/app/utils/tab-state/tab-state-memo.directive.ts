@@ -24,6 +24,10 @@ import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
  * </mat-tab-group>
  * ```
  *
+ * Navigating to another page without a tab index in the URL starts on the first tab,
+ * also if the router reuses the component (e.g. "go to details" of another record
+ * of the same type from a popup on a details page).
+ *
  * When tab groups are nested within the same route (e.g. an entity-details tab
  * group containing a component that itself uses a tab group), each must use a
  * distinct `tabIndexKey`. Otherwise they share the same query param and reset
@@ -59,6 +63,10 @@ export class TabStateMemoDirective implements OnInit {
       return;
     }
 
+    // The router updates its url before it creates the components of a navigation,
+    // so this already is the path of the page this tab group is created for.
+    let currentPath = this.getPath(this.router.url);
+
     // React to NavigationEnd (not just snapshot) so that navigating to
     // ?_tabIndex=N while already on this page also updates the tab.
     // startWith(null) covers the initial load synchronously.
@@ -68,11 +76,20 @@ export class TabStateMemoDirective implements OnInit {
         startWith(null),
         untilDestroyed(this),
       )
-      .subscribe((navigationEvent) => {
-        const potentialNextTabIndex = parseInt(
-          this.urlState.getUrlParam(this.tabIndexKey),
-          10,
-        );
+      .subscribe((navigationEvent: NavigationEnd | null) => {
+        const tabIndexParam = this.urlState.getUrlParam(this.tabIndexKey);
+        let potentialNextTabIndex = parseInt(tabIndexParam, 10);
+
+        const previousPath = currentPath;
+        if (navigationEvent) {
+          currentPath = this.getPath(navigationEvent.urlAfterRedirects);
+        }
+        if (tabIndexParam === null && currentPath !== previousPath) {
+          // The router reuses this component for another page of the same route
+          // (e.g. the details of another record): start on the first tab
+          // instead of keeping the tab of the previous page.
+          potentialNextTabIndex = 0;
+        }
         if (
           !Number.isNaN(potentialNextTabIndex) &&
           this.tab.selectedIndex !== potentialNextTabIndex
@@ -120,5 +137,13 @@ export class TabStateMemoDirective implements OnInit {
     }
 
     this.urlState.updateUrlParams({ [this.tabIndexKey]: String(value) });
+  }
+
+  /** The path of a URL, without query params and fragment. */
+  private getPath(url: string): string {
+    const urlTree = this.router.parseUrl(url);
+    urlTree.queryParams = {};
+    urlTree.fragment = null;
+    return this.router.serializeUrl(urlTree);
   }
 }

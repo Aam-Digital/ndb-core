@@ -13,7 +13,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import {
+  EntitySchemaService,
+  resolveTranslatableLabels,
+} from "app/core/entity/schema/entity-schema.service";
 import { InheritedValueButtonComponent } from "../../../features/inherited-field/inherited-value-button/inherited-value-button.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import {
@@ -107,6 +110,7 @@ export class EntityFieldEditComponent<
     result.editComponent =
       result.editComponent ??
       this.entitySchemaService.getComponent(result, "edit");
+    resolveTranslatableLabels(result);
     return result;
   });
 

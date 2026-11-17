@@ -690,6 +690,23 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Schools",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "School",
+                  "property": "contactPersons",
+                  "editable": false,
+                  "columns": [
+                    "name",
+                    "contactPersons.role"
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -816,7 +833,7 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId",
+                        "linkedSchool",
                         "projectSchool",
                         "projectPeriod"
                       ]
@@ -1404,7 +1421,7 @@
         "image": "photo",
         "fields": [
           "phone",
-          "schoolId",
+          "linkedSchool",
           "schoolClass"
         ]
       },
@@ -1431,7 +1448,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown",
               "valueMapping": {
                 "C1": "1",
@@ -1447,7 +1464,7 @@
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
         },
-        "schoolId": {
+        "linkedSchool": {
           "dataType": "entity",
           "additional": "School",
           "label": "Linked School",
@@ -1460,7 +1477,7 @@
           "defaultValue": {
             "mode": "inherited-field",
             "config": {
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "enumDropdown"
             }
           },
@@ -1529,7 +1546,16 @@
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number"
+          "label": "Phone Number",
+          "validators": {
+            "pattern": {
+              "pattern": "^[+0-9 ()/-]+$",
+              "message": "Enter a valid phone number"
+            },
+            "_warningOnly": [
+              "pattern"
+            ]
+          }
         },
         "address": {
           "dataType": "location",
@@ -1634,7 +1660,7 @@
             "mode": "inherited-field",
             "config": {
               "sourceReferenceEntity": "Child",
-              "sourceReferenceField": "schoolId",
+              "sourceReferenceField": "linkedSchool",
               "sourceValueField": "center",
               "aggregation": "add"
             }
@@ -1762,9 +1788,19 @@
         "entityMultiField": {
           "id": "entityMultiField",
           "label": "Entity Multi Field",
+          "description": "Only offers the children linked in \"Entity Multi Field\" of the Parent school (if one is selected)",
           "dataType": "entity",
           "isArray": true,
-          "additional": "Child"
+          "additional": "Child",
+          "validators": {
+            "selectionCondition": {
+              "_id": {
+                "$in": [
+                  "$current_record.parentSchool.entityMultiField"
+                ]
+              }
+            }
+          }
         },
         "percentageField": {
           "id": "percentageField",
@@ -1834,6 +1870,54 @@
               "label": "embedded item period"
             }
           }
+        },
+        "contactPersons": {
+          "id": "contactPersons",
+          "label": "Contact Persons",
+          "dataType": "schema-embed-array",
+          "additional": {
+            "user": {
+              "dataType": "entity",
+              "additional": "User",
+              "label": "User"
+            },
+            "role": {
+              "dataType": "string",
+              "label": "Role"
+            }
+          }
+        },
+        "childrenIdDocuments": {
+          "id": "childrenIdDocuments",
+          "label": "Identification Documents of Children",
+          "description": "Collects the Identification Documents of all children linked to this school",
+          "dataType": "schema-embed-array",
+          "additional": {
+            "documentType": {
+              "dataType": "string",
+              "label": "Document Type"
+            },
+            "documentNumber": {
+              "dataType": "string",
+              "label": "Document Number"
+            },
+            "issueDate": {
+              "dataType": "date",
+              "label": "Issue Date",
+              "validators": {
+                "readonlyAfterSet": true
+              }
+            }
+          },
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "Child",
+              "sourceReferenceField": "linkedSchool",
+              "sourceValueField": "identificationDocuments",
+              "aggregation": "add"
+            }
+          }
         }
       },
       "hasPII": false
@@ -1891,6 +1975,7 @@
                         "childrenCenter",
                         "parentSchool",
                         "allCenters",
+                        "childrenIdDocuments",
                         "numberField",
                         "longTextField",
                         "percentageField",
@@ -1926,7 +2011,8 @@
                         "eventAttendanceField",
                         "eventAttendanceMapField",
                         "templateExportFileField",
-                        "embeddedArrayOfObjects"
+                        "embeddedArrayOfObjects",
+                        "contactPersons"
                       ]
                     }
                   ]

@@ -122,7 +122,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
@@ -157,11 +157,11 @@ describe("TemplateExportApiService", () => {
     );
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "My Welcome Letter",
+      filename: "My Welcome Letter.pdf",
       file: mockResponse.body,
     });
   });
@@ -180,11 +180,11 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "My Welcome Letter",
+      filename: "My Welcome Letter.pdf",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -193,6 +193,39 @@ describe("TemplateExportApiService", () => {
         convertTo: "pdf",
         data: dataEntity,
       },
+      expect.any(Object),
+    );
+  });
+
+  it("should request the given file format instead of a PDF", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "My Welcome Letter";
+    const dataList = [{ name: "A" }, { name: "B" }];
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    const result = await lastValueFrom(
+      service.generateFileFromTemplate(templateEntity, dataList[0], "docx"),
+    );
+    await lastValueFrom(
+      service.generateBatchFromTemplate(
+        templateEntity,
+        dataList,
+        "zip",
+        "docx",
+      ),
+    );
+
+    expect(result.filename).toBe("My Welcome Letter.docx");
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render/" + templateEntity.getId(),
+      { convertTo: "docx", data: dataList[0] },
+      expect.any(Object),
+    );
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render-batch/" + templateEntity.getId() + "?mode=zip",
+      { convertTo: "docx", data: dataList },
       expect.any(Object),
     );
   });
@@ -209,7 +242,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
 
     await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -233,7 +266,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
 
     await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(mockApiResponse).toHaveBeenCalledWith(

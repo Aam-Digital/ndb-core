@@ -1,0 +1,8 @@
+// Strikes through the values shown in a component, e.g. the values that a change removes.
+// Include it in the selector of the element that holds the removed values.
+@mixin removed-values {
+  // on each element, as the line of a parent does not go through values shown as a block (e.g. a record, a chip)
+  app-entity-field-view ::ng-deep * {
+    text-decoration: line-through;
+  }
+}

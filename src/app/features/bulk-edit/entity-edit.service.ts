@@ -10,6 +10,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
 import { asArray } from "#src/app/utils/asArray";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -21,6 +22,9 @@ export class EntityEditService extends CascadingEntityAction {
   private readonly matDialog = inject(MatDialog);
   private readonly entityActionsService = inject(EntityActionsService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   /**
    * Shows a confirmation dialog to the user
@@ -45,12 +49,18 @@ export class EntityEditService extends CascadingEntityAction {
     if (action) {
       const result = await this.editEntity(action, entitiesToEdit);
       await this.bulkOperationState.waitForBulkOperationToFinish();
+      // as editing a single record does; undo also reverts the related records that were updated
+      const updatedRelatedRecords =
+        await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+          result.newEntities,
+          result.originalEntities,
+        );
       this.entityActionsService.showSnackbarConfirmationWithUndo(
         this.entityActionsService.generateMessageForConfirmationWithUndo(
           entities,
           $localize`:Entity action confirmation message verb:edited`,
         ),
-        result.originalEntities,
+        [...result.originalEntities, ...updatedRelatedRecords],
       );
     }
     return true;

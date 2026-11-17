@@ -1,6 +1,6 @@
 /**
- * All validator names supported in a {@link FormValidatorConfig}
- * (also used to validate the config when an admin saves it).
+ * The keys of the validators of the core module in a {@link FormValidatorConfig},
+ * to type configs written in code. Each is implemented by a registered `FieldValidator`.
  */
 export const DYNAMIC_VALIDATORS = [
   /** type: number */
@@ -36,6 +36,11 @@ export const DYNAMIC_VALIDATORS = [
    * (with the "any" combinator, `$or`, the whole condition then is not applied).
    * The same applies if there is no single record, like in bulk edit.
    *
+   * A placeholder can also refer to a field of a record that the edited record links to (one level only),
+   * like `"$current_record.parentAction.locations"`: the values of all records linked in `parentAction`.
+   * For example `{ "_id": { "$in": ["$current_record.parentAction.locations"] } }` only offers the locations of the parent.
+   * A linked record that cannot be loaded (e.g. without read permission) counts as not linked.
+   *
    * Only applies to a field referencing a single record type and edited with the entity dropdown
    * (or an edit component using it), not if a form layout sets another `editComponent`.
    * A `schema-embed` field (e.g. `attendance`) takes it in the config of its embedded
@@ -57,6 +62,9 @@ export const DYNAMIC_VALIDATORS = [
  * when a form is invalid
  */
 export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
+
+/** key of the setting in a {@link FormValidatorConfig} listing the validators that are only a warning */
+export const WARNING_ONLY_KEY = "_warningOnly";
 
 /**
  * the validators config. This is an object where the key
@@ -88,6 +96,13 @@ export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
  */
 export type FormValidatorConfig = {
   [key in DynamicValidator]?: any;
+} & {
+  /**
+   * keys of the validators of this config whose errors are only a warning:
+   * the field shows the error, but users can still save after confirming it
+   * (keys starting with "_" are settings, not validators)
+   */
+  _warningOnly?: string[];
 };
 
 /** config of the `withinParent` validator (for "date-range" fields) */

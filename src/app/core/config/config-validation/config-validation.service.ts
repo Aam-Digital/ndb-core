@@ -4,8 +4,15 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
 import { DefaultValueStrategy } from "../../default-values/default-value-strategy.interface";
-import { DYNAMIC_VALIDATORS } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { DynamicValidatorsService } from "../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { ConfigValidationContext } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
+import {
+  FormValidatorConfig,
+  WARNING_ONLY_KEY,
+} from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { asArray } from "#src/app/utils/asArray";
 import { resolveIconDefinition } from "../../common-components/fa-dynamic-icon/fa-icon-utils";
 import { MenuItem } from "../../ui/navigation/menu-item";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -13,9 +20,6 @@ import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
 import { Config } from "../config";
 import { resolveLocaleText } from "../../language/active-locale";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
-import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -105,11 +109,15 @@ export class ConfigValidationService {
       });
     }
 
+    const context: ConfigValidationContext = {
+      entityType: configId.substring(ENTITY_CONFIG_PREFIX.length),
+      fieldsOf: (entityType) => this.getFields(entityType, config),
+    };
     for (const [field, schema] of Object.entries(
       entityConfig?.attributes ?? {},
     )) {
       problems.push(
-        ...this.validateField(schema, config).map((message) => ({
+        ...this.validateField(schema, config, context).map((message) => ({
           configId,
           field,
           message,
@@ -119,9 +127,39 @@ export class ConfigValidationService {
     return problems;
   }
 
+  /**
+   * The fields of a record type as the app sets them up from the config (see `EntityConfigService`):
+   * the fields of its code, each replaced by a field of the same id in the checked config.
+   * `undefined` for an unknown record type.
+   */
+  private getFields(
+    entityType: string,
+    config: Record<string, any>,
+  ): Map<string, EntitySchemaField> | undefined {
+    const registry = this.injector.get(EntityRegistry);
+    const entityConfig: EntityConfig | undefined =
+      config[ENTITY_CONFIG_PREFIX + entityType];
+    if (!registry.has(entityType) && !entityConfig) {
+      return undefined;
+    }
+
+    // the check runs before the saved config is applied: a type new in it starts from the type it extends
+    const codeType = registry.has(entityType)
+      ? entityType
+      : entityConfig.extends;
+    const fields = new Map(
+      registry.has(codeType) ? registry.get(codeType).schema : Entity.schema,
+    );
+    for (const [id, field] of Object.entries(entityConfig?.attributes ?? {})) {
+      fields.set(id, field);
+    }
+    return fields;
+  }
+
   private validateField(
     schema: EntitySchemaField,
     config: Record<string, any>,
+    context: ConfigValidationContext,
   ): string[] {
     if (!schema || typeof schema !== "object") {
       return [];
@@ -140,17 +178,7 @@ export class ConfigValidationService {
       );
     }
 
-    for (const validator of Object.keys(schema.validators ?? {})) {
-      if (!(DYNAMIC_VALIDATORS as readonly string[]).includes(validator)) {
-        problems.push(
-          validator === "regex"
-            ? $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`
-            : $localize`:config validation:Unknown validator "${validator}:validator:", it is ignored.`,
-        );
-      }
-    }
-
-    problems.push(...this.validateSelectionCondition(schema));
+    problems.push(...this.validateValidators(schema, context));
 
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
@@ -163,36 +191,56 @@ export class ConfigValidationService {
     return problems;
   }
 
-  /** a `selectionCondition` only applies to a field linking to exactly one record type (see `DYNAMIC_VALIDATORS`) */
-  private validateSelectionCondition(schema: EntitySchemaField): string[] {
-    if (!schema.validators?.selectionCondition) {
-      return [];
-    }
-    if (schema.dataType !== EntityDatatype.dataType) {
-      return [
-        this.isEmbeddingDataType(schema.dataType)
-          ? $localize`:config validation:A selection filter ("selectionCondition") does not apply to a field of embedded entries, it is ignored. Set it in the validators of the inner field linking to records instead (e.g. "additional.participant.validators").`
-          : $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to records, it is ignored.`,
-      ];
-    }
-    if (asArray(schema.additional ?? []).length !== 1) {
-      return [
-        $localize`:config validation:A selection filter ("selectionCondition") only applies to a field linking to one record type, it is ignored.`,
-      ];
-    }
-    return [];
+  private validateValidators(
+    schema: EntitySchemaField,
+    context: ConfigValidationContext,
+  ): string[] {
+    const rules = this.injector.get(DynamicValidatorsService);
+    const datatype = this.injector
+      .get(EntitySchemaService)
+      .getDatatypeOrDefault(schema.dataType);
+    return Object.entries(schema.validators ?? {}).flatMap(([key, value]) => {
+      if (key === WARNING_ONLY_KEY) {
+        return this.validateWarningOnly(schema.validators, rules);
+      }
+      const rule = rules.rules.get(key);
+      if (!rule) {
+        return [
+          key === "regex"
+            ? $localize`:config validation:Unknown validator "regex", it is ignored. Use "pattern" instead.`
+            : $localize`:config validation:Unknown validator "${key}:validator:", it is ignored.`,
+        ];
+      }
+      const problems = rule.validateConfig(value, schema, datatype, context);
+      // without a dataType (e.g. overriding a field of the record type's code) the type is not known here
+      if (
+        problems.length === 0 &&
+        schema.dataType &&
+        !rule.isSwitchedOff(value) &&
+        !rule.appliesTo(datatype, schema)
+      ) {
+        problems.push(
+          $localize`:config validation:The validator "${key}:validator:" does not fit the type of this field ("${schema.dataType}:dataType:"). It is removed once an admin edits the field's validation settings.`,
+        );
+      }
+      return problems;
+    });
   }
 
-  private isEmbeddingDataType(dataType: string | undefined): boolean {
-    try {
-      return (
-        this.injector
-          .get(EntitySchemaService)
-          .getDatatypeOrDefault(dataType, false) instanceof SchemaEmbedDatatype
+  /** `_warningOnly` lists validators of the field that can be only a warning */
+  private validateWarningOnly(
+    validators: FormValidatorConfig,
+    rules: DynamicValidatorsService,
+  ): string[] {
+    return asArray(validators[WARNING_ONLY_KEY] ?? [])
+      .filter(
+        (key) =>
+          !(key in validators) || rules.rules.get(key)?.warning !== "optional",
+      )
+      .map(
+        (key) =>
+          $localize`:config validation:"${key}:validator:" is listed in "_warningOnly", but is not a validator of this field that can be only a warning. It is ignored there.`,
       );
-    } catch {
-      return false;
-    }
   }
 
   private validateMenuItems(

@@ -615,13 +615,13 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Existing Label 1");
     await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
 
     labelControl.setValue("existing label 2");
     await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
   });
 
@@ -653,7 +653,7 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Another Label");
     await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
   });
 
@@ -680,19 +680,19 @@ describe("AdminEntityFieldComponent", () => {
     component.fieldIdForm.setValue("testField");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
 
     component.fieldIdForm.setValue("TestField");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
 
     component.fieldIdForm.setValue("TESTFIELD");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: expect.any(String),
+      uniqueProperty: { errorMessage: expect.any(String) },
     });
   });
 

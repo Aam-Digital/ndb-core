@@ -5,7 +5,7 @@ import { differenceWith, isEqual, uniq } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import { addAndRemoveValues } from "../add-missing-values";
 import { isEmptyValue } from "#src/app/utils/is-empty-value";
-import { isSameValue } from "../get-common-value";
+import { getCommonValue, isSameValue } from "../get-common-value";
 import {
   DefaultValueConfigInheritedField,
   isCollectingFromLinkedRecords,
@@ -17,18 +17,16 @@ import {
   EnteredValue,
   UpdateTrigger,
 } from "./automated-field-update.types";
-import {
-  ChangeSet,
-  ChangeSetState,
-  getChangedFields,
-  isLinkedTo,
-} from "./change-set";
+import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
 
 /** Number of levels above the changed entity that are included in one update dialog. */
 export const MAX_HIERARCHY_LEVELS = 10;
 
-/** Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop) */
-const MAX_STEPS = 1000;
+/**
+ * Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop):
+ * how often the same record is calculated again, regardless of how many records are reached in total.
+ */
+export const MAX_CALCULATIONS_PER_RECORD = 1000;
 
 /** An entity whose fields changed, so that the entities based on them have to be calculated (again) */
 export interface QueuedChange {
@@ -132,9 +130,10 @@ function getLinkedIds(
  * It collects its result while it runs, so use a new instance for each calculation.
  */
 export class AffectedEntitiesCalculation {
-  private readonly changedFields: string[];
+  /** the fields of each changed record that are passed on, by the id of the record */
+  private readonly changedFields: Map<string, string[]>;
 
-  /** the changed entity and the entities with a suggested value, which the entities above are calculated from */
+  /** the changed entities and the entities with a suggested value, which the entities above are calculated from */
   private readonly changeSet: ChangeSet;
 
   /** the affected entities found so far, by entity id and field */
@@ -147,24 +146,33 @@ export class AffectedEntitiesCalculation {
   private readonly loadedRecords = new Map<string, Promise<Entity[]>>();
 
   /**
+   * The suggestions calculated so far, by entity id and field, with the version of the change set they are based on.
+   * Many changed records can lead to the same entity (e.g. all children of a school in a bulk edit),
+   * which is only calculated again once the change set changed.
+   */
+  private readonly suggestions = new Map<
+    string,
+    { version: number; suggestion: Suggestion | undefined }
+  >();
+
+  /**
    * @param context the rules, records and permissions that the calculation works with
-   * @param trigger the change that starts the update
+   * @param triggers the changes that start the update (several for a bulk edit)
    * @param enteredValues values the user entered for affected entities (database format),
    *   which the entities above are based on instead of the suggestions
    */
   constructor(
     private readonly context: AffectedEntitiesContext,
-    private readonly trigger: UpdateTrigger,
+    private readonly triggers: UpdateTrigger[],
     private readonly enteredValues: EnteredValue[] = [],
   ) {
-    this.changedFields = trigger.fieldId
-      ? [trigger.fieldId]
-      : getChangedFields(trigger.entity, trigger.before);
-    this.changeSet = new ChangeSet(
-      trigger.entity,
-      trigger.before,
-      this.changedFields,
+    this.changedFields = new Map(
+      triggers.map((trigger) => [
+        trigger.entity.getId(),
+        trigger.changedFields,
+      ]),
     );
+    this.changeSet = new ChangeSet(triggers);
   }
 
   /**
@@ -172,21 +180,27 @@ export class AffectedEntitiesCalculation {
    * @return the affected entities, ordered by level
    */
   async run(): Promise<AffectedEntity[]> {
-    const queue: QueuedChange[] = [
-      {
-        entity: this.trigger.entity,
+    const queue: QueuedChange[] = this.triggers.map(
+      ({ entity, changedFields, onlyLinkedEntities }) => ({
+        entity,
         level: 0,
-        changedFields: this.changedFields,
-        onlyLinkedEntities: !!this.trigger.fieldId,
-      },
-    ];
+        changedFields,
+        onlyLinkedEntities,
+      }),
+    );
 
-    let steps = 0;
+    const calculations = new Map<string, number>();
     while (queue.length > 0) {
-      if (steps++ >= MAX_STEPS) {
+      const id = queue[0].entity.getId();
+      const count = (calculations.get(id) ?? 0) + 1;
+      calculations.set(id, count);
+      if (count > MAX_CALCULATIONS_PER_RECORD) {
         Logging.warn(
-          "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
-          { entityType: this.trigger.entity.getType() },
+          "AutomatedFieldUpdateConfigService: Stopped looking for affected entities because a record was calculated too often",
+          {
+            entityType: this.triggers[0]?.entity.getType(),
+            changedRecords: this.triggers.length,
+          },
         );
         break;
       }
@@ -230,17 +244,16 @@ export class AffectedEntitiesCalculation {
     source: Entity,
     { level, sourceFieldId }: Pick<QueuedChange, "level" | "sourceFieldId">,
   ): Promise<boolean> {
-    // the field that was changed is never offered again, and the chain ends at an entity the user may not update
+    // a field that was changed is never offered again, and the chain ends at an entity the user may not update
     const isChangedField =
-      target.getId() === this.trigger.entity.getId() &&
-      this.changedFields.includes(rule.fieldId);
+      this.changedFields.get(target.getId())?.includes(rule.fieldId) ?? false;
     if (isChangedField || !this.context.canUpdate(target, rule.fieldId)) {
       return false;
     }
 
     const key = `${target.getId()}|${rule.fieldId}`;
     const existing = this.affectedEntities.get(key);
-    const suggestion = await this.suggestValue(target, rule, source);
+    const suggestion = await this.getSuggestion(key, target, rule, source);
     if (suggestion) {
       this.affectedEntities.set(key, {
         ...suggestion,
@@ -338,6 +351,23 @@ export class AffectedEntitiesCalculation {
     return true;
   }
 
+  /** The suggested value of the affected entity (see {@link suggestions}) */
+  private async getSuggestion(
+    key: string,
+    target: Entity,
+    affectedRule: AffectedRule,
+    source: Entity,
+  ): Promise<Suggestion | undefined> {
+    const version = this.changeSet.version;
+    const cached = this.suggestions.get(key);
+    if (cached?.version === version) {
+      return cached.suggestion;
+    }
+    const suggestion = await this.suggestValue(target, affectedRule, source);
+    this.suggestions.set(key, { version, suggestion });
+    return suggestion;
+  }
+
   /**
    * Calculate the suggested value of an affected entity from its linked records after the change.
    * @param target the affected entity as it is saved
@@ -356,7 +386,7 @@ export class AffectedEntitiesCalculation {
     } else if (isCollectingFromLinkedRecords(entityType.schema.get(fieldId))) {
       newValue = await this.loadCollectedValue(target, affectedRule);
     } else {
-      newValue = this.getValueOfChangedRecord(target, rule);
+      newValue = this.getValueOfChangedRecord(target, affectedRule);
     }
     return newValue
       ? this.toAffectedEntity(target, affectedRule, source, newValue)
@@ -421,21 +451,22 @@ export class AffectedEntitiesCalculation {
   }
 
   /**
-   * Get the new value of a field that takes the value of a linked record: the value of a changed record linking to it,
+   * Get the new value of a field that takes the value of a linked record: the value of the changed records linking to it,
    * if that value changed or the link is new (then only if there is a value, instead of clearing the existing one).
+   * If several changed records (e.g. of a bulk edit) pass on different values, the current value is kept.
    * @return undefined if no changed record passes on its value
    */
   private getValueOfChangedRecord(
     target: Entity,
-    rule: DefaultValueConfigInheritedField,
+    { rule, fieldId }: AffectedRule,
   ): NewValue | undefined {
-    const source = this.changeSet
+    const values = this.changeSet
       .changedRecordsLinkingTo(
         rule.sourceReferenceEntity,
         rule.sourceReferenceField,
         target.getId(),
       )
-      .find(
+      .filter(
         (record) =>
           this.changeSet.isChanged(record, rule.sourceValueField) ||
           (!isLinkedTo(
@@ -444,10 +475,19 @@ export class AffectedEntitiesCalculation {
             target.getId(),
           ) &&
             !isEmptyValue(this.context.calculateNewValue(record, rule))),
-      );
-    return source
-      ? { value: this.context.calculateNewValue(source, rule) }
-      : undefined;
+      )
+      .map((record) => this.context.calculateNewValue(record, rule));
+    if (values.length === 0) return undefined;
+
+    const { value, isConflict } = getCommonValue(values);
+    if (isConflict) {
+      return {
+        value: this.context.getDatabaseValue(target, fieldId),
+        noCommonValue: "conflict",
+      };
+    }
+    // if all of them cleared their value, the empty value as they pass it on
+    return { value: value ?? values[0] };
   }
 
   /**
