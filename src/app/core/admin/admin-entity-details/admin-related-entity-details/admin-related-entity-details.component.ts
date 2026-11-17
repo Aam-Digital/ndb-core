@@ -96,11 +96,15 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   }
 
   cancelChanges(): void {
+    const schemaChanged = this.hasSchemaChanged();
     this.entityConstructor.schema.clear();
     for (const [key, value] of this.originalSchema.entries()) {
       this.entityConstructor.schema.set(key, value);
     }
-    this.adminEntityService.entitySchemaUpdated.emit();
+    if (schemaChanged) {
+      // every listener resets its form editor, so only notify them about an actual change
+      this.adminEntityService.entitySchemaUpdated.emit();
+    }
     this.dialogRef.close();
   }
 

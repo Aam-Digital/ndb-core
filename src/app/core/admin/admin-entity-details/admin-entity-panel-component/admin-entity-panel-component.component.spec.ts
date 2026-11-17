@@ -6,13 +6,19 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { EventEmitter } from "@angular/core";
 import { Entity } from "app/core/entity/model/entity";
 import { DefaultDatatype } from "app/core/entity/default-datatype/default.datatype";
 import { SchemaEmbedArrayDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
 import {
   MatDialogMock,
   mockMatDialog,
@@ -120,15 +126,7 @@ describe("AdminEntityPanelComponentComponent", () => {
       } as any);
     });
 
-    it("offers only the inner fields of embedded entries linking the current entity type, without the link itself", () => {
-      expect(component.embeddedFieldColumns()).toEqual([
-        { id: "contactPersons.role", label: "Contact Persons -> Role" },
-      ]);
-    });
-
-    it("updates the offered columns when the schema of the related type is edited", () => {
-      component.embeddedFieldColumns();
-
+    function linkPartnersToTestEntity() {
       const partners = EmbedColumnsPanelTest.schema.get("partners");
       EmbedColumnsPanelTest.schema.set("partners", {
         ...partners,
@@ -137,6 +135,14 @@ describe("AdminEntityPanelComponentComponent", () => {
           contact: { dataType: "entity", additional: TestEntity.ENTITY_TYPE },
         },
       });
+    }
+
+    it("updates the offered columns when the schema of the related type is edited", () => {
+      expect(component.embeddedFieldColumns().map((c) => c.id)).toEqual([
+        "contactPersons.role",
+      ]);
+
+      linkPartnersToTestEntity();
       entitySchemaUpdated.emit();
 
       expect(component.embeddedFieldColumns().map((c) => c.id)).toEqual([
@@ -146,51 +152,153 @@ describe("AdminEntityPanelComponentComponent", () => {
       ]);
     });
 
-    it("offers only the inner fields of the embedded entries through which the section's property links the records", () => {
-      const partners = EmbedColumnsPanelTest.schema.get("partners");
-      EmbedColumnsPanelTest.schema.set("partners", {
-        ...partners,
-        additional: {
-          ...partners.additional,
-          contact: { dataType: "entity", additional: TestEntity.ENTITY_TYPE },
-        },
+    it.each([
+      [
+        undefined,
+        [
+          { id: "contactPersons.role", label: "Contact Persons -> Role" },
+          { id: "partners.role", label: "Partners -> Role" },
+          { id: "partners.organisation", label: "Partners -> organisation" },
+        ],
+      ],
+      [
+        "contactPersons",
+        [{ id: "contactPersons.role", label: "Contact Persons -> Role" }],
+      ],
+    ])(
+      "offers the inner fields of the entries linking the records, without the link itself (property: %s)",
+      (property, expected) => {
+        linkPartnersToTestEntity();
+        fixture.componentRef.setInput("config", {
+          component: "RelatedEntities",
+          config: { entityType: EmbedColumnsPanelTest.ENTITY_TYPE, property },
+        } as any);
+
+        expect(component.embeddedFieldColumns()).toEqual(expected);
+      },
+    );
+
+    describe("data structure dialog", () => {
+      beforeEach(() => {
+        fixture.componentRef.setInput("config", {
+          component: "RelatedEntities",
+          config: {
+            entityType: EmbedColumnsPanelTest.ENTITY_TYPE,
+            columns: ["name", "contactPersons.role", "other"],
+          },
+        } as any);
       });
-      fixture.componentRef.setInput("config", {
-        component: "RelatedEntities",
-        config: {
-          entityType: EmbedColumnsPanelTest.ENTITY_TYPE,
-          property: "contactPersons",
-        },
-      } as any);
 
-      expect(component.embeddedFieldColumns().map((c) => c.id)).toEqual([
-        "contactPersons.role",
-      ]);
-    });
+      it("keeps embedded columns out of the dialog", () => {
+        dialog.open.mockReturnValue(mockMatDialogRef());
 
-    it("keeps embedded columns out of the data structure dialog and at their position after applying it", () => {
-      fixture.componentRef.setInput("config", {
-        component: "RelatedEntities",
-        config: {
-          entityType: EmbedColumnsPanelTest.ENTITY_TYPE,
-          columns: ["name", "contactPersons.role", "other"],
+        component.openRelatedEntityDetailsConfig();
+
+        expect(dialog.open.mock.calls[0][1].data.currentColumns).toEqual([
+          "name",
+          "other",
+        ]);
+      });
+
+      it.each([
+        [
+          ["other", "name"],
+          ["other", "name", "contactPersons.role"],
+        ],
+        [
+          ["x", "y", "name", "other"],
+          ["x", "y", "name", "contactPersons.role", "other"],
+        ],
+        [["other"], ["contactPersons.role", "other"]],
+      ])(
+        "puts embedded columns back behind the column they followed (dialog result %j)",
+        (fieldIds, expected) => {
+          dialog.open.mockReturnValue(
+            mockMatDialogRef({ fieldIds, schemaChanged: false }),
+          );
+
+          component.openRelatedEntityDetailsConfig();
+
+          expect(component.config().config.columns).toEqual(expected);
         },
-      } as any);
-      dialog.open.mockReturnValue(
-        mockMatDialogRef({ fieldIds: ["other", "name"], schemaChanged: false }),
       );
 
-      component.openRelatedEntityDetailsConfig();
+      it("drops embedded columns whose field was removed in the dialog", () => {
+        const contactPersons =
+          EmbedColumnsPanelTest.schema.get("contactPersons");
+        dialog.open.mockImplementation(() => {
+          EmbedColumnsPanelTest.schema.set("contactPersons", {
+            ...contactPersons,
+            additional: { person: contactPersons.additional.person },
+          });
+          return mockMatDialogRef({
+            fieldIds: ["name", "other"],
+            schemaChanged: true,
+          });
+        });
 
-      expect(dialog.open.mock.calls[0][1].data.currentColumns).toEqual([
-        "name",
-        "other",
-      ]);
-      expect(component.config().config.columns).toEqual([
-        "other",
-        "contactPersons.role",
-        "name",
-      ]);
+        component.openRelatedEntityDetailsConfig();
+
+        expect(component.config().config.columns).toEqual(["name", "other"]);
+      });
     });
   });
+});
+
+// the "Edit data structure" dialog opened by the panel, tested here to share the spec environment
+describe("AdminRelatedEntityDetailsComponent", () => {
+  let component: AdminRelatedEntityDetailsComponent;
+  let schemaUpdateLabels: string[];
+
+  beforeEach(() => {
+    EmbedColumnsPanelTest.schema.set("role", {
+      dataType: "string",
+      label: "Role",
+    });
+    const entitySchemaUpdated = new EventEmitter<void>();
+    schemaUpdateLabels = [];
+    entitySchemaUpdated.subscribe(() =>
+      schemaUpdateLabels.push(
+        EmbedColumnsPanelTest.schema.get("role").label as string,
+      ),
+    );
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: MatDialogRef, useValue: mockMatDialogRef() },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            entityConstructor: EmbedColumnsPanelTest,
+            currentColumns: ["role"],
+          },
+        },
+        { provide: AdminEntityService, useValue: { entitySchemaUpdated } },
+      ],
+    });
+    component = TestBed.runInInjectionContext(
+      () => new AdminRelatedEntityDetailsComponent(),
+    );
+    component.ngOnInit();
+  });
+
+  afterEach(() => {
+    EmbedColumnsPanelTest.schema.delete("role");
+  });
+
+  it.each([
+    ["Function", ["Role"]],
+    ["Role", []],
+  ])(
+    "notifies schema listeners about the restored schema on cancel only if it was changed (edited label: %s)",
+    (editedLabel, expectedUpdates) => {
+      EmbedColumnsPanelTest.schema.set("role", {
+        dataType: "string",
+        label: editedLabel,
+      });
+
+      component.cancelChanges();
+
+      expect(schemaUpdateLabels).toEqual(expectedUpdates);
+    },
+  );
 });

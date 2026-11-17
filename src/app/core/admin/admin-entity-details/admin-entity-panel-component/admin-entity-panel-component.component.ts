@@ -73,9 +73,10 @@ export class AdminEntityPanelComponentComponent {
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
   private readonly schemaService = inject(EntitySchemaService);
+  private readonly adminEntityService = inject(AdminEntityService);
   // every (void) event must count as a change, so that it recomputes the dependent signals
   private readonly schemaUpdated = toSignal(
-    inject(AdminEntityService).entitySchemaUpdated,
+    this.adminEntityService.entitySchemaUpdated,
     { equal: () => false },
   );
 
@@ -300,7 +301,21 @@ export class AdminEntityPanelComponentComponent {
         if (result) {
           const fieldIds = [...result.fieldIds];
           for (const id of embeddedColumns) {
-            fieldIds.splice(columnIds.indexOf(id), 0, id);
+            // the dialog may have removed the embedded field or its inner field
+            if (
+              !resolveEmbeddedField(this.schemaService, entityConstructor, id)
+            ) {
+              continue;
+            }
+            // put it back behind the column it followed before, if that is still shown
+            const previousColumn = columnIds
+              .slice(0, columnIds.indexOf(id))
+              .findLast((columnId) => fieldIds.includes(columnId));
+            fieldIds.splice(
+              previousColumn ? fieldIds.indexOf(previousColumn) + 1 : 0,
+              0,
+              id,
+            );
           }
           this.config().config.columns = fieldIds;
           this.activeFields.set(fieldIds);
