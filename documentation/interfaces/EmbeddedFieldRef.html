@@ -246,7 +246,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:24</a></div>
                                 </td>
                             </tr>
 
@@ -291,7 +291,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:28</a></div>
                                 </td>
                             </tr>
 
@@ -336,7 +336,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:30</a></div>
                                 </td>
                             </tr>
 
@@ -381,7 +381,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:22</a></div>
                                 </td>
                             </tr>
 
@@ -426,7 +426,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:25</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/entity/schema/embedded-schema-field.util.ts:26</a></div>
                                 </td>
                             </tr>
 
@@ -449,6 +449,7 @@ import { EntitySchemaField } from &quot;./entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;./entity-schema.service&quot;;
 import { SchemaEmbedDatatype } from &quot;../../basic-datatypes/schema-embed/schema-embed.datatype&quot;;
 import { getInnerEntityReferenceFields } from &quot;./entity-reference-fields&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * Separator used to build an id referencing a property nested inside an embedded field,
@@ -600,9 +601,11 @@ export function getEmbeddedFieldId(ref: EmbeddedFieldRef): string {
  */
 export function getEmbeddedFieldLabel(ref: EmbeddedFieldRef): string {
   const outerLabel &#x3D;
-    ref.outerSchema.labelShort ?? ref.outerSchema.label ?? ref.outerProp;
+    resolveLocaleText(ref.outerSchema.labelShort ?? ref.outerSchema.label) ??
+    ref.outerProp;
   const innerLabel &#x3D;
-    ref.innerSchema.labelShort ?? ref.innerSchema.label ?? ref.innerProp;
+    resolveLocaleText(ref.innerSchema.labelShort ?? ref.innerSchema.label) ??
+    ref.innerProp;
   return &#x60;${outerLabel} -&gt; ${innerLabel}&#x60;;
 }
 </code></pre>

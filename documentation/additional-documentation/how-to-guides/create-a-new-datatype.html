@@ -263,7 +263,8 @@ record lists the records whose entries link it. For example, a School has the em
 inner fields <code>user</code> (a User) and <code>role</code>: the details view of a User can list the Schools where that User is a contact
 person. A column id <code>&quot;&lt;field&gt;.&lt;inner field&gt;&quot;</code> shows the inner field of the entries linking the User (not those of other
 contact persons), e.g. the User&#39;s role at each School. Such a column cannot be sorted
-(see <code>DisplayRelatedEmbeddedFieldComponent</code>):</p>
+(see <code>DisplayRelatedEmbeddedFieldComponent</code>). The Admin UI offers these inner fields as columns of the section,
+e.g. &quot;Contact Persons -&gt; Role&quot;:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
   &quot;component&quot;: &quot;RelatedEntities&quot;,
   &quot;config&quot;: {

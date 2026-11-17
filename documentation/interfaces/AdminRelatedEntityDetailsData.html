@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.ts:24</a></div>
                                 </td>
                             </tr>
 
@@ -297,6 +297,7 @@ import {
 import { DialogCloseComponent } from &quot;../../../common-components/dialog-close/dialog-close.component&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { HintBoxComponent } from &quot;#src/app/core/common-components/hint-box/hint-box.component&quot;;
+import { AdminEntityService } from &quot;#src/app/core/admin/admin-entity.service&quot;;
 
 /**
  * Data interface for AdminRelatedEntityDetailsComponent dialog
@@ -332,6 +333,7 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   );
   private readonly data &#x3D;
     inject&lt;AdminRelatedEntityDetailsData&gt;(MAT_DIALOG_DATA);
+  private readonly adminEntityService &#x3D; inject(AdminEntityService);
 
   entityConstructor: EntityConstructor;
   currentColumns: string[] &#x3D; [];
@@ -376,9 +378,14 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   }
 
   cancelChanges(): void {
+    const schemaChanged &#x3D; this.hasSchemaChanged();
     this.entityConstructor.schema.clear();
     for (const [key, value] of this.originalSchema.entries()) {
       this.entityConstructor.schema.set(key, value);
+    }
+    if (schemaChanged) {
+      // every listener resets its form editor, so only notify them about an actual change
+      this.adminEntityService.entitySchemaUpdated.emit();
     }
     this.dialogRef.close();
   }
