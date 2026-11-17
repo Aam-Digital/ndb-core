@@ -69,9 +69,12 @@ export class EditPublicFormEmailFieldComponent
     return configuredType ? this.entities.get(configuredType) : undefined;
   });
 
-  /** ids of the fields the form asks the submitter for */
+  /** ids of the fields the form asks the submitter for; `undefined` when it does not say (multi form format) */
   private readonly collectedFieldIds = computed(() => {
-    const columns: FieldGroup[] = this.entity()?.["columns"] ?? [];
+    const columns: FieldGroup[] | undefined = this.entity()?.["columns"];
+    if (!Array.isArray(columns)) {
+      return undefined;
+    }
     return new Set(
       columns.flatMap((group) =>
         (group.fields ?? []).map((field) => toFormFieldConfig(field).id),
@@ -83,11 +86,31 @@ export class EditPublicFormEmailFieldComponent
   protected readonly hideOption = computed(() => {
     const collected = this.collectedFieldIds();
     return (option: FormFieldConfig): boolean =>
-      option.dataType !== "email" || !collected.has(option.id);
+      option.dataType !== "email" || !collected?.has(option.id);
   });
 
+  /**
+   * The selected field can stop being part of the form after it was saved, by being removed in
+   * "Configure Fields". Nothing would be sent then, so say so instead of leaving a dead setting.
+   */
+  private readonly selectedFieldStillInForm = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const collected = this.collectedFieldIds();
+    return collected && control.value && !collected.has(control.value)
+      ? {
+          recipientFieldNotInForm: {
+            errorMessage: $localize`:PublicFormConfig:This field is no longer part of the form. Select another one, or add it back under "Configure Fields"`,
+          },
+        }
+      : null;
+  };
+
   ngOnInit(): void {
-    this.formControl.addValidators(requiredWhenConfirmationEnabled);
+    this.formControl.addValidators([
+      requiredWhenConfirmationEnabled,
+      this.selectedFieldStillInForm,
+    ]);
 
     this.formControl.parent
       ?.get("sendConfirmationEmail")

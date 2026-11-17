@@ -83,6 +83,30 @@ describe("EditPublicFormEmailFieldComponent", () => {
     expect(offeredFieldIds()).toEqual([]);
   });
 
+  it("rejects a selected field that the form no longer asks for", () => {
+    setConfiguredForm("PublicFormEmailTestRecord", ["name", "contactEmail"]);
+    const field = formGroup.get("confirmationEmailField");
+    field.setValue("contactEmail");
+    expect(field.valid).toBe(true);
+
+    setConfiguredForm("PublicFormEmailTestRecord", ["name"]);
+    field.updateValueAndValidity();
+
+    expect(field.hasError("recipientFieldNotInForm")).toBe(true);
+  });
+
+  it("accepts the saved field of a form that does not list its fields", () => {
+    const multiFormConfig = new PublicFormConfig();
+    multiFormConfig.entity = "PublicFormEmailTestRecord";
+    fixture.componentRef.setInput("entity", multiFormConfig);
+    fixture.detectChanges();
+
+    const field = formGroup.get("confirmationEmailField");
+    field.setValue("contactEmail");
+
+    expect(field.hasError("recipientFieldNotInForm")).toBe(false);
+  });
+
   it("requires a field only while the confirmation email is switched on", () => {
     const toggle = formGroup.get("sendConfirmationEmail");
     const field = formGroup.get("confirmationEmailField");
