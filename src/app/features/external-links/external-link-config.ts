@@ -6,6 +6,11 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
+ * A web address the link may open (the form validator and the service share it).
+ */
+export const WEB_ADDRESS_PATTERN = "https?://\\S+";
+
+/**
  * Each entity of this type defines a link to an external site
  * that is offered in the actions menu of the records of one entity type.
  */
@@ -47,7 +52,7 @@ export class ExternalLinkConfig extends Entity {
     validators: {
       required: true,
       pattern: {
-        pattern: "https?://\\S+",
+        pattern: WEB_ADDRESS_PATTERN,
         message: $localize`:ExternalLinkConfig:Enter a web address starting with "https://" (without spaces).`,
       },
     },

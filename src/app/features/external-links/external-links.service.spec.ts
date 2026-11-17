@@ -1,14 +1,22 @@
 import { TestBed } from "@angular/core/testing";
 import { Subject } from "rxjs";
-import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
-import { EntityRelationResolverService } from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype";
+import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
 import { ExternalLinkConfig } from "./external-link-config";
 import { ExternalLinksService } from "./external-links.service";
 
@@ -19,15 +27,22 @@ describe("ExternalLinksService", () => {
     @DatabaseField() status: string;
     @DatabaseField({ dataType: "entity", additional: "ExternalLinkTestRecord" })
     parent: string;
+    @DatabaseField({
+      dataType: "entity",
+      additional: "ExternalLinkTestRecord",
+      isArray: true,
+    })
+    children: string[];
+    @DatabaseField({ dataType: "date-only" }) birthday: Date;
+    @DatabaseField({ dataType: "translatable-text" }) title: unknown;
   }
 
   let service: ExternalLinksService;
   let links: ExternalLinkConfig[];
   let updates: Subject<UpdatedEntity<ExternalLinkConfig>>;
-  let entityMapper: { loadType: any; receiveUpdates: any };
+  let entityMapper: { loadType: any; receiveUpdates: any; load: any };
   let ability: { can: any };
   let windowOpen: any;
-  let resolveRelations: any;
   let record: TestRecord;
 
   function createLink(values: Partial<ExternalLinkConfig>): ExternalLinkConfig {
@@ -45,21 +60,27 @@ describe("ExternalLinksService", () => {
     entityMapper = {
       loadType: vi.fn(async () => links),
       receiveUpdates: vi.fn(() => updates),
+      load: vi.fn(async () => undefined),
     };
     ability = { can: vi.fn(() => true) };
     windowOpen = vi.fn();
-    resolveRelations = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: EntityAbility, useValue: ability },
         { provide: WINDOW_TOKEN, useValue: { open: windowOpen } },
-        {
-          provide: EntityRelationResolverService,
-          useValue: { resolveRelations },
-        },
         CurrentUserSubject,
+        { provide: EntityRegistry, useValue: entityRegistry },
+        EntitySchemaService,
+        // only the datatypes of the fields these tests read
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: TranslatableTextDatatype,
+          multi: true,
+        },
       ],
     });
     service = TestBed.inject(ExternalLinksService);
@@ -67,6 +88,12 @@ describe("ExternalLinksService", () => {
     record = new TestRecord("1");
     record.name = "Asha & Co";
     record.status = "enrolled";
+    record.parent = "ExternalLinkTestRecord:2";
+    record.children = ["ExternalLinkTestRecord:2"];
+
+    const user = new TestRecord("user");
+    user.name = "Test User";
+    TestBed.inject(CurrentUserSubject).next(user);
   });
 
   it.each([
@@ -81,6 +108,29 @@ describe("ExternalLinksService", () => {
     ["a formatter", { url: "https://x.org/{d.name:upperCase()}" }, false],
     ["an unknown context", { url: "https://x.org/{c.other.name}" }, false],
     ["the user's record", { url: "https://x.org/{c.user.name}" }, true],
+    [
+      "an unknown field of the user",
+      { url: "https://x.org/{c.user.x}" },
+      false,
+    ],
+    ["a linked record's field", { url: "https://x.org/{d.parent.name}" }, true],
+    [
+      "a linked record's unknown field",
+      { url: "https://x.org/{d.parent.x}" },
+      false,
+    ],
+    [
+      "a field of linked records",
+      { url: "https://x.org/{d.children.name}" },
+      false,
+    ],
+    ["a key below a plain field", { url: "https://x.org/{d.name.x}" }, false],
+    [
+      "a path deeper than a linked record",
+      { url: "https://x.org/{d.parent.parent.name}" },
+      false,
+    ],
+    ["an upper-case scheme", { url: "HTTPS://x.org/{d.name}" }, false],
   ] as [string, Partial<ExternalLinkConfig>, boolean][])(
     "for %s the link is offered: %s",
     async (_, values, expected) => {
@@ -102,31 +152,24 @@ describe("ExternalLinksService", () => {
     expect(await service.getActions(record)).toEqual([]);
   });
 
-  it("opens the address with encoded values of the record in a new tab", async () => {
+  it("opens the address with values of the record right on click", async () => {
     links = [
-      createLink({ url: "https://crm.example.org/?ref={d._id}&n={d.name}" }),
+      createLink({
+        url: "https://crm.example.org/?ref={d._id}&n={d.name}&b={d.birthday}&t={d.title}&p={d.parent.name}",
+      }),
     ];
+    record.birthday = new Date(2020, 0, 5);
+    record.title = { en: "Translated" };
+    const parent = new TestRecord("2");
+    parent.name = "Parent";
+    entityMapper.load.mockResolvedValue(parent);
     const [action] = await service.getActions(record);
 
-    await action.execute(record);
+    // not awaited: browsers block a new tab that is opened after waiting for data
+    void action.execute(record);
 
     expect(windowOpen).toHaveBeenCalledWith(
-      "https://crm.example.org/?ref=ExternalLinkTestRecord%3A1&n=Asha%20%26%20Co",
-      "_blank",
-      "noopener",
-    );
-    expect(resolveRelations).not.toHaveBeenCalled();
-  });
-
-  it("loads linked records only for placeholders reading their fields", async () => {
-    links = [createLink({ url: "https://x.org/{d.parent.name}" })];
-    resolveRelations.mockResolvedValue({ parent: { name: "Parent" } });
-    const [action] = await service.getActions(record);
-
-    await action.execute(record);
-
-    expect(windowOpen).toHaveBeenCalledWith(
-      "https://x.org/Parent",
+      "https://crm.example.org/?ref=ExternalLinkTestRecord%3A1&n=Asha%20%26%20Co&b=2020-01-05&t=Translated&p=Parent",
       "_blank",
       "noopener",
     );

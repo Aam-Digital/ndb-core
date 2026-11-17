@@ -66,7 +66,7 @@ function valueToText(value: unknown): string {
     return "";
   }
   if (value instanceof Date) {
-    return dateToText(value);
+    return Number.isNaN(value.getTime()) ? "" : value.toISOString();
   }
   if (Array.isArray(value)) {
     return value.map(valueToText).join(",");
@@ -78,22 +78,4 @@ function valueToText(value: unknown): string {
     return typeof id === "object" ? "" : valueToText(id);
   }
   return String(value);
-}
-
-/** date-only values are stored as local midnight: write them without a time, which would shift in UTC */
-function dateToText(date: Date): string {
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-  const isDateOnly =
-    date.getHours() === 0 &&
-    date.getMinutes() === 0 &&
-    date.getSeconds() === 0 &&
-    date.getMilliseconds() === 0;
-  if (!isDateOnly) {
-    return date.toISOString();
-  }
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${date.getFullYear()}-${month}-${day}`;
 }

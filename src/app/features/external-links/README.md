@@ -37,7 +37,8 @@ Here the placeholders are filled in the browser by `fillPlaceholders()` (`src/ap
 | `{c.user.name}`   | a field of the record linked to the logged-in user |
 
 - Carbone formatters (`{d.date:formatD(L)}`) are not supported.
-- A dropdown value or a linked record without a further key is written as its ID, a date-only value as `YYYY-MM-DD`, a list joined by commas.
+- Values are written as they are stored: a dropdown value or a linked record without a further key as its ID, a date-only value as `YYYY-MM-DD`, a date with time in ISO format, a list joined by commas. A translatable text is written in the active language.
+- A field of a linked record (`{d.school.name}`) can only be read through a field that links a single record, not a list of records.
 - An empty field gives an empty value. To hide the link in that case, add a condition.
 
 ### When a link is shown
@@ -46,7 +47,7 @@ A link is offered for a record if all of these hold:
 
 - the record is of the configured type and matches the condition,
 - the user may read the record and the `ExternalLinkConfig` record (so permission rules for `ExternalLinkConfig` can limit a link to some roles),
-- the `url` is a web address and every placeholder is supported and refers to an existing field.
+- the `url` is a web address and every placeholder is supported and refers to an existing field (also the field of a linked record or of the user's record).
 
 A link that is not shown because of its `url` or `condition` is a mistake in the configuration; it is not logged.
 
