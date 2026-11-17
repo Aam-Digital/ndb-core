@@ -1,8 +1,24 @@
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import {
+  EMBEDDED_FIELD_ID_SEPARATOR,
+  EmbeddedFieldRef,
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+  resolveEmbeddedField,
+} from "#src/app/core/entity/schema/embedded-schema-field.util";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
+import { asArray } from "#src/app/utils/asArray";
+import { AdminEntityService } from "#src/app/core/admin/admin-entity.service";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 import {
   Component,
@@ -56,6 +72,13 @@ export class AdminEntityPanelComponentComponent {
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly adminEntityService = inject(AdminEntityService);
+  // every (void) event must count as a change, so that it recomputes the dependent signals
+  private readonly schemaUpdated = toSignal(
+    this.adminEntityService.entitySchemaUpdated,
+    { equal: () => false },
+  );
 
   config = input.required<PanelComponent>();
 
@@ -93,6 +116,38 @@ export class AdminEntityPanelComponentComponent {
       typeof col === "string" ? col : col.id,
     ),
   );
+
+  /**
+   * Inner fields of the embedded entries that link a record to the current entity type
+   * (e.g. "contactPersons.role"), offered as additional columns.
+   * The related entities table shows them for the linking entries only,
+   * i.e. for the embedded fields named in the section's `property`, if one is configured.
+   */
+  embeddedFieldColumns = computed<FormFieldConfig[]>(() => {
+    this.schemaUpdated(); // the schema can be edited in place through the "Edit data structure" dialog
+    const relatedType = this.entityConstructor();
+    if (!relatedType) {
+      return [];
+    }
+    const parentType = this.entityType().ENTITY_TYPE;
+    const linksParent = (ref: EmbeddedFieldRef) =>
+      ref.innerSchema.dataType === EntityDatatype.dataType &&
+      asArray(ref.innerSchema.additional).includes(parentType);
+
+    const refs = getEmbeddedFieldRefs(this.schemaService, relatedType);
+    const property = this.config()?.config?.property;
+    const linkingFields = new Set(
+      property
+        ? asArray(property).map((p) => p.split(EMBEDDED_FIELD_ID_SEPARATOR)[0])
+        : refs.filter(linksParent).map((ref) => ref.outerProp),
+    );
+    return refs
+      .filter((ref) => linkingFields.has(ref.outerProp) && !linksParent(ref))
+      .map((ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }));
+  });
 
   /**
    * List of entity types that reference the current entity type.
@@ -215,9 +270,19 @@ export class AdminEntityPanelComponentComponent {
    * If the related entity's schema was modified, emits an event so the parent can save it.
    */
   openRelatedEntityDetailsConfig(): void {
-    if (!this.entityConstructor()) {
+    const entityConstructor = this.entityConstructor();
+    if (!entityConstructor) {
       return;
     }
+
+    const columnIds = this.activeFields().map((col) =>
+      typeof col === "string" ? col : col.id,
+    );
+    // columns of embedded entries (e.g. "contactPersons.role") are not fields of the record type
+    // and therefore cannot be edited in the dialog
+    const embeddedColumns = columnIds.filter((id) =>
+      resolveEmbeddedField(this.schemaService, entityConstructor, id),
+    );
 
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
       // using 76vh height making it clear that there are multiple dialog layers open
@@ -225,10 +290,8 @@ export class AdminEntityPanelComponentComponent {
       width: "90vw",
       minHeight: "76vh",
       data: {
-        entityConstructor: this.entityConstructor(),
-        currentColumns: this.activeFields().map((col) =>
-          typeof col === "string" ? col : col.id,
-        ),
+        entityConstructor,
+        currentColumns: columnIds.filter((id) => !embeddedColumns.includes(id)),
       },
     });
 
@@ -236,8 +299,26 @@ export class AdminEntityPanelComponentComponent {
       .afterClosed()
       .subscribe((result: AdminRelatedEntityDetailsResult) => {
         if (result) {
-          this.config().config.columns = result.fieldIds;
-          this.activeFields.set(result.fieldIds);
+          const fieldIds = [...result.fieldIds];
+          for (const id of embeddedColumns) {
+            // the dialog may have removed the embedded field or its inner field
+            if (
+              !resolveEmbeddedField(this.schemaService, entityConstructor, id)
+            ) {
+              continue;
+            }
+            // put it back behind the column it followed before, if that is still shown
+            const previousColumn = columnIds
+              .slice(0, columnIds.indexOf(id))
+              .findLast((columnId) => fieldIds.includes(columnId));
+            fieldIds.splice(
+              previousColumn ? fieldIds.indexOf(previousColumn) + 1 : 0,
+              0,
+              id,
+            );
+          }
+          this.config().config.columns = fieldIds;
+          this.activeFields.set(fieldIds);
 
           if (result.schemaChanged) {
             this.relatedEntityModified.emit(this.entityConstructor());
