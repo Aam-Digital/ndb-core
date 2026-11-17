@@ -8,10 +8,8 @@ import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import {
   getEmbeddedEntityReferenceFields,
-  getSchemaEmbedDatatype,
   resolveEmbeddedField,
 } from "../schema/embedded-schema-field.util";
-import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields";
 import { referenceIdConditions } from "../default-datatype/default.datatype";
 import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
 import { toStoredFormatCondition } from "../../filter/stored-format";
@@ -261,7 +259,7 @@ export class EntityRelationsService {
       const propertyConditions = this.fieldReferenceConditions(
         refType,
         refProperty,
-        primaryEntity.getId(),
+        primaryEntity,
       );
 
       if (!propertyConditions?.length) {
@@ -288,26 +286,23 @@ export class EntityRelationsService {
   }
 
   /**
-   * The conditions that the given field of a record references the id, in any of the shapes it may be stored in,
+   * The conditions that the given field of a record references the entity, in any of the shapes it may be stored in,
    * also inside the entries of an embedded field.
-   * `undefined` if the field's datatype does not hold the reference in a way a query can match.
+   * None if the field's datatype does not hold the reference in a way a query can match.
    */
   private fieldReferenceConditions(
     refType: EntityConstructor,
     refProperty: FormFieldConfig,
-    referencedId: string,
-  ): DataFilter<Entity>[] | undefined {
+    referencedEntity: Entity,
+  ): DataFilter<Entity>[] {
+    const referencedId = referencedEntity.getId();
     if (refProperty.dataType === EntityDatatype.dataType) {
       return this.referenceConditions(refType, refProperty.id, referencedId);
     }
-
-    const container = getSchemaEmbedDatatype(this.schemaService, refProperty);
-    if (!container) {
-      return undefined;
-    }
-    return getInnerEntityReferenceFields(
-      container.getEffectiveSchema(refProperty),
-    ).flatMap(([innerProp]) =>
+    return this.innerFieldsLinkingTo(
+      refProperty,
+      referencedEntity.getType(),
+    ).flatMap((innerProp) =>
       this.referenceConditions(
         refType,
         `${refProperty.id}.${innerProp}`,
@@ -315,6 +310,7 @@ export class EntityRelationsService {
       ),
     );
   }
+
 
   /**
    * Check whether a single value (a plain ID string or an embedded object)
