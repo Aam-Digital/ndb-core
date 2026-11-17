@@ -157,6 +157,10 @@ export class FilterService {
   getFilterPredicate<T extends Entity>(
     filter: DataFilter<T>,
   ): (record: T) => boolean {
+    if (Object.keys(filter ?? {}).length === 0) {
+      // matches every record, so a list without active filter does not convert its records
+      return () => true;
+    }
     const matchesAsIs = createFilterPredicate<T>(filter);
     const matchesPerSchema = new Map<
       EntitySchema,

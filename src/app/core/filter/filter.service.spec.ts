@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { FilterService } from "./filter.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
@@ -421,6 +422,19 @@ describe("FilterService", () => {
 
       expect(matches(testRecord())).toBe(expected);
     });
+
+    it.each([[{}], [undefined]])(
+      "matches every record of an empty condition %j without converting it",
+      (condition) => {
+        const convert = vi.spyOn(
+          TestBed.inject(EntitySchemaService),
+          "transformEntityToDatabaseFormat",
+        );
+
+        expect(service.getFilterPredicate(condition)(testRecord())).toBe(true);
+        expect(convert).not.toHaveBeenCalled();
+      },
+    );
 
     it("converts a saved record again once it has a new revision", () => {
       const record = testRecord();
