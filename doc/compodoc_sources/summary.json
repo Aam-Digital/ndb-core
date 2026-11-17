@@ -82,6 +82,10 @@
       {
         "title": "Template Export (File / PDF Generation)",
         "file": "../../src/app/features/template-export/README.md"
+      },
+      {
+        "title": "External Links",
+        "file": "../../src/app/features/external-links/README.md"
       }
     ]
   },

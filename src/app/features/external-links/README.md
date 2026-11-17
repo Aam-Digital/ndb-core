@@ -1,0 +1,62 @@
+# External Links
+
+Admins can add links to external sites (e.g. a CRM or an accounting tool) to the "three dots" actions menu of a record.
+The link opens in a new tab and carries values of the record in its web address, so the other site can open the matching entry.
+
+## Configuration
+
+Each link is an `ExternalLinkConfig:*` record:
+
+```json
+{
+  "_id": "ExternalLinkConfig:donor-crm",
+  "title": "Open in Donor CRM",
+  "entity": "Child",
+  "url": "https://crm.example.org/contact?ref={d._id}&name={d.name}",
+  "condition": { "status": "enrolled" }
+}
+```
+
+- `entity`: the entity type whose records offer the link.
+- `condition` (optional): a filter (same format as `displayCondition` of a field) that a record has to match.
+- `url`: has to start with `http://` or `https://`. Values are URL-encoded when inserted.
+
+Admins manage these records under Admin > External Links,
+or in the "External Links" section of the admin screen of a record type (both open the same form).
+
+### Placeholders
+
+The `url` uses the placeholder syntax of the Template Export feature (which is rendered by Carbone on the server).
+Here the placeholders are filled in the browser by `fillPlaceholders()` (`src/app/utils/placeholders/`), which supports plain paths only:
+
+| Placeholder       | Value                                              |
+| ----------------- | -------------------------------------------------- |
+| `{d.name}`        | the field `name` of the record                     |
+| `{d._id}`         | the ID of the record, e.g. `Child:123`             |
+| `{d.school.name}` | a field of a record linked in the field `school`   |
+| `{c.user.name}`   | a field of the record linked to the logged-in user |
+
+- Carbone formatters (`{d.date:formatD(L)}`) are not supported.
+- Values are written as they are stored: a dropdown value or a linked record without a further key as its ID, a date-only value as `YYYY-MM-DD`, a date with time in ISO format, a list joined by commas. A translatable text is written in the active language.
+- A field of a linked record (`{d.school.name}`) can only be read through a field that links a single record, not a list of records.
+- An empty field gives an empty value. To hide the link in that case, add a condition.
+
+### When a link is shown
+
+A link is offered for a record if all of these hold:
+
+- the record is of the configured type and matches the condition,
+- the user may read the record and the `ExternalLinkConfig` record (so permission rules for `ExternalLinkConfig` can limit a link to some roles),
+- the `url` is a web address and every placeholder is supported and refers to an existing field (also the field of a linked record or of the user's record).
+
+A link that is not shown because of its `url` or `condition` is a mistake in the configuration; it is not logged.
+
+With more than two links for a record, they are collapsed into an "External Links" submenu.
+
+## Key files
+
+- `external-link-config.ts` — the `ExternalLinkConfig` entity
+- `external-links.service.ts` — loads the link definitions (cached until one changes) and turns them into menu actions
+- `external-links.module.ts` — registers the admin views, the admin overview entry, the section in the entity type admin and the actions factory
+- `edit-external-link-condition/` — form field opening the condition editor for the selected record type
+- `src/app/utils/placeholders/fill-placeholders.ts` — the placeholder resolver

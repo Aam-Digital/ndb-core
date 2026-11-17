@@ -1,0 +1,11 @@
+[
+  {
+    "_id": "ExternalLinkConfig:example-crm",
+    "title": {
+      "en-US": "Open in Donor CRM (example)",
+      "de": "Im Spender-CRM öffnen (Beispiel)"
+    },
+    "entity": "Child",
+    "url": "https://example.org/crm/contact?ref={d._id}&name={d.name}&by={c.user.name}"
+  }
+]
