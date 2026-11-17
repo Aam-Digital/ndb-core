@@ -83,13 +83,17 @@ The engine compares with `extendedCompare`, so that a `Date` matches a day strin
   the "not defined" condition and the `$current_record` placeholder helpers
 - `filter-generator/filter-generator.service.ts` — builds the list filters from config, including those for embedded fields
 - `embedded-field-filter.ts` — turns a condition on a property of an embedded field into one on the embedding field,
-  and defines "not defined" for it; used by list filters and `FilterService`
+  and defines "not defined" for it; used by list filters, `FilterService` and `EntityRelationsService`
 - `../entity/default-datatype/default.datatype.ts` (`referenceIdConditions`) — "the field contains this id",
-  for both single-value and multi-value fields; used by list filters and the delete / anonymize cascades
+  for both single-value and multi-value fields; used by list filters and `EntityRelationsService`
+- `../entity/entity-mapper/entity-relations.service.ts` (`referenceConditions`) — "the record links to this record",
+  in every shape the link may be stored in, also inside the entries of an embedded field;
+  used by related entities and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
 - `filter.service.ts` — the in-memory engine; the fields a condition can be set on (also the properties of embedded fields)
-  and the stored form of a condition on such a field (`toStoredCondition`), used by the conditions editor and related entities;
+  and the stored form of a condition on such a field (`toStoredCondition`), used by the conditions editor;
   and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
   ("Add new" in related entities and the entity select): it applies the conditions requiring one specific value,
   also for an entry of an embedded field, and converts the stored values through the field's datatype
+- `required-values.ts` — the one value (or the embedded entry) a condition requires, in the stored format, for `alignEntityWithFilter`
 - `stored-format.ts` — normalizes conditions and converts records to the stored format, for the in-memory engine and database queries
