@@ -795,20 +795,18 @@ describe("ConditionsEditorComponent", () => {
     });
 
     it("offers the properties of an embedded field instead of the field itself", () => {
-      component.ngOnInit();
-
-      expect(component.fieldOptions.map((o) => o.id)).toEqual([
+      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
         "log.status",
         "log.date",
       ]);
-      expect(component.excludedFields).toEqual(["log"]);
+      expect(component.conditionFields().excludedFields).toEqual(["log"]);
     });
 
     it("offers the properties of embedded fields also for conditions on the stored documents (e.g. permissions)", () => {
+      // a change of the input after the editor started updates the fields
       fixture.componentRef.setInput("onStoredDocuments", true);
-      component.ngOnInit();
 
-      expect(component.fieldOptions.map((o) => o.id)).toEqual([
+      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
         "log.status",
         "log.date",
       ]);
@@ -824,8 +822,8 @@ describe("ConditionsEditorComponent", () => {
       component.conditions = stored;
       component.ngOnInit();
 
-      expect(component.fieldOptions).toEqual([]);
-      expect(component.excludedFields).toEqual([]);
+      expect(component.conditionFields().options).toEqual([]);
+      expect(component.conditionFields().excludedFields).toEqual([]);
       expect(component.conditionsArray()).toEqual([stored]);
     });
 
@@ -853,10 +851,9 @@ describe("ConditionsEditorComponent", () => {
       );
       editor.detectChanges();
 
-      expect(editor.componentInstance.fieldOptions.map((o) => o.id)).toEqual([
-        "log.status",
-        "log.date",
-      ]);
+      expect(
+        editor.componentInstance.conditionFields().options.map((o) => o.id),
+      ).toEqual(["log.status", "log.date"]);
     });
 
     it.each([

@@ -78,7 +78,15 @@ import { resolveLocaleText } from "../../language/active-locale";
 })
 export class ConditionsEditorComponent implements OnInit, OnChanges {
   @Input() conditions: any = {};
-  @Input() entityConstructor?: EntityConstructor;
+  @Input() set entityConstructor(value: EntityConstructor | undefined) {
+    this.entityType.set(value);
+  }
+  get entityConstructor(): EntityConstructor | undefined {
+    return this.entityType();
+  }
+  private readonly entityType = signal<EntityConstructor | undefined>(
+    undefined,
+  );
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
@@ -161,8 +169,15 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   private readonly referenceRows = new WeakSet<object>();
 
   /** the fields a condition can be set on, in addition to and instead of the record's own fields (see `FilterService.getConditionFields`) */
-  fieldOptions: FormFieldConfig[] = [];
-  excludedFields: string[] = [];
+  readonly conditionFields = computed(() => {
+    const entityType = this.entityType();
+    return entityType
+      ? this.filterService.getConditionFields(
+          entityType,
+          this.onStoredDocuments(),
+        )
+      : { options: [], excludedFields: [] };
+  });
 
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly filterService = inject(FilterService);
@@ -171,12 +186,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
-    const conditionFields = this.filterService.getConditionFields(
-      this.entityConstructor,
-      this.onStoredDocuments(),
-    );
-    this.fieldOptions = conditionFields.options;
-    this.excludedFields = conditionFields.excludedFields;
     this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
   }
@@ -630,7 +639,9 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     );
     // an embedded field offered only whole keeps its condition as stored
     const [fieldPath] = Object.keys(editorRow ?? {});
-    return this.fieldOptions.some((o) => o.id === fieldPath) ? editorRow : row;
+    return this.conditionFields().options.some((o) => o.id === fieldPath)
+      ? editorRow
+      : row;
   }
 }
 

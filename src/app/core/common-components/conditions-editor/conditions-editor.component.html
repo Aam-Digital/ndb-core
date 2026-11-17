@@ -41,8 +41,8 @@
           <mat-label i18n>Field</mat-label>
           <app-entity-field-select
             [entityType]="entityConstructor"
-            [options]="fieldOptions"
-            [excludedFields]="excludedFields"
+            [options]="conditionFields().options"
+            [excludedFields]="conditionFields().excludedFields"
             [value]="getConditionField(condition)"
             [showInternalIdField]="
               showInternalIdField() || !!currentRecordType()
