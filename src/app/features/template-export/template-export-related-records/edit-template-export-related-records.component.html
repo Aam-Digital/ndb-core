@@ -1,0 +1,121 @@
+<div class="flex-column gap-small">
+  @for (row of rows(); track $index; let i = $index) {
+    <div class="related-records-entry flex-column gap-small padding-small">
+      <div class="flex-row align-center gap-small">
+        <mat-form-field
+          class="flex-grow"
+          floatLabel="always"
+          [subscriptSizing]="'dynamic'"
+        >
+          <mat-label i18n>Related records</mat-label>
+          <mat-select
+            [value]="row.optionId"
+            (selectionChange)="selectOption(i, $event.value)"
+            [disabled]="!enabled()"
+            placeholder="Select related records"
+            i18n-placeholder
+          >
+            @for (option of options(); track option.id) {
+              <mat-option [value]="option.id">{{ option.label }}</mat-option>
+            }
+            @if (row.optionId && !row.option) {
+              <!-- keep displaying a selection that does not fit the record types anymore -->
+              <mat-option [value]="row.optionId" disabled>
+                {{ row.config.entityType }}.{{ row.config.property }}
+                <ng-container i18n>(not available)</ng-container>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (enabled()) {
+          <button
+            mat-icon-button
+            type="button"
+            (click)="removeRow(i)"
+            matTooltip="Remove these related records"
+            i18n-matTooltip
+            aria-label="Remove these related records"
+            i18n-aria-label
+          >
+            <app-fa-dynamic-icon icon="trash"></app-fa-dynamic-icon>
+          </button>
+        }
+      </div>
+
+      <div class="flex-row flex-wrap gap-small">
+        <mat-form-field
+          class="related-records-key"
+          floatLabel="always"
+          [subscriptSizing]="'dynamic'"
+        >
+          <mat-label i18n>Placeholder name</mat-label>
+          <input
+            matInput
+            #keyInput
+            [value]="row.config.key ?? ''"
+            (change)="keyInput.value = setKey(i, keyInput.value)"
+            [disabled]="!enabled()"
+            placeholder="e.g. subTasks"
+            i18n-placeholder
+          />
+        </mat-form-field>
+
+        @if (row.option?.isHierarchy) {
+          <mat-form-field
+            class="related-records-levels"
+            floatLabel="always"
+            [subscriptSizing]="'dynamic'"
+          >
+            <mat-label i18n>Levels</mat-label>
+            <input
+              matInput
+              type="number"
+              min="1"
+              [max]="maxLevels"
+              #levelsInput
+              [value]="row.levels"
+              (change)="
+                levelsInput.value = '' + setLevels(i, levelsInput.value)
+              "
+              [disabled]="!enabled()"
+              matTooltip="How many levels of the hierarchy to include: 1 for the directly linked records only, 2 to also include the records linked to those, and so on."
+              i18n-matTooltip
+            />
+          </mat-form-field>
+        }
+      </div>
+
+      @if (row.examples.length > 0) {
+        <div class="hint-text flex-row flex-wrap gap-small">
+          <span i18n>Use in the template file as</span>
+          @for (example of row.examples; track example) {
+            <code class="related-records-example">{{ example }}</code>
+          }
+        </div>
+      }
+    </div>
+  } @empty {
+    @if (!enabled()) {
+      <span class="hint-text" i18n>No related records included.</span>
+    }
+  }
+
+  @if (enabled()) {
+    @if (options().length > 0) {
+      <div>
+        <button mat-stroked-button type="button" (click)="addRow()">
+          <app-fa-dynamic-icon
+            icon="plus-circle"
+            class="standard-icon-with-text"
+          ></app-fa-dynamic-icon>
+          <span i18n>Add related records</span>
+        </button>
+      </div>
+    } @else {
+      <span class="hint-text" i18n>
+        No other records link to the applicable record types selected above.
+      </span>
+    }
+  }
+</div>

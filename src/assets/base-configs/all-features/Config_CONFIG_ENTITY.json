@@ -2055,6 +2055,17 @@
       },
       "_id": "view:school/:id"
     },
+    "entity:Todo": {
+      "attributes": {
+        "parentTask": {
+          "label": "Parent task",
+          "description": "The task that this task is a part (sub-task) of.",
+          "dataType": "entity",
+          "additional": "Todo",
+          "showInDetailsView": true
+        }
+      }
+    },
     "entity:HistoricalEntityData": {
       "label": "Observation",
       "labelPlural": "Observations",

@@ -135,6 +135,44 @@ describe("EntityRelationsService querying a real database", () => {
     expect(loadType).not.toHaveBeenCalledWith(RelationQuerySource);
   });
 
+  it("queries the records linking to many entities in one field, grouped by the entity they link to", async () => {
+    // more targets than fit into a single query, to cover the batching
+    const targets = Array.from(
+      { length: 60 },
+      (_, i) => new RelationQueryTarget("target-" + i),
+    );
+    const firstId = targets[0].getId();
+    const lastId = targets[59].getId();
+    const linkingToFirst = await saveSource({ refScalar: firstId });
+    const linkingToBoth = await saveSource({ refArray: [firstId, lastId] });
+    // references the target in another field than the requested one
+    await saveSource({ refScalar: lastId });
+    const loadType = vi.spyOn(entityMapper, "loadType");
+
+    const scalarLinks = await service.loadLinkingToEntities(
+      targets.map((t) => t.getId()),
+      RelationQuerySource,
+      "refScalar",
+    );
+    const arrayLinks = await service.loadLinkingToEntities(
+      targets.map((t) => t.getId()),
+      RelationQuerySource,
+      "refArray",
+    );
+
+    const ids = (links: Map<string, Entity[]>) =>
+      [...links].map(([id, entities]) => [id, entities.map((e) => e.getId())]);
+    expect(ids(scalarLinks)).toEqual(
+      expect.arrayContaining([[firstId, [linkingToFirst]]]),
+    );
+    expect(scalarLinks.get(firstId)).toHaveLength(1);
+    expect(ids(arrayLinks)).toEqual([
+      [firstId, [linkingToBoth]],
+      [lastId, [linkingToBoth]],
+    ]);
+    expect(loadType).not.toHaveBeenCalled();
+  });
+
   it("loads the whole type when one of its referencing fields cannot be queried", async () => {
     @DatabaseEntity("RelationQueryUnqueryableSource")
     class RelationQueryUnqueryableSource extends Entity {

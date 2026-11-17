@@ -1,0 +1,19 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+.related-records-entry {
+  border: 1px solid colors.$border-color;
+  border-radius: sizes.$x-small;
+}
+
+.related-records-key {
+  flex: 1 1 160px;
+}
+
+.related-records-levels {
+  flex: 0 1 90px;
+}
+
+.related-records-example {
+  user-select: all;
+}

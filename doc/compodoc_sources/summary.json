@@ -78,6 +78,10 @@
       {
         "title": "Reports",
         "file": "../../src/app/features/reporting/README.md"
+      },
+      {
+        "title": "Template Export (File / PDF Generation)",
+        "file": "../../src/app/features/template-export/README.md"
       }
     ]
   },
