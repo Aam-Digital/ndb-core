@@ -1,4 +1,5 @@
-import { inject, resource } from "@angular/core";
+import { computed, inject, resource } from "@angular/core";
+import { isEqual } from "lodash-es";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -65,13 +66,17 @@ export function parentRangesResource(
   const entityMapper = inject(EntityMapperService);
 
   return resource({
-    params: () => {
-      const { record, fieldId, config } = params();
-      const parentIds = config ? getParentIds(config, record) : [];
-      return parentIds.length
-        ? { parentIds, valueField: config.parentValueField ?? fieldId }
-        : undefined;
-    },
+    params: computed(
+      () => {
+        const { record, fieldId, config } = params();
+        const parentIds = config ? getParentIds(config, record) : [];
+        return parentIds.length
+          ? { parentIds, valueField: config.parentValueField ?? fieldId }
+          : undefined;
+      },
+      // the record is copied on every change of its form: only load again when the parents change
+      { equal: isEqual },
+    ),
     loader: ({ params: { parentIds, valueField } }) =>
       loadParentRanges(entityMapper, parentIds, valueField),
   });
