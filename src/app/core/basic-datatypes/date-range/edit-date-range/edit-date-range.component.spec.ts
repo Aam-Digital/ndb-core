@@ -17,6 +17,7 @@ import {
 } from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeValue } from "../date-range.datatype";
 import {
@@ -464,6 +465,27 @@ describe("EditDateRangeComponent", () => {
       form.get("parent").setValue(parentAction.getId());
 
       expect(await warning()).toBe("Outside the period of Training");
+    });
+
+    it("loads the parent again only when the parent link changes, not on changes of other fields", async () => {
+      const { form, warning } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      form.addControl("name", new FormControl(""));
+      await warning();
+      const load = vi.spyOn(TestBed.inject(EntityMapperService), "load");
+
+      form.get("name").setValue("Workshop");
+      await warning();
+      expect(load).not.toHaveBeenCalled();
+
+      form.get("parent").setValue(ongoingParentAction.getId());
+      await warning();
+      expect(load).toHaveBeenCalledTimes(1);
     });
 
     it("follows the dates entered in the form", async () => {

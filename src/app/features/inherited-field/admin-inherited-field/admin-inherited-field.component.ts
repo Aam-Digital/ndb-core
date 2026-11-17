@@ -30,6 +30,7 @@ import {
   entityToFieldReferenceLabel,
   fieldToEntityReferenceLabel,
 } from "../../../core/entity/schema/entity-field-reference-label";
+import { resolveLocaleText } from "../../../core/language/active-locale";
 
 interface InheritanceOption {
   type: "inherit" | "automated";
@@ -238,7 +239,7 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective<Def
 
     if (!fieldId || !entityType?.schema) return fieldId;
     const fieldConfig = entityType.schema.get(fieldId);
-    return fieldConfig?.label || fieldId;
+    return resolveLocaleText(fieldConfig?.label) || fieldId;
   }
 
   private getEntityLabel(entityType: EntityConstructor): string {

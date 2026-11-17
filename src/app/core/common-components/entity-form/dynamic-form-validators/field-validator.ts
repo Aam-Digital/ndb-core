@@ -18,6 +18,19 @@ export interface ValidatorContext {
   config: FormValidatorConfig;
 }
 
+/** what the config of a rule can be checked against (see {@link FieldValidator.validateConfig}) */
+export interface ConfigValidationContext {
+  /** the record type that the checked field belongs to */
+  entityType: string;
+  /**
+   * the fields of a record type as far as they are known while a config is checked
+   * (those of its code and of the checked config), `undefined` for an unknown record type
+   */
+  fieldsOf: (
+    entityType: string,
+  ) => ReadonlyMap<string, EntitySchemaField> | undefined;
+}
+
 /**
  * A validation rule that admins can configure for a field, under its {@link FieldValidator.key} in the field's `validators`.
  *
@@ -95,11 +108,15 @@ export abstract class FieldValidator<Config = unknown> {
     return [];
   }
 
-  /** problems of the rule's config for the given field, which admins are told about when saving the config */
+  /**
+   * Problems of the rule's config for the given field, which admins are told about when saving the config.
+   * @param _context to check references to other fields
+   */
   validateConfig(
     _value: Config,
     _field: EntitySchemaField,
     _datatype: DefaultDatatype,
+    _context?: ConfigValidationContext,
   ): string[] {
     return [];
   }

@@ -314,8 +314,11 @@ export class EntitySchemaService {
  * Config loaded through ConfigService is already resolved, but the runtime
  * schema can hold a translation map while an admin has configured
  * translations that are not saved to the config document yet.
+ *
+ * Exported for the few components that display a field config without extending
+ * it from a schema first (see {@link addSchemaToFormField}).
  */
-function resolveTranslatableLabels(field: FormFieldConfig) {
+export function resolveTranslatableLabels(field: FormFieldConfig) {
   for (const property of ["label", "labelShort", "description"]) {
     if (field[property] === undefined) {
       continue;

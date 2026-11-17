@@ -10,6 +10,7 @@ import { Entity } from "app/core/entity/model/entity";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { SchemaEmbedDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed.datatype";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 @DatabaseEntity("ConditionsEditorTestEntity")
 class ConditionsEditorTestEntity extends Entity {
@@ -40,6 +41,28 @@ class ConditionsEditorRecordTestEntity extends Entity {
     additional: "genders",
   })
   recordGender: string;
+  @DatabaseField({
+    label: "Parent",
+    dataType: "entity",
+    additional: "ConditionsEditorRecordTestEntity",
+  })
+  parent: string;
+  @DatabaseField({
+    label: "Items",
+    dataType: "entity",
+    additional: "ConditionsEditorTestEntity",
+    isArray: true,
+  })
+  items: string[];
+  @DatabaseField({
+    label: "Related",
+    dataType: "entity",
+    additional: [
+      "ConditionsEditorRecordTestEntity",
+      "ConditionsEditorTestEntity",
+    ],
+  })
+  related: string;
 }
 
 describe("ConditionsEditorComponent", () => {
@@ -429,11 +452,36 @@ describe("ConditionsEditorComponent", () => {
         "recordGender",
         { gender: { $elemMatch: { $in: ["$current_record.recordGender"] } } },
       ],
+      [
+        "a text field with a multi-value field of a linked record in an $in list",
+        "name",
+        "parent.recordNames",
+        { name: { $in: ["$current_record.parent.recordNames"] } },
+      ],
+      [
+        "the record itself with the records linked in a field of a linked record",
+        "_id",
+        "parent.items",
+        { _id: { $in: ["$current_record.parent.items"] } },
+      ],
     ])("saves the comparison of %s", (_, field, recordField, expected) => {
       compareRowWithRecordField(field, recordField);
 
       expect(component.conditionsArray()[0]).toEqual(expected);
       expect(component.getReferencedField(0)).toBe(recordField);
+    });
+
+    it("offers the fields of the records linked in a field with a single record type", () => {
+      const offered = component.linkedRecordFields();
+
+      expect(offered).toContainEqual(
+        expect.objectContaining({
+          id: "parent.recordNames",
+          label: "Parent › Record names",
+        }),
+      );
+      // a link to several record types has no single set of fields
+      expect(offered.filter(({ id }) => id.startsWith("related."))).toEqual([]);
     });
 
     it("keeps 'is not' when the compared record field changes", () => {
@@ -467,13 +515,42 @@ describe("ConditionsEditorComponent", () => {
     });
 
     it.each([
-      ["the same dropdown options", "configurable-enum", "genders", false],
-      ["other dropdown options", "configurable-enum", "other-enum", true],
-      ["another data type", "string", undefined, true],
+      [
+        "genderSingle",
+        "the same dropdown options",
+        "configurable-enum",
+        "genders",
+        false,
+      ],
+      [
+        "genderSingle",
+        "other dropdown options",
+        "configurable-enum",
+        "other-enum",
+        true,
+      ],
+      ["genderSingle", "another data type", "string", undefined, true],
+      [
+        "_id",
+        "a link to the record type of the condition",
+        "entity",
+        "ConditionsEditorTestEntity",
+        false,
+      ],
+      [
+        "_id",
+        "a link to another record type",
+        "entity",
+        "ConditionsEditorRecordTestEntity",
+        true,
+      ],
+      ["_id", "a field of another data type", "string", undefined, true],
     ])(
-      "offers only record fields with matching values for comparison (%s)",
-      (_, dataType, additional, expectedHidden) => {
-        compareRowWithRecordField("genderSingle", "recordGender");
+      "offers only record fields with values comparable to %s (%s)",
+      (field, _, dataType, additional, expectedHidden) => {
+        component.conditions = { $or: [{ [field]: null }] };
+        component.ngOnInit();
+        component.setReferenceRow(0, true);
         const hideOption = component.referenceFieldFilters.get("0");
 
         expect(hideOption({ id: "x", dataType, additional })).toBe(
@@ -481,6 +558,35 @@ describe("ConditionsEditorComponent", () => {
         );
       },
     );
+
+    /** the labels a field select of the first row offers (0: the row's field, 1: the compared field) */
+    function offeredLabels(fieldSelectIndex: number): string[] {
+      fixture.detectChanges();
+      const fieldSelect = fixture.debugElement.queryAll(
+        By.directive(EntityFieldSelectComponent),
+      )[fieldSelectIndex].componentInstance as EntityFieldSelectComponent;
+      fieldSelect.autocompleteForm.setValue("");
+      return fieldSelect.autocompleteOptions().map((o) => o.asString);
+    }
+
+    it("offers the record itself (_id) as field of a row", () => {
+      component.conditions = { $or: [{ name: null }] };
+      component.ngOnInit();
+
+      expect(offeredLabels(0)).toContain("ID (internal unique ID)");
+    });
+
+    it("offers the fields of the edited record before those of its linked records", () => {
+      compareRowWithRecordField("name", "recordName");
+
+      const offered = offeredLabels(1);
+
+      expect(offered).toContain("Parent › Record name");
+      expect(offered.indexOf("Record name")).toBeGreaterThanOrEqual(0);
+      expect(offered.indexOf("Record name")).toBeLessThan(
+        offered.indexOf("Parent › Record name"),
+      );
+    });
 
     it("clears the comparison when switching back to a fixed value", () => {
       compareRowWithRecordField("genderSingle", "recordGender");

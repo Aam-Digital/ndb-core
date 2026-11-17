@@ -25,7 +25,10 @@
   <span i18n>of the following conditions match</span>
 </div>
 
-<div class="conditions-container">
+<div
+  class="conditions-container"
+  [class.has-compare-mode]="!!currentRecordType()"
+>
   <div class="conditions-list flex-column">
     @for (
       condition of conditionsArray();
@@ -41,7 +44,9 @@
             [options]="fieldOptions"
             [excludedFields]="excludedFields"
             [value]="getConditionField(condition)"
-            [showInternalIdField]="showInternalIdField()"
+            [showInternalIdField]="
+              showInternalIdField() || !!currentRecordType()
+            "
             (valueChange)="onConditionFieldChange(conditionId, $event)"
           ></app-entity-field-select>
         </mat-form-field>
@@ -66,7 +71,7 @@
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label i18n>Field of the edited record</mat-label>
               <app-entity-field-select
-                [entityType]="currentRecordType()"
+                [options]="referenceFieldOptions()"
                 [value]="reference.referencedField"
                 [hideOption]="referenceFieldFilters.get(conditionId + '')"
                 (valueChange)="onReferencedFieldChange(conditionId, $event)"

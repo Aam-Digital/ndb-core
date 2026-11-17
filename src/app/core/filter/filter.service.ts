@@ -217,6 +217,10 @@ export class FilterService {
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     for (const [key, condition] of Object.entries(filter ?? {})) {
+      if (key === "_id") {
+        // a filter selecting existing records by id does not describe a new record
+        continue;
+      }
       if ((key === "$or" || key === "$and") && Array.isArray(condition)) {
         // apply each branch of the alternatives ($or) or required parts ($and)
         condition.forEach((branch) =>
