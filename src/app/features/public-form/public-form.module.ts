@@ -40,8 +40,8 @@ export class PublicFormModule {
       // id kept from before sections were registered, so that existing links to this section still work
       id: "publicForm",
       label: PublicFormConfig.labelPlural,
-      description: $localize`:PublicFormConfig admin section:You can share the link to a "Public Form" with people who do not have an account or embed it in your website. People can submit new records through this form without logging in. For example, you can let participants self-register this way and then review their data later.`,
-      footnote: $localize`:PublicFormConfig admin section:You can also create forms for "related records" (e.g. a survey that links back to the participant's record who has submitted the form). For this, create a form for the "related record's type" (e.g. the survey record) and enable the setting to create custom, individualized form links there.`,
+      description: $localize`You can share the link to a "Public Form" with people who do not have an account or embed it in your website. People can submit new records through this form without logging in. For example, you can let participants self-register this way and then review their data later.`,
+      footnote: $localize`You can also create forms for "related records" (e.g. a survey that links back to the participant's record who has submitted the form). For this, create a form for the "related record's type" (e.g. the survey record) and enable the setting to create custom, individualized form links there.`,
       entityType: PublicFormConfig.ENTITY_TYPE,
       property: "entity",
       columns: ["title", "route", "description"],
