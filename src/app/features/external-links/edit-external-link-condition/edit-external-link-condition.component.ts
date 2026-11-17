@@ -1,9 +1,18 @@
-import { Component, computed, inject, input } from "@angular/core";
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import {
   ConditionEditorDialogComponent,
@@ -24,17 +33,20 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 @DynamicComponent("EditExternalLinkCondition")
 @Component({
   selector: "app-edit-external-link-condition",
-  imports: [MatButtonModule, FaIconComponent],
+  imports: [MatButtonModule, FaDynamicIconComponent],
   template: `
     <div class="flex-row align-center gap-regular">
       <span class="flex-grow">{{ summary() }}</span>
       <button
         mat-stroked-button
         type="button"
-        [disabled]="!enabled()"
+        [disabled]="!enabled() || !recordType()"
         (click)="editCondition()"
       >
-        <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
+        <app-fa-dynamic-icon
+          icon="filter"
+          class="standard-icon-with-text"
+        ></app-fa-dynamic-icon>
         @if (hasCondition()) {
           <ng-container i18n>Edit Condition</ng-container>
         } @else {
@@ -52,10 +64,14 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 })
 export class EditExternalLinkConditionComponent
   extends CustomFormControlDirective<DataFilter<Entity> | undefined>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
   private readonly dialog = inject(MatDialog);
   private readonly entities = inject(EntityRegistry);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** the record type as currently selected in the same form, which may not be saved yet */
+  protected readonly recordType = signal<string | undefined>(undefined);
 
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
@@ -70,10 +86,25 @@ export class EditExternalLinkConditionComponent
       : $localize`Shown for all records of the type.`,
   );
 
+  ngOnInit() {
+    const recordTypeControl = this.formControl?.parent?.get("entity");
+    if (!recordTypeControl) return;
+
+    this.recordType.set(recordTypeControl.value);
+    recordTypeControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((recordType: string | undefined) => {
+        // a condition refers to fields of the previous record type
+        if (recordType !== this.recordType() && this.hasCondition()) {
+          this.formControl.setValue(undefined);
+          this.formControl.markAsDirty();
+        }
+        this.recordType.set(recordType);
+      });
+  }
+
   protected async editCondition() {
-    // the record type as currently selected in the form, which may not be saved yet
-    const entityType: string | undefined =
-      this.formControl.parent?.get("entity")?.value;
+    const entityType = this.recordType();
 
     const result: DataFilter<Entity> | null | undefined = await firstValueFrom(
       this.dialog
