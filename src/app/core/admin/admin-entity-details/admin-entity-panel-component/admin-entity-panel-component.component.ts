@@ -8,10 +8,12 @@ import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/rel
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import {
+  EMBEDDED_FIELD_ID_SEPARATOR,
   EmbeddedFieldRef,
   getEmbeddedFieldId,
   getEmbeddedFieldLabel,
   getEmbeddedFieldRefs,
+  resolveEmbeddedField,
 } from "#src/app/core/entity/schema/embedded-schema-field.util";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import { asArray } from "#src/app/utils/asArray";
@@ -117,7 +119,8 @@ export class AdminEntityPanelComponentComponent {
   /**
    * Inner fields of the embedded entries that link a record to the current entity type
    * (e.g. "contactPersons.role"), offered as additional columns.
-   * The related entities table shows them for the linking entries only.
+   * The related entities table shows them for the linking entries only,
+   * i.e. for the embedded fields named in the section's `property`, if one is configured.
    */
   embeddedFieldColumns = computed<FormFieldConfig[]>(() => {
     this.schemaUpdated(); // the schema can be edited in place through the "Edit data structure" dialog
@@ -131,8 +134,11 @@ export class AdminEntityPanelComponentComponent {
       asArray(ref.innerSchema.additional).includes(parentType);
 
     const refs = getEmbeddedFieldRefs(this.schemaService, relatedType);
+    const property = this.config()?.config?.property;
     const linkingFields = new Set(
-      refs.filter(linksParent).map((ref) => ref.outerProp),
+      property
+        ? asArray(property).map((p) => p.split(EMBEDDED_FIELD_ID_SEPARATOR)[0])
+        : refs.filter(linksParent).map((ref) => ref.outerProp),
     );
     return refs
       .filter((ref) => linkingFields.has(ref.outerProp) && !linksParent(ref))
@@ -263,9 +269,19 @@ export class AdminEntityPanelComponentComponent {
    * If the related entity's schema was modified, emits an event so the parent can save it.
    */
   openRelatedEntityDetailsConfig(): void {
-    if (!this.entityConstructor()) {
+    const entityConstructor = this.entityConstructor();
+    if (!entityConstructor) {
       return;
     }
+
+    const columnIds = this.activeFields().map((col) =>
+      typeof col === "string" ? col : col.id,
+    );
+    // columns of embedded entries (e.g. "contactPersons.role") are not fields of the record type
+    // and therefore cannot be edited in the dialog
+    const embeddedColumns = columnIds.filter((id) =>
+      resolveEmbeddedField(this.schemaService, entityConstructor, id),
+    );
 
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
       // using 76vh height making it clear that there are multiple dialog layers open
@@ -273,10 +289,8 @@ export class AdminEntityPanelComponentComponent {
       width: "90vw",
       minHeight: "76vh",
       data: {
-        entityConstructor: this.entityConstructor(),
-        currentColumns: this.activeFields().map((col) =>
-          typeof col === "string" ? col : col.id,
-        ),
+        entityConstructor,
+        currentColumns: columnIds.filter((id) => !embeddedColumns.includes(id)),
       },
     });
 
@@ -284,8 +298,12 @@ export class AdminEntityPanelComponentComponent {
       .afterClosed()
       .subscribe((result: AdminRelatedEntityDetailsResult) => {
         if (result) {
-          this.config().config.columns = result.fieldIds;
-          this.activeFields.set(result.fieldIds);
+          const fieldIds = [...result.fieldIds];
+          for (const id of embeddedColumns) {
+            fieldIds.splice(columnIds.indexOf(id), 0, id);
+          }
+          this.config().config.columns = fieldIds;
+          this.activeFields.set(fieldIds);
 
           if (result.schemaChanged) {
             this.relatedEntityModified.emit(this.entityConstructor());

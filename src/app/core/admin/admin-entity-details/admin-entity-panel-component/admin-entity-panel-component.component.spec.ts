@@ -6,13 +6,18 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { EventEmitter } from "@angular/core";
 import { Entity } from "app/core/entity/model/entity";
 import { DefaultDatatype } from "app/core/entity/default-datatype/default.datatype";
 import { SchemaEmbedArrayDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
+import {
+  MatDialogMock,
+  mockMatDialog,
+  mockMatDialogRef,
+} from "app/utils/test-utils/dialog-mocks";
 
 @DatabaseEntity("EmbedColumnsPanelTest")
 class EmbedColumnsPanelTest extends Entity {}
@@ -22,6 +27,7 @@ describe("AdminEntityPanelComponentComponent", () => {
   let fixture: ComponentFixture<AdminEntityPanelComponentComponent>;
   let mockEntityRelationsService: any;
   let entitySchemaUpdated: EventEmitter<void>;
+  let dialog: MatDialogMock;
 
   beforeEach(async () => {
     mockEntityRelationsService = {
@@ -31,6 +37,7 @@ describe("AdminEntityPanelComponentComponent", () => {
         .mockName("EntityRelationsService.getEntityTypesReferencingType"),
     };
     entitySchemaUpdated = new EventEmitter<void>();
+    dialog = mockMatDialog();
     await TestBed.configureTestingModule({
       imports: [AdminEntityPanelComponentComponent, MatDialogModule],
       providers: [
@@ -49,7 +56,9 @@ describe("AdminEntityPanelComponentComponent", () => {
           multi: true,
         },
       ],
-    }).compileComponents();
+    })
+      .overrideProvider(MatDialog, { useValue: dialog })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AdminEntityPanelComponentComponent);
     component = fixture.componentInstance;
@@ -134,6 +143,53 @@ describe("AdminEntityPanelComponentComponent", () => {
         "contactPersons.role",
         "partners.role",
         "partners.organisation",
+      ]);
+    });
+
+    it("offers only the inner fields of the embedded entries through which the section's property links the records", () => {
+      const partners = EmbedColumnsPanelTest.schema.get("partners");
+      EmbedColumnsPanelTest.schema.set("partners", {
+        ...partners,
+        additional: {
+          ...partners.additional,
+          contact: { dataType: "entity", additional: TestEntity.ENTITY_TYPE },
+        },
+      });
+      fixture.componentRef.setInput("config", {
+        component: "RelatedEntities",
+        config: {
+          entityType: EmbedColumnsPanelTest.ENTITY_TYPE,
+          property: "contactPersons",
+        },
+      } as any);
+
+      expect(component.embeddedFieldColumns().map((c) => c.id)).toEqual([
+        "contactPersons.role",
+      ]);
+    });
+
+    it("keeps embedded columns out of the data structure dialog and at their position after applying it", () => {
+      fixture.componentRef.setInput("config", {
+        component: "RelatedEntities",
+        config: {
+          entityType: EmbedColumnsPanelTest.ENTITY_TYPE,
+          columns: ["name", "contactPersons.role", "other"],
+        },
+      } as any);
+      dialog.open.mockReturnValue(
+        mockMatDialogRef({ fieldIds: ["other", "name"], schemaChanged: false }),
+      );
+
+      component.openRelatedEntityDetailsConfig();
+
+      expect(dialog.open.mock.calls[0][1].data.currentColumns).toEqual([
+        "name",
+        "other",
+      ]);
+      expect(component.config().config.columns).toEqual([
+        "other",
+        "contactPersons.role",
+        "name",
       ]);
     });
   });
