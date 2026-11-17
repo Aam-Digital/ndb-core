@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/basic-datatypes/date-range/parent-ranges.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/core/basic-datatypes/date-range/parent-ranges.ts:13</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/core/basic-datatypes/date-range/parent-ranges.ts:13</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/basic-datatypes/date-range/parent-ranges.ts:14</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, resource } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, resource } from &quot;@angular/core&quot;;
+import { isEqual } from &quot;lodash-es&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { WithinParentConfig } from &quot;../../common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
@@ -347,13 +348,17 @@ export function parentRangesResource(
   const entityMapper &#x3D; inject(EntityMapperService);
 
   return resource({
-    params: () &#x3D;&gt; {
-      const { record, fieldId, config } &#x3D; params();
-      const parentIds &#x3D; config ? getParentIds(config, record) : [];
-      return parentIds.length
-        ? { parentIds, valueField: config.parentValueField ?? fieldId }
-        : undefined;
-    },
+    params: computed(
+      () &#x3D;&gt; {
+        const { record, fieldId, config } &#x3D; params();
+        const parentIds &#x3D; config ? getParentIds(config, record) : [];
+        return parentIds.length
+          ? { parentIds, valueField: config.parentValueField ?? fieldId }
+          : undefined;
+      },
+      // the record is copied on every change of its form: only load again when the parents change
+      { equal: isEqual },
+    ),
     loader: ({ params: { parentIds, valueField } }) &#x3D;&gt;
       loadParentRanges(entityMapper, parentIds, valueField),
   });
