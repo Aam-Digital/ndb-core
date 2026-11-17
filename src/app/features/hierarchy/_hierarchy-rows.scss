@@ -1,0 +1,29 @@
+@use "@angular/material" as mat;
+@use "variables/colors";
+@use "variables/sizes";
+
+/* Rows of a list arranged as a hierarchy (see hierarchy-data-source.ts).
+   They are styled globally because the rows belong to the table, not to the feature's components. */
+
+/* a row only shown as the parent of a matching record */
+tr.hierarchy-context-row {
+  color: colors.$context;
+  font-style: italic;
+}
+
+/* each branch of the tree is a block: its top-level row has a very light background
+   and, except for the first, a separator line and a little extra space above it
+   (no connector line crosses it, as the lines of a branch end before the next top-level row) */
+tr.hierarchy-top-row {
+  background-color: colors.$grey-light;
+}
+
+tr.hierarchy-top-row:not(:first-child) > td {
+  border-top: 2px solid mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400);
+  padding-top: sizes.$small;
+}
+
+/* the title of a record with sub-records (the field following the tree cell) */
+tr.hierarchy-parent-row app-hierarchy-tree-cell + * {
+  font-weight: 500;
+}

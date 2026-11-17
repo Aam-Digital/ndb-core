@@ -1,0 +1,79 @@
+@use "variables/breakpoints";
+@use "variables/sizes";
+
+/* the host is a flex item in the filter row of the list (desktop) or in the header row (mobile) */
+:host {
+  display: flex;
+  align-items: center;
+  /* the "Filter" field next to it takes the remaining width, the buttons keep theirs */
+  flex-shrink: 0;
+  /* the height of the form fields next to it, to center the buttons on them */
+  min-height: 56px;
+
+  @media screen and (min-width: breakpoints.$md) {
+    /* after the filters, at the end of the row: it arranges the list, it does not filter it */
+    order: 1;
+    margin-inline-start: auto;
+  }
+}
+
+.field-icon {
+  margin-inline-end: sizes.$small;
+}
+
+.caret {
+  margin-inline-start: sizes.$small;
+}
+
+.field-button {
+  white-space: nowrap;
+}
+
+/* the two buttons look like one control */
+.field-button.joined {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.expand-button {
+  min-width: 0;
+  padding-inline: sizes.$regular;
+  margin-inline-start: -1px;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* on mobile, an icon button (with its tooltip and accessible name), to leave the width to the "Filter" field */
+@media screen and (max-width: calc(breakpoints.$md - 1px)) {
+  .field-button {
+    min-width: 0;
+    padding-inline: sizes.$regular;
+  }
+
+  .field-icon {
+    margin-inline-end: 0;
+  }
+
+  .caret {
+    display: none;
+  }
+
+  /* hidden visually only, it stays in the accessible name */
+  .field-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+/* keeps the labels of the menu aligned whether their option is checked or not */
+.check {
+  margin-inline-end: sizes.$small;
+
+  &.unchecked {
+    visibility: hidden;
+  }
+}
