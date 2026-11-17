@@ -33,7 +33,7 @@ import { createFilterPredicate } from "../../../utils/filter-compare-utils";
 /** whether an entity matches a condition of its conditional colors (see {@link Entity.matchColorConditionsWith}) */
 export type ColorConditionMatcher = (
   entity: Entity,
-  condition: DataFilter<any>,
+  condition: DataFilter<Entity>,
 ) => boolean;
 
 /**

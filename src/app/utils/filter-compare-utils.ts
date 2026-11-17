@@ -30,7 +30,9 @@ export function createFilterPredicate<T>(
  * Whether a part of a condition is an object of operators or nested conditions,
  * as opposed to a value to compare with (like a `Date`, a list or `null`).
  */
-export function isPlainObject(value: unknown): value is Record<string, any> {
+export function isPlainObject(
+  value: unknown,
+): value is Record<string, unknown> {
   return (
     !!value &&
     typeof value === "object" &&

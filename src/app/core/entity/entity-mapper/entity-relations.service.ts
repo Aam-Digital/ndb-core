@@ -311,7 +311,6 @@ export class EntityRelationsService {
     );
   }
 
-
   /**
    * Check whether a single value (a plain ID string or an embedded object)
    * references the given entity ID.
