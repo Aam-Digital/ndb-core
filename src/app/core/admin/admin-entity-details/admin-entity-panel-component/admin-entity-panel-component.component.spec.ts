@@ -30,6 +30,9 @@ import {
 @DatabaseEntity("EmbedColumnsPanelTest")
 class EmbedColumnsPanelTest extends Entity {}
 
+@DatabaseEntity("EmbedSectionPanelTest")
+class EmbedSectionPanelTest extends Entity {}
+
 describe("AdminEntityPanelComponentComponent", () => {
   let component: AdminEntityPanelComponentComponent;
   let fixture: ComponentFixture<AdminEntityPanelComponentComponent>;
@@ -102,16 +105,12 @@ describe("AdminEntityPanelComponentComponent", () => {
 
   describe("field of an EmbeddedArrayData section", () => {
     beforeEach(() => {
-      TestEntity.schema.set("contactPersons", {
+      EmbedSectionPanelTest.schema.set("contactPersons", {
         dataType: "schema-embed-array",
         label: "Contact Persons",
         additional: { role: { dataType: "string", label: "Role" } },
       });
-      fixture.componentRef.setInput("entityType", TestEntity);
-    });
-
-    afterEach(() => {
-      TestEntity.schema.delete("contactPersons");
+      fixture.componentRef.setInput("entityType", EmbedSectionPanelTest);
     });
 
     function sectionConfig(
@@ -150,7 +149,7 @@ describe("AdminEntityPanelComponentComponent", () => {
         sectionConfig("EmbeddedArrayData", "contactPersons"),
       );
       const editedField = {
-        ...TestEntity.schema.get("contactPersons"),
+        ...EmbedSectionPanelTest.schema.get("contactPersons"),
         id: "contactPersons",
         label: "Contacts",
       };
@@ -165,7 +164,7 @@ describe("AdminEntityPanelComponentComponent", () => {
         }),
       );
       expect(updateSchemaField).toHaveBeenCalledWith(
-        TestEntity,
+        EmbedSectionPanelTest,
         "contactPersons",
         editedField,
       );
