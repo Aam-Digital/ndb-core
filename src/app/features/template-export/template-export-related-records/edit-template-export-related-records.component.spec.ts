@@ -10,21 +10,21 @@ import { TemplateExportRelatedRecords } from "./template-export-related-records"
 describe("EditTemplateExportRelatedRecordsComponent", () => {
   @DatabaseEntity("EditRelatedProject")
   class Project extends Entity {
-    static override label = "Project";
+    static override readonly label = "Project";
 
     @DatabaseField({ label: "Title" }) title: string;
   }
 
   @DatabaseEntity("EditRelatedUnlinked")
   class Unlinked extends Entity {
-    static override label = "Unlinked";
+    static override readonly label = "Unlinked";
   }
 
   @DatabaseEntity("EditRelatedAction")
   class Action extends Entity {
-    static override label = "Action";
-    static override labelPlural = "Actions";
-    static override toStringAttributes = ["subject"];
+    static override readonly label = "Action";
+    static override readonly labelPlural = "Actions";
+    static override readonly toStringAttributes = ["subject"];
 
     @DatabaseField({ label: "Subject" }) subject: string;
 
@@ -65,7 +65,8 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     typesControl = new FormControl(applicableTypes);
     control = new FormControl(value);
     arrayReportControl = new FormControl(false);
-    new FormGroup({
+    // the component reads the other fields of the template from its parent form
+    const form = new FormGroup({
       applicableForEntityTypes: typesControl,
       arrayReport: arrayReportControl,
       relatedRecords: control,
@@ -77,6 +78,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     component = fixture.componentInstance;
     component.ngControl = { control } as any;
     fixture.detectChanges();
+    return form;
   }
 
   beforeEach(async () => {

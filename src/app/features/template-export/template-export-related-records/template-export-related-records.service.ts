@@ -78,10 +78,11 @@ export class TemplateExportRelatedRecordsService {
     records: Entity[],
     loadedEntities: LoadedEntitiesCache = new Map(),
   ): Promise<Map<string, RelatedRecordsData>> {
-    const result = new Map<string, RelatedRecordsData>();
     if (!template.relatedRecords?.length) {
-      return result;
+      return new Map();
     }
+
+    const result = new Map<string, RelatedRecordsData>();
     records.forEach((record) => result.set(record.getId(), {}));
 
     // each config adds its own list to the records' data, so they can be loaded at the same time

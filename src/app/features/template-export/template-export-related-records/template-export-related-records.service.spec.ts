@@ -20,7 +20,7 @@ import {
 describe("TemplateExportRelatedRecordsService", () => {
   @DatabaseEntity("RelatedRecordsProject")
   class Project extends Entity {
-    static override toStringAttributes = ["title"];
+    static override readonly toStringAttributes = ["title"];
 
     @DatabaseField() title: string;
   }
@@ -33,7 +33,7 @@ describe("TemplateExportRelatedRecordsService", () => {
   /** a record type forming a hierarchy among itself, that can also be linked to a project */
   @DatabaseEntity("RelatedRecordsAction")
   class Action extends Entity {
-    static override toStringAttributes = ["title"];
+    static override readonly toStringAttributes = ["title"];
 
     @DatabaseField() title: string;
 
