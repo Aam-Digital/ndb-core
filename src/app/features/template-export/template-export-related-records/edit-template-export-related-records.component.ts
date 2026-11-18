@@ -33,6 +33,7 @@ import {
   canBeUsedInPlaceholder,
   getRelatedRecordsPlaceholder,
   RELATED_RECORDS_MAX_LEVELS,
+  clampRelatedRecordsLevels,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
 
@@ -213,10 +214,7 @@ export class EditTemplateExportRelatedRecordsComponent
    * (the input keeps the entered number if the saved value does not change)
    */
   setLevels(index: number, value: string): number {
-    const levels = Math.min(
-      Math.max(Math.floor(Number(value)) || 1, 1),
-      RELATED_RECORDS_MAX_LEVELS,
-    );
+    const levels = clampRelatedRecordsLevels(value);
     this.updateRow(index, (config) => {
       const { levels: _previous, ...updated } = config;
       return levels > 1 ? { ...updated, levels } : updated;
@@ -248,18 +246,7 @@ export class EditTemplateExportRelatedRecordsComponent
     this.formControl.markAsTouched();
   }
 
-  /** the options of the record types last asked for, as the validator asks on every change */
-  private optionsCache?: { types: string; options: RelatedRecordsOption[] };
-
   private getOptions(applicableTypes: string[]): RelatedRecordsOption[] {
-    const types = applicableTypes.join();
-    if (this.optionsCache?.types !== types) {
-      this.optionsCache = { types, options: this.findOptions(applicableTypes) };
-    }
-    return this.optionsCache.options;
-  }
-
-  private findOptions(applicableTypes: string[]): RelatedRecordsOption[] {
     const options = new Map<string, RelatedRecordsOption>();
     for (const type of applicableTypes) {
       for (const {
@@ -289,7 +276,7 @@ export class EditTemplateExportRelatedRecordsComponent
           const option: RelatedRecordsOption = {
             id: getOptionId(config),
             ...config,
-            label: $localize`:option to include related records, e.g. 'Tasks (linked through "Parent task")':${recordType}:recordType: (linked through "${fieldLabel}:fieldLabel:")`,
+            label: $localize`${recordType}:recordType: (linked through "${fieldLabel}:fieldLabel:")`,
             isHierarchy: isFieldLinkingToType(field, entityType.ENTITY_TYPE),
           };
           options.set(option.id, option);
@@ -321,7 +308,7 @@ export class EditTemplateExportRelatedRecordsComponent
 
   /**
    * Prevent saving a config that cannot be applied when generating a file.
-   * Reads the record types from the control's parent, so it does not depend on this component's state.
+   * (The options follow the record types selected in the form, see `ngOnInit`.)
    */
   private readonly validateRelatedRecords = (
     control: AbstractControl,
@@ -329,21 +316,15 @@ export class EditTemplateExportRelatedRecordsComponent
     const configs: TemplateExportRelatedRecords[] = asArray(
       control.value ?? [],
     );
-    const applicableTypes: string[] = asArray(
-      control.parent?.get("applicableForEntityTypes")?.value ?? [],
-    );
-    const errorMessage = this.getErrorMessage(configs, applicableTypes);
+    const errorMessage = this.getErrorMessage(configs);
 
     return errorMessage ? { relatedRecords: { errorMessage } } : null;
   };
 
   private getErrorMessage(
     configs: TemplateExportRelatedRecords[],
-    applicableTypes: string[],
   ): string | undefined {
-    const availableOptions = new Set(
-      this.getOptions(applicableTypes).map((option) => option.id),
-    );
+    const availableOptions = new Set(this.options().map((option) => option.id));
     const selected = new Set<string>();
 
     for (const config of configs) {

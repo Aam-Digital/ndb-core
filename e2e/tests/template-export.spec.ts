@@ -107,7 +107,7 @@ test("Template-export action generates a file in the selected format, including 
 
   expect(renderRequest?.convertTo).toBe("docx");
   expect(download.suggestedFilename()).toBe("letter.docx");
-  // the template gets the related records under the configured placeholder name
+  // the template gets the related records under their record type and link field
   expect(renderRequest?.data?.name).toBe(CHILD_NAME);
   const notes = renderRequest?.data?._related?.Note?.relatedEntities;
   expect(notes).toHaveLength(1);

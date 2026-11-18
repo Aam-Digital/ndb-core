@@ -103,7 +103,14 @@ export function getRelatedRecordsLevels(
     return 1;
   }
 
-  const levels = Math.floor(Number(config.levels));
+  return clampRelatedRecordsLevels(config.levels);
+}
+
+/**
+ * A number of hierarchy levels within the supported range (1 to {@link RELATED_RECORDS_MAX_LEVELS}).
+ */
+export function clampRelatedRecordsLevels(value: unknown): number {
+  const levels = Math.floor(Number(value));
   if (!Number.isFinite(levels)) {
     return 1;
   }
