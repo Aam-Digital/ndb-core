@@ -42,10 +42,11 @@
     <app-admin-list-manager
       [items]="activeFields()"
       [activeFields]="activeFields()"
+      [additionalFields]="embeddedFieldColumns()"
       [entityType]="entityConstructor()"
       fieldLabel="Columns shown:"
       i18n-fieldLabel
-      (itemsChange)="updateFields($event)"
+      (idsChange)="updateFields($event)"
     ></app-admin-list-manager>
   } @else {
     <p>[ {{ config().component }} ]</p>

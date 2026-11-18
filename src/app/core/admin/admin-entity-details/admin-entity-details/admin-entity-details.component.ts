@@ -21,6 +21,7 @@ import { ViewTitleComponent } from "../../../common-components/view-title/view-t
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-component/admin-entity-panel-component.component";
+import { AdminEmbeddedArrayDataComponent } from "../admin-embedded-array-data/admin-embedded-array-data.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
@@ -49,6 +50,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     AdminSectionHeaderComponent,
     AdminEntityFormComponent,
     AdminEntityPanelComponentComponent,
+    AdminEmbeddedArrayDataComponent,
     MatTooltipModule,
     AdminTabsComponent,
     AdminTabTemplateDirective,
