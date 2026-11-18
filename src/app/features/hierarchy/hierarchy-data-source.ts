@@ -34,8 +34,11 @@ export type HierarchyDataSourceConfig = {
 
 /** URL query param holding the user's choice of the hierarchy field in a list */
 export const HIERARCHY_URL_PARAM = "_hierarchy";
-/** value of {@link HIERARCHY_URL_PARAM} for the flat list */
-export const NO_HIERARCHY = "none";
+/**
+ * value of {@link HIERARCHY_URL_PARAM} for the flat list,
+ * starting with "_" so that it cannot be the id of a field (see {@link UrlStateService})
+ */
+export const NO_HIERARCHY = "_flat";
 /** CSS class of rows that are only shown as the parent of a matching record */
 export const CONTEXT_ROW_CLASS = "hierarchy-context-row";
 /** CSS class of rows at the top level, each starting a branch of the tree */
@@ -64,7 +67,10 @@ export class HierarchyDataSource<
   readonly rootRecord = computed<Entity | undefined>(() => {
     const config = this.loadRecordConfig();
     const root = config?.forEntity;
-    const isOwnType = root?.getType() === config?.entityCtr?.ENTITY_TYPE;
+    if (!root || !config.entityCtr) {
+      return undefined;
+    }
+    const isOwnType = root.getType() === config.entityCtr.ENTITY_TYPE;
     return isOwnType && this.isValidField(config.relationProperty)
       ? root
       : undefined;
@@ -81,15 +87,16 @@ export class HierarchyDataSource<
       : [];
   });
 
+  /** the user's choice in the URL, following the browser's Back and Forward */
+  private readonly urlChoice = this.urlState.watchUrlParam(HIERARCHY_URL_PARAM);
+
   /** The field the records are currently arranged by (none: a flat list). */
   readonly activeField = linkedSignal<string | undefined>(() => {
     const fields = this.hierarchyFields();
     if (this.rootRecord()) {
       return fields[0];
     }
-    const fromUrl = untracked(() =>
-      this.urlState.getUrlParam(HIERARCHY_URL_PARAM),
-    );
+    const fromUrl = this.urlChoice();
     if (fromUrl === NO_HIERARCHY) {
       return undefined;
     }
@@ -134,13 +141,12 @@ export class HierarchyDataSource<
       new Map(this.view()?.rows.map((row) => [row.record.getId(), row]) ?? []),
   );
 
-  /** Whether any record with sub-records is expanded. */
-  readonly anyExpanded = computed(() => {
-    const collapsed = this.collapsedIds();
-    return [...(this.view()?.expandableIds ?? [])].some(
-      (id) => !collapsed.has(id),
-    );
-  });
+  /** Whether any visible record with sub-records is expanded (not those hidden under a collapsed row). */
+  readonly anyExpanded = computed(
+    () =>
+      this.view()?.rows.some((row) => row.childCount > 0 && !row.isCollapsed) ??
+      false,
+  );
 
   override readonly usesPagination = computed(() => !this.activeField());
 
@@ -204,8 +210,10 @@ export class HierarchyDataSource<
     super();
 
     effect(() => {
-      // a changed filter shows all its matches, at every level
+      // a changed filter shows all its matches, at every level,
+      // and another field (also through the browser's Back and Forward) starts fully expanded
       this.filterState();
+      this.activeField();
       untracked(() => this.expandAll());
     });
     effect(() => {
@@ -291,6 +299,8 @@ export class HierarchyDataSource<
   private async revealNewlyHidden(change: () => Promise<unknown>) {
     const hiddenBefore = this.view()?.hiddenIds ?? new Set<string>();
     await change();
+    // the filters would apply the change only later (in an effect), the tree needs it now
+    untracked(() => this.filteredRecords.set(this.filterRecords()));
     const newlyHidden = [...(this.view()?.hiddenIds ?? [])].filter(
       (id) => !hiddenBefore.has(id),
     );

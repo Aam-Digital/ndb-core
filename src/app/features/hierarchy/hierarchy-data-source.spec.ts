@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { MatSort } from "@angular/material/sort";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
@@ -96,7 +97,8 @@ describe("HierarchyDataSource", () => {
   let dataSource: HierarchyDataSource<Action>;
   let entityMapper: EntityMapperService;
   let urlState: UrlStateService;
-  let urlParam: string | null;
+  /** the hierarchy param in the URL, a signal to simulate the browser's Back and Forward */
+  const urlParam = signal<string | null>(null);
 
   async function createDataSource(
     config: object = { hierarchyFields: ["parent", "dependsOn"] },
@@ -143,14 +145,14 @@ describe("HierarchyDataSource", () => {
   }
 
   beforeEach(() => {
-    urlParam = null;
+    urlParam.set(null);
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState(LoginState.LOGGED_IN, plan())],
     });
     entityMapper = TestBed.inject(EntityMapperService);
     urlState = TestBed.inject(UrlStateService);
-    vi.spyOn(urlState, "getUrlParam").mockImplementation((key) =>
-      key === HIERARCHY_URL_PARAM ? urlParam : null,
+    vi.spyOn(urlState, "watchUrlParam").mockImplementation((key) =>
+      key === HIERARCHY_URL_PARAM ? urlParam : signal(null),
     );
     vi.spyOn(urlState, "updateUrlParams").mockImplementation(() => undefined);
   });
@@ -298,6 +300,15 @@ describe("HierarchyDataSource", () => {
     expect(selectableIds()).not.toContain("Rampur");
   });
 
+  it("offers to expand all once no visible row is expanded, also with sub-records hidden under a collapsed row", async () => {
+    await createDataSource();
+
+    dataSource.toggleCollapsed("HierarchyTestAction:Clean Water");
+    await settle();
+
+    expect(dataSource.anyExpanded()).toBe(false);
+  });
+
   it("shows the number of hidden sub-records after the title of a collapsed row only", async () => {
     await createDataSource();
 
@@ -367,11 +378,34 @@ describe("HierarchyDataSource", () => {
     [NO_HIERARCHY, undefined],
     ["dependsOn", "dependsOn"],
     ["unknown", "parent"],
+    // a field could have the id "none"
+    ["none", "parent"],
   ])("starts with the choice %s from the URL as %s", async (param, field) => {
-    urlParam = param;
+    urlParam.set(param);
     await createDataSource();
 
     expect(dataSource.activeField()).toBe(field);
+  });
+
+  it("follows the choice in the URL when the user goes back or forward in the browser history", async () => {
+    await createDataSource();
+
+    urlParam.set("dependsOn");
+    await settle();
+    expect(dataSource.activeField()).toBe("dependsOn");
+
+    urlParam.set(null);
+    await settle();
+    expect(dataSource.activeField()).toBe("parent");
+  });
+
+  it("does not fail before the table has set which records to load", () => {
+    dataSource = TestBed.runInInjectionContext(
+      () => new HierarchyDataSource<Action>(),
+    );
+
+    expect(dataSource.rootRecord()).toBeUndefined();
+    expect(dataSource.usesPagination()).toBe(true);
   });
 
   it("works as a flat list, without reporting a problem, if no configured field can be a hierarchy", async () => {
@@ -415,13 +449,15 @@ describe("HierarchyDataSource", () => {
     ]);
   });
 
-  it.each<{ change: string; apply: () => Promise<unknown> }>([
+  it.each<{ change: string; moved: string; apply: () => Promise<unknown> }>([
     {
       change: "a new record",
-      apply: () => entityMapper.save(action("Garden", { parent: "Meetings" })),
+      moved: "Orchard",
+      apply: () => entityMapper.save(action("Orchard", { parent: "Meetings" })),
     },
     {
       change: "a form that edited the object held by the list",
+      moved: "Garden",
       apply: () => {
         const garden = dataSource
           .allRecords()
@@ -432,6 +468,7 @@ describe("HierarchyDataSource", () => {
     },
     {
       change: "a bulk operation (reloading the list)",
+      moved: "Garden",
       apply: async () => {
         vi.spyOn(
           TestBed.inject(ConfirmationDialogService),
@@ -448,7 +485,7 @@ describe("HierarchyDataSource", () => {
     },
   ])(
     "expands the parents of a record that $change puts below a collapsed row",
-    async ({ apply }) => {
+    async ({ moved, apply }) => {
       await createDataSource();
       dataSource.collapseAll();
       await settle();
@@ -457,7 +494,7 @@ describe("HierarchyDataSource", () => {
       await settle();
 
       expect(displayedRows()).toEqual(
-        expect.arrayContaining(["-Mobilisation", "--Meetings", "---Garden"]),
+        expect.arrayContaining(["-Mobilisation", "--Meetings", `---${moved}`]),
       );
     },
   );

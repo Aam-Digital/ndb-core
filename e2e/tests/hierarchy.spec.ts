@@ -16,8 +16,17 @@ test("Actions list shows sub-actions indented below their parent", async ({
       .locator("app-hierarchy-tree-cell")
       .evaluate((cell) => cell.getBoundingClientRect().width);
 
-  // sub-actions are indented one step per level, all levels expanded
+  // sub-actions follow their parent, indented one step per level, all levels expanded
   await expect(row("Meeting in Sonpur")).toBeVisible();
+  const rowTexts = await page.getByRole("row").allInnerTexts();
+  const positionOf = (title: string) =>
+    rowTexts.findIndex((text) => text.includes(title));
+  expect(positionOf("Clean Water 2027")).toBeLessThan(
+    positionOf("Village meetings"),
+  );
+  expect(positionOf("Village meetings")).toBeLessThan(
+    positionOf("Meeting in Sonpur"),
+  );
   expect(await indentOf("Clean Water 2027")).toBeLessThan(
     await indentOf("Village meetings"),
   );
@@ -28,14 +37,16 @@ test("Actions list shows sub-actions indented below their parent", async ({
 
   // collapsing a row hides its sub-actions and shows how many there are
   await row("Village meetings")
-    .getByRole("button", { name: "3 sub-records" })
+    .getByRole("button", { name: "Village meetings: 3 sub-records" })
     .click();
   await expect(row("Meeting in Sonpur")).toBeHidden();
   await expect(row("Village meetings")).toContainText(
     /Village meetings\s*\(3\)/,
   );
   await expect(
-    row("Village meetings").getByRole("button", { name: "3 sub-records" }),
+    row("Village meetings").getByRole("button", {
+      name: "Village meetings: 3 sub-records",
+    }),
   ).toHaveAttribute("aria-expanded", "false");
 
   await page.getByRole("button", { name: "Collapse all" }).click();
@@ -47,10 +58,10 @@ test("Actions list shows sub-actions indented below their parent", async ({
   await page.getByPlaceholder("e.g. name, age").fill("Sonpur");
   await expect(page.getByRole("row")).toHaveCount(5); // header + 3 parents + match
   await expect(row("Village meetings")).toContainText(
-    "Not matching the filters",
+    "Does not match the filters",
   );
   await expect(row("Meeting in Sonpur")).not.toContainText(
-    "Not matching the filters",
+    "Does not match the filters",
   );
   await page.getByPlaceholder("e.g. name, age").fill("");
 
@@ -69,7 +80,7 @@ test("Actions list shows sub-actions indented below their parent", async ({
 
   await hierarchyButton.click();
   await page.getByRole("menuitemradio", { name: "None (flat list)" }).click();
-  await expect(page).toHaveURL(/[?&]_hierarchy=none/);
+  await expect(page).toHaveURL(/[?&]_hierarchy=_flat/);
   await expect(hierarchyButton).toHaveAccessibleName("Hierarchy: Flat list");
   await expect(page.getByRole("button", { name: "Collapse all" })).toBeHidden();
   await expect(page.locator("app-hierarchy-tree-cell")).toHaveCount(0);

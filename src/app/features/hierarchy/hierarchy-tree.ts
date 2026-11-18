@@ -87,13 +87,16 @@ export function resolveParentIds<T extends Entity>(
   const done = new Set<string>();
   for (const start of parents.keys()) {
     const path: string[] = [];
+    // the position of each record in the path, to find a loop without searching the path
+    const positions = new Map<string, number>();
     let current: string | undefined = start;
     while (current !== undefined && !done.has(current)) {
-      const loopStart = path.indexOf(current);
-      if (loopStart !== -1) {
+      const loopStart = positions.get(current);
+      if (loopStart !== undefined) {
         path.slice(loopStart).forEach((id) => parents.set(id, undefined));
         break;
       }
+      positions.set(current, path.length);
       path.push(current);
       current = parents.get(current);
     }
@@ -161,12 +164,15 @@ export function buildHierarchyView<T extends Entity>(
     const id = match.getId();
     matchIds.add(id);
     visible.set(id, match);
-    // add the parents as context, up to the top (or the root)
+    // add the parents as context, up to the top (or the root);
+    // a parent already shown has all its parents shown, too
     let parentId = parents.get(id);
-    while (parentId !== undefined && parentId !== rootId) {
-      if (!visible.has(parentId)) {
-        visible.set(parentId, byId.get(parentId)!);
-      }
+    while (
+      parentId !== undefined &&
+      parentId !== rootId &&
+      !visible.has(parentId)
+    ) {
+      visible.set(parentId, byId.get(parentId)!);
       parentId = parents.get(parentId);
     }
   }

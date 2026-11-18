@@ -5,7 +5,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { resolveLocaleText } from "#src/app/core/language/active-locale";
-import { HierarchyDataSource, NO_HIERARCHY } from "../hierarchy-data-source";
+import { HierarchyDataSource } from "../hierarchy-data-source";
 
 /**
  * The hierarchy control of a list: a button with a menu to choose the field to arrange the records by
@@ -26,28 +26,31 @@ import { HierarchyDataSource, NO_HIERARCHY } from "../hierarchy-data-source";
 export class HierarchyToolbarComponent {
   dataSource = input.required<HierarchyDataSource<Entity>>();
 
-  protected readonly options = computed(() => {
-    const schema = this.dataSource().loadRecordConfig()?.entityCtr?.schema;
-    return [
-      ...this.dataSource()
-        .hierarchyFields()
-        .map((id) => ({
-          id,
-          label: resolveLocaleText(schema?.get(id)?.label) ?? id,
-        })),
-      {
-        id: NO_HIERARCHY,
-        label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
-      },
-    ];
-  });
+  /** the options of the menu: the hierarchy fields and `null` for the flat list (a field could have any id) */
+  protected readonly options = computed<{ id: string | null; label: string }[]>(
+    () => {
+      const schema = this.dataSource().loadRecordConfig()?.entityCtr?.schema;
+      return [
+        ...this.dataSource()
+          .hierarchyFields()
+          .map((id) => ({
+            id,
+            label: resolveLocaleText(schema?.get(id)?.label) ?? id,
+          })),
+        {
+          id: null,
+          label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
+        },
+      ];
+    },
+  );
 
   protected readonly selected = computed(
-    () => this.dataSource().activeField() ?? NO_HIERARCHY,
+    () => this.dataSource().activeField() ?? null,
   );
 
   protected readonly selectedLabel = computed(() =>
-    this.selected() === NO_HIERARCHY
+    this.selected() === null
       ? $localize`:hierarchy|Label of the Hierarchy button while a list is shown without hierarchy:Flat list`
       : this.options().find((option) => option.id === this.selected())?.label,
   );
@@ -71,7 +74,7 @@ export class HierarchyToolbarComponent {
         };
   });
 
-  protected select(value: string) {
-    this.dataSource().selectField(value === NO_HIERARCHY ? undefined : value);
+  protected select(field: string | null) {
+    this.dataSource().selectField(field ?? undefined);
   }
 }

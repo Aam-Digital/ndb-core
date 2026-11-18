@@ -29,6 +29,11 @@ export class HierarchyTreeCellComponent {
     { equal: isSameTreeCell },
   );
 
+  /** the name of the record, for the accessible name of the expand button (kept apart from the tree position above) */
+  protected readonly title = computed(() =>
+    this.dataSource().rows().get(this.recordId())?.record.toString(),
+  );
+
   protected toggle() {
     this.dataSource().toggleCollapsed(this.recordId());
   }

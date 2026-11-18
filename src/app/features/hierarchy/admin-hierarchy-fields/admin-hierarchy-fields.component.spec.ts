@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { provideNoopAnimations } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
@@ -37,10 +38,15 @@ describe("AdminHierarchyFieldsComponent", () => {
   let fixture: ComponentFixture<AdminHierarchyFieldsComponent>;
   let config: EntityListConfig;
 
-  async function openSelect(hierarchyFields?: string[]) {
+  const hierarchy = (hierarchyFields: unknown) => ({
+    name: "hierarchy",
+    config: { hierarchyFields },
+  });
+
+  async function openSelect(dataSource?: EntityListConfig["dataSource"]) {
     config = { entityType: Action.ENTITY_TYPE } as EntityListConfig;
-    if (hierarchyFields) {
-      config.dataSource = { name: "hierarchy", config: { hierarchyFields } };
+    if (dataSource) {
+      config.dataSource = dataSource;
     }
     fixture.componentRef.setInput("entityConstructor", Action);
     fixture.componentRef.setInput("config", config);
@@ -54,7 +60,7 @@ describe("AdminHierarchyFieldsComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AdminHierarchyFieldsComponent],
+      imports: [AdminHierarchyFieldsComponent, FontAwesomeTestingModule],
       providers: [provideNoopAnimations()],
     });
     fixture = TestBed.createComponent(AdminHierarchyFieldsComponent);
@@ -83,10 +89,27 @@ describe("AdminHierarchyFieldsComponent", () => {
   });
 
   it("removes the hierarchy from the list when no field is selected", async () => {
-    const select = await openSelect(["parent"]);
+    const select = await openSelect(hierarchy(["parent"]));
 
     await select.clickOptions({ text: "Parent action" });
 
     expect(config.dataSource).toBeUndefined();
+  });
+
+  it("keeps the list's own data source when the admin removes the fields again", async () => {
+    const select = await openSelect("in-memory");
+
+    await select.clickOptions({ text: "Parent action" });
+    await select.clickOptions({ text: "Parent action" });
+
+    expect(config.dataSource).toBe("in-memory");
+  });
+
+  it("shows a config with an invalid value of the fields without selection, for the admin to fix it", async () => {
+    const select = await openSelect(hierarchy("parent"));
+
+    await select.clickOptions({ text: "Depends on" });
+
+    expect(config.dataSource).toEqual(hierarchy(["dependsOn"]));
   });
 });

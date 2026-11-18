@@ -5,8 +5,8 @@
 :host {
   display: flex;
   align-items: center;
-  /* the "Filter" field next to it takes the remaining width, the buttons keep theirs */
-  flex-shrink: 0;
+  /* never wider than the row, the label of the field is cut off instead (see .field-label) */
+  max-width: 100%;
   /* the height of the form fields next to it, to center the buttons on them */
   min-height: 56px;
 
@@ -27,6 +27,16 @@
 
 .field-button {
   white-space: nowrap;
+}
+
+/* a long label is cut off with "…", like the selected value of the filter dropdowns next to it
+   (the full label is in the menu and in the accessible name) */
+.field-label {
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 
 /* the two buttons look like one control */

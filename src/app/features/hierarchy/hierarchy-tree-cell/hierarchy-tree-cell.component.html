@@ -48,9 +48,11 @@
           class="visually-hidden"
           i18n="
             hierarchy|Accessible name of the button to expand or collapse the
-            sub-records of a record in a list
+            sub-records of a record in a list, starting with the name of the
+            record
           "
-          >{row.childCount, plural,
+          >{{ title() }}:
+          {row.childCount, plural,
             =1 {1 sub-record}
             other {{{ row.childCount }} sub-records}
           }</span
@@ -76,7 +78,7 @@
         hierarchy|Screen reader text of a greyed record in a list that is only
         shown as the parent of matching records
       "
-      >Not matching the filters:</span
+      >Does not match the filters, shown because records below it do:</span
     >
   }
 }

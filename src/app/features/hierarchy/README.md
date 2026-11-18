@@ -40,7 +40,8 @@ The user chooses the field (or "None (flat list)") with the hierarchy button at 
 as it changes how the list is arranged, not which records it shows; "Collapse all" / "Expand all" is joined to it.
 On mobile, both are icon buttons in the header row.
 The choice is kept in the URL param `_hierarchy` (with the `_` prefix of URL state other than filters, see `UrlStateService`),
-the default field is not written to the URL.
+the default field is not written to the URL and the flat list is `_flat` (starting with `_`, so it cannot be a field id).
+The browser's Back and Forward restore the choice.
 
 **Related-entities section** on the details page of a record of the same type (JSON config only):
 the relation `property` is the hierarchy field, and the section shows the whole branch below the page's record.

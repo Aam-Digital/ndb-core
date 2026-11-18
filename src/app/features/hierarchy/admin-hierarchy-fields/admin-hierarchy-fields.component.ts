@@ -2,8 +2,7 @@ import { Component, computed, input, linkedSignal } from "@angular/core";
 import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityListConfig } from "#src/app/core/entity-list/EntityListConfig";
 import { resolveLocaleText } from "#src/app/core/language/active-locale";
@@ -21,12 +20,7 @@ import {
  */
 @Component({
   selector: "app-admin-hierarchy-fields",
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    MatTooltipModule,
-    FaDynamicIconComponent,
-  ],
+  imports: [MatFormFieldModule, MatSelectModule, HelpButtonComponent],
   templateUrl: "./admin-hierarchy-fields.component.html",
   styleUrl: "./admin-hierarchy-fields.component.scss",
 })
@@ -44,17 +38,30 @@ export class AdminHierarchyFieldsComponent {
     })),
   );
 
-  /** the selected fields, in the order of selection */
-  protected readonly selected = linkedSignal<string[]>(() => {
+  /**
+   * The setting as in the config before the admin changed it
+   * (read before the first change, as the config is updated in place).
+   */
+  private readonly initial = computed(() => {
     const dataSource = this.config().dataSource;
     const isHierarchy =
       typeof dataSource === "object" &&
       dataSource?.name === HierarchyDataSource.DATA_SOURCE_NAME;
-    return isHierarchy
-      ? ((dataSource.config as HierarchyDataSourceConfig)?.hierarchyFields ??
-          [])
-      : [];
+    const fields = isHierarchy
+      ? (dataSource.config as HierarchyDataSourceConfig)?.hierarchyFields
+      : undefined;
+    return {
+      // a config with an invalid value is shown without fields, so that the admin can fix it
+      fields: Array.isArray(fields) ? fields : [],
+      // restored when the admin removes all fields again
+      otherDataSource: isHierarchy ? undefined : dataSource,
+    };
   });
+
+  /** the selected fields, in the order of selection */
+  protected readonly selected = linkedSignal<string[]>(
+    () => this.initial().fields,
+  );
 
   /**
    * Keeps the selected fields in the order they were selected, newly selected ones last
@@ -80,7 +87,9 @@ export class AdminHierarchyFieldsComponent {
         name: HierarchyDataSource.DATA_SOURCE_NAME,
         config: hierarchyConfig,
       };
-    } else if (typeof config.dataSource === "object") {
+    } else if (this.initial().otherDataSource !== undefined) {
+      config.dataSource = this.initial().otherDataSource;
+    } else {
       delete config.dataSource;
     }
   }
