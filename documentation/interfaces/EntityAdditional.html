@@ -312,7 +312,7 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
-  referenceIdConditions,
+  referenceIdCondition,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
@@ -348,9 +348,9 @@ export class EntityDatatype extends StringDatatype {
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter&lt;any&gt;[] {
-    return referenceIdConditions(fieldId, referencedId);
+    return [referenceIdCondition(fieldId, referencedIds)];
   }
 
   override getExportColumns(

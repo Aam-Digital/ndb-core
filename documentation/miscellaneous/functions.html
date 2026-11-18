@@ -776,6 +776,9 @@
                             <a href="#groupByCause" title="src/app/core/logging/sentry-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupByCause</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-grouping.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#groupByReferencedId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupByReferencedId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#groupByRootCause" title="src/app/core/logging/sentry-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupByRootCause</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-grouping.ts)</span></a>
                         </li>
                         <li>
@@ -1247,7 +1250,10 @@
                             <a href="#rebuildTree" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rebuildTree</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#referenceIdConditions" title="src/app/core/entity/default-datatype/default.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>referenceIdConditions</b>&nbsp;&nbsp;&nbsp;(src/.../default.datatype.ts)</span></a>
+                            <a href="#referencedIdsIn" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>referencedIdsIn</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#referenceIdCondition" title="src/app/core/entity/default-datatype/default.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>referenceIdCondition</b>&nbsp;&nbsp;&nbsp;(src/.../default.datatype.ts)</span></a>
                         </li>
                         <li>
                             <a href="#registerLinkedRecordsSource" title="src/app/core/basic-datatypes/entity/selection-condition.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>registerLinkedRecordsSource</b>&nbsp;&nbsp;&nbsp;(src/.../selection-condition.ts)</span></a>
@@ -27455,6 +27461,172 @@ role already grants the action to every logged-in user.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/entity/entity-mapper/entity-relations.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="groupByReferencedId"></a>
+                    <span class="name">
+                        <span ><b>groupByReferencedId</b></span>
+                        <a href="#groupByReferencedId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>groupByReferencedId&lt;T extends Entity&gt;(entities, ids: Set, referencedIdsOf)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T extends Entity</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Group the entities by which of the given ids they reference.
+An entity referencing several of the ids is listed for each of them.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>ids</td>
+                                            <td>
+                                                        <code>Set</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referencedIdsOf</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Map&lt;string, T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referencedIdsIn"></a>
+                    <span class="name">
+                        <span ><b>referencedIdsIn</b></span>
+                        <a href="#referencedIdsIn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>referencedIdsIn(value, innerKeys)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The ids a field value references: the plain id(s), or for embedded objects the ids
+in their inner reference properties (all their values, if <code>innerKeys</code> is empty).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>innerKeys</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -32397,16 +32569,16 @@ that are randomized (in case there are many parallel requests to be spread out).
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="referenceIdConditions"></a>
+                    <a name="referenceIdCondition"></a>
                     <span class="name">
-                        <span ><b>referenceIdConditions</b></span>
-                        <a href="#referenceIdConditions"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>referenceIdCondition</b></span>
+                        <a href="#referenceIdCondition"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>referenceIdConditions(path: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>referenceIdCondition(path: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, referencedIds)</code>
                 </td>
             </tr>
 
@@ -32415,9 +32587,10 @@ that are randomized (in case there are many parallel requests to be spread out).
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>The Mango conditions matching the given document path against a reference id,
-covering both shapes it may have been stored in: the id itself or an array containing it.</p>
-<p>This is the same pair of conditions <a href="../classes/EntityFilter.html">EntityFilter</a> builds for list filters.</p>
+                        <div class="io-description"><p>The Mango condition matching the given document path against any of the reference ids.
+It covers both shapes the value may have been stored in, the id itself or an array
+containing it, because <code>$in</code> also matches any element of an array
+(in CouchDB&#39;s <code>_find</code> as well as in pouchdb-find).</p>
 </div>
 
                             <div class="io-description">
@@ -32445,9 +32618,8 @@ covering both shapes it may have been stored in: the id itself or an array conta
 
                                         </tr>
                                         <tr>
-                                                <td>referencedId</td>
+                                                <td>referencedIds</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
 
                                             <td>
@@ -32460,7 +32632,7 @@ covering both shapes it may have been stored in: the id itself or an array conta
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter[]</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;any&gt;</a></code>
 
                         </div>
                             <div class="io-description">

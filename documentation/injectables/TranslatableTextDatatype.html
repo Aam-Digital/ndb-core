@@ -512,7 +512,7 @@ resolving here would make every <code>save()</code> drop the other languages.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:436</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:435</a></code>
 </div>
                         </td>
                     </tr>
@@ -622,7 +622,7 @@ resolving here would make every <code>save()</code> drop the other languages.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:144</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:141</a></code>
 </div>
                         </td>
                     </tr>
@@ -721,7 +721,7 @@ resolving here would make every <code>save()</code> drop the other languages.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:129</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:126</a></code>
 </div>
                         </td>
                     </tr>
@@ -809,7 +809,7 @@ forwarding their own relevant datatype identifiers.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedIds: string[])</code>
                 </td>
             </tr>
 
@@ -822,7 +822,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:424</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:423</a></code>
 </div>
                         </td>
                     </tr>
@@ -830,7 +830,7 @@ forwarding their own relevant datatype identifiers.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Mango conditions matching documents whose <code>fieldId</code> references the given entity id,
+                        <div class="io-description"><p>Mango conditions matching documents whose <code>fieldId</code> references any of the given entity ids,
 used to query related entities instead of loading a whole entity type (see
 <a href="EntityRelationsService.loadAllLinkingToEntity">EntityRelationsService.loadAllLinkingToEntity</a>).</p>
 <p>The conditions are matched against the <em>database</em> format, so only the datatype that
@@ -839,7 +839,9 @@ calling service. Return every shape the value may have been stored in rather tha
 branching on <code>schemaField.isArray</code>: existing documents may have been written while the
 field had the other setting (see <a href="../injectables/FilterService.html">FilterService</a> and <a href="../classes/EntityFilter.html">EntityFilter</a>).</p>
 <p>The caller treats these as candidates only and still post-filters in memory, so
-matching too much is harmless - matching too little silently loses references.</p>
+matching too much is harmless - matching too little silently loses references.
+Match all ids in the same few conditions (with <code>$in</code>) rather than conditions per id,
+so that the query keeps its size however many ids are looked up.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">     cannot be expressed as a query, which makes the caller load the whole type.
      Never return an empty array: `{$or: []}` matches nothing.
 </code></pre></div></div>
@@ -881,9 +883,9 @@ matching too much is harmless - matching too little silently loses references.</
 
                                         </tr>
                                         <tr>
-                                                <td>referencedId</td>
+                                                <td>referencedIds</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        <code>string[]</code>
                                             </td>
 
                                             <td>
@@ -937,7 +939,7 @@ Never return an empty array: <code>{$or: []}</code> matches nothing.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:239</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:236</a></code>
 </div>
                         </td>
                     </tr>
@@ -1069,7 +1071,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:263</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:260</a></code>
 </div>
                         </td>
                     </tr>
@@ -1189,7 +1191,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:366</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:363</a></code>
 </div>
                         </td>
                     </tr>
@@ -1274,7 +1276,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:206</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:203</a></code>
 </div>
                         </td>
                     </tr>
@@ -1389,7 +1391,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:223</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:220</a></code>
 </div>
                         </td>
                     </tr>
@@ -1674,7 +1676,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:168</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:165</a></code>
 </div>
                         </td>
                     </tr>
@@ -1715,7 +1717,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:342</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:339</a></code>
 </div>
                         </td>
                     </tr>
@@ -1758,7 +1760,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:349</a></code>
 </div>
                         </td>
                     </tr>
@@ -1807,7 +1809,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:174</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:171</a></code>
 </div>
                         </td>
                     </tr>

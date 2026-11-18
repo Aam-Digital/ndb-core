@@ -504,8 +504,8 @@ queryIndexDocs(Note, &quot;myIndex/by_category&quot;)</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="154"
-                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:154</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:148</a></div>
                         </td>
                     </tr>
 
@@ -626,8 +626,8 @@ queryIndexDocs(Note, &quot;myIndex/by_category&quot;)</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="179"
-                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:179</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -756,8 +756,8 @@ queryIndexDocs(Note, &quot;myIndex/by_category&quot;)</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="216"
-                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:216</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:210</a></div>
                         </td>
                     </tr>
 
@@ -890,8 +890,8 @@ If no index exists this may result in an error (e.g. 404)</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="196"
-                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:196</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:190</a></div>
                         </td>
                     </tr>
 
@@ -1106,25 +1106,19 @@ export class DatabaseIndexingService {
       }
     };
 
-    const simpleEmit &#x3D; emitParamFormatter(&quot;doc.&quot; + referenceProperty);
-    const arrayEmit &#x3D; &#x60;
-      if (!Array.isArray(doc.${referenceProperty})) return;
-      doc.${referenceProperty}.forEach((relatedEntity) &#x3D;&gt; {
-        ${emitParamFormatter(&quot;relatedEntity&quot;)}
-      });&#x60;;
-
+    // index both shapes a value may be stored in, whatever the schema&#x27;s &#x60;isArray&#x60; says now:
+    // existing documents may have been written while the field had the other setting
     const designDoc &#x3D; {
       _id: &quot;_design/&quot; + indexId,
       views: {
         [&#x60;by_${referenceProperty}&#x60;]: {
           map: &#x60;(doc) &#x3D;&gt; {
             if (!doc._id.startsWith(&quot;${entity.ENTITY_TYPE}:&quot;)) return;
-
-            ${
-              entity.schema.get(referenceProperty).isArray
-                ? arrayEmit
-                : simpleEmit
-            }
+            const value &#x3D; doc.${referenceProperty};
+            (Array.isArray(value) ? value : [value]).forEach((relatedEntity) &#x3D;&gt; {
+              if (relatedEntity &#x3D;&#x3D;&#x3D; undefined || relatedEntity &#x3D;&#x3D;&#x3D; null) return;
+              ${emitParamFormatter(&quot;relatedEntity&quot;)}
+            });
           }&#x60;,
         },
       },

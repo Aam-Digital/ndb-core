@@ -203,7 +203,7 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   DefaultDatatype,
   ExportColumnMapping,
-  referenceIdConditions,
+  referenceIdCondition,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
@@ -349,7 +349,7 @@ export class SchemaEmbedDatatype&lt;
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter&lt;any&gt;[] | undefined {
     const innerKeys &#x3D; getInnerEntityReferenceFields(
       this.getEffectiveSchema(schemaField),
@@ -360,13 +360,10 @@ export class SchemaEmbedDatatype&lt;
     }
 
     return innerKeys.flatMap((key) &#x3D;&gt; [
-      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
-      {
-        [fieldId]: {
-          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
-        },
-      },
-      ...referenceIdConditions(&#x60;${fieldId}.${key}&#x60;, referencedId),
+      // an array of embedded objects (&#x60;$in&#x60; also matches an inner array of ids)
+      { [fieldId]: { $elemMatch: { [key]: { $in: referencedIds } } } },
+      // a single embedded object
+      referenceIdCondition(&#x60;${fieldId}.${key}&#x60;, referencedIds),
     ]);
   }
 

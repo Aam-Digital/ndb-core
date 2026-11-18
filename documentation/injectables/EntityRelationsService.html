@@ -201,6 +201,11 @@
                                     <span class="modifier">Async</span>
                                 <a href="#loadAllLinkingToEntity" >loadAllLinkingToEntity</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadLinkingToEntities" >loadLinkingToEntities</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -239,8 +244,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="41"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:41</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -309,8 +314,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="68"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:68</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -385,15 +390,15 @@ along with the field linking to it.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>itemReferencesId(item: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, refId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, field?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+<code>itemReferencesId(item: unknown, refId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, field?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="220"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:220</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="366"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:366</a></div>
                         </td>
                     </tr>
 
@@ -422,7 +427,7 @@ Without such schema info the function falls back to checking all object values.<
                                         <tr>
                                                 <td>item</td>
                                             <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                                        <code>unknown</code>
                                             </td>
 
                                             <td>
@@ -491,8 +496,8 @@ Without such schema info the function falls back to checking all object values.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -546,6 +551,131 @@ Without such schema info the function falls back to checking all object values.<
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadLinkingToEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>loadLinkingToEntities</b></span>
+                        <a href="#loadLinkingToEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadLinkingToEntities&lt;T&gt;(referencedIds: string[], refType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt;</a>, refProperty: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="167"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:167</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Find the entities of one type that reference any of the given entities in one specific field,
+grouped by the entity they reference.</p>
+<p>Unlike <a href="loadAllLinkingToEntity">loadAllLinkingToEntity</a> this loads a single, known relationship
+(e.g. the &quot;Task&quot; records whose <code>parentTask</code> is one of the given records)
+and does so for many referenced entities at once.
+The field can be a plain entity-reference field or hold embedded objects
+with references (e.g. the participants of attendance items).</p>
+<p>Only the records needed are loaded, where possible:</p>
+<ul>
+<li><p>through a database query, if the database answers queries (online-only)
+(all records of the type are loaded instead if the query fails);</p>
+</li>
+<li><p>through a database index of the field, on a local database
+(all records of the type are loaded instead if the index cannot be used);</p>
+</li>
+<li><p>all records of the type for a visitor without an account (public forms),
+whom the server does not let query indexes.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">   An entity referencing several of the given ids is listed for each of them.
+   Empty if the user may not read the entity type.</code></pre></div></li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>referencedIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>refType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>refProperty</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Map&lt;string, T[]&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A map of each referenced id that has any entity linking to it, to these linking entities.
+An entity referencing several of the given ids is listed for each of them.
+Empty if the user may not read the entity type.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 
@@ -565,6 +695,9 @@ import { getEmbeddedEntityReferenceFields } from &quot;../schema/embedded-schema
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+import { DatabaseIndexingService } from &quot;../database-indexing/database-indexing.service&quot;;
+import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
+import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 
 /** fields of an entity type that another type links to (see {@link EntityRelationsService.getFieldsOfLinkedTypes}) */
 export interface LinkedTypeFields {
@@ -576,6 +709,11 @@ export interface LinkedTypeFields {
   fields: [string, EntitySchemaField][];
 }
 
+/** the property of an entity that a reference index can be created for */
+type IndexedProperty &#x3D; Parameters&lt;
+  DatabaseIndexingService[&quot;generateIndexOnProperty&quot;]
+&gt;[2];
+
 /**
  * Service to work with related, interlinked entities.
  */
@@ -586,6 +724,12 @@ export class EntityRelationsService {
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly schemaService &#x3D; inject(EntitySchemaService);
+  private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
+  private readonly ability &#x3D; inject(EntityAbility, { optional: true });
+  private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
+
+  /** ids of the reference indexes that were already requested in this session */
+  private readonly requestedReferenceIndexes &#x3D; new Set&lt;string&gt;();
 
   /**
    * Get all entity types whose schema includes fields referencing the given type.
@@ -684,6 +828,126 @@ export class EntityRelationsService {
   }
 
   /**
+   * Find the entities of one type that reference any of the given entities in one specific field,
+   * grouped by the entity they reference.
+   *
+   * Unlike {@link loadAllLinkingToEntity} this loads a single, known relationship
+   * (e.g. the &quot;Task&quot; records whose &#x60;parentTask&#x60; is one of the given records)
+   * and does so for many referenced entities at once.
+   * The field can be a plain entity-reference field or hold embedded objects
+   * with references (e.g. the participants of attendance items).
+   *
+   * Only the records needed are loaded, where possible:
+   * - through a database query, if the database answers queries (online-only)
+   *   (all records of the type are loaded instead if the query fails);
+   * - through a database index of the field, on a local database
+   *   (all records of the type are loaded instead if the index cannot be used);
+   * - all records of the type for a visitor without an account (public forms),
+   *   whom the server does not let query indexes.
+   *
+   * @returns A map of each referenced id that has any entity linking to it, to these linking entities.
+   *          An entity referencing several of the given ids is listed for each of them.
+   *          Empty if the user may not read the entity type.
+   */
+  async loadLinkingToEntities&lt;T extends Entity &#x3D; Entity&gt;(
+    referencedIds: string[],
+    refType: EntityConstructor&lt;T&gt;,
+    refProperty: string,
+  ): Promise&lt;Map&lt;string, T[]&gt;&gt; {
+    const ids &#x3D; new Set(referencedIds);
+    const field &#x3D; refType.schema.get(refProperty);
+    if (!field || ids.size &#x3D;&#x3D;&#x3D; 0 || !this.canRead(refType)) {
+      return new Map();
+    }
+
+    const candidates &#x3D; await this.loadCandidatesForField([...ids], refType, {
+      ...field,
+      id: refProperty,
+    });
+    const innerKeys &#x3D; this.innerReferenceKeys(field);
+    return groupByReferencedId(candidates, ids, (entity) &#x3D;&gt;
+      referencedIdsIn(entity[refProperty], innerKeys),
+    );
+  }
+
+  /**
+   * The records of the type that may reference one of the ids in the one field
+   * (like {@link loadCandidates} for several fields, see {@link loadLinkingToEntities} for how they are loaded).
+   */
+  private async loadCandidatesForField&lt;T extends Entity&gt;(
+    ids: string[],
+    refType: EntityConstructor&lt;T&gt;,
+    field: FormFieldConfig,
+  ): Promise&lt;T[]&gt; {
+    if (this.sessionInfo &amp;&amp; !this.sessionInfo.value) {
+      return this.entityMapper.loadType(refType);
+    }
+    if (
+      !this.entityMapper.supportsFind(refType) &amp;&amp;
+      field.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType
+    ) {
+      return this.loadThroughReferenceIndex(refType, field.id, ids);
+    }
+    return this.loadCandidates(ids, refType, [field]);
+  }
+
+  /**
+   * The records referencing one of the ids through the reference index of the field
+   * (created on first use), or all records of the type if the index cannot be used.
+   */
+  private async loadThroughReferenceIndex&lt;T extends Entity&gt;(
+    refType: EntityConstructor&lt;T&gt;,
+    property: string,
+    ids: string[],
+  ): Promise&lt;T[]&gt; {
+    const indexId &#x3D; &#x60;linking_${refType.ENTITY_TYPE}_${property}&#x60;;
+    let records: T[];
+    try {
+      if (!this.requestedReferenceIndexes.has(indexId)) {
+        this.requestedReferenceIndexes.add(indexId);
+        await this.dbIndexing.generateIndexOnProperty(
+          indexId,
+          refType,
+          property as IndexedProperty,
+        );
+      }
+      records &#x3D; await this.dbIndexing.queryIndexDocs(
+        refType,
+        &#x60;${indexId}/by_${property}&#x60;,
+        { keys: ids },
+      );
+    } catch (error) {
+      // only a local database gets here, where the index should always work
+      Logging.warn(
+        &quot;EntityRelationsService: Could not use the index of linked records, loading all records of the type instead&quot;,
+        error,
+        { entityType: refType.ENTITY_TYPE, field: property },
+      );
+      return this.entityMapper.loadType(refType);
+    }
+    // a record referencing several of the ids is returned once for each of them
+    return [...new Map(records.map((r) &#x3D;&gt; [r.getId(), r])).values()];
+  }
+
+  /** The inner reference properties of an embedded field, empty for other fields. */
+  private innerReferenceKeys(field: EntitySchemaField | undefined): string[] {
+    if (field?.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType) {
+      return [];
+    }
+    return getEmbeddedEntityReferenceFields(this.schemaService, field).map(
+      ([key]) &#x3D;&gt; key,
+    );
+  }
+
+  /**
+   * Whether the user may read records of the type.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canRead(entityType: EntityConstructor): boolean {
+    return !this.ability?.initialized || this.ability.can(&quot;read&quot;, entityType);
+  }
+
+  /**
    * Search through all entities of the given type and find those that reference the given entity.
    * @param primaryEntity The entity to which the other entities include a reference
    * @param refType The entity type of the entities to search for references to primaryEntity
@@ -696,7 +960,7 @@ export class EntityRelationsService {
     refProperties: FormFieldConfig[],
   ) {
     const entities &#x3D; await this.loadCandidates(
-      primaryEntity,
+      [primaryEntity.getId()],
       refType,
       refProperties,
     );
@@ -716,7 +980,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * The records of the given type that may reference the primary entity.
+   * The records of the given type that may reference one of the given ids.
    *
    * Where every referencing property can express itself as a database query, this loads
    * only the matching records instead of the whole entity type - which is what keeps a
@@ -725,13 +989,13 @@ export class EntityRelationsService {
    * All-or-nothing per type: a full load already contains every property&#x27;s matches, so
    * combining it with queries for the remaining properties would transfer the same
    * documents twice. The caller post-filters the result either way, so a query that
-   * matches too much is harmless.
+   * matches too much is harmless. If the query fails, the whole type is loaded as well.
    */
-  private async loadCandidates(
-    primaryEntity: Entity,
-    refType: EntityConstructor,
+  private async loadCandidates&lt;T extends Entity&gt;(
+    referencedIds: string[],
+    refType: EntityConstructor&lt;T&gt;,
     refProperties: FormFieldConfig[],
-  ): Promise&lt;Entity[]&gt; {
+  ): Promise&lt;T[]&gt; {
     if (!this.entityMapper.supportsFind(refType)) {
       // a local database answers no queries, but its full load is cheap
       return this.entityMapper.loadType(refType);
@@ -742,26 +1006,38 @@ export class EntityRelationsService {
       const datatype &#x3D; this.schemaService.getDatatypeOrDefault(
         refProperty.dataType,
       );
-      const propertyConditions &#x3D; datatype.getReferenceSelector(
+      const selectors &#x3D; datatype.getReferenceSelector(
         refProperty.id,
         refProperty,
-        primaryEntity.getId(),
+        referencedIds,
       );
-
-      if (!propertyConditions?.length) {
+      if (!selectors?.length) {
         Logging.debug(
           &quot;loading all records of an entity type because a referencing field cannot be queried&quot;,
           { entityType: refType.ENTITY_TYPE, field: refProperty.id },
         );
         return this.entityMapper.loadType(refType);
       }
-      conditions.push(...propertyConditions);
+      conditions.push(...selectors);
     }
 
     if (conditions.length &#x3D;&#x3D;&#x3D; 0) {
       return [];
     }
-    return this.entityMapper.findAllType(refType, { $or: conditions });
+    try {
+      return await this.entityMapper.findAllType(refType, { $or: conditions });
+    } catch (error) {
+      // a failure of the user&#x27;s environment (e.g. offline) is logged at debug by Logging itself
+      Logging.warn(
+        &quot;EntityRelationsService: Could not query the linked records, loading all records of the type instead&quot;,
+        error,
+        {
+          entityType: refType.ENTITY_TYPE,
+          fields: refProperties.map((p) &#x3D;&gt; p.id),
+        },
+      );
+      return this.entityMapper.loadType(refType);
+    }
   }
 
   /**
@@ -773,27 +1049,13 @@ export class EntityRelationsService {
    * Without such schema info the function falls back to checking all object values.
    */
   itemReferencesId(
-    item: any,
+    item: unknown,
     refId: string,
     field?: EntitySchemaField,
   ): boolean {
-    if (item &#x3D;&#x3D;&#x3D; refId) {
-      return true;
-    }
-
-    if (typeof item &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; item !&#x3D;&#x3D; null) {
-      const refFields &#x3D; getEmbeddedEntityReferenceFields(
-        this.schemaService,
-        field,
-      );
-      if (refFields.length &gt; 0) {
-        return refFields.some(([key]) &#x3D;&gt; asArray(item[key]).includes(refId));
-      }
-      // Fallback when no embedded schema info is available
-      return Object.values(item).includes(refId);
-    }
-
-    return false;
+    return referencedIdsIn(item, this.innerReferenceKeys(field)).includes(
+      refId,
+    );
   }
 
   /**
@@ -809,11 +1071,51 @@ export class EntityRelationsService {
     relevantFields: FormFieldConfig[],
   ): FormFieldConfig[] {
     return relevantFields.filter((field) &#x3D;&gt;
-      asArray(entity[field.id]).some((item) &#x3D;&gt;
-        this.itemReferencesId(item, refId, field),
-      ),
+      referencedIdsIn(
+        entity[field.id],
+        this.innerReferenceKeys(field),
+      ).includes(refId),
     );
   }
+}
+
+/**
+ * The ids a field value references: the plain id(s), or for embedded objects the ids
+ * in their inner reference properties (all their values, if &#x60;innerKeys&#x60; is empty).
+ */
+function referencedIdsIn(value: unknown, innerKeys: string[]): unknown[] {
+  return asArray(value).flatMap((item) &#x3D;&gt; {
+    if (typeof item !&#x3D;&#x3D; &quot;object&quot; || item &#x3D;&#x3D;&#x3D; null) {
+      return [item];
+    }
+    return innerKeys.length &gt; 0
+      ? innerKeys.flatMap((key) &#x3D;&gt; asArray(item[key]))
+      : Object.values(item);
+  });
+}
+
+/**
+ * Group the entities by which of the given ids they reference.
+ * An entity referencing several of the ids is listed for each of them.
+ */
+function groupByReferencedId&lt;T extends Entity&gt;(
+  entities: T[],
+  ids: Set&lt;string&gt;,
+  referencedIdsOf: (entity: T) &#x3D;&gt; unknown[],
+): Map&lt;string, T[]&gt; {
+  const groups &#x3D; new Map&lt;string, T[]&gt;();
+  for (const entity of entities) {
+    // a Set, so that an id referenced twice (e.g. by two embedded items) counts only once
+    for (const id of new Set&lt;unknown&gt;(referencedIdsOf(entity))) {
+      if (typeof id &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; ids.has(id)) {
+        if (!groups.has(id)) {
+          groups.set(id, []);
+        }
+        groups.get(id).push(entity);
+      }
+    }
+  }
+  return groups;
 }
 </code></pre>
     </div>

@@ -529,7 +529,7 @@ as for any other datatype that does not support partial anonymization.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedIds: string[])</code>
                 </td>
             </tr>
 
@@ -590,9 +590,9 @@ as for any other datatype that does not support partial anonymization.</p>
 
                                         </tr>
                                         <tr>
-                                                <td>referencedId</td>
+                                                <td>referencedIds</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        <code>string[]</code>
                                             </td>
 
                                             <td>
@@ -1049,7 +1049,7 @@ all matches (isArray=true), or undefined / [] if nothing matched</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:144</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:141</a></code>
 </div>
                         </td>
                     </tr>
@@ -1148,7 +1148,7 @@ all matches (isArray=true), or undefined / [] if nothing matched</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:129</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:126</a></code>
 </div>
                         </td>
                     </tr>
@@ -1249,7 +1249,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:366</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:363</a></code>
 </div>
                         </td>
                     </tr>
@@ -1334,7 +1334,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:402</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:399</a></code>
 </div>
                         </td>
                     </tr>
@@ -1655,7 +1655,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:349</a></code>
 </div>
                         </td>
                     </tr>
@@ -1704,7 +1704,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:174</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:171</a></code>
 </div>
                         </td>
                     </tr>
@@ -1738,7 +1738,7 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
-  referenceIdConditions,
+  referenceIdCondition,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
@@ -1774,9 +1774,9 @@ export class EntityDatatype extends StringDatatype {
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter&lt;any&gt;[] {
-    return referenceIdConditions(fieldId, referencedId);
+    return [referenceIdCondition(fieldId, referencedIds)];
   }
 
   override getExportColumns(

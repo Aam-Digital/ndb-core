@@ -344,19 +344,16 @@ export interface ExportColumnMapping&lt;EntityType &#x3D; any&gt; {
 }
 
 /**
- * The Mango conditions matching the given document path against a reference id,
- * covering both shapes it may have been stored in: the id itself or an array containing it.
- *
- * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ * The Mango condition matching the given document path against any of the reference ids.
+ * It covers both shapes the value may have been stored in, the id itself or an array
+ * containing it, because &#x60;$in&#x60; also matches any element of an array
+ * (in CouchDB&#x27;s &#x60;_find&#x60; as well as in pouchdb-find).
  */
-export function referenceIdConditions(
+export function referenceIdCondition(
   path: string,
-  referencedId: string,
-): DataFilter&lt;any&gt;[] {
-  return [
-    { [path]: referencedId },
-    { [path]: { $elemMatch: { $eq: referencedId } } },
-  ];
+  referencedIds: string[],
+): DataFilter&lt;any&gt; {
+  return { [path]: { $in: referencedIds } };
 }
 
 /**
@@ -670,7 +667,7 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
   }
 
   /**
-   * Mango conditions matching documents whose &#x60;fieldId&#x60; references the given entity id,
+   * Mango conditions matching documents whose &#x60;fieldId&#x60; references any of the given entity ids,
    * used to query related entities instead of loading a whole entity type (see
    * {@link EntityRelationsService.loadAllLinkingToEntity}).
    *
@@ -682,6 +679,8 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
    *
    * The caller treats these as candidates only and still post-filters in memory, so
    * matching too much is harmless - matching too little silently loses references.
+   * Match all ids in the same few conditions (with &#x60;$in&#x60;) rather than conditions per id,
+   * so that the query keeps its size however many ids are looked up.
    *
    * @returns the conditions to OR together, or &#x60;undefined&#x60; if this datatype&#x27;s stored format
    *          cannot be expressed as a query, which makes the caller load the whole type.
@@ -690,7 +689,7 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
   getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter&lt;any&gt;[] | undefined {
     return undefined;
   }
