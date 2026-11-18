@@ -59,12 +59,10 @@ export class TemplateExportRelatedRecordsService {
   /**
    * Load the related records configured for the template, for each of the given records.
    *
-   * Related records are returned as plain copies with their own entity-reference fields
-   * resolved one level deep (like the exported record itself), excluding archived records
+   * Related records are plain copies with their own entity-reference fields resolved
+   * one level deep (like the exported record itself), excluding archived records
    * and sorted by their display text.
    *
-   * @param template The template whose `relatedRecords` config defines what to load
-   * @param records The records a file is generated for
    * @param loadedEntities Records already loaded to resolve relations, shared with other calls
    *          for the same file (each level of a hierarchy refers to the records of the level above)
    * @returns The related records data by the id of the exported record,
@@ -77,42 +75,34 @@ export class TemplateExportRelatedRecordsService {
     loadedEntities: LoadedEntitiesCache = new Map(),
   ): Promise<Map<string, RelatedRecordsData>> {
     const result = new Map<string, RelatedRecordsData>();
-    const configs = template.relatedRecords ?? [];
-    if (configs.length === 0 || records.length === 0) {
+    if (!template.relatedRecords?.length) {
       return result;
     }
+    records.forEach((record) => result.set(record.getId(), {}));
 
-    const uniqueRecords = new Map(records.map((r) => [r.getId(), r]));
-    for (const id of uniqueRecords.keys()) {
-      result.set(id, {});
-    }
-
-    // each config adds its own key to the records' data, so they can be loaded at the same time
+    // each config adds its own list to the records' data, so they can be loaded at the same time
     await Promise.all(
-      this.withoutDuplicateKeys(template, configs).map((config) =>
-        this.addRelatedRecords(
-          template,
-          config,
-          [...uniqueRecords.values()],
-          result,
-          loadedEntities,
-        ),
+      this.validConfigs(template).map((config) =>
+        this.addRelatedRecords(template, config, result, loadedEntities),
       ),
     );
     return result;
   }
 
   /**
-   * Skip (and report) configs that use the placeholder name of an earlier config,
-   * which would otherwise silently replace the earlier list.
+   * The configs with a placeholder name that can be used, reporting the others:
+   * an invalid name, or the name of an earlier config (which would replace its list).
    */
-  private withoutDuplicateKeys(
+  private validConfigs(
     template: TemplateExport,
-    configs: TemplateExportRelatedRecords[],
   ): TemplateExportRelatedRecords[] {
     const keys = new Set<string>();
-    return configs.filter((config) => {
-      if (config?.key && keys.has(config.key)) {
+    return template.relatedRecords.filter((config) => {
+      if (!RELATED_RECORDS_KEY_PATTERN.test(config?.key ?? "")) {
+        this.reportInvalidConfig(template, config, "invalid placeholder name");
+        return false;
+      }
+      if (keys.has(config.key)) {
         this.reportInvalidConfig(
           template,
           config,
@@ -120,40 +110,32 @@ export class TemplateExportRelatedRecordsService {
         );
         return false;
       }
-      keys.add(config?.key);
+      keys.add(config.key);
       return true;
     });
   }
 
   /**
-   * Load the records of one config and add them to the result of each record.
+   * Load the records of one config, level by level, and add them to the data of each record.
    */
   private async addRelatedRecords(
     template: TemplateExport,
     config: TemplateExportRelatedRecords,
-    records: Entity[],
     result: Map<string, RelatedRecordsData>,
     loadedEntities: LoadedEntitiesCache,
   ) {
-    if (!RELATED_RECORDS_KEY_PATTERN.test(config?.key ?? "")) {
-      this.reportInvalidConfig(template, config, "invalid placeholder name");
-      return;
-    }
-
-    // records to load related records for, level by level
-    let parents: HierarchyNode[] = records.map((record) => {
-      const data = result.get(record.getId());
-      // always provide a list, so that a loop in the template prints nothing
-      // rather than the unresolved placeholder itself
+    // always provide a list, so that a loop in the template prints nothing
+    // rather than the unresolved placeholder itself
+    let parents: HierarchyNode[] = [...result].map(([id, data]) => {
       setRelatedList(data, config.key, []);
-      return { id: record.getId(), data };
+      return { id, data };
     });
 
     const relatedType = this.entityRegistry.has(config.entityType)
       ? this.entityRegistry.get(config.entityType)
       : undefined;
     const linkField = relatedType?.schema.get(config.property);
-    if (!relatedType || linkField?.dataType !== "entity") {
+    if (linkField?.dataType !== "entity") {
       this.reportInvalidConfig(
         template,
         config,
@@ -166,40 +148,21 @@ export class TemplateExportRelatedRecordsService {
     parents = parents.filter((parent) =>
       isFieldLinkingToType(linkField, Entity.extractTypeFromId(parent.id)),
     );
+    if (parents.length === 0) {
+      return;
+    }
 
-    const loadLinking = this.createLinkingLoader(relatedType, config.property);
+    // without database queries every level needs all records of the type: load them only once
+    const allRecords = this.entityMapper.supportsFind(relatedType)
+      ? undefined
+      : await this.entityMapper.loadType(relatedType);
     const levels = getRelatedRecordsLevels(config, relatedType);
     for (let level = 1; level <= levels && parents.length > 0; level++) {
-      parents = await this.addLevel(
-        config,
-        loadLinking,
-        parents,
+      parents = await this.addLevel(config, relatedType, parents, {
+        allRecords,
         loadedEntities,
-      );
+      });
     }
-  }
-
-  /**
-   * Look up the records linking to given ids through the field, level by level.
-   * Without database queries every lookup needs all records of the type,
-   * so these are then loaded only once for all levels.
-   */
-  private createLinkingLoader(
-    relatedType: EntityConstructor,
-    property: string,
-  ): (ids: string[]) => Promise<Map<string, Entity[]>> {
-    let allRecords: Promise<Entity[]> | undefined;
-    return async (ids) => {
-      if (!this.entityMapper.supportsFind(relatedType)) {
-        allRecords ??= this.entityMapper.loadType(relatedType);
-      }
-      return this.entityRelations.loadLinkingToEntities(
-        ids,
-        relatedType,
-        property,
-        await allRecords,
-      );
-    };
   }
 
   /**
@@ -208,49 +171,61 @@ export class TemplateExportRelatedRecordsService {
    */
   private async addLevel(
     config: TemplateExportRelatedRecords,
-    loadLinking: (ids: string[]) => Promise<Map<string, Entity[]>>,
+    relatedType: EntityConstructor,
     parents: HierarchyNode[],
-    loadedEntities: LoadedEntitiesCache,
+    loaded: { allRecords?: Entity[]; loadedEntities: LoadedEntitiesCache },
   ): Promise<HierarchyNode[]> {
-    const linking = await loadLinking(parents.map((parent) => parent.id));
-
-    const related = new Map<string, Entity>();
-    for (const entities of linking.values()) {
-      entities
-        .filter((entity) => !entity.inactive)
-        .forEach((entity) => related.set(entity.getId(), entity));
-    }
-    const sorted = [...related.values()].sort(compareByDisplayText);
-    // plain copies of the records (with their relations resolved)
-    const resolved = (await this.relationResolver.resolveRelations<unknown>(
-      sorted,
-      loadedEntities,
-    )) as Record<string, unknown>[];
-    const dataById = new Map<string, Record<string, unknown>>(
-      sorted.map((entity, i) => [entity.getId(), resolved[i]]),
+    const linking = await this.entityRelations.loadLinkingToEntities(
+      parents.map((parent) => parent.id),
+      relatedType,
+      config.property,
+      loaded.allRecords,
     );
-    const sortIndex = new Map(sorted.map((entity, i) => [entity.getId(), i]));
+    const dataById = await this.resolveActiveRecords(
+      [...linking.values()].flat(),
+      loaded.loadedEntities,
+    );
 
     const children: HierarchyNode[] = [];
     for (const parent of parents) {
-      const childIds = (linking.get(parent.id) ?? [])
-        .map((entity) => entity.getId())
-        .filter((id) => dataById.has(id) && !isInBranch(parent, id))
-        .sort((a, b) => sortIndex.get(a) - sortIndex.get(b));
-
-      const list = childIds.map((id) => {
-        // an own copy, as a record linking to several parents gets a separate list of related records for each
-        const child = {
-          id,
-          data: withParentAsId(dataById.get(id), config.property, parent.id),
-          parent,
-        };
-        children.push(child);
-        return child.data;
-      });
+      const list = (linking.get(parent.id) ?? [])
+        .filter((entity) => dataById.has(entity.getId()))
+        .filter((entity) => !isInBranch(parent, entity.getId()))
+        .sort(compareByDisplayText)
+        .map((entity) => {
+          // an own copy, as a record linking to several parents gets a separate list for each
+          const data = withParentAsId(
+            dataById.get(entity.getId()),
+            config.property,
+            parent.id,
+          );
+          children.push({ id: entity.getId(), data, parent });
+          return data;
+        });
       setRelatedList(parent.data, config.key, list);
     }
     return children;
+  }
+
+  /**
+   * Plain copies of the records that are not archived, with their relations resolved, by their id.
+   */
+  private async resolveActiveRecords(
+    entities: Entity[],
+    loadedEntities: LoadedEntitiesCache,
+  ): Promise<Map<string, Record<string, unknown>>> {
+    const active = [
+      ...new Map(
+        entities
+          .filter((entity) => !entity.inactive)
+          .map((entity) => [entity.getId(), entity]),
+      ).values(),
+    ];
+    const resolved = (await this.relationResolver.resolveRelations<unknown>(
+      active,
+      loadedEntities,
+    )) as Record<string, unknown>[];
+    return new Map(active.map((entity, i) => [entity.getId(), resolved[i]]));
   }
 
   /**
