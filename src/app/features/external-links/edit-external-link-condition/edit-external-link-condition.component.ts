@@ -40,6 +40,7 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
       <button
         mat-stroked-button
         type="button"
+        [color]="hasCondition() ? 'accent' : undefined"
         [disabled]="!enabled() || !recordType()"
         (click)="editCondition()"
       >
@@ -82,9 +83,30 @@ export class EditExternalLinkConditionComponent
 
   protected readonly summary = computed(() =>
     this.hasCondition()
-      ? $localize`Shown only for records matching the condition.`
+      ? $localize`Shown only for records matching a condition on: ${this.conditionFieldLabels().join(", ")}:fields:`
       : $localize`Shown for all records of the type.`,
   );
+
+  /** labels of the fields the condition refers to, also inside `$and` / `$or` / `$nor` */
+  private readonly conditionFieldLabels = computed(() => {
+    const type = this.recordType();
+    const schema =
+      type && this.entities.has(type)
+        ? this.entities.get(type).schema
+        : undefined;
+    const keys = new Set<string>();
+    const collect = (condition: unknown) => {
+      for (const [key, value] of Object.entries(condition ?? {})) {
+        if (key.startsWith("$")) {
+          (Array.isArray(value) ? value : [value]).forEach(collect);
+        } else {
+          keys.add(key);
+        }
+      }
+    };
+    collect(this.valueSignal());
+    return [...keys].map((key) => schema?.get(key)?.label ?? key);
+  });
 
   ngOnInit() {
     const recordTypeControl = this.formControl?.parent?.get("entity");
