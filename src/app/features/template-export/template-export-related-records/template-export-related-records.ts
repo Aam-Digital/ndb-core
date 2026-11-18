@@ -61,7 +61,7 @@ export const RELATED_RECORDS_MAX_LEVELS = 5;
  * Allowed format of the record type and field of a config,
  * so that they work as parts of a placeholder in a template.
  */
-const PLACEHOLDER_PART_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const PLACEHOLDER_PART_PATTERN = /^[A-Za-z_]\w*$/;
 
 /**
  * Whether the record type and field of the config can be used in a placeholder of a template.
