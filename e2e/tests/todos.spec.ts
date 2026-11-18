@@ -2,6 +2,7 @@ import {
   argosScreenshot,
   expect,
   loadApp,
+  Page,
   test,
   waitForDashboardWidgetsToLoad,
 } from "#e2e/fixtures.js";
@@ -10,16 +11,87 @@ import { generateChild } from "#src/app/child-dev-project/children/demo-data-gen
 import { Todo } from "#src/app/features/todos/model/todo.js";
 
 const TASK_SUBJECT = "<PLAN CAREER COUNSELLING>";
+const DASHBOARD_TASK_SUBJECT = "<DASHBOARD TASK>";
 const ARCHIVE_TASK_SUBJECT = "<ARCHIVE TASK>";
+const COMPLETE_TASK_SUBJECT = "<COMPLETE TASK>";
 
-test("Add a new task record to the list", async ({ page }) => {
+test("Tasks: add, edit, archive and complete them and see them on the dashboard", async ({
+  page,
+}) => {
   const users = generateUsers();
-  const child1 = generateChild({ name: "Anand Trivedi" });
-  const child2 = generateChild({ name: "Anand Nehru" });
-  const child3 = generateChild({ name: "Arun Kapoor" });
+  const [, demoAdmin] = users;
 
-  await loadApp(page, [...users, child1, child2, child3]);
+  const children = [
+    generateChild({ name: "Anand Trivedi" }),
+    generateChild({ name: "Anand Nehru" }),
+    generateChild({ name: "Arun Kapoor" }),
+  ];
+  const childToAdd = generateChild({ name: "Amrita Nayar" });
+  Object.assign(childToAdd, { phone: "+63 98163115" });
 
+  // Task assigned to demo-admin with deadline 08.03.2026; no startDate so it
+  // passes the dashboard filter (moment(undefined) == today <= today).
+  const dashboardTask = Todo.create({
+    subject: DASHBOARD_TASK_SUBJECT,
+    deadline: new Date("2026-03-08"),
+    assignedTo: [demoAdmin.getId()],
+  });
+  // no startDate, so both are visible under the default filter of the tasks list
+  const taskToArchive = Todo.create({
+    subject: ARCHIVE_TASK_SUBJECT,
+    deadline: new Date("2025-02-28"),
+    assignedTo: [demoAdmin.getId()],
+  });
+  const taskToComplete = Todo.create({
+    subject: COMPLETE_TASK_SUBJECT,
+    deadline: new Date("2025-02-28"),
+    assignedTo: [demoAdmin.getId()],
+    relatedEntities: children.map((child) => child.getId()),
+  });
+
+  await loadApp(page, [
+    ...users,
+    ...children,
+    childToAdd,
+    dashboardTask,
+    taskToArchive,
+    taskToComplete,
+  ]);
+
+  await test.step("Logged-in users Tasks list displayed in the Dashboard", () =>
+    showTasksOnDashboard(page));
+  await test.step("Add a new task record to the list", () => addTask(page));
+  await test.step("Edit the related records assigned to the task", () =>
+    editRelatedRecordsOfTask(page));
+  await test.step("Task lifecycle: archive hides task; complete moves it to completed filter", () =>
+    archiveAndCompleteTasks(page));
+});
+
+async function showTasksOnDashboard(page: Page) {
+  // The Dashboard is the default landing page after login.
+  // The "Tasks due" widget shows only tasks assigned to the logged-in user.
+  const tasksDueWidget = page.locator("app-todos-dashboard");
+  await expect(tasksDueWidget.getByText(DASHBOARD_TASK_SUBJECT)).toBeVisible();
+
+  // The deadline "08.03.2026" (dd.MM.yyyy format) is displayed next to the task
+  await expect(tasksDueWidget.getByText("08.03.2026")).toBeVisible();
+
+  await waitForDashboardWidgetsToLoad(page);
+  await argosScreenshot(page, "dashboard-tasks-widget");
+
+  // When I click on the task name in the widget
+  await tasksDueWidget.getByText(DASHBOARD_TASK_SUBJECT).click();
+
+  // Then the overview of the task is displayed in a dialog
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByRole("heading", { name: DASHBOARD_TASK_SUBJECT }),
+  ).toBeVisible();
+
+  await page.locator("button.overlay-close-button").click();
+}
+
+async function addTask(page: Page) {
   // When I click on Tasks from the Main Menu
   await page.getByRole("navigation").getByText("Tasks").click();
 
@@ -123,39 +195,11 @@ test("Add a new task record to the list", async ({ page }) => {
 
   // [screenshot]
   await argosScreenshot(page, "task-list-after-add");
-});
+}
 
-test("Edit the related records assigned to the task", async ({ page }) => {
-  const users = generateUsers();
-  const [, demoAdmin] = users;
-
-  const childToRemove = generateChild({ name: "Anand Trivedi" });
-  const childToAdd = generateChild({ name: "Amrita Nayar" });
-  Object.assign(childToAdd, { phone: "+63 98163115" });
-  const childOther = generateChild({ name: "Arun Kapoor" });
-
-  // Pre-existing task with "Anand Trivedi" as a related record.
-  // No startDate so the task appears under the default "Currently Active" filter
-  // (filter includes tasks where startDate does not exist).
-  const taskToEdit = Todo.create({
-    subject: TASK_SUBJECT,
-    deadline: new Date("2025-02-28"),
-    assignedTo: [demoAdmin.getId()],
-    relatedEntities: [childToRemove.getId()],
-  });
-
-  await loadApp(page, [
-    ...users,
-    childToRemove,
-    childToAdd,
-    childOther,
-    taskToEdit,
-  ]);
-
-  // When I click on Tasks from the Main Menu
-  await page.getByRole("navigation").getByText("Tasks").click();
-
-  // And I click on the record with the subject "<PLAN CAREER COUNSELLING>"
+/** edits the task added by {@link addTask}, from the list of all tasks */
+async function editRelatedRecordsOfTask(page: Page) {
+  // When I click on the task added in the previous step
   await page.getByRole("cell", { name: TASK_SUBJECT }).click();
 
   const dialog = page.getByRole("dialog");
@@ -210,6 +254,8 @@ test("Edit the related records assigned to the task", async ({ page }) => {
   // Close the dialog to return to the list view
   // (background table is aria-hidden while dialog is open, so we must close first)
   await page.locator("button.overlay-close-button").click();
+  // after saving and closing, the list is back on its default filter, which hides the task with its future start date
+  await page.getByRole("button", { name: "Clear" }).click();
 
   // When I view the list of Tasks, the updated related records are visible in the list view
   const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
@@ -242,77 +288,9 @@ test("Edit the related records assigned to the task", async ({ page }) => {
 
   // Then the related task is listed under Tasks
   await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
-});
+}
 
-test("Logged-in users Tasks list displayed in the Dashboard", async ({
-  page,
-}) => {
-  const users = generateUsers();
-  const [, demoAdmin] = users;
-
-  // Task assigned to demo-admin with deadline 08.03.2026; no startDate so it
-  // passes the dashboard filter (moment(undefined) == today <= today).
-  const taskForAdmin = Todo.create({
-    subject: TASK_SUBJECT,
-    deadline: new Date("2026-03-08"),
-    assignedTo: [demoAdmin.getId()],
-  });
-
-  await loadApp(page, [...users, taskForAdmin]);
-
-  // The Dashboard is the default landing page after login.
-  // The "Tasks due" widget shows only tasks assigned to the logged-in user.
-  const tasksDueWidget = page.locator("app-todos-dashboard");
-  await expect(tasksDueWidget.getByText(TASK_SUBJECT)).toBeVisible();
-
-  // The deadline "08.03.2026" (dd.MM.yyyy format) is displayed next to the task
-  await expect(tasksDueWidget.getByText("08.03.2026")).toBeVisible();
-
-  await waitForDashboardWidgetsToLoad(page);
-  await argosScreenshot(page, "dashboard-tasks-widget");
-
-  // When I click on the task name in the widget
-  await tasksDueWidget.getByText(TASK_SUBJECT).click();
-
-  // Then the overview of the task is displayed in a dialog
-  const dialog = page.getByRole("dialog");
-  await expect(
-    dialog.getByRole("heading", { name: TASK_SUBJECT }),
-  ).toBeVisible();
-});
-
-test("Task lifecycle: archive hides task; complete moves it to completed filter", async ({
-  page,
-}) => {
-  const users = generateUsers();
-  const [, demoAdmin] = users;
-
-  const child1 = generateChild({ name: "Anand Trivedi" });
-  const child2 = generateChild({ name: "Anand Nehru" });
-  const child3 = generateChild({ name: "Arun Kapoor" });
-
-  // Two pre-existing tasks; no startDate so both are visible under the default filter
-  const taskToArchive = Todo.create({
-    subject: ARCHIVE_TASK_SUBJECT,
-    deadline: new Date("2025-02-28"),
-    assignedTo: [demoAdmin.getId()],
-  });
-  const taskToComplete = Todo.create({
-    subject: TASK_SUBJECT,
-    deadline: new Date("2025-02-28"),
-    assignedTo: [demoAdmin.getId()],
-    relatedEntities: [child1.getId(), child2.getId(), child3.getId()],
-  });
-
-  await loadApp(page, [
-    ...users,
-    child1,
-    child2,
-    child3,
-    taskToArchive,
-    taskToComplete,
-  ]);
-
+async function archiveAndCompleteTasks(page: Page) {
   // When I click on Tasks from the Main Menu
   await page.getByRole("navigation").getByText("Tasks").click();
 
@@ -354,7 +332,7 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
 
   // --- Complete flow ---
 
-  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+  await page.getByRole("cell", { name: COMPLETE_TASK_SUBJECT }).click();
 
   // Click "Edit" to enter edit mode — the "Complete Task" button requires the
   // form to be in edit mode before it can be activated
@@ -376,7 +354,7 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
 
   // The completed task is removed from the default "Currently Active" task list
   await expect(
-    page.getByRole("cell", { name: TASK_SUBJECT }),
+    page.getByRole("cell", { name: COMPLETE_TASK_SUBJECT }),
   ).not.toBeVisible();
 
   // Switch to the "Completed" filter — the "Tasks due" filter is an
@@ -390,14 +368,18 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
   await page.getByRole("option", { name: "Completed" }).click();
 
   // The completed task appears in the list with the "completed" column visible
-  await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
+  await expect(
+    page.getByRole("cell", { name: COMPLETE_TASK_SUBJECT }),
+  ).toBeVisible();
 
   // The "completed by" user is shown in the list row
-  const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
+  const taskRow = page
+    .getByRole("row")
+    .filter({ hasText: COMPLETE_TASK_SUBJECT });
   await expect(taskRow.getByText(/by demo-admin on/)).toBeVisible();
 
   // Open the completed task from the list to show the "completed" field
-  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+  await page.getByRole("cell", { name: COMPLETE_TASK_SUBJECT }).click();
 
   const completedDialog = page.getByRole("dialog");
   await expect(completedDialog).toBeVisible();
@@ -412,4 +394,4 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
 
   // [screenshot] details dialog showing the completed field
   await argosScreenshot(page, "task-completed-dialog");
-});
+}
