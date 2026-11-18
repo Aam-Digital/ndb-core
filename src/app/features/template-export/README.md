@@ -18,13 +18,13 @@ The frontend manages the templates and assembles the data that is sent with a re
 
 ## Data available to placeholders
 
-| Placeholder               | Data                                                                                                      |
-| ------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `{d.name}`                | a field of the record, by its field ID                                                                    |
-| `{d.school.name}`         | a field of a record that the record links to in an entity-reference field (resolved one level deep)       |
-| `{d._related.Todo.parentTask[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below) |
-| `{c.user.name}`           | a field of the record linked to the logged-in user                                                        |
-| `{d[i].name}`             | a field of each selected record, in a "Multi-Record Report" template (`arrayReport`) with `d` as an array |
+| Placeholder                               | Data                                                                                                      |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `{d.name}`                                | a field of the record, by its field ID                                                                    |
+| `{d.school.name}`                         | a field of a record that the record links to in an entity-reference field (resolved one level deep)       |
+| `{d._related.Todo.parentTask[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below)                |
+| `{c.user.name}`                           | a field of the record linked to the logged-in user                                                        |
+| `{d[i].name}`                             | a field of each selected record, in a "Multi-Record Report" template (`arrayReport`) with `d` as an array |
 
 The exported entity objects are never modified to add this data: the request data is built from copies.
 
