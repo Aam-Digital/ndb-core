@@ -1,6 +1,7 @@
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * Whether a field can define a hierarchy of records of this type:
@@ -18,9 +19,7 @@ function linksToOneOfType(field: EntitySchemaField, type: string): boolean {
   if (field.dataType !== EntityDatatype.dataType || field.isArray) {
     return false;
   }
-  const targets = Array.isArray(field.additional)
-    ? field.additional
-    : [field.additional];
+  const targets = asArray(field.additional);
   return targets.length === 1 && targets[0] === type;
 }
 

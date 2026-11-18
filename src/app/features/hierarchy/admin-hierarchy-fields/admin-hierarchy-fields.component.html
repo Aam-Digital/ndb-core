@@ -1,0 +1,29 @@
+@if (candidates().length > 0) {
+  <mat-form-field class="hierarchy-fields">
+    <mat-label
+      i18n="
+        admin list view|Label of the setting to show the list as a hierarchy by
+        link fields
+      "
+      >Hierarchy displayed by</mat-label
+    >
+    <!-- in the order of selection, as the first field is the default -->
+    <mat-select
+      multiple
+      [value]="selected()"
+      [sortComparator]="bySelectionOrder"
+      (valueChange)="select($event)"
+    >
+      @for (option of candidates(); track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+    <app-fa-dynamic-icon
+      matIconSuffix
+      icon="question-circle"
+      class="hint-icon"
+      matTooltip="Show records indented below the record they link to through this field. Users can switch between the selected fields; the first one is shown by default."
+      i18n-matTooltip="admin list view|Explanation of the hierarchy setting"
+    ></app-fa-dynamic-icon>
+  </mat-form-field>
+}

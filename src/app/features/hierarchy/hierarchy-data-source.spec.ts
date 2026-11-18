@@ -9,6 +9,9 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { restrictToNotArchived } from "#src/app/core/filter/not-archived-filter";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DataSourceRegistry } from "#src/app/core/common-components/entities-table/data-source/data-source-registry";
@@ -152,7 +155,9 @@ describe("HierarchyDataSource", () => {
     vi.spyOn(urlState, "updateUrlParams").mockImplementation(() => undefined);
   });
 
-  it("shows sub-records below their parents, with the first field and without pages", async () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("shows all sub-records below their parents on one page, by the first configured field", async () => {
     await createDataSource();
 
     expect(displayedRows()).toEqual([
@@ -277,11 +282,12 @@ describe("HierarchyDataSource", () => {
     ]);
   });
 
-  it("hides the sub-records of collapsed rows from the table and from select all, until a filter changes", async () => {
+  it("hides the sub-records of a collapsed row, also from select all", async () => {
     await createDataSource();
 
     dataSource.toggleCollapsed("HierarchyTestAction:Mobilisation");
     await settle();
+
     expect(displayedRows()).toEqual([
       "Clean Water",
       "-Mobilisation +2",
@@ -292,12 +298,22 @@ describe("HierarchyDataSource", () => {
       "Loop",
     ]);
     expect(selectableIds()).not.toContain("Rampur");
-    // the number of hidden sub-records follows the title of the collapsed row only
+  });
+
+  it("shows the number of hidden sub-records after the title of a collapsed row only", async () => {
+    await createDataSource();
+
+    dataSource.toggleCollapsed("HierarchyTestAction:Mobilisation");
+    await settle();
+
     const suffix = (title: string) =>
       dataSource.rowOptionsOf(new Action(title))?.suffix?.component;
     expect(suffix("Mobilisation")).toBe("HierarchyChildCount");
     expect(suffix("Clean Water")).toBeUndefined();
+  });
 
+  it("expands all rows again when the filters change", async () => {
+    await createDataSource();
     dataSource.collapseAll();
     await settle();
     expect(displayedRows()).toEqual(["Clean Water +2", "Garden", "Loop"]);
@@ -305,38 +321,46 @@ describe("HierarchyDataSource", () => {
 
     dataSource.searchText.set("w");
     await settle();
+
     expect(displayedRows()).toContain("-Well");
   });
 
-  it("switches to another field or a flat list with pages, kept in the URL", async () => {
+  it("arranges the records by the field the user chooses", async () => {
     await createDataSource();
 
     dataSource.selectField("dependsOn");
     await settle();
+
     expect(displayedRows()).toEqual(
       expect.arrayContaining(["Survey", "-Well in Rampur"]),
     );
-    expect(urlState.updateUrlParams).toHaveBeenLastCalledWith(
-      { [HIERARCHY_URL_PARAM]: "dependsOn" },
-      false,
-    );
+  });
+
+  it("shows a flat list with pages if the user chooses no field", async () => {
+    await createDataSource();
 
     dataSource.selectField(undefined);
     await settle();
+
     expect(dataSource.usesPagination()).toBe(true);
     const options = dataSource
       .filteredRecords()
       .map((r) => dataSource.rowOptionsOf(r));
     expect(options.filter(Boolean)).toEqual([]);
     expect(displayedRows()[0]).toBe("Clean Water");
-    expect(urlState.updateUrlParams).toHaveBeenLastCalledWith(
-      { [HIERARCHY_URL_PARAM]: NO_HIERARCHY },
-      false,
-    );
+  });
 
-    dataSource.selectField("parent");
+  it.each([
+    ["dependsOn", "dependsOn"],
+    [undefined, NO_HIERARCHY],
+    ["parent", null],
+  ])("keeps the choice %s in the URL as %s", async (field, param) => {
+    await createDataSource();
+
+    dataSource.selectField(field);
+
     expect(urlState.updateUrlParams).toHaveBeenLastCalledWith(
-      { [HIERARCHY_URL_PARAM]: null },
+      { [HIERARCHY_URL_PARAM]: param },
       false,
     );
   });
@@ -368,7 +392,7 @@ describe("HierarchyDataSource", () => {
     expect(error).not.toHaveBeenCalled();
   });
 
-  it("moves a record together with its sub-records and expands the parents of a new record", async () => {
+  it("moves a record together with its sub-records", async () => {
     await createDataSource();
     const training = await entityMapper.load(Action, "Training");
     await entityMapper.save(Object.assign(training, { parent: undefined }));
@@ -391,14 +415,54 @@ describe("HierarchyDataSource", () => {
       "Loop",
       "Training",
     ]);
-
-    dataSource.collapseAll();
-    await entityMapper.save(action("Sonpur 2", { parent: "Meetings" }));
-    await settle();
-    expect(displayedRows()).toEqual(
-      expect.arrayContaining(["-Well", "--Meetings", "---Sonpur 2"]),
-    );
   });
+
+  it.each<{ change: string; apply: () => Promise<unknown> }>([
+    {
+      change: "a new record",
+      apply: () => entityMapper.save(action("Garden", { parent: "Meetings" })),
+    },
+    {
+      change: "a form that edited the object held by the list",
+      apply: () => {
+        const garden = dataSource
+          .allRecords()
+          .find((record) => record.title === "Garden")!;
+        garden.parent = "HierarchyTestAction:Meetings";
+        return entityMapper.save(garden);
+      },
+    },
+    {
+      change: "a bulk operation (reloading the list)",
+      apply: async () => {
+        vi.spyOn(
+          TestBed.inject(ConfirmationDialogService),
+          "showProgressDialog",
+        ).mockReturnValue(mockMatDialogRef() as never);
+        TestBed.inject(BulkOperationStateService).startBulkOperation(2);
+        const garden = await entityMapper.load(Action, "Garden");
+        const loop = await entityMapper.load(Action, "Loop");
+        await entityMapper.saveAll([
+          Object.assign(garden, { parent: "HierarchyTestAction:Meetings" }),
+          Object.assign(loop, { parent: "HierarchyTestAction:Meetings" }),
+        ]);
+      },
+    },
+  ])(
+    "expands the parents of a record that $change puts below a collapsed row",
+    async ({ apply }) => {
+      await createDataSource();
+      dataSource.collapseAll();
+      await settle();
+
+      await apply();
+      await settle();
+
+      expect(displayedRows()).toEqual(
+        expect.arrayContaining(["-Mobilisation", "--Meetings", "---Garden"]),
+      );
+    },
+  );
 
   describe("in a related-entities section of a record of the same type", () => {
     beforeEach(() => {

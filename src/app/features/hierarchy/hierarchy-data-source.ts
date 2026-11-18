@@ -274,34 +274,42 @@ export class HierarchyDataSource<
   }
 
   protected override async processEntityUpdate(update: UpdatedEntity<T>) {
-    const field = this.activeField();
-    const id = update.entity.getId();
-    const before = this.allRecords().find((record) => record.getId() === id);
-    await super.processEntityUpdate(update);
+    await this.revealNewlyHidden(() => super.processEntityUpdate(update));
+  }
 
-    if (!field || update.type === "remove") {
-      return;
-    }
-    const isNewOrMoved = !before || before[field] !== update.entity[field];
-    if (isNewOrMoved) {
-      this.expandParentsOf(id, field);
+  /** also after a bulk operation, as the list then reloads instead of processing each update */
+  protected override async loadRecords() {
+    await this.revealNewlyHidden(() => super.loadRecords());
+  }
+
+  /**
+   * Apply a change of the records and show the new or moved records it puts under a collapsed row,
+   * by expanding their parents.
+   * This compares the hidden records of the tree, not the values of the records:
+   * a form may have changed the record object held in the list already.
+   */
+  private async revealNewlyHidden(change: () => Promise<unknown>) {
+    const hiddenBefore = this.view()?.hiddenIds ?? new Set<string>();
+    await change();
+    const newlyHidden = [...(this.view()?.hiddenIds ?? [])].filter(
+      (id) => !hiddenBefore.has(id),
+    );
+    if (newlyHidden.length > 0) {
+      this.expandParentsOf(newlyHidden);
     }
   }
 
-  /** Show a new or moved record by expanding all its parents. */
-  private expandParentsOf(recordId: string, field: string) {
-    const collapsed = this.collapsedIds();
-    if (collapsed.size === 0) {
-      return;
-    }
+  private expandParentsOf(recordIds: string[]) {
     const parents = resolveParentIds(
       this.allRecords(),
-      field,
+      this.activeField()!,
       this.rootRecord()?.getId(),
     );
-    const next = new Set(collapsed);
-    for (let id = parents.get(recordId); id; id = parents.get(id)) {
-      next.delete(id);
+    const next = new Set(this.collapsedIds());
+    for (const recordId of recordIds) {
+      for (let id = parents.get(recordId); id; id = parents.get(id)) {
+        next.delete(id);
+      }
     }
     this.collapsedIds.set(next);
   }

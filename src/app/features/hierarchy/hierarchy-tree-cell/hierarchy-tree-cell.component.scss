@@ -2,6 +2,8 @@
 @use "variables/breakpoints";
 @use "variables/colors";
 @use "variables/sizes";
+/* the styles of the rows of a hierarchy, see there */
+@use "../hierarchy-rows";
 
 $line-color: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 500);
 $toggle-size: 28px;

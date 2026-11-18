@@ -1,10 +1,12 @@
 import { Component, computed, input, linkedSignal } from "@angular/core";
+import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityListConfig } from "#src/app/core/entity-list/EntityListConfig";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { getHierarchyFieldCandidates } from "../hierarchy-fields";
 import {
   HierarchyDataSource,
@@ -25,43 +27,8 @@ import {
     MatTooltipModule,
     FaDynamicIconComponent,
   ],
-  template: `
-    @if (candidates().length > 0) {
-      <mat-form-field class="hierarchy-fields">
-        <mat-label
-          i18n="
-            admin list view|Label of the setting to show the list as a hierarchy
-            by link fields
-          "
-          >Hierarchy displayed by</mat-label
-        >
-        <mat-select
-          multiple
-          [value]="selected()"
-          (valueChange)="select($event)"
-        >
-          @for (option of candidates(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-        <app-fa-dynamic-icon
-          matIconSuffix
-          icon="question-circle"
-          class="hint-icon"
-          matTooltip="Show records indented below the record they link to through this field. Users can switch between the selected fields; the first one is shown by default."
-          i18n-matTooltip="admin list view|Explanation of the hierarchy setting"
-        ></app-fa-dynamic-icon>
-      </mat-form-field>
-    }
-  `,
-  styles: `
-    .hierarchy-fields {
-      min-width: 300px;
-    }
-    .hint-icon {
-      padding-inline: 8px;
-    }
-  `,
+  templateUrl: "./admin-hierarchy-fields.component.html",
+  styleUrl: "./admin-hierarchy-fields.component.scss",
 })
 export class AdminHierarchyFieldsComponent {
   entityConstructor = input.required<EntityConstructor>();
@@ -72,10 +39,12 @@ export class AdminHierarchyFieldsComponent {
   protected readonly candidates = computed(() =>
     getHierarchyFieldCandidates(this.entityConstructor()).map((id) => ({
       id,
-      label: this.entityConstructor().schema.get(id)?.label ?? id,
+      label:
+        resolveLocaleText(this.entityConstructor().schema.get(id)?.label) ?? id,
     })),
   );
 
+  /** the selected fields, in the order of selection */
   protected readonly selected = linkedSignal<string[]>(() => {
     const dataSource = this.config().dataSource;
     const isHierarchy =
@@ -86,6 +55,19 @@ export class AdminHierarchyFieldsComponent {
           [])
       : [];
   });
+
+  /**
+   * Keeps the selected fields in the order they were selected, newly selected ones last
+   * (the select would sort them in the order of the options otherwise).
+   */
+  protected readonly bySelectionOrder = (a: MatOption, b: MatOption) => {
+    const selected = this.selected();
+    const rank = (option: MatOption) => {
+      const index = selected.indexOf(option.value);
+      return index === -1 ? selected.length : index;
+    };
+    return rank(a) - rank(b);
+  };
 
   protected select(fields: string[]) {
     this.selected.set(fields);

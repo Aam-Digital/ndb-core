@@ -17,7 +17,8 @@ The feature plugs into the entities table through the generic extension points o
   and the titles of records with sub-records are in medium weight (500).
 - Rows with sub-records can be collapsed; a collapsed row shows its number of direct sub-records after its title, e.g. "Village meetings (3)".
   Collapsed rows are not remembered: the list opens fully expanded, and a change of the filters
-  or the search text expands everything again. A new or moved record expands its parents.
+  or the search text expands everything again. A new or moved record expands its parents,
+  also after a bulk operation or an import (the list then reloads instead of processing each update).
 - Filters and the "Filter" search apply on every level. Parents of a match that do not match themselves
   (filtered out, or archived while archived records are hidden) are shown greyed as context rows.
   Context rows cannot be selected and are not downloaded; "select all" also leaves out
@@ -28,7 +29,7 @@ The feature plugs into the entities table through the generic extension points o
 ## Configuration
 
 **List** (`EntityList`): the hierarchy data source with the fields users can choose from, the first one is the default.
-Admins set this in the admin UI of the list view ("Hierarchy displayed by").
+Admins set this in the admin UI of the list view ("Hierarchy displayed by"), in the order of selection.
 
 ```json
 "dataSource": { "name": "hierarchy", "config": { "hierarchyFields": ["parentAction", "dependsOn"] } }
@@ -60,7 +61,7 @@ Invalid fields (not a single link to the same type) are ignored without an error
 | `hierarchy-data-source.ts`                   | `HierarchyDataSource` ("hierarchy"): tree order, row options, collapse state, URL param   |
 | `hierarchy-tree-cell/`                       | row options prefix: indentation, connector lines, expand/collapse button, context icon    |
 | `hierarchy-child-count/`                     | row options suffix of a collapsed row: the number of its sub-records                      |
-| `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), included in `styles.scss` |
+| `_hierarchy-rows.scss`                       | global styles of the rows (context, top-level and parent rows), loaded with the tree cell |
 | `hierarchy-toolbar/`                         | toolbar control: menu to choose the field, joined with "Collapse all" / "Expand all"      |
 | `admin-hierarchy-fields/`                    | admin setting "Hierarchy displayed by" (`ADMIN_ENTITY_LIST_SETTINGS`)                     |
 | `demo-data/demo-action-generator.service.ts` | the sample plan for the "Action" type of demo mode "All Features"                         |
@@ -76,10 +77,12 @@ Invalid fields (not a single link to the same type) are ignored without an error
   (which only covers direct sub-records) by "is in the branch below the page's record".
 - The prefix and suffix configs are cached per record id, so rows do not reload their components when the tree changes.
 - Rows get global CSS classes from their row options (context rows, top-level rows, rows with sub-records),
-  styled in `_hierarchy-rows.scss`, as rows belong to the table component.
+  styled in `_hierarchy-rows.scss`. As rows belong to the table component, these styles are global (`::ng-deep`),
+  added to the page by the tree cell component (shown in every row of a hierarchy) instead of the app's `styles.scss`.
 - The tree cell stretches over the full height of its row (see the entities-table README),
   with a slot per level whose lines are drawn by CSS from `ancestorsContinue` and `isLastChild` of its row,
-  so that the lines of the rows meet. The lines are decorative (`aria-hidden`).
+  so that the lines of the rows meet. The lines are decorative (`aria-hidden`):
+  screen readers read the level from visually hidden text ("Level 2:") instead.
 
 ## Limitations
 
