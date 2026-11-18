@@ -17,7 +17,7 @@ $toggle-size: 28px;
   align-self: stretch;
   flex-shrink: 0;
 
-  @media screen and (max-width: breakpoints.$md) {
+  @media screen and (max-width: calc(breakpoints.$md - 1px)) {
     --hierarchy-indent: 20px;
   }
 }
