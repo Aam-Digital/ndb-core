@@ -61,6 +61,11 @@
                   uniqueAreaId="{{ tabIndex }}-{{ i }}"
                 >
                 </app-admin-entity-form>
+              } @else if (componentConfig.component === "EmbeddedArrayData") {
+                <app-admin-embedded-array-data
+                  [config]="componentConfig.config"
+                  [entityType]="entityConstructor()"
+                ></app-admin-embedded-array-data>
               } @else {
                 <app-admin-entity-panel-component
                   [config]="componentConfig"

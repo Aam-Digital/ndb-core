@@ -206,47 +206,59 @@ describe("DatabaseIndexingService", () => {
     ]);
   });
 
-  it("should generate index for entity property", async () => {
+  async function emittedKeys(
+    entityType: typeof Entity,
+    property: string,
+    docs: object[],
+    secondaryIndex?: string,
+  ): Promise<unknown[]> {
     const call = vi.spyOn(service, "createIndex");
     await service.generateIndexOnProperty(
       "testIndex",
+      entityType as any,
+      property as any,
+      secondaryIndex as any,
+    );
+    const emitted: unknown[] = [];
+    const map = new Function(
+      "emit",
+      "return " + vi.mocked(call).mock.calls[0][0].views[`by_${property}`].map,
+    )((value: unknown) => emitted.push(value));
+    docs.forEach((doc) => map(doc));
+    return emitted;
+  }
+
+  it.each([
+    [
+      "each element of an array",
       TestEntityWithRelation,
       "relatedEntities",
-    );
-
-    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
-    expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
-      cleanedUpStringify({
-        _id: "_design/testIndex",
-        views: {
-          by_relatedEntities: {
-            map: `(doc) => {
-            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}:")) return;
-            if (!Array.isArray(doc.relatedEntities)) return;
-            doc.relatedEntities.forEach((relatedEntity) => {
-              emit(relatedEntity);
-            });
-          }`,
-          },
-        },
-      }),
-    );
-  });
-
-  it("should generate index for entity property that is not an array", async () => {
-    const call = vi.spyOn(service, "createIndex");
-    await service.generateIndexOnProperty("testIndex", Note, "category");
-
-    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
+      { relatedEntities: ["a", "b"] },
+      ["a", "b"],
+    ],
+    [
+      "a single value stored in an array field (written before it became an array)",
+      TestEntityWithRelation,
+      "relatedEntities",
+      { relatedEntities: "a" },
+      ["a"],
+    ],
+    ["a single value", Note, "category", { category: "a" }, ["a"]],
+    [
+      "each element of an array stored in a single-value field (written while it was an array)",
+      Note,
+      "category",
+      { category: ["a", "b"] },
+      ["a", "b"],
+    ],
+    ["nothing for an empty value", Note, "category", {}, []],
+  ])("indexes %s", async (_name, entityType, property, values, expected) => {
+    const prefix = entityType.ENTITY_TYPE + ":";
     expect(
-      cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map),
-    ).toEqual(
-      cleanedUpStringify(`(doc) => {
-            if (!doc._id.startsWith("Note:")) return;
-
-            emit(doc.category);
-          }`),
-    );
+      await emittedKeys(entityType, property, [
+        { _id: prefix + "1", ...values },
+      ]),
+    ).toEqual(expected);
   });
 
   it("should only index records of exactly the entity type, not of types whose name starts with the same text", async () => {
@@ -264,31 +276,23 @@ describe("DatabaseIndexingService", () => {
     expect(emitted).toEqual(["a"]);
   });
 
-  it("should generate index for entity property with secondary index", async () => {
-    const call = vi.spyOn(service, "createIndex");
-    await service.generateIndexOnProperty(
-      "testIndex",
-      TestEntityWithRelation,
-      "relatedEntities",
-      "deadline",
-    );
-
-    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
+  it("emits the secondary index with each indexed value", async () => {
     expect(
-      cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map),
-    ).toEqual(
-      cleanedUpStringify(`(doc) => {
-            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}:")) return;
-            if (!Array.isArray(doc.relatedEntities)) return;
-
-            doc.relatedEntities.forEach((relatedEntity) => {
-              emit([relatedEntity, doc.deadline]);
-            });
-          }`),
-    );
+      await emittedKeys(
+        TestEntityWithRelation,
+        "relatedEntities",
+        [
+          {
+            _id: "TestEntityWithRelation:1",
+            relatedEntities: ["a", "b"],
+            deadline: "2026-01-01",
+          },
+        ],
+        "deadline",
+      ),
+    ).toEqual([
+      ["a", "2026-01-01"],
+      ["b", "2026-01-01"],
+    ]);
   });
 });
-
-function cleanedUpStringify(doc) {
-  return JSON.stringify(doc).replace(/\s/g, "").replace(/\\n/g, "");
-}

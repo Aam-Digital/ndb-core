@@ -487,11 +487,17 @@ describe("AutomatedFieldUpdateConfigService", () => {
       queryIndexDocs: vi.fn(),
     };
     mockIndexing.queryIndexDocs.mockImplementation(
-      async (ctor: EntityConstructor, indexName: string, key: string) => {
+      async (
+        ctor: EntityConstructor,
+        indexName: string,
+        { keys }: { keys: string[] },
+      ) => {
         const field = indexName.split("/by_")[1];
         return entityMapper
           .getAll(ctor.ENTITY_TYPE)
-          .filter((record) => asArray(record[field]).includes(key));
+          .filter((record) =>
+            asArray(record[field]).some((id) => keys.includes(id)),
+          );
       },
     );
     ability = { initialized: true, can: vi.fn(() => true) };
@@ -1184,7 +1190,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockIndexing.queryIndexDocs).toHaveBeenCalledWith(
           AggregatingAction,
           "linking_AggregatingAction_parentAction/by_parentAction",
-          parent.getId(),
+          { keys: [parent.getId()] },
         );
       });
 
@@ -1753,8 +1759,8 @@ describe("AutomatedFieldUpdateConfigService", () => {
           suggestions.find((e) => e.targetFieldId === "subTags").newValue,
         ).toEqual(["education"]);
         expect(
-          mockIndexing.queryIndexDocs.mock.calls.filter(
-            ([, , key]) => key === project.getId(),
+          mockIndexing.queryIndexDocs.mock.calls.filter(([, , { keys }]) =>
+            keys.includes(project.getId()),
           ),
         ).toHaveLength(1);
       });
