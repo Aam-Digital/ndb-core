@@ -4,6 +4,7 @@ import { EntitySchemaField } from "./entity-schema-field";
 import { EntitySchemaService } from "./entity-schema.service";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 import { getInnerEntityReferenceFields } from "./entity-reference-fields";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * Separator used to build an id referencing a property nested inside an embedded field,
@@ -155,8 +156,10 @@ export function getEmbeddedFieldId(ref: EmbeddedFieldRef): string {
  */
 export function getEmbeddedFieldLabel(ref: EmbeddedFieldRef): string {
   const outerLabel =
-    ref.outerSchema.labelShort ?? ref.outerSchema.label ?? ref.outerProp;
+    resolveLocaleText(ref.outerSchema.labelShort ?? ref.outerSchema.label) ??
+    ref.outerProp;
   const innerLabel =
-    ref.innerSchema.labelShort ?? ref.innerSchema.label ?? ref.innerProp;
+    resolveLocaleText(ref.innerSchema.labelShort ?? ref.innerSchema.label) ??
+    ref.innerProp;
   return `${outerLabel} -> ${innerLabel}`;
 }
