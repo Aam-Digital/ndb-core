@@ -145,6 +145,9 @@ describe("EntityRelationsService querying a real database", () => {
     const lastId = targets[59].getId();
     const linkingToFirst = await saveSource({ refScalar: firstId });
     const linkingToBoth = await saveSource({ refArray: [firstId, lastId] });
+    const embeddingFirst = await saveSource({
+      embeddedArray: [{ participant: firstId }, { participant: firstId }],
+    });
     // references the target in another field than the requested one
     await saveSource({ refScalar: lastId });
     const loadType = vi.spyOn(entityMapper, "loadType");
@@ -159,6 +162,11 @@ describe("EntityRelationsService querying a real database", () => {
       RelationQuerySource,
       "refArray",
     );
+    const embeddedLinks = await service.loadLinkingToEntities(
+      targets.map((t) => t.getId()),
+      RelationQuerySource,
+      "embeddedArray",
+    );
 
     const ids = (links: Map<string, Entity[]>) =>
       [...links].map(([id, entities]) => [id, entities.map((e) => e.getId())]);
@@ -170,6 +178,8 @@ describe("EntityRelationsService querying a real database", () => {
       [firstId, [linkingToBoth]],
       [lastId, [linkingToBoth]],
     ]);
+    // listed once, although two of its embedded objects link to the target
+    expect(ids(embeddedLinks)).toEqual([[firstId, [embeddingFirst]]]);
     expect(loadType).not.toHaveBeenCalled();
   });
 

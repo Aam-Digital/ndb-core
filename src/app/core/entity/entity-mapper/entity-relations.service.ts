@@ -45,7 +45,7 @@ export class EntityRelationsService {
     const referencingTypes = [];
     for (const t of this.entityRegistry.values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (this.fieldReferencesType(field, type)) {
+        if (this.fieldReferencesType(field, [type])) {
           let refType = referencingTypes.find((e) => e.entityType === t);
           if (!refType) {
             refType = { entityType: t, referencingProperties: [] };
@@ -89,16 +89,22 @@ export class EntityRelationsService {
   }
 
   /**
-   * Check whether a schema field references the given entity type,
+   * Check whether a schema field references (any of) the given entity types,
    * including nested references inside embedded schemas (e.g. attendance fields).
    */
-  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    if (asArray(field.additional).includes(type)) {
+  fieldReferencesType(
+    field: EntitySchemaField | undefined,
+    types: string[],
+  ): boolean {
+    if (!field) {
+      return false;
+    }
+    if (asArray(field.additional).some((type) => types.includes(type))) {
       return true;
     }
 
     return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
-      ([, inner]) => asArray(inner.additional).includes(type),
+      ([, inner]) => asArray(inner.additional).some((t) => types.includes(t)),
     );
   }
 
@@ -136,8 +142,8 @@ export class EntityRelationsService {
    * (e.g. the "Task" records whose `parentTask` is one of the given records)
    * and does so for many referenced entities at once.
    *
-   * Only plain entity-reference fields (`dataType: "entity"`) are supported,
-   * not references nested inside embedded objects.
+   * The field can be a plain entity-reference field (`dataType: "entity"`)
+   * or hold embedded objects with references (e.g. the participants of attendance items).
    *
    * @param referencedIds The ids of the entities to find references to
    * @param refType The entity type of the entities to search for references
@@ -159,15 +165,38 @@ export class EntityRelationsService {
       return new Map();
     }
 
+    const fieldConfig = { ...field, id: refProperty };
     const candidates =
       allEntities ??
-      (this.entityMapper.supportsFind(refType)
+      (field.dataType === EntityDatatype.dataType &&
+      this.entityMapper.supportsFind(refType)
         ? await this.entityMapper.findAllType(
             refType,
             referencingAnyOf(refProperty, [...idsToFind]),
           )
-        : await this.entityMapper.loadType(refType));
-    return groupByReferencedId(candidates, refProperty, idsToFind);
+        : await this.loadCandidates([...idsToFind], refType, [fieldConfig]));
+    return groupByReferencedId(candidates, idsToFind, (entity) =>
+      this.referencedIds(entity[refProperty], field),
+    );
+  }
+
+  /**
+   * The ids referenced in a field value: the plain id(s),
+   * or the ids in the reference fields of embedded objects.
+   */
+  private referencedIds(value: unknown, field: EntitySchemaField): unknown[] {
+    if (field.dataType === EntityDatatype.dataType) {
+      return asArray(value);
+    }
+    const innerKeys = getEmbeddedEntityReferenceFields(
+      this.schemaService,
+      field,
+    ).map(([key]) => key);
+    return asArray(value).flatMap((item) =>
+      innerKeys.length > 0 && typeof item === "object" && item !== null
+        ? innerKeys.flatMap((key) => asArray(item[key]))
+        : [item],
+    );
   }
 
   /**
@@ -313,13 +342,13 @@ function referencingAnyOf<T>(path: string, ids: string[]): DataFilter<T> {
  */
 function groupByReferencedId<T extends Entity>(
   entities: T[],
-  refProperty: string,
   ids: Set<string>,
+  referencedIdsOf: (entity: T) => unknown[],
 ): Map<string, T[]> {
   const groups = new Map<string, T[]>();
   for (const entity of entities) {
-    // a Set, so that a (faulty) field value listing the same id twice counts only once
-    const referencedIds = new Set<unknown>(asArray(entity[refProperty]));
+    // a Set, so that an id referenced twice (e.g. by two embedded items) counts only once
+    const referencedIds = new Set<unknown>(referencedIdsOf(entity));
     for (const id of referencedIds) {
       if (typeof id === "string" && ids.has(id)) {
         groups.set(id, [...(groups.get(id) ?? []), entity]);
