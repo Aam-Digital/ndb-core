@@ -161,9 +161,12 @@ export class EntityRelationsService {
 
     const candidates =
       allEntities ??
-      (await this.loadCandidates([...idsToFind], refType, [
-        { ...field, id: refProperty },
-      ]));
+      (this.entityMapper.supportsFind(refType)
+        ? await this.entityMapper.findAllType(
+            refType,
+            referencingAnyOf(refProperty, [...idsToFind]),
+          )
+        : await this.entityMapper.loadType(refType));
     return groupByReferencedId(candidates, refProperty, idsToFind);
   }
 
@@ -292,6 +295,16 @@ export class EntityRelationsService {
       ),
     );
   }
+}
+
+/**
+ * The query for records whose field references any of the ids,
+ * stored as a single id or as a list of ids: two conditions however many ids there are.
+ */
+function referencingAnyOf<T>(path: string, ids: string[]): DataFilter<T> {
+  return {
+    $or: [{ [path]: { $in: ids } }, { [path]: { $elemMatch: { $in: ids } } }],
+  } as DataFilter<T>;
 }
 
 /**

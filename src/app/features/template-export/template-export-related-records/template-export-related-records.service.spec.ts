@@ -182,7 +182,7 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(step.owner).toBe(owner.getId());
   });
 
-  it("keeps only the id of the record a related record is listed under, but resolves its other links", async () => {
+  it("keeps only the ids in the link field of related records, as the linked record is one level up", async () => {
     const root = action("Root");
     const other = action("Other");
     action("Waiting", { blockedBy: [root.getId(), other.getId()] });
@@ -192,34 +192,11 @@ describe("TemplateExportRelatedRecordsService", () => {
     const [related] = listOf(result.get(root.getId()), BLOCKING);
     expect(related["blockedBy"]).toEqual([
       { _id: root.getId() },
-      expect.objectContaining({ title: "Other" }),
+      { _id: other.getId() },
     ]);
   });
 
-  it("loads all records of the type only once for all levels if the database answers no queries", async () => {
-    const root = action("Root");
-    const child = action("Child", { parent: root.getId() });
-    action("Grandchild", { parent: child.getId() });
-    const loadLinking = vi.spyOn(
-      TestBed.inject(EntityRelationsService),
-      "loadLinkingToEntities",
-    );
-
-    const result = await service.loadRelatedRecords(
-      template({ ...SUB_ACTIONS, levels: 3 }),
-      [root],
-    );
-
-    expect(titles(result.get(root.getId()))).toEqual([
-      ["Child", [["Grandchild", []]]],
-    ]);
-    const preloaded = loadLinking.mock.calls.map((call) => call[3]);
-    expect(preloaded).toHaveLength(3);
-    expect(new Set(preloaded).size).toBe(1);
-    expect(preloaded[0]).toEqual(expect.arrayContaining([child]));
-  });
-
-  it("loads the records linked from related records only once for all levels", async () => {
+  it("loads each record type only once for all levels, also the type of the related records", async () => {
     const owner = Object.assign(new Person(), { name: "Owner" });
     entityMapper.add(owner);
     const root = action("Root");
@@ -240,10 +217,38 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(grandchild.owner).toEqual(
       expect.objectContaining({ name: "Owner" }),
     );
-    const personLoads = loadType.mock.calls.filter(
-      ([type]) => type === Person.ENTITY_TYPE || type === Person,
+    const loadsOf = (entityType: typeof Entity) =>
+      loadType.mock.calls.filter(
+        ([type]) => type === entityType.ENTITY_TYPE || type === entityType,
+      );
+    expect(loadsOf(Person)).toHaveLength(1);
+    expect(loadsOf(Action)).toHaveLength(1);
+  });
+
+  it("still provides the other lists if loading the records of one config fails", async () => {
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    const root = action("Root");
+    action("Sub", { parent: root.getId() });
+    action("Waiting", { blockedBy: [root.getId()] });
+    const entityRelations = TestBed.inject(EntityRelationsService);
+    const loadLinking =
+      entityRelations.loadLinkingToEntities.bind(entityRelations);
+    vi.spyOn(entityRelations, "loadLinkingToEntities").mockImplementation(
+      (ids, type, property, all) =>
+        property === BLOCKING.property
+          ? Promise.reject(new Error("failed"))
+          : loadLinking(ids, type, property, all),
     );
-    expect(personLoads).toHaveLength(1);
+
+    const result = await service.loadRelatedRecords(
+      template(SUB_ACTIONS, BLOCKING),
+      [root],
+    );
+
+    const data = result.get(root.getId());
+    expect(titles(data)).toEqual(["Sub"]);
+    expect(titles(data, BLOCKING)).toEqual([]);
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   it("adds separate lists for several configs, also through fields holding multiple links", async () => {

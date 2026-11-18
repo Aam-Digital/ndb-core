@@ -25,6 +25,7 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { asArray } from "#src/app/utils/asArray";
 import {
   getRelatedRecordsLevels,
@@ -270,17 +271,25 @@ export class EditTemplateExportRelatedRecordsComponent
         }
 
         for (const field of referencingProperties) {
-          if (!isFieldLinkingToType(field, type)) {
-            continue;
-          }
-          const option: RelatedRecordsOption = {
-            id: getOptionId({
-              entityType: entityType.ENTITY_TYPE,
-              property: field.id,
-            }),
+          const config = {
             entityType: entityType.ENTITY_TYPE,
             property: field.id,
-            label: $localize`:option to include related records, e.g. 'Tasks (linked through "Parent task")':${entityType.labelPlural ?? entityType.label}:recordType: (linked through "${field.label ?? field.id}:fieldLabel:")`,
+          };
+          // an id that cannot be part of a placeholder could not be saved anyway
+          if (
+            !isFieldLinkingToType(field, type) ||
+            !canBeUsedInPlaceholder(config)
+          ) {
+            continue;
+          }
+          const recordType = resolveLocaleText(
+            entityType.labelPlural ?? entityType.label,
+          );
+          const fieldLabel = resolveLocaleText(field.label) ?? field.id;
+          const option: RelatedRecordsOption = {
+            id: getOptionId(config),
+            ...config,
+            label: $localize`:option to include related records, e.g. 'Tasks (linked through "Parent task")':${recordType}:recordType: (linked through "${fieldLabel}:fieldLabel:")`,
             isHierarchy: isFieldLinkingToType(field, entityType.ENTITY_TYPE),
           };
           options.set(option.id, option);

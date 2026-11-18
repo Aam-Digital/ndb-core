@@ -8,6 +8,7 @@ import {
 } from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { TemplateExport } from "../template-export.entity";
 import {
   getRelatedRecordsLevels,
@@ -56,6 +57,7 @@ export class TemplateExportRelatedRecordsService {
   private readonly entityRelations = inject(EntityRelationsService);
   private readonly relationResolver = inject(EntityRelationResolverService);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /** configs already reported as invalid, to report each only once per session */
   private readonly reportedConfigs = new Set<string>();
@@ -88,7 +90,15 @@ export class TemplateExportRelatedRecordsService {
     // each config adds its own list to the records' data, so they can be loaded at the same time
     await Promise.all(
       this.validConfigs(template).map((config) =>
-        this.addRelatedRecords(template, config, result, loadedEntities),
+        this.addRelatedRecords(template, config, result, loadedEntities).catch(
+          // the file is still generated, with the lists that could be loaded
+          (error) =>
+            Logging.warn(
+              "TemplateExport: could not load related records",
+              { template: template.getId(), config },
+              error,
+            ),
+        ),
       ),
     );
     return result;
@@ -172,14 +182,15 @@ export class TemplateExportRelatedRecordsService {
     parents = parents.filter((parent) =>
       isFieldLinkingToType(linkField, Entity.extractTypeFromId(parent.id)),
     );
-    if (parents.length === 0) {
+    if (parents.length === 0 || !this.canRead(relatedType)) {
       return;
     }
 
-    // without database queries every level needs all records of the type: load them only once
+    // without database queries every level needs all records of the type: load them only once,
+    // shared with the resolving of relations (which needs them too)
     const allRecords = this.entityMapper.supportsFind(relatedType)
       ? undefined
-      : await this.entityMapper.loadType(relatedType);
+      : await this.loadAll(relatedType, loadedEntities);
     const levels = getRelatedRecordsLevels(config, relatedType);
     for (let level = 1; level <= levels && parents.length > 0; level++) {
       parents = await this.addLevel(config, relatedType, parents, {
@@ -207,6 +218,7 @@ export class TemplateExportRelatedRecordsService {
     );
     const dataById = await this.resolveActiveRecords(
       [...linking.values()].flat(),
+      config.property,
       loaded.loadedEntities,
     );
 
@@ -218,11 +230,9 @@ export class TemplateExportRelatedRecordsService {
         .sort(compareByDisplayText)
         .map((entity) => {
           // an own copy, as a record linking to several parents gets a separate list for each
-          const data = withParentAsId(
-            dataById.get(entity.getId()),
-            config.property,
-            parent.id,
-          );
+          const data: Record<string, unknown> & RelatedRecordsData = {
+            ...dataById.get(entity.getId()),
+          };
           children.push({ id: entity.getId(), data, parent });
           return data;
         });
@@ -233,9 +243,14 @@ export class TemplateExportRelatedRecordsService {
 
   /**
    * Plain copies of the records that are not archived, with their relations resolved, by their id.
+   *
+   * The link field to the parent records is not resolved but holds only the ids (`{_id}`):
+   * the details of the parent are already available one level up, and resolving it would
+   * load all records of the parent's type and repeat them in every list item.
    */
   private async resolveActiveRecords(
     entities: Entity[],
+    linkProperty: string,
     loadedEntities: LoadedEntitiesCache,
   ): Promise<Map<string, Record<string, unknown>>> {
     const active = [
@@ -245,11 +260,43 @@ export class TemplateExportRelatedRecordsService {
           .map((entity) => [entity.getId(), entity]),
       ).values(),
     ];
+    const withoutLinks = active.map((entity) => {
+      const copy = entity.copy();
+      copy[linkProperty] = undefined;
+      return copy;
+    });
     const resolved = (await this.relationResolver.resolveRelations<unknown>(
-      active,
+      withoutLinks,
       loadedEntities,
     )) as Record<string, unknown>[];
-    return new Map(active.map((entity, i) => [entity.getId(), resolved[i]]));
+    return new Map(
+      active.map((entity, i) => [
+        entity.getId(),
+        { ...resolved[i], [linkProperty]: asIdStubs(entity[linkProperty]) },
+      ]),
+    );
+  }
+
+  /**
+   * All records of the type, through the cache shared with the resolving of relations.
+   */
+  private async loadAll(
+    entityType: EntityConstructor,
+    loadedEntities: LoadedEntitiesCache,
+  ): Promise<Entity[]> {
+    if (!loadedEntities.has(entityType.ENTITY_TYPE)) {
+      loadedEntities.set(
+        entityType.ENTITY_TYPE,
+        this.entityMapper
+          .loadType(entityType)
+          .then((entities) => new Map(entities.map((e) => [e.getId(), e]))),
+      );
+    }
+    return [...(await loadedEntities.get(entityType.ENTITY_TYPE)).values()];
+  }
+
+  private canRead(entityType: EntityConstructor): boolean {
+    return !this.ability?.initialized || this.ability.can("read", entityType);
   }
 
   /**
@@ -299,23 +346,14 @@ function setRelatedList(
 }
 
 /**
- * A copy of the related record's data in which the link to the record it is listed under
- * holds only that record's id: its details are already available one level up,
- * and repeating them in every list item would multiply the size of the request.
- * Other records linked through the same field stay resolved.
+ * The linked id(s) in the shape of an unresolved relation (`{_id}`), keeping a list a list.
  */
-function withParentAsId(
-  data: Record<string, unknown>,
-  property: string,
-  parentId: string,
-): Record<string, unknown> & RelatedRecordsData {
-  const shorten = (linked: unknown) =>
-    (linked as { _id?: string })?._id === parentId ? { _id: parentId } : linked;
-  const value = data[property];
-  return {
-    ...data,
-    [property]: Array.isArray(value) ? value.map(shorten) : shorten(value),
-  };
+function asIdStubs(value: unknown): unknown {
+  return Array.isArray(value)
+    ? value.map((id) => ({ _id: id }))
+    : value
+      ? { _id: value }
+      : value;
 }
 
 function compareByDisplayText(a: Entity, b: Entity): number {
