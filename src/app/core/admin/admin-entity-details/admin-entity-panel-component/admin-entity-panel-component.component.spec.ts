@@ -18,8 +18,6 @@ import { DefaultDatatype } from "app/core/entity/default-datatype/default.dataty
 import { SchemaEmbedArrayDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { PanelComponent } from "app/core/entity-details/EntityDetailsConfig";
-import { EmbeddedArrayDataConfig } from "app/core/entity-details/embedded-array-data/embedded-array-data.component";
 import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
 import {
   MatDialogMock,
@@ -30,15 +28,11 @@ import {
 @DatabaseEntity("EmbedColumnsPanelTest")
 class EmbedColumnsPanelTest extends Entity {}
 
-@DatabaseEntity("EmbedSectionPanelTest")
-class EmbedSectionPanelTest extends Entity {}
-
 describe("AdminEntityPanelComponentComponent", () => {
   let component: AdminEntityPanelComponentComponent;
   let fixture: ComponentFixture<AdminEntityPanelComponentComponent>;
   let mockEntityRelationsService: any;
   let entitySchemaUpdated: EventEmitter<void>;
-  let updateSchemaField: ReturnType<typeof vi.fn>;
   let dialog: MatDialogMock;
 
   beforeEach(async () => {
@@ -49,7 +43,6 @@ describe("AdminEntityPanelComponentComponent", () => {
         .mockName("EntityRelationsService.getEntityTypesReferencingType"),
     };
     entitySchemaUpdated = new EventEmitter<void>();
-    updateSchemaField = vi.fn();
     dialog = mockMatDialog();
     await TestBed.configureTestingModule({
       imports: [AdminEntityPanelComponentComponent, MatDialogModule],
@@ -61,7 +54,7 @@ describe("AdminEntityPanelComponentComponent", () => {
         },
         {
           provide: AdminEntityService,
-          useValue: { entitySchemaUpdated, updateSchemaField },
+          useValue: { entitySchemaUpdated },
         },
         {
           provide: DefaultDatatype,
@@ -101,86 +94,6 @@ describe("AdminEntityPanelComponentComponent", () => {
       { id: "subject" },
       { id: "note" },
     ]);
-  });
-
-  describe("field of an EmbeddedArrayData section", () => {
-    beforeEach(() => {
-      EmbedSectionPanelTest.schema.set("contactPersons", {
-        dataType: "schema-embed-array",
-        label: "Contact Persons",
-        additional: { role: { dataType: "string", label: "Role" } },
-      });
-      fixture.componentRef.setInput("entityType", EmbedSectionPanelTest);
-    });
-
-    function sectionConfig(
-      component: string,
-      property: string,
-    ): PanelComponent {
-      return {
-        component,
-        config: { property } satisfies EmbeddedArrayDataConfig,
-      };
-    }
-
-    it.each([
-      ["EmbeddedArrayData", "contactPersons", "Contact Persons"],
-      ["EmbeddedArrayData", "missingField", undefined],
-      ["RelatedEntities", "contactPersons", undefined],
-    ])(
-      "offers to configure the displayed field (component: %s, property: %s)",
-      (sectionComponent, property, expectedLabel) => {
-        fixture.componentRef.setInput(
-          "config",
-          sectionConfig(sectionComponent, property),
-        );
-        fixture.detectChanges();
-
-        expect(
-          fixture.nativeElement.textContent.includes("Configure field"),
-        ).toBe(!!expectedLabel);
-        expect(component.sectionField()?.label).toBe(expectedLabel);
-      },
-    );
-
-    it("updates the entity type's schema with the field edited in the dialog", () => {
-      fixture.componentRef.setInput(
-        "config",
-        sectionConfig("EmbeddedArrayData", "contactPersons"),
-      );
-      const editedField = {
-        ...EmbedSectionPanelTest.schema.get("contactPersons"),
-        id: "contactPersons",
-        label: "Contacts",
-      };
-      dialog.open.mockReturnValue(mockMatDialogRef(editedField));
-
-      component.openSectionFieldConfig();
-
-      expect(dialog.open.mock.calls[0][1].data.entitySchemaField).toEqual(
-        expect.objectContaining({
-          id: "contactPersons",
-          label: "Contact Persons",
-        }),
-      );
-      expect(updateSchemaField).toHaveBeenCalledWith(
-        EmbedSectionPanelTest,
-        "contactPersons",
-        editedField,
-      );
-    });
-
-    it("keeps the schema if the dialog is cancelled", () => {
-      fixture.componentRef.setInput(
-        "config",
-        sectionConfig("EmbeddedArrayData", "contactPersons"),
-      );
-      dialog.open.mockReturnValue(mockMatDialogRef(undefined));
-
-      component.openSectionFieldConfig();
-
-      expect(updateSchemaField).not.toHaveBeenCalled();
-    });
   });
 
   describe("columns of embedded entries", () => {
