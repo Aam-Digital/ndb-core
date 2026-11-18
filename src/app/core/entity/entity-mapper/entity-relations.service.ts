@@ -33,12 +33,6 @@ export class EntityRelationsService {
   private readonly schemaService = inject(EntitySchemaService);
 
   /**
-   * Maximum number of conditions combined into one database query
-   * when looking up the records linking to many entities at once.
-   */
-  private static readonly MAX_QUERY_CONDITIONS = 100;
-
-  /**
    * Get all entity types whose schema includes fields referencing the given type.
    *
    * e.g. given Child -> [Note, ChildSchoolRelation, ...]
@@ -159,11 +153,10 @@ export class EntityRelationsService {
     refProperty: string,
     allEntities?: T[],
   ): Promise<Map<string, T[]>> {
-    const linkingEntities = new Map<string, T[]>();
     const idsToFind = new Set(referencedIds);
     const field = refType.schema.get(refProperty);
     if (!field || idsToFind.size === 0) {
-      return linkingEntities;
+      return new Map();
     }
 
     const candidates =
@@ -171,20 +164,7 @@ export class EntityRelationsService {
       (await this.loadCandidates([...idsToFind], refType, [
         { ...field, id: refProperty },
       ]));
-
-    for (const candidate of candidates) {
-      // a Set, so that a (faulty) field value listing the same id twice counts only once
-      for (const id of new Set<unknown>(asArray(candidate[refProperty]))) {
-        if (typeof id !== "string" || !idsToFind.has(id)) {
-          continue;
-        }
-        if (!linkingEntities.has(id)) {
-          linkingEntities.set(id, []);
-        }
-        linkingEntities.get(id).push(candidate);
-      }
-    }
-    return linkingEntities;
+    return groupByReferencedId(candidates, refProperty, idsToFind);
   }
 
   /**
@@ -225,8 +205,6 @@ export class EntityRelationsService {
    * Where every referencing property can express itself as a database query, this loads
    * only the matching records instead of the whole entity type - which is what keeps a
    * merge or a cascading delete from transferring the entire database.
-   * Many conditions are split into several queries, to keep each query's selector
-   * at a size the database handles well.
    *
    * All-or-nothing per type: a full load already contains every property's matches, so
    * combining it with queries for the remaining properties would transfer the same
@@ -248,44 +226,20 @@ export class EntityRelationsService {
       const datatype = this.schemaService.getDatatypeOrDefault(
         refProperty.dataType,
       );
-      for (const id of referencedIds) {
-        const propertyConditions = datatype.getReferenceSelector(
-          refProperty.id,
-          refProperty,
-          id,
-        );
-
-        if (!propertyConditions?.length) {
-          Logging.debug(
-            "loading all records of an entity type because a referencing field cannot be queried",
-            { entityType: refType.ENTITY_TYPE, field: refProperty.id },
-          );
-          return this.entityMapper.loadType(refType);
-        }
-        conditions.push(...propertyConditions);
-      }
-    }
-
-    const batches: DataFilter<T>[][] = [];
-    for (
-      let i = 0;
-      i < conditions.length;
-      i += EntityRelationsService.MAX_QUERY_CONDITIONS
-    ) {
-      batches.push(
-        conditions.slice(i, i + EntityRelationsService.MAX_QUERY_CONDITIONS),
+      const selectors = referencedIds.map((id) =>
+        datatype.getReferenceSelector(refProperty.id, refProperty, id),
       );
+      if (selectors.some((selector) => !selector?.length)) {
+        Logging.debug(
+          "loading all records of an entity type because a referencing field cannot be queried",
+          { entityType: refType.ENTITY_TYPE, field: refProperty.id },
+        );
+        return this.entityMapper.loadType(refType);
+      }
+      conditions.push(...selectors.flat());
     }
-    const results = await Promise.all(
-      batches.map((batch) =>
-        this.entityMapper.findAllType(refType, { $or: batch }),
-      ),
-    );
 
-    // a record referencing ids of several batches is returned by each of them
-    const candidates = new Map<string, T>();
-    results.flat().forEach((entity) => candidates.set(entity.getId(), entity));
-    return [...candidates.values()];
+    return this.entityMapper.findAllType(refType, { $or: conditions });
   }
 
   /**
@@ -338,4 +292,26 @@ export class EntityRelationsService {
       ),
     );
   }
+}
+
+/**
+ * Group the entities by which of the given ids their field references.
+ * An entity referencing several of the ids is listed for each of them.
+ */
+function groupByReferencedId<T extends Entity>(
+  entities: T[],
+  refProperty: string,
+  ids: Set<string>,
+): Map<string, T[]> {
+  const groups = new Map<string, T[]>();
+  for (const entity of entities) {
+    // a Set, so that a (faulty) field value listing the same id twice counts only once
+    const referencedIds = new Set<unknown>(asArray(entity[refProperty]));
+    for (const id of referencedIds) {
+      if (typeof id === "string" && ids.has(id)) {
+        groups.set(id, [...(groups.get(id) ?? []), entity]);
+      }
+    }
+  }
+  return groups;
 }

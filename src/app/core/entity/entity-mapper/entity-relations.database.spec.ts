@@ -136,7 +136,7 @@ describe("EntityRelationsService querying a real database", () => {
   });
 
   it("queries the records linking to many entities in one field, grouped by the entity they link to", async () => {
-    // more targets than fit into a single query, to cover the batching
+    // many targets, combined into one query
     const targets = Array.from(
       { length: 60 },
       (_, i) => new RelationQueryTarget("target-" + i),
