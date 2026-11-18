@@ -18,7 +18,7 @@
 import {
   DefaultDatatype,
   ExportColumnMapping,
-  referenceIdConditions,
+  referenceIdCondition,
 } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -175,13 +175,10 @@ export class SchemaEmbedDatatype<
     }
 
     return innerKeys.flatMap((key) => [
+      // an array of embedded objects (`$in` also matches an inner array of ids)
       { [fieldId]: { $elemMatch: { [key]: { $in: referencedIds } } } },
-      {
-        [fieldId]: {
-          $elemMatch: { [key]: { $elemMatch: { $in: referencedIds } } },
-        },
-      },
-      ...referenceIdConditions(`${fieldId}.${key}`, referencedIds),
+      // a single embedded object
+      referenceIdCondition(`${fieldId}.${key}`, referencedIds),
     ]);
   }
 

@@ -259,20 +259,39 @@ describe("EntityRelationsService querying a real database", () => {
       },
     );
 
-    it("loads all records of the type when the query fails", async () => {
-      const linkingToFirst = await saveSource({ refScalar: firstId });
-      vi.spyOn(entityMapper, "findAllType").mockRejectedValue(
-        new Error("query failed"),
-      );
+    it.each<[string, () => Promise<Entity[]>]>([
+      [
+        "of one field for many entities",
+        async () =>
+          (
+            await service.loadLinkingToEntities(
+              targetIds,
+              RelationQuerySource,
+              "refScalar",
+            )
+          ).get(firstId),
+      ],
+      [
+        "of all fields for one entity (e.g. for a cascading delete)",
+        async () =>
+          (await service.loadAllLinkingToEntity(targets[0])).map(
+            ({ entity }) => entity,
+          ),
+      ],
+    ])(
+      "loads all records of the type when the lookup %s cannot query them",
+      async (_name, lookUp) => {
+        const linkingToFirst = await saveSource({ refScalar: firstId });
+        await saveSource({ refScalar: lastId });
+        vi.spyOn(entityMapper, "findAllType").mockRejectedValue(
+          new Error("query failed"),
+        );
 
-      const links = await service.loadLinkingToEntities(
-        targetIds,
-        RelationQuerySource,
-        "refScalar",
-      );
+        const linked = await lookUp();
 
-      expect(ids(links)).toEqual([[firstId, [linkingToFirst]]]);
-    });
+        expect(linked.map((e) => e.getId())).toEqual([linkingToFirst]);
+      },
+    );
   });
 
   it("loads the whole type when one of its referencing fields cannot be queried", async () => {

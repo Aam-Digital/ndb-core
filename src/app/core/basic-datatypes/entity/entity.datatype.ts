@@ -28,7 +28,7 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
-  referenceIdConditions,
+  referenceIdCondition,
 } from "../../entity/default-datatype/default.datatype";
 import type { DataFilter } from "../../filter/filters/filters";
 import {
@@ -66,7 +66,7 @@ export class EntityDatatype extends StringDatatype {
     schemaField: EntitySchemaField,
     referencedIds: string[],
   ): DataFilter<any>[] {
-    return referenceIdConditions(fieldId, referencedIds);
+    return [referenceIdCondition(fieldId, referencedIds)];
   }
 
   override getExportColumns(
