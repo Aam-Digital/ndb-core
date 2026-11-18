@@ -6,12 +6,8 @@
   border-radius: sizes.$x-small;
 }
 
-.related-records-key {
-  flex: 1 1 160px;
-}
-
 .related-records-levels {
-  flex: 0 1 90px;
+  inline-size: 120px;
 }
 
 .related-records-example {

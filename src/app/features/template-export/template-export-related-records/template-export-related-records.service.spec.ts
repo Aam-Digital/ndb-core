@@ -55,10 +55,22 @@ describe("TemplateExportRelatedRecordsService", () => {
   }
 
   const SUB_ACTIONS: TemplateExportRelatedRecords = {
-    key: "subActions",
     entityType: "RelatedRecordsAction",
     property: "parent",
   };
+  const BLOCKING: TemplateExportRelatedRecords = {
+    entityType: "RelatedRecordsAction",
+    property: "blockedBy",
+  };
+
+  function relatedList(
+    config: TemplateExportRelatedRecords,
+    list: unknown[] = [],
+  ): RelatedRecordsData {
+    return {
+      _related: { [config.entityType]: { [config.property]: list } },
+    } as RelatedRecordsData;
+  }
 
   let service: TemplateExportRelatedRecordsService;
   let entityMapper: MockEntityMapperService;
@@ -75,11 +87,21 @@ describe("TemplateExportRelatedRecordsService", () => {
     return Object.assign(new TemplateExport(), { relatedRecords });
   }
 
-  /** the titles of the related records under the given key, including those of nested levels */
-  function titles(data: RelatedRecordsData | Record<string, any>, key: string) {
-    return (data?._related?.[key] as Record<string, any>[])?.map((record) =>
-      record._related?.[key]
-        ? [record.title, titles(record, key)]
+  function listOf(
+    data: RelatedRecordsData | Record<string, any>,
+    config: TemplateExportRelatedRecords = SUB_ACTIONS,
+  ): Record<string, any>[] | undefined {
+    return data?._related?.[config.entityType]?.[config.property];
+  }
+
+  /** the titles of the related records of the config, including those of nested levels */
+  function titles(
+    data: RelatedRecordsData | Record<string, any>,
+    config: TemplateExportRelatedRecords = SUB_ACTIONS,
+  ) {
+    return listOf(data, config)?.map((record) =>
+      listOf(record, config)
+        ? [record.title, titles(record, config)]
         : record.title,
     );
   }
@@ -129,12 +151,9 @@ describe("TemplateExportRelatedRecordsService", () => {
       rootB,
     ]);
 
-    expect(titles(result.get(rootA.getId()), "subActions")).toEqual([
-      "Step 2",
-      "Step 10",
-    ]);
+    expect(titles(result.get(rootA.getId()))).toEqual(["Step 2", "Step 10"]);
     // an empty list rather than no list, so that a loop in the template prints nothing
-    expect(result.get(rootB.getId())).toEqual({ _related: { subActions: [] } });
+    expect(result.get(rootB.getId())).toEqual(relatedList(SUB_ACTIONS));
     // one lookup for all exported records, not one per record
     expect(loadLinking).toHaveBeenCalledTimes(1);
   });
@@ -152,7 +171,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       root,
     ]);
 
-    const [related] = result.get(root.getId())._related.subActions;
+    const [related] = listOf(result.get(root.getId()));
     expect(related).toEqual(
       expect.objectContaining({
         title: "Step",
@@ -168,16 +187,9 @@ describe("TemplateExportRelatedRecordsService", () => {
     const other = action("Other");
     action("Waiting", { blockedBy: [root.getId(), other.getId()] });
 
-    const result = await service.loadRelatedRecords(
-      template({
-        key: "blocking",
-        entityType: "RelatedRecordsAction",
-        property: "blockedBy",
-      }),
-      [root],
-    );
+    const result = await service.loadRelatedRecords(template(BLOCKING), [root]);
 
-    const [related] = result.get(root.getId())._related.blocking;
+    const [related] = listOf(result.get(root.getId()), BLOCKING);
     expect(related["blockedBy"]).toEqual([
       { _id: root.getId() },
       expect.objectContaining({ title: "Other" }),
@@ -198,7 +210,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()), "subActions")).toEqual([
+    expect(titles(result.get(root.getId()))).toEqual([
       ["Child", [["Grandchild", []]]],
     ]);
     const preloaded = loadLinking.mock.calls.map((call) => call[3]);
@@ -223,9 +235,8 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const [loadedChild] = result.get(root.getId())._related.subActions;
-    const [grandchild] = (loadedChild as RelatedRecordsData)._related
-      .subActions;
+    const [loadedChild] = listOf(result.get(root.getId()));
+    const [grandchild] = listOf(loadedChild);
     expect(grandchild.owner).toEqual(
       expect.objectContaining({ name: "Owner" }),
     );
@@ -241,17 +252,13 @@ describe("TemplateExportRelatedRecordsService", () => {
     action("Waiting", { blockedBy: ["RelatedRecordsAction:x", root.getId()] });
 
     const result = await service.loadRelatedRecords(
-      template(SUB_ACTIONS, {
-        key: "blocking",
-        entityType: "RelatedRecordsAction",
-        property: "blockedBy",
-      }),
+      template(SUB_ACTIONS, BLOCKING),
       [root],
     );
 
     const data = result.get(root.getId());
-    expect(titles(data, "subActions")).toEqual(["Sub"]);
-    expect(titles(data, "blocking")).toEqual(["Waiting"]);
+    expect(titles(data)).toEqual(["Sub"]);
+    expect(titles(data, BLOCKING)).toEqual(["Waiting"]);
   });
 
   it("nests the related records of related records up to the configured number of levels", async () => {
@@ -266,7 +273,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()), "subActions")).toEqual([
+    expect(titles(result.get(root.getId()))).toEqual([
       // the deepest loaded level does not get a (misleadingly empty) list of its own
       ["Child", ["Grandchild"]],
       ["Sibling", []],
@@ -283,9 +290,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()), "subActions")).toEqual([
-      ["Child", []],
-    ]);
+    expect(titles(result.get(root.getId()))).toEqual([["Child", []]]);
   });
 
   it("only loads records for the exported record types that the configured field links to", async () => {
@@ -298,51 +303,51 @@ describe("TemplateExportRelatedRecordsService", () => {
       person,
     ]);
 
-    expect(titles(result.get(project.getId()), "subActions")).toEqual([
-      "Project action",
-    ]);
-    expect(result.get(person.getId())).toEqual({
-      _related: { subActions: [] },
-    });
+    expect(titles(result.get(project.getId()))).toEqual(["Project action"]);
+    expect(result.get(person.getId())).toEqual(relatedList(SUB_ACTIONS));
   });
 
-  it("keeps the lists apart from the fields of the records, also with a placeholder name that is a field", async () => {
+  it("keeps the lists apart from the fields of the records, also of nested levels", async () => {
     const root = action("Root");
     const child = action("Child", { parent: root.getId() });
     action("Grandchild", { parent: child.getId() });
 
     const result = await service.loadRelatedRecords(
-      template({ ...SUB_ACTIONS, key: "title", levels: 2 }),
+      template({ ...SUB_ACTIONS, levels: 2 }),
       [root],
     );
 
-    const [related] = result.get(root.getId())._related.title;
-    expect(related.title).toBe("Child");
-    expect(titles(related, "title")).toEqual(["Grandchild"]);
+    const [related] = listOf(result.get(root.getId()));
+    expect(related.parent).toEqual({ _id: root.getId() });
+    expect(titles(related)).toEqual(["Grandchild"]);
   });
 
   it.each<[string, TemplateExportRelatedRecords, RelatedRecordsData]>([
     [
       "an unknown record type",
       { ...SUB_ACTIONS, entityType: "RemovedType" },
-      { _related: { subActions: [] } },
+      relatedList({ ...SUB_ACTIONS, entityType: "RemovedType" }),
     ],
     [
       "a field that does not exist (anymore)",
       { ...SUB_ACTIONS, property: "removedField" },
-      { _related: { subActions: [] } },
+      relatedList({ ...SUB_ACTIONS, property: "removedField" }),
     ],
     [
       "a field that does not link to records",
       { ...SUB_ACTIONS, property: "title" },
-      { _related: { subActions: [] } },
+      relatedList({ ...SUB_ACTIONS, property: "title" }),
     ],
     [
       "a field that does not link to the applicable record types (anymore)",
       { ...SUB_ACTIONS, property: "owner" },
-      { _related: { subActions: [] } },
+      relatedList({ ...SUB_ACTIONS, property: "owner" }),
     ],
-    ["an invalid placeholder name", { ...SUB_ACTIONS, key: "sub actions" }, {}],
+    [
+      "a field that cannot be used in a placeholder",
+      { ...SUB_ACTIONS, property: "my field" },
+      {},
+    ],
   ])("skips and reports a config with %s", async (_name, config, expected) => {
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     const root = action("Root");
@@ -358,18 +363,18 @@ describe("TemplateExportRelatedRecordsService", () => {
     // reported only once, not for every generated file
     expect(warn).toHaveBeenCalledTimes(1);
   });
-  it("skips and reports a config using the placeholder name of an earlier one", async () => {
+  it("skips and reports a config including the same related records as an earlier one", async () => {
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     const root = action("Root");
     action("Sub", { parent: root.getId() });
     action("Waiting", { blockedBy: [root.getId()] });
 
     const result = await service.loadRelatedRecords(
-      template(SUB_ACTIONS, { ...SUB_ACTIONS, property: "blockedBy" }),
+      template(SUB_ACTIONS, { ...SUB_ACTIONS, levels: 2 }),
       [root],
     );
 
-    expect(titles(result.get(root.getId()), "subActions")).toEqual(["Sub"]);
+    expect(titles(result.get(root.getId()))).toEqual(["Sub"]);
     expect(warn).toHaveBeenCalledTimes(1);
   });
 });

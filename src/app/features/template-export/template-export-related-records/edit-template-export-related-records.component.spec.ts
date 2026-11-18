@@ -44,12 +44,10 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
   }
 
   const PROJECT_ACTIONS: TemplateExportRelatedRecords = {
-    key: "actions",
     entityType: Action.ENTITY_TYPE,
     property: "project",
   };
   const SUB_ACTIONS: TemplateExportRelatedRecords = {
-    key: "subActions",
     entityType: Action.ENTITY_TYPE,
     property: "parentAction",
   };
@@ -109,27 +107,10 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     );
   });
 
-  it("suggests a placeholder name that is not in use yet when selecting related records", () => {
-    setup(
-      [Project.ENTITY_TYPE],
-      [{ ...PROJECT_ACTIONS, key: "editRelatedAction" }],
-    );
-
-    component.addRow();
-    component.selectOption(1, component.options()[0].id);
-
-    expect(control.value[1]).toEqual({
-      ...PROJECT_ACTIONS,
-      key: "editRelatedAction2",
-    });
-    expect(control.valid).toBe(true);
-    expect(control.dirty).toBe(true);
-  });
-
   it("shows the placeholder to use in the template file, including nested levels of a hierarchy", () => {
     setup([Action.ENTITY_TYPE], [SUB_ACTIONS]);
     expect(fixture.nativeElement.textContent).toContain(
-      "{d._related.subActions[i].subject}",
+      "{d._related.EditRelatedAction.parentAction[i].subject}",
     );
 
     // limited to the supported number of levels
@@ -139,7 +120,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     expect(control.value).toEqual([{ ...SUB_ACTIONS, levels: 5 }]);
     // one example per level
     expect(fixture.nativeElement.textContent).toContain(
-      "{d._related.subActions[i]._related.subActions[i]._related.subActions[i]._related.subActions[i]._related.subActions[i].subject}",
+      "{d._related.EditRelatedAction.parentAction[i]._related.EditRelatedAction.parentAction[i]._related.EditRelatedAction.parentAction[i]._related.EditRelatedAction.parentAction[i]._related.EditRelatedAction.parentAction[i].subject}",
     );
 
     component.setLevels(0, "1");
@@ -149,7 +130,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     arrayReportControl.setValue(true);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain(
-      "{d[i]._related.subActions[i].subject}",
+      "{d[i]._related.EditRelatedAction.parentAction[i].subject}",
     );
   });
 
@@ -164,9 +145,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
       PROJECT_ACTIONS.entityType + "::" + PROJECT_ACTIONS.property,
     );
 
-    expect(control.value).toEqual([
-      { ...PROJECT_ACTIONS, key: SUB_ACTIONS.key },
-    ]);
+    expect(control.value).toEqual([PROJECT_ACTIONS]);
   });
 
   it("shows the saved levels in the input, also when an entered value is limited to the same value again", () => {
@@ -187,26 +166,11 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     ["a complete entry", [PROJECT_ACTIONS], true],
     [
       "an entry without selected related records",
-      [{ key: "x", entityType: "", property: "" }],
+      [{ entityType: "", property: "" }],
       false,
     ],
     [
-      "an entry without placeholder name",
-      [{ ...PROJECT_ACTIONS, key: "" }],
-      false,
-    ],
-    [
-      "a placeholder name that breaks the placeholder syntax",
-      [{ ...PROJECT_ACTIONS, key: "my actions" }],
-      false,
-    ],
-    [
-      "a placeholder name not starting with a letter",
-      [{ ...PROJECT_ACTIONS, key: "_actions" }],
-      false,
-    ],
-    [
-      "the same placeholder name twice",
+      "the same related records twice",
       [PROJECT_ACTIONS, PROJECT_ACTIONS],
       false,
     ],

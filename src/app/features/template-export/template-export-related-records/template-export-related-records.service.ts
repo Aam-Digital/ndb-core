@@ -12,18 +12,22 @@ import { TemplateExport } from "../template-export.entity";
 import {
   getRelatedRecordsLevels,
   isFieldLinkingToType,
-  RELATED_RECORDS_KEY_PATTERN,
+  canBeUsedInPlaceholder,
+  getRelatedRecordsPlaceholder,
   RELATED_RECORDS_PROPERTY,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
 
 /**
  * The data to add to one exported record: the lists of related records
- * by the `key` of their {@link TemplateExportRelatedRecords} config,
+ * by the record type and field of their {@link TemplateExportRelatedRecords} config,
  * under {@link RELATED_RECORDS_PROPERTY} so that they never hide a field of the record.
  */
 export type RelatedRecordsData = {
-  [RELATED_RECORDS_PROPERTY]?: Record<string, Record<string, unknown>[]>;
+  [RELATED_RECORDS_PROPERTY]?: Record<
+    string,
+    Record<string, Record<string, unknown>[]>
+  >;
 };
 
 /**
@@ -66,7 +70,7 @@ export class TemplateExportRelatedRecordsService {
    * @param loadedEntities Records already loaded to resolve relations, shared with other calls
    *          for the same file (each level of a hierarchy refers to the records of the level above)
    * @returns The related records data by the id of the exported record,
-   *          holding a (possibly empty) list for each validly configured key.
+   *          holding a (possibly empty) list for each valid config.
    *          Empty if the template does not include any related records.
    */
   async loadRelatedRecords(
@@ -90,27 +94,32 @@ export class TemplateExportRelatedRecordsService {
   }
 
   /**
-   * The configs with a placeholder name that can be used, reporting the others:
-   * an invalid name, or the name of an earlier config (which would replace its list).
+   * The configs that can be applied, reporting the others: a record type or field that cannot
+   * be part of a placeholder, or the same related records as an earlier config.
    */
   private validConfigs(
     template: TemplateExport,
   ): TemplateExportRelatedRecords[] {
-    const keys = new Set<string>();
+    const placeholders = new Set<string>();
     return template.relatedRecords.filter((config) => {
-      if (!RELATED_RECORDS_KEY_PATTERN.test(config?.key ?? "")) {
-        this.reportInvalidConfig(template, config, "invalid placeholder name");
-        return false;
-      }
-      if (keys.has(config.key)) {
+      if (!canBeUsedInPlaceholder(config)) {
         this.reportInvalidConfig(
           template,
           config,
-          "placeholder name is used more than once",
+          "record type or field cannot be used in a placeholder",
         );
         return false;
       }
-      keys.add(config.key);
+      const placeholder = getRelatedRecordsPlaceholder(config);
+      if (placeholders.has(placeholder)) {
+        this.reportInvalidConfig(
+          template,
+          config,
+          "related records are included more than once",
+        );
+        return false;
+      }
+      placeholders.add(placeholder);
       return true;
     });
   }
@@ -127,7 +136,7 @@ export class TemplateExportRelatedRecordsService {
     // always provide a list, so that a loop in the template prints nothing
     // rather than the unresolved placeholder itself
     let parents: HierarchyNode[] = [...result].map(([id, data]) => {
-      setRelatedList(data, config.key, []);
+      setRelatedList(data, config, []);
       return { id, data };
     });
 
@@ -216,7 +225,7 @@ export class TemplateExportRelatedRecordsService {
           children.push({ id: entity.getId(), data, parent });
           return data;
         });
-      setRelatedList(parent.data, config.key, list);
+      setRelatedList(parent.data, config, list);
     }
     return children;
   }
@@ -280,11 +289,12 @@ function isInBranch(node: HierarchyNode | undefined, id: string): boolean {
 
 function setRelatedList(
   data: RelatedRecordsData,
-  key: string,
+  config: TemplateExportRelatedRecords,
   list: Record<string, unknown>[],
 ) {
   data[RELATED_RECORDS_PROPERTY] ??= {};
-  data[RELATED_RECORDS_PROPERTY][key] = list;
+  data[RELATED_RECORDS_PROPERTY][config.entityType] ??= {};
+  data[RELATED_RECORDS_PROPERTY][config.entityType][config.property] = list;
 }
 
 /**

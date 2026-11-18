@@ -29,8 +29,8 @@ import { asArray } from "#src/app/utils/asArray";
 import {
   getRelatedRecordsLevels,
   isFieldLinkingToType,
-  RELATED_RECORDS_KEY_PATTERN,
-  RELATED_RECORDS_PROPERTY,
+  canBeUsedInPlaceholder,
+  getRelatedRecordsPlaceholder,
   RELATED_RECORDS_MAX_LEVELS,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
@@ -71,7 +71,7 @@ function getOptionId(config: { entityType?: string; property?: string }) {
 
 /**
  * Edit which records linking to the exported record are included in a {@link TemplateExport}
- * (e.g. the sub-tasks of a task) and under which placeholder name.
+ * (e.g. the sub-tasks of a task).
  */
 @DynamicComponent("EditTemplateExportRelatedRecords")
 @Component({
@@ -181,7 +181,7 @@ export class EditTemplateExportRelatedRecordsComponent
   addRow() {
     this.updateValue([
       ...this.currentValue(),
-      { key: "", entityType: "", property: "" },
+      { entityType: "", property: "" },
     ]);
   }
 
@@ -197,7 +197,6 @@ export class EditTemplateExportRelatedRecordsComponent
 
     this.updateRow(index, (config) => {
       const updated: TemplateExportRelatedRecords = {
-        key: config.key || this.suggestKey(option),
         entityType: option.entityType,
         property: option.property,
       };
@@ -206,16 +205,6 @@ export class EditTemplateExportRelatedRecordsComponent
       }
       return updated;
     });
-  }
-
-  /**
-   * @returns the placeholder name as saved, to show in the input
-   * (the input keeps the entered text if the saved value does not change)
-   */
-  setKey(index: number, value: string): string {
-    const key = value.trim();
-    this.updateRow(index, (config) => ({ ...config, key }));
-    return key;
   }
 
   /**
@@ -302,34 +291,18 @@ export class EditTemplateExportRelatedRecordsComponent
     return [...options.values()].sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  /**
-   * A placeholder name for the option that is not in use yet.
-   */
-  private suggestKey(option: RelatedRecordsOption): string {
-    // already under `_related` in the placeholder, so the record type alone (e.g. "todo") reads best
-    const type = option.entityType.replace(/[^A-Za-z0-9_]/g, "");
-    const base = type.charAt(0).toLowerCase() + type.slice(1);
-    const usedKeys = new Set(this.currentValue().map((config) => config.key));
-
-    let key = base;
-    for (let i = 2; usedKeys.has(key); i++) {
-      key = base + i;
-    }
-    return key;
-  }
-
   private getExamples(
     config: TemplateExportRelatedRecords,
     option: RelatedRecordsOption | undefined,
     levels: number,
   ): string[] {
-    if (!option || !RELATED_RECORDS_KEY_PATTERN.test(config.key ?? "")) {
+    if (!option || !canBeUsedInPlaceholder(config)) {
       return [];
     }
 
     const field = getExampleField(this.entityRegistry.get(option.entityType));
     const record = this.isArrayReport() ? "d[i]" : "d";
-    const list = `${RELATED_RECORDS_PROPERTY}.${config.key}[i]`;
+    const list = `${getRelatedRecordsPlaceholder(config)}[i]`;
     return Array.from(
       { length: levels },
       (_, level) =>
@@ -362,22 +335,23 @@ export class EditTemplateExportRelatedRecordsComponent
     const availableOptions = new Set(
       this.getOptions(applicableTypes).map((option) => option.id),
     );
-    const keys = new Set<string>();
+    const selected = new Set<string>();
 
     for (const config of configs) {
-      if (!getOptionId(config) || !config.key) {
-        return $localize`Select related records and a placeholder name for each entry, or remove it.`;
+      const optionId = getOptionId(config);
+      if (!optionId) {
+        return $localize`Select related records for each entry, or remove it.`;
       }
-      if (!availableOptions.has(getOptionId(config))) {
+      if (!availableOptions.has(optionId)) {
         return $localize`Some related records do not link to the applicable record types.`;
       }
-      if (!RELATED_RECORDS_KEY_PATTERN.test(config.key)) {
-        return $localize`Placeholder name "${config.key}:name:" must start with a letter and only contain letters, digits and underscores.`;
+      if (!canBeUsedInPlaceholder(config)) {
+        return $localize`The record type or field of some related records cannot be used in a placeholder.`;
       }
-      if (keys.has(config.key)) {
-        return $localize`Placeholder name "${config.key}:name:" is used more than once.`;
+      if (selected.has(optionId)) {
+        return $localize`The same related records are included more than once.`;
       }
-      keys.add(config.key);
+      selected.add(optionId);
     }
     return undefined;
   }

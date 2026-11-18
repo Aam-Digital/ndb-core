@@ -43,48 +43,27 @@
         }
       </div>
 
-      <div class="flex-row flex-wrap gap-small">
+      @if (row.option?.isHierarchy) {
         <mat-form-field
-          class="related-records-key"
+          class="related-records-levels"
           floatLabel="always"
           [subscriptSizing]="'dynamic'"
         >
-          <mat-label i18n>Placeholder name</mat-label>
+          <mat-label i18n>Levels</mat-label>
           <input
             matInput
-            #keyInput
-            [value]="row.config.key ?? ''"
-            (change)="keyInput.value = setKey(i, keyInput.value)"
+            type="number"
+            min="1"
+            [max]="maxLevels"
+            #levelsInput
+            [value]="row.levels"
+            (change)="levelsInput.value = '' + setLevels(i, levelsInput.value)"
             [disabled]="!enabled()"
-            placeholder="e.g. subTasks"
-            i18n-placeholder
+            matTooltip="How many levels of the hierarchy to include: 1 for the directly linked records only, 2 to also include the records linked to those, and so on."
+            i18n-matTooltip
           />
         </mat-form-field>
-
-        @if (row.option?.isHierarchy) {
-          <mat-form-field
-            class="related-records-levels"
-            floatLabel="always"
-            [subscriptSizing]="'dynamic'"
-          >
-            <mat-label i18n>Levels</mat-label>
-            <input
-              matInput
-              type="number"
-              min="1"
-              [max]="maxLevels"
-              #levelsInput
-              [value]="row.levels"
-              (change)="
-                levelsInput.value = '' + setLevels(i, levelsInput.value)
-              "
-              [disabled]="!enabled()"
-              matTooltip="How many levels of the hierarchy to include: 1 for the directly linked records only, 2 to also include the records linked to those, and so on."
-              i18n-matTooltip
-            />
-          </mat-form-field>
-        }
-      </div>
+      }
 
       @if (row.examples.length > 0) {
         <div class="hint-text flex-row flex-wrap gap-small">

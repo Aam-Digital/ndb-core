@@ -22,7 +22,7 @@ The frontend manages the templates and assembles the data that is sent with a re
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `{d.name}`                | a field of the record, by its field ID                                                                    |
 | `{d.school.name}`         | a field of a record that the record links to in an entity-reference field (resolved one level deep)       |
-| `{d._related.subTasks[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below) |
+| `{d._related.Todo.parentTask[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below) |
 | `{c.user.name}`           | a field of the record linked to the logged-in user                                                        |
 | `{d[i].name}`             | a field of each selected record, in a "Multi-Record Report" template (`arrayReport`) with `d` as an array |
 
@@ -35,12 +35,13 @@ are only loaded if a template lists them in `TemplateExport.relatedRecords`,
 to avoid loading and sending more data than a template needs.
 Each entry (`TemplateExportRelatedRecords`) defines
 
-- `entityType` and `property`: the record type and its entity-reference field that links to the exported record,
-- `key`: the name under which the list is added to the record's data (`{d._related.<key>[i].…}`).
-  The lists are kept under `_related`, apart from the record's own fields (`d.*`), so that a list never hides a field.
+- `entityType` and `property`: the record type and its entity-reference field that links to the exported record.
+  The list is added to the record's data under both (`{d._related.<entityType>.<property>[i].…}`),
+  kept under `_related` apart from the record's own fields (`d.*`), so that a list never hides a field.
+  Several entries can be included, each for another record type or field.
 - `levels` (optional): how many levels to load if the related records link among themselves
   through the same field (e.g. sub-tasks of sub-tasks). The records of each further level are added
-  to their parent record under the same `key` (`{d._related.subTasks[i]._related.subTasks[i].subject}`).
+  to their parent record in the same way (`{d._related.Todo.parentTask[i]._related.Todo.parentTask[i].subject}`).
 
 `TemplateExportRelatedRecordsService` loads these lists when a file is generated:
 

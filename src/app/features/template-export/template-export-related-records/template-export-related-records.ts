@@ -7,17 +7,12 @@ import { asArray } from "#src/app/utils/asArray";
  * {@link TemplateExport}, to make records that link *to* the exported record
  * available for placeholders in the template file.
  *
- * e.g. `{ key: "subTasks", entityType: "Task", property: "parentTask" }`
+ * e.g. `{ entityType: "Todo", property: "parentTask" }`
  * adds the tasks whose "parentTask" field links to the exported record,
- * to be used in the template as `{d._related.subTasks[i].subject}`.
+ * to be used in the template as `{d._related.Todo.parentTask[i].subject}`
+ * (see {@link getRelatedRecordsPlaceholder}).
  */
 export interface TemplateExportRelatedRecords {
-  /**
-   * Name under which the list is added to the exported record,
-   * i.e. the placeholder to use in the template (`{d._related.<key>[i]...}`).
-   */
-  key: string;
-
   /**
    * Entity type of the related records to be loaded.
    */
@@ -32,7 +27,7 @@ export interface TemplateExportRelatedRecords {
    * How many levels of a hierarchy to load, if the related records are linked among themselves
    * through the same field (e.g. sub-tasks of sub-tasks).
    *
-   * The related records of a related record are added to it under the same `key`.
+   * The related records of a related record are added to it in the same way.
    * Defaults to 1 (only records directly linking to the exported record)
    * and is limited to {@link RELATED_RECORDS_MAX_LEVELS}.
    */
@@ -40,10 +35,22 @@ export interface TemplateExportRelatedRecords {
 }
 
 /**
- * The property of an exported record under which the lists of its related records are added
- * (`{d._related.<key>[i]…}`), apart from the record's own fields so that they never hide one.
+ * The property of an exported record under which the lists of its related records are added,
+ * apart from the record's own fields so that they never hide one.
  */
 export const RELATED_RECORDS_PROPERTY = "_related";
+
+/**
+ * The path of the list in the data of an exported record (`_related.<entityType>.<property>`),
+ * i.e. its placeholder in the template is `{d.<path>[i]…}`.
+ */
+export function getRelatedRecordsPlaceholder(
+  config: TemplateExportRelatedRecords,
+): string {
+  return [RELATED_RECORDS_PROPERTY, config.entityType, config.property].join(
+    ".",
+  );
+}
 
 /**
  * Maximum number of hierarchy levels of related records loaded for a template.
@@ -51,10 +58,21 @@ export const RELATED_RECORDS_PROPERTY = "_related";
 export const RELATED_RECORDS_MAX_LEVELS = 5;
 
 /**
- * Allowed format of {@link TemplateExportRelatedRecords.key},
- * so that it works as part of a placeholder in a template.
+ * Allowed format of the record type and field of a config,
+ * so that they work as parts of a placeholder in a template.
  */
-export const RELATED_RECORDS_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
+const PLACEHOLDER_PART_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+/**
+ * Whether the record type and field of the config can be used in a placeholder of a template.
+ */
+export function canBeUsedInPlaceholder(
+  config: TemplateExportRelatedRecords,
+): boolean {
+  return [config?.entityType, config?.property].every((part) =>
+    PLACEHOLDER_PART_PATTERN.test(part ?? ""),
+  );
+}
 
 /**
  * Whether the field is a plain entity-reference field (`dataType: "entity"`)

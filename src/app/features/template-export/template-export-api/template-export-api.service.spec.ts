@@ -279,7 +279,7 @@ describe("TemplateExportApiService", () => {
   it("should add the related records configured for the template to the data of each record", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     templateEntity.relatedRecords = [
-      { key: "children", entityType: "TestEntity", property: "ref" },
+      { entityType: "TestEntity", property: "ref" },
     ];
     TestBed.inject(EntityRegistry).add(TestEntity.ENTITY_TYPE, TestEntity);
     const parent = TestEntity.create("Parent");
@@ -299,18 +299,20 @@ describe("TemplateExportApiService", () => {
       expect.objectContaining({
         name: "Parent",
         _related: {
-          children: [
-            expect.objectContaining({
-              name: "Child",
-              // the link back to the record only holds its id, as its details are one level up
-              ref: { _id: parent.getId() },
-            }),
-          ],
+          TestEntity: {
+            ref: [
+              expect.objectContaining({
+                name: "Child",
+                // the link back to the record only holds its id, as its details are one level up
+                ref: { _id: parent.getId() },
+              }),
+            ],
+          },
         },
       }),
       expect.objectContaining({
         name: "Childless",
-        _related: { children: [] },
+        _related: { TestEntity: { ref: [] } },
       }),
     ]);
     // the entities held by the app are not modified
