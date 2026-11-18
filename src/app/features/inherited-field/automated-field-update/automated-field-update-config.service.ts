@@ -21,13 +21,12 @@ import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
+import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { asArray } from "#src/app/utils/asArray";
 import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { ChangeSet, getChangedFields } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
-import { SessionSubject } from "#src/app/core/session/auth/session-info";
 import {
   AffectedEntitiesCalculation,
   AffectedEntitiesContext,
@@ -41,11 +40,6 @@ export const MAX_ENTITIES_TO_REVIEW = 100;
 function changesValue(update: AffectedEntity): boolean {
   return !isSameValue(update.newValue, update.savedValue);
 }
-
-/** the property of an entity that a reference index can be created for */
-type IndexedProperty = Parameters<
-  DatabaseIndexingService["generateIndexOnProperty"]
->[2];
 
 /**
  * Saving the updated records failed after some of them were already stored.
@@ -73,13 +67,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entitySchemaService = inject(EntitySchemaService);
-  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly entityRelations = inject(EntityRelationsService);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly alertService = inject(AlertService);
-  private readonly sessionInfo = inject(SessionSubject, { optional: true });
-
-  /** ids of the reference indexes that were already requested in this session */
-  private readonly requestedReferenceIndexes = new Set<string>();
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
@@ -233,10 +223,6 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * Whether the user may read records of the type.
    * Until the permissions are loaded, this is not known (the server checks them anyway).
    */
-  private canRead(entityType: EntityConstructor): boolean {
-    return !this.ability?.initialized || this.ability.can("read", entityType);
-  }
-
   private getRulesUsingFieldAsSource(
     entityType: EntityConstructor,
     fieldId: string,
@@ -455,11 +441,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
   /**
    * Load the records of the given type that reference the given entity in the given field
-   * (a single reference or a list of references) through a database index,
-   * instead of loading and checking all records of the type.
-   * If the index cannot be used (e.g. it cannot be created in online-only mode,
-   * or for a visitor without an account, who the server does not let query indexes),
-   * all records of the type are loaded and checked instead.
+   * (see {@link EntityRelationsService.loadLinkingToEntities}).
    */
   public async loadRecordsLinkingTo(
     entityType: string | EntityConstructor,
@@ -470,70 +452,15 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       typeof entityType === "string"
         ? this.entityRegistry.get(entityType)
         : entityType;
-    if (!ctor?.schema.has(referenceField) || !this.canRead(ctor)) {
+    if (!ctor) {
       return [];
     }
-
-    if (this.sessionInfo && !this.sessionInfo.value) {
-      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
-    }
-
-    try {
-      return await this.queryLinkingRecordsIndex(
-        ctor,
-        referenceField,
-        entityId,
-      );
-    } catch (error) {
-      // the expected fallback described above, which still finds all linked records
-      Logging.debug(
-        "AutomatedFieldUpdateConfigService: Could not use the index of linked records, loading all records of the type instead",
-        { entityType: ctor.ENTITY_TYPE, referenceField },
-        error,
-      );
-      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
-    }
-  }
-
-  private async loadAllRecordsLinkingTo(
-    ctor: EntityConstructor,
-    referenceField: string,
-    entityId: string,
-  ): Promise<Entity[]> {
-    return (await this.entityMapper.loadType(ctor)).filter((record) =>
-      asArray(record[referenceField]).includes(entityId),
-    );
-  }
-
-  private async queryLinkingRecordsIndex(
-    ctor: EntityConstructor,
-    referenceField: string,
-    entityId: string,
-  ): Promise<Entity[]> {
-    const indexId = `linking_${ctor.ENTITY_TYPE}_${referenceField}`;
-    if (!this.requestedReferenceIndexes.has(indexId)) {
-      this.requestedReferenceIndexes.add(indexId);
-      // the query below waits until the index is ready
-      this.dbIndexing
-        .generateIndexOnProperty(
-          indexId,
-          ctor,
-          referenceField as IndexedProperty,
-        )
-        .catch((error) =>
-          Logging.warn(
-            "AutomatedFieldUpdateConfigService: Could not create the index of linked records",
-            error,
-            { indexId },
-          ),
-        );
-    }
-
-    return this.dbIndexing.queryIndexDocs(
+    const linking = await this.entityRelations.loadLinkingToEntities(
+      [entityId],
       ctor,
-      `${indexId}/by_${referenceField}`,
-      entityId,
+      referenceField,
     );
+    return linking.get(entityId) ?? [];
   }
 
   /**

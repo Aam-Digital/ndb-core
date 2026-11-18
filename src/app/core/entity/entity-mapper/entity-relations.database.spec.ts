@@ -7,6 +7,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { DatabaseEntity } from "../database-entity.decorator";
 import { DatabaseField } from "../database-field.decorator";
 import { Entity } from "../model/entity";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * These run against a real (in-memory) PouchDB rather than the mocked entity mapper,
@@ -133,6 +134,89 @@ describe("EntityRelationsService querying a real database", () => {
       expect.anything(),
     );
     expect(loadType).not.toHaveBeenCalledWith(RelationQuerySource);
+  });
+
+  describe("loading the records linking to many entities in one field", () => {
+    const targets = Array.from(
+      { length: 60 },
+      (_, i) => new RelationQueryTarget("target-" + i),
+    );
+    const firstId = targets[0].getId();
+    const lastId = targets[59].getId();
+    const targetIds = targets.map((t) => t.getId());
+
+    beforeEach(() =>
+      // a visitor without an account would load the whole type instead
+      TestBed.inject(SessionSubject).next({
+        id: "user",
+        name: "user",
+        roles: [],
+      }),
+    );
+
+    const ids = (links: Map<string, Entity[]>) =>
+      [...links].map(([id, entities]) => [
+        id,
+        entities.map((e) => e.getId()).sort(),
+      ]);
+
+    it.each([
+      ["a database query", true],
+      ["the reference index of a local database", false],
+    ])(
+      "groups the records by the entity they link to, found through %s",
+      async (_name, supportsFind) => {
+        vi.spyOn(
+          TestBed.inject(DatabaseResolverService).getDatabase(),
+          "supportsFind",
+        ).mockReturnValue(supportsFind);
+        const linkingToFirst = await saveSource({ refScalar: firstId });
+        const linkingToBoth = await saveSource({
+          refArray: [firstId, lastId],
+        });
+        // links to the last target only in the scalar field, not the array field
+        const linkingToLast = await saveSource({ refScalar: lastId });
+        const loadType = vi.spyOn(entityMapper, "loadType");
+
+        const scalarLinks = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refScalar",
+        );
+        const arrayLinks = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refArray",
+        );
+
+        expect(new Map(ids(scalarLinks) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [linkingToFirst]],
+            [lastId, [linkingToLast]],
+          ]),
+        );
+        expect(ids(arrayLinks)).toEqual([
+          [firstId, [linkingToBoth]],
+          [lastId, [linkingToBoth]],
+        ]);
+        expect(loadType).not.toHaveBeenCalled();
+      },
+    );
+
+    it("finds records linking to the entities inside embedded objects", async () => {
+      const embeddingFirst = await saveSource({
+        embeddedArray: [{ participant: firstId }, { participant: firstId }],
+      });
+
+      const links = await service.loadLinkingToEntities(
+        targetIds,
+        RelationQuerySource,
+        "embeddedArray",
+      );
+
+      // listed once, although two of its embedded objects link to the target
+      expect(ids(links)).toEqual([[firstId, [embeddingFirst]]]);
+    });
   });
 
   it("loads the whole type when one of its referencing fields cannot be queried", async () => {
