@@ -164,7 +164,7 @@ export class SchemaEmbedDatatype<
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<any>[] | undefined {
     const innerKeys = getInnerEntityReferenceFields(
       this.getEffectiveSchema(schemaField),
@@ -175,13 +175,13 @@ export class SchemaEmbedDatatype<
     }
 
     return innerKeys.flatMap((key) => [
-      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
+      { [fieldId]: { $elemMatch: { [key]: { $in: referencedIds } } } },
       {
         [fieldId]: {
-          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
+          $elemMatch: { [key]: { $elemMatch: { $in: referencedIds } } },
         },
       },
-      ...referenceIdConditions(`${fieldId}.${key}`, referencedId),
+      ...referenceIdConditions(`${fieldId}.${key}`, referencedIds),
     ]);
   }
 

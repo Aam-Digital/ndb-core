@@ -62,10 +62,16 @@ export class EventAttendanceMapDatatype extends SchemaEmbedDatatype {
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<any>[] {
     const participantPath = this.getEmbeddedFieldDbPath("participant");
-    return [{ [fieldId]: { $elemMatch: { [participantPath]: referencedId } } }];
+    return [
+      {
+        [fieldId]: {
+          $elemMatch: { [participantPath]: { $in: referencedIds } },
+        },
+      },
+    ];
   }
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {

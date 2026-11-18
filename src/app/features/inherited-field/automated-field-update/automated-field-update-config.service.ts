@@ -219,10 +219,6 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     );
   }
 
-  /**
-   * Whether the user may read records of the type.
-   * Until the permissions are loaded, this is not known (the server checks them anyway).
-   */
   private getRulesUsingFieldAsSource(
     entityType: EntityConstructor,
     fieldId: string,

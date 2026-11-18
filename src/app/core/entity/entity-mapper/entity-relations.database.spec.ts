@@ -174,6 +174,8 @@ describe("EntityRelationsService querying a real database", () => {
         const linkingToBoth = await saveSource({
           refArray: [firstId, lastId],
         });
+        // found only if the lookup includes the last id, not just the first
+        const linkingToLastInArray = await saveSource({ refArray: [lastId] });
         // links to the last target only in the scalar field, not the array field
         const linkingToLast = await saveSource({ refScalar: lastId });
         const loadType = vi.spyOn(entityMapper, "loadType");
@@ -195,27 +197,81 @@ describe("EntityRelationsService querying a real database", () => {
             [lastId, [linkingToLast]],
           ]),
         );
-        expect(ids(arrayLinks)).toEqual([
-          [firstId, [linkingToBoth]],
-          [lastId, [linkingToBoth]],
-        ]);
+        expect(new Map(ids(arrayLinks) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [linkingToBoth]],
+            [lastId, [linkingToBoth, linkingToLastInArray].sort()],
+          ]),
+        );
         expect(loadType).not.toHaveBeenCalled();
       },
     );
 
-    it("finds records linking to the entities inside embedded objects", async () => {
-      const embeddingFirst = await saveSource({
-        embeddedArray: [{ participant: firstId }, { participant: firstId }],
-      });
+    it.each(["embeddedArray", "legacyAttendance"])(
+      "finds records linking to the entities inside the embedded objects of %s through a query",
+      async (field) => {
+        const embeddingFirst = await saveSource({
+          [field]: [{ participant: firstId }, { participant: firstId }],
+        });
+        const embeddingLast = await saveSource({
+          [field]: [{ participant: lastId }],
+        });
+        const loadType = vi.spyOn(entityMapper, "loadType");
+
+        const links = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          field,
+        );
+
+        // listed once, although two of its embedded objects link to the target
+        expect(new Map(ids(links) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [embeddingFirst]],
+            [lastId, [embeddingLast]],
+          ]),
+        );
+        expect(loadType).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["a database query", true],
+      ["the reference index of a local database", false],
+    ])(
+      "finds a single id still stored in a field that became an array, through %s",
+      async (_name, supportsFind) => {
+        const database = TestBed.inject(DatabaseResolverService).getDatabase();
+        vi.spyOn(database, "supportsFind").mockReturnValue(supportsFind);
+        // written directly, as saving through the current schema would store an array
+        await database.put({
+          _id: "RelationQuerySource:legacy",
+          refArray: lastId,
+        });
+
+        const links = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refArray",
+        );
+
+        expect(ids(links)).toEqual([[lastId, ["RelationQuerySource:legacy"]]]);
+      },
+    );
+
+    it("loads all records of the type when the query fails", async () => {
+      const linkingToFirst = await saveSource({ refScalar: firstId });
+      vi.spyOn(entityMapper, "findAllType").mockRejectedValue(
+        new Error("query failed"),
+      );
 
       const links = await service.loadLinkingToEntities(
         targetIds,
         RelationQuerySource,
-        "embeddedArray",
+        "refScalar",
       );
 
-      // listed once, although two of its embedded objects link to the target
-      expect(ids(links)).toEqual([[firstId, [embeddingFirst]]]);
+      expect(ids(links)).toEqual([[firstId, [linkingToFirst]]]);
     });
   });
 

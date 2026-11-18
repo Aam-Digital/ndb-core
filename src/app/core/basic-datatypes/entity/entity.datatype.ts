@@ -64,9 +64,9 @@ export class EntityDatatype extends StringDatatype {
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<any>[] {
-    return referenceIdConditions(fieldId, referencedId);
+    return referenceIdConditions(fieldId, referencedIds);
   }
 
   override getExportColumns(

@@ -192,19 +192,23 @@ export class EntityRelationsService {
     refType: EntityConstructor<T>,
     field: FormFieldConfig,
   ): Promise<T[]> {
-    const isPlainLink = field.dataType === EntityDatatype.dataType;
     if (this.sessionInfo && !this.sessionInfo.value) {
       return this.entityMapper.loadType(refType);
     }
     if (this.entityMapper.supportsFind(refType)) {
-      return isPlainLink
-        ? this.entityMapper.findAllType(
-            refType,
-            referencingAnyOf(field.id, ids),
-          )
-        : this.loadCandidates(ids, refType, [field]);
+      try {
+        return await this.loadCandidates(ids, refType, [field]);
+      } catch (error) {
+        // the expected fallback described above, which still finds all linked records
+        Logging.debug(
+          "EntityRelationsService: Could not query the linked records, loading all records of the type instead",
+          { entityType: refType.ENTITY_TYPE, field: field.id },
+          error,
+        );
+        return this.entityMapper.loadType(refType);
+      }
     }
-    return isPlainLink
+    return field.dataType === EntityDatatype.dataType
       ? this.loadThroughReferenceIndex(refType, field.id, ids)
       : this.entityMapper.loadType(refType);
   }
@@ -272,6 +276,10 @@ export class EntityRelationsService {
     );
   }
 
+  /**
+   * Whether the user may read records of the type.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
   private canRead(entityType: EntityConstructor): boolean {
     return !this.ability?.initialized || this.ability.can("read", entityType);
   }
@@ -335,17 +343,19 @@ export class EntityRelationsService {
       const datatype = this.schemaService.getDatatypeOrDefault(
         refProperty.dataType,
       );
-      const selectors = referencedIds.map((id) =>
-        datatype.getReferenceSelector(refProperty.id, refProperty, id),
+      const selectors = datatype.getReferenceSelector(
+        refProperty.id,
+        refProperty,
+        referencedIds,
       );
-      if (selectors.some((selector) => !selector?.length)) {
+      if (!selectors?.length) {
         Logging.debug(
           "loading all records of an entity type because a referencing field cannot be queried",
           { entityType: refType.ENTITY_TYPE, field: refProperty.id },
         );
         return this.entityMapper.loadType(refType);
       }
-      conditions.push(...selectors.flat());
+      conditions.push(...selectors);
     }
 
     if (conditions.length === 0) {
@@ -404,16 +414,6 @@ export class EntityRelationsService {
       ),
     );
   }
-}
-
-/**
- * The query for records whose field references any of the ids,
- * stored as a single id or as a list of ids: two conditions however many ids there are.
- */
-function referencingAnyOf<T>(path: string, ids: string[]): DataFilter<T> {
-  return {
-    $or: [{ [path]: { $in: ids } }, { [path]: { $elemMatch: { $in: ids } } }],
-  } as DataFilter<T>;
 }
 
 /**
