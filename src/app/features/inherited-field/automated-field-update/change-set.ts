@@ -41,6 +41,19 @@ interface ChangedRecord {
   before: Entity | undefined;
   after: Entity;
   changedFields: Set<string>;
+  /** when the record was added, as the records linking to a record are listed in that order */
+  order: number;
+}
+
+/**
+ * The changed records of one type in one state, by the ids they link to in one field
+ * (the linked ids as they are stored, so maybe without type prefix).
+ */
+interface LinkIndex {
+  state: ChangeSetState;
+  entityType: string;
+  referenceField: string;
+  recordIds: Map<string, Set<string>>;
 }
 
 /** A changed record that starts an update */
@@ -62,6 +75,14 @@ export interface StartingChange {
  */
 export class ChangeSet {
   private readonly records = new Map<string, ChangedRecord>();
+  private nextOrder = 0;
+
+  /**
+   * The indexes of the records linking to a record, built when they are first needed and extended when a value is set,
+   * so that a bulk edit with many changed records does not go through all of them for every affected record.
+   * They only list the records that may link to a record: the records are checked again when they are looked up.
+   */
+  private readonly linkIndexes = new Map<string, LinkIndex>();
 
   /** Increases whenever a value is set, so that what is calculated from the records stays valid until then */
   version = 0;
@@ -73,6 +94,7 @@ export class ChangeSet {
         // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
         after: entity.copy(),
         changedFields: new Set(changedFields),
+        order: this.nextOrder++,
       });
     }
   }
@@ -111,6 +133,7 @@ export class ChangeSet {
       before: saved,
       after: saved.copy(),
       changedFields: new Set<string>(),
+      order: this.nextOrder++,
     };
     record.after[fieldId] = value;
     if (isSavedValue) {
@@ -121,6 +144,7 @@ export class ChangeSet {
 
     if (record.changedFields.size > 0) {
       this.records.set(id, record);
+      this.addToLinkIndexes(id, record);
     } else {
       this.records.delete(id);
     }
@@ -142,12 +166,19 @@ export class ChangeSet {
     state: ChangeSetState,
   ): Entity[] {
     const savedIds = new Set(saved.map((record) => record.getId()));
-    const otherChangedRecords = [...this.records.values()]
-      .map((record) => record[state])
-      .filter(
-        (record) =>
-          record?.getType() === entityType && !savedIds.has(record.getId()),
-      );
+    const recordIds = this.getLinkIndex(state, entityType, referenceField);
+    // a link can be stored without the type prefix of the id
+    const candidateIds = new Set([
+      ...(recordIds.get(id) ?? []),
+      ...(recordIds.get(id.slice(id.lastIndexOf(":") + 1)) ?? []),
+    ]);
+    const otherChangedRecords = [...candidateIds]
+      .filter((recordId) => !savedIds.has(recordId))
+      .map((recordId) => this.records.get(recordId))
+      // the indexes keep the records that are no longer changed or no longer linked
+      .filter((record) => record)
+      .sort((a, b) => a.order - b.order)
+      .map((record) => record[state]);
     return [
       ...saved.map((record) => this.get(record, state)),
       ...otherChangedRecords,
@@ -161,5 +192,44 @@ export class ChangeSet {
     id: string,
   ): Entity[] {
     return this.linkingTo([], entityType, referenceField, id, "after");
+  }
+
+  private getLinkIndex(
+    state: ChangeSetState,
+    entityType: string,
+    referenceField: string,
+  ): Map<string, Set<string>> {
+    const key = `${state}|${entityType}|${referenceField}`;
+    let index = this.linkIndexes.get(key);
+    if (!index) {
+      index = { state, entityType, referenceField, recordIds: new Map() };
+      this.linkIndexes.set(key, index);
+      for (const [id, record] of this.records) {
+        addToLinkIndex(index, id, record);
+      }
+    }
+    return index.recordIds;
+  }
+
+  private addToLinkIndexes(id: string, record: ChangedRecord): void {
+    for (const index of this.linkIndexes.values()) {
+      addToLinkIndex(index, id, record);
+    }
+  }
+}
+
+function addToLinkIndex(
+  index: LinkIndex,
+  id: string,
+  record: ChangedRecord,
+): void {
+  const entity = record[index.state];
+  if (entity?.getType() !== index.entityType) return;
+
+  for (const linkedId of asArray(entity[index.referenceField] ?? [])) {
+    const key = String(linkedId);
+    const recordIds = index.recordIds.get(key) ?? new Set<string>();
+    recordIds.add(id);
+    index.recordIds.set(key, recordIds);
   }
 }

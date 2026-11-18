@@ -1,6 +1,5 @@
 import { inject, Injectable } from "@angular/core";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import {
   EntityRelationResolverService,
@@ -53,7 +52,6 @@ interface HierarchyNode {
   providedIn: "root",
 })
 export class TemplateExportRelatedRecordsService {
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRelations = inject(EntityRelationsService);
   private readonly relationResolver = inject(EntityRelationResolverService);
   private readonly entityRegistry = inject(EntityRegistry);
@@ -188,17 +186,14 @@ export class TemplateExportRelatedRecordsService {
       return;
     }
 
-    // without database queries every level needs all records of the type: load them only once,
-    // shared with the resolving of relations (which needs them too)
-    const allRecords = this.entityMapper.supportsFind(relatedType)
-      ? undefined
-      : await this.loadAll(relatedType, loadedEntities);
     const levels = getRelatedRecordsLevels(config, relatedType);
     for (let level = 1; level <= levels && parents.length > 0; level++) {
-      parents = await this.addLevel(config, relatedType, parents, {
-        allRecords,
+      parents = await this.addLevel(
+        config,
+        relatedType,
+        parents,
         loadedEntities,
-      });
+      );
     }
   }
 
@@ -210,19 +205,18 @@ export class TemplateExportRelatedRecordsService {
     config: TemplateExportRelatedRecords,
     relatedType: EntityConstructor,
     parents: HierarchyNode[],
-    loaded: { allRecords?: Entity[]; loadedEntities: LoadedEntitiesCache },
+    loadedEntities: LoadedEntitiesCache,
   ): Promise<HierarchyNode[]> {
     const linking = await this.entityRelations.loadLinkingToEntities(
       parents.map((parent) => parent.id),
       relatedType,
       config.property,
-      loaded.allRecords,
     );
     const dataById = await this.resolveRecords(
       [...linking.values()].flat(),
       config,
       relatedType,
-      loaded.loadedEntities,
+      loadedEntities,
     );
 
     const children: HierarchyNode[] = [];
@@ -288,24 +282,6 @@ export class TemplateExportRelatedRecordsService {
           : resolved[i],
       ]),
     );
-  }
-
-  /**
-   * All records of the type, through the cache shared with the resolving of relations.
-   */
-  private async loadAll(
-    entityType: EntityConstructor,
-    loadedEntities: LoadedEntitiesCache,
-  ): Promise<Entity[]> {
-    if (!loadedEntities.has(entityType.ENTITY_TYPE)) {
-      loadedEntities.set(
-        entityType.ENTITY_TYPE,
-        this.entityMapper
-          .loadType(entityType)
-          .then((entities) => new Map(entities.map((e) => [e.getId(), e]))),
-      );
-    }
-    return [...(await loadedEntities.get(entityType.ENTITY_TYPE)).values()];
   }
 
   private allTypes(): string[] {

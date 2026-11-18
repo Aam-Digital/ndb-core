@@ -267,7 +267,7 @@ describe("TemplateExportRelatedRecordsService", () => {
     ]);
   });
 
-  it("loads each record type only once for all levels, also the type of the related records", async () => {
+  it("looks up the related records once per level, sharing the loaded linked record types between all levels", async () => {
     const owner = Object.assign(new Person(), { name: "Owner" });
     entityMapper.add(owner);
     const root = action("Root");
@@ -277,6 +277,10 @@ describe("TemplateExportRelatedRecordsService", () => {
     });
     action("Grandchild", { parent: child.getId(), owner: owner.getId() });
     const loadType = vi.spyOn(entityMapper, "loadType");
+    const loadLinking = vi.spyOn(
+      TestBed.inject(EntityRelationsService),
+      "loadLinkingToEntities",
+    );
 
     const result = await service.loadRelatedRecords(
       template({ ...SUB_ACTIONS, levels: 3 }),
@@ -293,7 +297,8 @@ describe("TemplateExportRelatedRecordsService", () => {
         ([type]) => type === entityType.ENTITY_TYPE || type === entityType,
       );
     expect(loadsOf(Person)).toHaveLength(1);
-    expect(loadsOf(Action)).toHaveLength(1);
+    // the third level finds no more records
+    expect(loadLinking).toHaveBeenCalledTimes(3);
   });
 
   it("still provides the other lists if loading the records of one config fails", async () => {
@@ -305,10 +310,10 @@ describe("TemplateExportRelatedRecordsService", () => {
     const loadLinking =
       entityRelations.loadLinkingToEntities.bind(entityRelations);
     vi.spyOn(entityRelations, "loadLinkingToEntities").mockImplementation(
-      (ids, type, property, all) =>
+      (ids, type, property) =>
         property === BLOCKING.property
           ? Promise.reject(new Error("failed"))
-          : loadLinking(ids, type, property, all),
+          : loadLinking(ids, type, property),
     );
 
     const result = await service.loadRelatedRecords(
