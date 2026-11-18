@@ -822,7 +822,9 @@ describe("ConditionsEditorComponent", () => {
       component.conditions = stored;
       component.ngOnInit();
 
-      expect(component.conditionFields().options).toEqual([]);
+      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
+        "log",
+      ]);
       expect(component.conditionFields().excludedFields).toEqual([]);
       expect(component.conditionsArray()).toEqual([stored]);
     });

@@ -168,7 +168,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** rows switched to compare with a field of the current record, before that field is selected */
   private readonly referenceRows = new WeakSet<object>();
 
-  /** the fields a condition can be set on, in addition to and instead of the record's own fields (see `FilterService.getConditionFields`) */
+  /** the fields a condition can be set on, with the properties of embedded fields in their place (see `FilterService.getConditionFields`) */
   readonly conditionFields = computed(() => {
     const entityType = this.entityType();
     return entityType

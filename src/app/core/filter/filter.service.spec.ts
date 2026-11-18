@@ -307,10 +307,50 @@ describe("FilterService", () => {
   });
 
   it("offers no condition fields inside internal embedded fields, like the created and updated metadata", () => {
-    expect(service.getConditionFields(TestEntity)).toEqual({
-      options: [],
-      excludedFields: [],
-    });
+    const { options, excludedFields } = service.getConditionFields(TestEntity);
+
+    expect(options.map((o) => o.id)).not.toContainEqual(
+      expect.stringMatching(/^(created|updated)\./),
+    );
+    expect(excludedFields).toEqual([]);
+  });
+
+  it("offers the condition fields in the order of the schema, with the properties of an embedded field in its place", () => {
+    // the field select shows only the first options, an admin has to find a record's own fields without scrolling past all embedded ones
+    @DatabaseEntity("FilterServiceConditionFieldOrderTest")
+    class ConditionFieldOrderEntity extends Entity {
+      @DatabaseField({ label: "Name" }) name: string;
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          status: { label: "Status", dataType: "string" },
+          remarks: { label: "Remarks", dataType: "string" },
+        },
+      })
+      log: object[];
+      @DatabaseField({ label: "Phone" }) phone: string;
+      @DatabaseField() unlabeled: string;
+    }
+
+    const { options, excludedFields } = service.getConditionFields(
+      ConditionFieldOrderEntity,
+    );
+
+    expect(options.map((o) => o.id)).toEqual([
+      "name",
+      "log.status",
+      "log.remarks",
+      "phone",
+    ]);
+    expect(options.map((o) => o.label)).toEqual([
+      "Name",
+      "Log -> Status",
+      "Log -> Remarks",
+      "Phone",
+    ]);
+    expect(excludedFields).toEqual(["log"]);
   });
 
   it("keeps an old attendance field whole for conditions on the stored documents, as its entries are stored as tuples", () => {
@@ -335,7 +375,10 @@ describe("FilterService", () => {
       excludedFields: ["childrenAttendance", "log"],
     });
     expect(service.getConditionFields(LegacyAttendanceEntity, true)).toEqual({
-      options: [expect.objectContaining({ id: "log.status" })],
+      options: [
+        expect.objectContaining({ id: "childrenAttendance" }),
+        expect.objectContaining({ id: "log.status" }),
+      ],
       excludedFields: ["log"],
     });
   });

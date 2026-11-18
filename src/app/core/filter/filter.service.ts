@@ -27,6 +27,7 @@ import { asArray } from "../../utils/asArray";
 import { Logging } from "../logging/logging.service";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
 import { requiredEntry, requiredStoredValue } from "./required-values";
+import { resolveLocaleText } from "../language/active-locale";
 
 /**
  * Works with conditions on records: matches records in memory, offers the fields a condition can be set on,
@@ -45,9 +46,10 @@ export class FilterService {
   >();
 
   /**
-   * The fields of the entity type that a condition can be set on, for a field select:
-   * its own fields and, instead of an embedded field itself, the properties of its entries
-   * (with paths like "attendance.status"), as `options` in addition to the record's fields and the `excludedFields`.
+   * The fields of the entity type that a condition can be set on, for a field select, in the order of the schema:
+   * its own fields and, in place of an embedded field itself, the properties of its entries (with paths like "attendance.status").
+   * The `excludedFields` are the embedded fields replaced by their properties.
+   * The options include the record's own fields, as the field select lists given options before the ones it infers.
    *
    * @param onStoredDocuments the conditions are matched against the stored documents (e.g. permissions, notification rules):
    *    an embedded field whose entries are stored in another shape (like the tuples of an old attendance field) is then kept whole
@@ -64,23 +66,34 @@ export class FilterService {
       entityType,
     ).filter(
       ({ outerSchema, innerProp }) =>
-        // like the field select does for the record's own fields
-        !outerSchema.isInternalField &&
-        !!outerSchema.label &&
-        (!onStoredDocuments ||
-          getSchemaEmbedDatatype(
-            this.schemaService,
-            outerSchema,
-          ).getEmbeddedFieldDbPath(innerProp) === innerProp),
+        !onStoredDocuments ||
+        getSchemaEmbedDatatype(
+          this.schemaService,
+          outerSchema,
+        ).getEmbeddedFieldDbPath(innerProp) === innerProp,
     );
-    return {
-      options: embeddedRefs.map((ref) => ({
-        ...ref.innerSchema,
-        id: getEmbeddedFieldId(ref),
-        label: getEmbeddedFieldLabel(ref),
-      })),
-      excludedFields: [...new Set(embeddedRefs.map((ref) => ref.outerProp))],
-    };
+
+    const options: FormFieldConfig[] = [];
+    const excludedFields: string[] = [];
+    for (const [id, field] of entityType.schema) {
+      // like the field select does for the record's own fields
+      if (field.isInternalField || !field.label) continue;
+
+      const refs = embeddedRefs.filter((ref) => ref.outerProp === id);
+      if (refs.length === 0) {
+        options.push({ ...field, id, label: resolveLocaleText(field.label) });
+        continue;
+      }
+      options.push(
+        ...refs.map((ref) => ({
+          ...ref.innerSchema,
+          id: getEmbeddedFieldId(ref),
+          label: getEmbeddedFieldLabel(ref),
+        })),
+      );
+      excludedFields.push(id);
+    }
+    return { options, excludedFields };
   }
 
   /** The schema of the field at the path (see {@link getConditionFields}). */
