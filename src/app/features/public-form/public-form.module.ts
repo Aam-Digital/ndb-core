@@ -143,8 +143,6 @@ const viewConfigs: ViewConfig[] = [
                       },
                       "logo",
                       "showSubmitAnotherButton",
-                      "sendConfirmationEmail",
-                      "confirmationEmailField",
                     ],
                   },
                 ],
@@ -188,6 +186,26 @@ const viewConfigs: ViewConfig[] = [
                         label: $localize`:PublicFormConfig admin form:**Collect replies of this form linked to individual records**<br> <br>You can use forms with a special "magic link" to collect responses from participants that are already registered in your system. By sending out an individual link to each person, the form response(s) from that person can be linked into their profile. For example, you can collect feedback or an evaluation survey and relate each submission to the specific participant or organisation that gave it.<br>The system supports linking to multiple entity types. For example, you can encode IDs of a person and activity in the magic link to collect feedback for that specific context. To set this up, select multiple fields below. Currently, such multi-ID URLs need to be generated outside of this system, however.`,
                       },
                       "linkedEntities",
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: $localize`:PublicFormConfig admin form panel:Confirmation Email`,
+          components: [
+            {
+              component: "Form",
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [
+                      "sendConfirmationEmail",
+                      "confirmationEmailField",
+                      "confirmationEmailSubject",
+                      "confirmationEmailBody",
                     ],
                   },
                 ],

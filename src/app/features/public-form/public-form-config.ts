@@ -139,14 +139,29 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Send a confirmation email`,
-    description: $localize`:PublicFormConfig:If enabled, everyone submitting this form receives an email confirming that their submission was received. The form has to ask for their email address, see the field below.`,
+    description: $localize`:PublicFormConfig:The form has to ask for the submitter's email address: add an email field under "Configure Fields" and select it below.`,
     dataType: "boolean",
   })
   sendConfirmationEmail: boolean = false;
 
   @DatabaseField({
+    label: $localize`:PublicFormConfig:Email subject`,
+    description: $localize`:PublicFormConfig:Subject line of the confirmation email. Leave empty to use a default.`,
+    dataType: TranslatableTextDatatype.dataType,
+  })
+  confirmationEmailSubject: TranslatableText;
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Email message`,
+    description: $localize`:PublicFormConfig:Text of the confirmation email, for example what happens next or who to contact. Leave empty to use a default.`,
+    dataType: TranslatableTextDatatype.dataType,
+    additional: { multiline: true, rows: 5 },
+  })
+  confirmationEmailBody: TranslatableText;
+
+  @DatabaseField({
     label: $localize`:PublicFormConfig:Email address field for the confirmation`,
-    description: $localize`:PublicFormConfig:The field of this form that holds the email address the confirmation is sent to. Only fields of the type "email" can be selected, so add one to the form's fields first if the list is empty.`,
+    description: $localize`:PublicFormConfig:Only fields of the type "email" that this form asks for can be selected.`,
     editComponent: "EditPublicFormEmailField",
   })
   confirmationEmailField: string;
