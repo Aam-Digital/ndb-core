@@ -10,6 +10,7 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import type { Mock } from "vitest";
 
 type HttpClientMock = {
@@ -50,6 +51,8 @@ describe("NotificationRuleComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: HttpClient, useValue: mockHttp },
         { provide: KeycloakAuthService, useValue: mockAuthService },
+        // a dependency of the embedded ConditionsEditorComponent, which is not used without a record type
+        { provide: EntityRelationsService, useValue: {} },
       ],
     }).compileComponents();
 

@@ -69,7 +69,7 @@ export class TemplateExportModule {
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Export Templates`,
       link: getEntityRuntimeRoute(TemplateExport),
-      subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF documents populated with dynamic data from your records.`,
+      subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF or editable documents populated with dynamic data from your records.`,
     });
   }
 }

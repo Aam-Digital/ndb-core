@@ -3,6 +3,7 @@ import { PaginatedDataSource } from "./paginated-data-source";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { deferred } from "#src/app/utils/test-utils/deferred";
 import {
   EntityMapperService,
   FULL_LOAD_PAGE_SIZE,
@@ -56,20 +57,6 @@ function firePage(
 async function flush() {
   await new Promise((resolve) => setTimeout(resolve));
   TestBed.tick();
-}
-
-/** A promise plus its resolver/rejecter, to control exactly when a mocked `findType` call settles. */
-function deferred<T>() {
-  let resolve!: (value: T) => void;
-  let reject!: (reason: any) => void;
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  // an unhandled rejection would otherwise fail the test even once the
-  // rejection is later handled by whichever code actually awaits `promise`
-  promise.catch(() => {});
-  return { promise, resolve, reject };
 }
 
 describe("PaginatedDataSource", () => {

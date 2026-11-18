@@ -8,11 +8,18 @@ import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-bloc
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
 
 /**
- * Represents a TemplateExport that can be used to generate PDFs via API,
+ * Represents a TemplateExport that can be used to generate files (PDF, or the template's own editable format) via API,
  * replacing placeholders in the file with data from an entity.
  *
  * A TemplateExport entity represents the meta-data of a template and can be added and manage by admin users.
  */
+/**
+ * Template file formats in which the template engine can also generate the filled-in file,
+ * so users can get an editable document instead of a PDF.
+ * Legacy formats (.doc, .xls, .ppt) are left out, as they would need a conversion.
+ */
+const EDITABLE_OUTPUT_FORMATS = ["docx", "xlsx", "pptx", "odt", "ods", "odp"];
+
 @DatabaseEntity("TemplateExport")
 export class TemplateExport extends Entity {
   static override label = $localize`:TemplateExport:Export Template`;
@@ -80,7 +87,7 @@ export class TemplateExport extends Entity {
    */
   @DatabaseField({
     label: $localize`:TemplateExport:Template File`,
-    description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific record when generating a PDF.`,
+    description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific record when generating a file (as PDF or in the format of the template).`,
     validators: { required: true },
     dataType: TemplateExportFileDatatype.dataType,
     additional: {
@@ -89,6 +96,17 @@ export class TemplateExport extends Entity {
     } as FileFieldConfig,
   })
   templateFile: string;
+
+  /**
+   * The format of the uploaded template file as its lower-case extension (e.g. "docx"),
+   * if files can be generated in that format as an editable alternative to a PDF.
+   */
+  getEditableOutputFormat(): string | undefined {
+    const extension = /\.([a-z0-9]+)$/i
+      .exec(this.templateFile ?? "")?.[1]
+      .toLowerCase();
+    return EDITABLE_OUTPUT_FORMATS.includes(extension) ? extension : undefined;
+  }
 
   /**
    * ID of the template file in the server-side managed API.
@@ -105,7 +123,7 @@ export class TemplateExport extends Entity {
   @DatabaseField({
     label: $localize`:TemplateExport:File name pattern for generated file`,
     labelShort: $localize`:TemplateExport:File name pattern`,
-    description: $localize`:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}_{c.user.name}.pdf").`,
+    description: $localize`:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}_{c.user.name}"). The file extension is set automatically.`,
     validators: { required: true },
   })
   targetFileName: string;
