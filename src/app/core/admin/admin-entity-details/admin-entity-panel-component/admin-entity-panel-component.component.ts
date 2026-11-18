@@ -56,7 +56,6 @@ import {
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import type { EmbeddedArrayDataConfig } from "#src/app/core/entity-details/embedded-array-data/embedded-array-data.component";
-import { lastValueFrom } from "rxjs";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -358,7 +357,7 @@ export class AdminEntityPanelComponentComponent {
    * and update the entity type's schema with the result
    * (saved together with the entity's config).
    */
-  async openSectionFieldConfig(): Promise<void> {
+  openSectionFieldConfig(): void {
     const field = this.sectionField();
     if (!field) {
       return;
@@ -377,16 +376,17 @@ export class AdminEntityPanelComponentComponent {
       } as AdminEntityFieldData,
     });
 
-    const updatedField: EntitySchemaField | undefined = await lastValueFrom(
-      dialogRef.afterClosed(),
-    );
-    if (!updatedField || typeof updatedField !== "object") {
-      return;
-    }
-    this.adminEntityService.updateSchemaField(
-      this.entityType(),
-      updatedField.id,
-      updatedField,
-    );
+    dialogRef
+      .afterClosed()
+      .subscribe((updatedField: EntitySchemaField | undefined) => {
+        if (!updatedField || typeof updatedField !== "object") {
+          return;
+        }
+        this.adminEntityService.updateSchemaField(
+          this.entityType(),
+          updatedField.id,
+          updatedField,
+        );
+      });
   }
 }

@@ -18,6 +18,8 @@ import { DefaultDatatype } from "app/core/entity/default-datatype/default.dataty
 import { SchemaEmbedArrayDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { PanelComponent } from "app/core/entity-details/EntityDetailsConfig";
+import { EmbeddedArrayDataConfig } from "app/core/entity-details/embedded-array-data/embedded-array-data.component";
 import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
 import {
   MatDialogMock,
@@ -112,6 +114,16 @@ describe("AdminEntityPanelComponentComponent", () => {
       TestEntity.schema.delete("contactPersons");
     });
 
+    function sectionConfig(
+      component: string,
+      property: string,
+    ): PanelComponent {
+      return {
+        component,
+        config: { property } satisfies EmbeddedArrayDataConfig,
+      };
+    }
+
     it.each([
       ["EmbeddedArrayData", "contactPersons", "Contact Persons"],
       ["EmbeddedArrayData", "missingField", undefined],
@@ -119,10 +131,10 @@ describe("AdminEntityPanelComponentComponent", () => {
     ])(
       "offers to configure the displayed field (component: %s, property: %s)",
       (sectionComponent, property, expectedLabel) => {
-        fixture.componentRef.setInput("config", {
-          component: sectionComponent,
-          config: { property },
-        } as any);
+        fixture.componentRef.setInput(
+          "config",
+          sectionConfig(sectionComponent, property),
+        );
         fixture.detectChanges();
 
         expect(
@@ -132,11 +144,11 @@ describe("AdminEntityPanelComponentComponent", () => {
       },
     );
 
-    it("updates the entity type's schema with the field edited in the dialog", async () => {
-      fixture.componentRef.setInput("config", {
-        component: "EmbeddedArrayData",
-        config: { property: "contactPersons" },
-      } as any);
+    it("updates the entity type's schema with the field edited in the dialog", () => {
+      fixture.componentRef.setInput(
+        "config",
+        sectionConfig("EmbeddedArrayData", "contactPersons"),
+      );
       const editedField = {
         ...TestEntity.schema.get("contactPersons"),
         id: "contactPersons",
@@ -144,7 +156,7 @@ describe("AdminEntityPanelComponentComponent", () => {
       };
       dialog.open.mockReturnValue(mockMatDialogRef(editedField));
 
-      await component.openSectionFieldConfig();
+      component.openSectionFieldConfig();
 
       expect(dialog.open.mock.calls[0][1].data.entitySchemaField).toEqual(
         expect.objectContaining({
@@ -159,14 +171,14 @@ describe("AdminEntityPanelComponentComponent", () => {
       );
     });
 
-    it("keeps the schema if the dialog is cancelled", async () => {
-      fixture.componentRef.setInput("config", {
-        component: "EmbeddedArrayData",
-        config: { property: "contactPersons" },
-      } as any);
+    it("keeps the schema if the dialog is cancelled", () => {
+      fixture.componentRef.setInput(
+        "config",
+        sectionConfig("EmbeddedArrayData", "contactPersons"),
+      );
       dialog.open.mockReturnValue(mockMatDialogRef(undefined));
 
-      await component.openSectionFieldConfig();
+      component.openSectionFieldConfig();
 
       expect(updateSchemaField).not.toHaveBeenCalled();
     });
