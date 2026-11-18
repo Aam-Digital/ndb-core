@@ -159,9 +159,6 @@ export class EntityRelationsService {
    * - all records of the type for a visitor without an account (public forms),
    *   whom the server does not let query indexes.
    *
-   * @param referencedIds The ids of the entities to find references to
-   * @param refType The entity type of the entities to search for references
-   * @param refProperty The field of refType that holds the reference
    * @returns A map of each referenced id that has any entity linking to it, to these linking entities.
    *          An entity referencing several of the given ids is listed for each of them.
    *          Empty if the user may not read the entity type.
@@ -177,7 +174,7 @@ export class EntityRelationsService {
       return new Map();
     }
 
-    const candidates = await this.loadCandidatesLinkingTo([...ids], refType, {
+    const candidates = await this.loadCandidatesForField([...ids], refType, {
       ...field,
       id: refProperty,
     });
@@ -187,19 +184,18 @@ export class EntityRelationsService {
   }
 
   /**
-   * The records of the type that may reference one of the ids in the field
-   * (see {@link loadLinkingToEntities} for how they are loaded).
+   * The records of the type that may reference one of the ids in the one field
+   * (like {@link loadCandidates} for several fields, see {@link loadLinkingToEntities} for how they are loaded).
    */
-  private async loadCandidatesLinkingTo<T extends Entity>(
+  private async loadCandidatesForField<T extends Entity>(
     ids: string[],
     refType: EntityConstructor<T>,
     field: FormFieldConfig,
   ): Promise<T[]> {
+    const isPlainLink = field.dataType === EntityDatatype.dataType;
     if (this.sessionInfo && !this.sessionInfo.value) {
       return this.entityMapper.loadType(refType);
     }
-
-    const isPlainLink = field.dataType === EntityDatatype.dataType;
     if (this.entityMapper.supportsFind(refType)) {
       return isPlainLink
         ? this.entityMapper.findAllType(
@@ -208,24 +204,16 @@ export class EntityRelationsService {
           )
         : this.loadCandidates(ids, refType, [field]);
     }
-    if (!isPlainLink) {
-      return this.entityMapper.loadType(refType);
-    }
-
-    try {
-      return await this.queryReferenceIndex(refType, field.id, ids);
-    } catch (error) {
-      // the expected fallback described above, which still finds all linked records
-      Logging.debug(
-        "EntityRelationsService: Could not use the index of linked records, loading all records of the type instead",
-        { entityType: refType.ENTITY_TYPE, field: field.id },
-        error,
-      );
-      return this.entityMapper.loadType(refType);
-    }
+    return isPlainLink
+      ? this.loadThroughReferenceIndex(refType, field.id, ids)
+      : this.entityMapper.loadType(refType);
   }
 
-  private async queryReferenceIndex<T extends Entity>(
+  /**
+   * The records referencing one of the ids through the reference index of the field
+   * (created on first use), or all records of the type if the index cannot be used.
+   */
+  private async loadThroughReferenceIndex<T extends Entity>(
     refType: EntityConstructor<T>,
     property: string,
     ids: string[],
@@ -245,11 +233,22 @@ export class EntityRelationsService {
         );
     }
 
-    const records = await this.dbIndexing.queryIndexDocs(
-      refType,
-      `${indexId}/by_${property}`,
-      { keys: ids },
-    );
+    let records: T[];
+    try {
+      records = await this.dbIndexing.queryIndexDocs(
+        refType,
+        `${indexId}/by_${property}`,
+        { keys: ids },
+      );
+    } catch (error) {
+      // the expected fallback described above, which still finds all linked records
+      Logging.debug(
+        "EntityRelationsService: Could not use the index of linked records, loading all records of the type instead",
+        { entityType: refType.ENTITY_TYPE, field: property },
+        error,
+      );
+      return this.entityMapper.loadType(refType);
+    }
     // a record referencing several of the ids is returned once for each of them
     return [...new Map(records.map((r) => [r.getId(), r])).values()];
   }
@@ -431,7 +430,10 @@ function groupByReferencedId<T extends Entity>(
     // a Set, so that an id referenced twice (e.g. by two embedded items) counts only once
     for (const id of new Set<unknown>(referencedIdsOf(entity))) {
       if (typeof id === "string" && ids.has(id)) {
-        groups.set(id, [...(groups.get(id) ?? []), entity]);
+        if (!groups.has(id)) {
+          groups.set(id, []);
+        }
+        groups.get(id).push(entity);
       }
     }
   }
