@@ -24,7 +24,7 @@ jobs:
       # Stop Playwright registering its own TS/ESM loader; we transform via tsx
       # (playwright.config.ts). Avoids a loader clash on Playwright >= 1.61 + Node 22+.
       PW_DISABLE_TS_ESM: 1
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

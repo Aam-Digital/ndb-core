@@ -150,9 +150,10 @@ failure message lists the errors.
   test.use({ allowedConsoleErrors: [/Could not load the file/] });
   ```
 
-Images from external hosts (e.g. map tiles) are replaced by an empty image, so
-the tests don't depend on these servers. A route that a test registers itself
-with `page.route()` takes precedence.
+Images from external hosts (e.g. map tiles) are replaced by an empty image, and
+the request for the translations of version 0.0.0 (never published) gets a 404
+right away, so the tests don't depend on these servers. A route that a test
+registers itself with `page.route()` takes precedence.
 
 The mocked clock replaces `Date`; the fixture makes sure that subclasses like
 `DateWithAge` still create instances of the subclass.
