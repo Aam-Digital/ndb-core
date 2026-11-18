@@ -130,7 +130,7 @@ describe("hierarchy-tree", () => {
     expect(describeRows(view)).toEqual(expected);
   });
 
-  it("leaves out the sub-records of collapsed records, counting only direct sub-records", () => {
+  it("leaves out the sub-records of collapsed records", () => {
     const view = buildHierarchyView(plan, plan, {
       ...sortedByName,
       collapsedIds: new Set(["TestEntity:Mobilisation", "TestEntity:Garden"]),

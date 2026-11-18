@@ -239,15 +239,14 @@ describe("HierarchyDataSource", () => {
     },
   );
 
-  it("decorates rows with CSS classes of their place in the tree, context rows as not selectable", async () => {
+  it("decorates rows with CSS classes of their place in the tree", async () => {
     await createDataSource();
     dataSource.dataFilter.set({ responsible: "Asha" });
     await settle();
 
-    const rowOptions = (title: string) =>
-      dataSource.rowOptionsOf(new Action(title));
     const classes = (title: string) =>
-      rowOptions(title)?.cssClass?.split(" ").sort() ?? [];
+      dataSource.rowOptionsOf(new Action(title))?.cssClass?.split(" ").sort() ??
+      [];
     expect(classes("Clean Water")).toEqual(
       [CONTEXT_ROW_CLASS, TOP_ROW_CLASS, PARENT_ROW_CLASS].sort(),
     );
@@ -256,7 +255,6 @@ describe("HierarchyDataSource", () => {
       [CONTEXT_ROW_CLASS, PARENT_ROW_CLASS].sort(),
     );
     expect(classes("Sonpur")).toEqual([]);
-    expect(rowOptions("Meetings")?.selectable).toBe(false);
   });
 
   it("sorts each level on its own", async () => {

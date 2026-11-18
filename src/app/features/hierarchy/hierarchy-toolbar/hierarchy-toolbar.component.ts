@@ -4,6 +4,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { HierarchyDataSource, NO_HIERARCHY } from "../hierarchy-data-source";
 
 /**
@@ -30,7 +31,10 @@ export class HierarchyToolbarComponent {
     return [
       ...this.dataSource()
         .hierarchyFields()
-        .map((id) => ({ id, label: schema?.get(id)?.label ?? id })),
+        .map((id) => ({
+          id,
+          label: resolveLocaleText(schema?.get(id)?.label) ?? id,
+        })),
       {
         id: NO_HIERARCHY,
         label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
