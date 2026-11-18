@@ -65,6 +65,19 @@
         </mat-form-field>
       }
 
+      @if (row.option) {
+        <mat-checkbox
+          [checked]="!!row.config.includeArchived"
+          (change)="setIncludeArchived(i, $event.checked)"
+          [disabled]="!enabled()"
+          matTooltip="Archived records are left out by default. If included, a template can tell them apart by their 'inactive' field."
+          i18n-matTooltip
+          i18n
+        >
+          Include archived records
+        </mat-checkbox>
+      }
+
       @if (row.examples.length > 0) {
         <div class="hint-text flex-row flex-wrap gap-small">
           <span i18n>Use in the template file as</span>

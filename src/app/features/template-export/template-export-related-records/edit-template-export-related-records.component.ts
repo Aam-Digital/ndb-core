@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AbstractControl, ValidationErrors } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import {
   MatFormFieldControl,
   MatFormFieldModule,
@@ -86,6 +87,7 @@ function getOptionId(config: { entityType?: string; property?: string }) {
     MatInputModule,
     MatButtonModule,
     MatTooltipModule,
+    MatCheckboxModule,
     FaDynamicIconComponent,
   ],
   providers: [
@@ -205,6 +207,9 @@ export class EditTemplateExportRelatedRecordsComponent
       if (option.isHierarchy && config.levels > 1) {
         updated.levels = config.levels;
       }
+      if (config.includeArchived) {
+        updated.includeArchived = true;
+      }
       return updated;
     });
   }
@@ -220,6 +225,13 @@ export class EditTemplateExportRelatedRecordsComponent
       return levels > 1 ? { ...updated, levels } : updated;
     });
     return levels;
+  }
+
+  setIncludeArchived(index: number, includeArchived: boolean) {
+    this.updateRow(index, (config) => {
+      const { includeArchived: _previous, ...updated } = config;
+      return includeArchived ? { ...updated, includeArchived } : updated;
+    });
   }
 
   private currentValue(): TemplateExportRelatedRecords[] {
@@ -263,10 +275,7 @@ export class EditTemplateExportRelatedRecordsComponent
             property: field.id,
           };
           // an id that cannot be part of a placeholder could not be saved anyway
-          if (
-            !isFieldLinkingToType(field, type) ||
-            !canBeUsedInPlaceholder(config)
-          ) {
+          if (!canBeUsedInPlaceholder(config)) {
             continue;
           }
           const recordType = resolveLocaleText(

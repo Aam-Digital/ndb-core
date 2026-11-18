@@ -93,7 +93,7 @@ export class TemplateExport extends Entity {
   @DatabaseField({
     label: $localize`:TemplateExport:Related Records to Include`,
     labelShort: $localize`:TemplateExport:Related Records`,
-    description: $localize`:TemplateExport:Make records that link to the selected record available in the template (e.g. the sub-tasks of a task). Each list is available under the record type and field linking to the record and can be used with carbone's repetition syntax (e.g. {d._related.Todo.parentTask[i].subject} for the sub-tasks of a task); the placeholder to use is shown for each entry. Archived records are not included.`,
+    description: $localize`:TemplateExport:Make records that link to the selected record available in the template (e.g. the sub-tasks of a task). Each list is available under the record type and field linking to the record and can be used with carbone's repetition syntax (e.g. {d._related.Todo.parentTask[i].subject} for the sub-tasks of a task); the placeholder to use is shown for each entry. Archived records are only included if selected.`,
     editComponent: "EditTemplateExportRelatedRecords",
     isArray: true,
   })

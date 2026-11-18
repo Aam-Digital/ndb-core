@@ -19,7 +19,8 @@ export interface TemplateExportRelatedRecords {
   entityType: string;
 
   /**
-   * ID of the field of the related records (of `entityType`) that links to the exported record.
+   * ID of the field of the related records (of `entityType`) that links to the exported record,
+   * directly or in embedded objects (e.g. the participants of attendance items).
    */
   property: string;
 
@@ -32,6 +33,12 @@ export interface TemplateExportRelatedRecords {
    * and is limited to {@link RELATED_RECORDS_MAX_LEVELS}.
    */
   levels?: number;
+
+  /**
+   * Whether archived (inactive) records are included as well.
+   * Templates can tell them apart by their `inactive` field.
+   */
+  includeArchived?: boolean;
 }
 
 /**

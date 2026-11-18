@@ -35,25 +35,28 @@ are only loaded if a template lists them in `TemplateExport.relatedRecords`,
 to avoid loading and sending more data than a template needs.
 Each entry (`TemplateExportRelatedRecords`) defines
 
-- `entityType` and `property`: the record type and its entity-reference field that links to the exported record.
+- `entityType` and `property`: the record type and its field that links to the exported record,
+  either an entity-reference field or a field of embedded objects with one (e.g. the participants of attendance items).
   The list is added to the record's data under both (`{d._related.<entityType>.<property>[i].…}`),
   kept under `_related` apart from the record's own fields (`d.*`), so that a list never hides a field.
   Several entries can be included, each for another record type or field.
 - `levels` (optional): how many levels to load if the related records link among themselves
   through the same field (e.g. sub-tasks of sub-tasks). The records of each further level are added
   to their parent record in the same way (`{d._related.Todo.parentTask[i]._related.Todo.parentTask[i].subject}`).
+- `includeArchived` (optional): whether archived (inactive) records are included, too.
+  A template can tell them apart by their `inactive` field.
 
 `TemplateExportRelatedRecordsService` loads these lists when a file is generated:
 
 - A list is always present (possibly empty) for a valid entry, so that a repetition in the template prints nothing
   rather than the unresolved placeholder.
-- Archived (inactive) records are excluded and each list is sorted by the display text of the records.
+- Archived (inactive) records are excluded, together with the records below them in a hierarchy,
+  unless `includeArchived` is set. Each list is sorted by the display text of the records.
 - Related records are copies with their own entity-reference fields resolved one level deep,
-  like the exported record itself.
+  like the exported record itself. Only a plain link field to the record they are listed under
+  holds just the ids (`{_id}`), as that record is available one level up.
 - The related records for all exported records are looked up together, once per entry and level
   (`EntityRelationsService.loadLinkingToEntities`), also for a bulk export.
 - Only records available to the current user are included, like everywhere in the app.
 - An entry that cannot be applied (e.g. its field was removed from the data structure) is skipped
   and reported as a warning. The admin form (`EditTemplateExportRelatedRecords`) validates entries to prevent this.
-
-Not supported: entity references nested inside embedded objects (e.g. the participants of attendance items).

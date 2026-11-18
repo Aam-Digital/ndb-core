@@ -54,6 +54,23 @@ describe("TemplateExportRelatedRecordsService", () => {
     owner: string;
   }
 
+  /** a record type linking to persons inside embedded objects */
+  @DatabaseEntity("RelatedRecordsMeeting")
+  class Meeting extends Entity {
+    static override readonly toStringAttributes = ["title"];
+
+    @DatabaseField() title: string;
+
+    @DatabaseField({
+      dataType: "schema-embed-array",
+      additional: {
+        person: { dataType: "entity", additional: "RelatedRecordsPerson" },
+        role: { dataType: "string" },
+      },
+    })
+    attendees: { person: string; role: string }[];
+  }
+
   const SUB_ACTIONS: TemplateExportRelatedRecords = {
     entityType: "RelatedRecordsAction",
     property: "parent",
@@ -180,6 +197,60 @@ describe("TemplateExportRelatedRecordsService", () => {
     );
     expect(related).not.toBe(step);
     expect(step.owner).toBe(owner.getId());
+  });
+
+  it("includes archived records, and the records below them, if configured", async () => {
+    const root = action("Root");
+    const archived = action("Archived", {
+      parent: root.getId(),
+      inactive: true,
+    });
+    action("Below archived", { parent: archived.getId() });
+
+    const result = await service.loadRelatedRecords(
+      template({ ...SUB_ACTIONS, levels: 2, includeArchived: true }),
+      [root],
+    );
+
+    expect(titles(result.get(root.getId()))).toEqual([
+      ["Archived", ["Below archived"]],
+    ]);
+    expect(listOf(result.get(root.getId()))[0].inactive).toBe(true);
+  });
+
+  it("lists records linking to the record inside embedded objects", async () => {
+    const person = Object.assign(new Person(), { name: "Pat" });
+    const other = Object.assign(new Person(), { name: "Other" });
+    entityMapper.addAll([person, other]);
+    const attendedBy = (...persons: Person[]) =>
+      persons.map((p) => ({ person: p.getId(), role: "guest" }));
+    const meeting = Object.assign(new Meeting(), {
+      title: "Kick-off",
+      attendees: attendedBy(other, person),
+    });
+    const otherMeeting = Object.assign(new Meeting(), {
+      title: "Other meeting",
+      attendees: attendedBy(other),
+    });
+    entityMapper.addAll([meeting, otherMeeting]);
+    const attendance: TemplateExportRelatedRecords = {
+      entityType: "RelatedRecordsMeeting",
+      property: "attendees",
+    };
+
+    const result = await service.loadRelatedRecords(template(attendance), [
+      person,
+    ]);
+
+    const [related] = listOf(result.get(person.getId()), attendance);
+    expect(titles(result.get(person.getId()), attendance)).toEqual([
+      "Kick-off",
+    ]);
+    // the embedded objects keep their other details
+    expect(related.attendees).toEqual([
+      expect.objectContaining({ role: "guest" }),
+      expect.objectContaining({ role: "guest" }),
+    ]);
   });
 
   it("keeps only the ids in the link field of related records, as the linked record is one level up", async () => {

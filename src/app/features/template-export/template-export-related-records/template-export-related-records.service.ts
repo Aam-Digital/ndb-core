@@ -7,12 +7,12 @@ import {
   LoadedEntitiesCache,
 } from "#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { TemplateExport } from "../template-export.entity";
 import {
   getRelatedRecordsLevels,
-  isFieldLinkingToType,
   canBeUsedInPlaceholder,
   getRelatedRecordsPlaceholder,
   RELATED_RECORDS_PROPERTY,
@@ -155,7 +155,7 @@ export class TemplateExportRelatedRecordsService {
       ? this.entityRegistry.get(config.entityType)
       : undefined;
     const linkField = relatedType?.schema.get(config.property);
-    if (linkField?.dataType !== "entity") {
+    if (!this.entityRelations.fieldReferencesType(linkField, this.allTypes())) {
       this.reportInvalidConfig(
         template,
         config,
@@ -167,7 +167,7 @@ export class TemplateExportRelatedRecordsService {
     const applicableTypes = template.applicableForEntityTypes ?? [];
     if (
       applicableTypes.length > 0 &&
-      !isFieldLinkingToType(linkField, ...applicableTypes)
+      !this.entityRelations.fieldReferencesType(linkField, applicableTypes)
     ) {
       // e.g. the link field was changed to link to other record types after the template was set up
       this.reportInvalidConfig(
@@ -180,7 +180,9 @@ export class TemplateExportRelatedRecordsService {
 
     // a template can apply to several record types, not all of which this field may link to
     parents = parents.filter((parent) =>
-      isFieldLinkingToType(linkField, Entity.extractTypeFromId(parent.id)),
+      this.entityRelations.fieldReferencesType(linkField, [
+        Entity.extractTypeFromId(parent.id),
+      ]),
     );
     if (parents.length === 0 || !this.canRead(relatedType)) {
       return;
@@ -216,9 +218,10 @@ export class TemplateExportRelatedRecordsService {
       config.property,
       loaded.allRecords,
     );
-    const dataById = await this.resolveActiveRecords(
+    const dataById = await this.resolveRecords(
       [...linking.values()].flat(),
-      config.property,
+      config,
+      relatedType,
       loaded.loadedEntities,
     );
 
@@ -242,37 +245,47 @@ export class TemplateExportRelatedRecordsService {
   }
 
   /**
-   * Plain copies of the records that are not archived, with their relations resolved, by their id.
+   * Plain copies of the records (without archived ones, unless configured), with their relations resolved, by their id.
    *
-   * The link field to the parent records is not resolved but holds only the ids (`{_id}`):
+   * A plain link field to the parent records is not resolved but holds only the ids (`{_id}`):
    * the details of the parent are already available one level up, and resolving it would
    * load all records of the parent's type and repeat them in every list item.
+   * Embedded objects linking to the parent (e.g. attendance items) also hold other details
+   * and are resolved like any other field.
    */
-  private async resolveActiveRecords(
+  private async resolveRecords(
     entities: Entity[],
-    linkProperty: string,
+    config: TemplateExportRelatedRecords,
+    relatedType: EntityConstructor,
     loadedEntities: LoadedEntitiesCache,
   ): Promise<Map<string, Record<string, unknown>>> {
-    const active = [
+    const records = [
       ...new Map(
         entities
-          .filter((entity) => !entity.inactive)
+          .filter((entity) => config.includeArchived || !entity.inactive)
           .map((entity) => [entity.getId(), entity]),
       ).values(),
     ];
-    const withoutLinks = active.map((entity) => {
-      const copy = entity.copy();
-      copy[linkProperty] = undefined;
-      return copy;
-    });
+    const property = config.property;
+    const isPlainLink =
+      relatedType.schema.get(property)?.dataType === EntityDatatype.dataType;
+    const toResolve = isPlainLink
+      ? records.map((entity) => {
+          const copy = entity.copy();
+          copy[property] = undefined;
+          return copy;
+        })
+      : records;
     const resolved = (await this.relationResolver.resolveRelations<unknown>(
-      withoutLinks,
+      toResolve,
       loadedEntities,
     )) as Record<string, unknown>[];
     return new Map(
-      active.map((entity, i) => [
+      records.map((entity, i) => [
         entity.getId(),
-        { ...resolved[i], [linkProperty]: asIdStubs(entity[linkProperty]) },
+        isPlainLink
+          ? { ...resolved[i], [property]: asIdStubs(entity[property]) }
+          : resolved[i],
       ]),
     );
   }
@@ -293,6 +306,10 @@ export class TemplateExportRelatedRecordsService {
       );
     }
     return [...(await loadedEntities.get(entityType.ENTITY_TYPE)).values()];
+  }
+
+  private allTypes(): string[] {
+    return [...this.entityRegistry.keys()];
   }
 
   private canRead(entityType: EntityConstructor): boolean {
