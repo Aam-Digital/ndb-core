@@ -51,6 +51,18 @@
   } @else {
     <p>[ {{ config().component }} ]</p>
 
+    @if (sectionField(); as field) {
+      <app-icon-button
+        icon="edit"
+        (buttonClick)="openSectionFieldConfig()"
+        matTooltip="Edit the settings of the field displayed in this section."
+        i18n-matTooltip
+        i18n
+      >
+        Configure field "{{ field.label }}"
+      </app-icon-button>
+    }
+
     <p class="hint-text" i18n>
       Editing advanced sub-sections is not supported yet in this preview.
     </p>

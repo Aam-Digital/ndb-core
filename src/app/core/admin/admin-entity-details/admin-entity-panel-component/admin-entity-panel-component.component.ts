@@ -49,6 +49,14 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
+import {
+  AdminEntityFieldComponent,
+  AdminEntityFieldData,
+} from "#src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
+import type { EmbeddedArrayDataConfig } from "#src/app/core/entity-details/embedded-array-data/embedded-array-data.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -147,6 +155,24 @@ export class AdminEntityPanelComponentComponent {
         id: getEmbeddedFieldId(ref),
         label: getEmbeddedFieldLabel(ref),
       }));
+  });
+
+  /**
+   * The field of the entity type that this section displays on its own
+   * (e.g. a `schema-embed-array` field shown as an "EmbeddedArrayData" section),
+   * so that its schema can be configured from the section.
+   */
+  sectionField = computed<{ id: string; label: string } | undefined>(() => {
+    this.schemaUpdated(); // the label can change through the "configure field" dialog
+    if (this.config()?.component !== "EmbeddedArrayData") {
+      return undefined;
+    }
+    const id = (this.config().config as EmbeddedArrayDataConfig)?.property;
+    const field = id ? this.entityType().schema.get(id) : undefined;
+    if (!field) {
+      return undefined;
+    }
+    return { id, label: resolveLocaleText(field.label) || id };
   });
 
   /**
@@ -325,5 +351,42 @@ export class AdminEntityPanelComponentComponent {
           }
         }
       });
+  }
+
+  /**
+   * Open the dialog to edit the schema of the field displayed by this section
+   * and update the entity type's schema with the result
+   * (saved together with the entity's config).
+   */
+  async openSectionFieldConfig(): Promise<void> {
+    const field = this.sectionField();
+    if (!field) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(AdminEntityFieldComponent, {
+      width: "99%",
+      maxHeight: "90vh",
+      data: {
+        entitySchemaField: {
+          ...this.entityType().schema.get(field.id),
+          id: field.id,
+        },
+        entityType: this.entityType(),
+        overwriteLocally: false,
+      } as AdminEntityFieldData,
+    });
+
+    const updatedField: EntitySchemaField | undefined = await lastValueFrom(
+      dialogRef.afterClosed(),
+    );
+    if (!updatedField || typeof updatedField !== "object") {
+      return;
+    }
+    this.adminEntityService.updateSchemaField(
+      this.entityType(),
+      updatedField.id,
+      updatedField,
+    );
   }
 }
