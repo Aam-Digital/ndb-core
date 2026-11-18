@@ -22,7 +22,7 @@ The frontend manages the templates and assembles the data that is sent with a re
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `{d.name}`                | a field of the record, by its field ID                                                                    |
 | `{d.school.name}`         | a field of a record that the record links to in an entity-reference field (resolved one level deep)       |
-| `{d.subTasks[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below)                |
+| `{d._related.subTasks[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below) |
 | `{c.user.name}`           | a field of the record linked to the logged-in user                                                        |
 | `{d[i].name}`             | a field of each selected record, in a "Multi-Record Report" template (`arrayReport`) with `d` as an array |
 
@@ -36,10 +36,11 @@ to avoid loading and sending more data than a template needs.
 Each entry (`TemplateExportRelatedRecords`) defines
 
 - `entityType` and `property`: the record type and its entity-reference field that links to the exported record,
-- `key`: the name under which the list is added to the record's data (`{d.<key>[i].…}`),
+- `key`: the name under which the list is added to the record's data (`{d._related.<key>[i].…}`).
+  The lists are kept under `_related`, apart from the record's own fields (`d.*`), so that a list never hides a field.
 - `levels` (optional): how many levels to load if the related records link among themselves
   through the same field (e.g. sub-tasks of sub-tasks). The records of each further level are added
-  to their parent record under the same `key` (`{d.subTasks[i].subTasks[i].subject}`).
+  to their parent record under the same `key` (`{d._related.subTasks[i]._related.subTasks[i].subject}`).
 
 `TemplateExportRelatedRecordsService` loads these lists when a file is generated:
 
@@ -51,8 +52,7 @@ Each entry (`TemplateExportRelatedRecords`) defines
 - The related records for all exported records are looked up together, once per entry and level
   (`EntityRelationsService.loadLinkingToEntities`), also for a bulk export.
 - Only records available to the current user are included, like everywhere in the app.
-- An entry that cannot be applied (e.g. its field was removed from the data structure, or its `key` is the ID
-  of a field of the record) is skipped and reported as a warning. The admin form (`EditTemplateExportRelatedRecords`)
-  validates entries to prevent this.
+- An entry that cannot be applied (e.g. its field was removed from the data structure) is skipped
+  and reported as a warning. The admin form (`EditTemplateExportRelatedRecords`) validates entries to prevent this.
 
 Not supported: entity references nested inside embedded objects (e.g. the participants of attendance items).

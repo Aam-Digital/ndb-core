@@ -109,7 +109,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
   it("suggests a placeholder name that is not in use yet when selecting related records", () => {
     setup(
       [Project.ENTITY_TYPE],
-      [{ ...PROJECT_ACTIONS, key: "relatedEditRelatedAction" }],
+      [{ ...PROJECT_ACTIONS, key: "editRelatedAction" }],
     );
 
     component.addRow();
@@ -117,7 +117,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
 
     expect(control.value[1]).toEqual({
       ...PROJECT_ACTIONS,
-      key: "relatedEditRelatedAction2",
+      key: "editRelatedAction2",
     });
     expect(control.valid).toBe(true);
     expect(control.dirty).toBe(true);
@@ -126,7 +126,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
   it("shows the placeholder to use in the template file, including nested levels of a hierarchy", () => {
     setup([Action.ENTITY_TYPE], [SUB_ACTIONS]);
     expect(fixture.nativeElement.textContent).toContain(
-      "{d.subActions[i].subject}",
+      "{d._related.subActions[i].subject}",
     );
 
     // limited to the supported number of levels
@@ -136,7 +136,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     expect(control.value).toEqual([{ ...SUB_ACTIONS, levels: 5 }]);
     // one example per level
     expect(fixture.nativeElement.textContent).toContain(
-      "{d.subActions[i].subActions[i].subActions[i].subActions[i].subActions[i].subject}",
+      "{d._related.subActions[i]._related.subActions[i]._related.subActions[i]._related.subActions[i]._related.subActions[i].subject}",
     );
 
     component.setLevels(0, "1");
@@ -177,11 +177,6 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
     [
       "a placeholder name not starting with a letter",
       [{ ...PROJECT_ACTIONS, key: "_actions" }],
-      false,
-    ],
-    [
-      "a placeholder name that is a field of the record type",
-      [{ ...PROJECT_ACTIONS, key: "title" }],
       false,
     ],
     [

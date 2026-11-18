@@ -24,7 +24,7 @@ test("Template-export action generates a file in the selected format, including 
   let renderRequest:
     | {
         convertTo?: string;
-        data?: { name: string; notes: { subject: string }[] };
+        data?: { name: string; _related?: { notes: { subject: string }[] } };
       }
     | undefined;
   await page.route("**/api/v1/export/render/**", (route) => {
@@ -71,7 +71,7 @@ test("Template-export action generates a file in the selected format, including 
   });
   await placeholderName.fill("notes");
   await placeholderName.blur();
-  await expect(page.getByText("{d.notes[i].subject}")).toBeVisible();
+  await expect(page.getByText("{d._related.notes[i].subject}")).toBeVisible();
 
   await argosScreenshot(page, "template-export-related-records");
   await page.getByRole("button", { name: "Save" }).click();
@@ -109,6 +109,6 @@ test("Template-export action generates a file in the selected format, including 
   expect(download.suggestedFilename()).toBe("letter.docx");
   // the template gets the related records under the configured placeholder name
   expect(renderRequest?.data?.name).toBe(CHILD_NAME);
-  expect(renderRequest?.data?.notes).toHaveLength(1);
-  expect(renderRequest?.data?.notes[0].subject).toBe(note.subject);
+  expect(renderRequest?.data?._related?.notes).toHaveLength(1);
+  expect(renderRequest?.data?._related?.notes[0].subject).toBe(note.subject);
 });

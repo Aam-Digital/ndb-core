@@ -77,8 +77,10 @@ describe("TemplateExportRelatedRecordsService", () => {
 
   /** the titles of the related records under the given key, including those of nested levels */
   function titles(data: RelatedRecordsData | Record<string, any>, key: string) {
-    return (data?.[key] as Record<string, any>[])?.map((record) =>
-      record[key] ? [record.title, titles(record, key)] : record.title,
+    return (data?._related?.[key] as Record<string, any>[])?.map((record) =>
+      record._related?.[key]
+        ? [record.title, titles(record, key)]
+        : record.title,
     );
   }
 
@@ -132,7 +134,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       "Step 10",
     ]);
     // an empty list rather than no list, so that a loop in the template prints nothing
-    expect(result.get(rootB.getId())).toEqual({ subActions: [] });
+    expect(result.get(rootB.getId())).toEqual({ _related: { subActions: [] } });
     // one lookup for all exported records, not one per record
     expect(loadLinking).toHaveBeenCalledTimes(1);
   });
@@ -150,7 +152,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       root,
     ]);
 
-    const [related] = result.get(root.getId()).subActions;
+    const [related] = result.get(root.getId())._related.subActions;
     expect(related).toEqual(
       expect.objectContaining({
         title: "Step",
@@ -175,7 +177,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const [related] = result.get(root.getId()).blocking;
+    const [related] = result.get(root.getId())._related.blocking;
     expect(related["blockedBy"]).toEqual([
       { _id: root.getId() },
       expect.objectContaining({ title: "Other" }),
@@ -221,12 +223,9 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const grandchild = (
-      result.get(root.getId()).subActions[0].subActions as Record<
-        string,
-        unknown
-      >[]
-    )[0];
+    const [loadedChild] = result.get(root.getId())._related.subActions;
+    const [grandchild] = (loadedChild as RelatedRecordsData)._related
+      .subActions;
     expect(grandchild.owner).toEqual(
       expect.objectContaining({ name: "Owner" }),
     );
@@ -302,30 +301,41 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(titles(result.get(project.getId()), "subActions")).toEqual([
       "Project action",
     ]);
-    expect(result.get(person.getId())).toEqual({ subActions: [] });
+    expect(result.get(person.getId())).toEqual({
+      _related: { subActions: [] },
+    });
+  });
+
+  it("keeps the lists apart from the fields of the records, also with a placeholder name that is a field", async () => {
+    const root = action("Root");
+    const child = action("Child", { parent: root.getId() });
+    action("Grandchild", { parent: child.getId() });
+
+    const result = await service.loadRelatedRecords(
+      template({ ...SUB_ACTIONS, key: "title", levels: 2 }),
+      [root],
+    );
+
+    const [related] = result.get(root.getId())._related.title;
+    expect(related.title).toBe("Child");
+    expect(titles(related, "title")).toEqual(["Grandchild"]);
   });
 
   it.each<[string, TemplateExportRelatedRecords, RelatedRecordsData]>([
     [
       "an unknown record type",
       { ...SUB_ACTIONS, entityType: "RemovedType" },
-      { subActions: [] },
+      { _related: { subActions: [] } },
     ],
     [
       "a field that does not exist (anymore)",
       { ...SUB_ACTIONS, property: "removedField" },
-      { subActions: [] },
+      { _related: { subActions: [] } },
     ],
     [
       "a field that does not link to records",
       { ...SUB_ACTIONS, property: "title" },
-      { subActions: [] },
-    ],
-    // the list must not replace the value of an actual field of the record
-    [
-      "a placeholder name of an existing field",
-      { ...SUB_ACTIONS, key: "title" },
-      {},
+      { _related: { subActions: [] } },
     ],
     ["an invalid placeholder name", { ...SUB_ACTIONS, key: "sub actions" }, {}],
   ])("skips and reports a config with %s", async (_name, config, expected) => {

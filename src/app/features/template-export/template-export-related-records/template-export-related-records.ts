@@ -9,12 +9,12 @@ import { asArray } from "#src/app/utils/asArray";
  *
  * e.g. `{ key: "subTasks", entityType: "Task", property: "parentTask" }`
  * adds the tasks whose "parentTask" field links to the exported record,
- * to be used in the template as `{d.subTasks[i].subject}`.
+ * to be used in the template as `{d._related.subTasks[i].subject}`.
  */
 export interface TemplateExportRelatedRecords {
   /**
    * Name under which the list is added to the exported record,
-   * i.e. the placeholder to use in the template (`{d.<key>[i]...}`).
+   * i.e. the placeholder to use in the template (`{d._related.<key>[i]...}`).
    */
   key: string;
 
@@ -38,6 +38,12 @@ export interface TemplateExportRelatedRecords {
    */
   levels?: number;
 }
+
+/**
+ * The property of an exported record under which the lists of its related records are added
+ * (`{d._related.<key>[i]…}`), apart from the record's own fields so that they never hide one.
+ */
+export const RELATED_RECORDS_PROPERTY = "_related";
 
 /**
  * Maximum number of hierarchy levels of related records loaded for a template.

@@ -30,6 +30,7 @@ import {
   getRelatedRecordsLevels,
   isFieldLinkingToType,
   RELATED_RECORDS_KEY_PATTERN,
+  RELATED_RECORDS_PROPERTY,
   RELATED_RECORDS_MAX_LEVELS,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
@@ -292,11 +293,10 @@ export class EditTemplateExportRelatedRecordsComponent
    * A placeholder name for the option that is not in use yet.
    */
   private suggestKey(option: RelatedRecordsOption): string {
-    const base = "related" + option.entityType.replace(/[^A-Za-z0-9_]/g, "");
-    const usedKeys = new Set([
-      ...this.currentValue().map((config) => config.key),
-      ...this.getFieldIds(this.applicableTypes()),
-    ]);
+    // already under `_related` in the placeholder, so the record type alone (e.g. "todo") reads best
+    const type = option.entityType.replace(/[^A-Za-z0-9_]/g, "");
+    const base = type.charAt(0).toLowerCase() + type.slice(1);
+    const usedKeys = new Set(this.currentValue().map((config) => config.key));
 
     let key = base;
     for (let i = 2; usedKeys.has(key); i++) {
@@ -315,7 +315,7 @@ export class EditTemplateExportRelatedRecordsComponent
     }
 
     const field = getExampleField(this.entityRegistry.get(option.entityType));
-    const list = `${config.key}[i]`;
+    const list = `${RELATED_RECORDS_PROPERTY}.${config.key}[i]`;
     return Array.from(
       { length: levels },
       (_, level) =>
@@ -323,15 +323,6 @@ export class EditTemplateExportRelatedRecordsComponent
           .fill(list)
           .join(".")}.${field}}`,
     );
-  }
-
-  /**
-   * IDs of all fields of the given record types.
-   */
-  private getFieldIds(entityTypes: string[]): string[] {
-    return entityTypes
-      .filter((type) => this.entityRegistry.has(type))
-      .flatMap((type) => [...this.entityRegistry.get(type).schema.keys()]);
   }
 
   /**
@@ -359,7 +350,6 @@ export class EditTemplateExportRelatedRecordsComponent
     const availableOptions = new Set(
       this.getOptions(applicableTypes).map((option) => option.id),
     );
-    const fieldIds = new Set(this.getFieldIds(applicableTypes));
     const keys = new Set<string>();
 
     for (const config of configs) {
@@ -371,9 +361,6 @@ export class EditTemplateExportRelatedRecordsComponent
       }
       if (!RELATED_RECORDS_KEY_PATTERN.test(config.key)) {
         return $localize`Placeholder name "${config.key}:name:" must start with a letter and only contain letters, digits and underscores.`;
-      }
-      if (fieldIds.has(config.key)) {
-        return $localize`Placeholder name "${config.key}:name:" is already the ID of a field of the record type.`;
       }
       if (keys.has(config.key)) {
         return $localize`Placeholder name "${config.key}:name:" is used more than once.`;

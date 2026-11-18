@@ -13,22 +13,26 @@ import {
   getRelatedRecordsLevels,
   isFieldLinkingToType,
   RELATED_RECORDS_KEY_PATTERN,
+  RELATED_RECORDS_PROPERTY,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
 
 /**
- * The lists of related records to be added to the data of one exported record,
- * by the `key` of their {@link TemplateExportRelatedRecords} config.
+ * The data to add to one exported record: the lists of related records
+ * by the `key` of their {@link TemplateExportRelatedRecords} config,
+ * under {@link RELATED_RECORDS_PROPERTY} so that they never hide a field of the record.
  */
-export type RelatedRecordsData = Record<string, Record<string, unknown>[]>;
+export type RelatedRecordsData = {
+  [RELATED_RECORDS_PROPERTY]?: Record<string, Record<string, unknown>[]>;
+};
 
 /**
  * A record placed in the hierarchy of related records of an exported record.
  */
 interface HierarchyNode {
   id: string;
-  /** the object the related records of this record are added to */
-  data: Record<string, unknown>;
+  /** the record's data, to which its related records are added */
+  data: RelatedRecordsData;
   parent?: HierarchyNode;
 }
 
@@ -137,24 +141,13 @@ export class TemplateExportRelatedRecordsService {
     }
 
     // records to load related records for, level by level
-    let parents: HierarchyNode[] = [];
-    for (const record of records) {
-      if (record.getSchema().has(config.key)) {
-        // never hide an actual field of the record behind the list
-        this.reportInvalidConfig(
-          template,
-          config,
-          "placeholder name is a field of the record type",
-        );
-        continue;
-      }
-
+    let parents: HierarchyNode[] = records.map((record) => {
       const data = result.get(record.getId());
       // always provide a list, so that a loop in the template prints nothing
       // rather than the unresolved placeholder itself
-      data[config.key] = [];
-      parents.push({ id: record.getId(), data });
-    }
+      setRelatedList(data, config.key, []);
+      return { id: record.getId(), data };
+    });
 
     const relatedType = this.entityRegistry.has(config.entityType)
       ? this.entityRegistry.get(config.entityType)
@@ -245,7 +238,7 @@ export class TemplateExportRelatedRecordsService {
         .filter((id) => dataById.has(id) && !isInBranch(parent, id))
         .sort((a, b) => sortIndex.get(a) - sortIndex.get(b));
 
-      parent.data[config.key] = childIds.map((id) => {
+      const list = childIds.map((id) => {
         // an own copy, as a record linking to several parents gets a separate list of related records for each
         const child = {
           id,
@@ -255,6 +248,7 @@ export class TemplateExportRelatedRecordsService {
         children.push(child);
         return child.data;
       });
+      setRelatedList(parent.data, config.key, list);
     }
     return children;
   }
@@ -295,6 +289,15 @@ function isInBranch(node: HierarchyNode | undefined, id: string): boolean {
   return false;
 }
 
+function setRelatedList(
+  data: RelatedRecordsData,
+  key: string,
+  list: Record<string, unknown>[],
+) {
+  data[RELATED_RECORDS_PROPERTY] ??= {};
+  data[RELATED_RECORDS_PROPERTY][key] = list;
+}
+
 /**
  * A copy of the related record's data in which the link to the record it is listed under
  * holds only that record's id: its details are already available one level up,
@@ -305,7 +308,7 @@ function withParentAsId(
   data: Record<string, unknown>,
   property: string,
   parentId: string,
-): Record<string, unknown> {
+): Record<string, unknown> & RelatedRecordsData {
   const shorten = (linked: unknown) =>
     (linked as { _id?: string })?._id === parentId ? { _id: parentId } : linked;
   const value = data[property];

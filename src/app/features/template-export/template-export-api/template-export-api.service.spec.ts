@@ -298,18 +298,23 @@ describe("TemplateExportApiService", () => {
     expect(mockApiResponse.mock.calls[0][1]["data"]).toEqual([
       expect.objectContaining({
         name: "Parent",
-        children: [
-          expect.objectContaining({
-            name: "Child",
-            // the link back to the record only holds its id, as its details are one level up
-            ref: { _id: parent.getId() },
-          }),
-        ],
+        _related: {
+          children: [
+            expect.objectContaining({
+              name: "Child",
+              // the link back to the record only holds its id, as its details are one level up
+              ref: { _id: parent.getId() },
+            }),
+          ],
+        },
       }),
-      expect.objectContaining({ name: "Childless", children: [] }),
+      expect.objectContaining({
+        name: "Childless",
+        _related: { children: [] },
+      }),
     ]);
     // the entities held by the app are not modified
-    expect(parent).not.toHaveProperty("children");
+    expect(parent).not.toHaveProperty("_related");
   });
 
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
