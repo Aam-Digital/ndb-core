@@ -10,6 +10,11 @@
   inline-size: 120px;
 }
 
+// the entry's gap already separates the hint from the fields above
+.related-records-entry .hint-text {
+  margin-block-start: 0;
+}
+
 .related-records-example {
   user-select: all;
 }
