@@ -79,7 +79,7 @@ test("Admin adds an external link for a record type and users open it from match
     .click();
 
   await expect(
-    form.getByText("Shown only for records matching the condition."),
+    form.getByText("Shown only for records matching a condition on: Name"),
   ).toBeVisible();
   await expect(conditionDialog).toBeHidden();
 
