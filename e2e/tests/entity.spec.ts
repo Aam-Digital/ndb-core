@@ -6,6 +6,7 @@ import {
   expect,
   loadApp,
   readCsvRows,
+  Page,
   selectFilterOption,
   test,
 } from "#e2e/fixtures.js";
@@ -606,16 +607,34 @@ test("Add related entries inline in the tables of a child's details", async ({
 const UNSAVED_CHILD_NAME = "<UNSAVED CHANGES CHILD>";
 const ORIGINAL_PHONE = "1234567890";
 const EDITED_PHONE = "9999999999";
+const DIALOG_INITIAL_SUBJECT = "<DIALOG BUTTONS INITIAL>";
+const DIALOG_EDITED_SUBJECT = "<DIALOG BUTTONS EDITED>";
 
-test("Discard-changes guard: stay on edit then save and leave without prompt", async ({
+test("Unsaved changes are kept or discarded on leaving a form", async ({
   page,
 }) => {
   const users = generateUsers();
+  const [, demoAdmin] = users;
   const child = generateChild({ name: UNSAVED_CHILD_NAME });
   (child as unknown as { phone: string }).phone = ORIGINAL_PHONE;
+  const note = generateNote({
+    child,
+    author: demoAdmin,
+    date: new Date(E2E_REF_DATE),
+  });
+  note.subject = DIALOG_INITIAL_SUBJECT;
 
-  await loadApp(page, [...users, child]);
+  await loadApp(page, [...users, child, note]);
 
+  await test.step("Discard-changes guard: stay on edit then save and leave without prompt", () =>
+    stayOnEditedDetailsPage(page));
+  await test.step("Dialog Cancel discards edits; Dialog Save persists changes", () =>
+    cancelOrSaveDialog(page));
+  await test.step("Closing an untouched new-entity dialog does not prompt discard-changes, but an edited one does", () =>
+    closeNewEntityDialog(page));
+});
+
+async function stayOnEditedDetailsPage(page: Page) {
   // Open the child's details page from the Children list.
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: UNSAVED_CHILD_NAME }).click();
@@ -662,26 +681,9 @@ test("Discard-changes guard: stay on edit then save and leave without prompt", a
 
   // We navigated away from the child details page — the edited phone field is gone.
   await expect(page.locator("#entity-field__phone")).not.toBeVisible();
-});
+}
 
-const DIALOG_INITIAL_SUBJECT = "<DIALOG BUTTONS INITIAL>";
-const DIALOG_EDITED_SUBJECT = "<DIALOG BUTTONS EDITED>";
-
-test("Dialog Cancel discards edits; Dialog Save persists changes", async ({
-  page,
-}) => {
-  const users = generateUsers();
-  const [, demoAdmin] = users;
-  const child = generateChild({ name: "Dialog Buttons Child" });
-  const note = generateNote({
-    child,
-    author: demoAdmin,
-    date: new Date(E2E_REF_DATE),
-  });
-  note.subject = DIALOG_INITIAL_SUBJECT;
-
-  await loadApp(page, [...users, child, note]);
-
+async function cancelOrSaveDialog(page: Page) {
   await page.getByRole("navigation").getByText("Notes").click();
   await page.getByRole("cell", { name: DIALOG_INITIAL_SUBJECT }).click();
 
@@ -729,20 +731,11 @@ test("Dialog Cancel discards edits; Dialog Save persists changes", async ({
   await expect(
     page.getByRole("cell", { name: DIALOG_INITIAL_SUBJECT }),
   ).not.toBeVisible();
-});
+}
 
-const NO_CHANGES_CHILD_NAME = "<NO CHANGES CHILD>";
-
-test("Closing an untouched new-entity dialog does not prompt discard-changes, but an edited one does", async ({
-  page,
-}) => {
-  const users = generateUsers();
-  const child = generateChild({ name: NO_CHANGES_CHILD_NAME });
-
-  await loadApp(page, [...users, child]);
-
+async function closeNewEntityDialog(page: Page) {
   await page.getByRole("navigation").getByText("Children").click();
-  await page.getByRole("cell", { name: NO_CHANGES_CHILD_NAME }).click();
+  await page.getByRole("cell", { name: UNSAVED_CHILD_NAME }).click();
   await page.getByRole("tab", { name: "Education", exact: true }).click();
 
   const schoolHistoryHeaderRow = page
@@ -792,7 +785,7 @@ test("Closing an untouched new-entity dialog does not prompt discard-changes, bu
   await discardDialogContainer.getByRole("button", { name: "No" }).click();
   await expect(discardDialog).not.toBeVisible();
   await expect(dialog).toBeVisible();
-});
+}
 
 test("Display conditions show a single field and a whole field group only while the record matches", async ({
   page,
