@@ -337,12 +337,19 @@ describe("TemplateExportRelatedRecordsService", () => {
       { ...SUB_ACTIONS, property: "title" },
       { _related: { subActions: [] } },
     ],
+    [
+      "a field that does not link to the applicable record types (anymore)",
+      { ...SUB_ACTIONS, property: "owner" },
+      { _related: { subActions: [] } },
+    ],
     ["an invalid placeholder name", { ...SUB_ACTIONS, key: "sub actions" }, {}],
   ])("skips and reports a config with %s", async (_name, config, expected) => {
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     const root = action("Root");
     action("Child", { parent: root.getId() });
-    const exportTemplate = template(config);
+    const exportTemplate = Object.assign(template(config), {
+      applicableForEntityTypes: [Action.ENTITY_TYPE],
+    });
 
     const result = await service.loadRelatedRecords(exportTemplate, [root]);
     await service.loadRelatedRecords(exportTemplate, [root]);

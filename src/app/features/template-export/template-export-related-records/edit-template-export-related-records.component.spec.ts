@@ -58,6 +58,7 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
   let fixture: ComponentFixture<EditTemplateExportRelatedRecordsComponent>;
   let typesControl: FormControl<string[]>;
   let control: FormControl<TemplateExportRelatedRecords[]>;
+  let arrayReportControl: FormControl<boolean>;
 
   function setup(
     applicableTypes: string[],
@@ -65,8 +66,10 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
   ) {
     typesControl = new FormControl(applicableTypes);
     control = new FormControl(value);
+    arrayReportControl = new FormControl(false);
     new FormGroup({
       applicableForEntityTypes: typesControl,
+      arrayReport: arrayReportControl,
       relatedRecords: control,
     });
 
@@ -141,6 +144,29 @@ describe("EditTemplateExportRelatedRecordsComponent", () => {
 
     component.setLevels(0, "1");
     expect(control.value).toEqual([SUB_ACTIONS]);
+
+    // in a "Multi-Record Report", d is the list of the selected records
+    arrayReportControl.setValue(true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain(
+      "{d[i]._related.subActions[i].subject}",
+    );
+  });
+
+  it("drops the levels when selecting related records that do not form a hierarchy", () => {
+    setup(
+      [Action.ENTITY_TYPE, Project.ENTITY_TYPE],
+      [{ ...SUB_ACTIONS, levels: 3 }],
+    );
+
+    component.selectOption(
+      0,
+      PROJECT_ACTIONS.entityType + "::" + PROJECT_ACTIONS.property,
+    );
+
+    expect(control.value).toEqual([
+      { ...PROJECT_ACTIONS, key: SUB_ACTIONS.key },
+    ]);
   });
 
   it("shows the saved levels in the input, also when an entered value is limited to the same value again", () => {

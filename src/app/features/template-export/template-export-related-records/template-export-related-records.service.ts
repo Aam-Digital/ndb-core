@@ -144,6 +144,20 @@ export class TemplateExportRelatedRecordsService {
       return;
     }
 
+    const applicableTypes = template.applicableForEntityTypes ?? [];
+    if (
+      applicableTypes.length > 0 &&
+      !isFieldLinkingToType(linkField, ...applicableTypes)
+    ) {
+      // e.g. the link field was changed to link to other record types after the template was set up
+      this.reportInvalidConfig(
+        template,
+        config,
+        "link field does not link to the applicable record types",
+      );
+      return;
+    }
+
     // a template can apply to several record types, not all of which this field may link to
     parents = parents.filter((parent) =>
       isFieldLinkingToType(linkField, Entity.extractTypeFromId(parent.id)),

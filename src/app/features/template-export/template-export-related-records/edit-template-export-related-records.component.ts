@@ -112,6 +112,11 @@ export class EditTemplateExportRelatedRecordsComponent
   private readonly applicableTypes = signal<string[]>([]);
 
   /**
+   * Whether the template is a "Multi-Record Report", in which `d` is the list of the selected records.
+   */
+  private readonly isArrayReport = signal(false);
+
+  /**
    * The relationships to the applicable record types that can be included.
    */
   readonly options = computed<RelatedRecordsOption[]>(() =>
@@ -154,6 +159,14 @@ export class EditTemplateExportRelatedRecordsComponent
         this.applicableTypes.set(asArray(types ?? []));
         this.formControl.updateValueAndValidity();
       });
+
+    const arrayReportControl = this.formControl?.parent?.get("arrayReport");
+    this.isArrayReport.set(
+      !!(arrayReportControl?.value ?? this.entity()?.["arrayReport"]),
+    );
+    arrayReportControl?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.isArrayReport.set(!!value));
 
     const control = this.formControl;
     if (control) {
@@ -315,13 +328,12 @@ export class EditTemplateExportRelatedRecordsComponent
     }
 
     const field = getExampleField(this.entityRegistry.get(option.entityType));
+    const record = this.isArrayReport() ? "d[i]" : "d";
     const list = `${RELATED_RECORDS_PROPERTY}.${config.key}[i]`;
     return Array.from(
       { length: levels },
       (_, level) =>
-        `{d.${Array(level + 1)
-          .fill(list)
-          .join(".")}.${field}}`,
+        `{${[record, ...Array(level + 1).fill(list)].join(".")}.${field}}`,
     );
   }
 
