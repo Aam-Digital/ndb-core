@@ -44,6 +44,13 @@ markup.
   expensive, so prefer adding a new check as an additional step to an existing
   scenario.
 
+  A scenario seeds the data of all its steps in one `loadApp()` and runs each
+  step as a named function in a `test.step()`, so that the test reads as a list
+  of phases and the report shows which one failed (e.g. `todos.spec.ts`). A step
+  closes the dialogs and full-screen editors it opened (they hide the main
+  navigation), unless the next step continues there, which that step's doc
+  comment then says.
+
 - A new larger feature (a new user flow, not a small change to an existing one) gets an
   e2e scenario for its main path. Keep the number of scenarios and screenshots small: every
   one adds to the run time and to the visual review, so cover the edge cases in unit tests.
