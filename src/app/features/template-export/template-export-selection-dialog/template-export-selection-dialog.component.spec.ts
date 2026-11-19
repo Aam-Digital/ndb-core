@@ -225,6 +225,26 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
+  it("should warn instead of reporting success if related records are missing from the file", async () => {
+    mockTemplateExportApiService.generateFileFromTemplate.mockReturnValue(
+      of({
+        filename: "test.pdf",
+        file: new ArrayBuffer(10),
+        incomplete: true,
+      } as TemplateExportResult),
+    );
+    component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    await component.requestFile();
+
+    expect(mockDownloadService.triggerFileDownload).toHaveBeenCalled();
+    expect(mockAlertService.addWarning).toHaveBeenCalled();
+    expect(mockAlertService.addInfo).not.toHaveBeenCalled();
+  });
+
   it("should generate an editable file in the template's format when the user selects it", async () => {
     const mockResponse: TemplateExportResult = {
       filename: "test.docx",

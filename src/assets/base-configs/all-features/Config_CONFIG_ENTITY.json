@@ -2058,6 +2058,51 @@
       },
       "_id": "view:school/:id"
     },
+    "entity:Todo": {
+      "attributes": {
+        "parentTask": {
+          "label": "Parent task",
+          "description": "The task that this task is a part (sub-task) of.",
+          "dataType": "entity",
+          "additional": "Todo",
+          "showInDetailsView": true
+        }
+      }
+    },
+    "view:todo/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Todo",
+        "panels": [
+          {
+            "title": "Overview",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "subject",
+                        "deadline",
+                        "startDate",
+                        "description",
+                        "assignedTo",
+                        "relatedEntities",
+                        "parentTask",
+                        "repetitionInterval",
+                        "completed"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     "entity:HistoricalEntityData": {
       "label": "Observation",
       "labelPlural": "Observations",
