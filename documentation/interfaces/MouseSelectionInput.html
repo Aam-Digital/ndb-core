@@ -636,6 +636,8 @@ export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
    * the table unselects every record that is not, whoever selected it
    */
   isSelectable: (record: T) &#x3D;&gt; boolean;
+  /** whether &quot;select all&quot; selects a selectable record */
+  isInSelectAll: (record: T) &#x3D;&gt; boolean;
 }
 
 /**
@@ -654,20 +656,27 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
   /** the records that &quot;select all&quot; selects */
   private readonly selectableRows &#x3D; computed(() &#x3D;&gt; {
     if (!this.context) return [];
-    return this.context.filteredRows().filter(this.context.isSelectable);
+    return this.context
+      .filteredRows()
+      .filter(
+        (record) &#x3D;&gt;
+          this.context.isSelectable(record) &amp;&amp;
+          this.context.isInSelectAll(record),
+      );
   });
 
+  /** whether all records of &quot;select all&quot; are selected (the selection may hold others &quot;select all&quot; leaves out) */
   readonly allRowsSelected &#x3D; computed(() &#x3D;&gt; {
-    const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.selectableRows().length;
-    return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
+    const selected &#x3D; new Set(this.context?.selectedRecords() ?? []);
+    const rows &#x3D; this.selectableRows();
+    return rows.length &gt; 0 &amp;&amp; rows.every((record) &#x3D;&gt; selected.has(record));
   });
 
-  readonly selectionIndeterminate &#x3D; computed(() &#x3D;&gt; {
-    const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.selectableRows().length;
-    return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
-  });
+  readonly selectionIndeterminate &#x3D; computed(
+    () &#x3D;&gt;
+      (this.context?.selectedRecords() ?? []).length &gt; 0 &amp;&amp;
+      !this.allRowsSelected(),
+  );
 
   /** Connects component input/model signals to this store. Must be called once from component constructor. */
   connect(context: EntitiesTableSelectionContext&lt;T&gt;) {

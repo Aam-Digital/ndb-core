@@ -221,12 +221,13 @@ row and may draw over the row divider (e.g. lines connecting rows);</li>
 same flex row (e.g. a count next to a title);</li>
 <li><code>cssClass</code>: an extra CSS class for the row;</li>
 <li><code>selectable: false</code>: the row cannot be selected for bulk actions
-(disabled checkbox, skipped by &quot;select all&quot; and Shift-click ranges).</li>
+(disabled checkbox, skipped by &quot;select all&quot; and Shift-click ranges);</li>
+<li><code>inSelectAll: false</code>: &quot;select all&quot; skips the row, but the user can select it,
+and a selection made before keeps it (e.g. a row the data source hides for now).</li>
 </ul>
 <p>The selection never holds a record that is not selectable: one effect of the
 table removes it, however it got there (Shift-click range, the host, or row
-options that changed since, e.g. a row the data source hides), so a bulk
-action never applies to it.</p>
+options that changed since), so a bulk action never applies to it.</p>
 <p>Row options are state of one table, so the data source provides them rather
 than the records (the same record object can be shown in several tables).
 The table calls <code>rowOptionsOf()</code> for every rendered row whenever it checks the

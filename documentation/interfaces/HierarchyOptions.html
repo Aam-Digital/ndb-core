@@ -1,0 +1,765 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  HierarchyOptions&lt;T extends Entity&gt;</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/hierarchy/hierarchy-tree.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#collapsedIds" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">collapsedIds</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#parents" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">parents</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#rootId" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">rootId</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#sort" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">sort</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="collapsedIds"></a>
+                                <span class="name "><b>collapsedIds</b>
+                                    <a href="#collapsedIds">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>collapsedIds:     <code>ReadonlySet&lt;string&gt;</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>ReadonlySet&lt;string&gt;</code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/hierarchy/hierarchy-tree.ts:44</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>ids of the records whose sub-records are hidden</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="parents"></a>
+                                <span class="name "><b>parents</b>
+                                    <a href="#parents">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>parents:         <code><a href="../miscellaneous/typealiases.html#ParentIds" target="_self" >ParentIds</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ParentIds" target="_self" >ParentIds</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/features/hierarchy/hierarchy-tree.ts:34</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>the parent of each record, see <a href="../miscellaneous/functions.html#resolveParentIds">resolveParentIds</a> (with the same <code>rootId</code>)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="rootId"></a>
+                                <span class="name "><b>rootId</b>
+                                    <a href="#rootId">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>rootId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/features/hierarchy/hierarchy-tree.ts:36</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>show only the records below this record (the root itself is not shown)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="sort"></a>
+                                <span class="name "><b>sort</b>
+                                    <a href="#sort">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>sort:         <code><a href="../miscellaneous/typealiases.html#SortValueFns" target="_self" >{ active: string; direction: SortDirection; sortValueFns?: SortValueFns&lt;T&gt; }</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#SortValueFns" target="_self" >{ active: string; direction: SortDirection; sortValueFns?: SortValueFns&lt;T&gt; }</a></code>
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-nested-properties">
+                                        <i>Properties :</i>
+                                        <ul class="index-list">
+                                                <li>
+                                                    <span class="io-nested-property-name"><code>active:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code></span>
+                                                </li>
+                                                <li>
+                                                    <span class="io-nested-property-name"><code>direction:     <code>SortDirection</code>
+</code></span>
+                                                </li>
+                                                <li>
+                                                    <span class="io-nested-property-name"><code>sortValueFns?:         <code><a href="../miscellaneous/typealiases.html#SortValueFns" target="_self" >SortValueFns&lt;T&gt;</a></code>
+</code></span>
+                                                </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/hierarchy/hierarchy-tree.ts:38</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>sort order, applied to each level separately</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import {
+  SortValueFns,
+  tableSort,
+} from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
+import { SortDirection } from &quot;@angular/material/sort&quot;;
+
+/**
+ * Pure helpers to show records of one type as a tree, by a &quot;parent&quot; field linking to another record of the same type.
+ */
+
+/** One visible row of a hierarchy: a record with its position in the tree. */
+export interface HierarchyRow&lt;T extends Entity &#x3D; Entity&gt; {
+  record: T;
+  /** depth in the tree, 0 for the top level */
+  level: number;
+  /** number of direct sub-records shown below this record (when expanded) */
+  childCount: number;
+  /** the record does not match the filters and is only shown as the parent of a match */
+  isContext: boolean;
+  /** the record has sub-records that are currently hidden */
+  isCollapsed: boolean;
+  /** the record is the last of the shown sub-records of its parent (or of the top level) */
+  isLastChild: boolean;
+  /**
+   * For each ancestor below the top level (levels 1 to &#x60;level - 1&#x60;): whether more sub-records of its parent follow it,
+   * i.e. whether the tree continues at that level below this row.
+   */
+  ancestorsContinue: readonly boolean[];
+}
+
+export interface HierarchyOptions&lt;T extends Entity&gt; {
+  /** the parent of each record, see {@link resolveParentIds} (with the same &#x60;rootId&#x60;) */
+  parents: ParentIds;
+  /** show only the records below this record (the root itself is not shown) */
+  rootId?: string;
+  /** sort order, applied to each level separately */
+  sort?: {
+    active: string;
+    direction: SortDirection;
+    sortValueFns?: SortValueFns&lt;T&gt;;
+  };
+  /** ids of the records whose sub-records are hidden */
+  collapsedIds?: ReadonlySet&lt;string&gt;;
+}
+
+/** The rows of a hierarchy, in display order. */
+export interface HierarchyView&lt;T extends Entity &#x3D; Entity&gt; {
+  rows: HierarchyRow&lt;T&gt;[];
+  /** ids of the records that are part of the tree but hidden under a collapsed row */
+  hiddenIds: ReadonlySet&lt;string&gt;;
+  /** ids of the records that have sub-records in the tree (shown or hidden) */
+  expandableIds: ReadonlySet&lt;string&gt;;
+}
+
+/** Parent id of each record in the tree; records at the top level have none. */
+export type ParentIds &#x3D; ReadonlyMap&lt;string, string | undefined&gt;;
+
+/**
+ * Resolve the parent of every record.
+ *
+ * A record is at the top level (without parent) if its parent is missing (deleted, not loaded or not permitted),
+ * if it is its own parent or if it is part of a loop of parents, so that no record is ever hidden.
+ * Records only leading into a loop keep their parent.
+ *
+ * @param rootId a record that is the top of the tree even if it has a parent itself
+ */
+export function resolveParentIds&lt;T extends Entity&gt;(
+  records: readonly T[],
+  parentField: string,
+  rootId?: string,
+): ParentIds {
+  const ids &#x3D; new Set(records.map((record) &#x3D;&gt; record.getId()));
+  const parents &#x3D; new Map&lt;string, string | undefined&gt;();
+  for (const record of records) {
+    const id &#x3D; record.getId();
+    const parentId &#x3D; record[parentField];
+    const isValidParent &#x3D;
+      id !&#x3D;&#x3D; rootId &amp;&amp;
+      typeof parentId &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+      parentId !&#x3D;&#x3D; id &amp;&amp;
+      ids.has(parentId);
+    parents.set(id, isValidParent ? parentId : undefined);
+  }
+
+  // walk up from every record; a walk that returns to a record of its own path found a loop
+  const done &#x3D; new Set&lt;string&gt;();
+  for (const start of parents.keys()) {
+    const path: string[] &#x3D; [];
+    // the position of each record in the path, to find a loop without searching the path
+    const positions &#x3D; new Map&lt;string, number&gt;();
+    let current: string | undefined &#x3D; start;
+    while (current !&#x3D;&#x3D; undefined &amp;&amp; !done.has(current)) {
+      const loopStart &#x3D; positions.get(current);
+      if (loopStart !&#x3D;&#x3D; undefined) {
+        path.slice(loopStart).forEach((id) &#x3D;&gt; parents.set(id, undefined));
+        break;
+      }
+      positions.set(current, path.length);
+      path.push(current);
+      current &#x3D; parents.get(current);
+    }
+    path.forEach((id) &#x3D;&gt; done.add(id));
+  }
+  return parents;
+}
+
+/** Ids of all records below the given record, over all levels. */
+export function descendantIds(
+  parents: ParentIds,
+  rootId: string,
+): ReadonlySet&lt;string&gt; {
+  const children &#x3D; childIdsByParent(parents);
+  const descendants &#x3D; new Set&lt;string&gt;();
+  const queue &#x3D; [...(children.get(rootId) ?? [])];
+  for (let i &#x3D; 0; i &lt; queue.length; i++) {
+    descendants.add(queue[i]);
+    queue.push(...(children.get(queue[i]) ?? []));
+  }
+  return descendants;
+}
+
+function childIdsByParent(parents: ParentIds): Map&lt;string, string[]&gt; {
+  const children &#x3D; new Map&lt;string, string[]&gt;();
+  for (const [id, parentId] of parents) {
+    if (parentId !&#x3D;&#x3D; undefined) {
+      getOrCreate(children, parentId).push(id);
+    }
+  }
+  return children;
+}
+
+function getOrCreate&lt;K, V&gt;(map: Map&lt;K, V[]&gt;, key: K): V[] {
+  let values &#x3D; map.get(key);
+  if (!values) {
+    values &#x3D; [];
+    map.set(key, values);
+  }
+  return values;
+}
+
+/**
+ * Arrange records as a tree, in the order to display them.
+ *
+ * Every matching record is shown below its parents. Parents that do not match themselves
+ * (e.g. filtered out or archived) are shown as context rows (&#x60;isContext&#x60;).
+ * Each level is sorted on its own; sub-records of collapsed records are left out.
+ *
+ * @param allRecords all records of the type, including those not matching (to find the parents)
+ * @param matches the records passing the filters
+ */
+export function buildHierarchyView&lt;T extends Entity&gt;(
+  allRecords: readonly T[],
+  matches: readonly T[],
+  options: HierarchyOptions&lt;T&gt;,
+): HierarchyView&lt;T&gt; {
+  const { parents, rootId, sort, collapsedIds &#x3D; new Set() } &#x3D; options;
+  const byId &#x3D; new Map(allRecords.map((record) &#x3D;&gt; [record.getId(), record]));
+
+  const matchIds &#x3D; new Set&lt;string&gt;();
+  const visible &#x3D; new Map&lt;string, T&gt;();
+  for (const match of matches) {
+    const id &#x3D; match.getId();
+    matchIds.add(id);
+    visible.set(id, match);
+    // add the parents as context, up to the top (or the root);
+    // a parent already shown has all its parents shown, too
+    let parentId &#x3D; parents.get(id);
+    while (
+      parentId !&#x3D;&#x3D; undefined &amp;&amp;
+      parentId !&#x3D;&#x3D; rootId &amp;&amp;
+      !visible.has(parentId)
+    ) {
+      visible.set(parentId, byId.get(parentId)!);
+      parentId &#x3D; parents.get(parentId);
+    }
+  }
+
+  const children &#x3D; new Map&lt;string | undefined, T[]&gt;();
+  for (const [id, record] of visible) {
+    getOrCreate(children, parents.get(id)).push(record);
+  }
+  for (const siblings of children.values()) {
+    sortLevel(siblings, sort);
+  }
+
+  const rows: HierarchyRow&lt;T&gt;[] &#x3D; [];
+  const hiddenIds &#x3D; new Set&lt;string&gt;();
+  const expandableIds &#x3D; new Set&lt;string&gt;();
+  const addRows &#x3D; (
+    records: T[],
+    level: number,
+    hidden: boolean,
+    ancestorsContinue: readonly boolean[],
+  ) &#x3D;&gt; {
+    for (const [index, record] of records.entries()) {
+      const id &#x3D; record.getId();
+      const subRecords &#x3D; children.get(id) ?? [];
+      if (subRecords.length &gt; 0) {
+        expandableIds.add(id);
+      }
+      const isCollapsed &#x3D; subRecords.length &gt; 0 &amp;&amp; collapsedIds.has(id);
+      const isLastChild &#x3D; index &#x3D;&#x3D;&#x3D; records.length - 1;
+      if (hidden) {
+        hiddenIds.add(id);
+      } else {
+        rows.push({
+          record,
+          level,
+          childCount: subRecords.length,
+          isContext: !matchIds.has(id),
+          isCollapsed,
+          isLastChild,
+          ancestorsContinue,
+        });
+      }
+      // the top level has no line connecting its records
+      const continues &#x3D; level &gt; 0 ? [...ancestorsContinue, !isLastChild] : [];
+      addRows(subRecords, level + 1, hidden || isCollapsed, continues);
+    }
+  };
+  addRows(children.get(rootId) ?? [], 0, false, []);
+
+  return { rows, hiddenIds, expandableIds };
+}
+
+/** Sort the records of one level in place, with the same rules as a flat table. */
+function sortLevel&lt;T extends Entity&gt;(
+  records: T[],
+  sort: HierarchyOptions&lt;T&gt;[&quot;sort&quot;],
+) {
+  if (!sort) {
+    return;
+  }
+  tableSort&lt;T, keyof T&gt;(records, {
+    active: sort.active as keyof T,
+    direction: sort.direction,
+    sortValueFns: sort.sortValueFns,
+  });
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'HierarchyOptions.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

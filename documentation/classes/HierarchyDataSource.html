@@ -1,0 +1,2776 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >HierarchyDataSource&lt;T extends Entity&gt;</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/hierarchy/hierarchy-data-source.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Shows the records of a list indented below their parent records.</p>
+<ul>
+<li>In a list, the hierarchy fields come from the <code>hierarchyFields</code> option
+and the user chooses one of them (or none) through a toolbar control.</li>
+<li>In a related-entities section of a record of the same type, the relation <code>property</code>
+is the hierarchy field and the section shows all records below the page&#39;s record.</li>
+</ul>
+<p>Without a valid hierarchy field this works like the <a href="../classes/InMemoryDataSource.html">InMemoryDataSource</a>.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource&lt;T&gt;</a></code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource&lt;T&gt;</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#activeField" >activeField</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#anyExpanded" >anyExpanded</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#collapsedIds" >collapsedIds</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#DATA_SOURCE_NAME" >DATA_SOURCE_NAME</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasSubRecords" >hasSubRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hierarchyFields" >hierarchyFields</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#rootRecord" >rootRecord</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#rows" >rows</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#toolbarControls" >toolbarControls</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#usesPagination" >usesPagination</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#freeTextFilterControl" >freeTextFilterControl</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                <a href="#sortData" >sortData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#allRecords" >allRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#dataFilter" >dataFilter</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#effectiveSort" >effectiveSort</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#entityMapper" >entityMapper</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#filteredRecords" >filteredRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#isLoading" >isLoading</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#loadGeneration" >loadGeneration</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#loadRecordConfig" >loadRecordConfig</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#renderedRows" >renderedRows</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#searchText" >searchText</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#_orderData" >_orderData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#collapseAll" >collapseAll</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#expandAll" >expandAll</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                <a href="#getFilterPredicate" >getFilterPredicate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadRecords" >loadRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#processEntityUpdate" >processEntityUpdate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#rowOptionsOf" >rowOptionsOf</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#selectField" >selectField</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#toggleCollapsed" >toggleCollapsed</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#filterRecords" >filterRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllData" >getAllData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#listenToEntityUpdates" >listenToEntityUpdates</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#setRecords" >setRecords</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="221" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:221</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="activeField"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>activeField</b></span>
+                        <a href="#activeField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>linkedSignal&lt;string | undefined&gt;(() &#x3D;&gt; {
+    const fields &#x3D; this.hierarchyFields();
+    if (this.rootRecord()) {
+      return fields[0];
+    }
+    const fromUrl &#x3D; this.urlChoice();
+    if (fromUrl &#x3D;&#x3D;&#x3D; NO_HIERARCHY) {
+      return undefined;
+    }
+    return fields.includes(fromUrl) ? fromUrl : fields[0];
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:95</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The field the records are currently arranged by (none: a flat list).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="anyExpanded"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>anyExpanded</b></span>
+                        <a href="#anyExpanded"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt;
+      this.view()?.rows.some((row) &#x3D;&gt; row.childCount &gt; 0 &amp;&amp; !row.isCollapsed) ??
+      false,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="154" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:154</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether any visible record with sub-records is expanded (not those hidden under a collapsed row).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="collapsedIds"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>collapsedIds</b></span>
+                        <a href="#collapsedIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;ReadonlySet&lt;string&gt;&gt;(new Set())</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:108</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Records whose sub-records are hidden. Not remembered, the tree opens fully expanded.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DATA_SOURCE_NAME"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>DATA_SOURCE_NAME</b></span>
+                        <a href="#DATA_SOURCE_NAME"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;hierarchy&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasSubRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasSubRecords</b></span>
+                        <a href="#hasSubRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; (this.view()?.expandableIds.size ?? 0) &gt; 0,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="161" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:161</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether any shown record has sub-records, so that there is something to collapse or expand.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hierarchyFields"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hierarchyFields</b></span>
+                        <a href="#hierarchyFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;string[]&gt;(() &#x3D;&gt; {
+    if (this.rootRecord()) {
+      return [this.loadRecordConfig().relationProperty as string];
+    }
+    const { hierarchyFields } &#x3D; this.config() as HierarchyDataSourceConfig;
+    return Array.isArray(hierarchyFields)
+      ? hierarchyFields.filter((field) &#x3D;&gt; this.isValidField(field))
+      : [];
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:81</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The valid hierarchy fields, in the configured order.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rootRecord"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>rootRecord</b></span>
+                        <a href="#rootRecord"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;Entity | undefined&gt;(() &#x3D;&gt; {
+    const config &#x3D; this.loadRecordConfig();
+    const root &#x3D; config?.forEntity;
+    if (!root || !config.entityCtr) {
+      return undefined;
+    }
+    const isOwnType &#x3D; root.getType() &#x3D;&#x3D;&#x3D; config.entityCtr.ENTITY_TYPE;
+    return isOwnType &amp;&amp; this.isValidField(config.relationProperty)
+      ? root
+      : undefined;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:68</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The record whose sub-records are shown, in a section of its details page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>rows</b></span>
+                        <a href="#rows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/HierarchyRow.html" target="_self" >Signal&lt;ReadonlyMap&lt;string, HierarchyRow&lt;T&gt;&gt;&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt;
+      new Map(this.view()?.rows.map((row) &#x3D;&gt; [row.record.getId(), row]) ?? []),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="148" class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:148</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The tree position of each displayed record, by id.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toolbarControls"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>toolbarControls</b></span>
+                        <a href="#toolbarControls"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.hierarchyFields().length &gt; 0 &amp;&amp; !this.rootRecord()
+      ? [this.freeTextFilterControl, this.hierarchyControl]
+      : [this.freeTextFilterControl],
+  )</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:199</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="usesPagination"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>usesPagination</b></span>
+                        <a href="#usesPagination"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; !this.activeField())</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:165</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="freeTextFilterControl"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>freeTextFilterControl</b></span>
+                        <a href="#freeTextFilterControl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >DynamicComponentConfig</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    component: &quot;FreeTextFilter&quot;,
+    config: { dataSource: this },
+  }</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/InMemoryDataSource.html#source" target="_self" >InMemoryDataSource:28</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>the &quot;Filter&quot; field to enter the <a href="searchText">searchText</a>, for subclasses that offer further toolbar controls</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>sortData</b></span>
+                        <a href="#sortData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/InMemoryDataSource.html#source" target="_self" >InMemoryDataSource:37</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allRecords"></a>
+                    <span class="name">
+                        <span ><b>allRecords</b></span>
+                        <a href="#allRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:101</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>All loaded records (only filled by data sources that hold all records in memory).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="config"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>config</b></span>
+                        <a href="#config"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Readonly&lt;Record&lt;string, unknown&gt;&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:131</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Options for this data source from the list or section config
+(the <code>config</code> of a <code>dataSource: { name, config }</code> entry), set by <code>resolveDataSource</code>.
+Data sources of feature modules read their own options from it; core data sources have none.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dataFilter"></a>
+                    <span class="name">
+                        <span ><b>dataFilter</b></span>
+                        <a href="#dataFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;DataFilter&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:93</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="effectiveSort"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>effectiveSort</b></span>
+                        <a href="#effectiveSort"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Sort | undefined&gt;(undefined)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:99</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The sort that the table applies (set by the table), as a signal:
+for data sources that arrange the rows themselves (the <code>sort</code> of the table only offers events).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityMapper"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>entityMapper</b></span>
+                        <a href="#entityMapper"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(EntityMapperService)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:86</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filteredRecords"></a>
+                    <span class="name">
+                        <span ><b>filteredRecords</b></span>
+                        <a href="#filteredRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:108</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records passing all filters (including the free-text <a href="searchText">searchText</a>), across all pages,
+in the order they were loaded (with server-side paging only the pages loaded so far, see <a href="getAllData">getAllData</a>).
+They are the input data of the table:
+sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isLoading"></a>
+                    <span class="name">
+                        <span ><b>isLoading</b></span>
+                        <a href="#isLoading"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:115</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadGeneration"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>loadGeneration</b></span>
+                        <a href="#loadGeneration"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:192</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Incremented whenever a new configuration triggers loading of new data.
+This allows stale requests to be detected.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecordConfig"></a>
+                    <span class="name">
+                        <span ><b>loadRecordConfig</b></span>
+                        <a href="#loadRecordConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:114</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="renderedRows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>renderedRows</b></span>
+                        <a href="#renderedRows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>toSignal(this.connect(), { requireSync: true })</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:113</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records as currently rendered by the table:
+filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchText"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>searchText</b></span>
+                        <a href="#searchText"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:122</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Free-text search for the records.
+Only data sources that support it apply it (see <a href="toolbarControls">toolbarControls</a> for the field to enter it);
+&quot;Clear filters&quot; resets it.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortValueFns"></a>
+                    <span class="name">
+                        <span ><b>sortValueFns</b></span>
+                        <a href="#sortValueFns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;SortValueFns&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:94</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="_orderData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>_orderData</b></span>
+                        <a href="#_orderData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>_orderData(data: T[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="274"
+                                    class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:274</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The records in tree order, or sorted as a flat list without a hierarchy field.
+Called by the table&#39;s pipeline instead of sorting a flat list.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                        <code>T[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="collapseAll"></a>
+                    <span class="name">
+                        <span ><b>collapseAll</b></span>
+                        <a href="#collapseAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>collapseAll()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="266"
+                                    class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:266</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="expandAll"></a>
+                    <span class="name">
+                        <span ><b>expandAll</b></span>
+                        <a href="#expandAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>expandAll()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:260</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFilterPredicate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                        <span ><b>getFilterPredicate</b></span>
+                        <a href="#getFilterPredicate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getFilterPredicate(filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/InMemoryDataSource.html#source" target="_self" >InMemoryDataSource:284</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>In a section, the condition linking the records to the page&#39;s record only covers its direct sub-records:
+all records of the branch below it match instead.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadRecords</b></span>
+                        <a href="#loadRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadRecords()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:302</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>also after a bulk operation, as the list then reloads instead of processing each update</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="processEntityUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>processEntityUpdate</b></span>
+                        <a href="#processEntityUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>processEntityUpdate(update: <a href="../interfaces/UpdatedEntity.html" target="_self">UpdatedEntity&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:297</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>update</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UpdatedEntity.html" target="_self" >UpdatedEntity&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rowOptionsOf"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>rowOptionsOf</b></span>
+                        <a href="#rowOptionsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>rowOptionsOf(record: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:191</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>record</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/RowOptions.html" target="_self" >RowOptions | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectField"></a>
+                    <span class="name">
+                        <span ><b>selectField</b></span>
+                        <a href="#selectField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectField(field: string | undefined)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:241</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Arrange the records by another field (or none), as chosen by the user.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                        <code>string | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleCollapsed"></a>
+                    <span class="name">
+                        <span ><b>toggleCollapsed</b></span>
+                        <a href="#toggleCollapsed"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleCollapsed(recordId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="250"
+                                    class="link-to-prism">src/app/features/hierarchy/hierarchy-data-source.ts:250</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>recordId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filterRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>filterRecords</b></span>
+                        <a href="#filterRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>filterRecords()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classess/InMemoryDataSource.html" target="_self" >InMemoryDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classess/InMemoryDataSource.html#source" target="_self" >InMemoryDataSource:53</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The records passing the filters and the free-text search.
+The <a href="filteredRecords">filteredRecords</a> are updated with them whenever a signal read here changes.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T[]</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllData</b></span>
+                        <a href="#getAllData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllData(filtered: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:76</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filtered</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="listenToEntityUpdates"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>listenToEntityUpdates</b></span>
+                        <a href="#listenToEntityUpdates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>listenToEntityUpdates()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:295</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>setRecords</b></span>
+                        <a href="#setRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setRecords()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:205</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Request a (re)load of the records for the current config/filter/sort/page.</p>
+<p>All the triggers that fire while a view initializes are debounced into a
+single request, so opening a list does not send several redundant DB
+requests (and the request already uses the fully resolved filter/sort/page).
+<a href="isLoading">isLoading</a> is set immediately so the table can show a progress
+indicator until the load finishes.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>a promise that resolves once the resulting load has completed.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  computed,
+  effect,
+  inject,
+  linkedSignal,
+  Signal,
+  signal,
+  untracked,
+} from &quot;@angular/core&quot;;
+import { InMemoryDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/in-memory-data-source&quot;;
+import { RowOptions } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
+import { DynamicComponentConfig } from &quot;#src/app/core/config/dynamic-components/dynamic-component-config.interface&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { UpdatedEntity } from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { UrlStateService } from &quot;#src/app/utils/url-state/url-state.service&quot;;
+import { isHierarchyField } from &quot;./hierarchy-fields&quot;;
+import {
+  buildHierarchyView,
+  descendantIds,
+  HierarchyRow,
+  HierarchyView,
+  ParentIds,
+  resolveParentIds,
+} from &quot;./hierarchy-tree&quot;;
+
+/** Options of the hierarchy data source in a list config: &#x60;&quot;dataSource&quot;: { &quot;name&quot;: &quot;hierarchy&quot;, &quot;config&quot;: { ... } }&#x60; */
+export type HierarchyDataSourceConfig &#x3D; {
+  /**
+   * The fields that users can display the hierarchy by, the first one is the default.
+   * Only links to one record of the same type are used, other fields are ignored.
+   */
+  hierarchyFields?: string[];
+};
+
+/** URL query param holding the user&#x27;s choice of the hierarchy field in a list */
+export const HIERARCHY_URL_PARAM &#x3D; &quot;_hierarchy&quot;;
+/**
+ * value of {@link HIERARCHY_URL_PARAM} for the flat list,
+ * starting with &quot;_&quot; so that it cannot be the id of a field (see {@link UrlStateService})
+ */
+export const NO_HIERARCHY &#x3D; &quot;_flat&quot;;
+/** CSS class of rows that are only shown as the parent of a matching record */
+export const CONTEXT_ROW_CLASS &#x3D; &quot;hierarchy-context-row&quot;;
+/** CSS class of rows at the top level, each starting a branch of the tree */
+export const TOP_ROW_CLASS &#x3D; &quot;hierarchy-top-row&quot;;
+/** CSS class of rows with sub-records */
+export const PARENT_ROW_CLASS &#x3D; &quot;hierarchy-parent-row&quot;;
+
+/**
+ * Shows the records of a list indented below their parent records.
+ *
+ * - In a list, the hierarchy fields come from the &#x60;hierarchyFields&#x60; option
+ *   and the user chooses one of them (or none) through a toolbar control.
+ * - In a related-entities section of a record of the same type, the relation &#x60;property&#x60;
+ *   is the hierarchy field and the section shows all records below the page&#x27;s record.
+ *
+ * Without a valid hierarchy field this works like the {@link InMemoryDataSource}.
+ */
+export class HierarchyDataSource&lt;
+  T extends Entity,
+&gt; extends InMemoryDataSource&lt;T&gt; {
+  static readonly DATA_SOURCE_NAME &#x3D; &quot;hierarchy&quot;;
+
+  private readonly urlState &#x3D; inject(UrlStateService);
+
+  /** The record whose sub-records are shown, in a section of its details page. */
+  readonly rootRecord &#x3D; computed&lt;Entity | undefined&gt;(() &#x3D;&gt; {
+    const config &#x3D; this.loadRecordConfig();
+    const root &#x3D; config?.forEntity;
+    if (!root || !config.entityCtr) {
+      return undefined;
+    }
+    const isOwnType &#x3D; root.getType() &#x3D;&#x3D;&#x3D; config.entityCtr.ENTITY_TYPE;
+    return isOwnType &amp;&amp; this.isValidField(config.relationProperty)
+      ? root
+      : undefined;
+  });
+
+  /** The valid hierarchy fields, in the configured order. */
+  readonly hierarchyFields &#x3D; computed&lt;string[]&gt;(() &#x3D;&gt; {
+    if (this.rootRecord()) {
+      return [this.loadRecordConfig().relationProperty as string];
+    }
+    const { hierarchyFields } &#x3D; this.config() as HierarchyDataSourceConfig;
+    return Array.isArray(hierarchyFields)
+      ? hierarchyFields.filter((field) &#x3D;&gt; this.isValidField(field))
+      : [];
+  });
+
+  /** the user&#x27;s choice in the URL, following the browser&#x27;s Back and Forward */
+  private readonly urlChoice &#x3D; this.urlState.watchUrlParam(HIERARCHY_URL_PARAM);
+
+  /** The field the records are currently arranged by (none: a flat list). */
+  readonly activeField &#x3D; linkedSignal&lt;string | undefined&gt;(() &#x3D;&gt; {
+    const fields &#x3D; this.hierarchyFields();
+    if (this.rootRecord()) {
+      return fields[0];
+    }
+    const fromUrl &#x3D; this.urlChoice();
+    if (fromUrl &#x3D;&#x3D;&#x3D; NO_HIERARCHY) {
+      return undefined;
+    }
+    return fields.includes(fromUrl) ? fromUrl : fields[0];
+  });
+
+  /** Records whose sub-records are hidden. Not remembered, the tree opens fully expanded. */
+  readonly collapsedIds &#x3D; signal&lt;ReadonlySet&lt;string&gt;&gt;(new Set());
+
+  /** The parent of each record by the active field (none for a flat list). */
+  private readonly parentIds &#x3D; computed&lt;ParentIds | undefined&gt;(() &#x3D;&gt; {
+    const field &#x3D; this.activeField();
+    return field
+      ? resolveParentIds(this.allRecords(), field, this.rootRecord()?.getId())
+      : undefined;
+  });
+
+  /**
+   * The filtered records arranged as a tree, each level sorted on its own
+   * (none for a flat list). The table shows its rows, see {@link _orderData}.
+   */
+  private readonly view &#x3D; computed&lt;HierarchyView&lt;T&gt; | undefined&gt;(() &#x3D;&gt; {
+    const parents &#x3D; this.parentIds();
+    if (!parents) {
+      return undefined;
+    }
+    const sort &#x3D; this.effectiveSort();
+    return buildHierarchyView(this.allRecords(), this.filteredRecords(), {
+      parents,
+      rootId: this.rootRecord()?.getId(),
+      sort: sort
+        ? {
+            active: sort.active ?? &quot;&quot;,
+            direction: sort.direction,
+            sortValueFns: this.sortValueFns(),
+          }
+        : undefined,
+      collapsedIds: this.collapsedIds(),
+    });
+  });
+
+  /** The records in the order of the {@link view}, kept as one array for the table. */
+  private readonly viewOrder &#x3D; computed(() &#x3D;&gt;
+    this.view()?.rows.map((row) &#x3D;&gt; row.record),
+  );
+
+  /** The tree position of each displayed record, by id. */
+  readonly rows: Signal&lt;ReadonlyMap&lt;string, HierarchyRow&lt;T&gt;&gt;&gt; &#x3D; computed(
+    () &#x3D;&gt;
+      new Map(this.view()?.rows.map((row) &#x3D;&gt; [row.record.getId(), row]) ?? []),
+  );
+
+  /** Whether any visible record with sub-records is expanded (not those hidden under a collapsed row). */
+  readonly anyExpanded &#x3D; computed(
+    () &#x3D;&gt;
+      this.view()?.rows.some((row) &#x3D;&gt; row.childCount &gt; 0 &amp;&amp; !row.isCollapsed) ??
+      false,
+  );
+
+  /** Whether any shown record has sub-records, so that there is something to collapse or expand. */
+  readonly hasSubRecords &#x3D; computed(
+    () &#x3D;&gt; (this.view()?.expandableIds.size ?? 0) &gt; 0,
+  );
+
+  override readonly usesPagination &#x3D; computed(() &#x3D;&gt; !this.activeField());
+
+  /** the row options by record id: a live update replaces the record object, the row keeps its options */
+  private readonly rowOptionsById: Signal&lt;ReadonlyMap&lt;string, RowOptions&gt;&gt; &#x3D;
+    computed(() &#x3D;&gt; {
+      const view &#x3D; this.view();
+      const optionsById &#x3D; new Map&lt;string, RowOptions&gt;();
+      for (const row of view?.rows ?? []) {
+        const id &#x3D; row.record.getId();
+        const { treeCell, childCount } &#x3D; this.cellConfigs(id);
+        optionsById.set(id, {
+          prefix: treeCell,
+          // after the title: &quot;Village meetings (3)&quot;
+          suffix: row.isCollapsed ? childCount : undefined,
+          cssClass: rowClasses(row),
+          selectable: !row.isContext,
+        });
+      }
+      // &quot;select all&quot; leaves out records hidden under a collapsed row,
+      // but collapsing a row keeps those already selected
+      for (const id of view?.hiddenIds ?? []) {
+        optionsById.set(id, { inSelectAll: false });
+      }
+      return optionsById;
+    });
+
+  override rowOptionsOf(record: T): RowOptions | undefined {
+    return this.rowOptionsById().get(record.getId());
+  }
+
+  private readonly hierarchyControl: DynamicComponentConfig &#x3D; {
+    component: &quot;HierarchyToolbar&quot;,
+    config: { dataSource: this },
+  };
+  override readonly toolbarControls &#x3D; computed(() &#x3D;&gt;
+    this.hierarchyFields().length &gt; 0 &amp;&amp; !this.rootRecord()
+      ? [this.freeTextFilterControl, this.hierarchyControl]
+      : [this.freeTextFilterControl],
+  );
+
+  /** the prefix and suffix configs by record id, kept stable so that rows do not reload their components */
+  private readonly cellConfigsById &#x3D; new Map&lt;string, CellConfigs&gt;();
+
+  /** All records below the root record (only in a section). */
+  private readonly branchIds &#x3D; computed&lt;ReadonlySet&lt;string&gt; | undefined&gt;(() &#x3D;&gt; {
+    const root &#x3D; this.rootRecord();
+    const parents &#x3D; this.parentIds();
+    if (!root || !parents) {
+      return undefined;
+    }
+    return descendantIds(parents, root.getId());
+  });
+
+  /** filters and search text, to notice when they change */
+  private readonly filterState &#x3D; computed(() &#x3D;&gt;
+    JSON.stringify([this.dataFilter(), this.searchText().trim()]),
+  );
+
+  constructor() {
+    super();
+
+    effect(() &#x3D;&gt; {
+      // a changed filter shows all its matches, at every level,
+      // and another field (also through the browser&#x27;s Back and Forward) starts fully expanded
+      this.filterState();
+      this.activeField();
+      untracked(() &#x3D;&gt; this.expandAll());
+    });
+    effect(() &#x3D;&gt; {
+      // show the new order (the table&#x27;s pipeline does not know signals)
+      this.viewOrder();
+      untracked(() &#x3D;&gt; (this.data &#x3D; this.data));
+    });
+  }
+
+  /** Arrange the records by another field (or none), as chosen by the user. */
+  selectField(field: string | undefined) {
+    this.activeField.set(field);
+    const isDefault &#x3D; field &#x3D;&#x3D;&#x3D; this.hierarchyFields()[0];
+    this.urlState.updateUrlParams(
+      { [HIERARCHY_URL_PARAM]: isDefault ? null : (field ?? NO_HIERARCHY) },
+      false,
+    );
+  }
+
+  toggleCollapsed(recordId: string) {
+    this.collapsedIds.update((collapsed) &#x3D;&gt; {
+      const next &#x3D; new Set(collapsed);
+      if (!next.delete(recordId)) {
+        next.add(recordId);
+      }
+      return next;
+    });
+  }
+
+  expandAll() {
+    if (this.collapsedIds().size &gt; 0) {
+      this.collapsedIds.set(new Set());
+    }
+  }
+
+  collapseAll() {
+    this.collapsedIds.set(new Set(this.view()?.expandableIds ?? []));
+  }
+
+  /**
+   * The records in tree order, or sorted as a flat list without a hierarchy field.
+   * Called by the table&#x27;s pipeline instead of sorting a flat list.
+   */
+  override _orderData(data: T[]): T[] {
+    // undefined while the base class subscribes its pipeline during construction
+    const order &#x3D; this.viewOrder &amp;&amp; untracked(this.viewOrder);
+    return order ?? super._orderData(data);
+  }
+
+  /**
+   * In a section, the condition linking the records to the page&#x27;s record only covers its direct sub-records:
+   * all records of the branch below it match instead.
+   */
+  protected override getFilterPredicate(
+    filter: DataFilter&lt;T&gt;,
+  ): (record: T) &#x3D;&gt; boolean {
+    const branch &#x3D; this.branchIds();
+    if (!branch) {
+      return super.getFilterPredicate(filter);
+    }
+    const predicate &#x3D; super.getFilterPredicate(
+      withoutCondition(filter, this.activeField()!, this.rootRecord()!.getId()),
+    );
+    return (record) &#x3D;&gt; branch.has(record.getId()) &amp;&amp; predicate(record);
+  }
+
+  protected override async processEntityUpdate(update: UpdatedEntity&lt;T&gt;) {
+    await this.revealNewlyHidden(() &#x3D;&gt; super.processEntityUpdate(update));
+  }
+
+  /** also after a bulk operation, as the list then reloads instead of processing each update */
+  protected override async loadRecords() {
+    await this.revealNewlyHidden(() &#x3D;&gt; super.loadRecords());
+  }
+
+  /**
+   * Apply a change of the records and show the new or moved records it puts under a collapsed row,
+   * by expanding their parents.
+   * This compares the hidden records of the tree, not the values of the records:
+   * a form may have changed the record object held in the list already.
+   */
+  private async revealNewlyHidden(change: () &#x3D;&gt; Promise&lt;unknown&gt;) {
+    const hiddenBefore &#x3D; this.view()?.hiddenIds ?? new Set&lt;string&gt;();
+    await change();
+    // the filters would apply the change only later (in an effect), the tree needs it now
+    untracked(() &#x3D;&gt; this.filteredRecords.set(this.filterRecords()));
+    const newlyHidden &#x3D; [...(this.view()?.hiddenIds ?? [])].filter(
+      (id) &#x3D;&gt; !hiddenBefore.has(id),
+    );
+    if (newlyHidden.length &gt; 0) {
+      this.expandParentsOf(newlyHidden);
+    }
+  }
+
+  private expandParentsOf(recordIds: string[]) {
+    const parents &#x3D; this.parentIds();
+    if (!parents) {
+      return;
+    }
+    const next &#x3D; new Set(this.collapsedIds());
+    for (const recordId of recordIds) {
+      for (let id &#x3D; parents.get(recordId); id; id &#x3D; parents.get(id)) {
+        next.delete(id);
+      }
+    }
+    this.collapsedIds.set(next);
+  }
+
+  private isValidField(field: unknown): field is string {
+    return (
+      typeof field &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+      isHierarchyField(this.loadRecordConfig()?.entityCtr, field)
+    );
+  }
+
+  private cellConfigs(recordId: string): CellConfigs {
+    let configs &#x3D; this.cellConfigsById.get(recordId);
+    if (!configs) {
+      const config &#x3D; { dataSource: this, recordId };
+      configs &#x3D; {
+        treeCell: { component: &quot;HierarchyTreeCell&quot;, config },
+        childCount: { component: &quot;HierarchyChildCount&quot;, config },
+      };
+      this.cellConfigsById.set(recordId, configs);
+    }
+    return configs;
+  }
+}
+
+/** The components shown in the first cell of a row, before and after the title. */
+interface CellConfigs {
+  treeCell: DynamicComponentConfig;
+  childCount: DynamicComponentConfig;
+}
+
+/** The CSS classes of a row, styled globally (&#x60;_hierarchy-rows.scss&#x60;) as rows belong to the table. */
+function rowClasses(row: HierarchyRow): string | undefined {
+  const classes &#x3D; [
+    row.isContext &amp;&amp; CONTEXT_ROW_CLASS,
+    row.level &#x3D;&#x3D;&#x3D; 0 &amp;&amp; TOP_ROW_CLASS,
+    row.childCount &gt; 0 &amp;&amp; PARENT_ROW_CLASS,
+  ].filter(Boolean);
+  return classes.length &gt; 0 ? classes.join(&quot; &quot;) : undefined;
+}
+
+/**
+ * The filter without the condition &#x60;{ [key]: value }&#x60;,
+ * also inside &#x60;$and&#x60; (e.g. combined with the restriction to records that are not archived).
+ */
+export function withoutCondition&lt;T&gt;(
+  filter: DataFilter&lt;T&gt;,
+  key: string,
+  value: unknown,
+): DataFilter&lt;T&gt; {
+  const result: DataFilter&lt;T&gt; &#x3D; {};
+  for (const [k, v] of Object.entries(filter ?? {})) {
+    if (k &#x3D;&#x3D;&#x3D; key &amp;&amp; v &#x3D;&#x3D;&#x3D; value) {
+      continue;
+    }
+    result[k] &#x3D;
+      k &#x3D;&#x3D;&#x3D; &quot;$and&quot; &amp;&amp; Array.isArray(v)
+        ? v
+            .map((condition) &#x3D;&gt; withoutCondition(condition, key, value))
+            .filter((condition) &#x3D;&gt; Object.keys(condition).length &gt; 0)
+        : v;
+  }
+  return result;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'HierarchyDataSource.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

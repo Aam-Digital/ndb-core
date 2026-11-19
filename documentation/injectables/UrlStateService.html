@@ -210,6 +210,10 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateUrlParams" >updateUrlParams</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#watchUrlParam" >watchUrlParam</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -248,8 +252,8 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="89"
-                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:89</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -287,8 +291,8 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -356,8 +360,8 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="97"
-                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:97</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:114</a></div>
                         </td>
                     </tr>
 
@@ -444,8 +448,8 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="24"
-                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:24</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="26"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:26</a></div>
                         </td>
                     </tr>
 
@@ -511,6 +515,77 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="watchUrlParam"></a>
+                    <span class="name">
+                        <span ><b>watchUrlParam</b></span>
+                        <a href="#watchUrlParam"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>watchUrlParam(key: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="93"
+                                    class="link-to-prism">src/app/utils/url-state/url-state.service.ts:93</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A query param value from the URL that follows changes of the URL,
+e.g. when the user goes back or forward in the browser history.
+Call this in an injection context: it stops following the URL when that context is destroyed.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>key</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Signal&lt;string | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 
@@ -518,8 +593,10 @@ Only the built-in <code>_id</code> and <code>_rev</code> start with &quot;_&quot
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject, Signal } from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { ActivatedRoute, Router } from &quot;@angular/router&quot;;
+import { distinctUntilChanged, map } from &quot;rxjs&quot;;
 
 /**
  * Service to persist and restore view state (filters, sort, selected tab, ...) via URL query params.
@@ -601,6 +678,21 @@ export class UrlStateService {
    */
   getUrlParam(key: string): string | null {
     return this.route.snapshot.queryParamMap.get(key);
+  }
+
+  /**
+   * A query param value from the URL that follows changes of the URL,
+   * e.g. when the user goes back or forward in the browser history.
+   * Call this in an injection context: it stops following the URL when that context is destroyed.
+   */
+  watchUrlParam(key: string): Signal&lt;string | null&gt; {
+    return toSignal(
+      this.route.queryParamMap.pipe(
+        map((params) &#x3D;&gt; params.get(key)),
+        distinctUntilChanged(),
+      ),
+      { initialValue: this.getUrlParam(key) },
+    );
   }
 
   /**

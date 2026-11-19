@@ -1,0 +1,298 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Feature Module: Hierarchy</h1>
+<p>Shows the records of a list indented below their parent records, e.g. actions and their sub-actions
+of a project plan (issue #2634). The parent is a field of the record type that links to
+<strong>one</strong> other record of the <strong>same</strong> type (&quot;hierarchy field&quot;).</p>
+<p>The feature plugs into the entities table through the generic extension points of its data sources
+(see <a href="../../core/common-components/entities-table/README.md">entities-table README</a>), core has no hierarchy code.</p>
+<h2>Behaviour</h2>
+<ul>
+<li>Every level is indented and sorted on its own (by the sorted column, with the same rules as a flat list).
+The list has no pages.</li>
+<li>Lines connect each record to its parent and its siblings, like a tree of files and folders.
+Each top-level record starts a block: its row has a very light background (grey 50)
+and, except for the first, a separator line (2px, grey 400) and a little extra space above it,
+and the titles of records with sub-records are in medium weight (500).</li>
+<li>Rows with sub-records can be collapsed; a collapsed row shows its number of direct sub-records after its title, e.g. &quot;Village meetings (3)&quot;.
+Collapsed rows are not remembered: the list opens fully expanded, and a change of the filters
+or the search text expands everything again. A new or moved record expands its parents,
+also after a bulk operation or an import (the list then reloads instead of processing each update).</li>
+<li>Filters and the &quot;Filter&quot; search apply on every level. Parents of a match that do not match themselves
+(filtered out, or archived while archived records are hidden) are shown greyed as context rows.
+Context rows cannot be selected and are not downloaded; &quot;select all&quot; also leaves out
+records hidden under a collapsed row (collapsing a row keeps those already selected).
+&quot;Collapse all&quot; / &quot;Expand all&quot; is shown only while some shown record has sub-records.</li>
+<li>A missing parent (deleted, not permitted, not loaded) or a loop of parents puts the record at the top level.</li>
+<li>Without a valid hierarchy field the data source works exactly like the in-memory data source (flat, with pages).</li>
+</ul>
+<h2>Configuration</h2>
+<p><strong>List</strong> (<code>EntityList</code>): the hierarchy data source with the fields users can choose from, the first one is the default.
+Admins set this in the admin UI of the list view (&quot;Hierarchy displayed by&quot;), in the order of selection.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;dataSource&quot;: { &quot;name&quot;: &quot;hierarchy&quot;, &quot;config&quot;: { &quot;hierarchyFields&quot;: [&quot;parentAction&quot;, &quot;dependsOn&quot;] } }</code></pre></div><p>The user chooses the field (or &quot;None (flat list)&quot;) with the hierarchy button at the end of the filter row
+(icon and the chosen field, opening a menu). It is a button and not a dropdown like the filters,
+as it changes how the list is arranged, not which records it shows; &quot;Collapse all&quot; / &quot;Expand all&quot; is joined to it.
+On mobile, both are icon buttons in the header row.
+The choice is kept in the URL param <code>_hierarchy</code> (with the <code>_</code> prefix of URL state other than filters, see <code>UrlStateService</code>),
+the default field is not written to the URL and the flat list is <code>_flat</code> (starting with <code>_</code>, so it cannot be a field id).
+The browser&#39;s Back and Forward restore the choice.</p>
+<p><strong>Related-entities section</strong> on the details page of a record of the same type (JSON config only):
+the relation <code>property</code> is the hierarchy field, and the section shows the whole branch below the page&#39;s record.
+The &quot;+&quot; button fills in only that property.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{ &quot;component&quot;: &quot;RelatedEntities&quot;, &quot;config&quot;: { &quot;entityType&quot;: &quot;Action&quot;, &quot;property&quot;: &quot;parentAction&quot;, &quot;dataSource&quot;: &quot;hierarchy&quot; } }</code></pre></div><p>Invalid fields (not a single link to the same type) are ignored without an error, as this is a problem of the instance config.</p>
+<h2>Key files</h2>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>File</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>hierarchy-tree.ts</code></td><td>pure functions: resolve parents (loops, missing parents), context rows, sort, flatten</td></tr>
+<tr><td><code>hierarchy-fields.ts</code></td><td>which fields can define a hierarchy</td></tr>
+<tr><td><code>hierarchy-data-source.ts</code></td><td><code>HierarchyDataSource</code> (&quot;hierarchy&quot;): tree order, row options, collapse state, URL param</td></tr>
+<tr><td><code>hierarchy-tree-cell/</code></td><td>row options prefix: indentation, connector lines, expand/collapse button, context icon</td></tr>
+<tr><td><code>hierarchy-child-count/</code></td><td>row options suffix of a collapsed row: the number of its sub-records</td></tr>
+<tr><td><code>_hierarchy-rows.scss</code></td><td>global styles of the rows (context, top-level and parent rows), loaded with the tree cell</td></tr>
+<tr><td><code>hierarchy-toolbar/</code></td><td>toolbar control: menu to choose the field, joined with &quot;Collapse all&quot; / &quot;Expand all&quot;</td></tr>
+<tr><td><code>admin-hierarchy-fields/</code></td><td>admin setting &quot;Hierarchy displayed by&quot; (<code>ADMIN_ENTITY_LIST_SETTINGS</code>)</td></tr>
+<tr><td><code>demo-data/demo-action-generator.service.ts</code></td><td>the sample plan for the &quot;Action&quot; type of demo mode &quot;All Features&quot;</td></tr>
+</tbody>
+</table>
+<h2>How it works</h2>
+<ul>
+<li><code>HierarchyDataSource</code> computes the tree (<code>view</code>) from signals: all loaded records (for the parents),
+the filtered records (the matches), the field, the collapsed rows and the sort (<code>effectiveSort</code> and <code>sortValueFns</code>,
+set by the table). The row options are computed from it.</li>
+<li>The table&#39;s pipeline calls <code>_orderData()</code> of the data source, which returns the records in tree order
+instead of sorting a flat list. A change of the tree re-runs the pipeline.</li>
+<li>In a section, <code>getFilterPredicate()</code> replaces the condition linking records to the page&#39;s record
+(which only covers direct sub-records) by &quot;is in the branch below the page&#39;s record&quot;.</li>
+<li>The prefix and suffix configs are cached per record id, so rows do not reload their components when the tree changes.</li>
+<li>Rows get global CSS classes from their row options (context rows, top-level rows, rows with sub-records),
+styled in <code>_hierarchy-rows.scss</code>. As rows belong to the table component, these styles are global (<code>::ng-deep</code>),
+added to the page by the tree cell component (shown in every row of a hierarchy) instead of the app&#39;s <code>styles.scss</code>.</li>
+<li>The tree cell stretches over the full height of its row (see the entities-table README),
+with a slot per level whose lines are drawn by CSS from <code>ancestorsContinue</code> and <code>isLastChild</code> of its row,
+so that the lines of the rows meet. The lines are decorative (<code>aria-hidden</code>):
+screen readers read the level from visually hidden text (&quot;Level 2:&quot;) instead.</li>
+</ul>
+<h2>Limitations</h2>
+<ul>
+<li>Records of one type only; only single-select link fields to the same type.</li>
+<li>All records are loaded and rendered at once (also in online-only sessions), meant for up to a few hundred records.</li>
+</ul>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'hierarchy-of-records.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

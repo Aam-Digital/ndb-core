@@ -296,6 +296,9 @@
                             <a href="#GroupEntry" title="src/app/core/entity-details/entity-actions-menu/entity-actions-grouping.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>GroupEntry</b>&nbsp;&nbsp;&nbsp;(src/.../entity-actions-grouping.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#HierarchyDataSourceConfig" title="src/app/features/hierarchy/hierarchy-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>HierarchyDataSourceConfig</b>&nbsp;&nbsp;&nbsp;(src/.../hierarchy-data-source.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#HttpErrorClassification" title="src/app/utils/typed-http-error.interceptor.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>HttpErrorClassification</b>&nbsp;&nbsp;&nbsp;(src/.../typed-http-error.interceptor.ts)</span></a>
                         </li>
                         <li>
@@ -336,6 +339,9 @@
                         </li>
                         <li>
                             <a href="#OpenStreetMapsSearchResult" title="src/app/features/location/geo.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>OpenStreetMapsSearchResult</b>&nbsp;&nbsp;&nbsp;(src/.../geo.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#ParentIds" title="src/app/features/hierarchy/hierarchy-tree.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ParentIds</b>&nbsp;&nbsp;&nbsp;(src/.../hierarchy-tree.ts)</span></a>
                         </li>
                         <li>
                             <a href="#PositionState" title="src/app/features/attendance/add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>PositionState</b>&nbsp;&nbsp;&nbsp;(src/.../roll-call-tab.component.ts)</span></a>
@@ -396,6 +402,9 @@
                         </li>
                         <li>
                             <a href="#SqlType" title="src/app/features/reporting/sql-report/sqs-schema.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SqlType</b>&nbsp;&nbsp;&nbsp;(src/.../sqs-schema.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#Status" title="src/app/features/hierarchy/demo-data/demo-action-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>Status</b>&nbsp;&nbsp;&nbsp;(src/.../demo-action-generator.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#Suggestion" title="src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>Suggestion</b>&nbsp;&nbsp;&nbsp;(src/.../affected-entities-calculation.ts)</span></a>
@@ -1822,6 +1831,31 @@ or the shared &quot;_default&quot; role that applies to every logged-in user.</p
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/hierarchy/hierarchy-data-source.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="HierarchyDataSourceConfig"></a>
+                    <span class="name "><b>HierarchyDataSourceConfig</b><a href="#HierarchyDataSourceConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Options of the hierarchy data source in a list config: <code>&quot;dataSource&quot;: { &quot;name&quot;: &quot;hierarchy&quot;, &quot;config&quot;: { ... } }</code></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>{ hierarchyFields?: string[] }</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/utils/typed-http-error.interceptor.ts</h3>
     <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
@@ -2089,6 +2123,31 @@ a boolean way:</p>
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="../interfaces/GeoResult.html" target="_self" >GeoResult &amp; literal type</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/hierarchy/hierarchy-tree.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ParentIds"></a>
+                    <span class="name "><b>ParentIds</b><a href="#ParentIds"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Parent id of each record in the tree; records at the top level have none.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>ReadonlyMap&lt;string | string | undefined&gt;</code>
 </code>
                 </td>
             </tr>
@@ -2517,6 +2576,25 @@ comparable value or <code>undefined</code> to fall back to default sorting in <a
             <tr>
                 <td class="col-md-4">
                     <code>    <code>&quot;TEXT&quot; | &quot;INTEGER&quot; | &quot;REAL&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/hierarchy/demo-data/demo-action-generator.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Status"></a>
+                    <span class="name "><b>Status</b><a href="#Status"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;PLANNED&quot; | &quot;IN_PROGRESS&quot; | &quot;DONE&quot;</code>
 </code>
                 </td>
             </tr>
