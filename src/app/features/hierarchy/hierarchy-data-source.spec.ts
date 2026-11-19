@@ -345,6 +345,17 @@ describe("HierarchyDataSource", () => {
     );
   });
 
+  it("shows another field fully expanded", async () => {
+    await createDataSource();
+    dataSource.collapseAll();
+    await settle();
+
+    dataSource.selectField("dependsOn");
+    await settle();
+
+    expect(dataSource.collapsedIds().size).toBe(0);
+  });
+
   it("shows a flat list with pages if the user chooses no field", async () => {
     await createDataSource();
 
