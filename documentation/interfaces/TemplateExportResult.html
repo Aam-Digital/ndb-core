@@ -179,6 +179,12 @@
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">filename</span>
                                 </a>
                         </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#incomplete" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">incomplete</span>
+                                </a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -223,7 +229,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:54</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:58</a></div>
                                 </td>
                             </tr>
 
@@ -262,10 +268,61 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:57</a></div>
                                 </td>
                             </tr>
 
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="incomplete"></a>
+                                <span class="name "><b>incomplete</b>
+                                    <a href="#incomplete">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>incomplete:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:63</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether some related records of the template could not be loaded
+and are missing from the generated file.</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
     </section>
@@ -278,10 +335,9 @@ import { FileService } from &quot;../../file/file.service&quot;;
 import { SafeUrl } from &quot;@angular/platform-browser&quot;;
 import { Entity } from &quot;app/core/entity/model/entity&quot;;
 import { from, Observable, of, throwError } from &quot;rxjs&quot;;
-import { HttpResponse } from &quot;@angular/common/http&quot;;
 import { NotAvailableOfflineError } from &quot;../../../core/session/not-available-offline.error&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
-import { switchMap } from &quot;rxjs/operators&quot;;
+import { map, switchMap } from &quot;rxjs/operators&quot;;
 import { TemplateExport } from &quot;../template-export.entity&quot;;
 import { resolveLocaleText } from &quot;../../../core/language/active-locale&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
@@ -290,7 +346,12 @@ import {
   TemplateExportComplement,
   TemplateExportContextService,
 } from &quot;../template-export-context/template-export-context.service&quot;;
-import { EntityRelationResolverService } from &quot;../../../core/entity/entity-relation-resolver/entity-relation-resolver.service&quot;;
+import { asArray } from &quot;../../../utils/asArray&quot;;
+import {
+  EntityRelationResolverService,
+  LoadedEntitiesCache,
+} from &quot;../../../core/entity/entity-relation-resolver/entity-relation-resolver.service&quot;;
+import { TemplateExportRelatedRecordsService } from &quot;../template-export-related-records/template-export-related-records.service&quot;;
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -327,6 +388,11 @@ interface TemplateRenderRequestDto {
 export interface TemplateExportResult {
   filename: string;
   file: ArrayBuffer;
+  /**
+   * Whether some related records of the template could not be loaded
+   * and are missing from the generated file.
+   */
+  incomplete?: boolean;
 }
 
 /**
@@ -340,6 +406,7 @@ export class TemplateExportApiService extends FileService {
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN);
   private readonly exportContext &#x3D; inject(TemplateExportContextService);
   private readonly relationResolver &#x3D; inject(EntityRelationResolverService);
+  private readonly relatedRecords &#x3D; inject(TemplateExportRelatedRecordsService);
 
   readonly API_URL &#x3D; environment.API_PROXY_PREFIX + &quot;/v1/export&quot;;
 
@@ -410,6 +477,7 @@ export class TemplateExportApiService extends FileService {
    * endpoint URL, the shape of &#x60;data&#x60;, and the fallback filename.
    */
   private renderTemplate(
+    template: TemplateExport,
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
@@ -417,21 +485,21 @@ export class TemplateExportApiService extends FileService {
   ): Observable&lt;TemplateExportResult&gt; {
     const complement &#x3D; this.exportContext.getComplement();
 
-    // give the template access to details of linked records (e.g. a Note&#x27;s related
-    // Child) instead of just their id - resolved one level deep, see the service.
-    return from(this.relationResolver.resolveRelations(data)).pipe(
-      switchMap((resolvedData) &#x3D;&gt;
-        this.httpClient.post(
-          url,
-          {
-            convertTo: format,
-            data: resolvedData,
-            ...(complement ? { complement } : {}),
-          } as TemplateRenderRequestDto,
-          { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
-        ),
+    return from(this.buildTemplateData(template, data)).pipe(
+      switchMap(({ data: templateData, incomplete }) &#x3D;&gt;
+        this.httpClient
+          .post(
+            url,
+            {
+              convertTo: format,
+              data: templateData,
+              ...(complement ? { complement } : {}),
+            } as TemplateRenderRequestDto,
+            { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
+          )
+          .pipe(map((res) &#x3D;&gt; ({ res, incomplete }))),
       ),
-      switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
+      switchMap(async ({ res, incomplete }) &#x3D;&gt; {
         // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
         const disposition &#x3D; res.headers.get(&quot;Content-Disposition&quot;);
         let filenameMatch: RegExpMatchArray | null &#x3D; null;
@@ -453,9 +521,48 @@ export class TemplateExportApiService extends FileService {
         return {
           filename: filenameMatch?.[1] ?? fallbackFilename,
           file: res.body,
+          ...(incomplete ? { incomplete } : {}),
         };
       }),
     );
+  }
+
+  /**
+   * Extend the given record(s) with the data of other records that the template can use:
+   * - details of linked records (e.g. a Note&#x27;s related Child) instead of just their id,
+   *   resolved one level deep (see {@link EntityRelationResolverService})
+   * - lists of records linking to the record (e.g. the sub-tasks of a task),
+   *   if configured for the template (see {@link TemplateExportRelatedRecordsService})
+   *
+   * @returns The data for the template, and whether some related records could not be loaded
+   */
+  private async buildTemplateData(
+    template: TemplateExport,
+    data: Object | Object[],
+  ): Promise&lt;{ data: Object | Object[]; incomplete: boolean }&gt; {
+    // related records link to the exported records (and to each other), so their relations
+    // resolve to the same records: load each type only once for all of them
+    const loadedEntities: LoadedEntitiesCache &#x3D; new Map();
+    const [resolved, relatedRecords] &#x3D; await Promise.all([
+      this.relationResolver.resolveRelations(data, loadedEntities),
+      this.relatedRecords.loadRelatedRecords(
+        template,
+        asArray(data).filter((record) &#x3D;&gt; record instanceof Entity),
+        loadedEntities,
+      ),
+    ]);
+
+    const addRelatedRecords &#x3D; (record: Object, resolvedRecord: Object) &#x3D;&gt;
+      record instanceof Entity &amp;&amp; relatedRecords.records.has(record.getId())
+        ? { ...resolvedRecord, ...relatedRecords.records.get(record.getId()) }
+        : resolvedRecord;
+
+    return {
+      data: Array.isArray(data)
+        ? data.map((record, i) &#x3D;&gt; addRelatedRecords(record, resolved[i]))
+        : addRelatedRecords(data, resolved),
+      incomplete: relatedRecords.incomplete,
+    };
   }
 
   /**
@@ -472,6 +579,7 @@ export class TemplateExportApiService extends FileService {
     format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
+      template,
       this.API_URL + &quot;/render/&quot; + template.getId(),
       data,
       resolveLocaleText(template.title) + &quot;.&quot; + format,
@@ -502,6 +610,7 @@ export class TemplateExportApiService extends FileService {
     format: string &#x3D; &quot;pdf&quot;,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.renderTemplate(
+      template,
       this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
       dataList,
       resolveLocaleText(template.title) +

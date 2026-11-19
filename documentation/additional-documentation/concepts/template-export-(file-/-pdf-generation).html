@@ -1,0 +1,279 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Template Export (File / PDF Generation)</h1>
+<p>The template-export module generates files (PDFs) for one or more records
+by filling the placeholders of an uploaded template file (e.g. a <code>.docx</code>) with the records&#39; data.</p>
+<p>Rendering happens server-side in the Export API of the <a href="https://github.com/Aam-Digital/aam-services">aam-services backend</a>,
+which uses <a href="https://carbone.io/documentation.html">carbone</a> as template engine.
+The frontend manages the templates and assembles the data that is sent with a render request.</p>
+<h2>Key files</h2>
+<ul>
+<li><code>template-export.entity.ts</code> — <code>TemplateExport</code>, the settings of one template (managed by admins under &quot;Admin &gt; Export Templates&quot;)</li>
+<li><code>template-export-api/template-export-api.service.ts</code> — <code>TemplateExportApiService</code>, uploads template files and sends the render requests</li>
+<li><code>template-export-selection-dialog/</code> — the &quot;Generate File&quot; dialog, in which users select a template for the record(s)</li>
+<li><code>template-export-context/template-export-context.service.ts</code> — context data that is independent of the record (<code>{c.…}</code>)</li>
+<li><code>template-export-related-records/</code> — config, loading and admin UI of the related records to include in a template</li>
+<li><code>../../core/entity/entity-relation-resolver/entity-relation-resolver.service.ts</code> — resolves the records a record links to</li>
+</ul>
+<h2>Data available to placeholders</h2>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>Placeholder</th><th>Data</th></tr>
+</thead>
+<tbody>
+<tr><td><code>{d.name}</code></td><td>a field of the record, by its field ID</td></tr>
+<tr><td><code>{d.school.name}</code></td><td>a field of a record that the record links to in an entity-reference field (resolved one level deep)</td></tr>
+<tr><td><code>{d._related.Todo.parentTask[i].subject}</code></td><td>a field of the records linking <em>to</em> the record, if configured for the template (see below)</td></tr>
+<tr><td><code>{c.user.name}</code></td><td>a field of the record linked to the logged-in user</td></tr>
+<tr><td><code>{d[i].name}</code></td><td>a field of each selected record, in a &quot;Multi-Record Report&quot; template (<code>arrayReport</code>) with <code>d</code> as an array</td></tr>
+</tbody>
+</table>
+<p>The exported entity objects are never modified to add this data: the request data is built from copies.</p>
+<h2>Related records</h2>
+<p>Records linking <em>to</em> the exported record (e.g. the sub-tasks of a task, the notes about a child)
+are only loaded if a template lists them in <code>TemplateExport.relatedRecords</code>,
+to avoid loading and sending more data than a template needs.
+Each entry (<code>TemplateExportRelatedRecords</code>) defines</p>
+<ul>
+<li><code>entityType</code> and <code>property</code>: the record type and its field that links to the exported record,
+either an entity-reference field or a field of embedded objects with one (e.g. the participants of attendance items).
+The list is added to the record&#39;s data under both (<code>{d._related.&lt;entityType&gt;.&lt;property&gt;[i].…}</code>),
+kept under <code>_related</code> apart from the record&#39;s own fields (<code>d.*</code>), so that a list never hides a field.
+Several entries can be included, each for another record type or field.</li>
+<li><code>levels</code> (optional): how many levels to load if the related records link among themselves
+through the same field (e.g. sub-tasks of sub-tasks). The records of each further level are added
+to their parent record in the same way (<code>{d._related.Todo.parentTask[i]._related.Todo.parentTask[i].subject}</code>).</li>
+<li><code>includeArchived</code> (optional): whether archived (inactive) records are included, too.
+A template can tell them apart by their <code>inactive</code> field.</li>
+</ul>
+<p><code>TemplateExportRelatedRecordsService</code> loads these lists when a file is generated:</p>
+<ul>
+<li>A list is always present (possibly empty) for a valid entry, so that a repetition in the template prints nothing
+rather than the unresolved placeholder.</li>
+<li>Archived (inactive) records are excluded, together with the records below them in a hierarchy,
+unless <code>includeArchived</code> is set. Each list is sorted by the display text of the records.</li>
+<li>Related records are copies with their own entity-reference fields resolved one level deep,
+like the exported record itself. Only a plain link field to the record they are listed under
+holds just the ids (<code>{_id}</code>), as that record is available one level up.</li>
+<li>The related records for all exported records are looked up together, once per entry and level
+(<code>EntityRelationsService.loadLinkingToEntities</code>), also for a bulk export.</li>
+<li>Only records available to the current user are included, like everywhere in the app.</li>
+<li>An entry that cannot be applied (e.g. its field was removed from the data structure) is skipped
+and reported as a warning. The admin form (<code>EditTemplateExportRelatedRecords</code>) validates entries to prevent this.</li>
+</ul>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'template-export-(file-/-pdf-generation).html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

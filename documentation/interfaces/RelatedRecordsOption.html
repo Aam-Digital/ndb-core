@@ -1,0 +1,893 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  RelatedRecordsOption</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>A relationship that can be selected to include related records in a template:
+a field of some record type that links to one of the template&#39;s applicable record types.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#entityType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityType</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#id" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">id</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#isHierarchy" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isHierarchy</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#label" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">label</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#property" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">property</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entityType"></a>
+                                <span class="name "><b>entityType</b>
+                                    <a href="#entityType">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts:48</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="id"></a>
+                                <span class="name "><b>id</b>
+                                    <a href="#id">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>id:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts:47</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>unique identifier of this option (combining entityType and property)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="isHierarchy"></a>
+                                <span class="name "><b>isHierarchy</b>
+                                    <a href="#isHierarchy">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>isHierarchy:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts:52</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>whether the related records can link among themselves through this field, forming a hierarchy</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="label"></a>
+                                <span class="name "><b>label</b>
+                                    <a href="#label">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>label:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts:50</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="property"></a>
+                                <span class="name "><b>property</b>
+                                    <a href="#property">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>property:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/features/template-export/template-export-related-records/edit-template-export-related-records.component.ts:49</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { AbstractControl, ValidationErrors } from &quot;@angular/forms&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import {
+  MatFormFieldControl,
+  MatFormFieldModule,
+} from &quot;@angular/material/form-field&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { CustomFormControlDirective } from &quot;#src/app/core/common-components/basic-autocomplete/custom-form-control.directive&quot;;
+import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-form/FormConfig&quot;;
+import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
+import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { EditComponent } from &quot;#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface&quot;;
+import { EntityRelationsService } from &quot;#src/app/core/entity/entity-mapper/entity-relations.service&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import {
+  getRelatedRecordsLevels,
+  isHierarchyField,
+  canBeUsedInPlaceholder,
+  getRelatedRecordsPlaceholder,
+  RELATED_RECORDS_MAX_LEVELS,
+  clampRelatedRecordsLevels,
+  TemplateExportRelatedRecords,
+} from &quot;./template-export-related-records&quot;;
+
+/**
+ * A relationship that can be selected to include related records in a template:
+ * a field of some record type that links to one of the template&#x27;s applicable record types.
+ */
+interface RelatedRecordsOption {
+  /** unique identifier of this option (combining entityType and property) */
+  id: string;
+  entityType: string;
+  property: string;
+  label: string;
+  /** whether the related records can link among themselves through this field, forming a hierarchy */
+  isHierarchy: boolean;
+}
+
+/**
+ * One configured list of related records, with the details needed to display it.
+ */
+interface RelatedRecordsRow {
+  config: TemplateExportRelatedRecords;
+  /** id of the selected option (even if that option is not available anymore) */
+  optionId: string | undefined;
+  /** the selected option, if it is (still) available for the applicable record types */
+  option: RelatedRecordsOption | undefined;
+  levels: number;
+  /** example placeholder(s) to copy into the template file */
+  examples: string[];
+}
+
+function getOptionId(config: { entityType?: string; property?: string }) {
+  return config.entityType &amp;&amp; config.property
+    ? config.entityType + &quot;::&quot; + config.property
+    : undefined;
+}
+
+/**
+ * Edit which records linking to the exported record are included in a {@link TemplateExport}
+ * (e.g. the sub-tasks of a task).
+ */
+@DynamicComponent(&quot;EditTemplateExportRelatedRecords&quot;)
+@Component({
+  selector: &quot;app-edit-template-export-related-records&quot;,
+  templateUrl: &quot;./edit-template-export-related-records.component.html&quot;,
+  styleUrl: &quot;./edit-template-export-related-records.component.scss&quot;,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    FaDynamicIconComponent,
+  ],
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditTemplateExportRelatedRecordsComponent,
+    },
+  ],
+})
+export class EditTemplateExportRelatedRecordsComponent
+  extends CustomFormControlDirective&lt;TemplateExportRelatedRecords[]&gt;
+  implements EditComponent, OnInit
+{
+  private readonly entityRelations &#x3D; inject(EntityRelationsService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
+  entity &#x3D; input&lt;Entity&gt;();
+
+  readonly maxLevels &#x3D; RELATED_RECORDS_MAX_LEVELS;
+
+  /**
+   * The record types the template is applicable for, as currently selected in the form.
+   */
+  private readonly applicableTypes &#x3D; signal&lt;string[]&gt;([]);
+
+  /**
+   * Whether the template is a &quot;Multi-Record Report&quot;, in which &#x60;d&#x60; is the list of the selected records.
+   */
+  private readonly isArrayReport &#x3D; signal(false);
+
+  /**
+   * The relationships to the applicable record types that can be included.
+   */
+  readonly options &#x3D; computed&lt;RelatedRecordsOption[]&gt;(() &#x3D;&gt;
+    this.getOptions(this.applicableTypes()),
+  );
+
+  readonly rows &#x3D; computed&lt;RelatedRecordsRow[]&gt;(() &#x3D;&gt;
+    asArray(this.valueSignal() ?? []).map((config) &#x3D;&gt; {
+      const optionId &#x3D; getOptionId(config);
+      const option &#x3D; this.options().find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; optionId);
+      const levels &#x3D; option?.isHierarchy
+        ? getRelatedRecordsLevels(
+            config,
+            this.entityRegistry.get(option.entityType),
+          )
+        : 1;
+      return {
+        config,
+        optionId,
+        option,
+        levels,
+        examples: this.getExamples(config, option, levels),
+      };
+    }),
+  );
+
+  ngOnInit() {
+    // which related records are available depends on the record types selected in the same form
+    const typesControl &#x3D; this.formControl?.parent?.get(
+      &quot;applicableForEntityTypes&quot;,
+    );
+    this.applicableTypes.set(
+      asArray(
+        typesControl?.value ?? this.entity()?.[&quot;applicableForEntityTypes&quot;],
+      ).filter((type) &#x3D;&gt; !!type),
+    );
+    typesControl?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((types) &#x3D;&gt; {
+        this.applicableTypes.set(asArray(types ?? []));
+        this.formControl.updateValueAndValidity();
+      });
+
+    const arrayReportControl &#x3D; this.formControl?.parent?.get(&quot;arrayReport&quot;);
+    this.isArrayReport.set(
+      !!(arrayReportControl?.value ?? this.entity()?.[&quot;arrayReport&quot;]),
+    );
+    arrayReportControl?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) &#x3D;&gt; this.isArrayReport.set(!!value));
+
+    const control &#x3D; this.formControl;
+    if (control) {
+      control.addValidators(this.validateRelatedRecords);
+      control.updateValueAndValidity({ emitEvent: false });
+      this.destroyRef.onDestroy(() &#x3D;&gt;
+        control.removeValidators(this.validateRelatedRecords),
+      );
+    }
+  }
+
+  addRow() {
+    this.updateValue([
+      ...this.currentValue(),
+      { entityType: &quot;&quot;, property: &quot;&quot; },
+    ]);
+  }
+
+  removeRow(index: number) {
+    this.updateValue(this.currentValue().filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; index));
+  }
+
+  selectOption(index: number, optionId: string) {
+    const option &#x3D; this.options().find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; optionId);
+    if (!option) {
+      return;
+    }
+
+    this.updateRow(index, (config) &#x3D;&gt; {
+      const updated: TemplateExportRelatedRecords &#x3D; {
+        entityType: option.entityType,
+        property: option.property,
+      };
+      if (option.isHierarchy &amp;&amp; config.levels &gt; 1) {
+        updated.levels &#x3D; config.levels;
+      }
+      if (config.includeArchived) {
+        updated.includeArchived &#x3D; true;
+      }
+      return updated;
+    });
+  }
+
+  /**
+   * @returns the number of levels as saved (limited to the supported range), to show in the input
+   * (the input keeps the entered number if the saved value does not change)
+   */
+  setLevels(index: number, value: string): number {
+    const levels &#x3D; clampRelatedRecordsLevels(value);
+    this.updateRow(index, (config) &#x3D;&gt; {
+      const { levels: _previous, ...updated } &#x3D; config;
+      return levels &gt; 1 ? { ...updated, levels } : updated;
+    });
+    return levels;
+  }
+
+  setIncludeArchived(index: number, includeArchived: boolean) {
+    this.updateRow(index, (config) &#x3D;&gt; {
+      const { includeArchived: _previous, ...updated } &#x3D; config;
+      return includeArchived ? { ...updated, includeArchived } : updated;
+    });
+  }
+
+  private currentValue(): TemplateExportRelatedRecords[] {
+    return asArray(this.formControl.value ?? []);
+  }
+
+  private updateRow(
+    index: number,
+    update: (
+      config: TemplateExportRelatedRecords,
+    ) &#x3D;&gt; TemplateExportRelatedRecords,
+  ) {
+    this.updateValue(
+      this.currentValue().map((config, i) &#x3D;&gt;
+        i &#x3D;&#x3D;&#x3D; index ? update(config) : config,
+      ),
+    );
+  }
+
+  private updateValue(value: TemplateExportRelatedRecords[]) {
+    this.formControl.setValue(value);
+    this.formControl.markAsDirty();
+    // show validation errors right away, as there is no single input to &quot;leave&quot; first
+    this.formControl.markAsTouched();
+  }
+
+  private getOptions(applicableTypes: string[]): RelatedRecordsOption[] {
+    const options &#x3D; new Map&lt;string, RelatedRecordsOption&gt;();
+    for (const type of applicableTypes) {
+      for (const {
+        entityType,
+        referencingProperties,
+      } of this.entityRelations.getEntityTypesReferencingType(type)) {
+        if (entityType.isInternalEntity || !entityType.label) {
+          continue;
+        }
+
+        for (const field of referencingProperties) {
+          const config &#x3D; {
+            entityType: entityType.ENTITY_TYPE,
+            property: field.id,
+          };
+          // an id that cannot be part of a placeholder could not be saved anyway
+          if (!canBeUsedInPlaceholder(config)) {
+            continue;
+          }
+          const recordType &#x3D; resolveLocaleText(
+            entityType.labelPlural ?? entityType.label,
+          );
+          const fieldLabel &#x3D; resolveLocaleText(field.label) ?? field.id;
+          const option: RelatedRecordsOption &#x3D; {
+            id: getOptionId(config),
+            ...config,
+            label: $localize&#x60;${recordType}:recordType: (linked through &quot;${fieldLabel}:fieldLabel:&quot;)&#x60;,
+            isHierarchy: isHierarchyField(field, entityType.ENTITY_TYPE),
+          };
+          options.set(option.id, option);
+        }
+      }
+    }
+
+    return [...options.values()].sort((a, b) &#x3D;&gt; a.label.localeCompare(b.label));
+  }
+
+  private getExamples(
+    config: TemplateExportRelatedRecords,
+    option: RelatedRecordsOption | undefined,
+    levels: number,
+  ): string[] {
+    if (!option) {
+      return [];
+    }
+
+    const field &#x3D; getExampleField(this.entityRegistry.get(option.entityType));
+    const record &#x3D; this.isArrayReport() ? &quot;d[i]&quot; : &quot;d&quot;;
+    const list &#x3D; &#x60;${getRelatedRecordsPlaceholder(config)}[i]&#x60;;
+    return Array.from(
+      { length: levels },
+      (_, level) &#x3D;&gt;
+        &#x60;{${[record, ...Array(level + 1).fill(list)].join(&quot;.&quot;)}.${field}}&#x60;,
+    );
+  }
+
+  /**
+   * Prevent saving a config that cannot be applied when generating a file.
+   * (The options follow the record types selected in the form, see &#x60;ngOnInit&#x60;.)
+   */
+  private readonly validateRelatedRecords &#x3D; (
+    control: AbstractControl,
+  ): ValidationErrors | null &#x3D;&gt; {
+    const configs: TemplateExportRelatedRecords[] &#x3D; asArray(
+      control.value ?? [],
+    );
+    const errorMessage &#x3D; this.getErrorMessage(configs);
+
+    return errorMessage ? { relatedRecords: { errorMessage } } : null;
+  };
+
+  private getErrorMessage(
+    configs: TemplateExportRelatedRecords[],
+  ): string | undefined {
+    const availableOptions &#x3D; new Set(this.options().map((option) &#x3D;&gt; option.id));
+    const selected &#x3D; new Set&lt;string&gt;();
+
+    for (const config of configs) {
+      const optionId &#x3D; getOptionId(config);
+      if (!optionId) {
+        return $localize&#x60;Select related records for each entry, or remove it.&#x60;;
+      }
+      if (!availableOptions.has(optionId)) {
+        return $localize&#x60;Some related records do not link to the applicable record types.&#x60;;
+      }
+      if (selected.has(optionId)) {
+        return $localize&#x60;The same related records are included more than once.&#x60;;
+      }
+      selected.add(optionId);
+    }
+    return undefined;
+  }
+}
+
+/**
+ * A field of the given record type to show in an example placeholder:
+ * preferably one that the record type&#x27;s display text is built from.
+ */
+function getExampleField(entityType: EntityConstructor): string {
+  const schema &#x3D; entityType.schema;
+  return (
+    entityType.toStringAttributes?.find((attr) &#x3D;&gt; schema.has(attr)) ??
+    [...schema.entries()].find(([, field]) &#x3D;&gt; !!field.label)?.[0] ??
+    &quot;_id&quot;
+  );
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'RelatedRecordsOption.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

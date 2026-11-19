@@ -186,6 +186,10 @@
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#fieldReferencesType" >fieldReferencesType</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getEntityTypesReferencingType" >getEntityTypesReferencingType</a>
                             </li>
                             <li>
@@ -224,6 +228,88 @@
     <h3 id="methods">
         Methods
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fieldReferencesType"></a>
+                    <span class="name">
+                        <span ><b>fieldReferencesType</b></span>
+                        <a href="#fieldReferencesType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fieldReferencesType(field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField | undefined</a>, types: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:109</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check whether a schema field references (any of) the given entity types,
+including nested references inside embedded schemas (e.g. attendance fields).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>types</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -397,8 +483,8 @@ along with the field linking to it.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="366"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:366</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="372"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:372</a></div>
                         </td>
                     </tr>
 
@@ -496,8 +582,8 @@ Without such schema info the function falls back to checking all object values.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:130</a></div>
                         </td>
                     </tr>
 
@@ -573,8 +659,8 @@ Without such schema info the function falls back to checking all object values.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="167"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:167</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -744,7 +830,7 @@ export class EntityRelationsService {
     const referencingTypes &#x3D; [];
     for (const t of this.entityRegistry.values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (this.fieldReferencesType(field, type)) {
+        if (this.fieldReferencesType(field, [type])) {
           let refType &#x3D; referencingTypes.find((e) &#x3D;&gt; e.entityType &#x3D;&#x3D;&#x3D; t);
           if (!refType) {
             refType &#x3D; { entityType: t, referencingProperties: [] };
@@ -788,16 +874,22 @@ export class EntityRelationsService {
   }
 
   /**
-   * Check whether a schema field references the given entity type,
+   * Check whether a schema field references (any of) the given entity types,
    * including nested references inside embedded schemas (e.g. attendance fields).
    */
-  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    if (asArray(field.additional).includes(type)) {
+  fieldReferencesType(
+    field: EntitySchemaField | undefined,
+    types: string[],
+  ): boolean {
+    if (!field) {
+      return false;
+    }
+    if (asArray(field.additional).some((type) &#x3D;&gt; types.includes(type))) {
       return true;
     }
 
     return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
-      ([, inner]) &#x3D;&gt; asArray(inner.additional).includes(type),
+      ([, inner]) &#x3D;&gt; asArray(inner.additional).some((t) &#x3D;&gt; types.includes(t)),
     );
   }
 

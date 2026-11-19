@@ -314,6 +314,9 @@
                             <a href="#LabelLanguage" title="src/app/child-dev-project/notes/deprecated/legacy-note-fields.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>LabelLanguage</b>&nbsp;&nbsp;&nbsp;(src/.../legacy-note-fields.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#LoadedEntitiesCache" title="src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>LoadedEntitiesCache</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relation-resolver.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#LoadErrorCause" title="src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>LoadErrorCause</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-data-source.ts)</span></a>
                         </li>
                         <li>
@@ -363,6 +366,9 @@
                         </li>
                         <li>
                             <a href="#ReadSignal" title="src/app/core/common-components/entities-table/entities-table-sort.store.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ReadSignal</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-sort.store.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RelatedRecordsData" title="src/app/features/template-export/template-export-related-records/template-export-related-records.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RelatedRecordsData</b>&nbsp;&nbsp;&nbsp;(src/.../template-export-related-records.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#ReportEntity" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ReportEntity</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
@@ -1977,6 +1983,33 @@ a boolean way:</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LoadedEntitiesCache"></a>
+                    <span class="name "><b>LoadedEntitiesCache</b><a href="#LoadedEntitiesCache"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The records loaded to resolve relations, by entity type and id.
+Pass the same instance to several <a href="EntityRelationResolverService.resolveRelations">EntityRelationResolverService.resolveRelations</a> calls
+to load each type only once for all of them.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../classes/Entity.html" target="_self" >Map&lt;string | Promise&lt;Map&lt;string, Entity&gt;&gt;&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts</h3>
     <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
@@ -2306,6 +2339,33 @@ as a plain string is flagged.</p>
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/template-export/template-export-related-records/template-export-related-records.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RelatedRecordsData"></a>
+                    <span class="name "><b>RelatedRecordsData</b><a href="#RelatedRecordsData"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The data to add to one exported record: its related records
+by the record type and field of their <a href="../interfaces/TemplateExportRelatedRecords.html">TemplateExportRelatedRecords</a> config,
+under <a href="../miscellaneous/variables.html#RELATED_RECORDS_PROPERTY">RELATED_RECORDS_PROPERTY</a> so that they never hide a field of the record.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>{ undefined?: Record&lt;string, Record&lt;string, Record[]&gt;&gt; }</code>
 </code>
                 </td>
             </tr>

@@ -150,6 +150,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="additional-documentation/concepts/reports.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Reports</a>
                                             </li>
                                             <li class="link for-chapter2">
+                                                <a href="additional-documentation/concepts/template-export-(file-/-pdf-generation).html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Template Export (File / PDF Generation)</a>
+                                            </li>
+                                            <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/hierarchy-of-records.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Hierarchy of Records</a>
                                             </li>
                                         </ul>
@@ -702,13 +705,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/TemplateExportModule.html" data-type="entity-link" >TemplateExportModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-TemplateExportModule-296d3920b94b12bfbfd2c21a0b6e0a683ced5b15c1d82c939db2d336ac2d7be4ee3ee5243f95c17124a5bc212db8cd7755005c50ae6a777098f9c32b1354a01d"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-296d3920b94b12bfbfd2c21a0b6e0a683ced5b15c1d82c939db2d336ac2d7be4ee3ee5243f95c17124a5bc212db8cd7755005c50ae6a777098f9c32b1354a01d"' }>
+                                        'data-bs-target="#injectables-links-module-TemplateExportModule-42dde12fc79e063aa48dd4c6b4accd84d88fe3df5dc6467b0c60e92796a68b1f73f6afeb8ea560d33eb47be6347753aedd4f6a7e92e38b814bfd2b00d30089c5"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-42dde12fc79e063aa48dd4c6b4accd84d88fe3df5dc6467b0c60e92796a68b1f73f6afeb8ea560d33eb47be6347753aedd4f6a7e92e38b814bfd2b00d30089c5"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-296d3920b94b12bfbfd2c21a0b6e0a683ced5b15c1d82c939db2d336ac2d7be4ee3ee5243f95c17124a5bc212db8cd7755005c50ae6a777098f9c32b1354a01d"' :
-                                        'id="xs-injectables-links-module-TemplateExportModule-296d3920b94b12bfbfd2c21a0b6e0a683ced5b15c1d82c939db2d336ac2d7be4ee3ee5243f95c17124a5bc212db8cd7755005c50ae6a777098f9c32b1354a01d"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-42dde12fc79e063aa48dd4c6b4accd84d88fe3df5dc6467b0c60e92796a68b1f73f6afeb8ea560d33eb47be6347753aedd4f6a7e92e38b814bfd2b00d30089c5"' :
+                                        'id="xs-injectables-links-module-TemplateExportModule-42dde12fc79e063aa48dd4c6b4accd84d88fe3df5dc6467b0c60e92796a68b1f73f6afeb8ea560d33eb47be6347753aedd4f6a7e92e38b814bfd2b00d30089c5"' }>
                                         <li class="link">
                                             <a href="injectables/TemplateExportFileDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >TemplateExportFileDatatype</a>
                                         </li>
@@ -1231,6 +1234,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EditTemplateExportFileComponent.html" data-type="entity-link" >EditTemplateExportFileComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditTemplateExportRelatedRecordsComponent.html" data-type="entity-link" >EditTemplateExportRelatedRecordsComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EditTextComponent.html" data-type="entity-link" >EditTextComponent</a>
@@ -2487,6 +2493,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/TemplateExportContextService.html" data-type="entity-link" >TemplateExportContextService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/TemplateExportRelatedRecordsService.html" data-type="entity-link" >TemplateExportRelatedRecordsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/TemplateExportService.html" data-type="entity-link" >TemplateExportService</a>
                                 </li>
                                 <li class="link">
@@ -3198,6 +3207,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/NavigationMenuConfig.html" data-type="entity-link" >NavigationMenuConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/NestedRecord.html" data-type="entity-link" >NestedRecord</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/NewMatchAction.html" data-type="entity-link" >NewMatchAction</a>
                             </li>
                             <li class="link">
@@ -3288,6 +3300,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/RelatedEntitiesComponentConfig.html" data-type="entity-link" >RelatedEntitiesComponentConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/RelatedRecordsOption.html" data-type="entity-link" >RelatedRecordsOption</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RelatedRecordsResult.html" data-type="entity-link" >RelatedRecordsResult</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RelatedRecordsRow.html" data-type="entity-link" >RelatedRecordsRow</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ReportCalculation.html" data-type="entity-link" >ReportCalculation</a>
                             </li>
                             <li class="link">
@@ -3304,6 +3325,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ReservedRoleInfo.html" data-type="entity-link" >ReservedRoleInfo</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ResolveRelationsOptions.html" data-type="entity-link" >ResolveRelationsOptions</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/Role.html" data-type="entity-link" >Role</a>
@@ -3376,6 +3400,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportComplement.html" data-type="entity-link" >TemplateExportComplement</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/TemplateExportRelatedRecords.html" data-type="entity-link" >TemplateExportRelatedRecords</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportResult.html" data-type="entity-link" >TemplateExportResult</a>

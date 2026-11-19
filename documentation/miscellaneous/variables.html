@@ -779,6 +779,9 @@
                             <a href="#permissionConditionsMatcher" title="src/app/core/permissions/ability/entity-ability.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>permissionConditionsMatcher</b>&nbsp;&nbsp;&nbsp;(src/.../entity-ability.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#PLACEHOLDER_PART_PATTERN" title="src/app/features/template-export/template-export-related-records/template-export-related-records.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>PLACEHOLDER_PART_PATTERN</b>&nbsp;&nbsp;&nbsp;(src/.../template-export-related-records.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#PRE_LOGIN_UNAVAILABLE_STATUSES" title="src/app/core/site-settings/site-settings.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>PRE_LOGIN_UNAVAILABLE_STATUSES</b>&nbsp;&nbsp;&nbsp;(src/.../site-settings.service.ts)</span></a>
                         </li>
                         <li>
@@ -822,6 +825,12 @@
                         </li>
                         <li>
                             <a href="#RELATED_ENTITY_OVERRIDES" title="src/app/utils/related-entities-default-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>RELATED_ENTITY_OVERRIDES</b>&nbsp;&nbsp;&nbsp;(src/.../related-entities-default-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RELATED_RECORDS_MAX_LEVELS" title="src/app/features/template-export/template-export-related-records/template-export-related-records.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>RELATED_RECORDS_MAX_LEVELS</b>&nbsp;&nbsp;&nbsp;(src/.../template-export-related-records.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RELATED_RECORDS_PROPERTY" title="src/app/features/template-export/template-export-related-records/template-export-related-records.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>RELATED_RECORDS_PROPERTY</b>&nbsp;&nbsp;&nbsp;(src/.../template-export-related-records.ts)</span></a>
                         </li>
                         <li>
                             <a href="#religions" title="src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>religions</b>&nbsp;&nbsp;&nbsp;(src/.../religions.ts)</span></a>
@@ -7458,6 +7467,13 @@ A dynamic component can be referenced from the config with the name defined on t
         (c) &#x3D;&gt; c.EditTemplateExportFileComponent,
       ),
   ],
+  [
+    &quot;EditTemplateExportRelatedRecords&quot;,
+    () &#x3D;&gt;
+      import(&quot;./template-export-related-records/edit-template-export-related-records.component&quot;).then(
+        (c) &#x3D;&gt; c.EditTemplateExportRelatedRecordsComponent,
+      ),
+  ],
 ]</code>
                     </td>
                 </tr>
@@ -7515,6 +7531,7 @@ A dynamic component can be referenced from the config with the name defined on t
                       &quot;description&quot;,
                       &quot;applicableForEntityTypes&quot;,
                       &quot;arrayReport&quot;,
+                      &quot;relatedRecords&quot;,
                     ],
                   },
                   {
@@ -7529,6 +7546,9 @@ See the documentation of the [carbone system](https://carbone.io/documentation.h
 
 The placeholder keys must match the field &quot;Field ID&quot; of the record data structure in Aam Digital.
 You can find this in the Admin UI form builder (Edit Data Structure -&gt; Details View) and edit a specific field to view its details.
+
+Fields that link to another record give access to the fields of that record (e.g. {d.school.name}).
+To list other records that link to the selected record (e.g. the sub-tasks of a task), add them under &quot;Related Records to Include&quot; and use the placeholder shown there.
 
 In addition to the selected record, you can also use fields of the currently logged-in user&#x27;s own record by prefixing them with &quot;c.user.&quot; (e.g. {c.user.name}). This works both in the template file and in the file name pattern.
 
@@ -11827,6 +11847,107 @@ permissions built with them would silently grant nothing.</p>
 <p>Exported so that anything else deciding whether a rule&#39;s conditions are met
 (e.g. the per-field form validators) reaches the same verdict as the ability
 enforcing them.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/template-export/template-export-related-records/template-export-related-records.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="PLACEHOLDER_PART_PATTERN"></a>
+                    <span class="name">
+                        <span ><b>PLACEHOLDER_PART_PATTERN</b></span>
+                        <a href="#PLACEHOLDER_PART_PATTERN"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>/^[A-Za-z_]\w*$/</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Allowed format of the record type and field of a config,
+so that they work as parts of a placeholder in a template.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RELATED_RECORDS_MAX_LEVELS"></a>
+                    <span class="name">
+                        <span ><b>RELATED_RECORDS_MAX_LEVELS</b></span>
+                        <a href="#RELATED_RECORDS_MAX_LEVELS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>5</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Maximum number of hierarchy levels of related records loaded for a template.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RELATED_RECORDS_PROPERTY"></a>
+                    <span class="name">
+                        <span ><b>RELATED_RECORDS_PROPERTY</b></span>
+                        <a href="#RELATED_RECORDS_PROPERTY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;_related&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The property of an exported record under which the lists of its related records are added,
+apart from the record&#39;s own fields so that they never hide one.</p>
 </div>
                 </td>
             </tr>

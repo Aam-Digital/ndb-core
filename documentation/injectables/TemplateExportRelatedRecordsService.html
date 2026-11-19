@@ -1,0 +1,881 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >TemplateExportRelatedRecordsService</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/template-export/template-export-related-records/template-export-related-records.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Load the records linking <em>to</em> an exported record (e.g. the sub-tasks of a task),
+as configured for a template in <a href="TemplateExport.relatedRecords">TemplateExport.relatedRecords</a>,
+so that they can be used in placeholders of the template file.</p>
+<p>(Records that the exported record itself links to are resolved by the
+<a href="../injectables/EntityRelationResolverService.html">EntityRelationResolverService</a> without any configuration.)</p>
+
+            </p>
+
+
+        <section data-compodoc="block-metadata">
+            <h3>Metadata</h3>
+            <table class="table table-sm table-hover metadata">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3">providedIn</td>
+                        <td class="col-md-9"><code>root</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadRelatedRecords" >loadRelatedRecords</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRelatedRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>loadRelatedRecords</b></span>
+                        <a href="#loadRelatedRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadRelatedRecords(template: <a href="../classess/TemplateExport.html" target="_self">TemplateExport</a>, records: <a href="../classes/Entity.html" target="_self">Entity[]</a>, loadedEntities: <a href="../miscellaneous/typealiases.html#LoadedEntitiesCache" target="_self">LoadedEntitiesCache</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/features/template-export/template-export-related-records/template-export-related-records.service.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load the related records configured for the template, for each of the given records.</p>
+<p>Related records are plain copies with their own entity-reference fields resolved
+one level deep (like the exported record itself), excluding archived records
+(unless the config sets <code>includeArchived</code>) and sorted by their display text.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     holding (possibly empty) related records for each valid config
+     (no records if the template does not include any related records),
+     and whether loading some of them failed.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>template</td>
+                                            <td>
+                                                            <code><a href="../classess/TemplateExport.html" target="_self" >TemplateExport</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The template, with the configs of the related records to load</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>records</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The exported records</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>loadedEntities</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#LoadedEntitiesCache" target="_self" >LoadedEntitiesCache</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>new Map()</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Records loaded to resolve relations, shared with other calls for the same file</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/RelatedRecordsResult.html" target="_self" >Promise&lt;RelatedRecordsResult&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The related records data by the id of the exported record,
+holding (possibly empty) related records for each valid config
+(no records if the template does not include any related records),
+and whether loading some of them failed.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { EntityRelationsService } from &quot;#src/app/core/entity/entity-mapper/entity-relations.service&quot;;
+import {
+  EntityRelationResolverService,
+  LoadedEntitiesCache,
+} from &quot;#src/app/core/entity/entity-relation-resolver/entity-relation-resolver.service&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { TemplateExport } from &quot;../template-export.entity&quot;;
+import {
+  getRelatedRecordsLevels,
+  canBeUsedInPlaceholder,
+  getRelatedRecordsPlaceholder,
+  RELATED_RECORDS_PROPERTY,
+  TemplateExportRelatedRecords,
+} from &quot;./template-export-related-records&quot;;
+
+/**
+ * The data to add to one exported record: its related records
+ * by the record type and field of their {@link TemplateExportRelatedRecords} config,
+ * under {@link RELATED_RECORDS_PROPERTY} so that they never hide a field of the record.
+ */
+export type RelatedRecordsData &#x3D; {
+  [RELATED_RECORDS_PROPERTY]?: Record&lt;
+    string,
+    Record&lt;string, Record&lt;string, unknown&gt;[]&gt;
+  &gt;;
+};
+
+/**
+ * The related records loaded for the exported records.
+ */
+export interface RelatedRecordsResult {
+  /** the related records data by the id of the exported record */
+  records: Map&lt;string, RelatedRecordsData&gt;;
+  /**
+   * Whether the related records of some config could not be loaded,
+   * so that their lists are empty or incomplete in the data.
+   */
+  incomplete: boolean;
+}
+
+/**
+ * A record in the nested data of an exported record:
+ * the exported record itself, or a related record (at any level) below it.
+ */
+interface NestedRecord {
+  id: string;
+  /**
+   * The record&#x27;s data in the result, into which its related records are written
+   * (for an exported record, it starts out with none; for a related record, as its resolved copy).
+   */
+  data: RelatedRecordsData;
+  /** the record of which this one is a related record */
+  relatedTo?: NestedRecord;
+}
+
+/**
+ * Load the records linking *to* an exported record (e.g. the sub-tasks of a task),
+ * as configured for a template in {@link TemplateExport.relatedRecords},
+ * so that they can be used in placeholders of the template file.
+ *
+ * (Records that the exported record itself links to are resolved by the
+ * {@link EntityRelationResolverService} without any configuration.)
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class TemplateExportRelatedRecordsService {
+  private readonly entityRelations &#x3D; inject(EntityRelationsService);
+  private readonly relationResolver &#x3D; inject(EntityRelationResolverService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+
+  /** configs already reported as invalid, to report each only once per session */
+  private readonly reportedConfigs &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * Load the related records configured for the template, for each of the given records.
+   *
+   * Related records are plain copies with their own entity-reference fields resolved
+   * one level deep (like the exported record itself), excluding archived records
+   * (unless the config sets &#x60;includeArchived&#x60;) and sorted by their display text.
+   *
+   * @param template The template, with the configs of the related records to load
+   * @param records The exported records
+   * @param loadedEntities Records loaded to resolve relations, shared with other calls for the same file
+   * @returns The related records data by the id of the exported record,
+   *          holding (possibly empty) related records for each valid config
+   *          (no records if the template does not include any related records),
+   *          and whether loading some of them failed.
+   */
+  async loadRelatedRecords(
+    template: TemplateExport,
+    records: Entity[],
+    loadedEntities: LoadedEntitiesCache &#x3D; new Map(),
+  ): Promise&lt;RelatedRecordsResult&gt; {
+    if (!template.relatedRecords?.length) {
+      return { records: new Map(), incomplete: false };
+    }
+
+    const configs &#x3D; this.filterValidConfigs(template);
+    // collects the results: each config replaces its empty related records in the data with the loaded ones
+    const exportedRecords: NestedRecord[] &#x3D; records.map((record) &#x3D;&gt; ({
+      id: record.getId(),
+      data: emptyRelatedRecords(configs),
+    }));
+
+    // each config writes its own related records into the records&#x27; data, so they can be loaded at the same time
+    const loaded &#x3D; await Promise.all(
+      configs.map((config) &#x3D;&gt;
+        this.addRelatedRecords(
+          template,
+          config,
+          exportedRecords,
+          loadedEntities,
+        ),
+      ),
+    );
+    return {
+      records: new Map(
+        exportedRecords.map((record) &#x3D;&gt; [record.id, record.data]),
+      ),
+      incomplete: loaded.includes(false),
+    };
+  }
+
+  /**
+   * The configs that can be applied, reporting the others: a record type or field that cannot
+   * be part of a placeholder, or the same related records as an earlier config.
+   */
+  private filterValidConfigs(
+    template: TemplateExport,
+  ): TemplateExportRelatedRecords[] {
+    const placeholders &#x3D; new Set&lt;string&gt;();
+    return template.relatedRecords.filter((config) &#x3D;&gt; {
+      if (!canBeUsedInPlaceholder(config)) {
+        this.reportInvalidConfig(
+          template,
+          config,
+          &quot;record type or field cannot be used in a placeholder&quot;,
+        );
+        return false;
+      }
+      const placeholder &#x3D; getRelatedRecordsPlaceholder(config);
+      if (placeholders.has(placeholder)) {
+        this.reportInvalidConfig(
+          template,
+          config,
+          &quot;related records are included more than once&quot;,
+        );
+        return false;
+      }
+      placeholders.add(placeholder);
+      return true;
+    });
+  }
+
+  /**
+   * Load the related records of one config and add them to the data
+   * of the exported records.
+   *
+   * @param template The template, to report an invalid config
+   * @param config Which records to load and where to put them
+   * @param exportedRecords The exported records, collecting the results in their &#x60;data&#x60;
+   *          (starting with empty related records, shared with the other configs)
+   * @param loadedEntities Records loaded to resolve relations, shared by all configs and levels
+   * @returns false if loading the related records failed
+   *          (true also for a config that cannot be applied, which is skipped)
+   */
+  private async addRelatedRecords(
+    template: TemplateExport,
+    config: TemplateExportRelatedRecords,
+    exportedRecords: NestedRecord[],
+    loadedEntities: LoadedEntitiesCache,
+  ): Promise&lt;boolean&gt; {
+    const linkField &#x3D; this.linkField(template, config);
+    if (!linkField) {
+      return true;
+    }
+
+    try {
+      // deliberately also for exported records of a type the field does not link to
+      // (a template can apply to several types): no record links to them, so they keep empty related records,
+      // and filtering them out first would only add code to save a few keys in one query
+      await this.fillRelatedRecords(config, exportedRecords, loadedEntities);
+      return true;
+    } catch (error) {
+      // the file is still generated, with the related records that could be loaded,
+      // and the user is told that some are missing (see &#x60;RelatedRecordsResult.incomplete&#x60;)
+      Logging.warn(
+        &quot;TemplateExport: could not load related records&quot;,
+        { template: template.getId(), config },
+        error,
+      );
+      return false;
+    }
+  }
+
+  /**
+   * Load the related records of each of the given records and write them into its data,
+   * and in the same way the related records of those, down to the configured number of levels.
+   *
+   * @param config Which records to load and where to write them
+   * @param records The records to fill, collecting the results in their &#x60;data&#x60;
+   *          (the exported records at level 1, the related records of the level above below that)
+   * @param loadedEntities Records loaded to resolve relations, shared by all configs and levels
+   * @param level The level of the related records to load
+   */
+  private async fillRelatedRecords(
+    config: TemplateExportRelatedRecords,
+    records: NestedRecord[],
+    loadedEntities: LoadedEntitiesCache,
+    level &#x3D; 1,
+  ): Promise&lt;void&gt; {
+    const relatedType &#x3D; this.entityRegistry.get(config.entityType);
+    if (
+      level &gt; getRelatedRecordsLevels(config, relatedType) ||
+      records.length &#x3D;&#x3D;&#x3D; 0
+    ) {
+      return;
+    }
+
+    const linking &#x3D; await this.loadLinkingRecords(config, records);
+    const dataById &#x3D; await this.resolveRecords(
+      config,
+      [...linking.values()].flat(),
+      loadedEntities,
+    );
+
+    const related: NestedRecord[] &#x3D; [];
+    for (const record of records) {
+      const relatedOfRecord &#x3D; relatedRecordsOf(
+        record,
+        linking.get(record.id) ?? [],
+        dataById,
+      );
+      setRelatedRecords(
+        record.data,
+        config,
+        relatedOfRecord.map((item) &#x3D;&gt; item.data),
+      );
+      related.push(...relatedOfRecord);
+    }
+
+    // the related records get their own related records in the same way
+    await this.fillRelatedRecords(config, related, loadedEntities, level + 1);
+  }
+
+  /**
+   * The records linking to each of the given records, by its id,
+   * without archived ones (unless configured).
+   */
+  private async loadLinkingRecords(
+    config: TemplateExportRelatedRecords,
+    records: NestedRecord[],
+  ): Promise&lt;Map&lt;string, Entity[]&gt;&gt; {
+    const linking &#x3D; await this.entityRelations.loadLinkingToEntities(
+      records.map((record) &#x3D;&gt; record.id),
+      this.entityRegistry.get(config.entityType),
+      config.property,
+    );
+    if (!config.includeArchived) {
+      linking.forEach((entities, id) &#x3D;&gt;
+        linking.set(
+          id,
+          entities.filter((entity) &#x3D;&gt; !entity.inactive),
+        ),
+      );
+    }
+    return linking;
+  }
+
+  /**
+   * Plain copies of the given (already loaded) records, by their id,
+   * in which the ids in link fields are replaced by the linked records.
+   * The linked records are loaded from the database by the {@link EntityRelationResolverService},
+   * each record type only once for all calls sharing &#x60;loadedEntities&#x60;.
+   *
+   * A plain link field back to the record they are related to is not resolved but holds only the ids (&#x60;{_id}&#x60;):
+   * the details of that record are already available one level up, and resolving it would
+   * load all records of its type and repeat them in every related record.
+   * Embedded objects linking to it (e.g. attendance items) also hold other details
+   * and are resolved like any other field.
+   */
+  private async resolveRecords(
+    config: TemplateExportRelatedRecords,
+    entities: Entity[],
+    loadedEntities: LoadedEntitiesCache,
+  ): Promise&lt;Map&lt;string, Record&lt;string, unknown&gt;&gt;&gt; {
+    // a record related to several records is resolved only once
+    const records &#x3D; [
+      ...new Map(entities.map((entity) &#x3D;&gt; [entity.getId(), entity])).values(),
+    ];
+    const resolved &#x3D; (await this.relationResolver.resolveRelations&lt;unknown&gt;(
+      records,
+      loadedEntities,
+      { idsOnly: [config.property] },
+    )) as Record&lt;string, unknown&gt;[];
+    return new Map(records.map((entity, i) &#x3D;&gt; [entity.getId(), resolved[i]]));
+  }
+
+  /**
+   * The field of the related records that links to the exported records,
+   * or &#x60;undefined&#x60; (reporting why) if it cannot be used for the template.
+   */
+  private linkField(
+    template: TemplateExport,
+    config: TemplateExportRelatedRecords,
+  ): EntitySchemaField | undefined {
+    const linkField &#x3D; this.entityRegistry.has(config.entityType)
+      ? this.entityRegistry.get(config.entityType).schema.get(config.property)
+      : undefined;
+    const allTypes &#x3D; [...this.entityRegistry.keys()];
+    if (!this.entityRelations.fieldReferencesType(linkField, allTypes)) {
+      this.reportInvalidConfig(
+        template,
+        config,
+        &quot;unknown record type or link field&quot;,
+      );
+      return undefined;
+    }
+
+    const applicableTypes &#x3D; template.applicableForEntityTypes ?? [];
+    if (
+      applicableTypes.length &gt; 0 &amp;&amp;
+      !this.entityRelations.fieldReferencesType(linkField, applicableTypes)
+    ) {
+      // e.g. the link field was changed to link to other record types after the template was set up
+      this.reportInvalidConfig(
+        template,
+        config,
+        &quot;link field does not link to the applicable record types&quot;,
+      );
+      return undefined;
+    }
+
+    return linkField;
+  }
+
+  /**
+   * Report a config that cannot be applied (e.g. because the data structure was changed after
+   * the template was set up) - which someone has to correct in the template&#x27;s settings.
+   */
+  private reportInvalidConfig(
+    template: TemplateExport,
+    config: TemplateExportRelatedRecords,
+    reason: string,
+  ) {
+    const reportKey &#x3D; [template.getId(), JSON.stringify(config), reason].join();
+    if (this.reportedConfigs.has(reportKey)) {
+      return;
+    }
+    this.reportedConfigs.add(reportKey);
+
+    Logging.warn(&quot;TemplateExport: skipping invalid related records config&quot;, {
+      reason,
+      template: template.getId(),
+      config,
+    });
+  }
+}
+
+/**
+ * Whether the id is the given record or one it is related to (at any level),
+ * i.e. adding it below the record would repeat a circular hierarchy.
+ */
+function isInBranch(record: NestedRecord | undefined, id: string): boolean {
+  for (let current &#x3D; record; current; current &#x3D; current.relatedTo) {
+    if (current.id &#x3D;&#x3D;&#x3D; id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * The related records of the record, from the records linking to it:
+ * sorted and without those that would repeat a circular hierarchy.
+ */
+function relatedRecordsOf(
+  record: NestedRecord,
+  entities: Entity[],
+  dataById: Map&lt;string, Record&lt;string, unknown&gt;&gt;,
+): NestedRecord[] {
+  return entities
+    .filter((entity) &#x3D;&gt; !isInBranch(record, entity.getId()))
+    .sort(compareByDisplayText)
+    .map((entity) &#x3D;&gt; ({
+      id: entity.getId(),
+      // an own copy, as a record linking to several records is a related record of each of them
+      data: { ...dataById.get(entity.getId()) },
+      relatedTo: record,
+    }));
+}
+
+/**
+ * The data of an exported record with empty related records for each config,
+ * so that a loop in the template prints nothing rather than the unresolved placeholder itself.
+ */
+function emptyRelatedRecords(
+  configs: TemplateExportRelatedRecords[],
+): RelatedRecordsData {
+  const data: RelatedRecordsData &#x3D; {};
+  configs.forEach((config) &#x3D;&gt; setRelatedRecords(data, config, []));
+  return data;
+}
+
+/**
+ * Put the related records of the config into the record&#x27;s data,
+ * at the path of their placeholder (&#x60;_related.&lt;entityType&gt;.&lt;property&gt;&#x60;).
+ */
+function setRelatedRecords(
+  data: RelatedRecordsData,
+  config: TemplateExportRelatedRecords,
+  relatedRecords: Record&lt;string, unknown&gt;[],
+) {
+  data[RELATED_RECORDS_PROPERTY] ??&#x3D; {};
+  data[RELATED_RECORDS_PROPERTY][config.entityType] ??&#x3D; {};
+  data[RELATED_RECORDS_PROPERTY][config.entityType][config.property] &#x3D;
+    relatedRecords;
+}
+
+function compareByDisplayText(a: Entity, b: Entity): number {
+  return (
+    a.toString().localeCompare(b.toString(), undefined, { numeric: true }) ||
+    a.getId().localeCompare(b.getId())
+  );
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'TemplateExportRelatedRecordsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

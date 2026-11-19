@@ -1,0 +1,643 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  TemplateExportRelatedRecords</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/template-export/template-export-related-records/template-export-related-records.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Configuration of one list of related records that is added to the data of a
+<a href="../classes/TemplateExport.html">TemplateExport</a>, to make records that link <em>to</em> the exported record
+available for placeholders in the template file.</p>
+<p>e.g. <code>{ entityType: &quot;Todo&quot;, property: &quot;parentTask&quot; }</code>
+adds the tasks whose &quot;parentTask&quot; field links to the exported record,
+to be used in the template as <code>{d._related.Todo.parentTask[i].subject}</code>
+(see <a href="../miscellaneous/functions.html#getRelatedRecordsPlaceholder">getRelatedRecordsPlaceholder</a>).</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#entityType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityType</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#includeArchived" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">includeArchived</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#levels" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">levels</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#property" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">property</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entityType"></a>
+                                <span class="name "><b>entityType</b>
+                                    <a href="#entityType">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/features/template-export/template-export-related-records/template-export-related-records.ts:19</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Entity type of the related records to be loaded.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="includeArchived"></a>
+                                <span class="name "><b>includeArchived</b>
+                                    <a href="#includeArchived">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>includeArchived:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/features/template-export/template-export-related-records/template-export-related-records.ts:41</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether archived (inactive) records are included as well.
+Templates can tell them apart by their <code>inactive</code> field.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="levels"></a>
+                                <span class="name "><b>levels</b>
+                                    <a href="#levels">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>levels:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/features/template-export/template-export-related-records/template-export-related-records.ts:35</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>How many levels of a hierarchy to load, if the related records are linked among themselves
+through the same field (e.g. sub-tasks of sub-tasks).</p>
+<p>The related records of a related record are added to it in the same way.
+Defaults to 1 (only records directly linking to the exported record)
+and is limited to <a href="../miscellaneous/variables.html#RELATED_RECORDS_MAX_LEVELS">RELATED_RECORDS_MAX_LEVELS</a>.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="property"></a>
+                                <span class="name "><b>property</b>
+                                    <a href="#property">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>property:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/features/template-export/template-export-related-records/template-export-related-records.ts:25</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>ID of the field of the related records (of <code>entityType</code>) that links to the exported record,
+directly or in embedded objects (e.g. the participants of attendance items).</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+
+/**
+ * Configuration of one list of related records that is added to the data of a
+ * {@link TemplateExport}, to make records that link *to* the exported record
+ * available for placeholders in the template file.
+ *
+ * e.g. &#x60;{ entityType: &quot;Todo&quot;, property: &quot;parentTask&quot; }&#x60;
+ * adds the tasks whose &quot;parentTask&quot; field links to the exported record,
+ * to be used in the template as &#x60;{d._related.Todo.parentTask[i].subject}&#x60;
+ * (see {@link getRelatedRecordsPlaceholder}).
+ */
+export interface TemplateExportRelatedRecords {
+  /**
+   * Entity type of the related records to be loaded.
+   */
+  entityType: string;
+
+  /**
+   * ID of the field of the related records (of &#x60;entityType&#x60;) that links to the exported record,
+   * directly or in embedded objects (e.g. the participants of attendance items).
+   */
+  property: string;
+
+  /**
+   * How many levels of a hierarchy to load, if the related records are linked among themselves
+   * through the same field (e.g. sub-tasks of sub-tasks).
+   *
+   * The related records of a related record are added to it in the same way.
+   * Defaults to 1 (only records directly linking to the exported record)
+   * and is limited to {@link RELATED_RECORDS_MAX_LEVELS}.
+   */
+  levels?: number;
+
+  /**
+   * Whether archived (inactive) records are included as well.
+   * Templates can tell them apart by their &#x60;inactive&#x60; field.
+   */
+  includeArchived?: boolean;
+}
+
+/**
+ * The property of an exported record under which the lists of its related records are added,
+ * apart from the record&#x27;s own fields so that they never hide one.
+ */
+export const RELATED_RECORDS_PROPERTY &#x3D; &quot;_related&quot;;
+
+/**
+ * The path of the list in the data of an exported record (&#x60;_related.&lt;entityType&gt;.&lt;property&gt;&#x60;),
+ * i.e. its placeholder in the template is &#x60;{d.&lt;path&gt;[i]…}&#x60;.
+ */
+export function getRelatedRecordsPlaceholder(
+  config: TemplateExportRelatedRecords,
+): string {
+  return [RELATED_RECORDS_PROPERTY, config.entityType, config.property].join(
+    &quot;.&quot;,
+  );
+}
+
+/**
+ * Maximum number of hierarchy levels of related records loaded for a template.
+ */
+export const RELATED_RECORDS_MAX_LEVELS &#x3D; 5;
+
+/**
+ * Allowed format of the record type and field of a config,
+ * so that they work as parts of a placeholder in a template.
+ */
+const PLACEHOLDER_PART_PATTERN &#x3D; /^[A-Za-z_]\w*$/;
+
+/**
+ * Whether the record type and field of the config can be used in a placeholder of a template.
+ */
+export function canBeUsedInPlaceholder(
+  config: TemplateExportRelatedRecords,
+): boolean {
+  return [config?.entityType, config?.property].every((part) &#x3D;&gt;
+    PLACEHOLDER_PART_PATTERN.test(part ?? &quot;&quot;),
+  );
+}
+
+/**
+ * Whether records of the given type can form a hierarchy through the field (see {@link getRelatedRecordsLevels}):
+ * a plain entity-reference field (&#x60;dataType: &quot;entity&quot;&#x60;) of that type, linking to records of the same type.
+ *
+ * Related records can also link through embedded objects (e.g. attendance items),
+ * but such links do not form a hierarchy: use &#x60;EntityRelationsService.fieldReferencesType&#x60; to check for any link.
+ */
+export function isHierarchyField(
+  field: EntitySchemaField | undefined,
+  entityType: string,
+): boolean {
+  return (
+    field?.dataType &#x3D;&#x3D;&#x3D; &quot;entity&quot; &amp;&amp;
+    asArray(field.additional).includes(entityType)
+  );
+}
+
+/**
+ * The number of hierarchy levels to load for the given config:
+ * more than one level is only possible if the related records link among themselves through the configured field.
+ */
+export function getRelatedRecordsLevels(
+  config: TemplateExportRelatedRecords,
+  relatedType: EntityConstructor,
+): number {
+  const field &#x3D; relatedType.schema.get(config.property);
+  if (!isHierarchyField(field, relatedType.ENTITY_TYPE)) {
+    return 1;
+  }
+
+  return clampRelatedRecordsLevels(config.levels);
+}
+
+/**
+ * A number of hierarchy levels within the supported range (1 to {@link RELATED_RECORDS_MAX_LEVELS}).
+ */
+export function clampRelatedRecordsLevels(value: unknown): number {
+  const levels &#x3D; Math.floor(Number(value));
+  if (!Number.isFinite(levels)) {
+    return 1;
+  }
+  return Math.min(Math.max(levels, 1), RELATED_RECORDS_MAX_LEVELS);
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'TemplateExportRelatedRecords.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

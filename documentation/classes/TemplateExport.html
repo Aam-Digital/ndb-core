@@ -230,6 +230,12 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#relatedRecords" >relatedRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier"></span>
                                 <a href="#route" >route</a>
@@ -461,7 +467,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -504,7 +510,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:83</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -550,7 +556,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -595,7 +601,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:33</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:34</a></code>
 </div>
                         </td>
                     </tr>
@@ -635,7 +641,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:25</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:26</a></code>
 </div>
                         </td>
                     </tr>
@@ -669,10 +675,56 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:27</a></div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatedRecords"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>relatedRecords</b></span>
+                        <a href="#relatedRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/TemplateExportRelatedRecords.html" target="_self" >TemplateExportRelatedRecords[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, labelShort: undefined, description: undefined, editComponent: &#x27;EditTemplateExportRelatedRecords&#x27;, isArray: true})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:100</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lists of records linking <em>to</em> the exported record (e.g. the sub-tasks of a task)
+that are loaded and added to the data available for placeholders in the template.</p>
+<p>Such records are only loaded if configured here explicitly,
+to avoid loading (and sending to the server) more data than a template needs.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -702,7 +754,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -738,7 +790,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:129</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -780,7 +832,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:98</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -822,7 +874,7 @@ as an option when generating a file for a bulk selection, never for a single rec
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:118</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -866,7 +918,7 @@ while this templateId is automatically set when the file is uploaded.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/template-export/template-export.entity.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -914,7 +966,7 @@ while this templateId is automatically set when the file is uploaded.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:28</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:29</a></code>
 </div>
                         </td>
                     </tr>
@@ -954,7 +1006,7 @@ while this templateId is automatically set when the file is uploaded.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:27</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:28</a></code>
 </div>
                         </td>
                     </tr>
@@ -1621,8 +1673,8 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/features/template-export/template-export.entity.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/features/template-export/template-export.entity.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -2456,6 +2508,7 @@ import { TranslatableText } from &quot;../../core/config/multi-lingual-config&qu
 import { FileFieldConfig } from &quot;../file/file.datatype&quot;;
 import { EntityBlockConfig } from &quot;../../core/basic-datatypes/entity/entity-block/entity-block-config&quot;;
 import { TemplateExportFileDatatype } from &quot;./template-export-file-datatype/template-export-file.datatype&quot;;
+import { TemplateExportRelatedRecords } from &quot;./template-export-related-records/template-export-related-records&quot;;
 
 /**
  * Represents a TemplateExport that can be used to generate files (PDF, or the template&#x27;s own editable format) via API,
@@ -2531,6 +2584,22 @@ export class TemplateExport extends Entity {
     dataType: &quot;boolean&quot;,
   })
   arrayReport?: boolean;
+
+  /**
+   * Lists of records linking *to* the exported record (e.g. the sub-tasks of a task)
+   * that are loaded and added to the data available for placeholders in the template.
+   *
+   * Such records are only loaded if configured here explicitly,
+   * to avoid loading (and sending to the server) more data than a template needs.
+   */
+  @DatabaseField({
+    label: $localize&#x60;:TemplateExport:Related Records to Include&#x60;,
+    labelShort: $localize&#x60;:TemplateExport:Related Records&#x60;,
+    description: $localize&#x60;:TemplateExport:Make records that link to the selected record available in the template (e.g. the sub-tasks of a task). Each list is available under the record type and field linking to the record and can be used with carbone&#x27;s repetition syntax (e.g. {d._related.Todo.parentTask[i].subject} for the sub-tasks of a task); the placeholder to use is shown for each entry. Archived records are only included if selected.&#x60;,
+    editComponent: &quot;EditTemplateExportRelatedRecords&quot;,
+    isArray: true,
+  })
+  relatedRecords?: TemplateExportRelatedRecords[];
 
   /**
    * File (storing the file name) of the template uploaded to the server.
