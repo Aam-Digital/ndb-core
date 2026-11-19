@@ -78,6 +78,10 @@
       {
         "title": "Reports",
         "file": "../../src/app/features/reporting/README.md"
+      },
+      {
+        "title": "Hierarchy of Records",
+        "file": "../../src/app/features/hierarchy/README.md"
       }
     ]
   },

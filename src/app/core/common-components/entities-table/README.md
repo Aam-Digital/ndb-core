@@ -97,12 +97,13 @@ The `RowOptions` of a row can have:
   same flex row (e.g. a count next to a title);
 - `cssClass`: an extra CSS class for the row;
 - `selectable: false`: the row cannot be selected for bulk actions
-  (disabled checkbox, skipped by "select all" and Shift-click ranges).
+  (disabled checkbox, skipped by "select all" and Shift-click ranges);
+- `inSelectAll: false`: "select all" skips the row, but the user can select it,
+  and a selection made before keeps it (e.g. a row the data source hides for now).
 
 The selection never holds a record that is not selectable: one effect of the
 table removes it, however it got there (Shift-click range, the host, or row
-options that changed since, e.g. a row the data source hides), so a bulk
-action never applies to it.
+options that changed since), so a bulk action never applies to it.
 
 Row options are state of one table, so the data source provides them rather
 than the records (the same record object can be shown in several tables).
