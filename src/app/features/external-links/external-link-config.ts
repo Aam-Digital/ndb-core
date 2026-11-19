@@ -1,3 +1,4 @@
+import type { EditConditionConfig } from "#src/app/core/admin/building-blocks/edit-condition/edit-condition.component";
 import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
@@ -67,7 +68,12 @@ export class ExternalLinkConfig extends Entity {
    */
   @DatabaseField({
     label: $localize`Condition`,
-    editComponent: "EditExternalLinkCondition",
+    description: $localize`The link is shown only for records matching this condition. Without a condition, it is shown for all records of the type.`,
+    editComponent: "EditCondition",
+    additional: {
+      entityTypeField: "entity",
+      explanation: $localize`This link is shown only for records matching...`,
+    } satisfies EditConditionConfig,
   })
   condition?: DataFilter<Entity>;
 }

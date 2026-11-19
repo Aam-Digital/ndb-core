@@ -18,7 +18,7 @@ Each link is an `ExternalLinkConfig:*` record:
 ```
 
 - `entity`: the entity type whose records offer the link.
-- `condition` (optional): a filter (same format as `displayCondition` of a field) that a record has to match.
+- `condition` (optional): a filter (same format as `displayCondition` of a field) that a record has to match. Edited with the generic `EditCondition` form field (`core/admin/building-blocks/edit-condition/`).
 - `url`: has to start with `http://` or `https://`. Values are URL-encoded when inserted.
 
 Admins manage these records under Admin > External Links,
@@ -52,5 +52,4 @@ Links are only offered in the menu of a single record, not for a selection of se
 - `external-link-config.ts` — the `ExternalLinkConfig` entity
 - `external-links.service.ts` — loads the link definitions (cached until one changes) and turns them into menu actions
 - `external-links.module.ts` — registers the admin views, the admin overview entry, the section in the entity type admin and the actions factory
-- `edit-external-link-condition/` — form field showing the condition, editable with the shared `AdminDisplayConditionButtonComponent` for the selected record type
 - `src/app/utils/placeholders/fill-placeholders.ts` — the placeholder resolver

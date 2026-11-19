@@ -10,31 +10,31 @@ import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
-import { EditExternalLinkConditionComponent } from "./edit-external-link-condition.component";
+import { EditConditionComponent } from "./edit-condition.component";
 
-@DatabaseEntity("ExternalLinkConditionTestRecord")
+@DatabaseEntity("EditConditionTestRecord")
 class TestRecord extends Entity {
   @DatabaseField({ label: "Name" }) name: string;
   @DatabaseField({ label: "Status" }) status: string;
 }
 
-describe("EditExternalLinkConditionComponent", () => {
-  let fixture: ComponentFixture<EditExternalLinkConditionComponent>;
-  let component: EditExternalLinkConditionComponent;
+describe("EditConditionComponent", () => {
+  let fixture: ComponentFixture<EditConditionComponent>;
+  let component: EditConditionComponent;
   let recordType: UntypedFormControl;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditExternalLinkConditionComponent, FontAwesomeTestingModule],
+      imports: [EditConditionComponent, FontAwesomeTestingModule],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditExternalLinkConditionComponent);
+    fixture = TestBed.createComponent(EditConditionComponent);
     component = fixture.componentInstance;
     const form = setupCustomFormControlEditComponent(
       component,
       "condition",
-      {},
+      { additional: { entityTypeField: "entity" } },
       fixture,
     );
     recordType = new UntypedFormControl(TestRecord.ENTITY_TYPE);
@@ -42,12 +42,12 @@ describe("EditExternalLinkConditionComponent", () => {
   });
 
   it.each([
-    [undefined, "Shown for all records of the type."],
-    [{}, "Shown for all records of the type."],
-    [{ name: "Asha" }, "Shown only for records matching a condition on: Name"],
+    [undefined, "All records of the type."],
+    [{}, "All records of the type."],
+    [{ name: "Asha" }, "Only records matching a condition on: Name"],
     [
       { $or: [{ status: "new" }, { $and: [{ name: "Asha" }] }] },
-      "Shown only for records matching a condition on: Status, Name",
+      "Only records matching a condition on: Status, Name",
     ],
   ] as [DataFilter<Entity> | undefined, string][])(
     "for the condition %j describes it as %j",
@@ -59,7 +59,7 @@ describe("EditExternalLinkConditionComponent", () => {
     },
   );
 
-  it("clears the condition when the record type changes, as it refers to fields of the previous type", () => {
+  it("clears the condition when the entity type changes, as it refers to fields of the previous type", () => {
     component.formControl.setValue({ name: "Asha" });
     fixture.detectChanges();
 
@@ -69,7 +69,7 @@ describe("EditExternalLinkConditionComponent", () => {
     expect(component.formControl.dirty).toBe(true);
   });
 
-  it("keeps the condition when the record type is set to the same value", () => {
+  it("keeps the condition when the entity type is set to the same value", () => {
     component.formControl.setValue({ name: "Asha" });
     fixture.detectChanges();
 

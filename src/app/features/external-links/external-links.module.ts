@@ -1,5 +1,4 @@
 import { inject, NgModule } from "@angular/core";
-import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 import { AdminEntitySectionsService } from "../../core/admin/admin-entity/admin-entity-sections.service";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
@@ -35,7 +34,6 @@ export class ExternalLinksModule {
   constructor() {
     const externalLinksService = inject(ExternalLinksService);
 
-    inject(ComponentRegistry).addAll(dynamicComponents);
     inject(RouterService).addRoutes(viewConfigs);
     inject(AdminOverviewService).addTemplateItems({
       label: ExternalLinkConfig.labelPlural,
@@ -59,16 +57,6 @@ export class ExternalLinksModule {
     ]);
   }
 }
-
-const dynamicComponents: [string, AsyncComponent][] = [
-  [
-    "EditExternalLinkCondition",
-    () =>
-      import("./edit-external-link-condition/edit-external-link-condition.component").then(
-        (c) => c.EditExternalLinkConditionComponent,
-      ),
-  ],
-];
 
 const viewConfigs: ViewConfig[] = [
   // List View
