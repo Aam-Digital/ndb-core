@@ -51,7 +51,7 @@ export class HierarchyToolbarComponent {
       {
         id: null,
         label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
-        hint: $localize`:hierarchy|Explanation of the option of the Hierarchy menu to show a list without hierarchy:All records in one list, with pages`,
+        hint: $localize`:hierarchy|Explanation of the option of the Hierarchy menu to show a list without hierarchy:All records in one list without indentation`,
       },
     ];
   });
