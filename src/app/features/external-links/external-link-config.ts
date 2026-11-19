@@ -10,21 +10,24 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
  */
 export const WEB_ADDRESS_PATTERN = "https?://\\S+";
 
+/** example of a link, kept out of the translated texts so that translators cannot change its placeholders */
+const EXAMPLE_URL = "https://crm.example.org/contact?ref={d._id}&name={d.name}";
+
 /**
  * Each entity of this type defines a link to an external site
  * that is offered in the actions menu of the records of one entity type.
  */
 @DatabaseEntity("ExternalLinkConfig")
 export class ExternalLinkConfig extends Entity {
-  static override label = $localize`:ExternalLinkConfig:External Link`;
-  static override labelPlural = $localize`:ExternalLinkConfig:External Links`;
+  static override label = $localize`External Link`;
+  static override labelPlural = $localize`External Links`;
   static override route = "admin/external-link";
   static override toStringAttributes = ["title"];
   static override isInternalEntity = true;
 
   @DatabaseField({
-    label: $localize`:ExternalLinkConfig:Title`,
-    description: $localize`:ExternalLinkConfig:The text of the menu item, e.g. "Open in Donor CRM".`,
+    label: $localize`Title`,
+    description: $localize`The text of the menu item, e.g. "Open in Donor CRM".`,
     dataType: TranslatableTextDatatype.dataType,
     validators: { required: true },
   })
@@ -34,8 +37,8 @@ export class ExternalLinkConfig extends Entity {
    * The entity type whose records offer this link.
    */
   @DatabaseField({
-    label: $localize`:ExternalLinkConfig:Record Type`,
-    description: $localize`:ExternalLinkConfig:The link is shown in the "three dots" menu of records of this type.`,
+    label: $localize`Record Type`,
+    description: $localize`The link is shown in the "three dots" menu of records of this type.`,
     editComponent: "EditEntityType",
     viewComponent: "DisplayEntityType",
     validators: { required: true },
@@ -47,13 +50,13 @@ export class ExternalLinkConfig extends Entity {
    * and of the current user's record (`{c.user.fieldId}`).
    */
   @DatabaseField({
-    label: $localize`:ExternalLinkConfig:Link (URL)`,
-    description: $localize`:ExternalLinkConfig:The web address to open, e.g. "https://crm.example.org/contact?ref={d._id}&name={d.name}". Placeholders in curly brackets are replaced with values of the record.`,
+    label: $localize`Link (URL)`,
+    description: $localize`The web address to open, e.g. "${EXAMPLE_URL}:example:". Placeholders in curly brackets are replaced with values of the record.`,
     validators: {
       required: true,
       pattern: {
         pattern: WEB_ADDRESS_PATTERN,
-        message: $localize`:ExternalLinkConfig:Enter a web address starting with "https://" (without spaces).`,
+        message: $localize`Enter a web address starting with "https://" (or "http://"), without spaces.`,
       },
     },
   })
@@ -63,7 +66,7 @@ export class ExternalLinkConfig extends Entity {
    * Only records matching this condition offer the link. Without a condition, all records of the type do.
    */
   @DatabaseField({
-    label: $localize`:ExternalLinkConfig:Condition`,
+    label: $localize`Condition`,
     editComponent: "EditExternalLinkCondition",
   })
   condition?: DataFilter<Entity>;

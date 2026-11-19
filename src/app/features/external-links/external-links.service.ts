@@ -34,7 +34,7 @@ const EXTERNAL_LINK_ICON = "external-link-alt";
 
 const EXTERNAL_LINKS_GROUP: EntityActionGroup = {
   id: "external-links",
-  label: $localize`:entity context menu:External Links`,
+  label: $localize`External Links`,
   icon: EXTERNAL_LINK_ICON,
 };
 
@@ -90,7 +90,7 @@ export class ExternalLinksService {
         action: `external-link-${link.getId(true)}`,
         label: title,
         icon: EXTERNAL_LINK_ICON,
-        tooltip: $localize`:entity context menu tooltip:Open "${title}" in a new tab. This sends details of this record to that site.`,
+        tooltip: $localize`Open "${title}:title:" in a new tab. This sends details of this record to that site.`,
         permission: "read",
         availableFor: "individual-only",
         group,
