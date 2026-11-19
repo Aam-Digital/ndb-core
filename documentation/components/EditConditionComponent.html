@@ -511,7 +511,7 @@ e.g. for a config entity that applies only to some records of its type.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:88</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:89</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -532,7 +532,7 @@ e.g. for a config entity that applies only to some records of its type.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:87</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:88</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -773,8 +773,8 @@ e.g. for a config entity that applies only to some records of its type.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="157"
-                                    class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:157</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:160</a></div>
                         </td>
                     </tr>
 
@@ -1417,7 +1417,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:103</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -1454,7 +1454,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:95</a></div>
                         </td>
                     </tr>
 
@@ -1489,7 +1489,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:110</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -1526,7 +1526,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:114</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -2030,6 +2030,7 @@ import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/d
 import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
 import { EditComponent } from &quot;#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 
 /**
@@ -2145,7 +2146,9 @@ export class EditConditionComponent
       }
     };
     collect(this.valueSignal());
-    return [...keys].map((key) &#x3D;&gt; schema?.get(key)?.label ?? key);
+    return [...keys].map(
+      (key) &#x3D;&gt; resolveLocaleText(schema?.get(key)?.label) ?? key,
+    );
   });
 
   ngOnInit() {

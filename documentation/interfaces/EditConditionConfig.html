@@ -231,7 +231,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:30</a></div>
                                 </td>
                             </tr>
 
@@ -282,7 +282,7 @@ Changing that field clears the condition.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:34</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/admin/building-blocks/edit-condition/edit-condition.component.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -317,6 +317,7 @@ import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/d
 import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
 import { EditComponent } from &quot;#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 
 /**
@@ -432,7 +433,9 @@ export class EditConditionComponent
       }
     };
     collect(this.valueSignal());
-    return [...keys].map((key) &#x3D;&gt; schema?.get(key)?.label ?? key);
+    return [...keys].map(
+      (key) &#x3D;&gt; resolveLocaleText(schema?.get(key)?.label) ?? key,
+    );
   });
 
   ngOnInit() {
