@@ -39,6 +39,7 @@ A link is offered for a record if all of these hold:
 - the `url` is a web address and every placeholder is supported and refers to an existing field (also the field of a linked record or of the user's record).
 
 A link that is not shown because of its `url` or `condition` is a mistake in the configuration; it is not logged.
+The same goes for a link reading a field whose value cannot be converted (malformed data): only that link is left out, the other links of the record are still offered.
 
 With more than two links for a record, they are collapsed into an "External Links" submenu.
 

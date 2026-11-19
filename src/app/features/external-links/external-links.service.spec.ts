@@ -1,5 +1,5 @@
+import { Injectable } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
-import { Subject } from "rxjs";
 import {
   DatabaseEntity,
   EntityRegistry,
@@ -7,10 +7,14 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import {
+  mockEntityMapperProvider,
+  MockEntityMapperService,
+} from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
@@ -19,6 +23,15 @@ import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-o
 import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
 import { ExternalLinkConfig } from "./external-link-config";
 import { ExternalLinksService } from "./external-links.service";
+
+/** a datatype that cannot store its values, like a malformed field value would */
+@Injectable()
+class FailingDatatype extends DefaultDatatype {
+  static override dataType = "external-link-test-failing";
+  override transformToDatabaseFormat(): never {
+    throw new Error("malformed value");
+  }
+}
 
 describe("ExternalLinksService", () => {
   @DatabaseEntity("ExternalLinkTestRecord")
@@ -35,14 +48,13 @@ describe("ExternalLinksService", () => {
     children: string[];
     @DatabaseField({ dataType: "date-only" }) birthday: Date;
     @DatabaseField({ dataType: "translatable-text" }) title: unknown;
+    @DatabaseField({ dataType: FailingDatatype.dataType }) broken: string;
   }
 
   let service: ExternalLinksService;
-  let links: ExternalLinkConfig[];
-  let updates: Subject<UpdatedEntity<ExternalLinkConfig>>;
-  let entityMapper: { loadType: any; receiveUpdates: any; load: any };
-  let ability: { can: any };
-  let windowOpen: any;
+  let entityMapper: MockEntityMapperService;
+  let ability: { can: ReturnType<typeof vi.fn> };
+  let windowOpen: ReturnType<typeof vi.fn>;
   let record: TestRecord;
 
   function createLink(values: Partial<ExternalLinkConfig>): ExternalLinkConfig {
@@ -55,22 +67,14 @@ describe("ExternalLinksService", () => {
   }
 
   beforeEach(() => {
-    links = [];
-    updates = new Subject();
-    entityMapper = {
-      loadType: vi.fn(async () => links),
-      receiveUpdates: vi.fn(() => updates),
-      load: vi.fn(async () => undefined),
-    };
     ability = { can: vi.fn(() => true) };
     windowOpen = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
+        ...mockEntityMapperProvider(),
         { provide: EntityAbility, useValue: ability },
         { provide: WINDOW_TOKEN, useValue: { open: windowOpen } },
-        CurrentUserSubject,
         { provide: EntityRegistry, useValue: entityRegistry },
         EntitySchemaService,
         // only the datatypes of the fields these tests read
@@ -81,9 +85,13 @@ describe("ExternalLinksService", () => {
           useClass: TranslatableTextDatatype,
           multi: true,
         },
+        { provide: DefaultDatatype, useClass: FailingDatatype, multi: true },
       ],
     });
     service = TestBed.inject(ExternalLinksService);
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
 
     record = new TestRecord("1");
     record.name = "Asha & Co";
@@ -134,7 +142,7 @@ describe("ExternalLinksService", () => {
   ] as [string, Partial<ExternalLinkConfig>, boolean][])(
     "for %s the link is offered: %s",
     async (_, values, expected) => {
-      links = [createLink(values)];
+      entityMapper.add(createLink(values));
 
       const actions = await service.getActions(record);
 
@@ -143,7 +151,7 @@ describe("ExternalLinksService", () => {
   );
 
   it("does not offer a link whose definition the user may not read", async () => {
-    links = [createLink({})];
+    entityMapper.add(createLink({}));
     ability.can.mockImplementation(
       (action: string, subject: Entity) =>
         !(subject instanceof ExternalLinkConfig),
@@ -153,16 +161,16 @@ describe("ExternalLinksService", () => {
   });
 
   it("opens the address with values of the record right on click", async () => {
-    links = [
+    entityMapper.add(
       createLink({
         url: "https://crm.example.org/?ref={d._id}&n={d.name}&b={d.birthday}&t={d.title}&p={d.parent.name}",
       }),
-    ];
+    );
     record.birthday = new Date(2020, 0, 5);
     record.title = { en: "Translated" };
     const parent = new TestRecord("2");
     parent.name = "Parent";
-    entityMapper.load.mockResolvedValue(parent);
+    entityMapper.add(parent);
     const [action] = await service.getActions(record);
 
     // not awaited: browsers block a new tab that is opened after waiting for data
@@ -176,11 +184,10 @@ describe("ExternalLinksService", () => {
   });
 
   it("collapses more than two links into a submenu", async () => {
-    links = [createLink({}), createLink({})];
+    entityMapper.addAll([createLink({}), createLink({})]);
     expect((await service.getActions(record))[0].group).toBeUndefined();
 
-    updates.next({ type: "new", entity: createLink({}) });
-    links = [createLink({}), createLink({}), createLink({})];
+    entityMapper.add(createLink({}));
 
     const actions = await service.getActions(record);
     expect(actions).toHaveLength(3);
@@ -188,14 +195,58 @@ describe("ExternalLinksService", () => {
   });
 
   it("keeps the link definitions until one of them changes", async () => {
-    links = [createLink({})];
+    const link = createLink({});
+    entityMapper.add(link);
+    const loadType = vi.spyOn(entityMapper, "loadType");
     await service.getActions(record);
     await service.getActions(record);
-    expect(entityMapper.loadType).toHaveBeenCalledTimes(1);
+    expect(loadType).toHaveBeenCalledTimes(1);
 
-    updates.next({ type: "update", entity: links[0] });
+    entityMapper.add(link);
     await service.getActions(record);
 
-    expect(entityMapper.loadType).toHaveBeenCalledTimes(2);
+    expect(loadType).toHaveBeenCalledTimes(2);
+  });
+
+  it("leaves out only the links reading a field whose value cannot be read", async () => {
+    vi.spyOn(Logging, "warn");
+    record.broken = "malformed";
+    entityMapper.addAll([
+      createLink({ title: "Broken", url: "https://x.org/{d.broken}" }),
+      createLink({ title: "Fine", url: "https://x.org/{d.name}" }),
+    ]);
+
+    const actions = await service.getActions(record);
+
+    expect(actions.map((action) => action.label)).toEqual(["Fine"]);
+    expect(Logging.warn).not.toHaveBeenCalled();
+  });
+
+  it("loads a linked record once for all links reading it", async () => {
+    entityMapper.add(new TestRecord("2"));
+    entityMapper.addAll([
+      createLink({ url: "https://x.org/{d.parent.name}" }),
+      createLink({ url: "https://y.org/{d.parent.name}" }),
+    ]);
+    const load = vi.spyOn(entityMapper, "load");
+
+    await service.getActions(record);
+
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes on the ID of a linked record that cannot be loaded", async () => {
+    entityMapper.add(
+      createLink({ url: "https://x.org/{d.parent._id}?n={d.parent.name}" }),
+    );
+    const [action] = await service.getActions(record);
+
+    void action.execute(record);
+
+    expect(windowOpen).toHaveBeenCalledWith(
+      "https://x.org/ExternalLinkTestRecord%3A2?n=",
+      "_blank",
+      "noopener",
+    );
   });
 });

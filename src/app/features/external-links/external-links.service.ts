@@ -16,6 +16,7 @@ import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { loadLinkedRecord } from "#src/app/core/basic-datatypes/entity/load-linked-records";
 import {
   fillPlaceholders,
   getPlaceholders,
@@ -71,16 +72,19 @@ export class ExternalLinksService {
       return [];
     }
 
-    const offered: { link: ExternalLinkConfig; url: string }[] = [];
-    for (const link of await this.loadLinks()) {
-      if (this.isOfferedFor(link, entity)) {
-        offered.push({ link, url: await this.buildUrl(link, entity) });
-      }
-    }
+    // shared by all links of this menu, so that each linked record is loaded only once
+    const linkedRecords = new Map<string, Promise<Entity | undefined>>();
+    const offered = await Promise.all(
+      (await this.loadLinks()).map(async (link) => ({
+        link,
+        url: await this.getUrlIfOffered(link, entity, linkedRecords),
+      })),
+    );
+    const buildable = offered.filter(({ url }) => url !== undefined);
     const group =
-      offered.length > MAX_UNGROUPED_LINKS ? EXTERNAL_LINKS_GROUP : undefined;
+      buildable.length > MAX_UNGROUPED_LINKS ? EXTERNAL_LINKS_GROUP : undefined;
 
-    return offered.map(({ link, url }) => {
+    return buildable.map(({ link, url }) => {
       const title = resolveLocaleText(link.title) ?? "";
       return {
         action: `external-link-${link.getId(true)}`,
@@ -96,6 +100,30 @@ export class ExternalLinksService {
         },
       };
     });
+  }
+
+  /**
+   * The web address of the link for the record, `undefined` if the link is not offered for it.
+   * A link whose values cannot be read from the record (e.g. a malformed field value) is left out,
+   * without affecting the other links.
+   */
+  private async getUrlIfOffered(
+    link: ExternalLinkConfig,
+    entity: Entity,
+    linkedRecords: Map<string, Promise<Entity | undefined>>,
+  ): Promise<string | undefined> {
+    try {
+      if (!this.isOfferedFor(link, entity)) {
+        return undefined;
+      }
+      return await this.buildUrl(link, entity, linkedRecords);
+    } catch (err) {
+      // a problem of the data or the link definition of an instance, not one of our code
+      Logging.debug("ExternalLinks: could not build the link", err, {
+        link: link.getId(),
+      });
+      return undefined;
+    }
   }
 
   private loadLinks(): Promise<ExternalLinkConfig[]> {
@@ -199,21 +227,39 @@ export class ExternalLinksService {
   private async buildUrl(
     link: ExternalLinkConfig,
     entity: Entity,
+    linkedRecords: Map<string, Promise<Entity | undefined>>,
   ): Promise<string> {
-    const record = this.toPlaceholderValues(entity);
+    const record = this.toPlaceholderValues(
+      entity,
+      getFieldsReadBelow(link.url, ["d"]),
+    );
     for (const key of this.getLinkedRecordKeys(link, entity)) {
-      record[key] = await this.loadLinkedRecord(
+      const linked = await this.getLinkedRecord(
         entity[key],
         this.getLinkedTypes(entity, key)[0],
+        linkedRecords,
       );
+      if (linked) {
+        record[key] = this.toPlaceholderValues(
+          linked,
+          getFieldsReadBelow(link.url, ["d", key]),
+        );
+      }
     }
+
     const user = this.placeholderContext.getComplement()?.user;
     return fillPlaceholders(
       link.url,
       {
         d: record,
         c: {
-          user: user instanceof Entity ? this.toPlaceholderValues(user) : user,
+          user:
+            user instanceof Entity
+              ? this.toPlaceholderValues(
+                  user,
+                  getFieldsReadBelow(link.url, ["c", "user"]),
+                )
+              : user,
         },
       },
       encodeURIComponent,
@@ -230,24 +276,48 @@ export class ExternalLinksService {
     return new Set(keys);
   }
 
-  private async loadLinkedRecord(id: unknown, defaultType: EntityConstructor) {
+  /**
+   * The linked record, or a stub with only its ID if it cannot be loaded
+   * (so that `{d.school._id}` still works).
+   */
+  private async getLinkedRecord(
+    id: unknown,
+    defaultType: EntityConstructor,
+    linkedRecords: Map<string, Promise<Entity | undefined>>,
+  ): Promise<Entity | { _id: string } | undefined> {
     if (typeof id !== "string" || !id) {
       return undefined;
     }
-    const type = id.includes(":") ? Entity.extractTypeFromId(id) : defaultType;
-    const linked = await this.entityMapper
-      .load(type, id)
-      .catch(() => undefined);
-    return linked ? this.toPlaceholderValues(linked) : { _id: id };
+    if (!linkedRecords.has(id)) {
+      const type = id.includes(":")
+        ? Entity.extractTypeFromId(id)
+        : defaultType.ENTITY_TYPE;
+      linkedRecords.set(id, loadLinkedRecord(this.entityMapper, type, id));
+    }
+    return (await linkedRecords.get(id)) ?? { _id: id };
   }
 
   /**
-   * The values of the record as stored (e.g. a date-only field as "2025-01-31",
+   * The values of the given fields of the record as stored (e.g. a date-only field as "2025-01-31",
    * a dropdown as its ID), with translatable texts in the active language.
+   * Only the fields read by a link are transformed, so that a malformed value in another field does not matter.
    */
-  private toPlaceholderValues(entity: Entity): Record<string, unknown> {
-    const values = this.schemaService.transformEntityToDatabaseFormat(entity);
-    for (const [key, field] of entity.getSchema()) {
+  private toPlaceholderValues(
+    entity: Entity | { _id: string },
+    fields: Set<string>,
+  ): Record<string, unknown> {
+    if (!(entity instanceof Entity)) {
+      // a linked record that could not be loaded
+      return { ...entity };
+    }
+    const schema: EntitySchema = new Map(
+      [...entity.getSchema()].filter(([key]) => fields.has(key)),
+    );
+    const values = this.schemaService.transformEntityToDatabaseFormat(
+      entity,
+      schema,
+    );
+    for (const [key, field] of schema) {
       if (field.dataType === TranslatableTextDatatype.dataType) {
         values[key] = resolveLocaleText(entity[key]);
       }
@@ -259,4 +329,17 @@ export class ExternalLinksService {
 
 function hasField(schema: EntitySchema, key: string): boolean {
   return key === "_id" || schema.has(key);
+}
+
+/**
+ * The fields read by the placeholders of the text directly below the given path,
+ * e.g. `name` and `school` below `d` for `{d.name}` and `{d.school.name}`.
+ */
+function getFieldsReadBelow(text: string, path: string[]): Set<string> {
+  const keys = getPlaceholders(text)
+    .map((placeholder) => placeholder.split("."))
+    .filter((parts) => path.every((part, i) => parts[i] === part))
+    .map((parts) => parts[path.length])
+    .filter((key) => key !== undefined);
+  return new Set(keys);
 }
