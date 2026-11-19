@@ -42,6 +42,8 @@ A link that is not shown because of its `url` or `condition` is a mistake in the
 
 With more than two links for a record, they are collapsed into an "External Links" submenu.
 
+The web addresses are built when the menu is built (so that a click opens the tab right away, which browsers would block as a popup after waiting for data).
+The menu is built again each time it is opened, so changed values of linked records or changed link definitions are picked up without reloading the page.
 Links are only offered in the menu of a single record, not for a selection of several records.
 
 ## Key files
