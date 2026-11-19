@@ -4,7 +4,7 @@
   class="field-button"
   [class.joined]="expandToggle()"
   [matMenuTriggerFor]="fieldMenu"
-  matTooltip="Show the records as a hierarchy"
+  matTooltip="Show records indented below the record they link to in a field"
   i18n-matTooltip="
     hierarchy|Tooltip of the button to choose the field by which a list is shown
     as a hierarchy
@@ -46,21 +46,32 @@
   </button>
 }
 
-<mat-menu #fieldMenu>
+<mat-menu #fieldMenu [aria-label]="menuTitle">
+  <!-- the menu's accessible name holds the same text -->
+  <div class="menu-title" aria-hidden="true">{{ menuTitle }}</div>
   @for (option of options(); track option.id) {
+    @if (option.id === null) {
+      <!-- the flat list is set apart from the fields: it turns the hierarchy off -->
+      <mat-divider></mat-divider>
+    }
     <button
       mat-menu-item
       role="menuitemradio"
       [attr.aria-checked]="option.id === selected()"
       (click)="select(option.id)"
     >
-      <app-fa-dynamic-icon
-        icon="check"
-        class="check"
-        [class.unchecked]="option.id !== selected()"
-        aria-hidden="true"
-      ></app-fa-dynamic-icon>
-      {{ option.label }}
+      <span class="option">
+        <app-fa-dynamic-icon
+          icon="check"
+          class="check"
+          [class.unchecked]="option.id !== selected()"
+          aria-hidden="true"
+        ></app-fa-dynamic-icon>
+        <span class="option-text">
+          <span>{{ option.label }}</span>
+          <span class="option-hint">{{ option.hint }}</span>
+        </span>
+      </span>
     </button>
   }
 </mat-menu>

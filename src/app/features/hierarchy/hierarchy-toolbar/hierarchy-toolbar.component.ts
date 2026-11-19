@@ -1,5 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDividerModule } from "@angular/material/divider";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -16,6 +17,7 @@ import { HierarchyDataSource } from "../hierarchy-data-source";
   selector: "app-hierarchy-toolbar",
   imports: [
     MatButtonModule,
+    MatDividerModule,
     MatMenuModule,
     MatTooltipModule,
     FaDynamicIconComponent,
@@ -26,24 +28,33 @@ import { HierarchyDataSource } from "../hierarchy-data-source";
 export class HierarchyToolbarComponent {
   dataSource = input.required<HierarchyDataSource<Entity>>();
 
-  /** the options of the menu: the hierarchy fields and `null` for the flat list (a field could have any id) */
-  protected readonly options = computed<{ id: string | null; label: string }[]>(
-    () => {
-      const schema = this.dataSource().loadRecordConfig()?.entityCtr?.schema;
-      return [
-        ...this.dataSource()
-          .hierarchyFields()
-          .map((id) => ({
+  /** title of the menu, also its accessible name */
+  protected readonly menuTitle = $localize`:hierarchy|Title of the menu to choose the field by which a list is shown as a hierarchy:Show hierarchy based on field`;
+
+  /**
+   * the options of the menu, each with a line explaining how it arranges the records:
+   * the hierarchy fields and `null` for the flat list (a field could have any id)
+   */
+  protected readonly options = computed<HierarchyMenuOption[]>(() => {
+    const schema = this.dataSource().loadRecordConfig()?.entityCtr?.schema;
+    return [
+      ...this.dataSource()
+        .hierarchyFields()
+        .map((id) => {
+          const label = resolveLocaleText(schema?.get(id)?.label) ?? id;
+          return {
             id,
-            label: resolveLocaleText(schema?.get(id)?.label) ?? id,
-          })),
-        {
-          id: null,
-          label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
-        },
-      ];
-    },
-  );
+            label,
+            hint: $localize`:hierarchy|Explanation of an option of the Hierarchy menu, followed by the name of a field:Indented below the record in "${label}:fieldLabel:"`,
+          };
+        }),
+      {
+        id: null,
+        label: $localize`:hierarchy|Option of the Hierarchy menu to show a list without hierarchy:None (flat list)`,
+        hint: $localize`:hierarchy|Explanation of the option of the Hierarchy menu to show a list without hierarchy:All records in one list, with pages`,
+      },
+    ];
+  });
 
   protected readonly selected = computed(
     () => this.dataSource().activeField() ?? null,
@@ -77,4 +88,10 @@ export class HierarchyToolbarComponent {
   protected select(field: string | null) {
     this.dataSource().selectField(field ?? undefined);
   }
+}
+
+interface HierarchyMenuOption {
+  id: string | null;
+  label: string;
+  hint: string;
 }
