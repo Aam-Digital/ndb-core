@@ -2066,6 +2066,40 @@
         }
       }
     },
+    "view:todo/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Todo",
+        "panels": [
+          {
+            "title": "Overview",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "subject",
+                        "deadline",
+                        "startDate",
+                        "description",
+                        "assignedTo",
+                        "relatedEntities",
+                        "parentTask",
+                        "repetitionInterval",
+                        "completed"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     "entity:HistoricalEntityData": {
       "label": "Observation",
       "labelPlural": "Observations",

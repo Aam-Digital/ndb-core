@@ -85,7 +85,9 @@ export function canBeUsedInPlaceholder(
  * Whether the field is a plain entity-reference field (`dataType: "entity"`)
  * through which records of (any of) the given types can be linked.
  *
- * References nested inside embedded objects are not supported for related records.
+ * Used to tell whether related records can form a hierarchy through the field (see {@link getRelatedRecordsLevels}).
+ * Related records can also link through embedded objects (e.g. attendance items),
+ * but such links do not form a hierarchy: use `EntityRelationsService.fieldReferencesType` to check for any link.
  */
 export function isFieldLinkingToType(
   field: EntitySchemaField | undefined,

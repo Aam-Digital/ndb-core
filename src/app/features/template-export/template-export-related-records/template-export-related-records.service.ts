@@ -68,7 +68,7 @@ export class TemplateExportRelatedRecordsService {
    *
    * Related records are plain copies with their own entity-reference fields resolved
    * one level deep (like the exported record itself), excluding archived records
-   * and sorted by their display text.
+   * (unless the config sets `includeArchived`) and sorted by their display text.
    *
    * @param template The template, with the configs of the related records to load
    * @param records The exported records
