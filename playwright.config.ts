@@ -37,7 +37,8 @@ export default defineConfig({
     [process.env.CI ? "github" : "null"],
   ],
   retries: process.env.CI ? 2 : undefined,
-  workers: 1,
+  // GitHub's Linux runners have 4 vCPUs, enough for two browsers in parallel.
+  workers: process.env.CI ? 2 : 1,
   forbidOnly: process.env.CI ? true : undefined,
 
   use: {
