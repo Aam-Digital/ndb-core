@@ -420,7 +420,7 @@ export class EntityRelationsService {
           { $or: conditions },
           refType.schema,
           this.schemaService,
-        ) as DataFilter<T>,
+        ),
       );
     } catch (error) {
       // a failure of the user's environment (e.g. offline) is logged at debug by Logging itself

@@ -39,5 +39,5 @@ export function buildEnumValueFilter<T extends Entity>(
   name: string,
   enumValueId: string,
 ): DataFilter<T> {
-  return referenceIdCondition(name + ".id", [enumValueId]) as DataFilter<T>;
+  return referenceIdCondition(name + ".id", [enumValueId]);
 }
