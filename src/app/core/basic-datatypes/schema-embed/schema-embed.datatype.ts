@@ -18,7 +18,7 @@
 import {
   DefaultDatatype,
   ExportColumnMapping,
-  referenceIdConditions,
+  referenceIdCondition,
 } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -164,7 +164,7 @@ export class SchemaEmbedDatatype<
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<any>[] | undefined {
     const innerKeys = getInnerEntityReferenceFields(
       this.getEffectiveSchema(schemaField),
@@ -175,13 +175,10 @@ export class SchemaEmbedDatatype<
     }
 
     return innerKeys.flatMap((key) => [
-      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
-      {
-        [fieldId]: {
-          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
-        },
-      },
-      ...referenceIdConditions(`${fieldId}.${key}`, referencedId),
+      // an array of embedded objects (`$in` also matches an inner array of ids)
+      { [fieldId]: { $elemMatch: { [key]: { $in: referencedIds } } } },
+      // a single embedded object
+      referenceIdCondition(`${fieldId}.${key}`, referencedIds),
     ]);
   }
 

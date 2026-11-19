@@ -82,6 +82,10 @@
       {
         "title": "External Links",
         "file": "../../src/app/features/external-links/README.md"
+      },
+      {
+        "title": "Hierarchy of Records",
+        "file": "../../src/app/features/hierarchy/README.md"
       }
     ]
   },

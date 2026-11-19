@@ -14,6 +14,7 @@ import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configur
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
+import { DateRangeDatatype } from "#src/app/core/basic-datatypes/date-range/date-range.datatype.js";
 import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
@@ -55,6 +56,7 @@ faker.setDefaultRefDate(E2E_REF_DATE);
 const KNOWN_CONSOLE_ERRORS: RegExp[] = [
   // The app first requests the translations of its own version, which don't
   // exist for the e2e build (version 0.0.0), and then falls back to the latest.
+  // The browser logs the 404 (stubbed in `stubExternalRequests`) as an error.
   /^Failed to load resource: .*404.*\/locale\/0\.0\.0\/messages\.\w+\.json/,
 ];
 
@@ -96,7 +98,7 @@ export const test = base.extend<{ forEachTest: void } & E2eOptions>({
         globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
       }, E2E_REF_DATE);
 
-      await stubExternalImages(page, baseURL);
+      await stubExternalRequests(page, baseURL);
       const consoleErrors = collectConsoleErrors(page);
 
       await use();
@@ -138,21 +140,37 @@ const EMPTY_PNG = Buffer.from(
 );
 
 /**
- * Serve an empty image for images from external hosts (e.g. map tiles),
- * so that the tests neither depend on these servers being reachable
- * nor fail on "Failed to load resource" console errors.
+ * Translations of the e2e build's version (0.0.0), which are never published.
+ * The app requests them first and then falls back to the latest translations.
+ */
+const UNPUBLISHED_TRANSLATIONS = /\/locale\/0\.0\.0\/messages\.\w+\.json$/;
+
+/**
+ * Stub requests to external hosts that the tests should not depend on:
+ * - images (e.g. map tiles) get an empty image,
+ * - the unpublished translations of version 0.0.0 get a 404 right away.
+ *   The CDN sometimes sends its 404 without a CORS header, which the browser
+ *   logs as a CORS error instead of the known 404.
  *
- * Other external requests (e.g. translations) are needed by the app and still go through.
+ * Other external requests (e.g. the latest translations) are needed by the app and still go through.
  * Routes that a test registers itself take precedence over this one.
  */
-async function stubExternalImages(page: Page, baseURL: string | undefined) {
+async function stubExternalRequests(page: Page, baseURL: string | undefined) {
   const appOrigin = new URL(baseURL ?? "http://localhost:4200").origin;
   await page.route(
     (url) => url.origin !== appOrigin,
-    (route) =>
-      route.request().resourceType() === "image"
-        ? route.fulfill({ contentType: "image/png", body: EMPTY_PNG })
-        : route.fallback(),
+    (route) => {
+      if (route.request().resourceType() === "image") {
+        return route.fulfill({ contentType: "image/png", body: EMPTY_PNG });
+      }
+      if (UNPUBLISHED_TRANSLATIONS.test(route.request().url())) {
+        return route.fulfill({
+          status: 404,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        });
+      }
+      return route.fallback();
+    },
   );
 }
 
@@ -321,6 +339,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
       { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
       {

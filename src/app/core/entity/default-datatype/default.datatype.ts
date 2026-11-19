@@ -78,19 +78,16 @@ export interface ExportColumnMapping<EntityType = any> {
 }
 
 /**
- * The Mango conditions matching the given document path against a reference id,
- * covering both shapes it may have been stored in: the id itself or an array containing it.
- *
- * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ * The Mango condition matching the given document path against any of the reference ids.
+ * It covers both shapes the value may have been stored in, the id itself or an array
+ * containing it, because `$in` also matches any element of an array
+ * (in CouchDB's `_find` as well as in pouchdb-find).
  */
-export function referenceIdConditions(
+export function referenceIdCondition(
   path: string,
-  referencedId: string,
-): DataFilter<any>[] {
-  return [
-    { [path]: referencedId },
-    { [path]: { $elemMatch: { $eq: referencedId } } },
-  ];
+  referencedIds: string[],
+): DataFilter<any> {
+  return { [path]: { $in: referencedIds } };
 }
 
 /**
@@ -404,7 +401,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
-   * Mango conditions matching documents whose `fieldId` references the given entity id,
+   * Mango conditions matching documents whose `fieldId` references any of the given entity ids,
    * used to query related entities instead of loading a whole entity type (see
    * {@link EntityRelationsService.loadAllLinkingToEntity}).
    *
@@ -416,6 +413,8 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    *
    * The caller treats these as candidates only and still post-filters in memory, so
    * matching too much is harmless - matching too little silently loses references.
+   * Match all ids in the same few conditions (with `$in`) rather than conditions per id,
+   * so that the query keeps its size however many ids are looked up.
    *
    * @returns the conditions to OR together, or `undefined` if this datatype's stored format
    *          cannot be expressed as a query, which makes the caller load the whole type.
@@ -424,7 +423,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<any>[] | undefined {
     return undefined;
   }

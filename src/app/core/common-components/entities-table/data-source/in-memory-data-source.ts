@@ -43,18 +43,21 @@ export class InMemoryDataSource<
 
   constructor() {
     super();
-    effect(() => {
-      const records = this.allRecords();
-      const predicate = this.getFilterPredicate(this.dataFilter());
-      const searchText = this.searchText().trim().toLowerCase();
-      this.filteredRecords.set(
-        records.filter(
-          (record) =>
-            predicate(record) &&
-            (!searchText || entityFilterPredicate(record, searchText)),
-        ),
-      );
-    });
+    effect(() => this.filteredRecords.set(this.filterRecords()));
+  }
+
+  /**
+   * The records passing the filters and the free-text search.
+   * The {@link filteredRecords} are updated with them whenever a signal read here changes.
+   */
+  protected filterRecords(): T[] {
+    const predicate = this.getFilterPredicate(this.dataFilter());
+    const searchText = this.searchText().trim().toLowerCase();
+    return this.allRecords().filter(
+      (record) =>
+        predicate(record) &&
+        (!searchText || entityFilterPredicate(record, searchText)),
+    );
   }
 
   /**
