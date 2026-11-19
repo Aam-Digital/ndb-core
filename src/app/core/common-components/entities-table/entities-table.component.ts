@@ -299,6 +299,8 @@ export class EntitiesTableComponent<T extends Entity>
       filteredRows: computed(() => this.recordsDataSource().filteredRecords()),
       currentPageRows: computed(() => this.recordsDataSource().renderedRows()),
       isSelectable: this.isSelectable,
+      isInSelectAll: (record) =>
+        this.recordsDataSource().rowOptionsOf(record)?.inSelectAll !== false,
     });
   }
 

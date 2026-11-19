@@ -781,6 +781,32 @@ describe("EntitiesTableComponent", () => {
       expect(dataSource.renderedRows()).toHaveLength(10);
     });
 
+    it("keeps a selected record that select all leaves out, without selecting it through select all", () => {
+      const [a, skipped] = ["A", "B"].map((name) => TestEntity.create(name));
+      dataSource.allRecords.set([a, skipped]);
+      fixture.detectChanges();
+      component.selectedRecords.set([a, skipped]);
+
+      dataSource.optionsById.set(
+        new Map([[skipped.getId(), { inSelectAll: false }]]),
+      );
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a, skipped]);
+      const selectAll = (): HTMLInputElement =>
+        fixture.nativeElement.querySelector(
+          "th[mat-header-cell] mat-checkbox input",
+        );
+      // every record of "select all" is selected, so it unselects all
+      expect(selectAll().checked).toBe(true);
+
+      selectAll().click();
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([]);
+      selectAll().click();
+      fixture.detectChanges();
+      expect(component.selectedRecords()).toEqual([a]);
+    });
+
     it("unselects a selected record once its row options make it not selectable", () => {
       const [a, b] = ["A", "B"].map((name) => TestEntity.create(name));
       dataSource.allRecords.set([a, b]);
