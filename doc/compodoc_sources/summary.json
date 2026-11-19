@@ -88,6 +88,10 @@
         "file": "../../src/app/features/template-export/README.md"
       },
       {
+        "title": "Placeholders in Texts",
+        "file": "../../src/app/utils/placeholders/README.md"
+      },
+      {
         "title": "Hierarchy of Records",
         "file": "../../src/app/features/hierarchy/README.md"
       }
