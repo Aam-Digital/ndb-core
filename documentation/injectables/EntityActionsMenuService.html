@@ -189,6 +189,7 @@ and displayed to users in the entity details context menu.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#getActions" >getActions</a>
                             </li>
                             <li>
@@ -242,6 +243,7 @@ and displayed to users in the entity details context menu.</p>
                 <td class="col-md-4">
                     <a name="getActions"></a>
                     <span class="name">
+                            <span class="modifier">Async</span>
                         <span ><b>getActions</b></span>
                         <a href="#getActions"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -249,21 +251,24 @@ and displayed to users in the entity details context menu.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getActions(entity?: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActions(entity?: <a href="../classes/Entity.html" target="_self">Entity</a>, availableFor?: <a href="../miscellaneous/typealiases.html#EntityActionAvailability" target="_self">EntityActionAvailability</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="23"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:23</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:27</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>All registered actions for the entity, including those of the factories.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -274,6 +279,7 @@ and displayed to users in the entity details context menu.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -288,12 +294,30 @@ and displayed to users in the entity details context menu.</p>
                                             </td>
 
 
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>availableFor</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionAvailability" target="_self" >EntityActionAvailability</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the kind of menu the actions are for, letting factories skip work for actions not offered there</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/EntityAction.html" target="_self" >EntityAction[]</a></code>
+                            <b>Returns : </b>        <code><a href="../interfaces/EntityAction.html" target="_self" >Promise&lt;EntityAction[]&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -325,8 +349,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="73"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:73</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -394,8 +418,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="81"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:81</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -458,15 +482,15 @@ and displayed to users in the entity details context menu.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getVisibleActions(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[] | undefined</a>, availableFor: "bulk-only" | "individual-only" | "all")</code>
+                    <code>getVisibleActions(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[] | undefined</a>, availableFor: <a href="../miscellaneous/typealiases.html#EntityActionAvailability" target="_self">EntityActionAvailability</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:43</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="50"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -503,7 +527,7 @@ and displayed to users in the entity details context menu.</p>
                                         <tr>
                                                 <td>availableFor</td>
                                             <td>
-                                                        <code>&quot;bulk-only&quot; | &quot;individual-only&quot; | &quot;all&quot;</code>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionAvailability" target="_self" >EntityActionAvailability</a></code>
                                             </td>
 
                                             <td>
@@ -546,8 +570,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="88"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:88</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +639,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -685,8 +709,8 @@ depending on the specific entity for which the menu is displayed (e.g. only for 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="127"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:127</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -768,19 +792,26 @@ export class EntityActionsMenuService {
   private actionsFactories: EntityActionsFactory[] &#x3D; [];
   private readonly ability &#x3D; inject(EntityAbility, { optional: true });
 
-  getActions(entity?: Entity): EntityAction[] {
-    const factoryActions &#x3D; this.actionsFactories.flatMap((factory) &#x3D;&gt; {
+  /**
+   * All registered actions for the entity, including those of the factories.
+   * @param availableFor the kind of menu the actions are for, letting factories skip work for actions not offered there
+   */
+  async getActions(
+    entity?: Entity,
+    availableFor?: EntityActionAvailability,
+  ): Promise&lt;EntityAction[]&gt; {
+    const factoryActions: EntityAction[] &#x3D; [];
+    for (const factory of this.actionsFactories) {
       try {
-        return factory(entity);
+        factoryActions.push(...(await factory(entity, availableFor)));
       } catch (err) {
         // a single misbehaving factory must not break the whole context menu
         Logging.warn(
           &quot;EntityActionsMenu: action factory failed; skipping its actions.&quot;,
           err,
         );
-        return [];
       }
-    });
+    }
 
     return [...this.actions, ...factoryActions];
   }
@@ -790,13 +821,15 @@ export class EntityActionsMenuService {
    */
   async getVisibleActions(
     entities: Entity | Entity[] | undefined,
-    availableFor: &quot;bulk-only&quot; | &quot;individual-only&quot; | &quot;all&quot;,
+    availableFor: EntityActionAvailability,
   ): Promise&lt;EntityAction[]&gt; {
     const entity &#x3D; Array.isArray(entities) ? entities[0] : entities;
-    const actions &#x3D; this.getActions(entity).filter((action) &#x3D;&gt; {
-      const avail &#x3D; action.availableFor ?? &quot;all&quot;;
-      return avail &#x3D;&#x3D;&#x3D; availableFor || avail &#x3D;&#x3D;&#x3D; &quot;all&quot;;
-    });
+    const actions &#x3D; (await this.getActions(entity, availableFor)).filter(
+      (action) &#x3D;&gt; {
+        const avail &#x3D; action.availableFor ?? &quot;all&quot;;
+        return avail &#x3D;&#x3D;&#x3D; availableFor || avail &#x3D;&#x3D;&#x3D; &quot;all&quot;;
+      },
+    );
     const visibleActions: EntityAction[] &#x3D; [];
     for (const action of actions) {
       let isVisible: boolean;
@@ -879,7 +912,19 @@ export class EntityActionsMenuService {
   }
 }
 
-export type EntityActionsFactory &#x3D; (entity: Entity) &#x3D;&gt; EntityAction[];
+/** the kind of menu actions are offered in: for one record, for several selected records, or both */
+export type EntityActionAvailability &#x3D; &quot;bulk-only&quot; | &quot;individual-only&quot; | &quot;all&quot;;
+
+/**
+ * Generates the actions for the given entity.
+ * May be async, e.g. to load the records that define the actions.
+ * @param availableFor the kind of menu the actions are requested for (if known),
+ *        so that a factory can skip loading data for actions that are not offered there
+ */
+export type EntityActionsFactory &#x3D; (
+  entity: Entity,
+  availableFor?: EntityActionAvailability,
+) &#x3D;&gt; EntityAction[] | Promise&lt;EntityAction[]&gt;;
 </code></pre>
     </div>
 
