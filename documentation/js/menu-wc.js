@@ -786,13 +786,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AdminEntityGeneralSettingsComponent.html" data-type="entity-link" >AdminEntityGeneralSettingsComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/AdminEntityLinkedRecordsComponent.html" data-type="entity-link" >AdminEntityLinkedRecordsComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/AdminEntityListComponent.html" data-type="entity-link" >AdminEntityListComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/AdminEntityPanelComponentComponent.html" data-type="entity-link" >AdminEntityPanelComponentComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/AdminEntityPublicFormsComponent.html" data-type="entity-link" >AdminEntityPublicFormsComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/AdminEntityTypesComponent.html" data-type="entity-link" >AdminEntityTypesComponent</a>
@@ -2103,6 +2103,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </div>
                             <ul class="links collapse " ${ isNormalMode ? 'id="injectables-links"' : 'id="xs-injectables-links"' }>
                                 <li class="link">
+                                    <a href="injectables/AdminEntitySectionsService.html" data-type="entity-link" >AdminEntitySectionsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/AdminEntityService.html" data-type="entity-link" >AdminEntityService</a>
                                 </li>
                                 <li class="link">
@@ -2578,6 +2581,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/AdminEntityFieldData.html" data-type="entity-link" >AdminEntityFieldData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/AdminEntitySection.html" data-type="entity-link" >AdminEntitySection</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/AdminRelatedEntityDetailsData.html" data-type="entity-link" >AdminRelatedEntityDetailsData</a>

@@ -182,6 +182,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &quot;@angular/common&quot;;
 import { inject, NgModule } from &quot;@angular/core&quot;;
 import { AsyncComponent, ComponentRegistry } from &quot;app/dynamic-components&quot;;
+import { AdminEntitySectionsService } from &quot;../../core/admin/admin-entity/admin-entity-sections.service&quot;;
 import { AdminOverviewService } from &quot;../../core/admin/admin-overview/admin-overview.service&quot;;
 import { RouterService } from &quot;../../core/config/dynamic-routing/router.service&quot;;
 import { ViewConfig } from &quot;../../core/config/dynamic-routing/view-config.interface&quot;;
@@ -215,6 +216,16 @@ export class PublicFormModule {
       label: $localize&#x60;:admin menu item:Public Forms&#x60;,
       link: getEntityRuntimeRoute(PublicFormConfig),
       subtitle: $localize&#x60;:admin menu item subtitle:Configure public forms shareable via link or website, to collect data even without a user account.&#x60;,
+    });
+    inject(AdminEntitySectionsService).addSections({
+      // id kept from before sections were registered, so that existing links to this section still work
+      id: &quot;publicForm&quot;,
+      label: PublicFormConfig.labelPlural,
+      description: $localize&#x60;You can share the link to a &quot;Public Form&quot; with people who do not have an account or embed it in your website. People can submit new records through this form without logging in. For example, you can let participants self-register this way and then review their data later.&#x60;,
+      footnote: $localize&#x60;You can also create forms for &quot;related records&quot; (e.g. a survey that links back to the participant&#x27;s record who has submitted the form). For this, create a form for the &quot;related record&#x27;s type&quot; (e.g. the survey record) and enable the setting to create custom, individualized form links there.&#x60;,
+      entityType: PublicFormConfig.ENTITY_TYPE,
+      property: &quot;entity&quot;,
+      columns: [&quot;title&quot;, &quot;route&quot;, &quot;description&quot;],
     });
     publicFormsService.initCustomFormActions();
   }
