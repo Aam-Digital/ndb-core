@@ -364,6 +364,8 @@ describe("DatabaseResolverService", () => {
 
       // still reported: real data loss worth monitoring
       expect(errorSpy).toHaveBeenCalled();
+      // persistence state is recorded on the event itself
+      expect(errorSpy.mock.calls[0][1]).toHaveProperty("storagePersisted");
       expect(alertService.addWarning).toHaveBeenCalledWith(
         expect.stringContaining("may have been lost"),
       );
