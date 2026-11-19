@@ -6,6 +6,7 @@ import {
   test,
 } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
+import type { Entity } from "#src/app/core/entity/model/entity.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 
 const LINKED_CHILD = "<MATCHING CHILD & CO>";
@@ -33,6 +34,15 @@ test("Admin adds an external link for a record type and users open it from match
     generateChild({ name: OTHER_CHILD }),
   ]);
 
+  await test.step("Admin adds an external link for the record type with a condition", () =>
+    addExternalLink(page));
+  await test.step("A record matching the condition offers the link with its values in the address", () =>
+    openLinkFromMatchingRecord(page, linkedChild));
+  await test.step("A record not matching the condition only offers the unconditional link", () =>
+    checkLinkHiddenForOtherRecord(page));
+});
+
+async function addExternalLink(page: Page) {
   // the admin screen of the record type lists its links and adds one for this type
   await openActionsMenuOf(page, LINKED_CHILD);
   await page
@@ -78,11 +88,13 @@ test("Admin adds an external link for a record type and users open it from match
 
   await argosScreenshot(page, "external-link-form");
   await form.getByRole("button", { name: "Save", exact: true }).click();
-  await page.keyboard.press("Escape");
+  await page.locator("button.overlay-close-button").click();
   await expect(
     page.getByRole("cell", { name: LINK_TITLE, exact: true }),
   ).toBeVisible();
+}
 
+async function openLinkFromMatchingRecord(page: Page, linkedChild: Entity) {
   // a record matching the condition offers the link, with its values in the address
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await openActionsMenuOf(page, LINKED_CHILD);
@@ -94,11 +106,13 @@ test("Admin adds an external link for a record type and users open it from match
       "&name=" +
       encodeURIComponent(LINKED_CHILD),
   );
+}
 
+async function checkLinkHiddenForOtherRecord(page: Page) {
   // a record not matching the condition only offers the link without condition
   await openActionsMenuOf(page, OTHER_CHILD);
   await expect(
     page.getByRole("menuitem", { name: "Open in Donor CRM (example)" }),
   ).toBeVisible();
   await expect(page.getByRole("menuitem", { name: LINK_TITLE })).toBeHidden();
-});
+}
