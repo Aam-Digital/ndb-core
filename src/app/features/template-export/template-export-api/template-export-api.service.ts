@@ -3,10 +3,9 @@ import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
 import { from, Observable, of, throwError } from "rxjs";
-import { HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { switchMap } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
 import { resolveLocaleText } from "../../../core/language/active-locale";
 import { Logging } from "../../../core/logging/logging.service";
@@ -57,6 +56,11 @@ interface TemplateRenderRequestDto {
 export interface TemplateExportResult {
   filename: string;
   file: ArrayBuffer;
+  /**
+   * Whether some related records of the template could not be loaded
+   * and are missing from the generated file.
+   */
+  incomplete?: boolean;
 }
 
 /**
@@ -150,18 +154,20 @@ export class TemplateExportApiService extends FileService {
     const complement = this.exportContext.getComplement();
 
     return from(this.buildTemplateData(template, data)).pipe(
-      switchMap((resolvedData) =>
-        this.httpClient.post(
-          url,
-          {
-            convertTo: format,
-            data: resolvedData,
-            ...(complement ? { complement } : {}),
-          } as TemplateRenderRequestDto,
-          { observe: "response", responseType: "arraybuffer" },
-        ),
+      switchMap(({ data: templateData, incomplete }) =>
+        this.httpClient
+          .post(
+            url,
+            {
+              convertTo: format,
+              data: templateData,
+              ...(complement ? { complement } : {}),
+            } as TemplateRenderRequestDto,
+            { observe: "response", responseType: "arraybuffer" },
+          )
+          .pipe(map((res) => ({ res, incomplete }))),
       ),
-      switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+      switchMap(async ({ res, incomplete }) => {
         // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
         const disposition = res.headers.get("Content-Disposition");
         let filenameMatch: RegExpMatchArray | null = null;
@@ -183,6 +189,7 @@ export class TemplateExportApiService extends FileService {
         return {
           filename: filenameMatch?.[1] ?? fallbackFilename,
           file: res.body,
+          ...(incomplete ? { incomplete } : {}),
         };
       }),
     );
@@ -194,11 +201,13 @@ export class TemplateExportApiService extends FileService {
    *   resolved one level deep (see {@link EntityRelationResolverService})
    * - lists of records linking to the record (e.g. the sub-tasks of a task),
    *   if configured for the template (see {@link TemplateExportRelatedRecordsService})
+   *
+   * @returns The data for the template, and whether some related records could not be loaded
    */
   private async buildTemplateData(
     template: TemplateExport,
     data: Object | Object[],
-  ): Promise<Object | Object[]> {
+  ): Promise<{ data: Object | Object[]; incomplete: boolean }> {
     // related records link to the exported records (and to each other), so their relations
     // resolve to the same records: load each type only once for all of them
     const loadedEntities: LoadedEntitiesCache = new Map();
@@ -212,13 +221,16 @@ export class TemplateExportApiService extends FileService {
     ]);
 
     const addRelatedRecords = (record: Object, resolvedRecord: Object) =>
-      record instanceof Entity && relatedRecords.has(record.getId())
-        ? { ...resolvedRecord, ...relatedRecords.get(record.getId()) }
+      record instanceof Entity && relatedRecords.records.has(record.getId())
+        ? { ...resolvedRecord, ...relatedRecords.records.get(record.getId()) }
         : resolvedRecord;
 
-    return Array.isArray(data)
-      ? data.map((record, i) => addRelatedRecords(record, resolved[i]))
-      : addRelatedRecords(data, resolved);
+    return {
+      data: Array.isArray(data)
+        ? data.map((record, i) => addRelatedRecords(record, resolved[i]))
+        : addRelatedRecords(data, resolved),
+      incomplete: relatedRecords.incomplete,
+    };
   }
 
   /**

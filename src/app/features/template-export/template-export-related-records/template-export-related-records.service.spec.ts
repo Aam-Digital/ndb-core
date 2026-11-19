@@ -145,7 +145,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       action("Root"),
     ]);
 
-    expect(result.size).toBe(0);
+    expect(result.records.size).toBe(0);
     expect(loadType).not.toHaveBeenCalled();
   });
 
@@ -168,9 +168,12 @@ describe("TemplateExportRelatedRecordsService", () => {
       rootB,
     ]);
 
-    expect(titles(result.get(rootA.getId()))).toEqual(["Step 2", "Step 10"]);
+    expect(titles(result.records.get(rootA.getId()))).toEqual([
+      "Step 2",
+      "Step 10",
+    ]);
     // an empty list rather than no list, so that a loop in the template prints nothing
-    expect(result.get(rootB.getId())).toEqual(relatedList(SUB_ACTIONS));
+    expect(result.records.get(rootB.getId())).toEqual(relatedList(SUB_ACTIONS));
     // one lookup for all exported records, not one per record
     expect(loadLinking).toHaveBeenCalledTimes(1);
   });
@@ -188,7 +191,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       root,
     ]);
 
-    const [related] = listOf(result.get(root.getId()));
+    const [related] = listOf(result.records.get(root.getId()));
     expect(related).toEqual(
       expect.objectContaining({
         title: "Step",
@@ -212,10 +215,10 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()))).toEqual([
+    expect(titles(result.records.get(root.getId()))).toEqual([
       ["Archived", ["Below archived"]],
     ]);
-    expect(listOf(result.get(root.getId()))[0].inactive).toBe(true);
+    expect(listOf(result.records.get(root.getId()))[0].inactive).toBe(true);
   });
 
   it("lists records linking to the record inside embedded objects", async () => {
@@ -242,8 +245,8 @@ describe("TemplateExportRelatedRecordsService", () => {
       person,
     ]);
 
-    const [related] = listOf(result.get(person.getId()), attendance);
-    expect(titles(result.get(person.getId()), attendance)).toEqual([
+    const [related] = listOf(result.records.get(person.getId()), attendance);
+    expect(titles(result.records.get(person.getId()), attendance)).toEqual([
       "Kick-off",
     ]);
     // the embedded objects keep their other details
@@ -260,7 +263,7 @@ describe("TemplateExportRelatedRecordsService", () => {
 
     const result = await service.loadRelatedRecords(template(BLOCKING), [root]);
 
-    const [related] = listOf(result.get(root.getId()), BLOCKING);
+    const [related] = listOf(result.records.get(root.getId()), BLOCKING);
     expect(related["blockedBy"]).toEqual([
       { _id: root.getId() },
       { _id: other.getId() },
@@ -287,7 +290,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const [loadedChild] = listOf(result.get(root.getId()));
+    const [loadedChild] = listOf(result.records.get(root.getId()));
     const [grandchild] = listOf(loadedChild);
     expect(grandchild.owner).toEqual(
       expect.objectContaining({ name: "Owner" }),
@@ -301,7 +304,7 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(loadLinking).toHaveBeenCalledTimes(3);
   });
 
-  it("still provides the other lists if loading the records of one config fails", async () => {
+  it("still provides the other lists if loading the records of one config fails, marking the result as incomplete", async () => {
     const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     const root = action("Root");
     action("Sub", { parent: root.getId() });
@@ -321,9 +324,10 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const data = result.get(root.getId());
+    const data = result.records.get(root.getId());
     expect(titles(data)).toEqual(["Sub"]);
     expect(titles(data, BLOCKING)).toEqual([]);
+    expect(result.incomplete).toBe(true);
     expect(warn).toHaveBeenCalledTimes(1);
   });
 
@@ -337,7 +341,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const data = result.get(root.getId());
+    const data = result.records.get(root.getId());
     expect(titles(data)).toEqual(["Sub"]);
     expect(titles(data, BLOCKING)).toEqual(["Waiting"]);
   });
@@ -354,7 +358,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()))).toEqual([
+    expect(titles(result.records.get(root.getId()))).toEqual([
       // the deepest loaded level does not get a (misleadingly empty) list of its own
       ["Child", ["Grandchild"]],
       ["Sibling", []],
@@ -371,7 +375,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()))).toEqual([["Child", []]]);
+    expect(titles(result.records.get(root.getId()))).toEqual([["Child", []]]);
   });
 
   it("provides an empty list for exported records of a type that the configured field does not link to", async () => {
@@ -384,8 +388,12 @@ describe("TemplateExportRelatedRecordsService", () => {
       person,
     ]);
 
-    expect(titles(result.get(project.getId()))).toEqual(["Project action"]);
-    expect(result.get(person.getId())).toEqual(relatedList(SUB_ACTIONS));
+    expect(titles(result.records.get(project.getId()))).toEqual([
+      "Project action",
+    ]);
+    expect(result.records.get(person.getId())).toEqual(
+      relatedList(SUB_ACTIONS),
+    );
   });
 
   it("keeps the lists apart from the fields of the records, also of nested levels", async () => {
@@ -398,7 +406,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    const [related] = listOf(result.get(root.getId()));
+    const [related] = listOf(result.records.get(root.getId()));
     expect(related.parent).toEqual({ _id: root.getId() });
     expect(titles(related)).toEqual(["Grandchild"]);
   });
@@ -440,7 +448,7 @@ describe("TemplateExportRelatedRecordsService", () => {
     const result = await service.loadRelatedRecords(exportTemplate, [root]);
     await service.loadRelatedRecords(exportTemplate, [root]);
 
-    expect(result.get(root.getId())).toEqual(expected);
+    expect(result.records.get(root.getId())).toEqual(expected);
     // reported only once, not for every generated file
     expect(warn).toHaveBeenCalledTimes(1);
   });
@@ -455,7 +463,7 @@ describe("TemplateExportRelatedRecordsService", () => {
       [root],
     );
 
-    expect(titles(result.get(root.getId()))).toEqual(["Sub"]);
+    expect(titles(result.records.get(root.getId()))).toEqual(["Sub"]);
     expect(warn).toHaveBeenCalledTimes(1);
   });
 });

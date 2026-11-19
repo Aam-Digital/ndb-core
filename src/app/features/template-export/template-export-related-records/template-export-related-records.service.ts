@@ -30,6 +30,19 @@ export type RelatedRecordsData = {
 };
 
 /**
+ * The related records loaded for the exported records.
+ */
+export interface RelatedRecordsResult {
+  /** the related records data by the id of the exported record */
+  records: Map<string, RelatedRecordsData>;
+  /**
+   * Whether the related records of some config could not be loaded,
+   * so that their lists are empty or incomplete in the data.
+   */
+  incomplete: boolean;
+}
+
+/**
  * A record in the nested data of an exported record:
  * the exported record itself, or a related record (at any level) below it.
  */
@@ -74,16 +87,17 @@ export class TemplateExportRelatedRecordsService {
    * @param records The exported records
    * @param loadedEntities Records loaded to resolve relations, shared with other calls for the same file
    * @returns The related records data by the id of the exported record,
-   *          holding (possibly empty) related records for each valid config.
-   *          Empty if the template does not include any related records.
+   *          holding (possibly empty) related records for each valid config
+   *          (no records if the template does not include any related records),
+   *          and whether loading some of them failed.
    */
   async loadRelatedRecords(
     template: TemplateExport,
     records: Entity[],
     loadedEntities: LoadedEntitiesCache = new Map(),
-  ): Promise<Map<string, RelatedRecordsData>> {
+  ): Promise<RelatedRecordsResult> {
     if (!template.relatedRecords?.length) {
-      return new Map();
+      return { records: new Map(), incomplete: false };
     }
 
     const configs = this.filterValidConfigs(template);
@@ -94,7 +108,7 @@ export class TemplateExportRelatedRecordsService {
     }));
 
     // each config writes its own related records into the records' data, so they can be loaded at the same time
-    await Promise.all(
+    const loaded = await Promise.all(
       configs.map((config) =>
         this.addRelatedRecords(
           template,
@@ -104,7 +118,12 @@ export class TemplateExportRelatedRecordsService {
         ),
       ),
     );
-    return new Map(exportedRecords.map((record) => [record.id, record.data]));
+    return {
+      records: new Map(
+        exportedRecords.map((record) => [record.id, record.data]),
+      ),
+      incomplete: loaded.includes(false),
+    };
   }
 
   /**
@@ -147,16 +166,18 @@ export class TemplateExportRelatedRecordsService {
    * @param exportedRecords The exported records, collecting the results in their `data`
    *          (starting with empty related records, shared with the other configs)
    * @param loadedEntities Records loaded to resolve relations, shared by all configs and levels
+   * @returns false if loading the related records failed
+   *          (true also for a config that cannot be applied, which is skipped)
    */
   private async addRelatedRecords(
     template: TemplateExport,
     config: TemplateExportRelatedRecords,
     exportedRecords: NestedRecord[],
     loadedEntities: LoadedEntitiesCache,
-  ) {
+  ): Promise<boolean> {
     const linkField = this.linkField(template, config);
     if (!linkField) {
-      return;
+      return true;
     }
 
     try {
@@ -164,13 +185,16 @@ export class TemplateExportRelatedRecordsService {
       // (a template can apply to several types): no record links to them, so they keep empty related records,
       // and filtering them out first would only add code to save a few keys in one query
       await this.fillRelatedRecords(config, exportedRecords, loadedEntities);
+      return true;
     } catch (error) {
-      // the file is still generated, with the related records that could be loaded
+      // the file is still generated, with the related records that could be loaded,
+      // and the user is told that some are missing (see `RelatedRecordsResult.incomplete`)
       Logging.warn(
         "TemplateExport: could not load related records",
         { template: template.getId(), config },
         error,
       );
+      return false;
     }
   }
 
