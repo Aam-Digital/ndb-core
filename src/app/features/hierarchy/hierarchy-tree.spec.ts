@@ -28,8 +28,19 @@ function describeRows(view: HierarchyView<TestEntity>): string[] {
   );
 }
 
-const sortedByName: HierarchyOptions<TestEntity> = {
-  parentField: "ref",
+type ViewOptions = Omit<HierarchyOptions<TestEntity>, "parents">;
+
+/** the tree of the records, by their `ref` field */
+function buildView(
+  records: TestEntity[],
+  matches: TestEntity[],
+  options: ViewOptions,
+): HierarchyView<TestEntity> {
+  const parents = resolveParentIds(records, "ref", options.rootId);
+  return buildHierarchyView(records, matches, { ...options, parents });
+}
+
+const sortedByName: ViewOptions = {
   sort: { active: "name", direction: "asc" },
 };
 
@@ -56,7 +67,7 @@ const named = (...names: string[]) =>
 
 describe("hierarchy-tree", () => {
   it("shows every record below its parent, each level sorted on its own", () => {
-    const view = buildHierarchyView(plan, plan, sortedByName);
+    const view = buildView(plan, plan, sortedByName);
 
     expect(describeRows(view)).toEqual([
       "Clean Water",
@@ -74,8 +85,7 @@ describe("hierarchy-tree", () => {
   });
 
   it("sorts each level in the given direction, also by a custom sort value", () => {
-    const view = buildHierarchyView(plan, plan, {
-      parentField: "ref",
+    const view = buildView(plan, plan, {
       sort: {
         active: "name",
         direction: "desc",
@@ -125,13 +135,13 @@ describe("hierarchy-tree", () => {
     },
     { scenario: "nothing without matches", matches: [], expected: [] },
   ])("shows $scenario", ({ matches, expected }) => {
-    const view = buildHierarchyView(plan, named(...matches), sortedByName);
+    const view = buildView(plan, named(...matches), sortedByName);
 
     expect(describeRows(view)).toEqual(expected);
   });
 
   it("leaves out the sub-records of collapsed records", () => {
-    const view = buildHierarchyView(plan, plan, {
+    const view = buildView(plan, plan, {
       ...sortedByName,
       collapsedIds: new Set(["TestEntity:Mobilisation", "TestEntity:Garden"]),
     });
@@ -218,7 +228,7 @@ describe("hierarchy-tree", () => {
   ])(
     "tells which lines connect the shown rows, for $scenario",
     ({ matches, options, expected }) => {
-      const view = buildHierarchyView(plan, matches, options);
+      const view = buildView(plan, matches, options);
 
       // drawn like a file tree: "│" where an ancestor's level continues, "├" or "└" before the record
       const lines = view.rows.map(
@@ -232,7 +242,7 @@ describe("hierarchy-tree", () => {
   );
 
   it("shows only the records below the root record, starting at level 0", () => {
-    const view = buildHierarchyView(plan, plan, {
+    const view = buildView(plan, plan, {
       ...sortedByName,
       rootId: "TestEntity:Mobilisation",
     });
@@ -246,7 +256,7 @@ describe("hierarchy-tree", () => {
   });
 
   it("shows the parents of a match below the root record as context, but not the root", () => {
-    const view = buildHierarchyView(plan, named("Rampur", "Garden"), {
+    const view = buildView(plan, named("Rampur", "Garden"), {
       ...sortedByName,
       rootId: "TestEntity:Clean Water",
     });
@@ -290,7 +300,7 @@ describe("hierarchy-tree", () => {
       expected: ["A"],
     },
   ])("puts records at the top level for $scenario", ({ records, expected }) => {
-    const view = buildHierarchyView(records, records, sortedByName);
+    const view = buildView(records, records, sortedByName);
 
     expect(describeRows(view)).toEqual(expected);
   });

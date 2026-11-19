@@ -30,8 +30,8 @@ export interface HierarchyRow<T extends Entity = Entity> {
 }
 
 export interface HierarchyOptions<T extends Entity> {
-  /** field of the records that holds the id of their parent record */
-  parentField: string;
+  /** the parent of each record, see {@link resolveParentIds} (with the same `rootId`) */
+  parents: ParentIds;
   /** show only the records below this record (the root itself is not shown) */
   rootId?: string;
   /** sort order, applied to each level separately */
@@ -154,8 +154,7 @@ export function buildHierarchyView<T extends Entity>(
   matches: readonly T[],
   options: HierarchyOptions<T>,
 ): HierarchyView<T> {
-  const { parentField, rootId, sort, collapsedIds = new Set() } = options;
-  const parents = resolveParentIds(allRecords, parentField, rootId);
+  const { parents, rootId, sort, collapsedIds = new Set() } = options;
   const byId = new Map(allRecords.map((record) => [record.getId(), record]));
 
   const matchIds = new Set<string>();

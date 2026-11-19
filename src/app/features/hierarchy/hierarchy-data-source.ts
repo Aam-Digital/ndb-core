@@ -20,6 +20,7 @@ import {
   descendantIds,
   HierarchyRow,
   HierarchyView,
+  ParentIds,
   resolveParentIds,
 } from "./hierarchy-tree";
 
@@ -106,18 +107,26 @@ export class HierarchyDataSource<
   /** Records whose sub-records are hidden. Not remembered, the tree opens fully expanded. */
   readonly collapsedIds = signal<ReadonlySet<string>>(new Set());
 
+  /** The parent of each record by the active field (none for a flat list). */
+  private readonly parentIds = computed<ParentIds | undefined>(() => {
+    const field = this.activeField();
+    return field
+      ? resolveParentIds(this.allRecords(), field, this.rootRecord()?.getId())
+      : undefined;
+  });
+
   /**
    * The filtered records arranged as a tree, each level sorted on its own
    * (none for a flat list). The table shows its rows, see {@link _orderData}.
    */
   private readonly view = computed<HierarchyView<T> | undefined>(() => {
-    const field = this.activeField();
-    if (!field) {
+    const parents = this.parentIds();
+    if (!parents) {
       return undefined;
     }
     const sort = this.effectiveSort();
     return buildHierarchyView(this.allRecords(), this.filteredRecords(), {
-      parentField: field,
+      parents,
       rootId: this.rootRecord()?.getId(),
       sort: sort
         ? {
@@ -193,11 +202,10 @@ export class HierarchyDataSource<
   /** All records below the root record (only in a section). */
   private readonly branchIds = computed<ReadonlySet<string> | undefined>(() => {
     const root = this.rootRecord();
-    const field = this.activeField();
-    if (!root || !field) {
+    const parents = this.parentIds();
+    if (!root || !parents) {
       return undefined;
     }
-    const parents = resolveParentIds(this.allRecords(), field, root.getId());
     return descendantIds(parents, root.getId());
   });
 
@@ -310,11 +318,10 @@ export class HierarchyDataSource<
   }
 
   private expandParentsOf(recordIds: string[]) {
-    const parents = resolveParentIds(
-      this.allRecords(),
-      this.activeField()!,
-      this.rootRecord()?.getId(),
-    );
+    const parents = this.parentIds();
+    if (!parents) {
+      return;
+    }
     const next = new Set(this.collapsedIds());
     for (const recordId of recordIds) {
       for (let id = parents.get(recordId); id; id = parents.get(id)) {
