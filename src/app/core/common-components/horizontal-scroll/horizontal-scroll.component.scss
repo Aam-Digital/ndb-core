@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.content {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* the sticky scrollbar below replaces the scrollbar of the content */
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.sticky-scrollbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.scrollbar-spacer {
+  height: 1px;
+}
+
+.hidden {
+  display: none;
+}

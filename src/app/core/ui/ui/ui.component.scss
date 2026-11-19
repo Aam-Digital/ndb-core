@@ -37,7 +37,8 @@ body {
 :host {
   background-color: colors.$background;
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax: wide content must not stretch the layout beyond the screen */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
 
   /*
@@ -70,6 +71,18 @@ body {
 }
 
 /**  Main content  **/
+
+/*
+ * The page scrolls on the document, never sideways.
+ * "clip" instead of Material's "hidden"/"auto" so these elements are no scroll containers:
+ * otherwise sticky elements in the content (e.g. the scrollbar of HorizontalScrollComponent)
+ * would stick to them instead of the screen.
+ * Content wider than the screen has to scroll on its own (wrap it in HorizontalScrollComponent).
+ */
+mat-sidenav-container,
+.sidenav-content {
+  overflow: clip;
+}
 
 mat-sidenav-container {
   background: none;
