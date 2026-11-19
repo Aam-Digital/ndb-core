@@ -82,20 +82,19 @@ export function canBeUsedInPlaceholder(
 }
 
 /**
- * Whether the field is a plain entity-reference field (`dataType: "entity"`)
- * through which records of (any of) the given types can be linked.
+ * Whether records of the given type can form a hierarchy through the field (see {@link getRelatedRecordsLevels}):
+ * a plain entity-reference field (`dataType: "entity"`) of that type, linking to records of the same type.
  *
- * Used to tell whether related records can form a hierarchy through the field (see {@link getRelatedRecordsLevels}).
  * Related records can also link through embedded objects (e.g. attendance items),
  * but such links do not form a hierarchy: use `EntityRelationsService.fieldReferencesType` to check for any link.
  */
-export function isFieldLinkingToType(
+export function isHierarchyField(
   field: EntitySchemaField | undefined,
-  ...entityTypes: string[]
+  entityType: string,
 ): boolean {
   return (
     field?.dataType === "entity" &&
-    asArray(field.additional).some((type) => entityTypes.includes(type))
+    asArray(field.additional).includes(entityType)
   );
 }
 
@@ -108,7 +107,7 @@ export function getRelatedRecordsLevels(
   relatedType: EntityConstructor,
 ): number {
   const field = relatedType.schema.get(config.property);
-  if (!isFieldLinkingToType(field, relatedType.ENTITY_TYPE)) {
+  if (!isHierarchyField(field, relatedType.ENTITY_TYPE)) {
     return 1;
   }
 

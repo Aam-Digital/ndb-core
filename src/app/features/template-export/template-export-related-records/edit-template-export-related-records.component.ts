@@ -30,7 +30,7 @@ import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { asArray } from "#src/app/utils/asArray";
 import {
   getRelatedRecordsLevels,
-  isFieldLinkingToType,
+  isHierarchyField,
   canBeUsedInPlaceholder,
   getRelatedRecordsPlaceholder,
   RELATED_RECORDS_MAX_LEVELS,
@@ -286,7 +286,7 @@ export class EditTemplateExportRelatedRecordsComponent
             id: getOptionId(config),
             ...config,
             label: $localize`${recordType}:recordType: (linked through "${fieldLabel}:fieldLabel:")`,
-            isHierarchy: isFieldLinkingToType(field, entityType.ENTITY_TYPE),
+            isHierarchy: isHierarchyField(field, entityType.ENTITY_TYPE),
           };
           options.set(option.id, option);
         }
@@ -301,7 +301,7 @@ export class EditTemplateExportRelatedRecordsComponent
     option: RelatedRecordsOption | undefined,
     levels: number,
   ): string[] {
-    if (!option || !canBeUsedInPlaceholder(config)) {
+    if (!option) {
       return [];
     }
 
@@ -343,9 +343,6 @@ export class EditTemplateExportRelatedRecordsComponent
       }
       if (!availableOptions.has(optionId)) {
         return $localize`Some related records do not link to the applicable record types.`;
-      }
-      if (!canBeUsedInPlaceholder(config)) {
-        return $localize`The record type or field of some related records cannot be used in a placeholder.`;
       }
       if (selected.has(optionId)) {
         return $localize`The same related records are included more than once.`;
