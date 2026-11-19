@@ -1,6 +1,6 @@
 import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption, SelectableFilter } from "./filters";
-import { referenceIdConditions } from "../../entity/default-datatype/default.datatype";
+import { referenceIdCondition } from "../../entity/default-datatype/default.datatype";
 
 export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
   constructor(name: string, label: string, filterEntities: Entity[]) {
@@ -9,7 +9,7 @@ export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
       (filterEntity) => ({
         key: filterEntity.getId(),
         label: filterEntity.toString(),
-        filter: { $or: referenceIdConditions(name, filterEntity.getId()) },
+        filter: referenceIdCondition(name, [filterEntity.getId()]),
       }),
     );
     super(name, options, label);

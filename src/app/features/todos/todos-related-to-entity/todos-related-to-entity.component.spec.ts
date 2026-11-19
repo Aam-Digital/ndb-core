@@ -56,10 +56,7 @@ describe("TodosRelatedToEntityComponent", () => {
       $and: [
         TODO_NOT_COMPLETED_FILTER,
         {
-          $or: [
-            { relatedEntities: child.getId() },
-            { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
-          ],
+          $or: [{ relatedEntities: { $in: [child.getId()] } }],
         },
       ],
     });
@@ -105,10 +102,8 @@ describe("TodosRelatedToEntityComponent", () => {
         TODO_NOT_COMPLETED_FILTER,
         {
           $or: [
-            { assignedTo: user.getId() },
-            { assignedTo: { $elemMatch: { $eq: user.getId() } } },
-            { relatedEntities: user.getId() },
-            { relatedEntities: { $elemMatch: { $eq: user.getId() } } },
+            { assignedTo: { $in: [user.getId()] } },
+            { relatedEntities: { $in: [user.getId()] } },
           ],
         },
       ],

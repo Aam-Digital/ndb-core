@@ -110,6 +110,16 @@ describe("EntityActionsMenuService", () => {
     expect(warnSpy).toHaveBeenCalled();
   });
 
+  it("tells the factories which menu the actions are for, so they can skip work for other menus", async () => {
+    const entity = TestEntity.create("Record A");
+    const factory = vi.fn(() => []);
+    service.registerActionsFactories([factory]);
+
+    await service.getActionsForBulk([entity]);
+
+    expect(factory).toHaveBeenCalledWith(entity, "bulk-only");
+  });
+
   it("should not break the whole menu when an action factory throws", async () => {
     const entity = TestEntity.create("Record A");
     const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
@@ -126,7 +136,8 @@ describe("EntityActionsMenuService", () => {
       () => {
         throw new Error("Requested item is not registered in EntityRegistry.");
       },
-      () => [
+      // factories may be async, e.g. to load the records defining their actions
+      async () => [
         {
           action: "healthy-factory-action",
           label: "Healthy Factory",

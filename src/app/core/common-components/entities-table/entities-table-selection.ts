@@ -166,6 +166,8 @@ export interface EntitiesTableSelectionContext<T extends Entity> {
    * the table unselects every record that is not, whoever selected it
    */
   isSelectable: (record: T) => boolean;
+  /** whether "select all" selects a selectable record */
+  isInSelectAll: (record: T) => boolean;
 }
 
 /**
@@ -184,20 +186,27 @@ export class EntitiesTableSelectionStore<T extends Entity> {
   /** the records that "select all" selects */
   private readonly selectableRows = computed(() => {
     if (!this.context) return [];
-    return this.context.filteredRows().filter(this.context.isSelectable);
+    return this.context
+      .filteredRows()
+      .filter(
+        (record) =>
+          this.context.isSelectable(record) &&
+          this.context.isInSelectAll(record),
+      );
   });
 
+  /** whether all records of "select all" are selected (the selection may hold others "select all" leaves out) */
   readonly allRowsSelected = computed(() => {
-    const selected = this.context?.selectedRecords() ?? [];
-    const total = this.selectableRows().length;
-    return selected.length > 0 && selected.length === total;
+    const selected = new Set(this.context?.selectedRecords() ?? []);
+    const rows = this.selectableRows();
+    return rows.length > 0 && rows.every((record) => selected.has(record));
   });
 
-  readonly selectionIndeterminate = computed(() => {
-    const selected = this.context?.selectedRecords() ?? [];
-    const total = this.selectableRows().length;
-    return selected.length > 0 && selected.length < total;
-  });
+  readonly selectionIndeterminate = computed(
+    () =>
+      (this.context?.selectedRecords() ?? []).length > 0 &&
+      !this.allRowsSelected(),
+  );
 
   /** Connects component input/model signals to this store. Must be called once from component constructor. */
   connect(context: EntitiesTableSelectionContext<T>) {

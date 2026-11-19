@@ -10,12 +10,15 @@ import {
   getEmbeddedEntityReferenceFields,
   resolveEmbeddedField,
 } from "../schema/embedded-schema-field.util";
-import { referenceIdConditions } from "../default-datatype/default.datatype";
+import { referenceIdCondition } from "../default-datatype/default.datatype";
 import { conditionOnEmbeddedField } from "../../filter/embedded-field-filter";
 import { toStoredFormatCondition } from "../../filter/stored-format";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DatabaseIndexingService } from "../database-indexing/database-indexing.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /** fields of an entity type that another type links to (see {@link EntityRelationsService.getFieldsOfLinkedTypes}) */
 export interface LinkedTypeFields {
@@ -27,6 +30,11 @@ export interface LinkedTypeFields {
   fields: [string, EntitySchemaField][];
 }
 
+/** the property of an entity that a reference index can be created for */
+type IndexedProperty = Parameters<
+  DatabaseIndexingService["generateIndexOnProperty"]
+>[2];
+
 /**
  * Service to work with related, interlinked entities.
  */
@@ -37,6 +45,12 @@ export class EntityRelationsService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly schemaService = inject(EntitySchemaService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly sessionInfo = inject(SessionSubject, { optional: true });
+
+  /** ids of the reference indexes that were already requested in this session */
+  private readonly requestedReferenceIndexes = new Set<string>();
 
   /**
    * Get all entity types whose schema includes fields referencing the given type.
@@ -51,7 +65,7 @@ export class EntityRelationsService {
     const referencingTypes = [];
     for (const t of this.entityRegistry.values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (this.fieldReferencesType(field, type)) {
+        if (this.fieldReferencesType(field, [type])) {
           let refType = referencingTypes.find((e) => e.entityType === t);
           if (!refType) {
             refType = { entityType: t, referencingProperties: [] };
@@ -132,23 +146,23 @@ export class EntityRelationsService {
 
   /**
    * The conditions (to combine with `$or`) that the field at the path (see {@link getReferencingFieldPaths})
-   * links to the record with the id, in any of the shapes it may be stored in:
+   * links to one of the records with the ids, in any of the shapes it may be stored in:
    * a single id or a list of them, and for a field inside the entries of an embedded field,
    * a list of entries or a single one (saved while the field had the other setting).
    */
   referenceConditions(
     entityType: EntityConstructor,
     fieldPath: string,
-    referencedId: string,
+    referencedIds: string[],
   ): DataFilter<Entity>[] {
-    const condition = { $or: referenceIdConditions(fieldPath, referencedId) };
+    const condition = referenceIdCondition(fieldPath, referencedIds);
     const embedded = resolveEmbeddedField(
       this.schemaService,
       entityType,
       fieldPath,
     );
     if (!embedded) {
-      return condition.$or;
+      return [condition];
     }
     return [true, false].flatMap((isArray) => {
       const onEmbeddedField = conditionOnEmbeddedField(condition, fieldPath, {
@@ -161,7 +175,7 @@ export class EntityRelationsService {
 
   /** ids of the inner fields of an embedded field linking to records of the type */
   private innerFieldsLinkingTo(
-    field: EntitySchemaField,
+    field: EntitySchemaField | undefined,
     referencedType: string,
   ): string[] {
     return getEmbeddedEntityReferenceFields(this.schemaService, field)
@@ -170,13 +184,17 @@ export class EntityRelationsService {
   }
 
   /**
-   * Check whether a schema field references the given entity type,
+   * Check whether a schema field references (any of) the given entity types,
    * including nested references inside embedded schemas (e.g. attendance fields).
    */
-  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    return (
-      asArray(field.additional).includes(type) ||
-      this.innerFieldsLinkingTo(field, type).length > 0
+  fieldReferencesType(
+    field: EntitySchemaField | undefined,
+    types: string[],
+  ): boolean {
+    return types.some(
+      (type) =>
+        asArray(field?.additional).includes(type) ||
+        this.innerFieldsLinkingTo(field, type).length > 0,
     );
   }
 
@@ -205,6 +223,126 @@ export class EntityRelationsService {
   }
 
   /**
+   * Find the entities of one type that reference any of the given entities in one specific field,
+   * grouped by the entity they reference.
+   *
+   * Unlike {@link loadAllLinkingToEntity} this loads a single, known relationship
+   * (e.g. the "Task" records whose `parentTask` is one of the given records)
+   * and does so for many referenced entities at once.
+   * The field can be a plain entity-reference field or hold embedded objects
+   * with references (e.g. the participants of attendance items).
+   *
+   * Only the records needed are loaded, where possible:
+   * - through a database query, if the database answers queries (online-only)
+   *   (all records of the type are loaded instead if the query fails);
+   * - through a database index of the field, on a local database
+   *   (all records of the type are loaded instead if the index cannot be used);
+   * - all records of the type for a visitor without an account (public forms),
+   *   whom the server does not let query indexes.
+   *
+   * @returns A map of each referenced id that has any entity linking to it, to these linking entities.
+   *          An entity referencing several of the given ids is listed for each of them.
+   *          Empty if the user may not read the entity type.
+   */
+  async loadLinkingToEntities<T extends Entity = Entity>(
+    referencedIds: string[],
+    refType: EntityConstructor<T>,
+    refProperty: string,
+  ): Promise<Map<string, T[]>> {
+    const ids = new Set(referencedIds);
+    const field = refType.schema.get(refProperty);
+    if (!field || ids.size === 0 || !this.canRead(refType)) {
+      return new Map();
+    }
+
+    const candidates = await this.loadCandidatesForField([...ids], refType, {
+      ...field,
+      id: refProperty,
+    });
+    const innerKeys = this.innerReferenceKeys(field);
+    return groupByReferencedId(candidates, ids, (entity) =>
+      referencedIdsIn(entity[refProperty], innerKeys),
+    );
+  }
+
+  /**
+   * The records of the type that may reference one of the ids in the one field
+   * (like {@link loadCandidates} for several fields, see {@link loadLinkingToEntities} for how they are loaded).
+   */
+  private async loadCandidatesForField<T extends Entity>(
+    ids: string[],
+    refType: EntityConstructor<T>,
+    field: FormFieldConfig,
+  ): Promise<T[]> {
+    if (this.sessionInfo && !this.sessionInfo.value) {
+      return this.entityMapper.loadType(refType);
+    }
+    if (
+      !this.entityMapper.supportsFind(refType) &&
+      field.dataType === EntityDatatype.dataType
+    ) {
+      return this.loadThroughReferenceIndex(refType, field.id, ids);
+    }
+    return this.loadCandidates(ids, refType, [field]);
+  }
+
+  /**
+   * The records referencing one of the ids through the reference index of the field
+   * (created on first use), or all records of the type if the index cannot be used.
+   */
+  private async loadThroughReferenceIndex<T extends Entity>(
+    refType: EntityConstructor<T>,
+    property: string,
+    ids: string[],
+  ): Promise<T[]> {
+    const indexId = `linking_${refType.ENTITY_TYPE}_${property}`;
+    let records: T[];
+    try {
+      if (!this.requestedReferenceIndexes.has(indexId)) {
+        this.requestedReferenceIndexes.add(indexId);
+        await this.dbIndexing.generateIndexOnProperty(
+          indexId,
+          refType,
+          property as IndexedProperty,
+        );
+      }
+      records = await this.dbIndexing.queryIndexDocs(
+        refType,
+        `${indexId}/by_${property}`,
+        { keys: ids },
+      );
+    } catch (error) {
+      // only a local database gets here, where the index should always work
+      Logging.warn(
+        "EntityRelationsService: Could not use the index of linked records, loading all records of the type instead",
+        error,
+        { entityType: refType.ENTITY_TYPE, field: property },
+      );
+      return this.entityMapper.loadType(refType);
+    }
+    // a record referencing several of the ids is returned once for each of them
+    return [...new Map(records.map((r) => [r.getId(), r])).values()];
+  }
+
+  /** The inner reference properties of an embedded field, empty for other fields. */
+  private innerReferenceKeys(field: EntitySchemaField | undefined): string[] {
+    if (field?.dataType === EntityDatatype.dataType) {
+      return [];
+    }
+    return getEmbeddedEntityReferenceFields(this.schemaService, field).map(
+      ([key]) => key,
+    );
+  }
+
+  /**
+   * Whether the user may read records of the type.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canRead(entityType: EntityConstructor): boolean {
+    return !this.ability?.initialized || this.ability.can("read", entityType);
+  }
+
+  /**
    * The records of the type referencing the primary entity through one of the given fields (of the type's schema).
    */
   private async loadLinkedEntitiesOfType(
@@ -213,7 +351,7 @@ export class EntityRelationsService {
     refProperties: FormFieldConfig[],
   ) {
     const entities = await this.loadCandidates(
-      primaryEntity,
+      [primaryEntity.getId()],
       refType,
       refProperties,
     );
@@ -233,7 +371,7 @@ export class EntityRelationsService {
   }
 
   /**
-   * The records of the given type that may reference the primary entity.
+   * The records of the given type that may reference one of the given ids.
    *
    * Where every referencing property can express itself as a database query, this loads
    * only the matching records instead of the whole entity type - which is what keeps a
@@ -242,13 +380,13 @@ export class EntityRelationsService {
    * All-or-nothing per type: a full load already contains every property's matches, so
    * combining it with queries for the remaining properties would transfer the same
    * documents twice. The caller post-filters the result either way, so a query that
-   * matches too much is harmless.
+   * matches too much is harmless. If the query fails, the whole type is loaded as well.
    */
-  private async loadCandidates(
-    primaryEntity: Entity,
-    refType: EntityConstructor,
+  private async loadCandidates<T extends Entity>(
+    referencedIds: string[],
+    refType: EntityConstructor<T>,
     refProperties: FormFieldConfig[],
-  ): Promise<Entity[]> {
+  ): Promise<T[]> {
     if (!this.entityMapper.supportsFind(refType)) {
       // a local database answers no queries, but its full load is cheap
       return this.entityMapper.loadType(refType);
@@ -259,10 +397,10 @@ export class EntityRelationsService {
       const propertyConditions = this.fieldReferenceConditions(
         refType,
         refProperty,
-        primaryEntity,
+        referencedIds,
       );
 
-      if (!propertyConditions?.length) {
+      if (propertyConditions.length === 0) {
         Logging.debug(
           "loading all records of an entity type because a referencing field cannot be queried",
           { entityType: refType.ENTITY_TYPE, field: refProperty.id },
@@ -275,39 +413,47 @@ export class EntityRelationsService {
     if (conditions.length === 0) {
       return [];
     }
-    return this.entityMapper.findAllType(
-      refType,
-      toStoredFormatCondition(
-        { $or: conditions },
-        refType.schema,
-        this.schemaService,
-      ),
-    );
+    try {
+      return await this.entityMapper.findAllType(
+        refType,
+        toStoredFormatCondition(
+          { $or: conditions },
+          refType.schema,
+          this.schemaService,
+        ) as DataFilter<T>,
+      );
+    } catch (error) {
+      // a failure of the user's environment (e.g. offline) is logged at debug by Logging itself
+      Logging.warn(
+        "EntityRelationsService: Could not query the linked records, loading all records of the type instead",
+        error,
+        {
+          entityType: refType.ENTITY_TYPE,
+          fields: refProperties.map((p) => p.id),
+        },
+      );
+      return this.entityMapper.loadType(refType);
+    }
   }
 
   /**
-   * The conditions that the given field of a record references the entity, in any of the shapes it may be stored in,
+   * The conditions that the given field of a record references one of the ids, in any of the shapes it may be stored in,
    * also inside the entries of an embedded field.
    * None if the field's datatype does not hold the reference in a way a query can match.
    */
   private fieldReferenceConditions(
     refType: EntityConstructor,
     refProperty: FormFieldConfig,
-    referencedEntity: Entity,
+    referencedIds: string[],
   ): DataFilter<Entity>[] {
-    const referencedId = referencedEntity.getId();
-    if (refProperty.dataType === EntityDatatype.dataType) {
-      return this.referenceConditions(refType, refProperty.id, referencedId);
-    }
-    return this.innerFieldsLinkingTo(
-      refProperty,
-      referencedEntity.getType(),
-    ).flatMap((innerProp) =>
-      this.referenceConditions(
-        refType,
-        `${refProperty.id}.${innerProp}`,
-        referencedId,
-      ),
+    const paths =
+      refProperty.dataType === EntityDatatype.dataType
+        ? [refProperty.id]
+        : this.innerReferenceKeys(refProperty).map(
+            (innerProp) => `${refProperty.id}.${innerProp}`,
+          );
+    return paths.flatMap((path) =>
+      this.referenceConditions(refType, path, referencedIds),
     );
   }
 
@@ -320,27 +466,13 @@ export class EntityRelationsService {
    * Without such schema info the function falls back to checking all object values.
    */
   itemReferencesId(
-    item: any,
+    item: unknown,
     refId: string,
     field?: EntitySchemaField,
   ): boolean {
-    if (item === refId) {
-      return true;
-    }
-
-    if (typeof item === "object" && item !== null) {
-      const refFields = getEmbeddedEntityReferenceFields(
-        this.schemaService,
-        field,
-      );
-      if (refFields.length > 0) {
-        return refFields.some(([key]) => asArray(item[key]).includes(refId));
-      }
-      // Fallback when no embedded schema info is available
-      return Object.values(item).includes(refId);
-    }
-
-    return false;
+    return referencedIdsIn(item, this.innerReferenceKeys(field)).includes(
+      refId,
+    );
   }
 
   /**
@@ -352,9 +484,10 @@ export class EntityRelationsService {
     relevantFields: FormFieldConfig[],
   ): FormFieldConfig[] {
     return relevantFields.filter((field) =>
-      asArray(entity[field.id]).some((item) =>
-        this.itemReferencesId(item, refId, field),
-      ),
+      referencedIdsIn(
+        entity[field.id],
+        this.innerReferenceKeys(field),
+      ).includes(refId),
     );
   }
 }
@@ -365,4 +498,43 @@ function isEntityLinkTo(field: EntitySchemaField, type: string): boolean {
     field.dataType === EntityDatatype.dataType &&
     asArray(field.additional).includes(type)
   );
+}
+
+/**
+ * The ids a field value references: the plain id(s), or for embedded objects the ids
+ * in their inner reference properties (all their values, if `innerKeys` is empty).
+ */
+function referencedIdsIn(value: unknown, innerKeys: string[]): unknown[] {
+  return asArray(value).flatMap((item) => {
+    if (typeof item !== "object" || item === null) {
+      return [item];
+    }
+    return innerKeys.length > 0
+      ? innerKeys.flatMap((key) => asArray(item[key]))
+      : Object.values(item);
+  });
+}
+
+/**
+ * Group the entities by which of the given ids they reference.
+ * An entity referencing several of the ids is listed for each of them.
+ */
+function groupByReferencedId<T extends Entity>(
+  entities: T[],
+  ids: Set<string>,
+  referencedIdsOf: (entity: T) => unknown[],
+): Map<string, T[]> {
+  const groups = new Map<string, T[]>();
+  for (const entity of entities) {
+    // a Set, so that an id referenced twice (e.g. by two embedded items) counts only once
+    for (const id of new Set<unknown>(referencedIdsOf(entity))) {
+      if (typeof id === "string" && ids.has(id)) {
+        if (!groups.has(id)) {
+          groups.set(id, []);
+        }
+        groups.get(id).push(entity);
+      }
+    }
+  }
+  return groups;
 }

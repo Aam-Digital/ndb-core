@@ -1,0 +1,106 @@
+@use "mixins/visually-hidden";
+@use "variables/breakpoints";
+@use "variables/colors";
+@use "variables/sizes";
+
+/* the host is a flex item in the filter row of the list (desktop) or in the header row (mobile) */
+:host {
+  display: flex;
+  align-items: center;
+  /* never wider than the row, the label of the field is cut off instead (see .field-label) */
+  max-width: 100%;
+  /* the height of the form fields next to it, to center the buttons on them */
+  min-height: 56px;
+
+  @media screen and (min-width: breakpoints.$md) {
+    /* after the filters, at the end of the row: it arranges the list, it does not filter it */
+    order: 1;
+    margin-inline-start: auto;
+  }
+}
+
+.field-icon {
+  margin-inline-end: sizes.$small;
+}
+
+.caret {
+  margin-inline-start: sizes.$small;
+}
+
+.field-button {
+  white-space: nowrap;
+}
+
+/* a long label is cut off with "…", like the selected value of the filter dropdowns next to it
+   (the full label is in the menu and in the accessible name) */
+.field-label {
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+/* the two buttons look like one control */
+.field-button.joined {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.expand-button {
+  min-width: 0;
+  padding-inline: sizes.$regular;
+  margin-inline-start: -1px;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* on mobile, an icon button (with its tooltip and accessible name), to leave the width to the "Filter" field */
+@media screen and (max-width: calc(breakpoints.$md - 1px)) {
+  .field-button {
+    min-width: 0;
+    padding-inline: sizes.$regular;
+  }
+
+  .field-icon {
+    margin-inline-end: 0;
+  }
+
+  .caret {
+    display: none;
+  }
+
+  /* it stays in the accessible name */
+  .field-label {
+    @include visually-hidden.visually-hidden;
+  }
+}
+
+.menu-title {
+  padding: sizes.$small sizes.$regular;
+  font-size: 12px;
+  color: colors.$muted;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
+  padding-block: sizes.$small;
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  color: colors.$muted;
+}
+
+/* keeps the labels of the menu aligned whether their option is checked or not */
+.check.unchecked {
+  visibility: hidden;
+}

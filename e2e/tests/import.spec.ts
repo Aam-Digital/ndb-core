@@ -1,22 +1,35 @@
-import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import { argosScreenshot, expect, loadApp, Page, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type.js";
 import { UpdateMetadata } from "#src/app/core/entity/model/update-metadata.js";
 
-test("Import children with entity reference, date and enum column mappings", async ({
+test("Import records with different column mappings, creating and updating records", async ({
   page,
 }) => {
-  const users = generateUsers();
-
-  // Create School entities that can be referenced during import
+  // Schools that can be referenced during import
   const school1 = createEntityOfType("School", "school-1");
   school1["name"] = "Springfield Elementary";
-
   const school2 = createEntityOfType("School", "school-2");
   school2["name"] = "Shelbyville Academy";
 
-  await loadApp(page, [...users, school1, school2]);
+  const existingChild = createEntityOfType("Child", "existing-child");
+  existingChild["name"] = "Erin Walsh";
+  existingChild["projectNumber"] = "101";
+  existingChild["phone"] = "555-0000";
+  // like real records, the existing one has a creation date (new import rows don't)
+  existingChild.created = new UpdateMetadata("demo", new Date("2024-06-01"));
 
+  await loadApp(page, [...generateUsers(), school1, school2, existingChild]);
+
+  await test.step("Import children with entity reference, date and enum column mappings", () =>
+    importChildrenWithValueMappings(page));
+  await test.step("Import a multi-value entity reference from a single comma-separated column", () =>
+    importMultiValueEntityReference(page));
+  await test.step("Import updates an existing record matched by a field and creates the others", () =>
+    importUpdatingExistingRecord(page));
+});
+
+async function importChildrenWithValueMappings(page: Page) {
   // Navigate to the Import page
   await page.getByRole("navigation").getByText("Import").click();
   await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
@@ -179,21 +192,9 @@ test("Import children with entity reference, date and enum column mappings", asy
   await expect(page.getByText("Alice Miller")).toBeVisible();
   await expect(page.getByText("Bob Smith")).toBeVisible();
   await expect(page.getByText("Charlie Lee")).toBeVisible();
-});
+}
 
-test("Import a multi-value entity reference from a single comma-separated column", async ({
-  page,
-}) => {
-  const users = generateUsers();
-
-  // Two schools to be referenced by name from one comma-separated cell
-  const school1 = createEntityOfType("School", "school-1");
-  school1["name"] = "Springfield Elementary";
-  const school2 = createEntityOfType("School", "school-2");
-  school2["name"] = "Shelbyville Academy";
-
-  await loadApp(page, [...users, school1, school2]);
-
+async function importMultiValueEntityReference(page: Page) {
   await page.getByRole("navigation").getByText("Import").click();
   await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
 
@@ -268,9 +269,8 @@ test("Import a multi-value entity reference from a single comma-separated column
     .click();
 
   // import runs to completion
-  await expect(page.getByText("Import completed")).toBeVisible({
-    timeout: 15_000,
-  });
+  // (not checked by the "Import completed" message, which the previous import may still show)
+  await expect(confirmDialog).not.toBeVisible({ timeout: 15_000 });
 
   // open the created note and confirm both schools are linked on the saved record.
   // the imported note has no date, so clear the list's default date-range filter first.
@@ -281,29 +281,17 @@ test("Import a multi-value entity reference from a single comma-separated column
   await expect(noteDetails).toBeVisible();
   await expect(noteDetails.getByText("Springfield Elementary")).toBeVisible();
   await expect(noteDetails.getByText("Shelbyville Academy")).toBeVisible();
-});
+  await page.locator("button.overlay-close-button").click();
+}
 
-test("Import updates an existing record matched by a field and creates the others", async ({
-  page,
-}) => {
-  const users = generateUsers();
-
-  const existingChild = createEntityOfType("Child", "existing-child");
-  existingChild["name"] = "Alice Miller";
-  existingChild["projectNumber"] = "101";
-  existingChild["phone"] = "555-0000";
-  // like real records, the existing one has a creation date (new import rows don't)
-  existingChild.created = new UpdateMetadata("demo", new Date("2024-06-01"));
-
-  await loadApp(page, [...users, existingChild]);
-
+async function importUpdatingExistingRecord(page: Page) {
   await page.getByRole("navigation").getByText("Import").click();
   await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
 
   // "101" matches the existing record, "102" is new
   const csvContent = [
     "Project Number,Name,Phone Number",
-    "101,Alice Miller,555-0101",
+    "101,Erin Walsh,555-0101",
     "102,Dave Brown,555-0102",
   ].join("\n");
 
@@ -366,5 +354,5 @@ test("Import updates an existing record matched by a field and creates the other
   // The existing record was updated instead of duplicated
   await page.getByRole("navigation").getByText("Children").click();
   await expect(page.getByRole("row", { name: /Dave Brown/ })).toBeVisible();
-  await expect(page.getByRole("row", { name: /Alice Miller/ })).toHaveCount(1);
-});
+  await expect(page.getByRole("row", { name: /Erin Walsh/ })).toHaveCount(1);
+}

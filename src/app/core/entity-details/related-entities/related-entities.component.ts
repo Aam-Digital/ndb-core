@@ -224,11 +224,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
         ? asArray(this.relationProperty())
             .filter((property) => !!property)
             .flatMap((property) =>
-              this.entityRelations.referenceConditions(
-                entityCtr,
-                property,
+              this.entityRelations.referenceConditions(entityCtr, property, [
                 relatedEntityId,
-              ),
+              ]),
             )
         : [];
     const relationFilter = (

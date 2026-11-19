@@ -9,6 +9,7 @@ import { DatabaseField } from "../database-field.decorator";
 import { Entity } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { toStoredFormatCondition } from "../../filter/stored-format";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * These run against a real (in-memory) PouchDB rather than the mocked entity mapper,
@@ -131,11 +132,9 @@ describe("EntityRelationsService querying a real database", () => {
         .put({ _id: legacyId, ...storedValues(target.getId()) });
 
       const condition = {
-        $or: service.referenceConditions(
-          RelationQuerySource,
-          fieldPath,
+        $or: service.referenceConditions(RelationQuerySource, fieldPath, [
           target.getId(),
-        ),
+        ]),
       };
       const found = await entityMapper.findAllType(
         RelationQuerySource,
@@ -178,6 +177,164 @@ describe("EntityRelationsService querying a real database", () => {
       expect.anything(),
     );
     expect(loadType).not.toHaveBeenCalledWith(RelationQuerySource);
+  });
+
+  describe("loading the records linking to many entities in one field", () => {
+    const targets = Array.from(
+      { length: 60 },
+      (_, i) => new RelationQueryTarget("target-" + i),
+    );
+    const firstId = targets[0].getId();
+    const lastId = targets[59].getId();
+    const targetIds = targets.map((t) => t.getId());
+
+    beforeEach(() =>
+      // a visitor without an account would load the whole type instead
+      TestBed.inject(SessionSubject).next({
+        id: "user",
+        name: "user",
+        roles: [],
+      }),
+    );
+
+    const ids = (links: Map<string, Entity[]>) =>
+      [...links].map(([id, entities]) => [
+        id,
+        entities.map((e) => e.getId()).sort(),
+      ]);
+
+    it.each([
+      ["a database query", true],
+      ["the reference index of a local database", false],
+    ])(
+      "groups the records by the entity they link to, found through %s",
+      async (_name, supportsFind) => {
+        vi.spyOn(
+          TestBed.inject(DatabaseResolverService).getDatabase(),
+          "supportsFind",
+        ).mockReturnValue(supportsFind);
+        const linkingToFirst = await saveSource({ refScalar: firstId });
+        const linkingToBoth = await saveSource({
+          refArray: [firstId, lastId],
+        });
+        // found only if the lookup includes the last id, not just the first
+        const linkingToLastInArray = await saveSource({ refArray: [lastId] });
+        // links to the last target only in the scalar field, not the array field
+        const linkingToLast = await saveSource({ refScalar: lastId });
+        const loadType = vi.spyOn(entityMapper, "loadType");
+
+        const scalarLinks = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refScalar",
+        );
+        const arrayLinks = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refArray",
+        );
+
+        expect(new Map(ids(scalarLinks) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [linkingToFirst]],
+            [lastId, [linkingToLast]],
+          ]),
+        );
+        expect(new Map(ids(arrayLinks) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [linkingToBoth]],
+            [lastId, [linkingToBoth, linkingToLastInArray].sort()],
+          ]),
+        );
+        expect(loadType).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(["embeddedArray", "legacyAttendance"])(
+      "finds records linking to the entities inside the embedded objects of %s through a query",
+      async (field) => {
+        const embeddingFirst = await saveSource({
+          [field]: [{ participant: firstId }, { participant: firstId }],
+        });
+        const embeddingLast = await saveSource({
+          [field]: [{ participant: lastId }],
+        });
+        const loadType = vi.spyOn(entityMapper, "loadType");
+
+        const links = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          field,
+        );
+
+        // listed once, although two of its embedded objects link to the target
+        expect(new Map(ids(links) as [string, string[]][])).toEqual(
+          new Map([
+            [firstId, [embeddingFirst]],
+            [lastId, [embeddingLast]],
+          ]),
+        );
+        expect(loadType).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["a database query", true],
+      ["the reference index of a local database", false],
+    ])(
+      "finds a single id still stored in a field that became an array, through %s",
+      async (_name, supportsFind) => {
+        const database = TestBed.inject(DatabaseResolverService).getDatabase();
+        vi.spyOn(database, "supportsFind").mockReturnValue(supportsFind);
+        // written directly, as saving through the current schema would store an array
+        await database.put({
+          _id: "RelationQuerySource:legacy",
+          refArray: lastId,
+        });
+
+        const links = await service.loadLinkingToEntities(
+          targetIds,
+          RelationQuerySource,
+          "refArray",
+        );
+
+        expect(ids(links)).toEqual([[lastId, ["RelationQuerySource:legacy"]]]);
+      },
+    );
+
+    it.each<[string, () => Promise<Entity[]>]>([
+      [
+        "of one field for many entities",
+        async () =>
+          (
+            await service.loadLinkingToEntities(
+              targetIds,
+              RelationQuerySource,
+              "refScalar",
+            )
+          ).get(firstId),
+      ],
+      [
+        "of all fields for one entity (e.g. for a cascading delete)",
+        async () =>
+          (await service.loadAllLinkingToEntity(targets[0])).map(
+            ({ entity }) => entity,
+          ),
+      ],
+    ])(
+      "loads all records of the type when the lookup %s cannot query them",
+      async (_name, lookUp) => {
+        const linkingToFirst = await saveSource({ refScalar: firstId });
+        await saveSource({ refScalar: lastId });
+        vi.spyOn(entityMapper, "findAllType").mockRejectedValue(
+          new Error("query failed"),
+        );
+
+        const linked = await lookUp();
+
+        expect(linked.map((e) => e.getId())).toEqual([linkingToFirst]);
+      },
+    );
   });
 
   it("loads the whole type when one of its referencing fields cannot be queried", async () => {

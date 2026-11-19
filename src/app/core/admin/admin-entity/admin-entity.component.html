@@ -41,13 +41,14 @@
       >
         General Settings
       </mat-list-item>
-      <mat-list-item
-        (click)="mode.set('publicForm')"
-        [activated]="mode() === 'publicForm'"
-        i18n="admin entity: nav item"
-      >
-        Public Forms
-      </mat-list-item>
+      @for (section of sections; track section.id) {
+        <mat-list-item
+          (click)="mode.set(section.id)"
+          [activated]="mode() === section.id"
+        >
+          {{ section.label }}
+        </mat-list-item>
+      }
       <app-beta-feature></app-beta-feature>
     </mat-nav-list>
 
@@ -93,10 +94,13 @@
             (generalSettingsChange)="configEntitySettings.set($event)"
           ></app-admin-entity-general-settings>
         }
-        @case ("publicForm") {
-          <app-admin-entity-public-forms-component
-            [entityConstructor]="entityConstructor()"
-          ></app-admin-entity-public-forms-component>
+        @default {
+          @if (activeSection(); as section) {
+            <app-admin-entity-linked-records
+              [entityConstructor]="entityConstructor()"
+              [section]="section"
+            ></app-admin-entity-linked-records>
+          }
         }
       }
     </div>

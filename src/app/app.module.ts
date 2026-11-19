@@ -84,6 +84,7 @@ import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/prog
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
+import { HierarchyModule } from "./features/hierarchy/hierarchy.module";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES } from "./core/config/config.app-initializer";
@@ -98,6 +99,7 @@ import { AdminModule } from "./core/admin/admin.module";
 import { Logging } from "./core/logging/logging.service";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
+import { ExternalLinksModule } from "./features/external-links/external-links.module";
 import { SkillModule } from "./features/skill/skill.module";
 import { BulkEditModule } from "./features/bulk-edit/bulk-edit.module";
 import { ChangeHistoryModule } from "./features/change-history/change-history.module";
@@ -152,6 +154,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,
+    HierarchyModule,
     AdminModule,
     TemplateExportModule,
     SkillModule,
@@ -161,6 +164,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     DemoDataModule,
     EmailClientServiceModule,
     PublicFormModule,
+    ExternalLinksModule,
     // top level component
     UiComponent,
     // Global Angular Material modules

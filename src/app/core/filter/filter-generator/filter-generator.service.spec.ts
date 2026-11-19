@@ -1118,7 +1118,7 @@ describe("FilterGeneratorService", () => {
   it("should build configurable-enum filters that match single and array values, independent of isArray (#4406)", async () => {
     // A plain equality selector (e.g. `{ tags: "A" }`) does not match an array
     // field in CouchDB's Mango `_find` (only client-side, ucast treats it as
-    // "array contains"), so online-only mode needs `$elemMatch`. `isArray` can be
+    // "array contains"), while `$in` matches both shapes there. `isArray` can be
     // toggled in the admin UI while existing records keep their previous shape,
     // so both variants are always matched - like EntityFilter does.
     @DatabaseEntity("ArrayEnumFilterTestEntity")
@@ -1141,10 +1141,7 @@ describe("FilterGeneratorService", () => {
     ).mockReturnValue([{ id: "A", label: "A" }]);
 
     const expectedFilter = (field: string, id: string) => ({
-      $or: [
-        { [field + ".id"]: id },
-        { [field + ".id"]: { $elemMatch: { $eq: id } } },
-      ],
+      [field + ".id"]: { $in: [id] },
     });
 
     for (const field of ["tags", "category"]) {

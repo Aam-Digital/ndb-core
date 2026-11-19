@@ -40,7 +40,7 @@ describe("RelatedEntitiesComponent", () => {
 
   /** the conditions that the field links to the id, in both shapes a link may be stored in (an id or a list of ids) */
   function linkTo(field: string, id: string) {
-    return [{ [field]: id }, { [field]: { $elemMatch: { $eq: id } } }];
+    return [{ [field]: { $in: [id] } }];
   }
 
   /** the same for a field inside the entries of an embedded field, stored as a list of entries or a single one */

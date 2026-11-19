@@ -29,6 +29,7 @@
     color="primary"
     style="margin-top: -8px; margin-bottom: -8px"
     [matMenuTriggerFor]="additional"
+    (menuOpened)="reloadActions()"
     aria-label="More actions"
     i18n-aria-label="Entity actions menu button"
   >

@@ -81,18 +81,16 @@ export interface ExportColumnMapping<EntityType = any> {
 export type StoredFormat = "as-is" | "plain" | "id";
 
 /**
- * The conditions matching the given path against an id (of a referenced record or a dropdown option),
- * covering both shapes it may have been stored in: the id itself or an array containing it
- * (data saved while the field was a single-value or a multi-value field).
+ * The Mango condition matching the given document path against any of the reference ids.
+ * It covers both shapes the value may have been stored in, the id itself or an array
+ * containing it, because `$in` also matches any element of an array
+ * (in CouchDB's `_find` as well as in pouchdb-find).
  */
-export function referenceIdConditions(
+export function referenceIdCondition(
   path: string,
-  referencedId: string,
-): DataFilter<any>[] {
-  return [
-    { [path]: referencedId },
-    { [path]: { $elemMatch: { $eq: referencedId } } },
-  ];
+  referencedIds: string[],
+): DataFilter<any> {
+  return { [path]: { $in: referencedIds } };
 }
 
 /**

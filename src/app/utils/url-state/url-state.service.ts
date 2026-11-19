@@ -1,5 +1,7 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, Signal } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
+import { distinctUntilChanged, map } from "rxjs";
 
 /**
  * Service to persist and restore view state (filters, sort, selected tab, ...) via URL query params.
@@ -81,6 +83,21 @@ export class UrlStateService {
    */
   getUrlParam(key: string): string | null {
     return this.route.snapshot.queryParamMap.get(key);
+  }
+
+  /**
+   * A query param value from the URL that follows changes of the URL,
+   * e.g. when the user goes back or forward in the browser history.
+   * Call this in an injection context: it stops following the URL when that context is destroyed.
+   */
+  watchUrlParam(key: string): Signal<string | null> {
+    return toSignal(
+      this.route.queryParamMap.pipe(
+        map((params) => params.get(key)),
+        distinctUntilChanged(),
+      ),
+      { initialValue: this.getUrlParam(key) },
+    );
   }
 
   /**

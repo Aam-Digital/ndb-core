@@ -118,25 +118,19 @@ export class DatabaseIndexingService {
       }
     };
 
-    const simpleEmit = emitParamFormatter("doc." + referenceProperty);
-    const arrayEmit = `
-      if (!Array.isArray(doc.${referenceProperty})) return;
-      doc.${referenceProperty}.forEach((relatedEntity) => {
-        ${emitParamFormatter("relatedEntity")}
-      });`;
-
+    // index both shapes a value may be stored in, whatever the schema's `isArray` says now:
+    // existing documents may have been written while the field had the other setting
     const designDoc = {
       _id: "_design/" + indexId,
       views: {
         [`by_${referenceProperty}`]: {
           map: `(doc) => {
             if (!doc._id.startsWith("${entity.ENTITY_TYPE}:")) return;
-
-            ${
-              entity.schema.get(referenceProperty).isArray
-                ? arrayEmit
-                : simpleEmit
-            }
+            const value = doc.${referenceProperty};
+            (Array.isArray(value) ? value : [value]).forEach((relatedEntity) => {
+              if (relatedEntity === undefined || relatedEntity === null) return;
+              ${emitParamFormatter("relatedEntity")}
+            });
           }`,
         },
       },

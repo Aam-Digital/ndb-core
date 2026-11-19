@@ -1,0 +1,77 @@
+<!-- one joined control, set apart from the filters: how the list is arranged, not which records it shows -->
+<button
+  mat-stroked-button
+  class="field-button"
+  [class.joined]="expandToggle()"
+  [matMenuTriggerFor]="fieldMenu"
+  matTooltip="Show records indented below the record they link to in a field"
+  i18n-matTooltip="
+    hierarchy|Tooltip of the button to choose the field by which a list is shown
+    as a hierarchy
+  "
+>
+  <app-fa-dynamic-icon
+    icon="sitemap"
+    class="field-icon"
+    aria-hidden="true"
+  ></app-fa-dynamic-icon>
+  <span
+    class="visually-hidden"
+    i18n="
+      hierarchy|Accessible name of the button to choose the field by which a
+      list is shown as a hierarchy, followed by the chosen field
+    "
+    >Hierarchy:</span
+  >
+  <span class="field-label">{{ selectedLabel() }}</span>
+  <app-fa-dynamic-icon
+    icon="caret-down"
+    class="caret"
+    aria-hidden="true"
+  ></app-fa-dynamic-icon>
+</button>
+
+@if (expandToggle(); as toggle) {
+  <button
+    mat-stroked-button
+    class="expand-button"
+    [matTooltip]="toggle.label"
+    [attr.aria-label]="toggle.label"
+    (click)="toggle.action()"
+  >
+    <app-fa-dynamic-icon
+      [icon]="toggle.icon"
+      aria-hidden="true"
+    ></app-fa-dynamic-icon>
+  </button>
+}
+
+<mat-menu #fieldMenu [aria-label]="menuTitle">
+  <!-- the menu's accessible name holds the same text -->
+  <div class="menu-title" aria-hidden="true">{{ menuTitle }}</div>
+  @for (option of options(); track option.id) {
+    @if (option.id === null) {
+      <!-- the flat list is set apart from the fields: it turns the hierarchy off -->
+      <mat-divider></mat-divider>
+    }
+    <button
+      mat-menu-item
+      role="menuitemradio"
+      [attr.aria-checked]="option.id === selected()"
+      (click)="select(option.id)"
+    >
+      <span class="option">
+        <app-fa-dynamic-icon
+          icon="check"
+          class="check"
+          [class.unchecked]="option.id !== selected()"
+          aria-hidden="true"
+        ></app-fa-dynamic-icon>
+        <span class="option-text">
+          <span>{{ option.label }}</span>
+          <span class="option-hint">{{ option.hint }}</span>
+        </span>
+      </span>
+    </button>
+  }
+</mat-menu>
