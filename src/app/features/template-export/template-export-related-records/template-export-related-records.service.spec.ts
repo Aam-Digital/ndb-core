@@ -374,7 +374,7 @@ describe("TemplateExportRelatedRecordsService", () => {
     expect(titles(result.get(root.getId()))).toEqual([["Child", []]]);
   });
 
-  it("only loads records for the exported record types that the configured field links to", async () => {
+  it("provides an empty list for exported records of a type that the configured field does not link to", async () => {
     const project = Object.assign(new Project(), { title: "Project" });
     const person = Object.assign(new Person(), { name: "Person" });
     action("Project action", { parent: project.getId() });

@@ -22,6 +22,17 @@ export interface UnresolvedEntityStub {
 export type LoadedEntitiesCache = Map<string, Promise<Map<string, Entity>>>;
 
 /**
+ * Options for {@link EntityRelationResolverService.resolveRelations}.
+ */
+export interface ResolveRelationsOptions {
+  /**
+   * Entity-reference fields of the given record(s) that only get the ids, as {@link UnresolvedEntityStub}s,
+   * instead of the linked records (e.g. because the linked record is already available elsewhere).
+   */
+  idsOnly?: string[];
+}
+
+/**
  * Resolve entity-reference fields (`dataType: "entity"`) within a record's data,
  * replacing the plain id string(s) with the actual referenced {@link Entity} objects.
  *
@@ -55,33 +66,41 @@ export class EntityRelationResolverService {
   async resolveRelations<T = any>(
     data: T,
     loadedEntitiesByType?: LoadedEntitiesCache,
+    options?: ResolveRelationsOptions,
   ): Promise<T>;
   async resolveRelations<T = any>(
     data: T[],
     loadedEntitiesByType?: LoadedEntitiesCache,
+    options?: ResolveRelationsOptions,
   ): Promise<T[]>;
   async resolveRelations(
     data: any,
     // every referenced type is loaded via `loadType` at most once,
     // no matter how many records or ids reference it
     loadedEntitiesByType: LoadedEntitiesCache = new Map(),
+    options: ResolveRelationsOptions = {},
   ): Promise<any> {
+    const idsOnly = options.idsOnly ?? [];
     if (Array.isArray(data)) {
       return Promise.all(
-        data.map((item) => this.resolveValue(item, loadedEntitiesByType)),
+        data.map((item) =>
+          this.resolveValue(item, loadedEntitiesByType, idsOnly),
+        ),
       );
     }
-    return this.resolveValue(data, loadedEntitiesByType);
+    return this.resolveValue(data, loadedEntitiesByType, idsOnly);
   }
 
   /**
    * Resolve one value: if it has an entity schema, return a new object with its
    * relation fields resolved (recursing into nested schema-holding values found
    * on it); otherwise return the value unchanged.
+   * @param idsOnly Fields of this value (not of nested values) to hold only stubs of the ids
    */
   private async resolveValue(
     value: any,
     loadedEntitiesByType: LoadedEntitiesCache,
+    idsOnly: string[] = [],
   ): Promise<any> {
     if (value === null || typeof value !== "object") {
       return value;
@@ -102,7 +121,14 @@ export class EntityRelationResolverService {
         continue;
       }
 
-      if (fieldSchema.dataType === EntityDatatype.dataType) {
+      if (
+        fieldSchema.dataType === EntityDatatype.dataType &&
+        idsOnly.includes(fieldId)
+      ) {
+        resolved[fieldId] = Array.isArray(raw)
+          ? raw.map((id) => toStub(id))
+          : toStub(raw);
+      } else if (fieldSchema.dataType === EntityDatatype.dataType) {
         resolved[fieldId] = Array.isArray(raw)
           ? await Promise.all(
               raw.map((id) =>
@@ -139,7 +165,7 @@ export class EntityRelationResolverService {
 
     const entityType = this.getReferencedEntityType(id, fieldSchema);
     if (!entityType) {
-      return { _id: id };
+      return toStub(id);
     }
 
     try {
@@ -147,14 +173,14 @@ export class EntityRelationResolverService {
       // a shallow, one-level copy: protects the entity instance still held
       // elsewhere in the app from being mutated through the resolved data,
       // without resolving (and thereby recursing into) its own relations.
-      return match ? this.copySchemaFieldsShallow(match) : { _id: id };
+      return match ? this.copySchemaFieldsShallow(match) : toStub(id);
     } catch (err) {
       Logging.warn(
         "EntityRelationResolverService: failed to load entities to resolve a relation field",
         err,
         { entityType, field: fieldSchema.id },
       );
-      return { _id: id };
+      return toStub(id);
     }
   }
 
@@ -227,4 +253,11 @@ export class EntityRelationResolverService {
     const schema = (value.constructor as { schema?: unknown })?.schema;
     return schema instanceof Map ? (schema as EntitySchema) : undefined;
   }
+}
+
+/**
+ * An id in the shape of an unresolved relation; any other value (e.g. empty) unchanged.
+ */
+function toStub(id: unknown): UnresolvedEntityStub | unknown {
+  return typeof id === "string" && id ? { _id: id } : id;
 }
