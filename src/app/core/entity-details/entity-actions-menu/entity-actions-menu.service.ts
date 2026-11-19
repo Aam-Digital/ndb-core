@@ -20,11 +20,18 @@ export class EntityActionsMenuService {
   private actionsFactories: EntityActionsFactory[] = [];
   private readonly ability = inject(EntityAbility, { optional: true });
 
-  async getActions(entity?: Entity): Promise<EntityAction[]> {
+  /**
+   * All registered actions for the entity, including those of the factories.
+   * @param availableFor the kind of menu the actions are for, letting factories skip work for actions not offered there
+   */
+  async getActions(
+    entity?: Entity,
+    availableFor?: EntityActionAvailability,
+  ): Promise<EntityAction[]> {
     const factoryActions: EntityAction[] = [];
     for (const factory of this.actionsFactories) {
       try {
-        factoryActions.push(...(await factory(entity)));
+        factoryActions.push(...(await factory(entity, availableFor)));
       } catch (err) {
         // a single misbehaving factory must not break the whole context menu
         Logging.warn(
@@ -42,13 +49,15 @@ export class EntityActionsMenuService {
    */
   async getVisibleActions(
     entities: Entity | Entity[] | undefined,
-    availableFor: "bulk-only" | "individual-only" | "all",
+    availableFor: EntityActionAvailability,
   ): Promise<EntityAction[]> {
     const entity = Array.isArray(entities) ? entities[0] : entities;
-    const actions = (await this.getActions(entity)).filter((action) => {
-      const avail = action.availableFor ?? "all";
-      return avail === availableFor || avail === "all";
-    });
+    const actions = (await this.getActions(entity, availableFor)).filter(
+      (action) => {
+        const avail = action.availableFor ?? "all";
+        return avail === availableFor || avail === "all";
+      },
+    );
     const visibleActions: EntityAction[] = [];
     for (const action of actions) {
       let isVisible: boolean;
@@ -131,10 +140,16 @@ export class EntityActionsMenuService {
   }
 }
 
+/** the kind of menu actions are offered in: for one record, for several selected records, or both */
+export type EntityActionAvailability = "bulk-only" | "individual-only" | "all";
+
 /**
  * Generates the actions for the given entity.
  * May be async, e.g. to load the records that define the actions.
+ * @param availableFor the kind of menu the actions are requested for (if known),
+ *        so that a factory can skip loading data for actions that are not offered there
  */
 export type EntityActionsFactory = (
   entity: Entity,
+  availableFor?: EntityActionAvailability,
 ) => EntityAction[] | Promise<EntityAction[]>;

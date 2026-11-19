@@ -42,6 +42,8 @@ A link that is not shown because of its `url` or `condition` is a mistake in the
 
 With more than two links for a record, they are collapsed into an "External Links" submenu.
 
+Links are only offered in the menu of a single record, not for a selection of several records.
+
 ## Key files
 
 - `external-link-config.ts` — the `ExternalLinkConfig` entity

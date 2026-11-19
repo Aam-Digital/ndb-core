@@ -39,7 +39,11 @@ export class ExternalLinksModule {
       columns: ["title", "url"],
     });
     inject(EntityActionsMenuService).registerActionsFactories([
-      (entity) => externalLinksService.getActions(entity),
+      // links are offered only in the menu of a single record
+      (entity, availableFor) =>
+        availableFor === "bulk-only"
+          ? []
+          : externalLinksService.getActions(entity),
     ]);
   }
 }
