@@ -226,7 +226,7 @@ The component itself uses signal inputs and therefore does not implement this pl
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/dashboard/dashboard/dashboard.component.ts:137</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/dashboard/dashboard/dashboard.component.ts:150</a></div>
                                 </td>
                             </tr>
 
@@ -250,6 +250,7 @@ import { DynamicComponentDirective } from &quot;../../config/dynamic-components/
 import { RouteTarget } from &quot;../../../route-target&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { ComponentRegistry } from &quot;../../../dynamic-components&quot;;
+import { RegistryLookupError } from &quot;../../config/registry/dynamic-registry&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { MatMenuModule } from &quot;@angular/material/menu&quot;;
 import { MatIconButton } from &quot;@angular/material/button&quot;;
@@ -328,7 +329,19 @@ export class DashboardComponent {
   }
 
   private async hasEntityPermission(widget: DynamicComponentConfig) {
-    const comp &#x3D; (await this.components.get(widget.component)()) as {
+    let loadComponent: ReturnType&lt;ComponentRegistry[&quot;get&quot;]&gt;;
+    try {
+      loadComponent &#x3D; this.components.get(widget.component);
+    } catch (e) {
+      if (e instanceof RegistryLookupError) {
+        // e.g. a widget removed from the code but still in the config:
+        // keep it, so the dynamic component directive reports it, instead of
+        // failing the permission check and with it the whole dashboard.
+        return true;
+      }
+      throw e;
+    }
+    const comp &#x3D; (await loadComponent()) as {
       getRequiredEntities?: (config: unknown) &#x3D;&gt; string | string[];
     };
     let entity: string | string[] | undefined;
