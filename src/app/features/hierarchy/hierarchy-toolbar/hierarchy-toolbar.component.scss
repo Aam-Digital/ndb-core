@@ -1,3 +1,4 @@
+@use "mixins/visually-hidden";
 @use "variables/breakpoints";
 @use "variables/colors";
 @use "variables/sizes";
@@ -69,14 +70,9 @@
     display: none;
   }
 
-  /* hidden visually only, it stays in the accessible name */
+  /* it stays in the accessible name */
   .field-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    @include visually-hidden.visually-hidden;
   }
 }
 
