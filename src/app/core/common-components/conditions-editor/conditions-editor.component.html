@@ -35,11 +35,14 @@
       track $index;
       let conditionId = $index
     ) {
+      @let reference = rowReferences()[conditionId];
       <div class="condition-item flex-row flex-wrap gap-regular align-center">
         <mat-form-field class="field-selector">
           <mat-label i18n>Field</mat-label>
           <app-entity-field-select
             [entityType]="entityConstructor"
+            [options]="conditionFields().options"
+            [excludedFields]="conditionFields().excludedFields"
             [value]="getConditionField(condition)"
             [showInternalIdField]="
               showInternalIdField() || !!currentRecordType()
@@ -64,12 +67,12 @@
           conditionFormFieldConfigs.get(conditionId + "");
           as formFieldConfig
         ) {
-          @if (isReferenceRow(conditionId)) {
+          @if (reference.isReference) {
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label i18n>Field of the edited record</mat-label>
               <app-entity-field-select
                 [options]="referenceFieldOptions()"
-                [value]="getReferencedField(conditionId)"
+                [value]="reference.referencedField"
                 [hideOption]="referenceFieldFilters.get(conditionId + '')"
                 (valueChange)="onReferencedFieldChange(conditionId, $event)"
               ></app-entity-field-select>
@@ -136,7 +139,7 @@
 <ng-template #compareMode let-conditionId>
   <mat-button-toggle-group
     class="compare-mode"
-    [value]="isReferenceRow(conditionId)"
+    [value]="rowReferences()[conditionId].isReference"
     (change)="setReferenceRow(conditionId, $event.value)"
     [disabled]="disabled"
     hideSingleSelectionIndicator

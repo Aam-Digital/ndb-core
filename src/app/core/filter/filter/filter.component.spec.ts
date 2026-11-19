@@ -313,12 +313,7 @@ describe("FilterComponent", () => {
     expect((avilableOptions as any).options.length).toBe(2);
 
     // each option matches the value stored as single value or inside an array
-    const optionFilter = (id: string) => ({
-      $or: [
-        { "category.id": id },
-        { "category.id": { $elemMatch: { $eq: id } } },
-      ],
-    });
+    const optionFilter = (id: string) => ({ "category.id": { $in: [id] } });
 
     component.filterOptionSelected(avilableOptions, [t1.id]);
 

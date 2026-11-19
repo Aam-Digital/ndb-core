@@ -26,6 +26,9 @@ export interface ConditionEditorDialogData {
 
   /** type of the record being edited when the condition is applied, whose fields condition rows can compare with */
   currentRecordType?: EntityConstructor;
+
+  /** the conditions are matched against the stored documents (see `ConditionsEditorComponent.onStoredDocuments`) */
+  onStoredDocuments?: boolean;
 }
 
 /**

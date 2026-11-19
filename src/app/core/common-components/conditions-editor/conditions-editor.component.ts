@@ -4,6 +4,8 @@ import {
   Output,
   EventEmitter,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   inject,
   computed,
   input,
@@ -18,7 +20,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
@@ -33,10 +35,13 @@ import {
   buildConditions,
   Combinator,
   DEFAULT_COMBINATOR,
+  isCompleteRow,
   parseConditions,
 } from "./conditions-combinator";
+import { FilterService } from "../../filter/filter.service";
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
+  DataFilter,
   isCurrentRecordPlaceholder,
   placeholderFieldId,
 } from "../../filter/filters/filters";
@@ -71,9 +76,17 @@ import { resolveLocaleText } from "../../language/active-locale";
     FaDynamicIconComponent,
   ],
 })
-export class ConditionsEditorComponent implements OnInit {
+export class ConditionsEditorComponent implements OnInit, OnChanges {
   @Input() conditions: any = {};
-  @Input() entityConstructor?: EntityConstructor;
+  @Input() set entityConstructor(value: EntityConstructor | undefined) {
+    this.entityType.set(value);
+  }
+  get entityConstructor(): EntityConstructor | undefined {
+    return this.entityType();
+  }
+  private readonly entityType = signal<EntityConstructor | undefined>(
+    undefined,
+  );
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
@@ -94,6 +107,12 @@ export class ConditionsEditorComponent implements OnInit {
    * If given, a condition row can compare with a field of that record instead of a fixed value.
    */
   readonly currentRecordType = input<EntityConstructor>();
+
+  /**
+   * The conditions are matched against the stored documents (e.g. permissions, notification rules),
+   * so embedded fields whose entries are stored in another shape are only offered whole (see `FilterService.getConditionFields`).
+   */
+  readonly onStoredDocuments = input(false);
 
   /**
    * The fields of the records that the current record links to ("link field › field"),
@@ -149,7 +168,19 @@ export class ConditionsEditorComponent implements OnInit {
   /** rows switched to compare with a field of the current record, before that field is selected */
   private readonly referenceRows = new WeakSet<object>();
 
+  /** the fields a condition can be set on, with the properties of embedded fields in their place (see `FilterService.getConditionFields`) */
+  readonly conditionFields = computed(() => {
+    const entityType = this.entityType();
+    return entityType
+      ? this.filterService.getConditionFields(
+          entityType,
+          this.onStoredDocuments(),
+        )
+      : { options: [], excludedFields: [] };
+  });
+
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly filterService = inject(FilterService);
   private readonly entityRelations = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
 
@@ -157,6 +188,13 @@ export class ConditionsEditorComponent implements OnInit {
     if (!this.entityConstructor) return;
     this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // the record type may only be chosen once the editor is shown (e.g. in a notification rule)
+    if (changes["entityConstructor"]?.firstChange === false) {
+      this.ngOnInit();
+    }
   }
 
   /**
@@ -196,20 +234,31 @@ export class ConditionsEditorComponent implements OnInit {
     this.emitConditions();
   }
 
+  /**
+   * Per row: whether it compares with a field of the current record instead of a fixed value,
+   * and the id of that field once it is chosen. Kept once per change of the rows for the template.
+   * Reads `conditionsSignal`, which gets a new object on every change, as the rows are edited in place.
+   */
+  readonly rowReferences = computed(() =>
+    (this.conditionsSignal()?.$or ?? []).map((condition) =>
+      this.referenceOf(condition),
+    ),
+  );
+
   /** whether the given row compares with a field of the current record instead of a fixed value */
   isReferenceRow(conditionIndex: number): boolean {
-    if (!this.currentRecordType()) return false;
-
-    const condition = this.conditionsArray()[conditionIndex];
-    return (
-      this.referenceRows.has(condition) ||
-      this.getReferencedField(conditionIndex) !== undefined
-    );
+    return this.rowReferences()[conditionIndex]?.isReference ?? false;
   }
 
   /** id of the current record's field the given row compares with, if any */
   getReferencedField(conditionIndex: number): string | undefined {
-    const condition = this.conditionsArray()[conditionIndex];
+    return this.rowReferences()[conditionIndex]?.referencedField;
+  }
+
+  private referenceOf(condition: Record<string, unknown>): {
+    isReference: boolean;
+    referencedField?: string;
+  } {
     const { positive } = splitNegation(
       condition?.[this.getConditionField(condition)],
     );
@@ -219,7 +268,13 @@ export class ConditionsEditorComponent implements OnInit {
       positive?.$in?.[0],
       positive?.$elemMatch?.$in?.[0],
     ].find(isCurrentRecordPlaceholder);
-    return placeholder && placeholderFieldId(placeholder);
+    const referencedField = placeholder && placeholderFieldId(placeholder);
+    return {
+      isReference:
+        !!this.currentRecordType() &&
+        (this.referenceRows.has(condition) || referencedField !== undefined),
+      referencedField,
+    };
   }
 
   /** switch a row between comparing with a fixed value and with a field of the current record */
@@ -237,9 +292,9 @@ export class ConditionsEditorComponent implements OnInit {
     }
     // the value does not fit the new mode, an "is not" the admin chose still applies
     condition[fieldKey] = withSameNegation(condition[fieldKey], null);
+    this.conditionsSignal.set({ ...this.working });
     this.createFormConfigForCondition(conditionIndex, fieldKey);
 
-    this.conditionsSignal.set({ ...this.working });
     this.emitConditions();
   }
 
@@ -252,7 +307,7 @@ export class ConditionsEditorComponent implements OnInit {
       : recordFieldId;
     const condition = this.conditionsArray()[conditionIndex];
     const fieldKey = this.getConditionField(condition);
-    const fieldConfig = this.entityConstructor.schema.get(fieldKey);
+    const fieldConfig = this.fieldConfigOf(fieldKey);
     if (!actualRecordFieldId || !fieldConfig) return;
 
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
@@ -349,7 +404,7 @@ export class ConditionsEditorComponent implements OnInit {
     fieldKey: string,
   ): void {
     const key = `${conditionIndex}`;
-    const fieldConfig = this.entityConstructor.schema.get(fieldKey);
+    const fieldConfig = this.fieldConfigOf(fieldKey);
     if (!fieldConfig) return;
     const editComponent = this.entitySchemaService.getComponent(
       fieldConfig,
@@ -528,7 +583,7 @@ export class ConditionsEditorComponent implements OnInit {
   openJsonEditor(): void {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
-        value: buildConditions(this.combinator(), this.working.$or ?? []),
+        value: buildConditions(this.combinator(), this.storedRows()),
         closeButton: true,
       },
     });
@@ -546,15 +601,47 @@ export class ConditionsEditorComponent implements OnInit {
   private loadConditions(stored: any): void {
     const { combinator, rows } = parseConditions(stored);
     this.combinator.set(combinator);
-    this.working = rows.length > 0 ? { $or: rows } : {};
+    this.working =
+      rows.length > 0 ? { $or: rows.map((row) => this.toEditorRow(row)) } : {};
     this.conditionsSignal.set(this.working);
   }
 
   /** Report the rows in their stored shape; rows that are not filled in yet stay out of it. */
   private emitConditions(): void {
     this.conditionsChange.emit(
-      buildConditions(this.combinator(), this.working.$or ?? []),
+      buildConditions(this.combinator(), this.storedRows()),
     );
+  }
+
+  /** the schema of a row's field; none while no record type is chosen */
+  private fieldConfigOf(fieldKey: string): EntitySchemaField | undefined {
+    return (
+      this.entityConstructor &&
+      this.filterService.getFieldAtPath(this.entityConstructor, fieldKey)
+    );
+  }
+
+  /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
+  private storedRows(): DataFilter<Entity>[] {
+    return (this.working.$or ?? []).map((row) =>
+      this.entityConstructor && isCompleteRow(row)
+        ? this.filterService.toStoredCondition(this.entityConstructor, row)
+        : row,
+    );
+  }
+
+  /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
+  private toEditorRow(row: DataFilter<Entity>): DataFilter<Entity> {
+    if (!this.entityConstructor) return row;
+    const editorRow = this.filterService.fromStoredCondition(
+      this.entityConstructor,
+      row,
+    );
+    // an embedded field offered only whole keeps its condition as stored
+    const [fieldPath] = Object.keys(editorRow ?? {});
+    return this.conditionFields().options.some((o) => o.id === fieldPath)
+      ? editorRow
+      : row;
   }
 }
 

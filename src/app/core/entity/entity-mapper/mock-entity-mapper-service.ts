@@ -6,7 +6,7 @@ import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { filter as buildFilterPredicate } from "@ucast/mongo2js";
+import { createFilterPredicate } from "../../../utils/filter-compare-utils";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 export function createEntityMapperSpyObj() {
@@ -165,7 +165,7 @@ export class MockEntityMapperService extends EntityMapperService {
     let records = await this.loadType<T>(entityType);
 
     // filter
-    const predicate = buildFilterPredicate(filter as any);
+    const predicate = createFilterPredicate(filter);
     records = records.filter((record) => predicate(record as any));
 
     // sort
