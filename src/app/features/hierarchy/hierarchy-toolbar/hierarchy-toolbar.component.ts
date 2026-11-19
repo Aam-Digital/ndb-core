@@ -66,10 +66,10 @@ export class HierarchyToolbarComponent {
       : this.options().find((option) => option.id === this.selected())?.label,
   );
 
-  /** the "Collapse all" / "Expand all" button, only while the list is arranged as a hierarchy */
+  /** the "Collapse all" / "Expand all" button, only while the list shows records with sub-records */
   protected readonly expandToggle = computed(() => {
     const dataSource = this.dataSource();
-    if (!dataSource.activeField()) {
+    if (!dataSource.activeField() || !dataSource.hasSubRecords()) {
       return undefined;
     }
     return dataSource.anyExpanded()

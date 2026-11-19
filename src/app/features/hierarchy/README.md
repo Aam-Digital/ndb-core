@@ -22,7 +22,8 @@ The feature plugs into the entities table through the generic extension points o
 - Filters and the "Filter" search apply on every level. Parents of a match that do not match themselves
   (filtered out, or archived while archived records are hidden) are shown greyed as context rows.
   Context rows cannot be selected and are not downloaded; "select all" also leaves out
-  records hidden under a collapsed row.
+  records hidden under a collapsed row (collapsing a row keeps those already selected).
+  "Collapse all" / "Expand all" is shown only while some shown record has sub-records.
 - A missing parent (deleted, not permitted, not loaded) or a loop of parents puts the record at the top level.
 - Without a valid hierarchy field the data source works exactly like the in-memory data source (flat, with pages).
 

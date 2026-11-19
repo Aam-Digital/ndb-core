@@ -144,6 +144,17 @@ describe("HierarchyDataSource", () => {
       .map((r) => r.title);
   }
 
+  /** the records "select all" selects */
+  function selectAllIds(): string[] {
+    return dataSource
+      .filteredRecords()
+      .filter((r) => {
+        const options = dataSource.rowOptionsOf(r);
+        return options?.selectable !== false && options?.inSelectAll !== false;
+      })
+      .map((r) => r.title);
+  }
+
   beforeEach(() => {
     urlParam.set(null);
     TestBed.configureTestingModule({
@@ -282,7 +293,7 @@ describe("HierarchyDataSource", () => {
     ]);
   });
 
-  it("hides the sub-records of a collapsed row, also from select all", async () => {
+  it("hides the sub-records of a collapsed row from select all, but keeps them selectable", async () => {
     await createDataSource();
 
     dataSource.toggleCollapsed("HierarchyTestAction:Mobilisation");
@@ -297,7 +308,9 @@ describe("HierarchyDataSource", () => {
       "Garden",
       "Loop",
     ]);
-    expect(selectableIds()).not.toContain("Rampur");
+    expect(selectAllIds()).not.toContain("Rampur");
+    // a selection made before collapsing the row stays
+    expect(selectableIds()).toContain("Rampur");
   });
 
   it("offers to expand all once no visible row is expanded, also with sub-records hidden under a collapsed row", async () => {
@@ -307,6 +320,16 @@ describe("HierarchyDataSource", () => {
     await settle();
 
     expect(dataSource.anyExpanded()).toBe(false);
+  });
+
+  it("has sub-records only while a shown record has some", async () => {
+    await createDataSource();
+    expect(dataSource.hasSubRecords()).toBe(true);
+
+    dataSource.searchText.set("Garden");
+    await settle();
+
+    expect(dataSource.hasSubRecords()).toBe(false);
   });
 
   it("shows the number of hidden sub-records after the title of a collapsed row only", async () => {

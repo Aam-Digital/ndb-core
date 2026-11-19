@@ -58,6 +58,11 @@ export interface RowOptions {
   cssClass?: string;
   /** whether the row can be selected for bulk actions (default: true) */
   selectable?: boolean;
+  /**
+   * whether "select all" selects the row (default: true), e.g. not a row the data source hides for now;
+   * unlike `selectable: false`, this keeps the row in a selection made before
+   */
+  inSelectAll?: boolean;
 }
 
 /** Why loading the records of a list failed, as named to the user. */

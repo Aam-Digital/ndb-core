@@ -157,6 +157,11 @@ export class HierarchyDataSource<
       false,
   );
 
+  /** Whether any shown record has sub-records, so that there is something to collapse or expand. */
+  readonly hasSubRecords = computed(
+    () => (this.view()?.expandableIds.size ?? 0) > 0,
+  );
+
   override readonly usesPagination = computed(() => !this.activeField());
 
   /** the row options by record id: a live update replaces the record object, the row keeps its options */
@@ -175,9 +180,10 @@ export class HierarchyDataSource<
           selectable: !row.isContext,
         });
       }
-      // "select all" leaves out records hidden under a collapsed row
+      // "select all" leaves out records hidden under a collapsed row,
+      // but collapsing a row keeps those already selected
       for (const id of view?.hiddenIds ?? []) {
-        optionsById.set(id, { selectable: false });
+        optionsById.set(id, { inSelectAll: false });
       }
       return optionsById;
     });
