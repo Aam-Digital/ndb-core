@@ -84,6 +84,10 @@
         "file": "../../src/app/features/external-links/README.md"
       },
       {
+        "title": "Template Export (File / PDF Generation)",
+        "file": "../../src/app/features/template-export/README.md"
+      },
+      {
         "title": "Hierarchy of Records",
         "file": "../../src/app/features/hierarchy/README.md"
       }

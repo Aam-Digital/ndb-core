@@ -59,7 +59,7 @@ export class EntityRelationsService {
     const referencingTypes = [];
     for (const t of this.entityRegistry.values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (this.fieldReferencesType(field, type)) {
+        if (this.fieldReferencesType(field, [type])) {
           let refType = referencingTypes.find((e) => e.entityType === t);
           if (!refType) {
             refType = { entityType: t, referencingProperties: [] };
@@ -103,16 +103,22 @@ export class EntityRelationsService {
   }
 
   /**
-   * Check whether a schema field references the given entity type,
+   * Check whether a schema field references (any of) the given entity types,
    * including nested references inside embedded schemas (e.g. attendance fields).
    */
-  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
-    if (asArray(field.additional).includes(type)) {
+  fieldReferencesType(
+    field: EntitySchemaField | undefined,
+    types: string[],
+  ): boolean {
+    if (!field) {
+      return false;
+    }
+    if (asArray(field.additional).some((type) => types.includes(type))) {
       return true;
     }
 
     return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
-      ([, inner]) => asArray(inner.additional).includes(type),
+      ([, inner]) => asArray(inner.additional).some((t) => types.includes(t)),
     );
   }
 

@@ -276,6 +276,49 @@ describe("TemplateExportApiService", () => {
     );
   });
 
+  it("should add the related records configured for the template to the data of each record", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.relatedRecords = [
+      { entityType: "TestEntity", property: "ref" },
+    ];
+    TestBed.inject(EntityRegistry).add(TestEntity.ENTITY_TYPE, TestEntity);
+    const parent = TestEntity.create("Parent");
+    const childless = TestEntity.create("Childless");
+    const child = TestEntity.create({ name: "Child", ref: parent.getId() });
+    entityMapper.addAll([parent, childless, child]);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, [parent, childless]),
+    );
+
+    expect(mockApiResponse.mock.calls[0][1]["data"]).toEqual([
+      expect.objectContaining({
+        name: "Parent",
+        _related: {
+          TestEntity: {
+            ref: [
+              expect.objectContaining({
+                name: "Child",
+                // the link back to the record only holds its id, as its details are one level up
+                ref: { _id: parent.getId() },
+              }),
+            ],
+          },
+        },
+      }),
+      expect.objectContaining({
+        name: "Childless",
+        _related: { TestEntity: { ref: [] } },
+      }),
+    ]);
+    // the entities held by the app are not modified
+    expect(parent).not.toHaveProperty("_related");
+  });
+
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];
