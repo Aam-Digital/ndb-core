@@ -34,12 +34,6 @@
       <app-fa-dynamic-icon icon="upload"></app-fa-dynamic-icon>
       <span i18n>Upload Configuration (JSON)</span>
     </button>
-    <input
-      #configImport
-      type="file"
-      hidden
-      (change)="uploadConfigFile($event)"
-    />
   </mat-card-actions>
 </mat-card>
 
@@ -73,5 +67,15 @@
       <app-fa-dynamic-icon icon="download"></app-fa-dynamic-icon>
       <span i18n>Download AI Context (JSON)</span>
     </button>
+    <button
+      mat-stroked-button
+      (click)="configImport.click()"
+      [disabled]="isUploadingConfig()"
+    >
+      <app-fa-dynamic-icon icon="upload"></app-fa-dynamic-icon>
+      <span i18n>Upload Configuration (JSON)</span>
+    </button>
   </mat-card-actions>
 </mat-card>
+
+<input #configImport type="file" hidden (change)="uploadConfigFile($event)" />
