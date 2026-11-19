@@ -1,0 +1,50 @@
+<div class="card" [style.border-inline-start-color]="color()">
+  <div class="card-body">
+    @if (typeLabel()) {
+      <div class="type-label">{{ typeLabel() }}</div>
+    }
+    <app-entity-block
+      [entity]="entity()"
+      [entityId]="item().entityId"
+      [linkDisabled]="true"
+    ></app-entity-block>
+  </div>
+
+  @if (!readonly()) {
+    <app-whiteboard-item-menu
+      (connect)="connect.emit()"
+      (remove)="remove.emit()"
+    >
+      @if (detailsLink(); as link) {
+        <a mat-menu-item [routerLink]="link">
+          <app-fa-dynamic-icon
+            icon="arrow-up-right-from-square"
+            class="standard-icon-with-text"
+          ></app-fa-dynamic-icon>
+          <span i18n>Open record</span>
+        </a>
+      }
+      @if (entity()) {
+        <button mat-menu-item (click)="addLinked.emit()">
+          <app-fa-dynamic-icon
+            icon="diagram-project"
+            class="standard-icon-with-text"
+          ></app-fa-dynamic-icon>
+          <span i18n>Add linked records</span>
+        </button>
+      }
+    </app-whiteboard-item-menu>
+  } @else if (detailsLink(); as link) {
+    <a
+      mat-icon-button
+      [routerLink]="link"
+      class="open-link"
+      aria-label="Open record"
+      i18n-aria-label
+    >
+      <app-fa-dynamic-icon
+        icon="arrow-up-right-from-square"
+      ></app-fa-dynamic-icon>
+    </a>
+  }
+</div>

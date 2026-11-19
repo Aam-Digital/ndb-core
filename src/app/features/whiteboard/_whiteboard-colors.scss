@@ -1,0 +1,18 @@
+@use "sass:map";
+
+/* The shades behind the colour names stored in whiteboard items (see `model/whiteboard-item.ts`). */
+$colors: (
+  "yellow": #fff59d,
+  "green": #c5e1a5,
+  "blue": #b3e5fc,
+  "pink": #f8bbd0,
+  "grey": #e0e0e0,
+);
+
+@mixin background-classes {
+  @each $name, $value in $colors {
+    &.color-#{$name} {
+      background-color: $value;
+    }
+  }
+}

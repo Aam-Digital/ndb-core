@@ -1,0 +1,97 @@
+<app-view-title>
+  <app-fa-dynamic-icon
+    icon="chalkboard"
+    class="standard-icon-with-text margin-start-regular"
+  ></app-fa-dynamic-icon>
+  {{ whiteboard()?.title }}
+</app-view-title>
+
+<app-view-actions>
+  <app-entity-actions-menu
+    [entity]="whiteboard()"
+    [navigateOnDelete]="true"
+  ></app-entity-actions-menu>
+</app-view-actions>
+
+<app-entity-archived-info [entity]="whiteboard()"></app-entity-archived-info>
+
+<div class="toolbar">
+  @if (!readonly()) {
+    <button mat-stroked-button (click)="addRecords()">
+      <app-fa-dynamic-icon
+        icon="plus"
+        class="standard-icon-with-text"
+      ></app-fa-dynamic-icon>
+      <span i18n>Add records</span>
+    </button>
+    <button mat-stroked-button (click)="addNote()">
+      <app-fa-dynamic-icon
+        icon="note-sticky"
+        class="standard-icon-with-text"
+      ></app-fa-dynamic-icon>
+      <span i18n>Note</span>
+    </button>
+    <button mat-stroked-button (click)="addText()">
+      <app-fa-dynamic-icon
+        icon="font"
+        class="standard-icon-with-text"
+      ></app-fa-dynamic-icon>
+      <span i18n>Text</span>
+    </button>
+    <button mat-stroked-button (click)="addGroup()">
+      <app-fa-dynamic-icon
+        icon="object-group"
+        class="standard-icon-with-text"
+      ></app-fa-dynamic-icon>
+      <span i18n>Group</span>
+    </button>
+  }
+
+  <button
+    mat-stroked-button
+    [class.active]="showReferences()"
+    (click)="showReferences.set(!showReferences())"
+    [attr.aria-pressed]="showReferences()"
+    matTooltip="Show lines between records that reference each other"
+    i18n-matTooltip
+  >
+    <app-fa-dynamic-icon
+      icon="diagram-project"
+      class="standard-icon-with-text"
+    ></app-fa-dynamic-icon>
+    <span i18n>References</span>
+  </button>
+
+  <span class="flex-grow"></span>
+
+  <span class="save-state" aria-live="polite">
+    @switch (saveState()) {
+      @case ("saved") {
+        <span i18n>All changes saved</span>
+      }
+      @case ("pending") {
+        <span i18n>Unsaved changes</span>
+      }
+      @case ("saving") {
+        <span i18n>Saving…</span>
+      }
+      @case ("error") {
+        <span class="color-error" i18n>Saving failed</span>
+      }
+    }
+  </span>
+</div>
+
+<div class="canvas-container">
+  <app-whiteboard-canvas
+    [items]="items()"
+    [connections]="connections()"
+    [entities]="loadedEntities()"
+    [readonly]="readonly()"
+    (itemChange)="onItemChange($event)"
+    (itemRemove)="onItemRemove($event)"
+    (itemEdit)="onItemEdit($event)"
+    (connectionCreate)="onConnectionCreate($event)"
+    (addLinkedRecords)="addLinkedRecords($event)"
+  ></app-whiteboard-canvas>
+</div>

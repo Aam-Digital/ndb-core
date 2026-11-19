@@ -1,0 +1,53 @@
+<button
+  mat-icon-button
+  class="menu-button"
+  [matMenuTriggerFor]="menu"
+  aria-label="Item actions"
+  i18n-aria-label
+>
+  <app-fa-dynamic-icon icon="ellipsis-v"></app-fa-dynamic-icon>
+</button>
+
+<mat-menu #menu="matMenu">
+  <ng-content></ng-content>
+
+  @if (editable()) {
+    <button mat-menu-item (click)="edit.emit()">
+      <app-fa-dynamic-icon
+        icon="pen"
+        class="standard-icon-with-text"
+      ></app-fa-dynamic-icon>
+      <span i18n>Edit text</span>
+    </button>
+  }
+
+  @if (color()) {
+    <div class="color-options" (click)="$event.stopPropagation()">
+      @for (c of colors; track c) {
+        <button
+          class="color-option color-{{ c }}"
+          [class.active]="c === color()"
+          (click)="colorChange.emit(c)"
+          [attr.aria-label]="c"
+          [matTooltip]="c"
+        ></button>
+      }
+    </div>
+  }
+
+  <button mat-menu-item (click)="connect.emit()">
+    <app-fa-dynamic-icon
+      icon="link"
+      class="standard-icon-with-text"
+    ></app-fa-dynamic-icon>
+    <span i18n>Connect to…</span>
+  </button>
+
+  <button mat-menu-item (click)="remove.emit()">
+    <app-fa-dynamic-icon
+      icon="trash"
+      class="standard-icon-with-text"
+    ></app-fa-dynamic-icon>
+    <span i18n>Remove from board</span>
+  </button>
+</mat-menu>

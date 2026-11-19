@@ -70,6 +70,9 @@
           "entityType": "Todo"
         },
         {
+          "entityType": "Whiteboard"
+        },
+        {
           "label": "Import",
           "icon": "file-import",
           "link": "/import"

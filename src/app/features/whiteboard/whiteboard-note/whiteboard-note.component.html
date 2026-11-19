@@ -1,0 +1,24 @@
+<div
+  class="note"
+  [class.sticky]="note()"
+  [class]="note() ? 'color-' + note()!.color : ''"
+  [style.width.px]="note()?.width"
+  [style.min-height.px]="note()?.height"
+  (dblclick)="!readonly() && edit.emit()"
+>
+  <div class="text" [class.empty]="!item().text">
+    {{ item().text || placeholder }}
+  </div>
+
+  @if (!readonly()) {
+    <app-whiteboard-item-menu
+      class="menu"
+      [editable]="true"
+      [color]="note()?.color"
+      (edit)="edit.emit()"
+      (colorChange)="colorChange.emit($event)"
+      (connect)="connect.emit()"
+      (remove)="remove.emit()"
+    ></app-whiteboard-item-menu>
+  }
+</div>

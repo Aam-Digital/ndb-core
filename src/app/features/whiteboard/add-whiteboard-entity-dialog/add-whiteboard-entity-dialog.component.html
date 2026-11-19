@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>
+  <span i18n>Add records to the board</span>
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  <mat-form-field class="full-width">
+    <mat-label i18n>Record type</mat-label>
+    <app-entity-type-select [formControl]="entityType"></app-entity-type-select>
+  </mat-form-field>
+
+  @if (selectedType(); as type) {
+    <mat-form-field class="full-width">
+      <mat-label i18n>Records</mat-label>
+      <app-edit-entity
+        [formControl]="entityIds"
+        [entityType]="type"
+        [multi]="true"
+        [disableCreateNew]="true"
+      ></app-edit-entity>
+    </mat-form-field>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close i18n>Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="entityIds.value.length === 0"
+    (click)="add()"
+    i18n
+  >
+    Add
+  </button>
+</mat-dialog-actions>

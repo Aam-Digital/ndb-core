@@ -78,6 +78,10 @@
       {
         "title": "Reports",
         "file": "../../src/app/features/reporting/README.md"
+      },
+      {
+        "title": "Whiteboard",
+        "file": "../../src/app/features/whiteboard/README.md"
       }
     ]
   },
