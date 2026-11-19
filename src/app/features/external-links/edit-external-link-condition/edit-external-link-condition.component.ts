@@ -8,16 +8,9 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { firstValueFrom } from "rxjs";
-import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { AdminDisplayConditionButtonComponent } from "#src/app/core/admin/building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import {
-  ConditionEditorDialogComponent,
-  ConditionEditorDialogData,
-} from "#src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -33,27 +26,26 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 @DynamicComponent("EditExternalLinkCondition")
 @Component({
   selector: "app-edit-external-link-condition",
-  imports: [MatButtonModule, FaDynamicIconComponent],
+  imports: [AdminDisplayConditionButtonComponent],
   template: `
     <div class="flex-row align-center gap-regular">
       <span class="flex-grow">{{ summary() }}</span>
-      <button
-        mat-stroked-button
-        type="button"
-        [color]="hasCondition() ? 'accent' : undefined"
-        [disabled]="!enabled() || !recordType()"
-        (click)="editCondition()"
-      >
-        <app-fa-dynamic-icon
-          icon="filter"
-          class="standard-icon-with-text"
-        ></app-fa-dynamic-icon>
-        @if (hasCondition()) {
-          <ng-container i18n>Edit Condition</ng-container>
-        } @else {
-          <ng-container i18n>Add Condition</ng-container>
-        }
-      </button>
+      <app-admin-display-condition-button
+        target="field"
+        [showLabel]="true"
+        [disabled]="!enabled() || !recordTypeConstructor()"
+        [entityType]="recordTypeConstructor()"
+        [condition]="hasCondition() ? valueSignal() : undefined"
+        createLabel="Add Condition"
+        i18n-createLabel
+        editLabel="Edit Condition"
+        i18n-editLabel
+        tooltip="Show the link only for records matching a condition."
+        i18n-tooltip
+        explanation="This link is shown only for records matching..."
+        i18n-explanation
+        (conditionChange)="setCondition($event)"
+      ></app-admin-display-condition-button>
     </div>
   `,
   providers: [
@@ -67,12 +59,18 @@ export class EditExternalLinkConditionComponent
   extends CustomFormControlDirective<DataFilter<Entity> | undefined>
   implements EditComponent, OnInit
 {
-  private readonly dialog = inject(MatDialog);
   private readonly entities = inject(EntityRegistry);
   private readonly destroyRef = inject(DestroyRef);
 
   /** the record type as currently selected in the same form, which may not be saved yet */
-  protected readonly recordType = signal<string | undefined>(undefined);
+  private readonly recordType = signal<string | undefined>(undefined);
+
+  protected readonly recordTypeConstructor = computed(() => {
+    const type = this.recordType();
+    return type && this.entities.has(type)
+      ? this.entities.get(type)
+      : undefined;
+  });
 
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
@@ -89,11 +87,7 @@ export class EditExternalLinkConditionComponent
 
   /** labels of the fields the condition refers to, also inside `$and` / `$or` / `$nor` */
   private readonly conditionFieldLabels = computed(() => {
-    const type = this.recordType();
-    const schema =
-      type && this.entities.has(type)
-        ? this.entities.get(type).schema
-        : undefined;
+    const schema = this.recordTypeConstructor()?.schema;
     const keys = new Set<string>();
     const collect = (condition: unknown) => {
       for (const [key, value] of Object.entries(condition ?? {})) {
@@ -118,38 +112,15 @@ export class EditExternalLinkConditionComponent
       .subscribe((recordType: string | undefined) => {
         // a condition refers to fields of the previous record type
         if (recordType !== this.recordType() && this.hasCondition()) {
-          this.formControl.setValue(undefined);
-          this.formControl.markAsDirty();
+          this.setCondition(null);
         }
         this.recordType.set(recordType);
       });
   }
 
-  protected async editCondition() {
-    const entityType = this.recordType();
-
-    const result: DataFilter<Entity> | null | undefined = await firstValueFrom(
-      this.dialog
-        .open(ConditionEditorDialogComponent, {
-          data: {
-            entityConstructor:
-              entityType && this.entities.has(entityType)
-                ? this.entities.get(entityType)
-                : undefined,
-            conditions: this.formControl.value,
-            explanation: $localize`This link is shown only for records matching...`,
-          } satisfies ConditionEditorDialogData,
-          width: "600px",
-        })
-        .afterClosed(),
-      { defaultValue: undefined },
-    );
-    if (result === undefined) {
-      // cancelled
-      return;
-    }
-
-    this.formControl.setValue(result ?? undefined);
+  /** @param condition the new condition, `null` if it was removed */
+  protected setCondition(condition: DataFilter<Entity> | null) {
+    this.formControl.setValue(condition ?? undefined);
     this.formControl.markAsDirty();
   }
 }
