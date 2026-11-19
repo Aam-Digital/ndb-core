@@ -54,12 +54,8 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { filter, pairwise } from "rxjs/operators";
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from "@angular/core/rxjs-interop";
+import { filter } from "rxjs/operators";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -210,14 +206,6 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
-
-  constructor() {
-    // a `selectionCondition` refers to fields of the linked record type, so it is removed when that type changes
-    // (the validator settings then show the field's validators without it, see ConfigureEntityFieldValidatorComponent)
-    toObservable(this.selectionConditionTargetType)
-      .pipe(pairwise(), takeUntilDestroyed())
-      .subscribe(() => this.removeSelectionCondition());
-  }
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -410,14 +398,6 @@ export class AdminEntityFieldComponent implements OnInit {
       this.fieldIdForm.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => autoGenerateSubscr.unsubscribe());
-    }
-  }
-
-  private removeSelectionCondition() {
-    const validators = this.schemaFieldsForm.get("validators");
-    const { selectionCondition, ...otherValidators } = validators.value ?? {};
-    if (selectionCondition) {
-      validators.setValue(otherValidators);
     }
   }
 

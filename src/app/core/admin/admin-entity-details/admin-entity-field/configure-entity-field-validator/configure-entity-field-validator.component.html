@@ -21,8 +21,8 @@
           >
         } @else if (row.rule.warning === "optional") {
           <mat-checkbox
-            [checked]="warningOnlyRuleKeys().has(row.rule.key)"
-            [disabled]="!setRuleKeys().has(row.rule.key)"
+            [checked]="row.warningOnly"
+            [disabled]="!row.hasValue"
             (change)="setWarningOnly(row.rule.key, $event.checked)"
             i18n
             >Only a warning</mat-checkbox
@@ -70,7 +70,7 @@
     </mat-form-field>
   }
 
-  @if (fieldDataType() === "string") {
+  @if (dataTypeName() === "string") {
     <div>
       <mat-checkbox i18n [formControl]="trimControl()">
         Trim leading/trailing spaces automatically
