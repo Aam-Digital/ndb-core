@@ -16,6 +16,7 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
@@ -131,7 +132,9 @@ export class EditConditionComponent
       }
     };
     collect(this.valueSignal());
-    return [...keys].map((key) => schema?.get(key)?.label ?? key);
+    return [...keys].map(
+      (key) => resolveLocaleText(schema?.get(key)?.label) ?? key,
+    );
   });
 
   ngOnInit() {

@@ -16,6 +16,11 @@ import { EditConditionComponent } from "./edit-condition.component";
 class TestRecord extends Entity {
   @DatabaseField({ label: "Name" }) name: string;
   @DatabaseField({ label: "Status" }) status: string;
+  // the admin field editor writes the label of a multi-language setup as a map
+  @DatabaseField({
+    label: { en: "Title", de: "Titel" } as unknown as string,
+  })
+  title: string;
 }
 
 describe("EditConditionComponent", () => {
@@ -45,6 +50,7 @@ describe("EditConditionComponent", () => {
     [undefined, "All records of the type."],
     [{}, "All records of the type."],
     [{ name: "Asha" }, "Only records matching a condition on: Name"],
+    [{ title: "Dr" }, "Only records matching a condition on: Title"],
     [
       { $or: [{ status: "new" }, { $and: [{ name: "Asha" }] }] },
       "Only records matching a condition on: Status, Name",
