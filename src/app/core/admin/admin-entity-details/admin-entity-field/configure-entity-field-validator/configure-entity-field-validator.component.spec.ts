@@ -15,8 +15,6 @@ import {
 import { Entity } from "../../../../entity/model/entity";
 import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
 import { FormValidatorConfig } from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
-import { DynamicValidatorsService } from "../../../../common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
-import { FieldValidator } from "../../../../common-components/entity-form/dynamic-form-validators/field-validator";
 import { mockEntityMapperProvider } from "../../../../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../../../../utils/core-testing.module";
 
@@ -144,7 +142,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       validators: { min: 1, max: 5, _warningOnly: ["max"] },
     });
 
-    rows()[1].querySelector("button").click();
+    rows()[1].querySelector<HTMLButtonElement>(".validator-remove").click();
     await settle();
 
     expect(emitted.at(-1)).toEqual({ min: 1 });
@@ -157,7 +155,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       dataType: "number",
       validators: { max: 5, _warningOnly: ["max"] },
     });
-    rows()[0].querySelector("button").click();
+    rows()[0].querySelector<HTMLButtonElement>(".validator-remove").click();
     await settle();
     expect(emitted).toHaveLength(1);
 
@@ -193,6 +191,24 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     expect(emitted.at(-1)).toEqual({ max: 5, _warningOnly: ["max"] });
   });
 
+  it("offers 'Only a warning' for a rule that is not set yet, but only enables it once it is set", async () => {
+    await render({ dataType: "number" });
+
+    await addRule("Maximum Value");
+    const checkbox = await loader().getHarness(
+      MatCheckboxHarness.with({ label: "Only a warning" }),
+    );
+    expect(await checkbox.isDisabled()).toBe(true);
+
+    const input = await loader().getHarness(
+      MatInputHarness.with({ ancestor: ".validator-row" }),
+    );
+    await input.setValue("7");
+    await settle();
+
+    expect(await checkbox.isDisabled()).toBe(false);
+  });
+
   describe("rules fitting the selected type", () => {
     it("shows only the rules that fit the type, and drops the others from the config when the type is changed", async () => {
       await render({
@@ -211,6 +227,43 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       );
       expect(await addableRules()).toContain("Maximum Value");
       expect(emitted.at(-1)).toEqual({ required: true });
+    });
+
+    it("does not name a hidden rule that is not set in the hint", async () => {
+      await render({ dataType: "string" });
+      await addRule("Pattern (Regex)");
+
+      fixture.componentRef.setInput("dataType", "number");
+      await settle();
+
+      expect(text()).not.toContain("Not used for this type of field");
+    });
+
+    it("keeps the setting of a hidden rule when the type is changed to a link field and back", async () => {
+      const field: EntitySchemaField = {
+        dataType: "string",
+        validators: { pattern: "[a-z]+", _warningOnly: ["pattern"] },
+      };
+      await render(field);
+
+      fixture.componentRef.setInput("dataType", "entity");
+      fixture.componentRef.setInput("additional", "ValidatorTabTestRecord");
+      await settle();
+      // the dialog writes the config of the tab into the field, which the tab then reads again
+      field.validators = emitted.at(-1);
+      expect(field.validators).toEqual({});
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTabTestRecord);
+      await settle();
+      fixture.componentRef.setInput("dataType", "string");
+      fixture.componentRef.setInput("additional", undefined);
+      fixture.componentRef.setInput("linkedEntityType", undefined);
+      await settle();
+
+      expect(emitted.at(-1)).toEqual({
+        pattern: "[a-z]+",
+        _warningOnly: ["pattern"],
+      });
+      expect(rows()).toHaveLength(1);
     });
 
     it("shows a rule again when the type is changed back, and saves it if the type is changed to one it fits", async () => {
@@ -287,14 +340,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(changes.at(-1)).toEqual({ trim: false });
     });
 
-    it("keeps rules the tab has no setting for, also as only a warning", async () => {
-      const validators = TestBed.inject(DynamicValidatorsService);
-      const getRule = validators.rules.get.bind(validators.rules);
-      vi.spyOn(validators.rules, "get").mockImplementation((key) =>
-        key === "customRule"
-          ? ({ warning: "optional" } as FieldValidator)
-          : getRule(key),
-      );
+    it("keeps rules that are not registered, also as only a warning", async () => {
       await render({
         dataType: "string",
         validators: {
@@ -342,6 +388,24 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       await vi.waitFor(() =>
         expect(rows()[0].textContent).toContain("Selection Filter"),
       );
+    });
+
+    it("clears the condition and does not name it in the hint when the linked type changes", async () => {
+      fixture.componentRef.setInput("linkedEntityType", ValidatorTabTestRecord);
+      await render({
+        dataType: "entity",
+        additional: "ValidatorTabTestRecord",
+        validators: { selectionCondition: condition },
+      });
+
+      fixture.componentRef.setInput("additional", ["A", "B"]);
+      fixture.componentRef.setInput("linkedEntityType", undefined);
+      await settle();
+
+      expect(component.validatorForm().get("selectionCondition").value).toBe(
+        null,
+      );
+      expect(text()).not.toContain("Not used for this type of field");
     });
 
     it("keeps a row that is not filled in yet when the linked type changes", async () => {

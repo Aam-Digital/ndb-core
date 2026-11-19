@@ -109,8 +109,7 @@ and the inputs of `ValidatorSettingInputs` that it declares: `label`, `descripti
 the `entityType` of the field and, for a link field, the `linkedEntityType`.
 Register it in the component registry like other dynamic components (`@DynamicComponent("MyValidatorSetting")` and `components.addAll` in your module).
 
-A rule of a module that is not loaded in the admin area can still be set in the config, and the tab keeps it,
-unless the field's type is changed to one the rule does not fit.
+A rule of a module that is not loaded in the admin area can still be set in the config, and the tab keeps it as it is (also its mark as only a warning).
 
 Unit-test the logic of the rule's check. Messages, warnings and checking a field again when the fields it depends on change
 are handled centrally by `DynamicValidatorsService`.

@@ -271,20 +271,46 @@ describe("settings components of the validation rules", () => {
   });
 
   describe("DateValidatorSettingComponent", () => {
-    it.each<[string, Date | string]>([
-      ["2020-03-01", new Date(2020, 2, 1)],
-      ["$now", "$now"],
-    ])(
-      "reads the date %s, which the config stores as a text",
-      (text, expected) => {
-        const control = new FormControl<Date | string | null>(text);
-        const fixture = TestBed.createComponent(DateValidatorSettingComponent);
-        fixture.componentRef.setInput("formControl", control);
-        fixture.componentRef.setInput("label", "Minimum Date");
-        fixture.detectChanges();
+    function createSetting(value: string | null) {
+      const control = new FormControl<Date | string | null>(value);
+      const fixture = TestBed.createComponent(DateValidatorSettingComponent);
+      fixture.componentRef.setInput("formControl", control);
+      fixture.componentRef.setInput("label", "Minimum Date");
+      fixture.detectChanges();
+      return { control, component: fixture.componentInstance as any };
+    }
 
-        expect(control.value).toEqual(expected);
+    it.each<[string, Date]>([
+      ["2020-03-01", new Date(2020, 2, 1)],
+      ["$now", new Date()],
+    ])(
+      "shows the date %s and leaves the text of the config as it is",
+      (text, expected) => {
+        const { control, component } = createSetting(text);
+
+        expect(component.date.value.toDateString()).toBe(
+          expected.toDateString(),
+        );
+        expect(control.value).toBe(text);
+        expect(control.dirty).toBe(false);
       },
     );
+
+    it("saves a changed date as a text of the day, regardless of the time zone", () => {
+      const { control, component } = createSetting("2020-03-01");
+
+      component.date.setValue(new Date(2021, 0, 5));
+
+      expect(control.value).toBe("2021-01-05");
+      expect(control.dirty).toBe(true);
+    });
+
+    it("removes the setting when the date is cleared", () => {
+      const { control, component } = createSetting("2020-03-01");
+
+      component.date.setValue(null);
+
+      expect(control.value).toBeNull();
+    });
   });
 });

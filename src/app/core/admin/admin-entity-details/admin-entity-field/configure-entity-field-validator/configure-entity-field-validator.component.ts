@@ -3,7 +3,6 @@ import {
   inject,
   input,
   output,
-  ChangeDetectionStrategy,
   effect,
   computed,
   linkedSignal,
@@ -24,6 +23,7 @@ import {
 } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { DynamicValidatorsService } from "app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { FieldValidator } from "app/core/common-components/entity-form/dynamic-form-validators/field-validator";
+import { SelectionConditionValidator } from "app/core/basic-datatypes/entity/selection-condition";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { StringDatatype } from "app/core/basic-datatypes/string/string.datatype";
 import { asArray } from "app/utils/asArray";
@@ -39,7 +39,6 @@ import { ValidatorSettingInputs } from "./validator-settings/validator-setting";
  * The setting of each rule is edited by the component that the rule names (`FieldValidator.configComponent`).
  */
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-configure-entity-field-validator",
   imports: [
     ReactiveFormsModule,
@@ -122,8 +121,6 @@ export class ConfigureEntityFieldValidatorComponent {
 
   /** one form control for the setting of each registered rule, and the rules that are only a warning */
   validatorForm = computed(() => {
-    // read again when the linked type changes, as the parent then removes the `selectionCondition`
-    this.linkedEntityType();
     const validators = this.entitySchemaField()?.validators;
     const controls: Record<string, FormControl> = {};
     for (const rule of this.validators.rules.values()) {
@@ -147,20 +144,12 @@ export class ConfigureEntityFieldValidatorComponent {
    */
   private readonly shownKeys = linkedSignal<FormGroup, string[]>({
     source: this.validatorForm,
-    computation: (form, previous) => {
-      const set = Object.keys(
-        this.entitySchemaField()?.validators ?? {},
-      ).filter(
+    computation: (form) =>
+      Object.keys(this.entitySchemaField()?.validators ?? {}).filter(
         (key) =>
           this.validators.rules.has(key) &&
           !this.validators.rules.get(key).isSwitchedOff(form.get(key).value),
-      );
-      // the form is rebuilt when the linked type changes: rows added but not filled in yet stay
-      return [
-        ...set,
-        ...(previous?.value.filter((key) => !set.includes(key)) ?? []),
-      ];
-    },
+      ),
   });
 
   /** the shown rules that fit the selected type, with the texts the list shows for them */
@@ -174,10 +163,13 @@ export class ConfigureEntityFieldValidatorComponent {
       }),
   );
 
+  /** the rules of another type that are set, as the hint that they are not used */
   protected readonly hiddenRulesText = computed(() =>
     this.shownKeys()
       .filter((key) => !this.applicableKeys().has(key))
-      .map((key) => this.labelOf(this.validators.rules.get(key)))
+      .map((key) => this.validators.rules.get(key))
+      .filter((rule) => !rule.isSwitchedOff(this.formValue()[rule.key]))
+      .map((rule) => this.labelOf(rule))
       .join(", "),
   );
 
@@ -282,12 +274,37 @@ export class ConfigureEntityFieldValidatorComponent {
       });
     });
 
+    this.clearSelectionConditionOnLinkedTypeChange();
+
     effect((onCleanup) => {
       const ctrl = this.trimControl();
       const sub = ctrl.valueChanges.subscribe((value: boolean) => {
         this.entitySchemaFieldChanges.emit({ trim: value });
       });
       onCleanup(() => sub.unsubscribe());
+    });
+  }
+
+  /**
+   * A `selectionCondition` refers to fields of the linked record type, so it is cleared when that type changes
+   * (the parent removes it from the config); the other settings stay, also those that the selected type hides.
+   */
+  private clearSelectionConditionOnLinkedTypeChange() {
+    let shownLinkedType: EntityConstructor | undefined;
+    let linkedTypeKnown = false;
+    effect(() => {
+      const linkedType = this.linkedEntityType();
+      untracked(() => {
+        if (linkedTypeKnown && linkedType !== shownLinkedType) {
+          const form = this.validatorForm();
+          form
+            .get(SelectionConditionValidator.key)
+            ?.setValue(null, { emitEvent: false });
+          this.formValue.set(form.getRawValue());
+        }
+        linkedTypeKnown = true;
+        shownLinkedType = linkedType;
+      });
     });
   }
 
@@ -339,7 +356,9 @@ export class ConfigureEntityFieldValidatorComponent {
 
     const warningOnly = asArray(form.get(WARNING_ONLY_KEY).value).filter(
       (key) =>
-        key in config && this.validators.rules.get(key)?.warning === "optional",
+        key in config &&
+        (!(key in form.controls) ||
+          this.validators.rules.get(key)?.warning === "optional"),
     );
     if (warningOnly.length > 0) {
       config[WARNING_ONLY_KEY] = warningOnly;

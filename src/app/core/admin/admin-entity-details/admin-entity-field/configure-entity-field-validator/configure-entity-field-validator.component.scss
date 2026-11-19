@@ -1,19 +1,59 @@
+@use "variables/breakpoints";
+@use "variables/colors";
+@use "variables/sizes";
+
+// the height of the first line of a row: the field of a setting, to which the other cells are centered
+$line-height: var(--mat-form-field-container-height, 56px);
+
 .validator-row {
-  flex-wrap: wrap;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem 28px;
+  column-gap: sizes.$small;
+  align-items: start;
+  max-width: sizes.$max-text-width;
+  padding: sizes.$x-small 0;
+  border-bottom: 1px solid colors.$border-color;
 }
 
-.validator-setting {
-  flex-basis: 360px;
-  min-width: 0;
+.validator-name,
+.validator-warning,
+.validator-remove {
+  display: flex;
+  align-items: center;
+  min-height: $line-height;
+}
+
+.validator-name {
+  gap: sizes.$small;
 }
 
 .validator-warning {
-  flex: 0 0 200px;
+  gap: sizes.$x-small;
+}
+
+@media screen and (max-width: breakpoints.$sm) {
+  .validator-row {
+    grid-template-columns: minmax(0, 1fr) 28px;
+  }
+
+  .validator-setting {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .validator-remove {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .validator-warning {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-height: 0;
+  }
 }
 
 .add-rule-field {
   max-width: 360px;
-  margin-top: var(--space-regular);
+  margin-top: sizes.$regular;
 }

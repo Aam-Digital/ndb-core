@@ -11,14 +11,15 @@ export abstract class AgeLimitValidator extends FieldValidator {
   override readonly datatypesSupported = [DateWithAgeDatatype];
   override readonly configComponent = "NumberValidatorSetting";
 
-  /** the key of the rule */
-  protected abstract readonly limit: "minAge" | "maxAge";
+  override get key(): "minAge" | "maxAge" {
+    return super.key as "minAge" | "maxAge";
+  }
 
   build(_value: unknown, { config }: ValidatorContext): ValidatorFn {
-    return ageRangeValidator(this.limit, config);
+    return ageRangeValidator(this.key, config);
   }
 
   override message(error: unknown): string {
-    return descriptionForAgeValidator(this.limit, error);
+    return descriptionForAgeValidator(this.key, error);
   }
 }

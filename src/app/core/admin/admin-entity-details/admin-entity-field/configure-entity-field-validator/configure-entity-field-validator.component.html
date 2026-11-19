@@ -1,25 +1,16 @@
 <div class="flex-column">
   @for (row of rows(); track row.rule.key) {
-    <div class="validator-row flex-row align-center gap-small">
-      <button
-        mat-icon-button
-        type="button"
-        (click)="removeRule(row.rule)"
-        matTooltip="Remove"
-        i18n-matTooltip
-        [attr.aria-label]="row.removeLabel"
-      >
-        <app-fa-dynamic-icon icon="xmark"></app-fa-dynamic-icon>
-      </button>
-
-      <div class="validator-setting flex-grow">
+    <div class="validator-row">
+      <div class="validator-setting">
         @if (settingComponents().get(row.rule.key); as setting) {
           <ng-template [appDynamicComponent]="setting"></ng-template>
         } @else {
-          <span>{{ row.label }}</span>
-          @if (row.rule.description) {
-            <app-help-button [text]="row.rule.description"></app-help-button>
-          }
+          <div class="validator-name">
+            <span>{{ row.label }}</span>
+            @if (row.rule.description) {
+              <app-help-button [text]="row.rule.description"></app-help-button>
+            }
+          </div>
         }
       </div>
 
@@ -28,11 +19,10 @@
           <span class="hint-text" i18n
             >Only a warning: users can still save.</span
           >
-        } @else if (
-          row.rule.warning === "optional" && setRuleKeys().has(row.rule.key)
-        ) {
+        } @else if (row.rule.warning === "optional") {
           <mat-checkbox
             [checked]="warningOnlyRuleKeys().has(row.rule.key)"
+            [disabled]="!setRuleKeys().has(row.rule.key)"
             (change)="setWarningOnly(row.rule.key, $event.checked)"
             i18n
             >Only a warning</mat-checkbox
@@ -43,6 +33,18 @@
           ></app-help-button>
         }
       </div>
+
+      <button
+        mat-icon-button
+        class="validator-remove input-embedded-icon-button"
+        type="button"
+        (click)="removeRule(row.rule)"
+        matTooltip="Remove"
+        i18n-matTooltip
+        [attr.aria-label]="row.removeLabel"
+      >
+        <app-fa-dynamic-icon icon="xmark"></app-fa-dynamic-icon>
+      </button>
     </div>
   } @empty {
     <div class="hint-text" i18n>no validation rules</div>

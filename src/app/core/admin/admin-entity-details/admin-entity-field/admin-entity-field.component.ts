@@ -152,6 +152,9 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigureEntityFieldValidatorComponent,
   );
 
+  /** the index of the shown tab: 0 "Basics", 1 "Advanced Options", 2 "Validation" */
+  protected readonly selectedTab = signal(0);
+
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -710,7 +713,12 @@ export class AdminEntityFieldComponent implements OnInit {
     const validatorForm = this.validatorConfig()?.validatorForm();
     validatorForm?.markAllAsTouched();
 
-    if (this.form.invalid || validatorForm?.invalid) return;
+    const settingsInvalid = validatorForm?.invalid;
+    if (settingsInvalid) {
+      // show the errors of the settings, which are not visible on the other tabs
+      this.selectedTab.set(2);
+    }
+    if (this.form.invalid || settingsInvalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);
   }
