@@ -35,6 +35,11 @@ $inactive: grey;
    darker than $inactive, so it can be told apart from archived records and keeps a contrast of 4.5:1 on white */
 $context: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 700);
 
+/* lines connecting the rows of a tree (e.g. records and their sub-records) */
+$tree-line: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 500);
+/* line separating the branches of a tree */
+$tree-separator: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400);
+
 /* background for the main view */
 $background: white;
 /* background for the sidebar */

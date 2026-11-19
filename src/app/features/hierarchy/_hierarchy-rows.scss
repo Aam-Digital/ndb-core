@@ -1,4 +1,3 @@
-@use "@angular/material" as mat;
 @use "variables/colors";
 @use "variables/sizes";
 
@@ -20,7 +19,7 @@
 }
 
 ::ng-deep tr.hierarchy-top-row:not(:first-child) > td {
-  border-top: 2px solid mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400);
+  border-top: 2px solid colors.$tree-separator;
   padding-top: sizes.$small;
 }
 
