@@ -8,17 +8,14 @@ import {
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 
-const LINKED_CHILD = "Asha & Co";
-const OTHER_CHILD = "Other Child";
-const LINK_TITLE = "Open in Accounting";
+const LINKED_CHILD = "<MATCHING CHILD & CO>";
+const OTHER_CHILD = "<OTHER CHILD>";
+const LINK_TITLE = "<OPEN IN ACCOUNTING>";
 
 async function openActionsMenuOf(page: Page, childName: string) {
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: childName }).click();
-  await page
-    .locator("app-entity-actions-menu button[mat-icon-button]")
-    .first()
-    .click();
+  await page.getByRole("button", { name: "More actions" }).click();
 }
 
 test("Admin adds an external link for a record type and users open it from matching records", async ({
@@ -42,11 +39,7 @@ test("Admin adds an external link for a record type and users open it from match
     .getByRole("menuitem", { name: "Configure Data Structure" })
     .click();
   await page.getByText("External Links", { exact: true }).click();
-  await page
-    .locator("app-admin-entity-linked-records")
-    .getByRole("button")
-    .first()
-    .click();
+  await page.getByRole("button", { name: "add element" }).click();
 
   const form = page.getByRole("dialog").filter({ hasText: "Record Type" });
   await form
@@ -79,13 +72,13 @@ test("Admin adds an external link for a record type and users open it from match
     .click();
 
   await expect(
-    form.getByText("Shown only for records matching a condition on: Name"),
+    form.getByText("Only records matching a condition on: Name"),
   ).toBeVisible();
   await expect(conditionDialog).toBeHidden();
 
   await argosScreenshot(page, "external-link-form");
   await form.getByRole("button", { name: "Save", exact: true }).click();
-  await form.locator("app-dialog-close button").click();
+  await page.keyboard.press("Escape");
   await expect(
     page.getByRole("cell", { name: LINK_TITLE, exact: true }),
   ).toBeVisible();
@@ -98,7 +91,8 @@ test("Admin adds an external link for a record type and users open it from match
   expect((await newTab).url()).toBe(
     "https://accounting.example.org/person?ref=" +
       encodeURIComponent(linkedChild.getId()) +
-      "&name=Asha%20%26%20Co",
+      "&name=" +
+      encodeURIComponent(LINKED_CHILD),
   );
 
   // a record not matching the condition only offers the link without condition
