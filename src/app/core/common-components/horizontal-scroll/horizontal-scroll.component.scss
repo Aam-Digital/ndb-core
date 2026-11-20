@@ -21,6 +21,8 @@
   z-index: 1;
   overflow-x: auto;
   overflow-y: hidden;
+  /* room for the overlay scrollbar of browsers that ignore the styles below (Firefox) */
+  min-height: 12px;
 
   /*
    * A styled scrollbar is always shown and takes up space,
