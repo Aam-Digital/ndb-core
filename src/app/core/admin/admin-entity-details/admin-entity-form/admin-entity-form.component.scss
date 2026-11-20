@@ -4,6 +4,18 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
 
 $toolbar-width: 300px;
+
+/* the toolbar reaches into the surrounding padding (negative margins below),
+   so the scroll area extends into that padding instead of scrolling by those few pixels */
+app-horizontal-scroll {
+  margin-inline-end: -(sizes.$small);
+  margin-bottom: -(sizes.$small);
+}
+.overall-container {
+  padding-inline-end: sizes.$small;
+  padding-bottom: sizes.$small;
+}
+
 .toolbar {
   width: $toolbar-width;
   padding: sizes.$small;

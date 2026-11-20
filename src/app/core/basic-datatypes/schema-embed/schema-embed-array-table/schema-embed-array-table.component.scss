@@ -6,6 +6,7 @@
 
 /* same look as the entities-table used by RelatedEntitiesComponent */
 
+/* on the scroll wrapper, not the table: the wrapper would clip the shadow of the table */
 .table {
   @include entities-table.table;
 }
@@ -35,11 +36,14 @@
 
   .table {
     box-shadow: none;
-    background: transparent;
     // min-width (not width): lets the table grow past its container so cells don't get
     // squeezed - .table-container then scrolls horizontally instead of clipping content.
     min-width: 100%;
     width: max-content;
+  }
+
+  table {
+    background: transparent;
   }
 
   .mat-mdc-header-row,

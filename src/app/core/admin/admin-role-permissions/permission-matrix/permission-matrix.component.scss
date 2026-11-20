@@ -4,11 +4,6 @@
 // same container/table styling as the user accounts and roles lists
 @include list-table.container-and-table;
 
-// on small screens the table keeps its minimum width and scrolls horizontally
-.table-scroll {
-  overflow-x: auto;
-}
-
 .action-col {
   text-align: center;
 }

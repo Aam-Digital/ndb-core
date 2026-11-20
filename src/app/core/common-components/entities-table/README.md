@@ -176,3 +176,9 @@ own keys, and a naming rule keeps them apart:
 
 A new kind of URL state (e.g. of a feature data source) must use a key with the
 `_` prefix as well.
+
+## Wide tables
+
+The table scrolls sideways on its own, inside `HorizontalScrollComponent`
+(`../horizontal-scroll/`), see the
+[UX guidelines](../../../../../doc/compodoc_sources/concepts/ux-guidelines.md#styling).

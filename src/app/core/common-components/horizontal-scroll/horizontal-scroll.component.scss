@@ -1,0 +1,48 @@
+@use "variables/colors";
+
+:host {
+  display: block;
+}
+
+.content {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* the sticky scrollbar below replaces the scrollbar of the content */
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.sticky-scrollbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* room for the overlay scrollbar of browsers that ignore the styles below (Firefox) */
+  min-height: 12px;
+
+  /*
+   * A styled scrollbar is always shown and takes up space,
+   * also where the system shows scrollbars only while scrolling (macOS overlay scrollbars).
+   */
+  &::-webkit-scrollbar {
+    height: 10px;
+    background-color: colors.$grey-medium;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: colors.$inactive;
+    border-radius: 5px;
+  }
+}
+
+.scrollbar-spacer {
+  height: 1px;
+}
+
+.hidden {
+  display: none;
+}
