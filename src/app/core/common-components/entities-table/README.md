@@ -180,8 +180,5 @@ A new kind of URL state (e.g. of a feature data source) must use a key with the
 ## Wide tables
 
 The table scrolls sideways on its own, inside `HorizontalScrollComponent`
-(`../horizontal-scroll/`), with a horizontal scrollbar that sticks to the
-bottom of the screen while the table is visible. The page itself never
-scrolls sideways (see `UiComponent`), so other content that can be wider than
-the screen has to be wrapped in `HorizontalScrollComponent` as well (e.g. the
-report results table).
+(`../horizontal-scroll/`), see the
+[UX guidelines](../../../../../doc/compodoc_sources/concepts/ux-guidelines.md#styling).
