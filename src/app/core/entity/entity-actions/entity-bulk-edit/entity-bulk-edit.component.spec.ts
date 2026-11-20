@@ -132,19 +132,26 @@ describe("EntityBulkEditComponent", () => {
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it.each([true, false])(
-    "closes the dialog only after the value is confirmed valid (confirmed: %s)",
-    async (confirmed) => {
-      mockEntityFormService.extendFormFieldConfig.mockReturnValue({
-        id: "name",
-      });
-      mockEntityFormService.createEntityForm.mockResolvedValue({
-        formGroup: new FormGroup({ name: new FormControl("") }),
-      });
+  async function selectNameField() {
+    mockEntityFormService.extendFormFieldConfig.mockReturnValue({ id: "name" });
+    mockEntityFormService.createEntityForm.mockResolvedValue({
+      formGroup: new FormGroup({ name: new FormControl("") }),
+    });
+    component.selectedFieldFormControl.setValue("name");
+    await vi.waitFor(() => expect(component.showValueForm).toBe(true));
+  }
+
+  it.each([
+    [true, "new"],
+    [true, 0],
+    [true, false],
+    [false, "new"],
+  ])(
+    "closes the dialog with the unchanged value only after it is confirmed valid (confirmed: %s, value: %j)",
+    async (confirmed, value) => {
+      await selectNameField();
       mockEntityFormService.confirmValidity.mockResolvedValue(confirmed);
-      component.selectedFieldFormControl.setValue("name");
-      await vi.waitFor(() => expect(component.showValueForm).toBe(true));
-      component.fieldValueForm.formGroup.controls["name"].setValue("new");
+      component.fieldValueForm.formGroup.controls["name"].setValue(value);
 
       await component.save();
 
@@ -154,13 +161,26 @@ describe("EntityBulkEditComponent", () => {
       if (confirmed) {
         expect(mockDialogRef.close).toHaveBeenCalledWith({
           selectedField: "name",
-          value: "new",
+          value,
         });
       } else {
         expect(mockDialogRef.close).not.toHaveBeenCalled();
       }
     },
   );
+
+  it("does not save while the value form of the selected field is not created yet", async () => {
+    await selectNameField();
+    mockEntityFormService.confirmValidity.mockResolvedValue(true);
+    mockEntityFormService.createEntityForm.mockReturnValue(
+      new Promise(() => undefined),
+    );
+    component.selectedFieldFormControl.setValue("gender");
+
+    await component.save();
+
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
 
   // The bulk-edit form's unsaved-changes state is now tracked per-form and cleared
   // automatically when the dialog's DestroyRef is destroyed (see EntityFormService),
