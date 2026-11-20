@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { CdkScrollable } from "@angular/cdk/scrolling";
 
 /**
  * Lets wide content (e.g. a table) scroll sideways on its own,
@@ -19,8 +20,14 @@ import {
  */
 @Component({
   selector: "app-horizontal-scroll",
+  imports: [CdkScrollable],
   template: `
-    <div #content class="content" (scroll)="syncScroll(content, scrollbar)">
+    <div
+      #content
+      cdkScrollable
+      class="content"
+      (scroll)="syncScroll(content, scrollbar)"
+    >
       <ng-content />
     </div>
     <div

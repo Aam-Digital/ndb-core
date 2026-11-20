@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../common-components/horizontal-scroll/horizontal-scroll.component";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,6 +31,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-user-list",
   imports: [
     ViewTitleComponent,
+    HorizontalScrollComponent,
     MatTableModule,
     MatButtonModule,
     FaIconComponent,
