@@ -7,14 +7,14 @@
       class="loading-bar"
     ></mat-progress-bar>
   }
-  <app-horizontal-scroll>
+  <app-horizontal-scroll class="table">
     <table
       mat-table
       [dataSource]="recordsDataSource()"
       matSort
       [matSortActive]="sortStore.effectiveSort()?.active"
       [matSortDirection]="sortStore.effectiveSort()?.direction"
-      class="full-width table"
+      class="full-width"
     >
       @for (col of _columns(); track col.id) {
         <ng-container [matColumnDef]="col.id">
