@@ -35,7 +35,7 @@ describe("EntityEditService", () => {
     service = TestBed.inject(EntityEditService);
   });
 
-  it.each([null, undefined, ""])(
+  it.each([null, undefined, "", []])(
     "removes the field from all records if the value is %j",
     async (value) => {
       const records = [
