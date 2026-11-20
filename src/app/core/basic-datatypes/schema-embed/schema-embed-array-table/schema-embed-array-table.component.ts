@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../common-components/horizontal-scroll/horizontal-scroll.component";
 import { Component, computed, inject, input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -29,6 +30,7 @@ import {
 @Component({
   selector: "app-schema-embed-array-table",
   imports: [
+    HorizontalScrollComponent,
     MatTableModule,
     MatButtonModule,
     MatTooltipModule,
