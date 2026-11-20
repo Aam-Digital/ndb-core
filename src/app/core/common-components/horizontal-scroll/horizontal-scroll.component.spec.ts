@@ -5,42 +5,60 @@ describe("HorizontalScrollComponent", () => {
   let fixture: ComponentFixture<HorizontalScrollComponent>;
   let content: HTMLElement;
   let scrollbar: HTMLElement;
+  let spacer: HTMLElement;
+
+  const originalResizeObserver = globalThis.ResizeObserver;
+  let notifyResize: () => void;
+  const disconnect = vi.fn();
 
   /** jsdom does no layout, so the sizes of the content are set by hand */
-  function setContentSize(scrollWidth: number, clientWidth: number) {
-    Object.defineProperty(content, "scrollWidth", { value: scrollWidth });
-    Object.defineProperty(content, "clientWidth", { value: clientWidth });
+  function resizeContent(scrollWidth: number, clientWidth: number) {
+    Object.defineProperty(content, "scrollWidth", {
+      value: scrollWidth,
+      configurable: true,
+    });
+    Object.defineProperty(content, "clientWidth", {
+      value: clientWidth,
+      configurable: true,
+    });
+    notifyResize();
+    fixture.detectChanges();
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    globalThis.ResizeObserver = class implements ResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        notifyResize = () => callback([], this);
+      }
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = disconnect;
+    };
+    disconnect.mockClear();
+
     fixture = TestBed.createComponent(HorizontalScrollComponent);
     const element: HTMLElement = fixture.nativeElement;
-    content = element.querySelector(".content");
-    scrollbar = element.querySelector(".sticky-scrollbar");
+    content = element.querySelector<HTMLElement>(".content");
+    scrollbar = element.querySelector<HTMLElement>(".sticky-scrollbar");
+    spacer = element.querySelector<HTMLElement>(".scrollbar-spacer");
+    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
-  it.each([
-    [1200, 600, true],
-    [600, 600, false],
-  ])(
-    "shows the scrollbar only when the content (%s px) is wider than the visible area (%s px)",
-    async (scrollWidth, clientWidth, visible) => {
-      setContentSize(scrollWidth, clientWidth);
-      fixture.detectChanges();
-      await fixture.whenStable();
-      fixture.detectChanges();
+  afterEach(() => {
+    globalThis.ResizeObserver = originalResizeObserver;
+  });
 
-      expect(scrollbar.classList.contains("hidden")).toBe(!visible);
-      expect(
-        (scrollbar.querySelector(".scrollbar-spacer") as HTMLElement).style
-          .width,
-      ).toBe(`${scrollWidth}px`);
-    },
-  );
+  it("shows the scrollbar only while the content is wider than the visible area", () => {
+    resizeContent(1200, 600);
+    expect(scrollbar.classList.contains("hidden")).toBe(false);
+    expect(spacer.style.width).toBe("1200px");
+
+    resizeContent(600, 600);
+    expect(scrollbar.classList.contains("hidden")).toBe(true);
+  });
 
   it("scrolls the content and the sticky scrollbar together", () => {
-    fixture.detectChanges();
-
     scrollbar.scrollLeft = 150;
     scrollbar.dispatchEvent(new Event("scroll"));
     expect(content.scrollLeft).toBe(150);
@@ -48,5 +66,10 @@ describe("HorizontalScrollComponent", () => {
     content.scrollLeft = 40;
     content.dispatchEvent(new Event("scroll"));
     expect(scrollbar.scrollLeft).toBe(40);
+  });
+
+  it("stops observing the size when destroyed", () => {
+    fixture.destroy();
+    expect(disconnect).toHaveBeenCalled();
   });
 });
