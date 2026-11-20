@@ -22,9 +22,10 @@ mat-stepper {
 :host ::ng-deep .mat-horizontal-stepper-wrapper {
   height: 100%;
 }
+/* no scroll container: the page scrolls, so the sticky scrollbar of the review table sticks to the screen */
 :host ::ng-deep .mat-horizontal-content-container {
-  overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .permission-message {
@@ -39,9 +40,6 @@ mat-stepper {
   justify-content: flex-end;
   gap: sizes.$regular;
 
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background-color: colors.$background;
 
   padding-top: sizes.$x-small;
