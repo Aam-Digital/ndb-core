@@ -79,8 +79,17 @@ export class EntityEditService extends CascadingEntityAction {
       : [entitiesToEdit];
     const newEntities: E[] = originalEntities.map((e) => e.copy());
 
+    const clearField =
+      action.value === null ||
+      action.value === undefined ||
+      action.value === "";
     for (const e of newEntities) {
-      e[action.selectedField] = action.value;
+      if (clearField) {
+        // like editing a single record: an empty value removes the property instead of storing a placeholder
+        delete e[action.selectedField];
+      } else {
+        e[action.selectedField] = action.value;
+      }
     }
 
     this.bulkOperationState.startBulkOperation(

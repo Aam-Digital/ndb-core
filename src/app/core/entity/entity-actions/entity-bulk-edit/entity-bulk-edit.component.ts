@@ -120,12 +120,9 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
     }
 
     const selectedField = this.selectedFieldFormControl.value;
-    const value =
-      this.fieldValueForm.formGroup.controls[selectedField]?.value || "";
-
     const returnValue: BulkEditAction = {
       selectedField,
-      value,
+      value: this.fieldValueForm.formGroup.controls[selectedField]?.value,
     };
     this.dialogRef.close(returnValue);
   }
