@@ -6,10 +6,8 @@
   flex-direction: column;
 }
 
+/* not sticky: in a tab with a wide table it would stick to the screen and cover the fields while editing */
 .form-buttons-wrapper {
-  position: sticky;
-  top: calc(var(--toolbar-height) + #{sizes.$regular});
-  z-index: 100;
   margin-inline-end: 3px;
 
   background-color: colors.$background;
