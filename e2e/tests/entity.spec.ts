@@ -182,7 +182,8 @@ test("List filter narrows results and clears restore full list", async ({
   // A wide table scrolls sideways on its own: its scrollbar stays at the bottom
   // of the screen while the end of the table is still below it.
   const viewport = page.viewportSize() ?? { width: 1280, height: 720 };
-  await page.setViewportSize({ width: 600, height: 400 });
+  // narrow, but wide enough to keep the desktop columns (the mobile column group fits the screen)
+  await page.setViewportSize({ width: 800, height: 400 });
   const wideTable = page.locator("app-entities-table app-horizontal-scroll");
   await expect(wideTable.locator("tbody tr").last()).not.toBeInViewport();
   await expect(wideTable.locator(".sticky-scrollbar")).toBeInViewport({
