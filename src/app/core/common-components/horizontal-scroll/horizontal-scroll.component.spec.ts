@@ -68,6 +68,19 @@ describe("HorizontalScrollComponent", () => {
     expect(scrollbar.scrollLeft).toBe(40);
   });
 
+  it("does not copy back the delayed scroll event of its own sync", () => {
+    content.scrollLeft = 40;
+    content.dispatchEvent(new Event("scroll"));
+
+    // the user keeps scrolling the content before the scrollbar's event of the sync arrives
+    content.scrollLeft = 60;
+    scrollbar.dispatchEvent(new Event("scroll"));
+    expect(content.scrollLeft).toBe(60);
+
+    content.dispatchEvent(new Event("scroll"));
+    expect(scrollbar.scrollLeft).toBe(60);
+  });
+
   it("stops observing the size when destroyed", () => {
     fixture.destroy();
     expect(disconnect).toHaveBeenCalled();

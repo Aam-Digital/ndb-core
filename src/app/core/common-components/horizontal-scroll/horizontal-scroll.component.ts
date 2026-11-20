@@ -46,6 +46,9 @@ export class HorizontalScrollComponent {
     () => this.contentWidth() > this.visibleWidth(),
   );
 
+  /** position that syncScroll last wrote to an element */
+  private readonly syncedPositions = new WeakMap<HTMLElement, number>();
+
   constructor() {
     afterNextRender(() => {
       const content = this.content().nativeElement;
@@ -67,8 +70,15 @@ export class HorizontalScrollComponent {
   }
 
   protected syncScroll(source: HTMLElement, target: HTMLElement) {
-    if (target.scrollLeft !== source.scrollLeft) {
-      target.scrollLeft = source.scrollLeft;
+    // the browser fires the scroll event of a synced element a frame later:
+    // copying that back would undo what the user scrolled in the meantime (e.g. trackpad momentum)
+    const isEchoOfSync = this.syncedPositions.get(source) === source.scrollLeft;
+    this.syncedPositions.delete(source);
+    if (isEchoOfSync || target.scrollLeft === source.scrollLeft) {
+      return;
     }
+
+    target.scrollLeft = source.scrollLeft;
+    this.syncedPositions.set(target, target.scrollLeft);
   }
 }
