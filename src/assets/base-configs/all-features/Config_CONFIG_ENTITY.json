@@ -1696,6 +1696,9 @@
           "id": "numberField",
           "label": "Number Field",
           "dataType": "number",
+          "validators": {
+            "min": 0
+          },
           "displayCondition": {
             "enumDropdown": {
               "$in": [

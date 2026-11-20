@@ -28,6 +28,7 @@ type DialogRefMock = {
 type EntityFormServiceMock = {
   createEntityForm: Mock;
   extendFormFieldConfig: Mock;
+  confirmValidity: Mock;
 };
 
 describe("EntityBulkEditComponent", () => {
@@ -64,6 +65,7 @@ describe("EntityBulkEditComponent", () => {
       extendFormFieldConfig: vi
         .fn()
         .mockName("EntityFormService.extendFormFieldConfig"),
+      confirmValidity: vi.fn().mockName("EntityFormService.confirmValidity"),
     };
     mockUnsavedChanges = { pending: signal(false) };
 
@@ -122,13 +124,43 @@ describe("EntityBulkEditComponent", () => {
     expect(singleRecord).toBe(false);
   });
 
-  it("should not save if the form is invalid", () => {
+  it("should not save if the form is invalid", async () => {
     component.selectedFieldFormControl.setValue("");
 
-    component.save();
+    await component.save();
 
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
+
+  it.each([true, false])(
+    "closes the dialog only after the value is confirmed valid (confirmed: %s)",
+    async (confirmed) => {
+      mockEntityFormService.extendFormFieldConfig.mockReturnValue({
+        id: "name",
+      });
+      mockEntityFormService.createEntityForm.mockResolvedValue({
+        formGroup: new FormGroup({ name: new FormControl("") }),
+      });
+      mockEntityFormService.confirmValidity.mockResolvedValue(confirmed);
+      component.selectedFieldFormControl.setValue("name");
+      await vi.waitFor(() => expect(component.showValueForm).toBe(true));
+      component.fieldValueForm.formGroup.controls["name"].setValue("new");
+
+      await component.save();
+
+      expect(mockEntityFormService.confirmValidity).toHaveBeenCalledWith(
+        component.fieldValueForm,
+      );
+      if (confirmed) {
+        expect(mockDialogRef.close).toHaveBeenCalledWith({
+          selectedField: "name",
+          value: "new",
+        });
+      } else {
+        expect(mockDialogRef.close).not.toHaveBeenCalled();
+      }
+    },
+  );
 
   // The bulk-edit form's unsaved-changes state is now tracked per-form and cleared
   // automatically when the dialog's DestroyRef is destroyed (see EntityFormService),

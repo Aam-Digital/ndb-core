@@ -112,13 +112,16 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
     }
   }
 
-  save() {
+  async save() {
     this.selectedFieldFormControl.markAsTouched();
-    if (this.selectedFieldFormControl.invalid) return;
+    if (this.selectedFieldFormControl.invalid || !this.fieldValueForm) return;
+    if (!(await this.entityFormService.confirmValidity(this.fieldValueForm))) {
+      return;
+    }
 
     const selectedField = this.selectedFieldFormControl.value;
     const value =
-      this.fieldValueForm?.formGroup.controls[selectedField]?.value || "";
+      this.fieldValueForm.formGroup.controls[selectedField]?.value || "";
 
     const returnValue: BulkEditAction = {
       selectedField,
