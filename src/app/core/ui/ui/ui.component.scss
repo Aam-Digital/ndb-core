@@ -54,7 +54,8 @@ body {
       be replaced as soon as a nicer solution exists.
     */
 
-    height: -webkit-fill-available;
+    /* min-height: the page scrolls on the document, so the layout has to grow with its content */
+    min-height: -webkit-fill-available;
   }
 }
 
