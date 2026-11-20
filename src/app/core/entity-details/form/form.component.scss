@@ -8,7 +8,7 @@
 
 .form-buttons-wrapper {
   position: sticky;
-  top: sizes.$regular;
+  top: calc(var(--toolbar-height) + #{sizes.$regular});
   z-index: 100;
   margin-inline-end: 3px;
 
