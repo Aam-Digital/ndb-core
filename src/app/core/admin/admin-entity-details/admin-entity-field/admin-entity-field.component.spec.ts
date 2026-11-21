@@ -28,9 +28,10 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
-import { MatButtonHarness } from "@angular/material/button/testing";
+import { MatSelectHarness } from "@angular/material/select/testing";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { By } from "@angular/platform-browser";
+import { AdminModule } from "../../admin.module";
 import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableText } from "../../../config/multi-lingual-config";
@@ -89,6 +90,8 @@ describe("AdminEntityFieldComponent", () => {
         { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
       ],
     });
+    // the components that edit the settings of the validation rules
+    TestBed.runInInjectionContext(() => new AdminModule());
     fixture = TestBed.createComponent(AdminEntityFieldComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
@@ -715,11 +718,20 @@ describe("AdminEntityFieldComponent", () => {
       await tabs.selectTab({ label: "Validation" });
     }
 
-    async function findSelectionFilterButton() {
+    async function addRuleSelect() {
       await openValidationTab();
       return loader.getHarnessOrNull(
-        MatButtonHarness.with({ text: /Selection Filter/ }),
+        MatSelectHarness.with({ ancestor: ".add-rule-field" }),
       );
+    }
+
+    async function offersSelectionFilter() {
+      const select = await addRuleSelect();
+      if (!select) {
+        return false;
+      }
+      await select.open();
+      return (await select.getOptions({ text: "Selection Filter" })).length > 0;
     }
 
     const entityRef: EntitySchemaField = {
@@ -770,7 +782,7 @@ describe("AdminEntityFieldComponent", () => {
       async (_, field, expectedOffered) => {
         await recreateComponentWithData({ label: "ref", ...field });
 
-        expect(!!(await findSelectionFilterButton())).toBe(expectedOffered);
+        expect(await offersSelectionFilter()).toBe(expectedOffered);
       },
     );
 
@@ -881,13 +893,21 @@ describe("AdminEntityFieldComponent", () => {
         } as EntitySchemaField,
         Note,
       );
-      await openValidationTab();
-      const button = fixture.debugElement
-        .queryAll(By.directive(AdminDisplayConditionButtonComponent))
-        .map(
-          (el) => el.componentInstance as AdminDisplayConditionButtonComponent,
-        )
-        .find((b) => !!b.currentRecordType());
+      await (await addRuleSelect()).clickOptions({ text: "Selection Filter" });
+      const findButton = () =>
+        fixture.debugElement
+          .queryAll(By.directive(AdminDisplayConditionButtonComponent))
+          .map(
+            (el) =>
+              el.componentInstance as AdminDisplayConditionButtonComponent,
+          )
+          .find((b) => !!b.currentRecordType());
+      // the setting of the rule is loaded when it is needed
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(findButton()).toBeDefined();
+      });
+      const button = findButton();
 
       expect(button.entityType()).toBe(TestEntity);
       expect(button.currentRecordType()).toBe(Note);

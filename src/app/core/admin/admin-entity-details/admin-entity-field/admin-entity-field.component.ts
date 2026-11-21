@@ -54,12 +54,8 @@ import {
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { filter, pairwise } from "rxjs/operators";
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from "@angular/core/rxjs-interop";
+import { filter } from "rxjs/operators";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -152,6 +148,9 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigureEntityFieldValidatorComponent,
   );
 
+  /** the index of the shown tab: 0 "Basics", 1 "Advanced Options", 2 "Validation" */
+  protected readonly selectedTab = signal(0);
+
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -207,14 +206,6 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
-
-  constructor() {
-    // a `selectionCondition` refers to fields of the linked record type, so it is removed when that type changes
-    // (the validator settings then show the field's validators without it, see ConfigureEntityFieldValidatorComponent)
-    toObservable(this.selectionConditionTargetType)
-      .pipe(pairwise(), takeUntilDestroyed())
-      .subscribe(() => this.removeSelectionCondition());
-  }
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -407,14 +398,6 @@ export class AdminEntityFieldComponent implements OnInit {
       this.fieldIdForm.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => autoGenerateSubscr.unsubscribe());
-    }
-  }
-
-  private removeSelectionCondition() {
-    const validators = this.schemaFieldsForm.get("validators");
-    const { selectionCondition, ...otherValidators } = validators.value ?? {};
-    if (selectionCondition) {
-      validators.setValue(otherValidators);
     }
   }
 
@@ -710,7 +693,12 @@ export class AdminEntityFieldComponent implements OnInit {
     const validatorForm = this.validatorConfig()?.validatorForm();
     validatorForm?.markAllAsTouched();
 
-    if (this.form.invalid || validatorForm?.invalid) return;
+    const settingsInvalid = validatorForm?.invalid;
+    if (settingsInvalid) {
+      // show the errors of the settings, which are not visible on the other tabs
+      this.selectedTab.set(2);
+    }
+    if (this.form.invalid || settingsInvalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);
   }

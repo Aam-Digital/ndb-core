@@ -55,6 +55,8 @@ export function buildReadonlyValidator(entity: Entity): {
 @Injectable()
 export class ReadonlyAfterSetValidator extends FieldValidator<boolean> {
   static override readonly key = "readonlyAfterSet";
+  readonly label = $localize`Read-only after it is saved`;
+  override readonly description = $localize`The value can only be edited until the record is saved for the first time.`;
   override readonly warning = "never";
 
   build(_value: boolean, { entity }: ValidatorContext): ValidatorFn {
