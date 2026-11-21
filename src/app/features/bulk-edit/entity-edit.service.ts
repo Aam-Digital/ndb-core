@@ -9,6 +9,7 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
 import { asArray } from "#src/app/utils/asArray";
+import { isEmptyValue } from "#src/app/utils/is-empty-value";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 
@@ -79,8 +80,14 @@ export class EntityEditService extends CascadingEntityAction {
       : [entitiesToEdit];
     const newEntities: E[] = originalEntities.map((e) => e.copy());
 
+    const clearField = isEmptyValue(action.value);
     for (const e of newEntities) {
-      e[action.selectedField] = action.value;
+      if (clearField) {
+        // like editing a single record: an empty value removes the property instead of storing a placeholder
+        delete e[action.selectedField];
+      } else {
+        e[action.selectedField] = action.value;
+      }
     }
 
     this.bulkOperationState.startBulkOperation(
