@@ -23,6 +23,7 @@
           <mat-checkbox
             [checked]="row.warningOnly"
             [disabled]="!row.hasValue"
+            [aria-label]="row.warningOnlyLabel"
             (change)="setWarningOnly(row.rule.key, $event.checked)"
             i18n
             >Only a warning</mat-checkbox

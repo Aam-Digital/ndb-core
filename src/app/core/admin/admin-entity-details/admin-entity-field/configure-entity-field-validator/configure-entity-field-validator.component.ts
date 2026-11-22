@@ -168,6 +168,7 @@ export class ConfigureEntityFieldValidatorComponent {
           rule,
           label,
           removeLabel: $localize`Remove ${label}:rule:`,
+          warningOnlyLabel: $localize`Only a warning: ${label}:rule:`,
           // only a rule that is set can be made only a warning
           hasValue: this.hasValue(rule, values),
           warningOnly: warningOnly.includes(key),
