@@ -25,70 +25,74 @@
   </p>
 
   <div class="table-container">
-    <table mat-table [dataSource]="dataSource" class="full-width table">
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef i18n>Email</th>
-        <td mat-cell *matCellDef="let user">{{ user.email || "-" }}</td>
-      </ng-container>
+    <app-horizontal-scroll>
+      <table mat-table [dataSource]="dataSource" class="full-width table">
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef i18n>Email</th>
+          <td mat-cell *matCellDef="let user">{{ user.email || "-" }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="userEntityId">
-        <th mat-header-cell *matHeaderCellDef i18n>Profile</th>
-        <td mat-cell *matCellDef="let user">
-          @if (user.userEntityId) {
-            <app-entity-block [entityId]="user.userEntityId"></app-entity-block>
-          } @else {
-            <span
-              class="no-profile-hint"
-              matTooltip="This account is not linked to a profile record. Permission rules based on the user's profile do not apply to this account."
-              i18n-matTooltip="user list: tooltip for account without profile"
-            >
-              <fa-icon
-                icon="triangle-exclamation"
-                class="standard-icon-with-text"
-              ></fa-icon>
-              <span i18n="user list: account without profile"
-                >No profile linked</span
+        <ng-container matColumnDef="userEntityId">
+          <th mat-header-cell *matHeaderCellDef i18n>Profile</th>
+          <td mat-cell *matCellDef="let user">
+            @if (user.userEntityId) {
+              <app-entity-block
+                [entityId]="user.userEntityId"
+              ></app-entity-block>
+            } @else {
+              <span
+                class="no-profile-hint"
+                matTooltip="This account is not linked to a profile record. Permission rules based on the user's profile do not apply to this account."
+                i18n-matTooltip="user list: tooltip for account without profile"
               >
-            </span>
-          }
-        </td>
-      </ng-container>
+                <fa-icon
+                  icon="triangle-exclamation"
+                  class="standard-icon-with-text"
+                ></fa-icon>
+                <span i18n="user list: account without profile"
+                  >No profile linked</span
+                >
+              </span>
+            }
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="enabled">
-        <th mat-header-cell *matHeaderCellDef i18n>Enabled</th>
-        <td mat-cell *matCellDef="let user">
-          @if (user.enabled) {
-            <span i18n>Yes</span>
-          } @else {
-            <span i18n>No</span>
-          }
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="enabled">
+          <th mat-header-cell *matHeaderCellDef i18n>Enabled</th>
+          <td mat-cell *matCellDef="let user">
+            @if (user.enabled) {
+              <span i18n>Yes</span>
+            } @else {
+              <span i18n>No</span>
+            }
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="emailVerified">
-        <th mat-header-cell *matHeaderCellDef i18n>Email Verified</th>
-        <td mat-cell *matCellDef="let user">
-          @if (user.emailVerified) {
-            <span i18n>Yes</span>
-          } @else {
-            <span i18n>No</span>
-          }
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="emailVerified">
+          <th mat-header-cell *matHeaderCellDef i18n>Email Verified</th>
+          <td mat-cell *matCellDef="let user">
+            @if (user.emailVerified) {
+              <span i18n>Yes</span>
+            } @else {
+              <span i18n>No</span>
+            }
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="roles">
-        <th mat-header-cell *matHeaderCellDef i18n>Roles</th>
-        <td mat-cell *matCellDef="let user">{{ getRoleNames(user) }}</td>
-      </ng-container>
+        <ng-container matColumnDef="roles">
+          <th mat-header-cell *matHeaderCellDef i18n>Roles</th>
+          <td mat-cell *matCellDef="let user">{{ getRoleNames(user) }}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        (click)="openUserDetails(row)"
-        class="clickable-row"
-      ></tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="openUserDetails(row)"
+          class="clickable-row"
+        ></tr>
+      </table>
+    </app-horizontal-scroll>
 
     <app-list-paginator
       class="table-footer"

@@ -4,7 +4,7 @@
 
 .top-control {
   position: sticky;
-  top: 0;
+  top: var(--toolbar-height);
   /* make this visible while other contents go "under" this top control */
   z-index: 1;
   /* These small hacks remove the global margin and re-apply them as padding.
