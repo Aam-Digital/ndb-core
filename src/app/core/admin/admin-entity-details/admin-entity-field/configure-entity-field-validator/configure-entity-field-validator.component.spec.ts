@@ -277,30 +277,38 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       expect(emitted.at(-1)).toEqual({ pattern: "[0-9]+" });
     });
 
-    it("keeps a pattern given as a regular expression as a text", async () => {
-      await render({ dataType: "string", validators: { pattern: /^\d+$/ } });
+    it.each<[string, string, FormValidatorConfig, unknown]>([
+      [
+        "a pattern given as a regular expression, as a text",
+        "string",
+        { pattern: /^\d+$/ },
+        { required: true, pattern: String.raw`^\d+$` },
+      ],
+      [
+        "the pattern of an email field",
+        "email",
+        { pattern: "@example\\.org$" },
+        { required: true, pattern: "@example\\.org$" },
+      ],
+      [
+        "a rule that is not registered, with its mark as only a warning",
+        "string",
+        {
+          customRule: 5,
+          _warningOnly: ["customRule"],
+        } as FormValidatorConfig,
+        { customRule: 5, required: true, _warningOnly: ["customRule"] },
+      ],
+    ])(
+      "keeps %s when another rule is added",
+      async (_, dataType, validators, expected) => {
+        await render({ dataType, validators });
 
-      await addRule("Required Field");
+        await addRule("Required Field");
 
-      expect(emitted.at(-1)).toEqual({
-        required: true,
-        pattern: String.raw`^\d+$`,
-      });
-    });
-
-    it("keeps the pattern of an email field when another setting is changed", async () => {
-      await render({
-        dataType: "email",
-        validators: { pattern: "@example\\.org$" },
-      });
-
-      await addRule("Required Field");
-
-      expect(emitted.at(-1)).toEqual({
-        required: true,
-        pattern: "@example\\.org$",
-      });
-    });
+        expect(emitted.at(-1)).toEqual(expected);
+      },
+    );
 
     it("does not change the config when only opening the field", async () => {
       await render({
@@ -338,24 +346,6 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       fixture.componentRef.setInput("dataType", "string");
       await settle();
       expect(changes.at(-1)).toEqual({ trim: false });
-    });
-
-    it("keeps rules that are not registered, also as only a warning", async () => {
-      await render({
-        dataType: "string",
-        validators: {
-          customRule: 5,
-          _warningOnly: ["customRule"],
-        } as FormValidatorConfig,
-      });
-
-      await addRule("Required Field");
-
-      expect(emitted.at(-1)).toEqual({
-        customRule: 5,
-        required: true,
-        _warningOnly: ["customRule"],
-      });
     });
   });
 
