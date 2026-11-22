@@ -5,6 +5,7 @@ import {
   DestroyRef,
   ElementRef,
   inject,
+  NgZone,
   signal,
   viewChild,
 } from "@angular/core";
@@ -22,20 +23,10 @@ import { CdkScrollable } from "@angular/cdk/scrolling";
   selector: "app-horizontal-scroll",
   imports: [CdkScrollable],
   template: `
-    <div
-      #content
-      cdkScrollable
-      class="content"
-      (scroll)="syncScroll(content, scrollbar)"
-    >
+    <div #content cdkScrollable class="content">
       <ng-content />
     </div>
-    <div
-      #scrollbar
-      class="sticky-scrollbar"
-      [class.hidden]="!overflows()"
-      (scroll)="syncScroll(scrollbar, content)"
-    >
+    <div #scrollbar class="sticky-scrollbar" [class.hidden]="!overflows()">
       <div class="scrollbar-spacer" [style.width.px]="contentWidth()"></div>
     </div>
   `,
@@ -43,8 +34,11 @@ import { CdkScrollable } from "@angular/cdk/scrolling";
 })
 export class HorizontalScrollComponent {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly ngZone = inject(NgZone);
   private readonly content =
     viewChild.required<ElementRef<HTMLElement>>("content");
+  private readonly scrollbar =
+    viewChild.required<ElementRef<HTMLElement>>("scrollbar");
 
   /** full width of the content, including the part scrolled out of view */
   protected readonly contentWidth = signal(0);
@@ -67,6 +61,28 @@ export class HorizontalScrollComponent {
       }
       this.destroyRef.onDestroy(() => observer.disconnect());
       this.measure();
+
+      this.listenToScrolling(content, this.scrollbar().nativeElement);
+    });
+  }
+
+  /**
+   * Outside of Angular: a scroll event fires every frame while scrolling,
+   * and syncing the scroll position needs no change detection.
+   */
+  private listenToScrolling(content: HTMLElement, scrollbar: HTMLElement) {
+    const onContentScroll = () => this.syncScroll(content, scrollbar);
+    const onScrollbarScroll = () => this.syncScroll(scrollbar, content);
+
+    this.ngZone.runOutsideAngular(() => {
+      content.addEventListener("scroll", onContentScroll, { passive: true });
+      scrollbar.addEventListener("scroll", onScrollbarScroll, {
+        passive: true,
+      });
+    });
+    this.destroyRef.onDestroy(() => {
+      content.removeEventListener("scroll", onContentScroll);
+      scrollbar.removeEventListener("scroll", onScrollbarScroll);
     });
   }
 
@@ -76,7 +92,7 @@ export class HorizontalScrollComponent {
     this.visibleWidth.set(content.clientWidth);
   }
 
-  protected syncScroll(source: HTMLElement, target: HTMLElement) {
+  private syncScroll(source: HTMLElement, target: HTMLElement) {
     // the browser fires the scroll event of a synced element a frame later:
     // copying that back would undo what the user scrolled in the meantime (e.g. trackpad momentum)
     const isEchoOfSync = this.syncedPositions.get(source) === source.scrollLeft;

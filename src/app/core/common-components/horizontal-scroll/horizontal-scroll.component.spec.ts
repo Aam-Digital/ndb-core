@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HorizontalScrollComponent } from "./horizontal-scroll.component";
 
@@ -79,6 +80,19 @@ describe("HorizontalScrollComponent", () => {
 
     content.dispatchEvent(new Event("scroll"));
     expect(scrollbar.scrollLeft).toBe(60);
+  });
+
+  it("scrolls outside of Angular, so scrolling runs no change detection of the app", () => {
+    const enteredAngular = vi.fn();
+    const subscription =
+      TestBed.inject(NgZone).onUnstable.subscribe(enteredAngular);
+    onTestFinished(() => subscription.unsubscribe());
+
+    content.scrollLeft = 40;
+    content.dispatchEvent(new Event("scroll"));
+
+    expect(scrollbar.scrollLeft).toBe(40);
+    expect(enteredAngular).not.toHaveBeenCalled();
   });
 
   it("stops observing the size when destroyed", () => {
