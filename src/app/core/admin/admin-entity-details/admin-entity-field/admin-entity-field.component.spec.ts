@@ -711,6 +711,38 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.errors).toBeNull();
   });
 
+  it.each([
+    ["Basics", ""],
+    ["Validation", "Phone"],
+  ])(
+    "shows the tab %s when Apply finds an invalid pattern and the label is '%s'",
+    async (expectedTab, label) => {
+      await recreateComponentWithData({
+        id: "phone",
+        label: "Phone",
+        dataType: "string",
+      });
+      const tabs = await loader.getHarness(MatTabGroupHarness);
+      await tabs.selectTab({ label: "Validation" });
+      await (
+        await loader.getHarness(
+          MatSelectHarness.with({ ancestor: ".add-rule-field" }),
+        )
+      ).clickOptions({ text: "Pattern (Regex)" });
+      // the setting of the rule is loaded when it is needed
+      const patternInput = await vi.waitFor(() =>
+        loader.getHarness(MatInputHarness.with({ ancestor: ".validator-row" })),
+      );
+      await patternInput.setValue("[a-z");
+      await tabs.selectTab({ label: "Advanced Options" });
+      component.schemaFieldsForm.get("label").setValue(label);
+
+      await component.save();
+
+      expect(await (await tabs.getSelectedTab()).getLabel()).toBe(expectedTab);
+    },
+  );
+
   describe("selection filter", () => {
     /** the filter is configured in the Validation tab, whose content is only displayed while it is open */
     async function openValidationTab() {

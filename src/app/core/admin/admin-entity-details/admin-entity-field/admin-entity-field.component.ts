@@ -694,7 +694,10 @@ export class AdminEntityFieldComponent implements OnInit {
     validatorForm?.markAllAsTouched();
 
     const settingsInvalid = validatorForm?.invalid;
-    if (settingsInvalid) {
+    if (this.form.invalid) {
+      // all checked controls of `form` (id, label, type) are on the "Basics" tab
+      this.selectedTab.set(0);
+    } else if (settingsInvalid) {
       // show the errors of the settings, which are not visible on the other tabs
       this.selectedTab.set(2);
     }
