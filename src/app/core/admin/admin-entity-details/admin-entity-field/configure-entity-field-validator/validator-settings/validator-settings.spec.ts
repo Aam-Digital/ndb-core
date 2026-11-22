@@ -1,9 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
-import { provideNativeDateAdapter } from "@angular/material/core";
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  provideNativeDateAdapter,
+} from "@angular/material/core";
 import { By } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -271,44 +276,53 @@ describe("settings components of the validation rules", () => {
   });
 
   describe("DateValidatorSettingComponent", () => {
-    function createSetting(value: string | null) {
+    /** the date as the date input shows it, and as an admin types it */
+    function asInputText(date: Date): string {
+      return TestBed.inject(DateAdapter).format(
+        date,
+        TestBed.inject(MAT_DATE_FORMATS).display.dateInput,
+      );
+    }
+
+    async function createSetting(value: string | null) {
       const control = new FormControl<Date | string | null>(value);
       const fixture = TestBed.createComponent(DateValidatorSettingComponent);
       fixture.componentRef.setInput("formControl", control);
       fixture.componentRef.setInput("label", "Minimum Date");
       fixture.detectChanges();
-      return { control, component: fixture.componentInstance as any };
+      const input = await TestbedHarnessEnvironment.loader(fixture).getHarness(
+        MatDatepickerInputHarness,
+      );
+      return { control, input };
     }
 
     it.each<[string, Date]>([
       ["2020-03-01", new Date(2020, 2, 1)],
       ["$now", new Date()],
     ])(
-      "shows the date %s and leaves the text of the config as it is",
-      (text, expected) => {
-        const { control, component } = createSetting(text);
+      "shows the date %s, leaving the text of the config as it is",
+      async (text, expected) => {
+        const { control, input } = await createSetting(text);
 
-        expect(component.date.value.toDateString()).toBe(
-          expected.toDateString(),
-        );
+        expect(await input.getValue()).toBe(asInputText(expected));
         expect(control.value).toBe(text);
         expect(control.dirty).toBe(false);
       },
     );
 
-    it("saves a changed date as a text of the day, regardless of the time zone", () => {
-      const { control, component } = createSetting("2020-03-01");
+    it("saves a changed date as a text of the day, regardless of the time zone", async () => {
+      const { control, input } = await createSetting("2020-03-01");
 
-      component.date.setValue(new Date(2021, 0, 5));
+      await input.setValue(asInputText(new Date(2021, 0, 5)));
 
       expect(control.value).toBe("2021-01-05");
       expect(control.dirty).toBe(true);
     });
 
-    it("removes the setting when the date is cleared", () => {
-      const { control, component } = createSetting("2020-03-01");
+    it("removes the setting when the date is cleared", async () => {
+      const { control, input } = await createSetting("2020-03-01");
 
-      component.date.setValue(null);
+      await input.setValue("");
 
       expect(control.value).toBeNull();
     });
