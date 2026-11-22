@@ -146,6 +146,11 @@ Until then, our UX &quot;policy&quot; is loosely documented below:</p>
 creating new styles.</li>
 <li>If a custom style is needed, create a class with a meaningful name in the component&#39;s scss file
 and avoid inline styles.</li>
+<li>The page scrolls vertically on the document and never sideways. Wrap content that can be wider
+than the screen (e.g. a table) in <code>HorizontalScrollComponent</code> (<code>&lt;app-horizontal-scroll&gt;</code>),
+which scrolls it sideways on its own, with a scrollbar that stays at the bottom of the screen.</li>
+<li>A sticky element in the page sticks to the screen, under the app&#39;s toolbar:
+offset it with <code>top: var(--toolbar-height)</code>.</li>
 <li>Use logical CSS properties (<code>margin-inline-start</code>, <code>padding-inline-end</code>, <code>text-align: start</code>)
 instead of <code>left</code> / <code>right</code>, so the layout mirrors for right-to-left languages
 (see <a href="../../../src/app/core/language/README.md#right-to-left-rtl-languages">RTL languages</a>).</li>

@@ -1377,6 +1377,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/HintBoxComponent.html" data-type="entity-link" >HintBoxComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/HorizontalScrollComponent.html" data-type="entity-link" >HorizontalScrollComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/IconButtonComponent.html" data-type="entity-link" >IconButtonComponent</a>
                             </li>
                             <li class="link">

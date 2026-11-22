@@ -276,7 +276,7 @@ with additional details required for permission conditions.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -315,7 +315,7 @@ with additional details required for permission conditions.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:72</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:73</a></div>
                                 </td>
                             </tr>
 
@@ -364,7 +364,7 @@ offered for.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -518,7 +518,8 @@ grants on top of what the row itself stores.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HorizontalScrollComponent } from &quot;../../../common-components/horizontal-scroll/horizontal-scroll.component&quot;;
+import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -605,6 +606,7 @@ interface CellState extends PermissionCellState {
   selector: &quot;app-permission-matrix&quot;,
   imports: [
     MatTableModule,
+    HorizontalScrollComponent,
     MatButtonModule,
     MatTooltipModule,
     MatFormFieldModule,
