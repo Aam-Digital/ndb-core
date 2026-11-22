@@ -223,7 +223,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:132</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:135</a></div>
                                 </td>
                             </tr>
 
@@ -262,7 +262,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:133</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:136</a></div>
                                 </td>
                             </tr>
 
@@ -387,17 +387,20 @@ export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
     }
   }
 
-  save() {
+  async save() {
     this.selectedFieldFormControl.markAsTouched();
-    if (this.selectedFieldFormControl.invalid) return;
-
+    // keep the field and form that are validated: the user may select another field while the check runs
     const selectedField &#x3D; this.selectedFieldFormControl.value;
-    const value &#x3D;
-      this.fieldValueForm?.formGroup.controls[selectedField]?.value || &quot;&quot;;
+    const form &#x3D; this.fieldValueForm;
+    const valueControl &#x3D; form?.formGroup.controls[selectedField];
+    if (this.selectedFieldFormControl.invalid || !valueControl) return;
+
+    const isValid &#x3D; await this.entityFormService.confirmValidity(form);
+    if (!isValid || this.destroyRef.destroyed) return;
 
     const returnValue: BulkEditAction &#x3D; {
       selectedField,
-      value,
+      value: valueControl.value,
     };
     this.dialogRef.close(returnValue);
   }

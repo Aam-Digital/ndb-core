@@ -293,8 +293,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -393,8 +393,8 @@ and edit the entity if the user confirms.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -716,6 +716,7 @@ import {
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { EntityActionsService } from &quot;#src/app/core/entity/entity-actions/entity-actions.service&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import { isEmptyValue } from &quot;#src/app/utils/is-empty-value&quot;;
 import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
 import { AutomatedFieldUpdateConfigService } from &quot;#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service&quot;;
 
@@ -786,8 +787,14 @@ export class EntityEditService extends CascadingEntityAction {
       : [entitiesToEdit];
     const newEntities: E[] &#x3D; originalEntities.map((e) &#x3D;&gt; e.copy());
 
+    const clearField &#x3D; isEmptyValue(action.value);
     for (const e of newEntities) {
-      e[action.selectedField] &#x3D; action.value;
+      if (clearField) {
+        // like editing a single record: an empty value removes the property instead of storing a placeholder
+        delete e[action.selectedField];
+      } else {
+        e[action.selectedField] &#x3D; action.value;
+      }
     }
 
     this.bulkOperationState.startBulkOperation(

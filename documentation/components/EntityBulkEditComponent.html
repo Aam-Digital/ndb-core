@@ -355,6 +355,7 @@
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#save" >save</a>
                             </li>
                         </ul>
@@ -403,6 +404,7 @@
                 <td class="col-md-4">
                     <a name="save"></a>
                     <span class="name">
+                            <span class="modifier">Async</span>
                         <span ><b>save</b></span>
                         <a href="#save"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -410,7 +412,8 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>save()</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>save()</code>
                 </td>
             </tr>
 
@@ -427,7 +430,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                 </td>
@@ -748,17 +751,20 @@ export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
     }
   }
 
-  save() {
+  async save() {
     this.selectedFieldFormControl.markAsTouched();
-    if (this.selectedFieldFormControl.invalid) return;
-
+    // keep the field and form that are validated: the user may select another field while the check runs
     const selectedField &#x3D; this.selectedFieldFormControl.value;
-    const value &#x3D;
-      this.fieldValueForm?.formGroup.controls[selectedField]?.value || &quot;&quot;;
+    const form &#x3D; this.fieldValueForm;
+    const valueControl &#x3D; form?.formGroup.controls[selectedField];
+    if (this.selectedFieldFormControl.invalid || !valueControl) return;
+
+    const isValid &#x3D; await this.entityFormService.confirmValidity(form);
+    if (!isValid || this.destroyRef.destroyed) return;
 
     const returnValue: BulkEditAction &#x3D; {
       selectedField,
-      value,
+      value: valueControl.value,
     };
     this.dialogRef.close(returnValue);
   }
