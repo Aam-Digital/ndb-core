@@ -1,6 +1,7 @@
 import { Component, computed, effect, input, untracked } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditDateComponent } from "#src/app/core/basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "#src/app/core/basic-datatypes/month/edit-month/edit-month.component";
@@ -19,6 +20,7 @@ import { ValidatorSettingComponent } from "./validator-setting";
     ReactiveFormsModule,
     EditDateComponent,
     EditMonthComponent,
+    HelpButtonComponent,
   ],
   template: `
     <mat-form-field floatLabel="always">
@@ -28,6 +30,9 @@ import { ValidatorSettingComponent } from "./validator-setting";
       } @else {
         <app-edit-date [formControl]="date" />
       }
+      @if (description()) {
+        <app-help-button matSuffix [text]="description()" />
+      }
     </mat-form-field>
   `,
 })
@@ -36,6 +41,7 @@ export class DateValidatorSettingComponent implements ValidatorSettingComponent<
 > {
   readonly formControl = input.required<FormControl<Date | string | null>>();
   readonly label = input.required<string>();
+  readonly description = input<string>();
   readonly field = input<EntitySchemaField>();
 
   protected readonly isMonth = computed(
