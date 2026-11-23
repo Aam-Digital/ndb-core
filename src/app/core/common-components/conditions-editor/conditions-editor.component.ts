@@ -32,6 +32,11 @@ import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.compo
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { negate, splitNegation, withSameNegation } from "./condition-negation";
 import {
+  shouldUseMultiSelectCondition,
+  unwrapConditionValue,
+  wrapConditionValue,
+} from "./condition-value";
+import {
   buildConditions,
   Combinator,
   DEFAULT_COMBINATOR,
@@ -332,12 +337,12 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       // the placeholder resolves to all values of a multi-value record field, which only match in a list (`$in`)
       isArray:
         !!recordField?.isArray ||
-        this.shouldUseMultiSelectCondition(
+        shouldUseMultiSelectCondition(
           fieldConfig,
           this.entitySchemaService.getComponent(fieldConfig, "edit"),
         ),
     };
-    const positive = this.wrapConditionValue(
+    const positive = wrapConditionValue(
       fieldConfig,
       conditionFieldConfig,
       conditionFieldConfig.isArray ? [placeholder] : placeholder,
@@ -412,7 +417,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       fieldConfig,
       "edit",
     );
-    const isDropdownMultiSelect = this.shouldUseMultiSelectCondition(
+    const isDropdownMultiSelect = shouldUseMultiSelectCondition(
       fieldConfig,
       editComponent,
     );
@@ -427,9 +432,8 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     // a placeholder is not a valid value for the field's value editor (e.g. not an existing record id)
     const initialValue = this.isReferenceRow(conditionIndex)
       ? null
-      : this.extractValueFromCondition(
-          condition[fieldKey],
-          fieldConfig,
+      : this.entitySchemaService.valueToEntityFormat(
+          unwrapConditionValue(condition[fieldKey], fieldConfig),
           conditionFieldConfig,
         );
     const formControl = new FormControl(initialValue);
@@ -473,42 +477,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     );
   }
 
-  private extractValueFromCondition(
-    conditionValue: any,
-    fieldConfig: EntitySchemaField,
-    conditionFieldConfig: EntitySchemaField,
-  ): any {
-    // a negated condition still edits the value inside it
-    const { positive } = splitNegation(conditionValue);
-
-    let value;
-    if (fieldConfig.isArray && positive?.$elemMatch?.$in) {
-      // For array fields, extract value from $elemMatch.$in if present
-      value = positive.$elemMatch.$in;
-    } else if (fieldConfig.isArray && positive?.$elemMatch !== undefined) {
-      // Support legacy array-condition format: { $elemMatch: "id" }
-      const elemMatch = positive.$elemMatch;
-      if (Array.isArray(elemMatch)) {
-        value = elemMatch;
-      } else {
-        value = [elemMatch];
-      }
-    } else if (!fieldConfig.isArray && positive?.$in) {
-      // For non-array dropdown fields, extract value from $in
-      value = positive.$in;
-    } else if (positive?.$eq !== undefined) {
-      // a negated plain value is stored as $eq, which the value control cannot render
-      value = positive.$eq;
-    } else {
-      value = positive;
-    }
-
-    return this.entitySchemaService.valueToEntityFormat(
-      value,
-      conditionFieldConfig,
-    );
-  }
-
   private onFormValueChange(
     condition: any,
     fieldKey: string,
@@ -525,43 +493,10 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
     condition[fieldKey] = withSameNegation(
       previous,
-      this.wrapConditionValue(fieldConfig, conditionFieldConfig, dbValue),
+      wrapConditionValue(fieldConfig, conditionFieldConfig, dbValue),
     );
 
     this.emitConditions();
-  }
-
-  /**
-   * The stored form of a row's value (in database format), depending on its field:
-   * array fields match with `$elemMatch`, other dropdown fields offering multiple options with `$in`.
-   */
-  private wrapConditionValue(
-    fieldConfig: EntitySchemaField,
-    conditionFieldConfig: EntitySchemaField,
-    value: any,
-  ): any {
-    if (!Array.isArray(value) || value.length === 0) {
-      return value;
-    }
-    if (fieldConfig.isArray) {
-      return { $elemMatch: { $in: value } };
-    }
-    return conditionFieldConfig.isArray ? { $in: value } : value;
-  }
-
-  private shouldUseMultiSelectCondition(
-    fieldConfig: EntitySchemaField,
-    editComponent: string,
-  ): boolean {
-    if (fieldConfig.isArray) {
-      return true;
-    }
-
-    return (
-      editComponent === "EditConfigurableEnum" ||
-      editComponent === "EditEntity" ||
-      editComponent === "EditEntityType"
-    );
   }
 
   /**
