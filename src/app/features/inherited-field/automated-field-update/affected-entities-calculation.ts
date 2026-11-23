@@ -207,7 +207,9 @@ export class AffectedEntitiesCalculation {
       const change = queue.shift();
       if (change.level >= MAX_HIERARCHY_LEVELS) continue;
 
-      const source = this.changeSet.get(change.entity, "after");
+      // a removed record passes on that it no longer has its values and links
+      const source =
+        this.changeSet.get(change.entity, "after") ?? change.entity;
       for (const rule of this.context.getTriggeredRules(source, change)) {
         const next = {
           level: change.level + 1,
@@ -292,11 +294,11 @@ export class AffectedEntitiesCalculation {
         source.getId(),
       );
     }
-    // the entities linked before and after the change (they may lose values)
+    // the entities linked before and after the change (they may lose values), except removed ones (e.g. by a merge)
     const ids = uniq([
       ...getLinkedIds(source, rule),
       ...getLinkedIds(this.changeSet.get(source, "before"), rule),
-    ]);
+    ]).filter((id) => !this.changeSet.isRemoved(id));
     return this.loadOnce(`ids|${entityType.ENTITY_TYPE}|${ids.join(",")}`, () =>
       this.context.loadEntitiesByIds(entityType, ids),
     );

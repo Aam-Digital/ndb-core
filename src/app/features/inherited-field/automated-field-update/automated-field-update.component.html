@@ -16,14 +16,24 @@
           <mat-panel-title class="trigger-header">
             @if (!several) {
               <span class="trigger-label" i18n>Triggered by</span>
+              <!-- the record itself, as a removed record cannot be loaded any more -->
               <app-entity-block
-                [entityId]="group.triggers[0].trigger.entity.getId()"
+                [entity]="group.triggers[0].trigger.entity"
                 [linkDisabled]="true"
               ></app-entity-block>
+              @if (group.triggers[0].trigger.removed) {
+                <span
+                  class="trigger-label"
+                  i18n="
+                    hint for a changed record that was removed, e.g. by a merge
+                  "
+                  >(removed)</span
+                >
+              }
             } @else {
               <span class="trigger-label" i18n
                 >Triggered by {{ group.triggers.length }}
-                {{ triggerTypeLabel }}</span
+                {{ group.triggerTypeLabel }}</span
               >
             }
           </mat-panel-title>
@@ -35,9 +45,18 @@
             @if (several) {
               <app-entity-block
                 class="trigger-record"
-                [entityId]="item.trigger.entity.getId()"
+                [entity]="item.trigger.entity"
                 [linkDisabled]="true"
               ></app-entity-block>
+              @if (item.trigger.removed) {
+                <span
+                  class="trigger-label"
+                  i18n="
+                    hint for a changed record that was removed, e.g. by a merge
+                  "
+                  >(removed)</span
+                >
+              }
             }
             @for (change of item.changes(); track change.field.id) {
               <div class="trigger-change" [class.of-record]="several">

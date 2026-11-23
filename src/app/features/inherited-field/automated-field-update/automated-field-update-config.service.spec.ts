@@ -1375,6 +1375,60 @@ describe("AutomatedFieldUpdateConfigService", () => {
       });
 
       it.each([
+        [[], ["health"]],
+        [[["education"]], undefined],
+      ])(
+        "removes the values only a removed sub-action had from its parent (other sub-actions %j)",
+        async (otherSubActionTags, expectedParentTags) => {
+          const parent = new AggregatingAction();
+          parent.tags = toTags(["health", "education"]);
+          const subAction = createSubAction(parent, ["education"]);
+          subAction._rev = "1-existing";
+          const others = otherSubActionTags.map((tags) =>
+            createSubAction(parent, tags),
+          );
+          entityMapper.addAll([parent, subAction, ...others]);
+          await entityMapper.remove(subAction);
+          mockDialog.open.mockClear();
+
+          await service.applyRulesToChanges([
+            { entity: subAction, before: subAction, removed: true },
+          ]);
+
+          expect(suggestions()?.[0]).toEqual(
+            expectedParentTags && [parent.getId(), expectedParentTags],
+          );
+        },
+      );
+
+      it("adds the values of a sub-action moved away from a removed parent without loading the removed parent", async () => {
+        const removedParent = new AggregatingAction();
+        removedParent._rev = "1-existing";
+        const keptParent = new AggregatingAction();
+        keptParent.tags = toTags(["health"]);
+        const subAction = createSubAction(removedParent, ["education"]);
+        subAction._rev = "1-existing";
+        entityMapper.addAll([keptParent, subAction]);
+        const subActionBefore = subAction.copy();
+        subAction.parentAction = keptParent.getId();
+        const loadSpy = vi.spyOn(entityMapper, "load");
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToChanges([
+          { entity: subAction, before: subActionBefore },
+          { entity: removedParent, before: removedParent, removed: true },
+        ]);
+
+        expect(suggestions()).toEqual([
+          [keptParent.getId(), ["health", "education"]],
+        ]);
+        expect(loadSpy).not.toHaveBeenCalledWith(
+          expect.anything(),
+          removedParent.getId(),
+        );
+      });
+
+      it.each([
         ["has no values", [], ["health"]],
         ["has only values the new parent already has", ["health"], ["health"]],
       ])(
