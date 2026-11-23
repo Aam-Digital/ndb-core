@@ -163,7 +163,7 @@ export class ConfigureEntityFieldValidatorComponent {
       .filter((key) => this.applicableKeys().has(key))
       .map((key) => {
         const rule = this.validators.rules.get(key);
-        const label = this.labelOf(rule);
+        const label = rule.label;
         return {
           rule,
           label,
@@ -182,7 +182,7 @@ export class ConfigureEntityFieldValidatorComponent {
       .filter((key) => !this.applicableKeys().has(key))
       .map((key) => this.validators.rules.get(key))
       .filter((rule) => this.hasValue(rule, this.formSnapshot()))
-      .map((rule) => this.labelOf(rule))
+      .map((rule) => rule.label)
       .join(", "),
   );
 
@@ -190,7 +190,7 @@ export class ConfigureEntityFieldValidatorComponent {
     const listed = new Set(this.listedRuleKeys());
     return this.applicableRules()
       .filter((rule) => !listed.has(rule.key))
-      .map((rule) => ({ rule, label: this.labelOf(rule) }));
+      .map((rule) => ({ rule, label: rule.label }));
   });
 
   /** created once per change of the inputs, as a new object recreates the component of the row */
@@ -211,7 +211,7 @@ export class ConfigureEntityFieldValidatorComponent {
             config: {
               ...inputs,
               formControl: form.get(rule.key),
-              label: this.labelOf(rule),
+              label: rule.label,
               description: rule.description,
             },
           },
@@ -291,10 +291,6 @@ export class ConfigureEntityFieldValidatorComponent {
       );
       onCleanup(() => sub.unsubscribe());
     });
-  }
-
-  private labelOf(rule: FieldValidator): string {
-    return rule.labelFor(this.datatype());
   }
 
   /** whether the rule is registered and switched on by its value in the given config */

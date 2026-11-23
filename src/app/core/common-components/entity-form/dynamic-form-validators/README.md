@@ -88,8 +88,6 @@ The members of a rule:
 - **`label`:**
   name of the rule in the admin "Validation" tab,
   in its list and in the dropdown "Add validation rule".
-  Use `labelFor(datatype)` to name it differently for a datatype
-  (e.g. a limit of a month field).
 - **`description`:**
   optional. Explains the rule to admins, as a help text next to its name.
 - **`configComponent`:**
@@ -176,12 +174,9 @@ name a component for it in `configComponent`.
 The core module has components for the common settings,
 reuse them before writing one:
 `NumberValidatorSetting`, `DateValidatorSetting`, `PatternValidatorSetting`.
-Your own component gets the `formControl` with the rule's value
-(`null` while it is not set),
-and the inputs of `ValidatorSettingInputs` that it declares:
-`label`, `description`,
-the `field` being edited with its currently selected type,
-the `entityType` of the field and, for a link field, the `linkedEntityType`.
+Your own component implements `ValidatorSettingComponent`
+and declares the inputs of `ValidatorSettingInputs` that it needs
+(see [validator-setting.ts](../../../admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/validator-settings/validator-setting.ts)).
 Register it in the component registry like other dynamic components
 (`@DynamicComponent("MyValidatorSetting")`
 and `components.addAll` in your module).

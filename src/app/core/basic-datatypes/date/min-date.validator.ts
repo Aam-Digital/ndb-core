@@ -8,7 +8,6 @@ import { minDateValidator } from "./date-limit";
 export class MinDateValidator extends DateLimitValidator {
   static override readonly key = "minDate";
   readonly label = $localize`Minimum Date`;
-  protected readonly monthLabel = $localize`Minimum Month`;
 
   build(value: unknown): ValidatorFn {
     return minDateValidator(value);

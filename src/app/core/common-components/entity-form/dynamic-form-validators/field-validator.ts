@@ -45,11 +45,6 @@ export abstract class FieldValidator<Config = unknown> {
    */
   readonly configComponent?: string;
 
-  /** the name of the rule for a field of the given datatype (by default its {@link label}) */
-  labelFor(_datatype: DefaultDatatype): string {
-    return this.label;
-  }
-
   /** the datatypes the rule is offered for, including their subtypes; empty for all datatypes */
   readonly datatypesSupported: (abstract new (
     ...args: any[]

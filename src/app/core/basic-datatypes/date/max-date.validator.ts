@@ -8,7 +8,6 @@ import { maxDateValidator } from "./date-limit";
 export class MaxDateValidator extends DateLimitValidator {
   static override readonly key = "maxDate";
   readonly label = $localize`Maximum Date`;
-  protected readonly monthLabel = $localize`Maximum Month`;
 
   build(value: unknown): ValidatorFn {
     return maxDateValidator(value);

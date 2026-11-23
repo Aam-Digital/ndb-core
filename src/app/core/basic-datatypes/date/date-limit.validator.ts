@@ -1,6 +1,4 @@
 import { FieldValidator } from "../../common-components/entity-form/dynamic-form-validators/field-validator";
-import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
-import { MonthDatatype } from "../month/month.datatype";
 import { DateDatatype } from "./date.datatype";
 import { descriptionForDateValidator } from "./date-limit";
 
@@ -11,13 +9,6 @@ export abstract class DateLimitValidator extends FieldValidator {
 
   override get key(): "minDate" | "maxDate" {
     return super.key as "minDate" | "maxDate";
-  }
-
-  /** the name of the rule for a month field */
-  protected abstract readonly monthLabel: string;
-
-  override labelFor(datatype: DefaultDatatype): string {
-    return datatype instanceof MonthDatatype ? this.monthLabel : this.label;
   }
 
   override message(error: unknown): string {
