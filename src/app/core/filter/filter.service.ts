@@ -42,7 +42,7 @@ export class FilterService {
   /** the records in the stored format, kept per saved revision (see {@link toStoredFormat}) */
   private readonly storedFormatCache = new WeakMap<
     Entity,
-    { rev: string; record: object }
+    { rev: string; record: object | undefined }
   >();
 
   /**
@@ -113,12 +113,12 @@ export class FilterService {
    * one on a property of an embedded field is a condition on one of its entries
    * (e.g. `{ "attendance.status": "A" }` becomes `{ attendance: { $elemMatch: { status: "A" } } }`).
    */
-  toStoredCondition<T extends Entity>(
+  editorRowToCondition<T extends Entity>(
     entityType: EntityConstructor,
     condition: DataFilter<T>,
   ): DataFilter<T> {
     const fields = Object.keys(condition ?? {});
-    // a row with conditions on several fields stays as it is, like in {@link fromStoredCondition}:
+    // a row with conditions on several fields stays as it is, like in {@link conditionToEditorRow}:
     // wrapping it in `$elemMatch` would turn the conditions on other fields into conditions on the entry
     const fieldPath = fields.length === 1 ? fields[0] : undefined;
     const embedded =
@@ -129,8 +129,8 @@ export class FilterService {
       : condition;
   }
 
-  /** The reverse of {@link toStoredCondition}: a condition on one entry of an embedded field becomes one on the path of the property. */
-  fromStoredCondition<T extends Entity>(
+  /** The reverse of {@link editorRowToCondition}: a condition on one entry of an embedded field becomes one on the path of the property. */
+  conditionToEditorRow<T extends Entity>(
     entityType: EntityConstructor,
     condition: DataFilter<T>,
   ): DataFilter<T> {
@@ -191,32 +191,36 @@ export class FilterService {
         );
         matchesPerSchema.set(schema, matches);
       }
-      return matches(this.toStoredFormat(record));
+      const storedRecord = this.toStoredFormat(record);
+      return !!storedRecord && matches(storedRecord);
     };
   }
 
   /**
    * The record as the database stores it (see {@link toStoredFormatRecord}).
    *
-   * Saved records are converted once per revision. A record without revision (e.g. a new record) is converted every time,
+   * Saved records are converted once per revision (also when that fails). A record without revision (e.g. a new record) is converted every time,
    * as it may still change. A copy with unsaved changes (like the current state of a form) is a new object and converted anew.
+   *
+   * @returns the stored format, or `undefined` for a record with a value that cannot be converted
    */
-  private toStoredFormat(record: Entity): object {
+  private toStoredFormat(record: Entity): object | undefined {
     const cached = this.storedFormatCache.get(record);
     if (record._rev && cached?.rev === record._rev) {
       return cached.record;
     }
 
-    let storedRecord: object;
+    let storedRecord: object | undefined;
     try {
       storedRecord = toStoredFormatRecord(record, this.schemaService);
     } catch (err) {
-      // a value that cannot be converted is a data problem of this record, not a reason to fail the whole list
-      Logging.debug(
-        "[FILTER] could not convert record to the stored format",
+      // a data problem of this record, not a reason to fail the whole list: the record is left out,
+      // as matching its entity format against a condition in the stored format would give wrong results
+      Logging.warn(
+        "[FILTER] could not convert a record to the stored format, leaving it out of the result",
         err,
+        { id: record.getId() },
       );
-      return record;
     }
     if (record._rev) {
       this.storedFormatCache.set(record, {

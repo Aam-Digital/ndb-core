@@ -98,7 +98,10 @@ describe("ConditionsEditorComponent", () => {
 
     fixture = TestBed.createComponent(ConditionsEditorComponent);
     component = fixture.componentInstance;
-    component.entityConstructor = ConditionsEditorTestEntity;
+    fixture.componentRef.setInput(
+      "entityConstructor",
+      ConditionsEditorTestEntity,
+    );
     component.conditions = { $or: [] };
     mockEntitySchemaService.getComponent.mockImplementation(
       (fieldConfig: { dataType?: string }) =>
@@ -204,7 +207,7 @@ describe("ConditionsEditorComponent", () => {
 
   it("should handle condition field change", () => {
     component.addCondition();
-    const fieldConfig = component.entityConstructor.schema.get("name");
+    const fieldConfig = component.entityConstructor().schema.get("name");
 
     component.onConditionFieldChange(0, "name");
 
@@ -468,7 +471,7 @@ describe("ConditionsEditorComponent", () => {
       compareRowWithRecordField(field, recordField);
 
       expect(component.conditionsArray()[0]).toEqual(expected);
-      expect(component.getReferencedField(0)).toBe(recordField);
+      expect(component.rowReferences()[0].referencedField).toBe(recordField);
     });
 
     it("offers the fields of the records linked in a field with a single record type", () => {
@@ -504,7 +507,7 @@ describe("ConditionsEditorComponent", () => {
       component.ngOnInit();
 
       expect(component.isReferenceRow(0)).toBe(true);
-      expect(component.getReferencedField(0)).toBe("recordGender");
+      expect(component.rowReferences()[0].referencedField).toBe("recordGender");
       expect(component.isNegated(0)).toBe(true);
       expect(
         mockEntitySchemaService.valueToEntityFormat,
@@ -748,7 +751,7 @@ describe("ConditionsEditorComponent", () => {
     });
 
     it("keeps the rows of the JSON editor's result while no record type is chosen", () => {
-      component.entityConstructor = undefined;
+      fixture.componentRef.setInput("entityConstructor", undefined);
       const conditions = {
         log: { $elemMatch: { status: "M" } },
         "log.status": "F",
@@ -791,7 +794,10 @@ describe("ConditionsEditorComponent", () => {
         (dataType: string) =>
           dataType === "schema-embed" ? embedDatatype : undefined,
       );
-      component.entityConstructor = ConditionsEditorEmbedTestEntity;
+      fixture.componentRef.setInput(
+        "entityConstructor",
+        ConditionsEditorEmbedTestEntity,
+      );
     });
 
     it("offers the properties of an embedded field instead of the field itself", () => {

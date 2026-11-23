@@ -226,6 +226,13 @@ interface SchemaContext {
   inMemory?: boolean;
 }
 
+/** whether the value is a day ("YYYY-MM-DD"), as date filters compare with */
+export function isDay(value: unknown): value is string {
+  return (
+    typeof value === "string" && moment(value, "YYYY-MM-DD", true).isValid()
+  );
+}
+
 /**
  * Date filters compare with a day ("YYYY-MM-DD"), which records in memory match at day precision.
  * For a field stored in another format, the field's datatype rewrites the day into that format (see `toStoredDayBound`).
@@ -236,11 +243,7 @@ function toStoredBound(
   field: EntitySchemaField | undefined,
   schemaService: EntitySchemaService,
 ): unknown {
-  if (
-    !["$gte", "$gt", "$lte", "$lt"].includes(operator) ||
-    typeof value !== "string" ||
-    !moment(value, "YYYY-MM-DD", true).isValid()
-  ) {
+  if (!["$gte", "$gt", "$lte", "$lt"].includes(operator) || !isDay(value)) {
     return value;
   }
   // `$lte` and `$gt` compare with the end of the day, `$gte` and `$lt` with its start

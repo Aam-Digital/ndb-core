@@ -78,7 +78,7 @@ export interface ExportColumnMapping<EntityType = any> {
 }
 
 /** see {@link DefaultDatatype.storedFormat} */
-export type StoredFormat = "as-is" | "plain" | "id";
+export type StoredFormat = "as-is" | "serialized" | "id";
 
 /**
  * The Mango condition matching the given document path against any of the reference ids.
@@ -180,10 +180,10 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   /**
    * How the database format of a value relates to the value the entity holds,
    * which conditions on the field depend on (see the README of the filter module):
-   * - `"as-is"`: the database holds the value as the entity does
-   * - `"plain"`: the database holds a plain value (like a text) for an object of the entity (like a `Date`),
+   * - `"as-is"`: the database holds the value as the entity does (also a link to a record, which is the id on both sides)
+   * - `"serialized"`: the database holds a text for an object of the entity (like a `Date`),
    *   so a condition on a property of the value (like `dateOfBirth.age`) can only be matched against the entity, in memory
-   * - `"id"`: the database holds the id of what the value refers to (a record or a dropdown option) as a plain value,
+   * - `"id"`: the database holds only the id of the object of the entity (a dropdown option),
    *   so a condition on `<field>.id` means that id in the database format
    */
   static readonly storedFormat: StoredFormat = "as-is";

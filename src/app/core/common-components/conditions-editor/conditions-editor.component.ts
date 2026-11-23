@@ -78,15 +78,7 @@ import { resolveLocaleText } from "../../language/active-locale";
 })
 export class ConditionsEditorComponent implements OnInit, OnChanges {
   @Input() conditions: any = {};
-  @Input() set entityConstructor(value: EntityConstructor | undefined) {
-    this.entityType.set(value);
-  }
-  get entityConstructor(): EntityConstructor | undefined {
-    return this.entityType();
-  }
-  private readonly entityType = signal<EntityConstructor | undefined>(
-    undefined,
-  );
+  readonly entityConstructor = input<EntityConstructor>();
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
@@ -170,7 +162,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /** the fields a condition can be set on, with the properties of embedded fields in their place (see `FilterService.getConditionFields`) */
   readonly conditionFields = computed(() => {
-    const entityType = this.entityType();
+    const entityType = this.entityConstructor();
     return entityType
       ? this.filterService.getConditionFields(
           entityType,
@@ -185,7 +177,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    if (!this.entityConstructor) return;
+    if (!this.entityConstructor()) return;
     this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
   }
@@ -248,11 +240,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** whether the given row compares with a field of the current record instead of a fixed value */
   isReferenceRow(conditionIndex: number): boolean {
     return this.rowReferences()[conditionIndex]?.isReference ?? false;
-  }
-
-  /** id of the current record's field the given row compares with, if any */
-  getReferencedField(conditionIndex: number): string | undefined {
-    return this.rowReferences()[conditionIndex]?.referencedField;
   }
 
   private referenceOf(condition: Record<string, unknown>): {
@@ -448,7 +435,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       editComponent,
       dataType: fieldConfig.dataType,
       additional: fieldConfig.additional,
-      label: fieldConfig.label || fieldKey,
+      label: resolveLocaleText(fieldConfig.label) || fieldKey,
       isArray: isDropdownMultiSelect,
     } as FormFieldConfig);
 
@@ -457,7 +444,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       fieldKey === "_id"
         ? {
             dataType: EntityDatatype.dataType,
-            additional: this.entityConstructor.ENTITY_TYPE,
+            additional: this.entityConstructor().ENTITY_TYPE,
           }
         : fieldConfig;
     const sameOptions = (a: EntitySchemaField) =>
@@ -615,28 +602,27 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /** the schema of a row's field; none while no record type is chosen */
   private fieldConfigOf(fieldKey: string): EntitySchemaField | undefined {
+    const entityType = this.entityConstructor();
     return (
-      this.entityConstructor &&
-      this.filterService.getFieldAtPath(this.entityConstructor, fieldKey)
+      entityType && this.filterService.getFieldAtPath(entityType, fieldKey)
     );
   }
 
-  /** the rows in their stored shape (see `FilterService.toStoredCondition`) */
+  /** the rows in their stored shape (see `FilterService.editorRowToCondition`) */
   private storedRows(): DataFilter<Entity>[] {
+    const entityType = this.entityConstructor();
     return (this.working.$or ?? []).map((row) =>
-      this.entityConstructor && isCompleteRow(row)
-        ? this.filterService.toStoredCondition(this.entityConstructor, row)
+      entityType && isCompleteRow(row)
+        ? this.filterService.editorRowToCondition(entityType, row)
         : row,
     );
   }
 
-  /** a stored condition as a row of the editor (see `FilterService.fromStoredCondition`) */
+  /** a stored condition as a row of the editor (see `FilterService.conditionToEditorRow`) */
   private toEditorRow(row: DataFilter<Entity>): DataFilter<Entity> {
-    if (!this.entityConstructor) return row;
-    const editorRow = this.filterService.fromStoredCondition(
-      this.entityConstructor,
-      row,
-    );
+    const entityType = this.entityConstructor();
+    if (!entityType) return row;
+    const editorRow = this.filterService.conditionToEditorRow(entityType, row);
     // an embedded field offered only whole keeps its condition as stored
     const [fieldPath] = Object.keys(editorRow ?? {});
     return this.conditionFields().options.some((o) => o.id === fieldPath)

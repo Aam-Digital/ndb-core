@@ -20,6 +20,7 @@ import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import { DateDatatype } from "../basic-datatypes/date/date.datatype";
 import { Injectable } from "@angular/core";
+import { Logging } from "../logging/logging.service";
 // qlty-ignore: radarlint-js:typescript:S1874 - covers records still stored with the deprecated attendance datatype
 import { EventAttendanceMapDatatype } from "../../features/attendance/deprecated/event-attendance-map.datatype";
 
@@ -411,6 +412,8 @@ describe("FilterService", () => {
   });
 
   describe("matching records in the stored format", () => {
+    afterEach(() => vi.restoreAllMocks());
+
     // like an attendance entry, the entry keeps its status behind a getter, the stored entry has it as property
     class EntryWithGetter {
       private readonly _status = "absent";
@@ -478,6 +481,26 @@ describe("FilterService", () => {
         expect(convert).not.toHaveBeenCalled();
       },
     );
+
+    it("leaves out a saved record that cannot be converted, and reports it once", () => {
+      vi.spyOn(
+        TestBed.inject(EntitySchemaService),
+        "transformEntityToDatabaseFormat",
+      ).mockImplementation(() => {
+        throw new Error("cannot convert");
+      });
+      const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+      const record = testRecord();
+      record._rev = "1-a";
+      // matches the record in entity format, which is the wrong shape for the condition
+      const matches = service.getFilterPredicate({
+        category: { $exists: true },
+      });
+
+      expect(matches(record)).toBe(false);
+      expect(matches(record)).toBe(false);
+      expect(warn).toHaveBeenCalledTimes(1);
+    });
 
     it("converts a saved record again once it has a new revision", () => {
       const record = testRecord();

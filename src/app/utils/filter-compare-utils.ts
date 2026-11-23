@@ -5,6 +5,7 @@ import {
   createFactory,
   Filter,
 } from "@ucast/mongo2js";
+import { isPlainObject as isLodashPlainObject } from "lodash-es";
 import moment from "moment";
 import type { MongoQuery } from "@casl/ability";
 import type { DataFilter } from "../core/filter/filters/filters";
@@ -29,15 +30,12 @@ export function createFilterPredicate<T>(
 /**
  * Whether a part of a condition is an object of operators or nested conditions,
  * as opposed to a value to compare with (like a `Date`, a list or `null`).
+ * (lodash's own typing does not narrow the type)
  */
 export function isPlainObject(
   value: unknown,
 ): value is Record<string, unknown> {
-  return (
-    !!value &&
-    typeof value === "object" &&
-    Object.getPrototypeOf(value) === Object.prototype
-  );
+  return isLodashPlainObject(value);
 }
 
 /**

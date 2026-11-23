@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { FilterService } from "#src/app/core/filter/filter.service";
+import { CoreTestingModule } from "#src/app/utils/core-testing.module";
 import { Todo } from "./todo";
 import {
   TODO_COMPLETED_FILTER,
@@ -12,10 +13,14 @@ describe("Todo completion filters", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
         {
           provide: ConfigurableEnumService,
-          useValue: { getEnumValues: vi.fn().mockReturnValue([]) },
+          useValue: {
+            getEnumValues: vi.fn().mockReturnValue([]),
+            preLoadEnums: vi.fn(),
+          },
         },
       ],
     });

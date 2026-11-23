@@ -283,7 +283,7 @@ describe("EntityAbility", () => {
       "are matched by permissions like in memory, as the conditions editor saves them: %j",
       (editorRow, expected) => {
         const filterService = TestBed.inject(FilterService);
-        const conditions = filterService.toStoredCondition(
+        const conditions = filterService.editorRowToCondition(
           EmbeddedFieldsTest,
           editorRow,
         );

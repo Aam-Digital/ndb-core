@@ -52,19 +52,11 @@ export class EntityDatatype extends StringDatatype {
   private readonly entityRegistry = inject(EntityRegistry);
 
   static override dataType = "entity";
-  static override readonly storedFormat = "id";
   static override label: string = $localize`:datatype-label:link to another record`;
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
   override importAllowsMultiMapping = true;
-
-  /** a list saved while the field allowed several records stays a list */
-  override transformToDatabaseFormat(value) {
-    return Array.isArray(value)
-      ? value.map((id) => super.transformToDatabaseFormat(id))
-      : super.transformToDatabaseFormat(value);
-  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

@@ -1,8 +1,8 @@
-import moment from "moment";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { SchemaEmbedDatatype } from "../basic-datatypes/schema-embed/schema-embed.datatype";
 import { isPlainObject } from "../../utils/filter-compare-utils";
+import { isDay } from "./stored-format";
 
 /**
  * The entry of an embedded field, in the stored format, with the values required by the conditions on its inner properties,
@@ -87,12 +87,6 @@ function requiredOperand(
   return ofList && isPlainObject(condition["$elemMatch"])
     ? { value: condition["$elemMatch"] }
     : undefined;
-}
-
-function isDay(value: unknown): value is string {
-  return (
-    typeof value === "string" && moment(value, "YYYY-MM-DD", true).isValid()
-  );
 }
 
 /** the object holding the last segment of the path, created where missing */

@@ -77,12 +77,12 @@ export function emptyValueFilterOfEmbeddedField<T extends Entity>(
  * has to state them as keys of one object instead (see the overlap query of `DateFilter`).
  */
 function wrapInElemMatch<T extends Entity>(
-  query: any,
+  query: unknown,
   outerProp: string,
 ): DataFilter<T> {
-  if (query && typeof query === "object" && Array.isArray(query.$or)) {
+  if (isPlainObject(query) && Array.isArray(query.$or)) {
     return {
-      $or: query.$or.map((branch: any) =>
+      $or: query.$or.map((branch: unknown) =>
         wrapInElemMatch<T>(branch, outerProp),
       ),
     } as DataFilter<T>;
@@ -95,12 +95,16 @@ function wrapInElemMatch<T extends Entity>(
  * also where it starts a path into the value (e.g. `fromKey + ".id"` of configurable-enum values,
  * or `fromKey + ".start"` of a date range).
  */
-function rewriteEmbeddedKeys(query: any, fromKey: string, toKey: string): any {
+function rewriteEmbeddedKeys(
+  query: unknown,
+  fromKey: string,
+  toKey: string,
+): unknown {
   if (Array.isArray(query)) {
     return query.map((q) => rewriteEmbeddedKeys(q, fromKey, toKey));
   }
   if (isPlainObject(query)) {
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(query)) {
       const newKey =
         key === fromKey || key.startsWith(`${fromKey}.`)

@@ -1145,6 +1145,8 @@ describe("FilterGeneratorService", () => {
     });
 
     for (const field of ["tags", "category"]) {
+      // only a multi-value field holds a list
+      const holdsList = field === "tags";
       const asSingleValue = new ArrayEnumFilterTestEntity();
       asSingleValue[field] = { id: "A", label: "A" };
       const asArray = new ArrayEnumFilterTestEntity();
@@ -1156,7 +1158,9 @@ describe("FilterGeneratorService", () => {
       otherValue[field] = { id: "B", label: "B" };
       const invalidInArray = new ArrayEnumFilterTestEntity();
       invalidInArray[field] = [{ id: "INVALID", label: "INVALID" }];
-      const data = [asSingleValue, asArray, otherValue, invalidInArray];
+      const data = holdsList
+        ? [asSingleValue, asArray, otherValue, invalidInArray]
+        : [asSingleValue, otherValue];
 
       const enumFilter = (
         await service.generate([{ id: field }], ArrayEnumFilterTestEntity, data)
@@ -1167,15 +1171,17 @@ describe("FilterGeneratorService", () => {
       // matches values stored as single value as well as inside an array
       expect(
         data.filter(filterService.getFilterPredicate(option.filter)),
-      ).toEqual([asSingleValue, asArray]);
+      ).toEqual(holdsList ? [asSingleValue, asArray] : [asSingleValue]);
 
-      const invalidOption = enumFilter.options.find(
-        (opt) => opt.key === "invalid:INVALID",
-      );
-      expect(invalidOption.filter).toEqual(expectedFilter(field, "INVALID"));
-      expect(
-        data.filter(filterService.getFilterPredicate(invalidOption.filter)),
-      ).toEqual([invalidInArray]);
+      if (holdsList) {
+        const invalidOption = enumFilter.options.find(
+          (opt) => opt.key === "invalid:INVALID",
+        );
+        expect(invalidOption.filter).toEqual(expectedFilter(field, "INVALID"));
+        expect(
+          data.filter(filterService.getFilterPredicate(invalidOption.filter)),
+        ).toEqual([invalidInArray]);
+      }
     }
   });
 

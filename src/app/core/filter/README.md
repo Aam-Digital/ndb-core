@@ -44,7 +44,7 @@ A condition on one entry is wrapped in `$elemMatch`: `{ "attendance": { "$elemMa
 Inside `$elemMatch`, write several conditions on the same entry as keys of one object, never with `$and` or `$or`:
 the in-memory engine rejects both there. Alternatives go outside, as an `$or` of `$elemMatch` conditions.
 The conditions editor offers the properties of embedded fields, listed in place of the embedded field,
-and stores a row on one as such a condition on an entry (`FilterService.getConditionFields` and `toStoredCondition`);
+and stores a row on one as such a condition on an entry (`FilterService.getConditionFields` and `editorRowToCondition`);
 two rows on the same embedded field may match different entries.
 Permissions and notification rules match the stored documents, so there an old `event-attendance-map` field
 (entries stored as tuples `[participantId, { status, remarks }]`) is only offered as a whole.
@@ -91,7 +91,7 @@ The engine compares with `extendedCompare`, so that a `Date` matches a day strin
   used by related entities and the delete / anonymize cascades
 - `filters/*Filter.ts` — the filter types offered in lists (dropdown, entity, date, boolean, prebuilt)
 - `filter.service.ts` — the in-memory engine; the fields a condition can be set on (also the properties of embedded fields)
-  and the stored form of a condition on such a field (`toStoredCondition`), used by the conditions editor;
+  and the stored form of a condition on such a field (`editorRowToCondition`), used by the conditions editor;
   and `alignEntityWithFilter` to pre-fill a new record so that it matches a condition
   ("Add new" in related entities and the entity select): it applies the conditions requiring one specific value,
   also for an entry of an embedded field, and converts the stored values through the field's datatype
