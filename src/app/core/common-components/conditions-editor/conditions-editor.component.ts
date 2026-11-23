@@ -38,7 +38,7 @@ import {
   isCompleteRow,
   parseConditions,
 } from "./conditions-combinator";
-import { FilterService } from "../../filter/filter.service";
+import { fieldOptions, FilterService } from "../../filter/filter.service";
 import {
   CURRENT_RECORD_PLACEHOLDER_PREFIX,
   DataFilter,
@@ -629,19 +629,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       ? editorRow
       : row;
   }
-}
-
-/** the options for the given fields that an admin can select (not the internal ones) */
-function fieldOptions(
-  fields: [string, EntitySchemaField][],
-): FormFieldConfig[] {
-  return fields
-    .filter(([, field]) => !field.isInternalField && !!field.label)
-    .map(([id, field]) => ({
-      ...field,
-      id,
-      label: resolveLocaleText(field.label),
-    }));
 }
 
 /** the options for the fields of the records linked in a link field ("link field › field") */

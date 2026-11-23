@@ -76,12 +76,12 @@ export class FilterService {
     const options: FormFieldConfig[] = [];
     const excludedFields: string[] = [];
     for (const [id, field] of entityType.schema) {
-      // like the field select does for the record's own fields
-      if (field.isInternalField || !field.label) continue;
+      const [option] = fieldOptions([[id, field]]);
+      if (!option) continue;
 
       const refs = embeddedRefs.filter((ref) => ref.outerProp === id);
       if (refs.length === 0) {
-        options.push({ ...field, id, label: resolveLocaleText(field.label) });
+        options.push(option);
         continue;
       }
       options.push(
@@ -348,4 +348,17 @@ export class FilterService {
       };
     }
   }
+}
+
+/** the options for the given fields that an admin can select (not the internal ones, nor those without a label) */
+export function fieldOptions(
+  fields: [string, EntitySchemaField][],
+): FormFieldConfig[] {
+  return fields
+    .filter(([, field]) => !field.isInternalField && !!field.label)
+    .map(([id, field]) => ({
+      ...field,
+      id,
+      label: resolveLocaleText(field.label),
+    }));
 }
