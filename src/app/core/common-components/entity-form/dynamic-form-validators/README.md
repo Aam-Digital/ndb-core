@@ -140,6 +140,8 @@ The members of a rule:
 - **`validateConfig(value, field, datatype)`:**
   problems of the setting,
   which admins are told about when they save the config.
+  An optional fourth argument gives the record type of the field
+  and the fields of record types, to check references to other fields.
 
 A rule that needs services injects them like any other service
 (`inject(EntityMapperService)`).

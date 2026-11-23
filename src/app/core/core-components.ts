@@ -262,6 +262,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DisplayRelatedEmbeddedField",
+    () =>
+      import("./entity-details/related-entities/display-related-embedded-field/display-related-embedded-field.component").then(
+        (c) => c.DisplayRelatedEmbeddedFieldComponent,
+      ),
+  ],
+  [
     "EmbeddedArrayData",
     () =>
       import("./entity-details/embedded-array-data/embedded-array-data.component").then(
@@ -287,6 +294,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./entity/edit-entity-type/edit-entity-type.component").then(
         (c) => c.EditEntityTypeComponent,
+      ),
+  ],
+  [
+    "EditCondition",
+    () =>
+      import("./admin/building-blocks/edit-condition/edit-condition.component").then(
+        (c) => c.EditConditionComponent,
       ),
   ],
 

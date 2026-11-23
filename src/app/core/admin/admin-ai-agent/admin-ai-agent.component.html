@@ -1,12 +1,52 @@
-<app-view-title i18n>Configure using AI Agents</app-view-title>
+<app-view-title i18n>Edit Application Configuration</app-view-title>
 
 <mat-card class="margin-regular">
+  <mat-card-header>
+    <mat-card-title i18n>Edit manually</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p i18n>
+      Open the raw configuration in a JSON editor to make advanced technical
+      adjustments. The previous configuration is kept as a backup and you can
+      undo the change right after saving.
+    </p>
+    <p i18n>
+      You can also download the configuration file, change it in an editor of
+      your choice and upload it again. Uploading overwrites the current system
+      configuration and accepts a single config object or an array of config
+      documents.
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="accent" (click)="editConfig()">
+      <app-fa-dynamic-icon icon="pen-to-square"></app-fa-dynamic-icon>
+      <span i18n>Edit Configuration (JSON)</span>
+    </button>
+    <button mat-stroked-button (click)="downloadConfigClick()">
+      <app-fa-dynamic-icon icon="download"></app-fa-dynamic-icon>
+      <span i18n>Download Configuration (JSON)</span>
+    </button>
+    <button
+      mat-stroked-button
+      (click)="configImport.click()"
+      [disabled]="isUploadingConfig()"
+    >
+      <app-fa-dynamic-icon icon="upload"></app-fa-dynamic-icon>
+      <span i18n>Upload Configuration (JSON)</span>
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<mat-card class="margin-regular">
+  <mat-card-header>
+    <mat-card-title i18n>Configure using AI Agents</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <p i18n>
       Download a snapshot of all configuration documents from this system as a
       single JSON file. You can share this file with an AI assistant (e.g.
       ChatGPT, Claude) so it has the context needed to help you adjust
-      configuration, reports, or forms.
+      configuration, reports, or forms. Apply the result with the upload above.
     </p>
     <p i18n>
       The download contains only structural configuration — no personal data or
@@ -24,8 +64,18 @@
   </mat-card-content>
   <mat-card-actions>
     <button mat-raised-button color="accent" (click)="downloadAiContext()">
-      <fa-icon icon="download"></fa-icon>
+      <app-fa-dynamic-icon icon="download"></app-fa-dynamic-icon>
       <span i18n>Download AI Context (JSON)</span>
+    </button>
+    <button
+      mat-stroked-button
+      (click)="configImport.click()"
+      [disabled]="isUploadingConfig()"
+    >
+      <app-fa-dynamic-icon icon="upload"></app-fa-dynamic-icon>
+      <span i18n>Upload Configuration (JSON)</span>
     </button>
   </mat-card-actions>
 </mat-card>
+
+<input #configImport type="file" hidden (change)="uploadConfigFile($event)" />

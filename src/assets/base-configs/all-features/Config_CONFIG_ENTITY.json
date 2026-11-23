@@ -70,6 +70,9 @@
           "entityType": "Todo"
         },
         {
+          "entityType": "Action"
+        },
+        {
           "label": "Import",
           "icon": "file-import",
           "link": "/import"
@@ -686,6 +689,23 @@
                     {
                       "id": "attendance"
                     }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Schools",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "School",
+                  "property": "contactPersons",
+                  "editable": false,
+                  "columns": [
+                    "name",
+                    "contactPersons.role"
                   ]
                 }
               }
@@ -1676,6 +1696,9 @@
           "id": "numberField",
           "label": "Number Field",
           "dataType": "number",
+          "validators": {
+            "min": 0
+          },
           "displayCondition": {
             "enumDropdown": {
               "$in": [
@@ -1771,9 +1794,19 @@
         "entityMultiField": {
           "id": "entityMultiField",
           "label": "Entity Multi Field",
+          "description": "Only offers the children linked in \"Entity Multi Field\" of the Parent school (if one is selected)",
           "dataType": "entity",
           "isArray": true,
-          "additional": "Child"
+          "additional": "Child",
+          "validators": {
+            "selectionCondition": {
+              "_id": {
+                "$in": [
+                  "$current_record.parentSchool.entityMultiField"
+                ]
+              }
+            }
+          }
         },
         "percentageField": {
           "id": "percentageField",
@@ -1841,6 +1874,22 @@
             "period": {
               "dataType": "date-range",
               "label": "embedded item period"
+            }
+          }
+        },
+        "contactPersons": {
+          "id": "contactPersons",
+          "label": "Contact Persons",
+          "dataType": "schema-embed-array",
+          "additional": {
+            "user": {
+              "dataType": "entity",
+              "additional": "User",
+              "label": "User"
+            },
+            "role": {
+              "dataType": "string",
+              "label": "Role"
             }
           }
         },
@@ -1968,7 +2017,8 @@
                         "eventAttendanceField",
                         "eventAttendanceMapField",
                         "templateExportFileField",
-                        "embeddedArrayOfObjects"
+                        "embeddedArrayOfObjects",
+                        "contactPersons"
                       ]
                     }
                   ]
@@ -2010,6 +2060,51 @@
         ]
       },
       "_id": "view:school/:id"
+    },
+    "entity:Todo": {
+      "attributes": {
+        "parentTask": {
+          "label": "Parent task",
+          "description": "The task that this task is a part (sub-task) of.",
+          "dataType": "entity",
+          "additional": "Todo",
+          "showInDetailsView": true
+        }
+      }
+    },
+    "view:todo/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Todo",
+        "panels": [
+          {
+            "title": "Overview",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "subject",
+                        "deadline",
+                        "startDate",
+                        "description",
+                        "assignedTo",
+                        "relatedEntities",
+                        "parentTask",
+                        "repetitionInterval",
+                        "completed"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
     },
     "entity:HistoricalEntityData": {
       "label": "Observation",
@@ -2291,6 +2386,141 @@
           }
         }
       }
+    },
+    "entity:Action": {
+      "label": "Action",
+      "labelPlural": "Actions",
+      "icon": "list-check",
+      "toStringAttributes": [
+        "title"
+      ],
+      "route": "action",
+      "attributes": {
+        "title": {
+          "label": "Title",
+          "dataType": "string",
+          "validators": {
+            "required": true
+          }
+        },
+        "parentAction": {
+          "label": "Parent action",
+          "dataType": "entity",
+          "additional": "Action"
+        },
+        "dependsOn": {
+          "label": "Depends on",
+          "dataType": "entity",
+          "additional": "Action"
+        },
+        "status": {
+          "label": "Status",
+          "dataType": "configurable-enum",
+          "additional": "action-status"
+        },
+        "responsible": {
+          "label": "Responsible",
+          "dataType": "entity",
+          "additional": "User"
+        },
+        "timeframe": {
+          "label": "Timeframe",
+          "dataType": "date-range"
+        }
+      }
+    },
+    "view:action": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "Action",
+        "columns": [
+          "title",
+          "status",
+          "responsible",
+          "timeframe"
+        ],
+        "filters": [
+          {
+            "id": "status"
+          },
+          {
+            "id": "responsible"
+          }
+        ],
+        "dataSource": {
+          "name": "hierarchy",
+          "config": {
+            "hierarchyFields": [
+              "parentAction",
+              "dependsOn"
+            ]
+          }
+        }
+      },
+      "_id": "view:action"
+    },
+    "view:action/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Action",
+        "panels": [
+          {
+            "title": "Action",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "title",
+                        "status",
+                        "responsible",
+                        "timeframe"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "parentAction",
+                        "dependsOn"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Sub-actions",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Action",
+                  "property": "parentAction",
+                  "dataSource": "hierarchy",
+                  "columns": [
+                    {
+                      "id": "title"
+                    },
+                    {
+                      "id": "status"
+                    },
+                    {
+                      "id": "responsible"
+                    },
+                    {
+                      "id": "timeframe",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:action/:id"
     }
   }
 }

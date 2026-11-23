@@ -63,6 +63,22 @@ describe("MarkdownPageComponent", () => {
     expect(fixture.nativeElement.querySelector("div[markdown]")).toBeTruthy();
   });
 
+  it("shows 'Content not found' instead of throwing when the MarkdownContent entity does not exist", async () => {
+    mockEntityMapper.load.mockImplementation(async () => {
+      throw Object.assign(new Error("missing"), { status: 404 });
+    });
+
+    fixture.componentRef.setInput("markdownEntityId", "not-existing");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.markdownContent()).toBe("");
+    expect(fixture.nativeElement.querySelector("em")?.textContent).toContain(
+      "Content not found",
+    );
+  });
+
   it("shows the active language of a multi-lingual content, keeping the entity raw", async () => {
     const entity = new MarkdownContent("test-entity-2");
     entity.content = { "en-US": "# Help", de: "# Hilfe" };

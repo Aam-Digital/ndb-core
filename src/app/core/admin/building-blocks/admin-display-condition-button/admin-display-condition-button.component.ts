@@ -43,6 +43,7 @@ import {
         mat-stroked-button
         type="button"
         [color]="color()"
+        [disabled]="disabled()"
         [matTooltip]="buttonTooltip()"
         (click)="openDialog()"
       >
@@ -54,6 +55,7 @@ import {
         mat-icon-button
         type="button"
         [color]="color()"
+        [disabled]="disabled()"
         [attr.aria-label]="buttonLabel()"
         [matTooltip]="buttonTooltip()"
         (click)="openDialog()"
@@ -84,6 +86,9 @@ export class AdminDisplayConditionButtonComponent {
 
   /** Show a text label next to the icon instead of an icon-only button. */
   readonly showLabel = input(false);
+
+  /** Disable the button, e.g. while the form it is part of is not in edit mode. */
+  readonly disabled = input(false);
 
   /**
    * (Optional) texts replacing the standard "display condition" wording,
@@ -138,8 +143,8 @@ export class AdminDisplayConditionButtonComponent {
               : $localize`This field is shown only while the record matches...`),
           currentRecordType: this.currentRecordType(),
         } satisfies ConditionEditorDialogData,
-        // comparing with fields of the current record needs an additional column
-        width: this.currentRecordType() ? "800px" : "600px",
+        // comparing with fields of the current record needs an additional column, for long names like "Parent action › Locations"
+        width: this.currentRecordType() ? "1000px" : "600px",
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

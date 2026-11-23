@@ -46,6 +46,7 @@ import {
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
+import { HorizontalScrollComponent } from "#src/app/core/common-components/horizontal-scroll/horizontal-scroll.component";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -65,6 +66,7 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
     MatTableModule,
     EntityCreateButtonComponent,
     DynamicComponentDirective,
+    HorizontalScrollComponent,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -299,6 +301,8 @@ export class EntitiesTableComponent<T extends Entity>
       filteredRows: computed(() => this.recordsDataSource().filteredRecords()),
       currentPageRows: computed(() => this.recordsDataSource().renderedRows()),
       isSelectable: this.isSelectable,
+      isInSelectAll: (record) =>
+        this.recordsDataSource().rowOptionsOf(record)?.inSelectAll !== false,
     });
   }
 

@@ -1,5 +1,7 @@
+import { HorizontalScrollComponent } from "../../../common-components/horizontal-scroll/horizontal-scroll.component";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { TranslatableText } from "../../../config/multi-lingual-config";
+import { resolveLocaleText } from "../../../language/active-locale";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -89,6 +91,7 @@ type FieldDragDropEvent = CdkDragDrop<
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
     AdminDisplayConditionButtonComponent,
+    HorizontalScrollComponent,
   ],
 })
 export class AdminEntityFormComponent {
@@ -286,7 +289,12 @@ export class AdminEntityFormComponent {
     const unusedFields = Array.from(entityType.schema.entries())
       .filter(([key]) => !usedFields.some((x) => x.id === key))
       .filter(([key, value]) => !value.isInternalField && value.label) // no technical, internal fields and must have label
-      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
+      // a label edited on this page can still be a translation map, which has no `localeCompare`
+      .sort(([aId, a], [bId, b]) =>
+        (resolveLocaleText(a.label) ?? "").localeCompare(
+          resolveLocaleText(b.label) ?? "",
+        ),
+      )
       .map(([key]) => key);
 
     return [

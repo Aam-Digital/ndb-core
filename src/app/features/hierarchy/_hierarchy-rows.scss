@@ -1,0 +1,29 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+/* Rows of a list arranged as a hierarchy (see hierarchy-data-source.ts).
+   The rows belong to the table, not to the feature's components: these styles are global (::ng-deep),
+   added to the page with the tree cell component that every row of a hierarchy shows. */
+
+/* a row only shown as the parent of a matching record */
+::ng-deep tr.hierarchy-context-row {
+  color: colors.$context;
+  font-style: italic;
+}
+
+/* each branch of the tree is a block: its top-level row has a very light background
+   and, except for the first, a separator line and a little extra space above it
+   (no connector line crosses it, as the lines of a branch end before the next top-level row) */
+::ng-deep tr.hierarchy-top-row {
+  background-color: colors.$grey-light;
+}
+
+::ng-deep tr.hierarchy-top-row:not(:first-child) > td {
+  border-top: 2px solid colors.$tree-separator;
+  padding-top: sizes.$small;
+}
+
+/* the title of a record with sub-records (the field following the tree cell) */
+::ng-deep tr.hierarchy-parent-row app-hierarchy-tree-cell + * {
+  font-weight: 500;
+}

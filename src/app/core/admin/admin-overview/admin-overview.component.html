@@ -205,44 +205,12 @@
         <span matListItemTitle i18n>Configuration Cleanup</span>
       </mat-list-item>
       <mat-list-item
-        (click)="editConfig()"
-        button
-        matTooltip="Open the raw configuration file to make advanced technical adjustments."
-        i18n-matTooltip
-        matTooltipPosition="before"
-      >
-        <span matListItemTitle i18n>Edit Application Configuration (JSON)</span>
-      </mat-list-item>
-      <mat-list-item
-        (click)="downloadConfigClick()"
-        button
-        matTooltip="Download the raw configuration file."
-        i18n-matTooltip
-        matTooltipPosition="before"
-      >
-        <span matListItemTitle i18n
-          >Download Application Configuration (JSON)</span
-        >
-      </mat-list-item>
-      <mat-list-item
-        (click)="!isUploadingConfig() && configImport.click()"
-        button
-        [class.disabled]="isUploadingConfig()"
-        matTooltip="Upload a raw configuration file and overwrite the current system configuration. Accepts a single config object or an array of config documents."
-        i18n-matTooltip
-        matTooltipPosition="before"
-      >
-        <span matListItemTitle i18n
-          >Upload Application Configuration (JSON)</span
-        >
-      </mat-list-item>
-      <mat-list-item
         [routerLink]="['/admin/ai-agent']"
-        matTooltip="Download all configuration documents as a single JSON file to use as context for an AI agent session."
+        matTooltip="Edit the raw configuration manually as JSON, or prepare it for AI-supported changes: download, upload and edit the configuration."
         i18n-matTooltip
         matTooltipPosition="before"
       >
-        <span matListItemTitle i18n>Configure using AI Agents</span>
+        <span matListItemTitle i18n>Edit Application Configuration</span>
       </mat-list-item>
       <mat-list-item
         (click)="debugDatabase()"
@@ -289,11 +257,5 @@
         <span matListItemTitle i18n>Database Conflicts</span>
       </mat-list-item>
     </mat-nav-list>
-    <input
-      #configImport
-      type="file"
-      hidden
-      (change)="uploadConfigFile($event)"
-    />
   </mat-expansion-panel>
 </mat-accordion>

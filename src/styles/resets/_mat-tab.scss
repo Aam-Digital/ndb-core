@@ -1,0 +1,13 @@
+/*
+ * Angular Material makes the tab body (and its wrapper) a scroll container, which never scrolls (it grows with its content).
+ * The sticky scrollbar of a wide table inside (HorizontalScrollComponent) would then stick to the tab body
+ * instead of the screen. "clip" and "visible" do not create a scroll container.
+ * min-width: the tab body is a flex item, which would otherwise grow to the width of the table.
+ */
+.mat-mdc-tab-body-wrapper:has(.mat-mdc-tab-body-active app-horizontal-scroll),
+.mat-mdc-tab-body.mat-mdc-tab-body-active:has(app-horizontal-scroll),
+.mat-mdc-tab-body-content:has(app-horizontal-scroll) {
+  overflow-x: clip;
+  overflow-y: visible;
+  min-width: 0;
+}

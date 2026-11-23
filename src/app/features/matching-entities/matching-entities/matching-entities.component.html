@@ -120,7 +120,7 @@
   <div class="flex-row flex-wrap gap-large">
     @for (side of sideDetails(); track $index) {
       @if (side.dataSource?.allRecords()) {
-        <div class="flex-grow">
+        <div class="flex-grow selection-side">
           <h3
             [style.color]="(side.entityType | entityType)?.color ?? 'black'"
             class="selection-header"

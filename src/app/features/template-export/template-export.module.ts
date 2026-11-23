@@ -69,7 +69,7 @@ export class TemplateExportModule {
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Export Templates`,
       link: getEntityRuntimeRoute(TemplateExport),
-      subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF documents populated with dynamic data from your records.`,
+      subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF or editable documents populated with dynamic data from your records.`,
     });
   }
 }
@@ -80,6 +80,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
     () =>
       import("./template-export-file-datatype/edit-template-export-file.component").then(
         (c) => c.EditTemplateExportFileComponent,
+      ),
+  ],
+  [
+    "EditTemplateExportRelatedRecords",
+    () =>
+      import("./template-export-related-records/edit-template-export-related-records.component").then(
+        (c) => c.EditTemplateExportRelatedRecordsComponent,
       ),
   ],
 ];
@@ -115,6 +122,7 @@ const viewConfigs: ViewConfig[] = [
                       "description",
                       "applicableForEntityTypes",
                       "arrayReport",
+                      "relatedRecords",
                     ],
                   },
                   {
@@ -129,6 +137,9 @@ See the documentation of the [carbone system](https://carbone.io/documentation.h
 
 The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
 You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
+
+Fields that link to another record give access to the fields of that record (e.g. {d.school.name}).
+To list other records that link to the selected record (e.g. the sub-tasks of a task), add them under "Related Records to Include" and use the placeholder shown there.
 
 In addition to the selected record, you can also use fields of the currently logged-in user's own record by prefixing them with "c.user." (e.g. {c.user.name}). This works both in the template file and in the file name pattern.
 

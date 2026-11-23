@@ -122,7 +122,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
@@ -157,11 +157,11 @@ describe("TemplateExportApiService", () => {
     );
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "My Welcome Letter",
+      filename: "My Welcome Letter.pdf",
       file: mockResponse.body,
     });
   });
@@ -180,11 +180,11 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "My Welcome Letter",
+      filename: "My Welcome Letter.pdf",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -193,6 +193,39 @@ describe("TemplateExportApiService", () => {
         convertTo: "pdf",
         data: dataEntity,
       },
+      expect.any(Object),
+    );
+  });
+
+  it("should request the given file format instead of a PDF", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "My Welcome Letter";
+    const dataList = [{ name: "A" }, { name: "B" }];
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    const result = await lastValueFrom(
+      service.generateFileFromTemplate(templateEntity, dataList[0], "docx"),
+    );
+    await lastValueFrom(
+      service.generateBatchFromTemplate(
+        templateEntity,
+        dataList,
+        "zip",
+        "docx",
+      ),
+    );
+
+    expect(result.filename).toBe("My Welcome Letter.docx");
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render/" + templateEntity.getId(),
+      { convertTo: "docx", data: dataList[0] },
+      expect.any(Object),
+    );
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render-batch/" + templateEntity.getId() + "?mode=zip",
+      { convertTo: "docx", data: dataList },
       expect.any(Object),
     );
   });
@@ -209,7 +242,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
 
     await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -233,7 +266,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
 
     await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity, dataEntity),
+      service.generateFileFromTemplate(templateEntity, dataEntity),
     );
 
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -241,6 +274,49 @@ describe("TemplateExportApiService", () => {
       { convertTo: "pdf", data: dataEntity },
       expect.any(Object),
     );
+  });
+
+  it("should add the related records configured for the template to the data of each record", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.relatedRecords = [
+      { entityType: "TestEntity", property: "ref" },
+    ];
+    TestBed.inject(EntityRegistry).add(TestEntity.ENTITY_TYPE, TestEntity);
+    const parent = TestEntity.create("Parent");
+    const childless = TestEntity.create("Childless");
+    const child = TestEntity.create({ name: "Child", ref: parent.getId() });
+    entityMapper.addAll([parent, childless, child]);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, [parent, childless]),
+    );
+
+    expect(mockApiResponse.mock.calls[0][1]["data"]).toEqual([
+      expect.objectContaining({
+        name: "Parent",
+        _related: {
+          TestEntity: {
+            ref: [
+              expect.objectContaining({
+                name: "Child",
+                // the link back to the record only holds its id, as its details are one level up
+                ref: { _id: parent.getId() },
+              }),
+            ],
+          },
+        },
+      }),
+      expect.objectContaining({
+        name: "Childless",
+        _related: { TestEntity: { ref: [] } },
+      }),
+    ]);
+    // the entities held by the app are not modified
+    expect(parent).not.toHaveProperty("_related");
   });
 
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {

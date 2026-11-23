@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../core/common-components/horizontal-scroll/horizontal-scroll.component";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -52,6 +53,7 @@ import { BulkMergeService } from "../bulk-merge-service";
     MatTableModule,
     MatProgressBarModule,
     ListPaginatorComponent,
+    HorizontalScrollComponent,
   ],
 })
 export class ReviewDuplicatesComponent implements OnInit {

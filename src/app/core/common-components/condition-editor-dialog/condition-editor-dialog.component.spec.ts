@@ -10,6 +10,7 @@ import {
 } from "./condition-editor-dialog.component";
 import { ConditionsEditorComponent } from "../conditions-editor/conditions-editor.component";
 import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
+import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 
 describe("ConditionEditorDialogComponent", () => {
   const mockDialogRef = mockMatDialogRef();
@@ -30,6 +31,8 @@ describe("ConditionEditorDialogComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: { ...defaultData, ...data },
         },
+        // a dependency of the embedded ConditionsEditorComponent, which is not used without a record type
+        { provide: EntityRelationsService, useValue: {} },
       ],
     });
     const fixture = TestBed.createComponent(ConditionEditorDialogComponent);

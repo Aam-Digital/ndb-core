@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   input,
+  linkedSignal,
   ChangeDetectionStrategy,
   signal,
   resource,
@@ -30,15 +31,18 @@ import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.servic
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
-import { resolveLocaleText } from "../../../core/language/active-locale";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
+import {
+  TemplateExportApiService,
+  TemplateExportResult,
+} from "../template-export-api/template-export-api.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { TemplateExport } from "../template-export.entity";
 
 /**
  * Popup for user to select one of the available templates
- * and manage the PDF/file generation process for a specific entity.
+ * and manage the file generation process (as PDF or as an editable file
+ * in the format of the template) for a specific entity.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -118,6 +122,34 @@ export class TemplateExportSelectionDialogComponent {
       !!this.selectedTemplate.value().arrayReport,
   );
   /**
+   * The format of the selected template's file (e.g. "docx"),
+   * offered as an editable alternative to the PDF.
+   */
+  readonly templateFileFormat = computed(() =>
+    this.selectedTemplate.hasValue()
+      ? this.selectedTemplate.value()?.getEditableOutputFormat()
+      : undefined,
+  );
+  /**
+   * User-controlled choice to generate an editable file in the format of the template
+   * instead of a PDF. Starts again from PDF whenever another template is selected.
+   */
+  readonly useTemplateFileFormat = linkedSignal<string, boolean>({
+    source: this.selectedTemplateId,
+    computation: () => false,
+  });
+  /**
+   * The file format to generate, as its file extension.
+   */
+  readonly outputFormat = computed(
+    () => (this.useTemplateFileFormat() && this.templateFileFormat()) || "pdf",
+  );
+  /**
+   * Multiple records can only be merged into a single file as PDF.
+   */
+  readonly canCombine = computed(() => this.outputFormat() === "pdf");
+
+  /**
    * Generating requires the full template entity, so this stays false while the selected template is still loading.
    */
   readonly canGenerate = computed(
@@ -134,8 +166,15 @@ export class TemplateExportSelectionDialogComponent {
   /**
    * User-controlled toggle (bulk only): when on, the backend returns a single combined
    * multi-page PDF instead of a ZIP of N independent files.
+   * Only applies while {@link canCombine}.
    */
   readonly combineIntoSinglePdf = signal<boolean>(false);
+  /**
+   * Whether the records of a bulk selection are actually merged into a single PDF.
+   */
+  readonly combineRecords = computed(
+    () => this.combineIntoSinglePdf() && this.canCombine(),
+  );
 
   readonly succeededCount = computed(
     () => this.totalRecords() - this.failures().length,
@@ -150,6 +189,19 @@ export class TemplateExportSelectionDialogComponent {
     loader: () =>
       this.templateExportService.isExportServerEnabled().catch(() => false),
   });
+
+  /**
+   * Multiple records are packaged in a zip, unless they are combined into one file.
+   */
+  private downloadExtension(
+    template: TemplateExport,
+    recordCount: number,
+    format: string,
+  ): string {
+    const isZip =
+      !template.arrayReport && recordCount > 1 && !this.combineRecords();
+    return isZip ? "zip" : format;
+  }
 
   async requestFile() {
     const entities = this.entities();
@@ -169,43 +221,42 @@ export class TemplateExportSelectionDialogComponent {
     this.totalRecords.set(entities.length);
     this.failures.set([]);
 
+    const format = this.outputFormat();
+
     try {
-      if (template.arrayReport) {
-        const result = await firstValueFrom(
-          this.templateExportApi.generatePdfFromTemplate(template, entities),
-        );
-        await this.downloadService.triggerDownload(
-          result.file,
-          "pdf",
-          result.filename ?? resolveLocaleText(template.title),
-        );
-      } else if (entities.length === 1) {
-        const result = await firstValueFrom(
-          this.templateExportApi.generatePdfFromTemplate(template, entities[0]),
-        );
-        await this.downloadService.triggerDownload(
-          result.file,
-          "pdf",
-          result.filename ?? entities[0].toString(),
+      let result: TemplateExportResult;
+      if (template.arrayReport || entities.length === 1) {
+        result = await firstValueFrom(
+          this.templateExportApi.generateFileFromTemplate(
+            template,
+            template.arrayReport ? entities : entities[0],
+            format,
+          ),
         );
       } else {
-        const combined = this.combineIntoSinglePdf();
-        const result = await firstValueFrom(
+        result = await firstValueFrom(
           this.templateExportApi.generateBatchFromTemplate(
             template,
             entities,
-            combined ? "combined" : "zip",
+            this.combineRecords() ? "combined" : "zip",
+            format,
           ),
         );
-        await this.downloadService.triggerDownload(
-          result.file,
-          combined ? "pdf" : "zip",
-          result.filename,
-        );
       }
+      this.downloadService.triggerFileDownload(
+        result.file,
+        result.filename,
+        this.downloadExtension(template, entities.length, format),
+      );
       this.dialogRef.close(true);
 
-      this.alertService.addInfo($localize`Files generated successfully.`);
+      if (result.incomplete) {
+        this.alertService.addWarning(
+          $localize`Files generated, but some related records could not be loaded and are missing from them. Please try again.`,
+        );
+      } else {
+        this.alertService.addInfo($localize`Files generated successfully.`);
+      }
     } catch (error) {
       Logging.warn("Failed to generate files", error);
       this.failures.set(entities.map((entity) => ({ entity, error })));

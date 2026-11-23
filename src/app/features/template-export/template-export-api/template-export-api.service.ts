@@ -3,10 +3,9 @@ import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
 import { from, Observable, of, throwError } from "rxjs";
-import { HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { switchMap } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
 import { resolveLocaleText } from "../../../core/language/active-locale";
 import { Logging } from "../../../core/logging/logging.service";
@@ -15,7 +14,12 @@ import {
   TemplateExportComplement,
   TemplateExportContextService,
 } from "../template-export-context/template-export-context.service";
-import { EntityRelationResolverService } from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
+import { asArray } from "../../../utils/asArray";
+import {
+  EntityRelationResolverService,
+  LoadedEntitiesCache,
+} from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
+import { TemplateExportRelatedRecordsService } from "../template-export-related-records/template-export-related-records.service";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -33,7 +37,8 @@ interface TemplateUploadResponseDto {
  */
 interface TemplateRenderRequestDto {
   /**
-   * target file type (e.g. "pdf")
+   * target file type as its extension: "pdf", or the format of the template file
+   * (e.g. "docx") to get an editable file
    */
   convertTo: string;
 
@@ -51,10 +56,16 @@ interface TemplateRenderRequestDto {
 export interface TemplateExportResult {
   filename: string;
   file: ArrayBuffer;
+  /**
+   * Whether some related records of the template could not be loaded
+   * and are missing from the generated file.
+   */
+  incomplete?: boolean;
 }
 
 /**
- * Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.
+ * Interact with the Template Export API that uses File Templates to generate custom documents
+ * (as PDF, or as an editable file in the format of the template).
  */
 @Injectable({
   providedIn: "root",
@@ -63,6 +74,7 @@ export class TemplateExportApiService extends FileService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private readonly exportContext = inject(TemplateExportContextService);
   private readonly relationResolver = inject(EntityRelationResolverService);
+  private readonly relatedRecords = inject(TemplateExportRelatedRecordsService);
 
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
@@ -122,7 +134,7 @@ export class TemplateExportApiService extends FileService {
   }
 
   /*
-  --- PDF Generation API methods ---
+  --- File Generation API methods ---
   */
 
   /**
@@ -133,27 +145,29 @@ export class TemplateExportApiService extends FileService {
    * endpoint URL, the shape of `data`, and the fallback filename.
    */
   private renderTemplate(
+    template: TemplateExport,
     url: string,
     data: Object | Object[],
     fallbackFilename: string,
+    format: string,
   ): Observable<TemplateExportResult> {
     const complement = this.exportContext.getComplement();
 
-    // give the template access to details of linked records (e.g. a Note's related
-    // Child) instead of just their id - resolved one level deep, see the service.
-    return from(this.relationResolver.resolveRelations(data)).pipe(
-      switchMap((resolvedData) =>
-        this.httpClient.post(
-          url,
-          {
-            convertTo: "pdf",
-            data: resolvedData,
-            ...(complement ? { complement } : {}),
-          } as TemplateRenderRequestDto,
-          { observe: "response", responseType: "arraybuffer" },
-        ),
+    return from(this.buildTemplateData(template, data)).pipe(
+      switchMap(({ data: templateData, incomplete }) =>
+        this.httpClient
+          .post(
+            url,
+            {
+              convertTo: format,
+              data: templateData,
+              ...(complement ? { complement } : {}),
+            } as TemplateRenderRequestDto,
+            { observe: "response", responseType: "arraybuffer" },
+          )
+          .pipe(map((res) => ({ res, incomplete }))),
       ),
-      switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+      switchMap(async ({ res, incomplete }) => {
         // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
         const disposition = res.headers.get("Content-Disposition");
         let filenameMatch: RegExpMatchArray | null = null;
@@ -175,25 +189,69 @@ export class TemplateExportApiService extends FileService {
         return {
           filename: filenameMatch?.[1] ?? fallbackFilename,
           file: res.body,
+          ...(incomplete ? { incomplete } : {}),
         };
       }),
     );
   }
 
   /**
-   * Generate a PDF applying actual data to an existing template.
+   * Extend the given record(s) with the data of other records that the template can use:
+   * - details of linked records (e.g. a Note's related Child) instead of just their id,
+   *   resolved one level deep (see {@link EntityRelationResolverService})
+   * - lists of records linking to the record (e.g. the sub-tasks of a task),
+   *   if configured for the template (see {@link TemplateExportRelatedRecordsService})
+   *
+   * @returns The data for the template, and whether some related records could not be loaded
+   */
+  private async buildTemplateData(
+    template: TemplateExport,
+    data: Object | Object[],
+  ): Promise<{ data: Object | Object[]; incomplete: boolean }> {
+    // related records link to the exported records (and to each other), so their relations
+    // resolve to the same records: load each type only once for all of them
+    const loadedEntities: LoadedEntitiesCache = new Map();
+    const [resolved, relatedRecords] = await Promise.all([
+      this.relationResolver.resolveRelations(data, loadedEntities),
+      this.relatedRecords.loadRelatedRecords(
+        template,
+        asArray(data).filter((record) => record instanceof Entity),
+        loadedEntities,
+      ),
+    ]);
+
+    const addRelatedRecords = (record: Object, resolvedRecord: Object) =>
+      record instanceof Entity && relatedRecords.records.has(record.getId())
+        ? { ...resolvedRecord, ...relatedRecords.records.get(record.getId()) }
+        : resolvedRecord;
+
+    return {
+      data: Array.isArray(data)
+        ? data.map((record, i) => addRelatedRecords(record, resolved[i]))
+        : addRelatedRecords(data, resolved),
+      incomplete: relatedRecords.incomplete,
+    };
+  }
+
+  /**
+   * Generate a file applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
-   * @return An array buffer of the generated PDF
+   * @param format The file format to generate, as its extension: "pdf" (default) or the
+   *   format of the template file (e.g. "docx") for an editable file
+   * @return An array buffer of the generated file
    */
-  generatePdfFromTemplate(
+  generateFileFromTemplate(
     template: TemplateExport,
     data: Object,
+    format: string = "pdf",
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
+      template,
       this.API_URL + "/render/" + template.getId(),
       data,
-      resolveLocaleText(template.title),
+      resolveLocaleText(template.title) + "." + format,
+      format,
     );
   }
 
@@ -203,23 +261,29 @@ export class TemplateExportApiService extends FileService {
    * Both modes go through the template engine's native batch rendering — the backend
    * just forwards the request:
    * - `mode: "zip"` (default): N independent files packaged in a ZIP archive.
-   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF.
+   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF
+   *   (only available for the "pdf" format).
    *
    * @param template The TemplateExport entity to render
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
+   * @param format The file format of each generated file, as its extension: "pdf" (default)
+   *   or the format of the template file (e.g. "docx") for editable files
    * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
     template: TemplateExport,
     dataList: Object[],
     mode: "zip" | "combined" = "zip",
+    format: string = "pdf",
   ): Observable<TemplateExportResult> {
     return this.renderTemplate(
+      template,
       this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
       dataList,
       resolveLocaleText(template.title) +
         (mode === "combined" ? ".pdf" : ".zip"),
+      format,
     );
   }
 }
