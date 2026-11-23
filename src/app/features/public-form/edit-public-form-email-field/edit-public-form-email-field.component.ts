@@ -1,0 +1,127 @@
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+} from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import {
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../../../core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityFieldSelectComponent } from "../../../core/entity/entity-field-select/entity-field-select.component";
+import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../core/entity/model/entity";
+import { PublicFormConfig } from "../public-form-config";
+
+/** A recipient field is needed while confirmations are switched on; reads the toggle from the sibling control. */
+const requiredWhenConfirmationEnabled = (
+  control: AbstractControl,
+): ValidationErrors | null =>
+  control.parent?.get("sendConfirmationEmail")?.value && !control.value
+    ? {
+        recipientFieldRequired: {
+          errorMessage: $localize`:PublicFormConfig:Select the field holding the email address, or switch the confirmation email off`,
+        },
+      }
+    : null;
+
+/** Picks the field of the submitted record that holds the address the confirmation is sent to. */
+@DynamicComponent("EditPublicFormEmailField")
+@Component({
+  selector: "app-edit-public-form-email-field",
+  imports: [ReactiveFormsModule, EntityFieldSelectComponent],
+  templateUrl: "./edit-public-form-email-field.component.html",
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditPublicFormEmailFieldComponent,
+    },
+  ],
+})
+export class EditPublicFormEmailFieldComponent
+  extends CustomFormControlDirective<string>
+  implements EditComponent, OnInit
+{
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
+
+  private readonly entities = inject(EntityRegistry);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** the framework types the input loosely, so narrow it once to see changes to the config */
+  private readonly formConfig = computed(
+    () => this.entity() as PublicFormConfig | undefined,
+  );
+
+  /** not set before the record type is saved, nor for configs in the multi form format */
+  protected readonly entityType = computed(() => {
+    const configuredType = this.formConfig()?.entity;
+    return configuredType ? this.entities.get(configuredType) : undefined;
+  });
+
+  /** ids of the fields the form asks the submitter for; `undefined` when it does not say (multi form format) */
+  private readonly collectedFieldIds = computed(() => {
+    const columns: FieldGroup[] | undefined = this.formConfig()?.columns;
+    if (!Array.isArray(columns)) {
+      return undefined;
+    }
+    return new Set(
+      columns.flatMap((group) =>
+        (group.fields ?? []).map((field) => toFormFieldConfig(field).id),
+      ),
+    );
+  });
+
+  /** only email fields the form actually collects: anything else could never hold an address to send to */
+  protected readonly hideOption = computed(() => {
+    const collected = this.collectedFieldIds();
+    return (option: FormFieldConfig): boolean =>
+      option.dataType !== "email" || !collected?.has(option.id);
+  });
+
+  /**
+   * The selected field can stop being part of the form after it was saved, by being removed in
+   * "Configure Fields". Nothing would be sent then, so say so instead of leaving a dead setting.
+   * Only while confirmations are on, so a leftover value does not block unrelated edits.
+   */
+  private readonly selectedFieldStillInForm = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const collected = this.collectedFieldIds();
+    return control.parent?.get("sendConfirmationEmail")?.value &&
+      collected &&
+      control.value &&
+      !collected.has(control.value)
+      ? {
+          recipientFieldNotInForm: {
+            errorMessage: $localize`:PublicFormConfig:This field is no longer part of the form. Select another one, or add it back under "Configure Fields"`,
+          },
+        }
+      : null;
+  };
+
+  ngOnInit(): void {
+    this.formControl.addValidators([
+      requiredWhenConfirmationEnabled,
+      this.selectedFieldStillInForm,
+    ]);
+
+    this.formControl.parent
+      ?.get("sendConfirmationEmail")
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.formControl.updateValueAndValidity());
+  }
+}
