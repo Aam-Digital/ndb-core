@@ -133,6 +133,9 @@ export class AffectedEntitiesCalculation {
   /** the fields of each changed record that are passed on, by the id of the record */
   private readonly changedFields: Map<string, string[]>;
 
+  /** the changed records that started the update, as they are saved, by their id */
+  private readonly changedRecords: Map<string, Entity>;
+
   /** the changed entities and the entities with a suggested value, which the entities above are calculated from */
   private readonly changeSet: ChangeSet;
 
@@ -171,6 +174,9 @@ export class AffectedEntitiesCalculation {
         trigger.entity.getId(),
         trigger.changedFields,
       ]),
+    );
+    this.changedRecords = new Map(
+      triggers.map((trigger) => [trigger.entity.getId(), trigger.entity]),
     );
     this.changeSet = new ChangeSet(triggers);
   }
@@ -288,6 +294,16 @@ export class AffectedEntitiesCalculation {
     source: Entity,
   ): Promise<Entity[]> {
     if (!rule.sourceReferenceEntity) {
+      if (!this.changeSet.get(source, "before")) {
+        // no saved record can link to a new record yet, only the other changed records (e.g. of the same import)
+        return this.changeSet
+          .changedRecordsLinkingTo(
+            entityType.ENTITY_TYPE,
+            rule.sourceReferenceField,
+            source.getId(),
+          )
+          .map((record) => this.changedRecords.get(record.getId()) ?? record);
+      }
       return this.loadRecordsLinkingTo(
         entityType,
         rule.sourceReferenceField,

@@ -132,7 +132,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     changes: Pick<StartingChange, "entity" | "before" | "removed">[],
   ): Promise<Entity[]> {
     // only the entities with a change that is passed on (saving also changes e.g. the update time),
-    // and the removed ones, so that they are not loaded as linked records of the others
+    // and the new and removed ones, as only these show which records link to them
     const triggers: UpdateTrigger[] = changes
       .map(({ entity, before, removed }) => ({
         entity,
@@ -143,6 +143,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       .filter(
         (trigger) =>
           (trigger.removed ||
+            trigger.before.isNew ||
             this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
               .length > 0) &&
           !this.checkRefAlreadyProcessed(trigger.entity),

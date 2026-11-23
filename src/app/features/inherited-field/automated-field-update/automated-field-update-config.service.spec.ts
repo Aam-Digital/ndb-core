@@ -4,7 +4,7 @@ import {
   AutomatedFieldUpdateConfigService,
   MAX_ENTITIES_TO_REVIEW,
 } from "./automated-field-update-config.service";
-import { ChangeSet } from "./change-set";
+import { ChangeSet, stateBeforeCreation } from "./change-set";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
@@ -543,6 +543,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
+    // like in the database, a saved record has a revision (a record without one is new)
+    const add = entityMapper.add.bind(entityMapper);
+    vi.spyOn(entityMapper, "add").mockImplementation((entity: Entity) => {
+      entity._rev ??= "1-saved";
+      add(entity);
+    });
   });
 
   it("should update mentee status when status of linked mentorship changes", async () => {
@@ -736,6 +742,26 @@ describe("AutomatedFieldUpdateConfigService", () => {
     school.category = TEST_SCHOOL_ENUM[1];
     await service.applyRulesToDependentEntities(school, originalSchool);
 
+    const updatedChild = await entityMapper.load(Child, child.getId());
+    expect(updatedChild.category).toBe("secondary-student");
+  });
+
+  it("finds the records linking to a new record among the records created with it, without looking for saved ones", async () => {
+    const school = createSchool("secondary");
+    const child = new Child();
+    child.school = school.getId();
+    // e.g. created by the same import
+    entityMapper.addAll([school, child]);
+    const loadLinking = vi.spyOn(service, "loadRecordsLinkingTo");
+
+    await service.applyRulesToChanges(
+      [school, child].map((entity) => ({
+        entity,
+        before: stateBeforeCreation(entity),
+      })),
+    );
+
+    expect(loadLinking).not.toHaveBeenCalled();
     const updatedChild = await entityMapper.load(Child, child.getId());
     expect(updatedChild.category).toBe("secondary-student");
   });
@@ -1154,7 +1180,9 @@ describe("AutomatedFieldUpdateConfigService", () => {
       const subAction = createSubAction(parent, ["education"]);
       entityMapper.addAll([parent, subAction]);
 
+      // the pre-filled record before its first save
       const subActionBefore = subAction.copy();
+      subActionBefore._rev = undefined;
       subAction.tags = toTags([]);
       mockDialog.open.mockClear();
 
