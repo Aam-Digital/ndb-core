@@ -92,4 +92,39 @@ describe("DuplicateRecordsService", () => {
     expect(cloneSpy).toHaveBeenCalledWith(originalData);
     expect(entityMapperService.saveAll).toHaveBeenCalled();
   });
+
+  it("should not wait for a list to complete a bulk operation when duplicating a single record", async () => {
+    // e.g. from the details page or a dialog: there is no list of this type that could complete the bulk operation
+    const bulkOperationState = TestBed.inject(BulkOperationStateService);
+    const entity = new DuplicateTestEntity();
+    entity.name = "TestName";
+
+    await expect(service.duplicateRecord(entity)).resolves.toBe(true);
+
+    expect(entityMapperService.saveAll).toHaveBeenCalledTimes(1);
+    expect(bulkOperationState.startBulkOperation).not.toHaveBeenCalled();
+    expect(
+      bulkOperationState.waitForBulkOperationToFinish,
+    ).not.toHaveBeenCalled();
+  });
+
+  it("should run as a bulk operation when duplicating multiple records", async () => {
+    const bulkOperationState = TestBed.inject(BulkOperationStateService);
+    const entities = ["A", "B"].map((name) => {
+      const entity = new DuplicateTestEntity();
+      entity.name = name;
+      return entity;
+    });
+
+    await service.duplicateRecord(entities);
+
+    const savedIds = (entityMapperService.saveAll as any).mock.calls[0][0].map(
+      (e: Entity) => e.getId(),
+    );
+    expect(bulkOperationState.startBulkOperation).toHaveBeenCalledWith(
+      2,
+      savedIds,
+    );
+    expect(bulkOperationState.waitForBulkOperationToFinish).toHaveBeenCalled();
+  });
 });

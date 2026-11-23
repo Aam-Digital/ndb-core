@@ -24,19 +24,14 @@ export class DuplicateRecordService {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
-    this.bulkOperationState.startBulkOperation(
-      duplicateData.length,
-      duplicateData.map((entity) => entity.getId()),
-    );
-
-    try {
+    if (duplicateData.length > 1) {
+      await this.saveAsBulkOperation(duplicateData);
+    } else {
+      // A single record can be duplicated where no list of this type is displayed
+      // (details page, dialog), so nothing would ever complete a bulk operation.
       await this.entityMapperService.saveAll(duplicateData);
-    } catch (error) {
-      this.bulkOperationState.completeBulkOperation();
-      throw error;
     }
 
-    await this.bulkOperationState.waitForBulkOperationToFinish();
     this.alertService.addInfo(this.generateSuccessMessage(entities));
 
     if (navigate) {
@@ -46,6 +41,22 @@ export class DuplicateRecordService {
     }
 
     return true;
+  }
+
+  private async saveAsBulkOperation(entities: Entity[]) {
+    this.bulkOperationState.startBulkOperation(
+      entities.length,
+      entities.map((entity) => entity.getId()),
+    );
+
+    try {
+      await this.entityMapperService.saveAll(entities);
+    } catch (error) {
+      this.bulkOperationState.completeBulkOperation();
+      throw error;
+    }
+
+    await this.bulkOperationState.waitForBulkOperationToFinish();
   }
 
   clone(sourceData: Entity[]): any {
