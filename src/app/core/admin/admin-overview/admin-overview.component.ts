@@ -2,7 +2,6 @@ import {
   Component,
   inject,
   computed,
-  signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { AdminSectionStateService } from "./admin-section-state.service";
@@ -11,7 +10,6 @@ import { SystemResetService } from "../system-reset/system-reset.service";
 import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
@@ -24,16 +22,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouteTarget } from "../../../route-target";
 import { MenuItem } from "../../ui/navigation/menu-item";
-import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { Config } from "#src/app/core/config/config";
 import { environment } from "#src/environments/environment";
-import moment from "moment";
 import { AdminOverviewService } from "./admin-overview.service";
 import { SetupWizardService } from "../setup-wizard/setup-wizard.service";
 import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
-import { Logging } from "#src/app/core/logging/logging.service";
 import { ApiClientService } from "#src/app/features/api-client/api-client.service";
 import { SessionSubject } from "#src/app/core/session/auth/session-info";
 import { UserAdminService } from "#src/app/core/user/user-admin-service/user-admin.service";
@@ -67,10 +60,7 @@ export class AdminOverviewComponent {
   private dbResolver = inject(DatabaseResolverService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private snackBar = inject(MatSnackBar);
-  private configService = inject(ConfigService);
   protected adminOverviewService = inject(AdminOverviewService);
-  private jsonEditorService = inject(JsonEditorService);
-  private entityMapper = inject(EntityMapperService);
   private readonly sectionStateService = inject(AdminSectionStateService);
   private readonly setupWizardService = inject(SetupWizardService);
 
@@ -93,7 +83,6 @@ export class AdminOverviewComponent {
     ),
   );
   expandedSection = computed(() => this.sectionStateService.getExpanded());
-  isUploadingConfig = signal(false);
 
   isSaasEnvironment: boolean;
 
@@ -134,107 +123,6 @@ export class AdminOverviewComponent {
   async saveCsvExport() {
     const backup = await this.backupService.getDatabaseExport();
     await this.downloadService.triggerDownload(backup, "csv", "export");
-  }
-
-  async downloadConfigClick() {
-    const configString = this.configService.exportConfig();
-    await this.downloadService.triggerDownload(configString, "json", "config");
-  }
-
-  async uploadConfigFile(inputEvent: Event) {
-    this.isUploadingConfig.set(true);
-    try {
-      const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
-      const parsed = JSON.parse(loadedFile);
-      if (Array.isArray(parsed)) {
-        const entities = parsed
-          .map((doc) => {
-            try {
-              return this.entityMapper.entityFromRawDoc(doc);
-            } catch (e) {
-              Logging.warn(
-                "Skipping unknown entity type during config upload",
-                doc["_id"],
-                e,
-              );
-              return null;
-            }
-          })
-          .filter(Boolean);
-        await this.entityMapper.saveAll(entities, true);
-      } else {
-        await this.configService.saveConfig(parsed);
-      }
-      this.snackBar.open($localize`Configuration updated`, undefined, {
-        duration: 3000,
-      });
-    } catch (e) {
-      Logging.error("Failed to upload configuration", e);
-      this.snackBar.open($localize`Upload failed: ${e.message}`, undefined, {
-        duration: 5000,
-      });
-    } finally {
-      this.isUploadingConfig.set(false);
-    }
-  }
-
-  editConfig() {
-    const originalData = this.configService.exportConfig(true);
-    this.jsonEditorService
-      .openJsonEditorDialog(originalData)
-      .subscribe(async (updatedData) => {
-        if (!updatedData) return;
-
-        const previousConfigBackup = new Config(
-          Config.CONFIG_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
-          originalData,
-        );
-        try {
-          await this.entityMapper.save(previousConfigBackup);
-          await this.configService.saveConfig(updatedData);
-
-          this.showConfirmationWithUndoOption(async () => {
-            await this.configService.saveConfig(originalData);
-            await this.entityMapper.remove(previousConfigBackup);
-          });
-        } catch (e) {
-          Logging.error("Failed to save configuration changes", e);
-          this.snackBar.open(
-            $localize`Update failed: ${e.message}`,
-            undefined,
-            {
-              duration: 5000,
-            },
-          );
-        }
-      });
-  }
-
-  /**
-   * Show a snack bar with undo option and handle undo callback with progress dialog.
-   */
-  private showConfirmationWithUndoOption(undoAction: () => Promise<void>) {
-    const snackBarRef = this.snackBar.open(
-      $localize`Configuration updated`,
-      $localize`Undo`,
-      { duration: 8000 },
-    );
-
-    snackBarRef.onAction().subscribe(async () => {
-      const progressRef = this.confirmationDialog.showProgressDialog(
-        signal($localize`Reverting configuration changes ...`),
-      );
-      try {
-        await undoAction();
-      } catch (e) {
-        Logging.error("Failed to revert configuration changes", e);
-        this.snackBar.open($localize`Revert failed: ${e.message}`, undefined, {
-          duration: 5000,
-        });
-      } finally {
-        progressRef.close();
-      }
-    });
   }
 
   /**

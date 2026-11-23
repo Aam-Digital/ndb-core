@@ -14,6 +14,7 @@ import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configur
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
+import { DateRangeDatatype } from "#src/app/core/basic-datatypes/date-range/date-range.datatype.js";
 import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
@@ -194,16 +195,13 @@ export async function argosScreenshot(
 }
 
 /**
- * Pin the main content area to the top before capturing a screenshot.
+ * Scroll the page to the top before capturing a screenshot.
  *
- * The app scrolls inside `mat-sidenav-content` rather than the window, so the
- * document itself never overflows and a `fullPage` screenshot effectively
- * captures just the viewport. Neither Playwright's `fullPage` nor Argos reset
- * the scroll offset of such an inner container. Actions like `fill()` call
- * `scrollIntoViewIfNeeded()`, which can leave the container scrolled by a few
- * pixels whenever the content is just slightly taller than the viewport. That
- * stray, timing-dependent offset shifts the whole content pane and produces
- * flaky screenshot diffs (notably the `site-settings-edited` screenshot).
+ * Actions like `fill()` call `scrollIntoViewIfNeeded()`, which can leave the
+ * page scrolled by a few pixels whenever the content is just slightly taller
+ * than the viewport. That stray, timing-dependent offset shifts the whole
+ * content and produces flaky screenshot diffs (notably the
+ * `site-settings-edited` screenshot).
  *
  * Skip resetting while an interactive overlay is open: dialogs, selects and
  * menus create a `.cdk-overlay-backdrop`, and some screenshots intentionally
@@ -213,9 +211,6 @@ export async function argosScreenshot(
 async function resetMainContentScroll(page: Page): Promise<void> {
   await page.evaluate(() => {
     if (document.querySelector(".cdk-overlay-backdrop")) return;
-    document
-      .querySelectorAll(".mat-drawer-content")
-      .forEach((el) => ((el as HTMLElement).scrollTop = 0));
     window.scrollTo(0, 0);
   });
 }
@@ -338,6 +333,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
       { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
       {

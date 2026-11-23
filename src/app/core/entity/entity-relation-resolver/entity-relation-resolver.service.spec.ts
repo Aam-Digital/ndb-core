@@ -159,6 +159,24 @@ describe("EntityRelationResolverService", () => {
     expect(loadTypeSpy).toHaveBeenCalledTimes(2);
   });
 
+  it("keeps only stubs of the ids in the fields given as idsOnly, without loading their records", async () => {
+    const relatedA = TestEntity.create("RelatedA");
+    const relatedB = Object.assign(new OtherTestEntity(), { name: "B" });
+    entityMapper.addAll([relatedA, relatedB]);
+    const loadTypeSpy = vi.spyOn(entityMapper, "loadType");
+    const primary = new EntityWithMultipleRelations();
+    primary.refA = relatedA.getId();
+    primary.refsB = [relatedB.getId()];
+
+    const result = await service.resolveRelations(primary, undefined, {
+      idsOnly: ["refsB"],
+    });
+
+    expect(result.refsB).toEqual([{ _id: relatedB.getId() }]);
+    expect(result.refA).toEqual(expect.objectContaining({ name: "RelatedA" }));
+    expect(loadTypeSpy).toHaveBeenCalledTimes(1);
+  });
+
   it("creates a stub object for an entity reference that cannot be found", async () => {
     const primary = TestEntity.create("Primary");
     primary.ref = TestEntity.createPrefixedId(

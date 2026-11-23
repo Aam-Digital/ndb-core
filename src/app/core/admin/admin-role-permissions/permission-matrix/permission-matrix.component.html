@@ -9,7 +9,7 @@
 }
 
 <div class="table-container">
-  <div class="table-scroll">
+  <app-horizontal-scroll>
     <table mat-table [dataSource]="viewRows()" class="full-width table">
       <ng-container matColumnDef="subject">
         <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
@@ -205,7 +205,7 @@
         [class.default-row]="row.isDefaultRow"
       ></tr>
     </table>
-  </div>
+  </app-horizontal-scroll>
 
   @if (viewRows().length === 0) {
     <div class="empty-state text-secondary padding-regular">

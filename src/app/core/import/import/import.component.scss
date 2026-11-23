@@ -14,17 +14,10 @@ mat-stepper {
   color: colors.$muted;
 }
 
-/* this component is designed as a screen filling view with sticky headers */
-:host {
-  height: 100%;
-  padding-bottom: 0; /* overwrite parent assigned (larger) padding to make reasonable use of space with scrolling */
-}
-:host ::ng-deep .mat-horizontal-stepper-wrapper {
-  height: 100%;
-}
+/* no scroll container: the page scrolls, so the sticky scrollbar of the review table sticks to the screen */
 :host ::ng-deep .mat-horizontal-content-container {
-  overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .permission-message {
@@ -38,11 +31,6 @@ mat-stepper {
   flex-direction: row;
   justify-content: flex-end;
   gap: sizes.$regular;
-
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background-color: colors.$background;
 
   padding-top: sizes.$x-small;
   padding-bottom: sizes.$regular;

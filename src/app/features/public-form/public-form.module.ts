@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { inject, NgModule } from "@angular/core";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
+import { AdminEntitySectionsService } from "../../core/admin/admin-entity/admin-entity-sections.service";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -34,6 +35,16 @@ export class PublicFormModule {
       label: $localize`:admin menu item:Public Forms`,
       link: getEntityRuntimeRoute(PublicFormConfig),
       subtitle: $localize`:admin menu item subtitle:Configure public forms shareable via link or website, to collect data even without a user account.`,
+    });
+    inject(AdminEntitySectionsService).addSections({
+      // id kept from before sections were registered, so that existing links to this section still work
+      id: "publicForm",
+      label: PublicFormConfig.labelPlural,
+      description: $localize`You can share the link to a "Public Form" with people who do not have an account or embed it in your website. People can submit new records through this form without logging in. For example, you can let participants self-register this way and then review their data later.`,
+      footnote: $localize`You can also create forms for "related records" (e.g. a survey that links back to the participant's record who has submitted the form). For this, create a form for the "related record's type" (e.g. the survey record) and enable the setting to create custom, individualized form links there.`,
+      entityType: PublicFormConfig.ENTITY_TYPE,
+      property: "entity",
+      columns: ["title", "route", "description"],
     });
     publicFormsService.initCustomFormActions();
   }

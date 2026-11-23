@@ -24,6 +24,11 @@
 .comparison-header-type {
   font-weight: bold;
 }
+.selection-side {
+  /* a flex item would otherwise grow to the width of its table instead of letting the table scroll */
+  min-width: 0;
+}
+
 .selection-header {
   font-weight: 500;
   font-size: medium;

@@ -9,13 +9,19 @@ import {
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSort, MatSortModule } from "@angular/material/sort";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { HorizontalScrollComponent } from "#src/app/core/common-components/horizontal-scroll/horizontal-scroll.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-object-table",
   templateUrl: "./object-table.component.html",
   styleUrls: ["./object-table.component.scss"],
-  imports: [MatTableModule, MatSortModule, MatPaginatorModule],
+  imports: [
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    HorizontalScrollComponent,
+  ],
 })
 export class ObjectTableComponent {
   objects = input<any[]>([]);

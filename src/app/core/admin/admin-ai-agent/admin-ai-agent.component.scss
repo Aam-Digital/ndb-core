@@ -1,0 +1,6 @@
+@use "variables/sizes";
+
+mat-card-actions {
+  flex-wrap: wrap;
+  gap: sizes.$small;
+}
