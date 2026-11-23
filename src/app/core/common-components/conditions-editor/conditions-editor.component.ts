@@ -206,24 +206,43 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     return Object.keys(condition || {})[0] || "";
   }
 
+  /** the row at the index with the field it is about (empty while none is chosen), none if there is no such row */
+  private rowAt(
+    conditionIndex: number,
+  ): { condition: any; fieldKey: string } | undefined {
+    const condition = this.conditionsArray()[conditionIndex];
+    return condition
+      ? { condition, fieldKey: this.getConditionField(condition) }
+      : undefined;
+  }
+
+  /** the rows are edited in place, so this hands the template and the computed values a new object to read them again */
+  private refreshRows(): void {
+    this.conditionsSignal.set({ ...this.working });
+  }
+
+  /** shows the changed rows and reports them */
+  private commit(): void {
+    this.refreshRows();
+    this.emitConditions();
+  }
+
   /** whether the given row's stored condition is negated */
   isNegated(conditionIndex: number): boolean {
-    const condition = this.conditionsArray()[conditionIndex];
-    const fieldKey = this.getConditionField(condition);
-    return splitNegation(condition?.[fieldKey]).negated;
+    const row = this.rowAt(conditionIndex);
+    return !!row && splitNegation(row.condition[row.fieldKey]).negated;
   }
 
   /** switch a row between "is" and "is not", keeping its value */
   setNegated(conditionIndex: number, negated: boolean): void {
-    const condition = this.conditionsArray()[conditionIndex];
-    const fieldKey = this.getConditionField(condition);
-    if (!fieldKey) return;
+    const row = this.rowAt(conditionIndex);
+    if (!row?.fieldKey) return;
 
+    const { condition, fieldKey } = row;
     const { positive } = splitNegation(condition[fieldKey]);
     condition[fieldKey] = negated ? negate(positive) : positive;
 
-    this.conditionsSignal.set({ ...this.working });
-    this.emitConditions();
+    this.commit();
   }
 
   setCombinator(combinator: Combinator): void {
@@ -271,12 +290,12 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /** switch a row between comparing with a fixed value and with a field of the current record */
   setReferenceRow(conditionIndex: number, isReference: boolean): void {
-    const condition = this.conditionsArray()[conditionIndex];
-    const fieldKey = this.getConditionField(condition);
-    if (!fieldKey || this.isReferenceRow(conditionIndex) === isReference) {
+    const row = this.rowAt(conditionIndex);
+    if (!row?.fieldKey || this.isReferenceRow(conditionIndex) === isReference) {
       return;
     }
 
+    const { condition, fieldKey } = row;
     if (isReference) {
       this.referenceRows.add(condition);
     } else {
@@ -284,7 +303,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     }
     // the value does not fit the new mode, an "is not" the admin chose still applies
     condition[fieldKey] = withSameNegation(condition[fieldKey], null);
-    this.conditionsSignal.set({ ...this.working });
+    this.refreshRows();
     this.createFormConfigForCondition(conditionIndex, fieldKey);
 
     this.emitConditions();
@@ -297,10 +316,12 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     const actualRecordFieldId = Array.isArray(recordFieldId)
       ? recordFieldId[0]
       : recordFieldId;
-    const condition = this.conditionsArray()[conditionIndex];
-    const fieldKey = this.getConditionField(condition);
+    const row = this.rowAt(conditionIndex);
+    if (!row || !actualRecordFieldId) return;
+
+    const { condition, fieldKey } = row;
     const fieldConfig = this.fieldConfigOf(fieldKey);
-    if (!actualRecordFieldId || !fieldConfig) return;
+    if (!fieldConfig) return;
 
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
     const recordField =
@@ -323,8 +344,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     );
     condition[fieldKey] = withSameNegation(condition[fieldKey], positive);
 
-    this.conditionsSignal.set({ ...this.working });
-    this.emitConditions();
+    this.commit();
   }
 
   /**
@@ -336,8 +356,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     }
 
     this.working.$or.push({});
-    this.conditionsSignal.set({ ...this.working });
-    this.emitConditions();
+    this.commit();
   }
 
   /**
@@ -351,10 +370,8 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
     if (conditions.length === 0) {
       this.working = {};
-      this.conditionsSignal.set({});
-    } else {
-      this.conditionsSignal.set({ ...this.working });
     }
+    this.refreshRows();
 
     this.rebuildFormConfigs();
     this.emitConditions();
@@ -367,22 +384,15 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     conditionIndex: number,
     fieldKey: string | string[],
   ): void {
-    const conditions = this.conditionsArray();
-    if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
-
     const actualFieldKey = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
-    if (!actualFieldKey) return;
+    const row = this.rowAt(conditionIndex);
+    if (!row || !actualFieldKey || row.fieldKey === actualFieldKey) return;
 
-    const condition = conditions[conditionIndex];
-    const currentFieldKey = this.getConditionField(condition);
-
-    // Only update if the field actually changed
-    if (currentFieldKey === actualFieldKey) return;
-
+    const { condition } = row;
     Object.keys(condition).forEach((key) => delete condition[key]);
     condition[actualFieldKey] = null;
     this.referenceRows.delete(condition);
-    this.conditionsSignal.set({ ...this.working });
+    this.refreshRows();
 
     this.createFormConfigForCondition(conditionIndex, actualFieldKey);
     this.emitConditions();
