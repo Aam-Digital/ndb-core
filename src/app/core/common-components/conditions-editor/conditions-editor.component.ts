@@ -200,14 +200,8 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.rebuildFormConfigs();
   }
 
-  /**
-   * Computed signal for the conditions array
-   */
   conditionsArray = computed(() => this.conditionsSignal()?.$or || []);
 
-  /**
-   * Get the field key from a condition object (static helper)
-   */
   getConditionField(condition: any): string {
     return Object.keys(condition || {})[0] || "";
   }
@@ -233,7 +227,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.emitConditions();
   }
 
-  /** whether the given row's stored condition is negated */
   isNegated(conditionIndex: number): boolean {
     const row = this.rowAt(conditionIndex);
     return !!row && splitNegation(row.condition[row.fieldKey]).negated;
@@ -353,9 +346,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.commit();
   }
 
-  /**
-   * Add a new condition
-   */
   addCondition(): void {
     if (!this.working.$or) {
       this.working.$or = [];
@@ -365,9 +355,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.commit();
   }
 
-  /**
-   * Delete a condition
-   */
   deleteCondition(conditionIndex: number): void {
     const conditions = this.conditionsArray();
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
@@ -383,9 +370,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.emitConditions();
   }
 
-  /**
-   * Handle condition field change
-   */
   onConditionFieldChange(
     conditionIndex: number,
     fieldKey: string | string[],
@@ -404,9 +388,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.emitConditions();
   }
 
-  /**
-   * Create form configuration for a specific condition
-   */
   private createFormConfigForCondition(
     conditionIndex: number,
     fieldKey: string,
@@ -522,9 +503,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     this.emitConditions();
   }
 
-  /**
-   * Rebuild form configs for all conditions
-   */
   private rebuildFormConfigs(): void {
     this.conditionFormFieldConfigs.clear();
     this.conditionFormControls.clear();
@@ -537,9 +515,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     });
   }
 
-  /**
-   * Open JSON editor for conditions
-   */
   openJsonEditor(): void {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
