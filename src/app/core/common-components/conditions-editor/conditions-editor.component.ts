@@ -51,6 +51,7 @@ import {
   placeholderFieldId,
 } from "../../filter/filters/filters";
 import { asArray } from "app/utils/asArray";
+import { isEqual } from "lodash-es";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import {
   EntityRelationsService,
@@ -410,7 +411,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
     conditionIndex: number,
     fieldKey: string,
   ): void {
-    const key = `${conditionIndex}`;
     const fieldConfig = this.fieldConfigOf(fieldKey);
     if (!fieldConfig) return;
     const editComponent = this.entitySchemaService.getComponent(
@@ -426,8 +426,38 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
       isArray: isDropdownMultiSelect,
     };
 
-    const conditions = this.conditionsArray();
-    const condition = conditions[conditionIndex];
+    const key = `${conditionIndex}`;
+    this.conditionFormControls.set(
+      key,
+      this.createValueControl(
+        conditionIndex,
+        fieldKey,
+        fieldConfig,
+        conditionFieldConfig,
+      ),
+    );
+    this.conditionFormFieldConfigs.set(key, {
+      id: fieldKey,
+      editComponent,
+      dataType: fieldConfig.dataType,
+      additional: fieldConfig.additional,
+      label: resolveLocaleText(fieldConfig.label) || fieldKey,
+      isArray: isDropdownMultiSelect,
+    } as FormFieldConfig);
+    this.referenceFieldFilters.set(
+      key,
+      this.referenceFieldFilter(fieldKey, fieldConfig),
+    );
+  }
+
+  /** the control for the value of a row, which stores the value in the row when it changes */
+  private createValueControl(
+    conditionIndex: number,
+    fieldKey: string,
+    fieldConfig: EntitySchemaField,
+    conditionFieldConfig: EntitySchemaField,
+  ): FormControl {
+    const condition = this.conditionsArray()[conditionIndex];
 
     // a placeholder is not a valid value for the field's value editor (e.g. not an existing record id)
     const initialValue = this.isReferenceRow(conditionIndex)
@@ -437,8 +467,6 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
           conditionFieldConfig,
         );
     const formControl = new FormControl(initialValue);
-    this.conditionFormControls.set(key, formControl);
-
     formControl.valueChanges.subscribe((value) =>
       this.onFormValueChange(
         condition,
@@ -448,16 +476,14 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
         conditionFieldConfig,
       ),
     );
+    return formControl;
+  }
 
-    this.conditionFormFieldConfigs.set(key, {
-      id: fieldKey,
-      editComponent,
-      dataType: fieldConfig.dataType,
-      additional: fieldConfig.additional,
-      label: resolveLocaleText(fieldConfig.label) || fieldKey,
-      isArray: isDropdownMultiSelect,
-    } as FormFieldConfig);
-
+  /** hides the fields of the current record whose values cannot be compared with the row's field */
+  private referenceFieldFilter(
+    fieldKey: string,
+    fieldConfig: EntitySchemaField,
+  ): (recordField: FormFieldConfig) => boolean {
     // the record itself ("_id") is compared with the fields linking to records of its type
     const comparedWith: EntitySchemaField =
       fieldKey === "_id"
@@ -466,15 +492,12 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
             additional: this.entityConstructor().ENTITY_TYPE,
           }
         : fieldConfig;
-    const sameOptions = (a: EntitySchemaField) =>
-      JSON.stringify(asArray(a.additional ?? [])) ===
-      JSON.stringify(asArray(comparedWith.additional ?? []));
-    this.referenceFieldFilters.set(
-      key,
-      (recordField) =>
-        recordField.dataType !== comparedWith.dataType ||
-        !sameOptions(recordField),
-    );
+    return (recordField) =>
+      recordField.dataType !== comparedWith.dataType ||
+      !isEqual(
+        asArray(recordField.additional ?? []),
+        asArray(comparedWith.additional ?? []),
+      );
   }
 
   private onFormValueChange(
