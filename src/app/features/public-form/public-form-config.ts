@@ -155,6 +155,7 @@ export class PublicFormConfig extends Entity {
     label: $localize`:PublicFormConfig:Email message`,
     description: $localize`:PublicFormConfig:Text of the confirmation email, for example what happens next or who to contact. Leave empty to use a default.`,
     dataType: TranslatableTextDatatype.dataType,
+    viewComponent: "DisplayLongText",
     additional: { multiline: true, rows: 5 },
   })
   confirmationEmailBody: TranslatableText;

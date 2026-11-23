@@ -84,6 +84,7 @@ describe("EditPublicFormEmailFieldComponent", () => {
   });
 
   it("rejects a selected field that the form no longer asks for", () => {
+    formGroup.get("sendConfirmationEmail").setValue(true);
     setConfiguredForm("PublicFormEmailTestRecord", ["name", "contactEmail"]);
     const field = formGroup.get("confirmationEmailField");
     field.setValue("contactEmail");

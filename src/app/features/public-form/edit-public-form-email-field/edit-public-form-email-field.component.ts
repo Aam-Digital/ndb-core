@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -25,6 +24,7 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityFieldSelectComponent } from "../../../core/entity/entity-field-select/entity-field-select.component";
 import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "../../../core/entity/model/entity";
+import { PublicFormConfig } from "../public-form-config";
 
 /** A recipient field is needed while confirmations are switched on; reads the toggle from the sibling control. */
 const requiredWhenConfirmationEnabled = (
@@ -42,10 +42,8 @@ const requiredWhenConfirmationEnabled = (
 @DynamicComponent("EditPublicFormEmailField")
 @Component({
   selector: "app-edit-public-form-email-field",
-  standalone: true,
   imports: [ReactiveFormsModule, EntityFieldSelectComponent],
   templateUrl: "./edit-public-form-email-field.component.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: MatFormFieldControl,
@@ -63,15 +61,20 @@ export class EditPublicFormEmailFieldComponent
   private readonly entities = inject(EntityRegistry);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** the framework types the input loosely, so narrow it once to see changes to the config */
+  private readonly formConfig = computed(
+    () => this.entity() as PublicFormConfig | undefined,
+  );
+
   /** not set before the record type is saved, nor for configs in the multi form format */
   protected readonly entityType = computed(() => {
-    const configuredType = this.entity()?.["entity"];
+    const configuredType = this.formConfig()?.entity;
     return configuredType ? this.entities.get(configuredType) : undefined;
   });
 
   /** ids of the fields the form asks the submitter for; `undefined` when it does not say (multi form format) */
   private readonly collectedFieldIds = computed(() => {
-    const columns: FieldGroup[] | undefined = this.entity()?.["columns"];
+    const columns: FieldGroup[] | undefined = this.formConfig()?.columns;
     if (!Array.isArray(columns)) {
       return undefined;
     }
@@ -92,12 +95,16 @@ export class EditPublicFormEmailFieldComponent
   /**
    * The selected field can stop being part of the form after it was saved, by being removed in
    * "Configure Fields". Nothing would be sent then, so say so instead of leaving a dead setting.
+   * Only while confirmations are on, so a leftover value does not block unrelated edits.
    */
   private readonly selectedFieldStillInForm = (
     control: AbstractControl,
   ): ValidationErrors | null => {
     const collected = this.collectedFieldIds();
-    return collected && control.value && !collected.has(control.value)
+    return control.parent?.get("sendConfirmationEmail")?.value &&
+      collected &&
+      control.value &&
+      !collected.has(control.value)
       ? {
           recipientFieldNotInForm: {
             errorMessage: $localize`:PublicFormConfig:This field is no longer part of the form. Select another one, or add it back under "Configure Fields"`,
