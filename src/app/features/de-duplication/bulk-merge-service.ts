@@ -19,6 +19,11 @@ import { AttendanceDatatype } from "../attendance/model/attendance.datatype";
 import { EventAttendanceMapDatatype } from "../attendance/deprecated/event-attendance-map.datatype";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
 import { UserAccount } from "app/core/user/user-admin-service/user-account";
+import { AutomatedFieldUpdateConfigService } from "app/features/inherited-field/automated-field-update/automated-field-update-config.service";
+import { StartingChange } from "app/features/inherited-field/automated-field-update/change-set";
+
+/** A record that a merge changed or removed, with its state before the merge */
+type MergeChange = Pick<StartingChange, "entity" | "before" | "removed">;
 
 @Injectable({
   providedIn: "root",
@@ -30,6 +35,9 @@ export class BulkMergeService {
   private readonly alert = inject(AlertService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly userAdminService = inject(UserAdminService);
+  private readonly automatedFieldUpdate = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   /**
    * Validates selection and opens the merge dialog for the given entities.
@@ -73,7 +81,7 @@ export class BulkMergeService {
 
     if (!dialogResult) return false;
 
-    await this.executeMerge(
+    const changes = await this.executeMerge(
       dialogResult.mergedEntity,
       entitiesToMerge,
       dialogResult.entityAccounts,
@@ -83,6 +91,7 @@ export class BulkMergeService {
     // the merge dialog's form is already destroyed (and thus its unsaved-changes state cleared)
     // by the time we reach here, since we awaited its `afterClosed()` above.
     this.alert.addInfo($localize`Records merged successfully.`);
+    await this.automatedFieldUpdate.applyRulesToChanges(changes);
     return true;
   }
 
@@ -97,6 +106,7 @@ export class BulkMergeService {
    * @param deleteSecondaryAccount Whether account of the discarded record should be deleted.
    *   If false, the account remains and may become orphaned.
    * @param accountUpdate Optional update payload for the surviving account (e.g. role changes).
+   * @return the records that the merge changed or removed, with their state before the merge
    */
   async executeMerge<E extends Entity>(
     mergedEntity: E,
@@ -104,8 +114,14 @@ export class BulkMergeService {
     entityAccounts?: (UserAccount | null)[],
     deleteSecondaryAccount: boolean = true,
     accountUpdate?: AccountMergeDecision["accountUpdate"],
-  ): Promise<void> {
+  ): Promise<MergeChange[]> {
+    const keptBefore = entitiesToMerge.find(
+      (entity) => entity.getId() === mergedEntity.getId(),
+    );
     await this.entityMapper.save(mergedEntity);
+    const changes: MergeChange[] = [
+      { entity: mergedEntity, before: keptBefore ?? mergedEntity },
+    ];
 
     for (const [i, discarded] of entitiesToMerge.entries()) {
       if (discarded.getId() === mergedEntity.getId()) continue;
@@ -113,13 +129,25 @@ export class BulkMergeService {
       if (deleteSecondaryAccount && entityAccounts?.[i]) {
         await this.deleteAccount(discarded);
       }
-      await this.moveLinks(discarded, mergedEntity);
+      for (const change of await this.moveLinks(discarded, mergedEntity)) {
+        // the kept record itself may link to the discarded one: it keeps its state from before the merge
+        const existing = changes.find(
+          ({ entity }) => entity.getId() === change.entity.getId(),
+        );
+        if (existing) {
+          existing.entity = change.entity;
+        } else {
+          changes.push(change);
+        }
+      }
       await this.entityMapper.remove(discarded);
+      changes.push({ entity: discarded, before: discarded, removed: true });
     }
 
     if (accountUpdate) {
       await this.updateAccount(accountUpdate);
     }
+    return changes;
   }
 
   /** Delete the user account of the entity; a failure leaves the account behind without stopping the merge. */
@@ -131,18 +159,28 @@ export class BulkMergeService {
     );
   }
 
-  /** Change the links to the discarded entity in all related records to the merged entity. */
-  private async moveLinks(discarded: Entity, merged: Entity): Promise<void> {
+  /**
+   * Change the links to the discarded entity in all related records to the merged entity.
+   * @return the related records with their state before
+   */
+  private async moveLinks(
+    discarded: Entity,
+    merged: Entity,
+  ): Promise<MergeChange[]> {
     const linkingRecords =
       await this.entityRelationshipService.loadAllLinkingToEntity(discarded);
+    const changes: MergeChange[] = [];
     for (const { entity, fields } of linkingRecords) {
+      const before = entity.copy();
       await this.relinkRecord(
         entity,
         fields,
         discarded.getId(),
         merged.getId(),
       );
+      changes.push({ entity, before });
     }
+    return changes;
   }
 
   /** Replace the link to the old id with the new id in the fields of the related record and save it. */
