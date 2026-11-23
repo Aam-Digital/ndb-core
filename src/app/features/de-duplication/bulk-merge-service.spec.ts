@@ -181,6 +181,22 @@ describe("BulkMergeService", () => {
     expect(updatedRelatedEntity.multiRelated).not.toContain(recordB.getId());
   });
 
+  it("moves the links to the discarded record in every field of a related record", async () => {
+    const relatedEntity = new EntityWithMergedRelations();
+    relatedEntity.singleRelated = recordB.getId();
+    relatedEntity.multiRelated = [recordB.getId()];
+    await entityMapper.save(relatedEntity);
+
+    await service.executeMerge(recordA.copy(), [recordA, recordB]);
+
+    const updatedRelatedEntity = entityMapper.get(
+      EntityWithMergedRelations.ENTITY_TYPE,
+      relatedEntity.getId(),
+    ) as EntityWithMergedRelations;
+    expect(updatedRelatedEntity.singleRelated).toEqual(recordA.getId());
+    expect(updatedRelatedEntity.multiRelated).toEqual([recordA.getId()]);
+  });
+
   it("should update the legacy Note childrenAttendance when merging Child entities", async () => {
     // legacy fields that are only defined in the config of systems still using them
     addLegacyNoteFieldsToSchema();

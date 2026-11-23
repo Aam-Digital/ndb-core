@@ -145,21 +145,21 @@ export class BulkMergeService {
     }
   }
 
-  /** Replace the link to the old id with the new id in the related record and save it. */
+  /** Replace the link to the old id with the new id in the fields of the related record and save it. */
   private async relinkRecord(
     record: Entity,
     fields: FormFieldConfig[],
     oldId: string,
     newId: string,
   ): Promise<void> {
-    const refFieldId = fields[0].id;
-
-    if (Array.isArray(record[refFieldId])) {
-      record[refFieldId] = Array.from(
-        new Set(record[refFieldId].map((id) => (id === oldId ? newId : id))),
-      );
-    } else if (record[refFieldId] === oldId) {
-      record[refFieldId] = newId;
+    for (const { id: refFieldId } of fields) {
+      if (Array.isArray(record[refFieldId])) {
+        record[refFieldId] = Array.from(
+          new Set(record[refFieldId].map((id) => (id === oldId ? newId : id))),
+        );
+      } else if (record[refFieldId] === oldId) {
+        record[refFieldId] = newId;
+      }
     }
 
     this.updateAttendanceFields(record, oldId, newId);
