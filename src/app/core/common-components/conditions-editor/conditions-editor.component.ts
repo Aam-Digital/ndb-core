@@ -177,16 +177,21 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    if (!this.entityConstructor()) return;
-    this.loadConditions(this.conditions);
-    this.rebuildFormConfigs();
+    this.showConditions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // the record type may only be chosen once the editor is shown (e.g. in a notification rule)
     if (changes["entityConstructor"]?.firstChange === false) {
-      this.ngOnInit();
+      this.showConditions();
     }
+  }
+
+  /** shows the rows of the `conditions` input, once there is a record type to edit them for */
+  private showConditions(): void {
+    if (!this.entityConstructor()) return;
+    this.loadConditions(this.conditions);
+    this.rebuildFormConfigs();
   }
 
   /**
