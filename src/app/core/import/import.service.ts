@@ -15,6 +15,7 @@ import { Logging } from "../logging/logging.service";
 import { PartialBulkWriteError } from "../database/database";
 import { AutomatedFieldUpdateConfigService } from "../../features/inherited-field/automated-field-update/automated-field-update-config.service";
 import { getChangedFields } from "../../features/inherited-field/automated-field-update/change-set";
+import { InheritedValueService } from "../../features/inherited-field/inherited-value.service";
 
 /**
  * Details about a single cell transformation error during import.
@@ -111,6 +112,7 @@ export class ImportService {
   private readonly automatedFieldUpdate = inject(
     AutomatedFieldUpdateConfigService,
   );
+  private readonly inheritedValueService = inject(InheritedValueService);
 
   /**
    * Save the imported records, run the additional actions and update the related records (after confirmation).
@@ -361,6 +363,8 @@ export class ImportService {
         mappedEntities,
         importSettings,
       );
+    // as for a new record created in a form
+    await this.inheritedValueService.inheritIntoNewRecords(entities);
     return { entities, errors };
   }
 

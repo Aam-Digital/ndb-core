@@ -32,6 +32,7 @@ flowchart BT
    records become in the system.
 3. **ImportColumnMappingComponent** maps each column of the file to a field of that entity type.
 4. **ImportReviewDataComponent** previews the resulting records before `ImportService` writes them.
+   New records already get the values they inherit from their linked records in the preview, as in a form.
 
 After saving the records and running the additional actions, `ImportService` passes all records they
 created or changed to the value automation, which offers to update the related records (e.g. a school

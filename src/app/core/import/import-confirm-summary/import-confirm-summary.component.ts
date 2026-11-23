@@ -84,8 +84,10 @@ export class ImportConfirmSummaryComponent {
       ? this.entityRegistry.get(entityType)
       : undefined;
 
+    // new records inherit their values already in the preview
     this.showInheritanceImportWarning.set(
       !!entityCtor &&
+        (this.data?.entitiesToImport ?? []).some((entity) => !entity.isNew) &&
         hasMappedInheritedSourceField(
           entityCtor,
           this.data?.importSettings?.columnMapping ?? [],

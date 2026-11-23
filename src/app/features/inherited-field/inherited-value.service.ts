@@ -21,6 +21,7 @@ import { AutomatedFieldUpdateConfigService } from "./automated-field-update/auto
 import { CommonValueOfParents } from "./automated-field-update/automated-field-update.types";
 import { Logging } from "../../core/logging/logging.service";
 import { isSameValue } from "./get-common-value";
+import { isEmptyValue } from "../../utils/is-empty-value";
 import {
   distinctUntilChanged,
   firstValueFrom,
@@ -221,6 +222,42 @@ export class InheritedValueService extends DefaultValueStrategy {
 
     targetFormControl.markAsUntouched();
     targetFormControl.markAsPristine();
+  }
+
+  /**
+   * Set the inherited values of new records that are not created in a form (e.g. imported ones),
+   * as for a new record in a form: only in empty fields, and only a value that all linked parents share.
+   */
+  async inheritIntoNewRecords(entities: Entity[]): Promise<void> {
+    // many records link to the same parents (e.g. imported children of one school)
+    const loaded = new Map<string, Promise<CommonValueOfParents>>();
+    for (const entity of entities.filter((e) => e.isNew)) {
+      const fields = [...entity.getSchema().entries()].map(([id, field]) => ({
+        id,
+        ...field,
+      }));
+      for (const [fieldId, config] of getConfigsForInheritedMode(fields)) {
+        const parentIds = asArray(
+          entity[config.sourceReferenceField] ?? [],
+        ).filter((id) => !!id);
+        if (parentIds.length === 0 || !isEmptyValue(entity[fieldId])) {
+          continue;
+        }
+
+        const key = [entity.getType(), fieldId, ...parentIds].join("|");
+        if (!loaded.has(key)) {
+          loaded.set(key, this.loadInheritedValue(parentIds, config, fieldId));
+        }
+        const { value, noCommonValue } = await loaded.get(key);
+        if (noCommonValue || value === undefined) continue;
+
+        const fieldConfig = entity.getSchema().get(fieldId);
+        entity[fieldId] = this.entitySchemaService.valueToEntityFormat(
+          fieldConfig.isArray ? asArray(value) : value,
+          fieldConfig,
+        );
+      }
+    }
   }
 
   /**
