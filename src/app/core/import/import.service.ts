@@ -13,6 +13,8 @@ import { ImportExistingService } from "./update-existing/import-existing.service
 import { ImportProcessingContext } from "./import-processing-context";
 import { Logging } from "../logging/logging.service";
 import { PartialBulkWriteError } from "../database/database";
+import { AutomatedFieldUpdateConfigService } from "../../features/inherited-field/automated-field-update/automated-field-update-config.service";
+import { getChangedFields } from "../../features/inherited-field/automated-field-update/change-set";
 
 /**
  * Details about a single cell transformation error during import.
@@ -106,11 +108,23 @@ export class ImportService {
   private readonly schemaService = inject(EntitySchemaService);
   private readonly importAdditionalService = inject(ImportAdditionalService);
   private readonly importExistingService = inject(ImportExistingService);
+  private readonly automatedFieldUpdate = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
+  /**
+   * Save the imported records, run the additional actions and update the related records (after confirmation).
+   * @param onCheckingRelatedRecords called when the records are saved and the related records are checked
+   * @return the history entry of the import, to undo it
+   */
   async executeImport(
     entitiesToImport: Entity[],
     settings: ImportSettings,
+    onCheckingRelatedRecords?: () => void,
   ): Promise<ImportMetadata> {
+    const statesBefore = entitiesToImport.map((entity) =>
+      this.importExistingService.getStateBeforeImport(entity),
+    );
     try {
       await this.entityMapper.saveAll(entitiesToImport);
     } catch (error) {
@@ -123,8 +137,11 @@ export class ImportService {
       );
     }
 
+    let linkChanges: Awaited<
+      ReturnType<ImportAdditionalService["executeImport"]>
+    >;
     try {
-      await this.importAdditionalService.executeImport(
+      linkChanges = await this.importAdditionalService.executeImport(
         entitiesToImport,
         settings,
       );
@@ -143,7 +160,60 @@ export class ImportService {
       );
     }
 
-    return this.saveImportHistory(entitiesToImport, settings);
+    onCheckingRelatedRecords?.();
+    const updatedRelatedRecords =
+      await this.automatedFieldUpdate.applyRulesToChanges([
+        ...entitiesToImport.map((entity, i) => ({
+          entity,
+          before: statesBefore[i],
+        })),
+        ...linkChanges,
+      ]);
+
+    return this.saveImportHistory(
+      entitiesToImport,
+      settings,
+      await this.getChangesForUndo(updatedRelatedRecords),
+    );
+  }
+
+  /**
+   * The changed fields of the updated records, to undo them together with the import.
+   * @param previousVersions the updated records as they were before
+   */
+  private getChangesForUndo(
+    previousVersions: Entity[],
+  ): Promise<ImportMetadata["updatedRelatedEntities"]> {
+    return Promise.all(
+      previousVersions.map(async (previous) => {
+        const updated = await this.entityMapper.load(
+          previous.getConstructor(),
+          previous.getId(),
+        );
+        const importDataChanges = Object.fromEntries(
+          getChangedFields(updated, previous)
+            // e.g. not the time of the update
+            .filter((field) => !previous.getSchema().get(field).isInternalField)
+            .map((field) => {
+              const schema = previous.getSchema().get(field);
+              return [
+                field,
+                {
+                  previousValue: this.schemaService.valueToDatabaseFormat(
+                    previous[field],
+                    schema,
+                  ),
+                  importedValue: this.schemaService.valueToDatabaseFormat(
+                    updated[field],
+                    schema,
+                  ),
+                },
+              ];
+            }),
+        );
+        return { id: previous.getId(), importDataChanges };
+      }),
+    );
   }
 
   /**
@@ -199,9 +269,11 @@ export class ImportService {
   private async saveImportHistory(
     savedEntities: Entity[],
     settings: ImportSettings,
+    updatedRelatedEntities?: ImportMetadata["updatedRelatedEntities"],
   ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
+    importMeta.updatedRelatedEntities = updatedRelatedEntities;
 
     importMeta.updatedEntities =
       this.importExistingService.getImportHistoryForUpdatedEntities(
@@ -220,7 +292,7 @@ export class ImportService {
     return importMeta;
   }
 
-  undoImport(item: ImportMetadata) {
+  async undoImport(item: ImportMetadata) {
     const removes = item.createdEntities.map((id) =>
       this.entityMapper
         .load(item.config.entityType, id)
@@ -228,13 +300,22 @@ export class ImportService {
         .catch(() => undefined),
     );
 
-    // Or should the ImportMetadata still be kept indicating that it has been undone?
-    return Promise.all([
+    await Promise.all([
       ...removes,
       this.importExistingService.undoImport(item),
       this.importAdditionalService.undoImport(item),
-      this.entityMapper.remove(item),
     ]);
+    // afterwards, as the additional actions may have changed the same records
+    await Promise.all(
+      (item.updatedRelatedEntities ?? []).map((related) =>
+        // e.g. the related record was deleted since
+        this.importExistingService
+          .revertChanges(related)
+          .catch(() => undefined),
+      ),
+    );
+    // Or should the ImportMetadata still be kept indicating that it has been undone?
+    await this.entityMapper.remove(item);
   }
 
   /**

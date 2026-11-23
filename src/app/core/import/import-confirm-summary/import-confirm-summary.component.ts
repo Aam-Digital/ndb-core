@@ -74,6 +74,8 @@ export class ImportConfirmSummaryComponent {
   private readonly entityRegistry = inject(EntityRegistry);
 
   importInProgress = signal(false);
+  /** whether the records are saved and the related records are checked */
+  checkingRelatedRecords = signal(false);
   showInheritanceImportWarning = signal(false);
 
   constructor() {
@@ -101,6 +103,7 @@ export class ImportConfirmSummaryComponent {
       const completedImport = await this.importService.executeImport(
         this.data.entitiesToImport,
         this.data.importSettings,
+        () => this.checkingRelatedRecords.set(true),
       );
       this.showImportSuccessToast(completedImport);
       this.dialogRef.close({ completedImport });
@@ -132,6 +135,7 @@ export class ImportConfirmSummaryComponent {
       });
     } finally {
       this.importInProgress.set(false);
+      this.checkingRelatedRecords.set(false);
       this.dialogRef.disableClose = false;
     }
   }

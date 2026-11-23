@@ -42,6 +42,12 @@ export function getChangedFields(
   );
 }
 
+/** The state of a new record before it was created, without any values */
+export function stateBeforeCreation(entity: Entity): Entity {
+  const entityType = entity.getConstructor();
+  return new entityType(Entity.extractEntityIdFromId(entity.getId()));
+}
+
 /** The state of the records: as saved before the change, or with the change and the suggested values */
 export type ChangeSetState = "before" | "after";
 

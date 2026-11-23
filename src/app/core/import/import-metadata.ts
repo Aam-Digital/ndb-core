@@ -52,6 +52,15 @@ export class ImportMetadata extends Entity {
     id: string;
     importDataChanges: ImportDataChange;
   }[];
+
+  /**
+   * IDs of other records that were updated based on the imported records (e.g. values collected from them)
+   * and the previous values of the updated fields, to undo them together with the import.
+   */
+  @DatabaseField() updatedRelatedEntities?: {
+    id: string;
+    importDataChanges: ImportDataChange;
+  }[];
 }
 
 /**

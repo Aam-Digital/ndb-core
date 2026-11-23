@@ -18,6 +18,7 @@ import { createEntityOfType } from "../demo-data/create-entity-of-type";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { Logging } from "../logging/logging.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
+import { AutomatedFieldUpdateConfigService } from "../../features/inherited-field/automated-field-update/automated-field-update-config.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -290,6 +291,79 @@ describe("ImportService", () => {
       expectedEntities.map((e) => Object.assign(new ImportTestTarget(), e)),
       true,
     );
+  });
+
+  describe("updating related records", () => {
+    const settings: ImportSettings = {
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: undefined,
+    };
+
+    it("passes the imported records with their state before and the records changed by the additional actions to the value automation", async () => {
+      const created = TestEntity.create({ name: "created" });
+      const existing = TestEntity.create({ name: "old" });
+      existing._rev = "1-existing";
+      await entityMapper.save(existing);
+      const updated = existing.copy();
+      updated.name = "new";
+      updated["_importUndo"] = {
+        name: { previousValue: "old", importedValue: "new" },
+      };
+      const linkTarget = TestEntity.create({ name: "link target" });
+      vi.spyOn(
+        TestBed.inject(ImportAdditionalService),
+        "executeImport",
+      ).mockResolvedValue([{ entity: linkTarget, before: linkTarget.copy() }]);
+      const applyRules = vi
+        .spyOn(
+          TestBed.inject(AutomatedFieldUpdateConfigService),
+          "applyRulesToChanges",
+        )
+        .mockResolvedValue([]);
+
+      await service.executeImport([created, updated], settings);
+
+      expect(
+        applyRules.mock.calls[0][0].map(({ entity, before }) => [
+          entity.getId(),
+          before.isNew,
+          before["name"],
+        ]),
+      ).toEqual([
+        [created.getId(), true, undefined],
+        [existing.getId(), false, "old"],
+        [linkTarget.getId(), true, "link target"],
+      ]);
+    });
+
+    it.each([
+      ["reverts a related record that the import updated", "updated", "before"],
+      [
+        "keeps a related record that was changed since",
+        "changed since",
+        "changed since",
+      ],
+    ])("%s on undo", async (_, valueBeforeUndo, expectedValue) => {
+      const related = TestEntity.create({ name: "updated" });
+      await entityMapper.save(related);
+      const previous = related.copy();
+      previous.name = "before";
+      vi.spyOn(
+        TestBed.inject(AutomatedFieldUpdateConfigService),
+        "applyRulesToChanges",
+      ).mockResolvedValue([previous]);
+      const importMeta = await service.executeImport(
+        [TestEntity.create({ name: "imported" })],
+        settings,
+      );
+
+      related.name = valueBeforeUndo;
+      await entityMapper.save(related);
+      await service.undoImport(importMeta);
+
+      const reverted = await entityMapper.load(TestEntity, related.getId());
+      expect(reverted.name).toBe(expectedValue);
+    });
   });
 
   it("should allow to remove entities with undo", async () => {

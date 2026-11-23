@@ -10,6 +10,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Logging } from "../../logging/logging.service";
 import { isEqual } from "lodash-es";
+import { stateBeforeCreation } from "../../../features/inherited-field/automated-field-update/change-set";
 
 /**
  * Import data to update existing records
@@ -247,33 +248,58 @@ export class ImportExistingService {
       .map((e) => ({ id: e.getId(), importDataChanges: e["_importUndo"] }));
   }
 
-  async undoImport(item: ImportMetadata) {
-    const reverts = (item.updatedEntities ?? []).map(async (updated) => {
-      const entity = await this.entityMapper.load(
-        item.config.entityType,
-        updated.id,
+  /**
+   * The record as it was before the import: an updated record without the imported values,
+   * or a new record without any values.
+   */
+  getStateBeforeImport(entity: Entity): Entity {
+    const importUndo: ImportDataChange | undefined = entity["_importUndo"];
+    if (!importUndo) {
+      return stateBeforeCreation(entity);
+    }
+    const before = entity.copy();
+    for (const [field, { previousValue }] of Object.entries(importUndo)) {
+      before[field] = this.schemaService.valueToEntityFormat(
+        previousValue,
+        entity.getSchema().get(field),
       );
-      for (const [field, changes] of Object.entries(
-        updated.importDataChanges,
-      )) {
-        const fieldSchema = entity.getSchema().get(field);
-        if (
-          this.schemaService.valueToDatabaseFormat(
-            entity[field],
-            fieldSchema,
-          ) === changes.importedValue
-        ) {
-          // only revert back if the value has not been changed manually in the meantime
-          entity[field] = this.schemaService.valueToEntityFormat(
-            changes.previousValue,
-            fieldSchema,
-          );
-        }
-      }
-      await this.entityMapper.save(entity);
-    });
+    }
+    return before;
+  }
 
-    await Promise.all(reverts);
+  async undoImport(item: ImportMetadata) {
+    await Promise.all(
+      (item.updatedEntities ?? []).map((updated) =>
+        this.revertChanges(updated, item.config.entityType),
+      ),
+    );
+  }
+
+  /**
+   * Revert the changed fields of a record to their previous value,
+   * unless the value has been changed manually in the meantime.
+   * @param entityType the type of the record, if its id does not include it
+   */
+  async revertChanges(
+    { id, importDataChanges }: ImportMetadata["updatedEntities"][number],
+    entityType = Entity.extractTypeFromId(id),
+  ) {
+    const entity = await this.entityMapper.load(entityType, id);
+    for (const [field, changes] of Object.entries(importDataChanges)) {
+      const fieldSchema = entity.getSchema().get(field);
+      if (
+        isEqual(
+          this.schemaService.valueToDatabaseFormat(entity[field], fieldSchema),
+          changes.importedValue,
+        )
+      ) {
+        entity[field] = this.schemaService.valueToEntityFormat(
+          changes.previousValue,
+          fieldSchema,
+        );
+      }
+    }
+    await this.entityMapper.save(entity);
   }
 
   private isEmptyImportValue(value: any): boolean {

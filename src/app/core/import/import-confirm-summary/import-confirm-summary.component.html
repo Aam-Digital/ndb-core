@@ -22,7 +22,11 @@
   @if (importInProgress()) {
     <div class="margin-top-large">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <div i18n>Importing data ...</div>
+      @if (checkingRelatedRecords()) {
+        <div i18n>Checking related records ...</div>
+      } @else {
+        <div i18n>Importing data ...</div>
+      }
     </div>
   }
 </mat-dialog-content>
