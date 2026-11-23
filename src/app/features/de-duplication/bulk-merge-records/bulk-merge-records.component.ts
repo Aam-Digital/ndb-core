@@ -31,7 +31,20 @@ import {
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
-import { MergeAccountSectionComponent } from "./merge-account-section/merge-account-section.component";
+import {
+  AccountMergeDecision,
+  MergeAccountSectionComponent,
+} from "./merge-account-section/merge-account-section.component";
+import { UserAccount } from "app/core/user/user-admin-service/user-account";
+
+/** What the user chose in the merge dialog, returned when it closes to merge the records */
+export interface MergeDialogResult<
+  E extends Entity,
+> extends AccountMergeDecision {
+  mergedEntity: E;
+  /** the user account of each record to merge, if it has one */
+  entityAccounts: (UserAccount | null)[];
+}
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -192,7 +205,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     }
 
     const primaryIndex = this.accountSection()?.primaryIndex() ?? 0;
-    this.dialogRef.close({
+    const result: MergeDialogResult<E> = {
       mergedEntity: Object.assign(
         this.entitiesToMerge[primaryIndex].copy(),
         this.mergeForm.formGroup.value,
@@ -200,6 +213,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       entityAccounts: this.accountSection()?.entityAccounts() ?? [],
       accountUpdate: accountDecision?.accountUpdate ?? null,
       deleteSecondaryAccount: accountDecision?.deleteSecondaryAccount ?? true,
-    });
+    };
+    this.dialogRef.close(result);
   }
 }

@@ -3,7 +3,12 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { catchError, lastValueFrom, of } from "rxjs";
-import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
+import {
+  BulkMergeRecordsComponent,
+  MergeDialogResult,
+} from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
+import { AccountMergeDecision } from "./bulk-merge-records/merge-account-section/merge-account-section.component";
+import { asArray } from "#src/app/utils/asArray";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
@@ -31,7 +36,7 @@ export class BulkMergeService {
    * Returns true if merge was executed, false otherwise.
    */
   async executeAction(entity: Entity | Entity[]): Promise<boolean> {
-    const entities = Array.isArray(entity) ? entity : [entity];
+    const entities = asArray(entity);
     if (entities.length !== 2) {
       await this.confirmationDialog.getConfirmation(
         $localize`:bulk merge error:Invalid selection`,
@@ -62,17 +67,9 @@ export class BulkMergeService {
         entitiesToMerge: entitiesToMerge,
       },
     });
-    const dialogResult:
-      | {
-          mergedEntity: E;
-          accountUpdate: {
-            accountId: string;
-            update: Partial<UserAccount>;
-          } | null;
-          deleteSecondaryAccount: boolean;
-          entityAccounts: (UserAccount | null)[];
-        }
-      | undefined = await lastValueFrom(dialogRef.afterClosed());
+    const dialogResult: MergeDialogResult<E> | undefined = await lastValueFrom(
+      dialogRef.afterClosed(),
+    );
 
     if (!dialogResult) return false;
 
@@ -106,93 +103,90 @@ export class BulkMergeService {
     entitiesToMerge: E[],
     entityAccounts?: (UserAccount | null)[],
     deleteSecondaryAccount: boolean = true,
-    accountUpdate?: { accountId: string; update: Partial<UserAccount> } | null,
+    accountUpdate?: AccountMergeDecision["accountUpdate"],
   ): Promise<void> {
-    const accountByEntityId = new Map<string, UserAccount | null>(
-      entitiesToMerge.map((e, i) => [e.getId(), entityAccounts?.[i] ?? null]),
-    );
-
     await this.entityMapper.save(mergedEntity);
 
-    // Process all entities to be deleted
-    for (const e of entitiesToMerge) {
-      if (e.getId() === mergedEntity.getId()) continue;
+    for (const [i, discarded] of entitiesToMerge.entries()) {
+      if (discarded.getId() === mergedEntity.getId()) continue;
 
-      // Delete linked user account only if requested and one was explicitly found
-      if (deleteSecondaryAccount && accountByEntityId.get(e.getId())) {
-        await lastValueFrom(
-          this.userAdminService
-            .deleteUser(e.getId())
-            .pipe(catchError(() => of({ userDeleted: false }))),
-        );
+      if (deleteSecondaryAccount && entityAccounts?.[i]) {
+        await this.deleteAccount(discarded);
       }
-
-      await this.updateRelatedRefId(e, mergedEntity);
-
-      await this.entityMapper.remove(e);
+      await this.moveLinks(discarded, mergedEntity);
+      await this.entityMapper.remove(discarded);
     }
 
     if (accountUpdate) {
-      const result = await lastValueFrom(
-        this.userAdminService
-          .updateUser(accountUpdate.accountId, accountUpdate.update)
-          .pipe(catchError(() => of({ userUpdated: false }))),
-      );
-      if (!result.userUpdated) {
-        await this.confirmationDialog.getConfirmation(
-          $localize`:Account update error title:Account update failed`,
-          $localize`:Account update error:The merge completed but the user account roles could not be updated. Please update them manually or contact support.`,
-          OkButton,
-        );
-      }
+      await this.updateAccount(accountUpdate);
     }
   }
 
-  /**
-   * Update references from the entity being deleted to the merged entity
-   */
-  private async updateRelatedRefId(
-    oldEntity: Entity,
-    newEntity: Entity,
-  ): Promise<void> {
-    const affectedEntities =
-      await this.entityRelationshipService.loadAllLinkingToEntity(oldEntity);
-    for (const affected of affectedEntities) {
-      await this.updateEntityReferences(
-        affected.entity,
-        oldEntity,
-        newEntity,
-        affected.fields,
+  /** Delete the user account of the entity; a failure leaves the account behind without stopping the merge. */
+  private async deleteAccount(entity: Entity): Promise<void> {
+    await lastValueFrom(
+      this.userAdminService
+        .deleteUser(entity.getId())
+        .pipe(catchError(() => of({ userDeleted: false }))),
+    );
+  }
+
+  /** Change the links to the discarded entity in all related records to the merged entity. */
+  private async moveLinks(discarded: Entity, merged: Entity): Promise<void> {
+    const linkingRecords =
+      await this.entityRelationshipService.loadAllLinkingToEntity(discarded);
+    for (const { entity, fields } of linkingRecords) {
+      await this.relinkRecord(
+        entity,
+        fields,
+        discarded.getId(),
+        merged.getId(),
       );
     }
   }
 
-  /**
-   * Updates references from the oldEntity to the newEntity in a related entity.
-   */
-  private async updateEntityReferences(
-    relatedEntity: Entity,
-    oldEntity: Entity,
-    newEntity: Entity,
-    refField: FormFieldConfig[],
+  /** Replace the link to the old id with the new id in the related record and save it. */
+  private async relinkRecord(
+    record: Entity,
+    fields: FormFieldConfig[],
+    oldId: string,
+    newId: string,
   ): Promise<void> {
-    const oldId = oldEntity.getId();
-    const newId = newEntity.getId();
-    const refFieldId = refField[0].id;
+    const refFieldId = fields[0].id;
 
-    if (Array.isArray(relatedEntity[refFieldId])) {
-      relatedEntity[refFieldId] = Array.from(
-        new Set(
-          relatedEntity[refFieldId].map((id) => (id === oldId ? newId : id)),
-        ),
+    if (Array.isArray(record[refFieldId])) {
+      record[refFieldId] = Array.from(
+        new Set(record[refFieldId].map((id) => (id === oldId ? newId : id))),
       );
-    } else if (relatedEntity[refFieldId] === oldId) {
-      relatedEntity[refFieldId] = newId;
+    } else if (record[refFieldId] === oldId) {
+      record[refFieldId] = newId;
     }
 
-    this.updateAttendanceFields(relatedEntity, oldId, newId);
+    this.updateAttendanceFields(record, oldId, newId);
 
-    await this.entityMapper.save(relatedEntity);
+    await this.entityMapper.save(record);
+  }
+
+  /**
+   * Update the user account of the merged entity (e.g. its roles).
+   * As the records are already merged, a failure is only shown to the user.
+   */
+  private async updateAccount({
+    accountId,
+    update,
+  }: NonNullable<AccountMergeDecision["accountUpdate"]>): Promise<void> {
+    const result = await lastValueFrom(
+      this.userAdminService
+        .updateUser(accountId, update)
+        .pipe(catchError(() => of({ userUpdated: false }))),
+    );
+    if (!result.userUpdated) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:Account update error title:Account update failed`,
+        $localize`:Account update error:The merge completed but the user account roles could not be updated. Please update them manually or contact support.`,
+        OkButton,
+      );
+    }
   }
 
   /**
