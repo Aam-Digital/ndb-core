@@ -4,6 +4,9 @@
 }
 
 :host {
+  // a block box gives the absolutely positioned settings icon a definite containing block
+  // (an inline host around block content is resolved differently between Chromium versions)
+  display: block;
   position: relative;
 }
 
