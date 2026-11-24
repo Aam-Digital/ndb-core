@@ -1,0 +1,109 @@
+{
+  "_id": "Config:DemoData",
+  "data": {
+    "Child": {
+      "count": 60,
+      "fields": {
+        "dateOfBirth": {
+          "min": 8,
+          "max": 21
+        },
+        "admissionDate": {
+          "yearsPast": 4
+        }
+      },
+      "samples": [
+        {
+          "interessenHobbys": "Fußball, Musik hören und Zeichnen",
+          "bemerkung": "Sehr motiviert, kommt zuverlässig zu den Treffen."
+        },
+        {
+          "interessenHobbys": "Lesen und Schwimmen",
+          "bemerkung": "Braucht Unterstützung beim Lesen, ist aber sehr interessiert."
+        },
+        {
+          "interessenHobbys": "Basketball und Videospiele",
+          "bemerkung": "Etwas schüchtern am Anfang, taut nach einigen Treffen auf."
+        },
+        {
+          "interessenHobbys": "Tanzen, Kochen und Handball",
+          "bemerkung": "Wünscht sich vor allem Unterstützung bei den Hausaufgaben."
+        }
+      ]
+    },
+    "School": {
+      "count": 25,
+      "fields": {
+        "dateOfBirth": {
+          "min": 22,
+          "max": 65
+        },
+        "admissionDate": {
+          "yearsPast": 4
+        }
+      },
+      "samples": [
+        {
+          "motivation": "Möchte etwas zurückgeben und ein Kind auf seinem Weg begleiten.",
+          "interessen": "Wandern, Fotografie und Literatur",
+          "wuenscheCoachee": "Offen für alle Altersgruppen, am liebsten gemeinsame Ausflüge.",
+          "bemerkungen": "Sehr engagiert, war bereits ehrenamtlich in einem Sportverein aktiv."
+        },
+        {
+          "motivation": "Hat selbst als Jugendliche Unterstützung erhalten und will das weitergeben.",
+          "interessen": "Kochen, Radfahren und Musik",
+          "wuenscheCoachee": "Am liebsten ein jüngeres Kind, gerne mit Interesse an Musik.",
+          "bemerkungen": "Flexible Zeiten, bevorzugt Treffen am Wochenende."
+        },
+        {
+          "motivation": "Sucht eine sinnvolle Aufgabe neben dem Studium.",
+          "interessen": "Klettern, Programmieren und Brettspiele",
+          "wuenscheCoachee": "Würde gerne bei Schule und Berufsorientierung unterstützen.",
+          "bemerkungen": "Noch wenig Erfahrung, aber sehr zuverlässig im Kontakt."
+        },
+        {
+          "motivation": "Möchte interkulturelle Begegnung fördern.",
+          "interessen": "Sprachen, Theater und Gartenarbeit",
+          "wuenscheCoachee": "Offen, gerne ein Kind mit Fluchterfahrung.",
+          "bemerkungen": "Spricht mehrere Sprachen, langjährige Erfahrung in der Jugendarbeit."
+        }
+      ]
+    },
+    "ChildSchoolRelation": {
+      "fields": {
+        "name": {
+          "faker": "lorem.words",
+          "fakerArgs": [
+            2
+          ]
+        },
+        "end": {
+          "after": "start"
+        }
+      }
+    },
+    "User": {
+      "count": 8
+    },
+    "event": {
+      "count": 12,
+      "samples": [
+        {
+          "anmerkungen": "Gemeinsamer Ausflug in den Kletterpark, gute Stimmung."
+        },
+        {
+          "anmerkungen": "Informationsabend für neue Mentor:innen."
+        },
+        {
+          "anmerkungen": "Sommerfest mit allen Patenschaften und Familien."
+        },
+        {
+          "anmerkungen": "Workshop zum Thema Kinderschutz."
+        }
+      ]
+    },
+    "Todo": {
+      "count": 25
+    }
+  }
+}

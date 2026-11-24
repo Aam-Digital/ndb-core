@@ -1,4 +1,5 @@
-import { DemoChildGenerator } from "../demo-child-generator.service";
+import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
+import { admissionDateOf } from "#src/app/core/demo-data/participant-dates";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { faker } from "../../../../core/demo-data/faker";
@@ -12,7 +13,7 @@ import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-
  */
 @Injectable()
 export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private demoEntities = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["HealthCheck"];
 
@@ -32,7 +33,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   public generateEntities(): Entity[] {
     const data = [];
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.demoEntities.get("Child")) {
       data.push(...this.generateHealthCheckHistoryForChild(child));
     }
 
@@ -42,7 +43,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   private generateHealthCheckHistoryForChild(child: Entity): Entity[] {
     const data = [];
 
-    let date = new Date(child["admissionDate"].getTime());
+    let date = new Date(admissionDateOf(child).getTime());
     let previousRecord = createEntityOfType("HealthCheck");
     previousRecord.height = 0;
     previousRecord.weight = 0;
@@ -73,7 +74,12 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   }
 
   private getAgeAtDate(child: Entity, date: Date): number {
-    const timeDiff = date.getTime() - child["dateOfBirth"].getTime();
+    const dateOfBirth = child["dateOfBirth"];
+    if (!(dateOfBirth instanceof Date)) {
+      // a use case that does not record a birthday gets the checks of a school age
+      return 8;
+    }
+    const timeDiff = date.getTime() - dateOfBirth.getTime();
     return timeDiff / (1000 * 60 * 60 * 24 * 365);
   }
 

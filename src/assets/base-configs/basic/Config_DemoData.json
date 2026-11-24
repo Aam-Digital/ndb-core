@@ -1,0 +1,37 @@
+{
+  "_id": "Config:DemoData",
+  "data": {
+    "Child": {
+      "count": 40,
+      "fields": {
+        "gender": {
+          "ids": [
+            "M",
+            "F"
+          ]
+        }
+      }
+    },
+    "School": {
+      "count": 6,
+      "fields": {
+        "name": {
+          "faker": "company.name"
+        },
+        "language": {
+          "valuePool": [
+            "Hindi",
+            "English",
+            "Bengali"
+          ]
+        },
+        "timing": {
+          "valuePool": [
+            "6 a.m. - 11 a.m.",
+            "11 a.m. - 4 p.m."
+          ]
+        }
+      }
+    }
+  }
+}

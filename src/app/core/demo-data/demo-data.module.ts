@@ -21,70 +21,93 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
-import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { DemoSchoolGenerator } from "../../child-dev-project/children/demo-data-generators/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
 import { DemoActivityGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-generator.service";
 import { DemoActivityEventsGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-events-generator.service";
 import { DemoNoteGeneratorService } from "../../child-dev-project/notes/demo-data/demo-note-generator.service";
 import { DemoAserGeneratorService } from "../../child-dev-project/children/demo-data-generators/aser/demo-aser-generator.service";
-import { DemoEducationalMaterialGeneratorService } from "../../child-dev-project/children/demo-data-generators/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/demo-data-generators/health-check/demo-health-check-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
-import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { DemoEntityStore } from "./generic/demo-entity-store";
+import { DemoValueService } from "./generic/demo-value.service";
+import { DEMO_VALUE_GENERATOR } from "./generic/demo-value-generator";
+import {
+  BooleanDemoValueGenerator,
+  ConfigurableEnumDemoValueGenerator,
+  DateDemoValueGenerator,
+  DateOnlyDemoValueGenerator,
+  DateWithAgeDemoValueGenerator,
+  EmailDemoValueGenerator,
+  LongTextDemoValueGenerator,
+  MonthDemoValueGenerator,
+  NumberDemoValueGenerator,
+  PercentageDemoValueGenerator,
+  SchemaEmbedArrayDemoValueGenerator,
+  SchemaEmbedDemoValueGenerator,
+  StringDemoValueGenerator,
+  UrlDemoValueGenerator,
+} from "./generic/core-demo-value-generators";
+
+/** Demo values per datatype, extensible from feature modules. */
+const demoValueGeneratorProviders = [
+  ConfigurableEnumDemoValueGenerator,
+  StringDemoValueGenerator,
+  LongTextDemoValueGenerator,
+  EmailDemoValueGenerator,
+  UrlDemoValueGenerator,
+  BooleanDemoValueGenerator,
+  NumberDemoValueGenerator,
+  PercentageDemoValueGenerator,
+  DateDemoValueGenerator,
+  DateOnlyDemoValueGenerator,
+  DateWithAgeDemoValueGenerator,
+  MonthDemoValueGenerator,
+  SchemaEmbedDemoValueGenerator,
+  SchemaEmbedArrayDemoValueGenerator,
+].map((useClass) => ({ provide: DEMO_VALUE_GENERATOR, useClass, multi: true }));
 
 const demoDataGeneratorProviders = [
+  // first, so the generators below can build on the records it creates
+  { provide: GenericDemoDataEngine, useClass: GenericDemoDataEngine },
   ...DemoUserGeneratorService.provider(),
-  ...DemoChildGenerator.provider({ count: 120 }),
-  ...DemoSchoolGenerator.provider({ count: 8 }),
   ...DemoChildSchoolRelationGenerator.provider(),
   ...DemoActivityGeneratorService.provider(),
   ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
   ...DemoNoteGeneratorService.provider({
     minNotesPerChild: 2,
     maxNotesPerChild: 6,
-    groupNotes: 3,
+    groupNotes: 15,
   }),
   ...DemoAserGeneratorService.provider(),
-  ...DemoEducationalMaterialGeneratorService.provider({
-    minCount: 3,
-    maxCount: 8,
-  }),
   ...DemoHealthCheckGeneratorService.provider(),
-  ...DemoHistoricalDataGenerator.provider({
-    minCountAttributes: 2,
-    maxCountAttributes: 5,
-  }),
   ...DemoTodoGeneratorService.provider(),
 ];
 
 /**
- * Generate realist mock entities for testing and demo purposes.
+ * Generate realistic mock entities for testing and demo purposes.
  *
- * Import this module in the root AppModule to automatically write demo data into the database on loading of the module.
- * You need to pass providers for {@link DemoDataGenerator} implementations to the `forRoot()` method to register them.
+ * {@link GenericDemoDataEngine} creates records for every entity type the active
+ * use case configures, from the type's schema and the `Config:DemoData` spec.
+ * The generators registered below keep the logic a declarative spec cannot express
+ * (date series, attendance, the fixed demo accounts); they read the engine's
+ * records from {@link DemoEntityStore} and declare the types they own themselves.
  *
- *```javascript
- *  DemoDataModule.forRoot([
- *    ...DemoChildGenerator.provider({count: 150}),
- *    { provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }
- *   ])
- * ```
+ * Call {@link DemoDataService}'s `publishDemoData()` to start generation, or
+ * `DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(dialog)`
+ * to show a progress dialog while it runs.
  *
- * In addition to importing the `DemoDataModule` you need to call the {@link DemoDataService}'s `publishDemoData()` method
- * to actually start the data generation.
- * Use `DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(this.dialog);` passing a `MatDialog` service
- * to display a dialog box to the user and automatically handle the data generation.
- *
- * To implement your own demo data generator, refer to the How-To Guides:
- * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
+ * See the [demo-data README](../../../../src/app/core/demo-data/README.md).
  */
 @NgModule({
   imports: [MatProgressBarModule, MatDialogModule],
   providers: [
     DemoDataInitializerService,
     DemoDataService,
+    DemoEntityStore,
+    DemoValueService,
+    demoValueGeneratorProviders,
     {
       provide: DemoDataServiceConfig,
       useValue: { dataGeneratorProviders: demoDataGeneratorProviders },

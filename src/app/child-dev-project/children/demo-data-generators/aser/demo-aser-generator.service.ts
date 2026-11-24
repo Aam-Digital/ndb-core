@@ -1,4 +1,5 @@
-import { DemoChildGenerator } from "../demo-child-generator.service";
+import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
+import { admissionDateOf } from "#src/app/core/demo-data/participant-dates";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { faker } from "../../../../core/demo-data/faker";
@@ -14,7 +15,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
  */
 @Injectable()
 export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private demoEntities = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["Aser"];
 
@@ -31,7 +32,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
   public generateEntities(): Entity[] {
     const data = [];
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.demoEntities.get("Child")) {
       data.push(...this.generateAserResultsForChild(child));
     }
 
@@ -41,9 +42,12 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
   private generateAserResultsForChild(child: Entity): Entity[] {
     const data = [];
 
-    let date = new Date(child["admissionDate"].getTime());
+    let date = new Date(admissionDateOf(child).getTime());
     let previousResult = createEntityOfType("Aser");
-    const firstLanguage = child["motherTongue"].toLowerCase();
+    // only some use cases record a mother tongue, and only some have a field for it
+    const motherTongue = child["motherTongue"];
+    const firstLanguage =
+      typeof motherTongue === "string" ? motherTongue.toLowerCase() : undefined;
     do {
       const aserResult = createEntityOfType("Aser");
       aserResult.child = child.getId();
@@ -56,10 +60,12 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
         readingLevels.slice(1),
         previousResult.english,
       );
-      aserResult[firstLanguage] = this.selectNextSkillLevel(
-        readingLevels.slice(1),
-        previousResult[firstLanguage],
-      );
+      if (firstLanguage && aserResult.getSchema().has(firstLanguage)) {
+        aserResult[firstLanguage] = this.selectNextSkillLevel(
+          readingLevels.slice(1),
+          previousResult[firstLanguage],
+        );
+      }
 
       data.push(aserResult);
 

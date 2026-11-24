@@ -1,8 +1,9 @@
 import { DemoDataGenerator } from "../demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { faker } from "../demo-data/faker";
 import { Entity } from "../entity/model/entity";
 import { createEntityOfType } from "../demo-data/create-entity-of-type";
+import { GenericDemoDataEngine } from "../demo-data/generic/generic-demo-data-engine";
 
 export const TEST_USER = "demo";
 
@@ -28,7 +29,19 @@ export class DemoUserGeneratorService extends DemoDataGenerator<Entity> {
     ];
   }
 
-  generateEntities = generateUsers;
+  private readonly engine = inject(GenericDemoDataEngine);
+
+  generateEntities(): Entity[] {
+    const users = generateUsers();
+    for (const user of users) {
+      // the accounts only carry a name: a use case configures far more on its staff
+      this.engine.fillRemainingFields(
+        user,
+        Entity.extractTypeFromId(user.getId()),
+      );
+    }
+    return users;
+  }
 }
 
 export function generateUsers(): Array<Entity & { name: string }> {

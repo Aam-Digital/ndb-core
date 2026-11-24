@@ -5,7 +5,7 @@ import {
   loadApp,
   test,
 } from "#e2e/fixtures.js";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 

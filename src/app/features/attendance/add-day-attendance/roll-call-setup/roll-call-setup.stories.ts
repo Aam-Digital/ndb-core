@@ -1,4 +1,4 @@
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils";
 import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";

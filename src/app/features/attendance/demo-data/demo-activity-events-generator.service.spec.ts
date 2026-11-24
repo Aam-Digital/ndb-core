@@ -8,6 +8,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { TestBed } from "@angular/core/testing";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { AttendanceService } from "../attendance.service";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 
@@ -50,6 +51,10 @@ describe("DemoActivityEventsGenerator", () => {
           useValue: mockActivityGenerator,
         },
         { provide: AttendanceService, useValue: mockAttendanceService },
+        {
+          provide: GenericDemoDataEngine,
+          useValue: { fillRemainingFields: () => undefined },
+        },
       ],
     });
     service = TestBed.inject(DemoActivityEventsGeneratorService);

@@ -24,6 +24,14 @@ export abstract class DemoDataGenerator<T extends Entity> {
   protected readonly entityRegistry = inject(EntityRegistry);
 
   /**
+   * Entity types this generator creates itself, so that the generic engine skips them.
+   * Defaults to the required types, which for most generators is the type they create.
+   */
+  get ownedEntityTypes(): string[] {
+    return this.requiredEntityTypes;
+  }
+
+  /**
    * generated demo entities
    */
   get entities() {

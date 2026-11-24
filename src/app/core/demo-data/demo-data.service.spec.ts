@@ -3,16 +3,25 @@ import { TestBed } from "@angular/core/testing";
 import { DemoDataService, DemoDataServiceConfig } from "./demo-data.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { AlertService } from "../alerts/alert.service";
-import {
-  DemoChildConfig,
-  DemoChildGenerator,
-} from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { Injectable } from "@angular/core";
+import { DemoDataGenerator } from "./demo-data-generator";
+import { Entity } from "../entity/model/entity";
 import { Database } from "../database/database";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { ConfigService } from "../config/config.service";
 import { of } from "rxjs";
 import type { Mock } from "vitest";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { DemoEntityStore } from "./generic/demo-entity-store";
+
+/** a generator registered through the config, to check it is picked up */
+@Injectable()
+class StubDemoDataGenerator extends DemoDataGenerator<Entity> {
+  protected generateEntities(): Entity[] {
+    return [];
+  }
+}
 
 type EntityMapperMock = Pick<EntityMapperService, "saveAll"> & {
   saveAll: Mock;
@@ -36,8 +45,7 @@ describe("DemoDataService", () => {
     };
     mockDatabase.isEmpty.mockResolvedValue(true);
     mockGeneratorsProviders = [
-      { provide: DemoChildGenerator, useClass: DemoChildGenerator },
-      { provide: DemoChildConfig, useValue: { count: 10 } },
+      { provide: StubDemoDataGenerator, useClass: StubDemoDataGenerator },
     ];
 
     TestBed.configureTestingModule({
@@ -62,8 +70,13 @@ describe("DemoDataService", () => {
           provide: ConfigService,
           useValue: { configUpdates: of({}) },
         },
+        {
+          provide: GenericDemoDataEngine,
+          useValue: { init: () => Promise.resolve(), linkReferences: () => {} },
+        },
         mockGeneratorsProviders,
         EntityRegistry,
+        DemoEntityStore,
       ],
     });
   });

@@ -1,6 +1,6 @@
 import { argosScreenshot, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 
 const CHILD_NAME = "<CONDITIONS TEST CHILD>";
 
