@@ -48,9 +48,7 @@ A JSON document imported with the base config, keyed by entity type. Everything 
         "motherTongue": { "valuePool": ["Hindi", "Bengali", "Urdu"] },
         "dropoutDate": { "nullProbability": 0.85, "after": "admissionDate" }
       },
-      "samples": [
-        { "interests": "Cricket and music", "remarks": "Very motivated." }
-      ]
+      "samples": [{ "interests": "Cricket and music", "remarks": "Very motivated." }]
     }
   }
 }
