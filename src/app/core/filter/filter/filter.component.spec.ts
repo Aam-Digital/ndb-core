@@ -183,6 +183,26 @@ describe("FilterComponent", () => {
     );
   });
 
+  it("should store filters set by their default in the url when the user changes another filter", async () => {
+    const urlState = TestBed.inject(UrlStateService);
+    const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "date", default: "0" }, { id: "category" }],
+    });
+    const categoryFilter = component
+      .filterSelections()
+      .find((f) => f.name === "category");
+
+    component.filterOptionSelected(categoryFilter, ["someCategory"]);
+
+    expect(updateUrlParamsSpy).toHaveBeenCalledWith(
+      { date: "0", category: "someCategory" },
+      false,
+    );
+  });
+
   it("should load url params and set no filter value when empty", async () => {
     activatedRouteMock.snapshot = {
       queryParams: {
