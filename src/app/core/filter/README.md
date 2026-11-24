@@ -46,8 +46,8 @@ the in-memory engine rejects both there. Alternatives go outside, as an `$or` of
 The conditions editor offers the properties of embedded fields, listed in place of the embedded field,
 and stores a row on one as such a condition on an entry (`FilterService.getConditionFields` and `editorRowToCondition`);
 two rows on the same embedded field may match different entries.
-Permissions and notification rules match the stored documents, so there an old `event-attendance-map` field
-(entries stored as tuples `[participantId, { status, remarks }]`) is only offered as a whole.
+Permissions and notification rules match the stored documents, which do not support conditions on the entries
+of an embedded field, so there the editor offers an embedded field only as a whole.
 
 **"Not defined"** (`createEmptyValueFilter`) matches a missing, `null` or empty value (and an empty list for multi-value fields).
 For an embedded list it matches records without entries or with at least one entry without a value.

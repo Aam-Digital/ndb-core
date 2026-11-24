@@ -108,7 +108,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
 
   /**
    * The conditions are matched against the stored documents (e.g. permissions, notification rules),
-   * so embedded fields whose entries are stored in another shape are only offered whole (see `FilterService.getConditionFields`).
+   * which do not support conditions on the entries of an embedded field, so these are only offered whole (see `FilterService.getConditionFields`).
    */
   readonly onStoredDocuments = input(false);
 

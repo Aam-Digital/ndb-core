@@ -354,7 +354,7 @@ describe("FilterService", () => {
     expect(excludedFields).toEqual(["log"]);
   });
 
-  it("keeps an old attendance field whole for conditions on the stored documents, as its entries are stored as tuples", () => {
+  it("keeps embedded fields whole for conditions on the stored documents", () => {
     @DatabaseEntity("FilterServiceLegacyAttendanceTest")
     class LegacyAttendanceEntity extends Entity {
       @DatabaseField({ label: "Attendance", dataType: "event-attendance-map" })
@@ -378,9 +378,9 @@ describe("FilterService", () => {
     expect(service.getConditionFields(LegacyAttendanceEntity, true)).toEqual({
       options: [
         expect.objectContaining({ id: "childrenAttendance" }),
-        expect.objectContaining({ id: "log.status" }),
+        expect.objectContaining({ id: "log" }),
       ],
-      excludedFields: ["log"],
+      excludedFields: [],
     });
   });
 

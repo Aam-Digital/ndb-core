@@ -808,30 +808,22 @@ describe("ConditionsEditorComponent", () => {
       expect(component.conditionFields().excludedFields).toEqual(["log"]);
     });
 
-    it("offers the properties of embedded fields also for conditions on the stored documents (e.g. permissions)", () => {
+    it("offers an embedded field only whole for conditions on the stored documents (e.g. permissions)", () => {
       // a change of the input after the editor started updates the fields
       fixture.componentRef.setInput("onStoredDocuments", true);
-
-      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
-        "log.status",
-        "log.date",
-      ]);
-    });
-
-    it("keeps an embedded field whole for conditions on the stored documents if its entries are stored in another shape", () => {
-      // like the tuples of an old attendance field
-      vi.spyOn(embedDatatype, "getEmbeddedFieldDbPath").mockImplementation(
-        (innerProp) => `1.${innerProp}`,
-      );
-      fixture.componentRef.setInput("onStoredDocuments", true);
-      const stored = { log: { $elemMatch: { status: "M" } } };
-      component.conditions = stored;
-      component.ngOnInit();
 
       expect(component.conditionFields().options.map((o) => o.id)).toEqual([
         "log",
       ]);
       expect(component.conditionFields().excludedFields).toEqual([]);
+    });
+
+    it("keeps a saved condition on an entry of an embedded field as stored for conditions on the stored documents", () => {
+      fixture.componentRef.setInput("onStoredDocuments", true);
+      const stored = { log: { $elemMatch: { status: "M" } } };
+      component.conditions = stored;
+      component.ngOnInit();
+
       expect(component.conditionsArray()).toEqual([stored]);
     });
 

@@ -51,8 +51,8 @@ export class FilterService {
    * The `excludedFields` are the embedded fields replaced by their properties.
    * The options include the record's own fields, as the field select lists given options before the ones it infers.
    *
-   * @param onStoredDocuments the conditions are matched against the stored documents (e.g. permissions, notification rules):
-   *    an embedded field whose entries are stored in another shape (like the tuples of an old attendance field) is then kept whole
+   * @param onStoredDocuments the conditions are matched against the stored documents (e.g. permissions, notification rules),
+   *    which do not support conditions on the entries of an embedded field: embedded fields are then kept whole
    */
   getConditionFields(
     entityType: EntityConstructor,
@@ -61,17 +61,9 @@ export class FilterService {
     options: FormFieldConfig[];
     excludedFields: string[];
   } {
-    const embeddedRefs = getEmbeddedFieldRefs(
-      this.schemaService,
-      entityType,
-    ).filter(
-      ({ outerSchema, innerProp }) =>
-        !onStoredDocuments ||
-        getSchemaEmbedDatatype(
-          this.schemaService,
-          outerSchema,
-        ).getEmbeddedFieldDbPath(innerProp) === innerProp,
-    );
+    const embeddedRefs = onStoredDocuments
+      ? []
+      : getEmbeddedFieldRefs(this.schemaService, entityType);
 
     const options: FormFieldConfig[] = [];
     const excludedFields: string[] = [];
