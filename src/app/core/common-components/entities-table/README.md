@@ -166,9 +166,12 @@ own keys, and a naming rule keeps them apart:
 - Filters use the id of the filter, usually a field id
   (e.g. `?status=active`). Links into a list, e.g. from a dashboard widget,
   use the same keys. `FilterComponent` only reads the params of its configured
-  filters and of fields of the entity type.
+  filters and of fields of the entity type. A URL with any filter param does
+  not apply the configured default values, so when the user changes a filter,
+  `FilterComponent` stores all active filters, including those set by a default.
 - All other view state uses keys starting with `_`: the sort store `_sortBy`
-  and `_sortOrder`, `TabStateMemoDirective` its tab key (`_tabIndex` by
+  and `_sortOrder`, `FreeTextFilterComponent` the search text (`_search`),
+  `TabStateMemoDirective` its tab key (`_tabIndex` by
   default). Custom field ids cannot start with `_` (the admin UI does not
   allow it, and CouchDB reserves such top-level properties), so these keys
   never collide with a filter. Only the built-in `_id` and `_rev` start with
@@ -176,6 +179,17 @@ own keys, and a naming rule keeps them apart:
 
 A new kind of URL state (e.g. of a feature data source) must use a key with the
 `_` prefix as well.
+
+After deleting a record on its details page, the app returns to the list the
+record was opened from, including that list's URL state (`PreviousPageService`
+remembers the previous page); without such a list it opens the plain parent
+list.
+
+On small screens the filters are edited in the filter overlay. Until the user
+opens it, a hidden `FilterComponent` of the entity list applies the filters from
+the URL, e.g. when the user comes back from the details page of a record. Once
+the overlay is opened, it owns the filters: two filter components would
+overwrite each other's changes.
 
 ## Wide tables
 

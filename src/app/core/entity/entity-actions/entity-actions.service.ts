@@ -18,6 +18,7 @@ import { BulkOperationStateService } from "./bulk-operation-state.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { asArray } from "#src/app/utils/asArray";
+import { PreviousPageService } from "#src/app/utils/url-state/previous-page.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -36,6 +37,7 @@ export class EntityActionsService {
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly previousPage = inject(PreviousPageService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -200,7 +202,13 @@ export class EntityActionsService {
     if (navigate) {
       currentUrl = getUrlWithoutParams(this.router);
       const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
-      await this.router.navigate([parentUrl]);
+      // return to the list with the filters and sort the user had set when opening the record
+      const previousPageUrl = this.previousPage.getPreviousPageUrl();
+      const queryParams =
+        previousPageUrl?.split("?")[0] === parentUrl
+          ? this.router.parseUrl(previousPageUrl).queryParams
+          : undefined;
+      await this.router.navigate([parentUrl], { queryParams });
     }
 
     this.showSnackbarConfirmationWithUndo(
