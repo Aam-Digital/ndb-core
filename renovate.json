@@ -23,6 +23,7 @@
   "additionalReviewers": [
     "Abhinegi2"
   ],
+  "platformAutomerge": false,
   "ignoreDeps": [
     "zone.js",
     "moment",
@@ -35,6 +36,16 @@
         "katex"
       ],
       "allowedVersions": "<0.19.0"
+    },
+    {
+      "description": "Minor, patch and digest updates merge automatically once CI passes; the renovate-approve app gives the required approval. A group containing a major update is not automerged. minimumReleaseAge keeps freshly published versions out for a few days. platformAutomerge is off so that Renovate itself waits for every check, including the Argos visual review, which is not a required check in GitHub.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "minimumReleaseAge": "3 days"
     }
   ]
 }

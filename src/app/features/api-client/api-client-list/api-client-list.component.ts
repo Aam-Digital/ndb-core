@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../core/common-components/horizontal-scroll/horizontal-scroll.component";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,6 +42,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ViewTitleComponent,
+    HorizontalScrollComponent,
     HintBoxComponent,
     MatTableModule,
     MatButtonModule,

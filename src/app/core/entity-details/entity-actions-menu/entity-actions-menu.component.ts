@@ -75,6 +75,15 @@ export class EntityActionsMenuComponent {
     return groupEntityActions(menuActions);
   });
 
+  /**
+   * Build the actions again when the menu is opened, as they may depend on other records
+   * (e.g. the external links and the values in their web addresses), which may have changed meanwhile.
+   * The current actions stay visible until the new ones are ready.
+   */
+  protected reloadActions() {
+    this.actionsResource.reload();
+  }
+
   async executeAction(action: EntityAction) {
     const entity = this.entity();
     if (!entity) {

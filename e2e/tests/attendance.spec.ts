@@ -1,6 +1,6 @@
 import { times } from "lodash-es";
 
-import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import { argosScreenshot, expect, loadApp, Page, test } from "#e2e/fixtures.js";
 import { generateActivity } from "#src/app/features/attendance/demo-data/demo-activity-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
@@ -83,59 +83,28 @@ test("Record attendance for one activity", async ({ page }) => {
   await expect(page.getByTitle("Absent")).toBeVisible();
 });
 
-test("View and download attendance report", async ({ page }) => {
+test("Attendance views of the generated demo data", async ({ page }) => {
+  // Default demo data includes recurring activities AND their generated events,
+  // which is what the calendar needs to render highlighted days.
   await loadApp(page);
-  await page.getByRole("navigation").getByText("Reports").click();
-  await page.getByRole("combobox", { name: "Select Report" }).click();
-  await page.getByRole("option", { name: "Attendance Report" }).click();
-  await page.getByRole("button", { name: "Open calendar" }).click();
-  await page.getByRole("button", { name: "January 12," }).click();
-  await page.getByRole("button", { name: "January 18," }).click();
-  await page.getByRole("button", { name: "Calculate" }).click();
 
-  // Verify the names , class , school , total , present , rate and late columns are visible
-  await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: "Class" })).toBeVisible();
-  await expect(
-    page.getByRole("columnheader", { name: "School" }),
-  ).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: "Total" })).toBeVisible();
-  await expect(
-    page.getByRole("columnheader", { name: "Present" }),
-  ).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: "Rate" })).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: "Late" })).toBeVisible();
-
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Download", exact: true }).click();
-  // export dialog: select CSV format and confirm
-  // (scoped to the dialog because the page's own "Download" button may still be
-  // exposed to the accessibility tree while the dialog is opening)
-  const exportDialog = page.getByRole("dialog");
-  await exportDialog.getByRole("radio", { name: "CSV" }).click();
-  await exportDialog
-    .getByRole("button", { name: "Download", exact: true })
-    .click();
-  const filename = (await downloadPromise).suggestedFilename();
-  expect(filename).toBe("Attendance Report 2025-01-12_2025-01-18.csv");
+  await test.step("Children list displays monthly attendance percentage", () =>
+    showChildrenAttendancePercentage(page));
+  await test.step("Recurring activities list and calendar navigation", () =>
+    browseRecurringActivityCalendar(page));
+  await test.step("View and download attendance report", () =>
+    downloadAttendanceReport(page));
 });
 
-test("Children list displays monthly attendance percentage", async ({
-  page,
-}) => {
-  await loadApp(page);
+async function showChildrenAttendancePercentage(page: Page) {
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
   // wait for the table to load with data
   await expect(page.locator("tr.mat-mdc-row")).toHaveCount(10);
   await argosScreenshot(page, "children-school-info");
-});
+}
 
-test("Recurring activities list and calendar navigation", async ({ page }) => {
-  // Default demo data includes recurring activities AND their generated events,
-  // which is what the calendar needs to render highlighted days.
-  await loadApp(page);
-
+async function browseRecurringActivityCalendar(page: Page) {
   await page.getByRole("navigation").getByText("Attendance").click();
   await page.getByRole("button", { name: "Recurring Activities" }).click();
 
@@ -173,7 +142,43 @@ test("Recurring activities list and calendar navigation", async ({ page }) => {
 
   // The calendar grid is still present after the change.
   await expect(calendar.getByRole("grid")).toBeVisible();
-});
+}
+
+async function downloadAttendanceReport(page: Page) {
+  await page.getByRole("navigation").getByText("Reports").click();
+  await page.getByRole("combobox", { name: "Select Report" }).click();
+  await page.getByRole("option", { name: "Attendance Report" }).click();
+  await page.getByRole("button", { name: "Open calendar" }).click();
+  await page.getByRole("button", { name: "January 12," }).click();
+  await page.getByRole("button", { name: "January 18," }).click();
+  await page.getByRole("button", { name: "Calculate" }).click();
+
+  // Verify the names , class , school , total , present , rate and late columns are visible
+  await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Class" })).toBeVisible();
+  await expect(
+    page.getByRole("columnheader", { name: "School" }),
+  ).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Total" })).toBeVisible();
+  await expect(
+    page.getByRole("columnheader", { name: "Present" }),
+  ).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Rate" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Late" })).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download", exact: true }).click();
+  // export dialog: select CSV format and confirm
+  // (scoped to the dialog because the page's own "Download" button may still be
+  // exposed to the accessibility tree while the dialog is opening)
+  const exportDialog = page.getByRole("dialog");
+  await exportDialog.getByRole("radio", { name: "CSV" }).click();
+  await exportDialog
+    .getByRole("button", { name: "Download", exact: true })
+    .click();
+  const filename = (await downloadPromise).suggestedFilename();
+  expect(filename).toBe("Attendance Report 2025-01-12_2025-01-18.csv");
+}
 
 // Center enum values from configurable-enums.json (id: label)
 const CENTER_ALIPORE = { id: "C1", label: "Alipore" };

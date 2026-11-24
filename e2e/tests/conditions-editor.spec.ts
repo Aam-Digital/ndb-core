@@ -1,4 +1,4 @@
-import { argosScreenshot, loadApp, test } from "#e2e/fixtures.js";
+import { argosScreenshot, loadApp, Page, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 
@@ -8,7 +8,7 @@ const CHILD_NAME = "<CONDITIONS TEST CHILD>";
  * Ripples and transitions started by the last click are still running when a screenshot is taken
  * right away, which makes the result depend on timing. A cancelled animation counts as finished.
  */
-async function waitForAnimations(page: Parameters<typeof argosScreenshot>[0]) {
+async function waitForAnimations(page: Page) {
   await page.evaluate(() =>
     Promise.all(
       document
@@ -22,11 +22,25 @@ async function waitForAnimations(page: Parameters<typeof argosScreenshot>[0]) {
   );
 }
 
-test("Conditional colour sections use the shared conditions editor", async ({
+test("The shared conditions editor in conditional colours, matching prefilters and permissions", async ({
   page,
 }) => {
-  await loadApp(page, generateUsers());
+  await loadApp(page, [
+    ...generateUsers(),
+    generateChild({ name: CHILD_NAME }),
+  ]);
 
+  await test.step("Conditional colour sections use the shared conditions editor", () =>
+    editConditionalColour(page));
+  await test.step("The conditions editor combines rows with Any or All", () =>
+    combineConditionsWithAny(page));
+  await test.step("Matching prefilters use the shared conditions editor", () =>
+    editMatchingPrefilter(page));
+  await test.step("Permission conditions use the shared conditions editor dialog", () =>
+    editPermissionCondition(page));
+});
+
+async function editConditionalColour(page: Page) {
   await page.getByRole("navigation").getByText("Schools").click();
   await page.locator("button[mat-icon-button][color='primary']").click();
   await page.getByText("Configure Data Structure").click();
@@ -40,21 +54,10 @@ test("Conditional colour sections use the shared conditions editor", async ({
 
   await waitForAnimations(page);
   await argosScreenshot(page, "conditional-colour-condition-row");
-});
+}
 
-test("The conditions editor combines rows with Any or All", async ({
-  page,
-}) => {
-  await loadApp(page, generateUsers());
-
-  await page.getByRole("navigation").getByText("Schools").click();
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByText("Configure Data Structure").click();
-  await page.getByText("General Settings").click();
-  await page.getByRole("button", { name: "Add Conditional Color" }).click();
-
-  await page.getByRole("textbox", { name: "Field", exact: true }).click();
-  await page.getByRole("option", { name: "Name", exact: true }).click();
+/** continues in the conditional colour of {@link editConditionalColour} */
+async function combineConditionsWithAny(page: Page) {
   await page
     .getByRole("button", { name: "Add Condition", exact: true })
     .click();
@@ -62,16 +65,12 @@ test("The conditions editor combines rows with Any or All", async ({
 
   await waitForAnimations(page);
   await argosScreenshot(page, "conditions-editor-any-combinator");
-});
 
-test("Matching prefilters use the shared conditions editor", async ({
-  page,
-}) => {
-  await loadApp(page, [
-    ...generateUsers(),
-    generateChild({ name: CHILD_NAME }),
-  ]);
+  // the config editor hides the main navigation
+  await page.getByRole("button", { name: "Cancel" }).click();
+}
 
+async function editMatchingPrefilter(page: Page) {
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: CHILD_NAME }).click();
   await page.getByRole("tab", { name: "Education", exact: true }).click();
@@ -88,13 +87,12 @@ test("Matching prefilters use the shared conditions editor", async ({
 
   await waitForAnimations(page);
   await argosScreenshot(page, "matching-prefilter-condition-row");
-});
 
-test("Permission conditions use the shared conditions editor dialog", async ({
-  page,
-}) => {
-  await loadApp(page, generateUsers());
+  // the matching editor hides the main navigation
+  await page.getByRole("button", { name: "Cancel" }).click();
+}
 
+async function editPermissionCondition(page: Page) {
   await page.getByRole("navigation").getByText("Admin").click();
   await page.getByRole("navigation").getByText("Admin Overview").click();
   await page.getByText("User Management", { exact: true }).click();
@@ -124,4 +122,4 @@ test("Permission conditions use the shared conditions editor dialog", async ({
     element: dialog,
     fullPage: false,
   });
-});
+}

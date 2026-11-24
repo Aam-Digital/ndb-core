@@ -250,7 +250,13 @@ export class TemplateExportSelectionDialogComponent {
       );
       this.dialogRef.close(true);
 
-      this.alertService.addInfo($localize`Files generated successfully.`);
+      if (result.incomplete) {
+        this.alertService.addWarning(
+          $localize`Files generated, but some related records could not be loaded and are missing from them. Please try again.`,
+        );
+      } else {
+        this.alertService.addInfo($localize`Files generated successfully.`);
+      }
     } catch (error) {
       Logging.warn("Failed to generate files", error);
       this.failures.set(entities.map((entity) => ({ entity, error })));

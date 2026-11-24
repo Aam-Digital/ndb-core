@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../common-components/horizontal-scroll/horizontal-scroll.component";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { TranslatableText } from "../../../config/multi-lingual-config";
 import { resolveLocaleText } from "../../../language/active-locale";
@@ -90,6 +91,7 @@ type FieldDragDropEvent = CdkDragDrop<
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
     AdminDisplayConditionButtonComponent,
+    HorizontalScrollComponent,
   ],
 })
 export class AdminEntityFormComponent {

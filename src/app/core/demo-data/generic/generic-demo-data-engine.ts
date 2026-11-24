@@ -106,6 +106,8 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
 
   private spec: DemoDataSpec = {};
   private typesOfOtherGenerators = new Set<string>();
+  /** the types this engine created, whose references are all its to fill */
+  private generatedTypes = new Set<string>();
 
   /** Load the scenario's spec before generation starts. */
   async init(typesOfOtherGenerators: string[] = []): Promise<void> {
@@ -126,6 +128,7 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
 
   protected generateEntities(): Entity[] {
     this.store.clear();
+    this.generatedTypes.clear();
     const generated: Entity[] = [];
 
     for (const entityType of this.entityTypesToGenerate()) {
@@ -142,6 +145,9 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
       );
 
       this.store.set(entityType, entities);
+      if (entities.length > 0) {
+        this.generatedTypes.add(entityType);
+      }
       generated.push(...entities);
     }
 
@@ -247,6 +253,12 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
   }
 
   private fillField(field: EntitySchemaField, fill: FieldFill): unknown {
+    if (field.validators?.withinParent) {
+      // it has to sit inside the value of a linked record, which is only linked in the
+      // second pass - inventing one now would show as a warning on most records
+      return undefined;
+    }
+
     const required = field.validators?.required === true;
     if (!required && this.leaveEmpty(fill.spec)) {
       return undefined;
@@ -410,10 +422,20 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
           !isReservedField(id),
       );
 
+      const managed = this.fieldsOfOtherGenerators(
+        entityType,
+        referenceFields,
+        entities,
+      );
+
       for (const entity of entities) {
         for (const [fieldId, field] of referenceFields) {
-          if (entity[fieldId] !== undefined) {
-            // a generator of its own already said what this record relates to
+          if (
+            entity[fieldId] !== undefined ||
+            managed.has(fieldId) ||
+            // only records a linked record offers are valid here, which this cannot know
+            field.validators?.selectionCondition
+          ) {
             continue;
           }
 
@@ -433,6 +455,26 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
         }
       }
     }
+  }
+
+  /**
+   * The reference fields of a type that its own generator takes care of.
+   * Having set one on some of its records, it left the others empty on purpose -
+   * the roots of a hierarchy, the actions nobody is responsible for.
+   */
+  private fieldsOfOtherGenerators(
+    entityType: string,
+    referenceFields: [string, EntitySchemaField][],
+    entities: Entity[],
+  ): Set<string> {
+    if (this.generatedTypes.has(entityType)) {
+      return new Set();
+    }
+    return new Set(
+      referenceFields
+        .map(([fieldId]) => fieldId)
+        .filter((fieldId) => entities.some((e) => e[fieldId] !== undefined)),
+    );
   }
 
   private linkCandidates(field: EntitySchemaField): Entity[] {

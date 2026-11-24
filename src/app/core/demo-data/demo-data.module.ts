@@ -29,6 +29,7 @@ import { DemoAserGeneratorService } from "../../child-dev-project/children/demo-
 import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/demo-data-generators/health-check/demo-health-check-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
+import { DemoActionGeneratorService } from "#src/app/features/hierarchy/demo-data/demo-action-generator.service";
 import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
 import { DemoEntityStore } from "./generic/demo-entity-store";
 import { DemoValueService } from "./generic/demo-value.service";
@@ -83,6 +84,7 @@ const demoDataGeneratorProviders = [
   ...DemoAserGeneratorService.provider(),
   ...DemoHealthCheckGeneratorService.provider(),
   ...DemoTodoGeneratorService.provider(),
+  ...DemoActionGeneratorService.provider(),
 ];
 
 /**

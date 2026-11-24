@@ -1,3 +1,4 @@
+/* "clip" instead of "hidden": no scroll container, so the sticky scrollbar of a wide table inside sticks to the screen */
 .activity-tab-group .mat-mdc-tab-body-content {
-  overflow: hidden;
+  overflow: clip;
 }

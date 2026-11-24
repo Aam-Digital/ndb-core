@@ -296,6 +296,13 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.EditEntityTypeComponent,
       ),
   ],
+  [
+    "EditCondition",
+    () =>
+      import("./admin/building-blocks/edit-condition/edit-condition.component").then(
+        (c) => c.EditConditionComponent,
+      ),
+  ],
 
   [
     "EditUrl",

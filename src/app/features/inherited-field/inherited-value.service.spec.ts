@@ -33,6 +33,8 @@ describe("InheritedValueService", () => {
       load: vi.fn(),
       loadType: vi.fn(),
       receiveUpdates: vi.fn(),
+      // a local database, whose linked records are found through the reference index
+      supportsFind: vi.fn(() => false),
     };
     mockEntityMapperService.receiveUpdates.mockReturnValue(updateSubject);
     mockIndexing = {

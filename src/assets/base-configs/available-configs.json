@@ -106,6 +106,7 @@
       "education/ReportConfig.json",
       "education/ReportConfig_sql.json",
       "all-features/ReportConfig.json",
+      "all-features/ExternalLinkConfig.json",
       "education/EmailTemplate_birthday.json",
       "all-features/Config_DemoData.json"
     ],

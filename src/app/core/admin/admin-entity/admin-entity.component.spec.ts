@@ -26,6 +26,8 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { AdminEntityLinkedRecordsComponent } from "./admin-entity-linked-records/admin-entity-linked-records.component";
+import { AdminEntitySectionsService } from "./admin-entity-sections.service";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 describe("AdminEntityComponent", () => {
@@ -104,6 +106,10 @@ describe("AdminEntityComponent", () => {
         },
       ],
     });
+    // the list of records in a registered section is not under test here
+    TestBed.overrideComponent(AdminEntityLinkedRecordsComponent, {
+      set: { template: "", imports: [] },
+    });
     fixture = TestBed.createComponent(AdminEntityComponent);
     component = fixture.componentInstance;
     entityMapper = TestBed.inject(
@@ -133,6 +139,31 @@ describe("AdminEntityComponent", () => {
 
     // cleanup
     AdminTestEntity.schema.delete("testCancelField");
+  });
+
+  it("should show a section registered by a feature module when its nav item is clicked", () => {
+    TestBed.inject(AdminEntitySectionsService).addSections({
+      id: "testSection",
+      label: "Test Section",
+      entityType: AdminTestEntity.ENTITY_TYPE,
+      property: "name",
+      columns: ["name"],
+    });
+    fixture = TestBed.createComponent(AdminEntityComponent);
+    fixture.componentRef.setInput("entityType", AdminTestEntity.ENTITY_TYPE);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector("app-admin-entity-linked-records")).toBeNull();
+
+    const navItem = Array.from(
+      element.querySelectorAll<HTMLElement>("mat-list-item"),
+    ).find((item) => item.textContent.includes("Test Section"));
+    navItem.click();
+    fixture.detectChanges();
+
+    expect(
+      element.querySelector("app-admin-entity-linked-records"),
+    ).not.toBeNull();
   });
 
   it("should save schema and view config", async () => {

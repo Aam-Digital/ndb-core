@@ -1,12 +1,13 @@
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
+import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
 import { TemplateExport } from "#src/app/features/template-export/template-export.entity.js";
 
 const CHILD_NAME = "<TEMPLATE EXPORT CHILD>";
 const TEMPLATE_TITLE = "<E2E LETTER TEMPLATE>";
 
-test("Template-export action generates a file in the selected format", async ({
+test("Template-export action generates a file in the selected format, including related records configured for the template", async ({
   page,
 }) => {
   // Stub the export feature/availability check so the dialog reaches its
@@ -20,9 +21,17 @@ test("Template-export action generates a file in the selected format", async ({
     }),
   );
   // The backend names the generated file after the requested format.
-  let renderRequest: { convertTo?: string } | undefined;
+  let renderRequest:
+    | {
+        convertTo?: string;
+        data?: {
+          name: string;
+          _related?: { Note?: { relatedEntities?: { subject: string }[] } };
+        };
+      }
+    | undefined;
   await page.route("**/api/v1/export/render/**", (route) => {
-    renderRequest = route.request().postDataJSON() as { convertTo?: string };
+    renderRequest = route.request().postDataJSON() as typeof renderRequest;
     return route.fulfill({
       status: 200,
       contentType: "application/octet-stream",
@@ -35,6 +44,7 @@ test("Template-export action generates a file in the selected format", async ({
 
   const users = generateUsers();
   const child = generateChild({ name: CHILD_NAME });
+  const note = generateNote({ child, author: users[0] });
   const template = Object.assign(new TemplateExport(), {
     title: TEMPLATE_TITLE,
     applicableForEntityTypes: ["Child"],
@@ -43,8 +53,30 @@ test("Template-export action generates a file in the selected format", async ({
     targetFileName: "letter",
   });
 
-  await loadApp(page, [...users, child, template]);
+  await loadApp(page, [...users, child, note, template]);
 
+  // Admin: include the notes linking to a child in the template
+  await page
+    .getByRole("navigation")
+    .getByText("Admin", { exact: true })
+    .click();
+  await page.getByRole("navigation").getByText("Admin Overview").click();
+  await page.getByRole("button", { name: /^Templates and Forms/ }).click();
+  await page.getByText("Export Templates", { exact: true }).click();
+  await page.getByRole("cell", { name: TEMPLATE_TITLE }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+
+  await page.getByRole("button", { name: "Add related records" }).click();
+  await page.getByRole("combobox", { name: "Related records" }).click();
+  await page.getByRole("option", { name: /^Notes \(linked through/ }).click();
+  await expect(
+    page.getByText("{d._related.Note.relatedEntities[i].subject}"),
+  ).toBeVisible();
+
+  await argosScreenshot(page, "template-export-related-records");
+  await page.getByRole("button", { name: "Save" }).click();
+
+  // User: generate a file for the child
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: CHILD_NAME }).click();
 
@@ -75,4 +107,9 @@ test("Template-export action generates a file in the selected format", async ({
 
   expect(renderRequest?.convertTo).toBe("docx");
   expect(download.suggestedFilename()).toBe("letter.docx");
+  // the template gets the related records under their record type and link field
+  expect(renderRequest?.data?.name).toBe(CHILD_NAME);
+  const notes = renderRequest?.data?._related?.Note?.relatedEntities;
+  expect(notes).toHaveLength(1);
+  expect(notes[0].subject).toBe(note.subject);
 });

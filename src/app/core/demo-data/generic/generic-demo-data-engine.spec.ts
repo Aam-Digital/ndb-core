@@ -28,6 +28,12 @@ function declareTypes(types: Record<string, Record<string, any>>) {
   return Object.keys(types).map((type) => ({ _id: `entity:${type}` }));
 }
 
+/** A record of a type declared above, as a generator of its own would create it. */
+function TestEntityOfType(type: string): Entity {
+  const ctor = TestBed.inject(EntityRegistry).get(type);
+  return new ctor();
+}
+
 describe("GenericDemoDataEngine", () => {
   let engine: GenericDemoDataEngine;
   let entityConfigs: { _id: string }[] = [];
@@ -348,6 +354,25 @@ describe("GenericDemoDataEngine", () => {
           (participant) => !participant["peers"].includes(participant.getId()),
         ),
       ).toBe(true);
+    });
+
+    it("keeps the gaps a generator left in a reference it manages", async () => {
+      // the roots of a hierarchy have no parent on purpose: a generator that set the
+      // field on some of its records decides for all of them
+      spec = { Organisation: { count: 2 } };
+      await engine.init(["Participant"]);
+      engine["generateEntities"]();
+
+      const store = TestBed.inject(DemoEntityStore);
+      const root = TestEntityOfType("Participant");
+      const child = TestEntityOfType("Participant");
+      child["partner"] = "Organisation:set-by-the-generator";
+      store.add("Participant", [root, child]);
+
+      engine.linkReferences();
+
+      expect(root["partner"]).toBeUndefined();
+      expect(child["partner"]).toBe("Organisation:set-by-the-generator");
     });
 
     it("keeps a reference another generator set itself", async () => {
