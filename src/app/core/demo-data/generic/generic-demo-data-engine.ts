@@ -173,7 +173,7 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
           this.entityRegistry.has(type) &&
           !this.entityRegistry.get(type).isInternalEntity,
       )
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
   }
 
   /**
@@ -430,31 +430,37 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
 
       for (const entity of entities) {
         for (const [fieldId, field] of referenceFields) {
-          if (
-            entity[fieldId] !== undefined ||
-            managed.has(fieldId) ||
-            // only records a linked record offers are valid here, which this cannot know
-            field.validators?.selectionCondition
-          ) {
-            continue;
+          if (entity[fieldId] === undefined && !managed.has(fieldId)) {
+            this.linkField(entity, fieldId, field);
           }
-
-          // a record is not its own sibling or parent
-          const candidates = this.linkCandidates(field).filter(
-            (candidate) => candidate !== entity,
-          );
-          if (candidates.length === 0) {
-            continue;
-          }
-
-          entity[fieldId] = field.isArray
-            ? faker.helpers
-                .arrayElements(candidates, { min: 1, max: MAX_ARRAY_VALUES })
-                .map((candidate) => candidate.getId())
-            : faker.helpers.arrayElement(candidates).getId();
         }
       }
     }
+  }
+
+  private linkField(
+    entity: Entity,
+    fieldId: string,
+    field: EntitySchemaField,
+  ): void {
+    if (field.validators?.selectionCondition) {
+      // only records a linked record offers are valid here, which this cannot know
+      return;
+    }
+
+    // a record is not its own sibling or parent
+    const candidates = this.linkCandidates(field).filter(
+      (candidate) => candidate !== entity,
+    );
+    if (candidates.length === 0) {
+      return;
+    }
+
+    entity[fieldId] = field.isArray
+      ? faker.helpers
+          .arrayElements(candidates, { min: 1, max: MAX_ARRAY_VALUES })
+          .map((candidate) => candidate.getId())
+      : faker.helpers.arrayElement(candidates).getId();
   }
 
   /**

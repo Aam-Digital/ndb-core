@@ -13,7 +13,7 @@ import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-
  */
 @Injectable()
 export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["HealthCheck"];
 

@@ -7,7 +7,7 @@ import {
 } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import type { Entity } from "#src/app/core/entity/model/entity.js";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 
 const LINKED_CHILD = "<MATCHING CHILD & CO>";
 const OTHER_CHILD = "<OTHER CHILD>";

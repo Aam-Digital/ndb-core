@@ -15,7 +15,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
  */
 @Injectable()
 export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["Aser"];
 

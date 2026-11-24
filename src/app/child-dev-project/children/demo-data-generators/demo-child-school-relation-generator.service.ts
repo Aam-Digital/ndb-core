@@ -16,7 +16,7 @@ import { Entity } from "../../../core/entity/model/entity";
 export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
   override requiredEntityTypes = ["ChildSchoolRelation"];
 
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
   private readonly engine = inject(GenericDemoDataEngine);
 
   /**

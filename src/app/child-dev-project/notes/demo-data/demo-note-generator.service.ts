@@ -25,7 +25,7 @@ export class DemoNoteConfig {
 @Injectable()
 export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   private config = inject(DemoNoteConfig);
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
   private demoUsers = inject(DemoUserGeneratorService);
   private readonly enums = inject(ConfigurableEnumService);
 
@@ -74,32 +74,43 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     }
 
     for (const [fieldId, field] of this.entityRegistry.get("Note").schema) {
-      if (field.dataType !== "entity") {
-        continue;
-      }
-      const allowed = asArray(field.additional).filter(
-        (type): type is string => typeof type === "string",
-      );
+      const allowed =
+        field.dataType === "entity"
+          ? asArray(field.additional).filter(
+              (type): type is string => typeof type === "string",
+            )
+          : [];
       if (allowed.length === 0) {
         continue;
       }
 
       for (const note of notes) {
-        const record = note as unknown as Record<string, unknown>;
-        if (record[fieldId] === undefined) {
-          continue;
-        }
-        const kept = asArray(record[fieldId]).filter(
-          (id) =>
-            typeof id === "string" &&
-            allowed.includes(Entity.extractTypeFromId(id)),
-        );
-        if (kept.length === 0) {
-          delete record[fieldId];
-        } else {
-          record[fieldId] = field.isArray ? kept : kept[0];
-        }
+        this.keepOnlyAllowedLinks(note, fieldId, field.isArray, allowed);
       }
+    }
+  }
+
+  /** Drop the ids of a reference field whose type the use case does not allow there. */
+  private keepOnlyAllowedLinks(
+    note: Note,
+    fieldId: string,
+    isArray: boolean,
+    allowed: string[],
+  ): void {
+    const record = note as unknown as Record<string, unknown>;
+    if (record[fieldId] === undefined) {
+      return;
+    }
+
+    const kept = asArray(record[fieldId]).filter(
+      (id) =>
+        typeof id === "string" &&
+        allowed.includes(Entity.extractTypeFromId(id)),
+    );
+    if (kept.length === 0) {
+      delete record[fieldId];
+    } else {
+      record[fieldId] = isArray ? kept : kept[0];
     }
   }
 

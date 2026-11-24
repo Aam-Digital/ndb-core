@@ -59,8 +59,8 @@ export class DemoDataService {
   private injector = inject(Injector);
   private config = inject(DemoDataServiceConfig);
   private configService = inject(ConfigService);
-  private engine = inject(GenericDemoDataEngine);
-  private demoEntities = inject(DemoEntityStore);
+  private readonly engine = inject(GenericDemoDataEngine);
+  private readonly demoEntities = inject(DemoEntityStore);
 
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];

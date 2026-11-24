@@ -20,8 +20,8 @@ function declareTypes(types: Record<string, Record<string, any>>) {
   const registry = TestBed.inject(EntityRegistry);
   for (const [type, attributes] of Object.entries(types)) {
     class Declared extends Entity {
-      static override ENTITY_TYPE = type;
-      static override schema = new Map(Object.entries(attributes));
+      static override readonly ENTITY_TYPE = type;
+      static override readonly schema = new Map(Object.entries(attributes));
     }
     registry.set(type, Declared);
   }
@@ -172,8 +172,8 @@ describe("GenericDemoDataEngine", () => {
         (value: any) => expect(value).toBeUndefined(),
       ],
     ])("sets %s", async (_name, attributes, typeSpec, field, assert) => {
-      entityConfigs = declareTypes({ Thing: attributes as any });
-      spec = { Thing: { count: 1, ...(typeSpec as any) } };
+      entityConfigs = declareTypes({ Thing: attributes });
+      spec = { Thing: { count: 1, ...typeSpec } };
 
       const [record] = await generate("Thing");
 

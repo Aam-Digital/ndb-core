@@ -19,7 +19,7 @@ import { AttendanceDatatype } from "../model/attendance.datatype";
  */
 @Injectable()
 export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
   private demoUser = inject(DemoUserGeneratorService);
   private attendanceService = inject(AttendanceService);
   private readonly engine = inject(GenericDemoDataEngine);

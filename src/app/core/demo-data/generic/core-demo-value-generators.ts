@@ -35,11 +35,8 @@ export class ConfigurableEnumDemoValueGenerator implements DemoValueGenerator {
       : values;
     // an option without a label is a placeholder in the config, not a real choice
     const labelled = allowed.filter((value) => !!value.label);
-    const options = labelled.length
-      ? labelled
-      : allowed.length
-        ? allowed
-        : values;
+    const narrowed = allowed.length ? allowed : values;
+    const options = labelled.length ? labelled : narrowed;
 
     return options.length
       ? context.faker.helpers.arrayElement(options)

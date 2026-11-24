@@ -15,7 +15,7 @@ export class DemoTodoConfig {
 @Injectable()
 export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   private config = inject(DemoTodoConfig);
-  private demoEntities = inject(DemoEntityStore);
+  private readonly demoEntities = inject(DemoEntityStore);
   private demoUsers = inject(DemoUserGeneratorService);
 
   override requiredEntityTypes = ["Todo"];
