@@ -4,7 +4,7 @@ import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { getUrlWithoutParams } from "../../../utils/utils";
+import { getPathOfUrl, getUrlWithoutParams } from "../../../utils/utils";
 import {
   EntityDeleteService,
   EntityDeletionAbortedError,
@@ -205,7 +205,7 @@ export class EntityActionsService {
       // return to the list with the filters and sort the user had set when opening the record
       const previousPageUrl = this.previousPage.getPreviousPageUrl();
       const queryParams =
-        previousPageUrl?.split("?")[0] === parentUrl
+        previousPageUrl && getPathOfUrl(previousPageUrl) === parentUrl
           ? this.router.parseUrl(previousPageUrl).queryParams
           : undefined;
       await this.router.navigate([parentUrl], { queryParams });

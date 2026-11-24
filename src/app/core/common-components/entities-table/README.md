@@ -170,7 +170,8 @@ own keys, and a naming rule keeps them apart:
   not apply the configured default values, so when the user changes a filter,
   `FilterComponent` stores all active filters, including those set by a default.
 - All other view state uses keys starting with `_`: the sort store `_sortBy`
-  and `_sortOrder`, `FreeTextFilterComponent` the search text (`_search`),
+  and `_sortOrder`, `FreeTextFilterComponent` the search text (`_search`,
+  which also follows the browser's Back and Forward),
   `TabStateMemoDirective` its tab key (`_tabIndex` by
   default). Custom field ids cannot start with `_` (the admin UI does not
   allow it, and CouchDB reserves such top-level properties), so these keys

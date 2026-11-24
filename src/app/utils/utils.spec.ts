@@ -1,5 +1,6 @@
 import {
   calculateAge,
+  getPathOfUrl,
   groupBy,
   isValidDate,
   mapInBatches,
@@ -50,6 +51,15 @@ describe("Utils", () => {
 
     await expect(mapInBatches([1, 2, 3, 4], 2, fn)).rejects.toThrow("fail");
     expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    ["/event", "/event"],
+    ["/event?team=abc&_sortBy=date", "/event"],
+    ["/event#top", "/event"],
+    ["/event?team=abc#top", "/event"],
+  ])("getPathOfUrl strips the query and fragment of %s", (url, expected) => {
+    expect(getPathOfUrl(url)).toBe(expected);
   });
 
   it("isValidDate for normal Date object", () => {

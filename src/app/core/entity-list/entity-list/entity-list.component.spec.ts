@@ -64,6 +64,7 @@ describe("EntityListComponent", () => {
     mockActivatedRoute = {
       component: undefined,
       queryParams: new Subject(),
+      queryParamMap: new Subject(),
       data: routeData,
       snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
     };

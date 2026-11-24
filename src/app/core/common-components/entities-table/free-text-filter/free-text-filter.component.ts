@@ -1,5 +1,12 @@
 import { Location } from "@angular/common";
-import { Component, effect, inject, input } from "@angular/core";
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  untracked,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -10,6 +17,7 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
+import { getPathOfUrl } from "#src/app/utils/utils";
 
 /** URL query param of the search text (with the "_" prefix of view state other than filters, see `UrlStateService`) */
 const SEARCH_PARAM = "_search";
@@ -73,40 +81,27 @@ export class FreeTextFilterComponent {
 
   dataSource = input.required<EntitiesTableDataSource<Entity>>();
 
+  /** The search text in the URL, following the browser's Back and Forward. */
+  private readonly searchTextInUrl = this.urlState.watchUrlParam(SEARCH_PARAM);
+
   private restoredDataSource?: EntitiesTableDataSource<Entity>;
+  private knownSearchTextInUrl?: string;
 
   /** The search text that is not yet written to the URL (as the delay has not passed). */
   private pendingSearchText?: { text: string };
+  private pendingWrite?: ReturnType<typeof setTimeout>;
 
   constructor() {
-    effect((onCleanup) => {
+    effect(() => {
       const dataSource = this.dataSource();
       const searchText = dataSource.searchText();
-      const searchTextInUrl = this.urlState.getUrlParam(SEARCH_PARAM) ?? "";
-
-      if (this.restoredDataSource !== dataSource) {
-        this.restoredDataSource = dataSource;
-        if (!searchText && searchTextInUrl) {
-          dataSource.searchText.set(searchTextInUrl);
-          return;
-        }
-      }
-
-      if (searchText !== searchTextInUrl) {
-        const timer = setTimeout(
-          () =>
-            this.urlState.updateUrlParams({
-              [SEARCH_PARAM]: searchText || null,
-            }),
-          FREE_TEXT_URL_UPDATE_DELAY_MS,
-        );
-        this.pendingSearchText = { text: searchText };
-        onCleanup(() => {
-          clearTimeout(timer);
-          this.pendingSearchText = undefined;
-        });
-      }
+      const searchTextInUrl = this.searchTextInUrl() ?? "";
+      untracked(() =>
+        this.syncWithUrl(dataSource, searchText, searchTextInUrl),
+      );
     });
+
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.pendingWrite));
 
     this.router.events
       .pipe(
@@ -114,6 +109,44 @@ export class FreeTextFilterComponent {
         takeUntilDestroyed(),
       )
       .subscribe((event) => this.keepPendingSearchTextInHistory(event.url));
+  }
+
+  private syncWithUrl(
+    dataSource: EntitiesTableDataSource<Entity>,
+    searchText: string,
+    searchTextInUrl: string,
+  ) {
+    const urlChanged = searchTextInUrl !== this.knownSearchTextInUrl;
+    this.knownSearchTextInUrl = searchTextInUrl;
+
+    if (this.restoredDataSource !== dataSource) {
+      this.restoredDataSource = dataSource;
+      if (!searchText && searchTextInUrl) {
+        dataSource.searchText.set(searchTextInUrl);
+        return;
+      }
+    } else if (urlChanged && !this.pendingSearchText) {
+      // The user went back or forward to another URL.
+      // While a write is pending, a change of the URL is only an earlier write arriving.
+      dataSource.searchText.set(searchTextInUrl);
+      return;
+    }
+
+    this.scheduleUrlUpdate(searchText, searchTextInUrl);
+  }
+
+  private scheduleUrlUpdate(searchText: string, searchTextInUrl: string) {
+    clearTimeout(this.pendingWrite);
+    this.pendingSearchText = undefined;
+    if (searchText === searchTextInUrl) {
+      return;
+    }
+
+    this.pendingSearchText = { text: searchText };
+    this.pendingWrite = setTimeout(() => {
+      this.pendingSearchText = undefined;
+      this.urlState.updateUrlParams({ [SEARCH_PARAM]: searchText || null });
+    }, FREE_TEXT_URL_UPDATE_DELAY_MS);
   }
 
   /**
@@ -124,7 +157,10 @@ export class FreeTextFilterComponent {
    */
   private keepPendingSearchTextInHistory(targetUrl: string) {
     const currentUrl = this.router.url;
-    if (!this.pendingSearchText || pathOf(targetUrl) === pathOf(currentUrl)) {
+    if (
+      !this.pendingSearchText ||
+      getPathOfUrl(targetUrl) === getPathOfUrl(currentUrl)
+    ) {
       return;
     }
 
@@ -140,8 +176,4 @@ export class FreeTextFilterComponent {
       this.location.getState(),
     );
   }
-}
-
-function pathOf(url: string): string {
-  return url.split(/[?#]/)[0];
 }

@@ -1,4 +1,5 @@
 import { Location } from "@angular/common";
+import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Event, NavigationStart, Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -15,17 +16,19 @@ import {
 describe("FreeTextFilterComponent", () => {
   let fixture: ComponentFixture<FreeTextFilterComponent>;
   let dataSource: InMemoryDataSource<TestEntity>;
+  let searchTextInUrl: WritableSignal<string | null>;
   let urlState: {
-    getUrlParam: ReturnType<typeof vi.fn>;
+    watchUrlParam: ReturnType<typeof vi.fn>;
     updateUrlParams: ReturnType<typeof vi.fn>;
   };
 
-  function createComponent(searchTextInUrl: string | null = null) {
+  function createComponent(initialSearchTextInUrl: string | null = null) {
+    searchTextInUrl = signal(initialSearchTextInUrl);
     urlState = {
-      getUrlParam: vi
+      watchUrlParam: vi
         .fn()
         .mockImplementation((key) =>
-          key === "_search" ? searchTextInUrl : null,
+          key === "_search" ? searchTextInUrl : signal(null),
         ),
       updateUrlParams: vi.fn(),
     };
@@ -71,6 +74,41 @@ describe("FreeTextFilterComponent", () => {
     });
   });
 
+  it("follows the URL when the user goes back or forward in the browser history", async () => {
+    vi.useFakeTimers();
+    createComponent("Alipore");
+
+    searchTextInUrl.set(null);
+    fixture.detectChanges();
+    expect(dataSource.searchText()).toBe("");
+
+    searchTextInUrl.set("Bob");
+    fixture.detectChanges();
+    expect(dataSource.searchText()).toBe("Bob");
+
+    await vi.advanceTimersByTimeAsync(FREE_TEXT_URL_UPDATE_DELAY_MS);
+    expect(urlState.updateUrlParams).not.toHaveBeenCalled();
+  });
+
+  it("keeps the text the user went on typing when an earlier write reaches the URL", async () => {
+    vi.useFakeTimers();
+    createComponent();
+    dataSource.searchText.set("Ali");
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(FREE_TEXT_URL_UPDATE_DELAY_MS);
+    dataSource.searchText.set("Alic");
+    fixture.detectChanges();
+
+    searchTextInUrl.set("Ali");
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(FREE_TEXT_URL_UPDATE_DELAY_MS);
+
+    expect(dataSource.searchText()).toBe("Alic");
+    expect(urlState.updateUrlParams).toHaveBeenLastCalledWith({
+      _search: "Alic",
+    });
+  });
+
   describe("when the user leaves the list before the delay has passed", () => {
     let router: Router;
     let replaceState: ReturnType<typeof vi.spyOn>;
@@ -99,6 +137,14 @@ describe("FreeTextFilterComponent", () => {
         "",
         { navigationId: 3 },
       );
+    });
+
+    it("does not touch the history once the text is written to the URL", () => {
+      vi.advanceTimersByTime(FREE_TEXT_URL_UPDATE_DELAY_MS);
+
+      startNavigationTo("/event/123");
+
+      expect(replaceState).not.toHaveBeenCalled();
     });
 
     it("does not touch the history for a change of the same page", () => {

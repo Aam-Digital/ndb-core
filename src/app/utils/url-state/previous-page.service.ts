@@ -1,6 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs";
+import { getPathOfUrl } from "../utils";
 
 /**
  * Remembers the page the user came from, e.g. the list that a record was opened from.
@@ -22,7 +23,7 @@ export class PreviousPageService {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
         const url = event.urlAfterRedirects;
-        if (pathOf(url) !== pathOf(this.currentUrl)) {
+        if (getPathOfUrl(url) !== getPathOfUrl(this.currentUrl)) {
           this.previousPageUrl = this.currentUrl;
         }
         this.currentUrl = url;
@@ -33,8 +34,4 @@ export class PreviousPageService {
   getPreviousPageUrl(): string | undefined {
     return this.previousPageUrl;
   }
-}
-
-function pathOf(url: string): string {
-  return url.split(/[?#]/)[0];
 }
