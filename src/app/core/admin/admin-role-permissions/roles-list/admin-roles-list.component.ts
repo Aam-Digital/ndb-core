@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../common-components/horizontal-scroll/horizontal-scroll.component";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -31,6 +32,7 @@ import {
   selector: "app-admin-roles-list",
   imports: [
     ViewTitleComponent,
+    HorizontalScrollComponent,
     MatTableModule,
     ListPaginatorComponent,
     MatButtonModule,

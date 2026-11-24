@@ -27,6 +27,7 @@
   z-index: 10;
 }
 
+/* on the scroll wrapper, not the table: the wrapper would clip the shadow of the table */
 .table {
   @include entities-table.table;
 }

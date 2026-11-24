@@ -1,3 +1,4 @@
+import { HorizontalScrollComponent } from "../../../common-components/horizontal-scroll/horizontal-scroll.component";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -85,6 +86,7 @@ interface CellState extends PermissionCellState {
   selector: "app-permission-matrix",
   imports: [
     MatTableModule,
+    HorizontalScrollComponent,
     MatButtonModule,
     MatTooltipModule,
     MatFormFieldModule,

@@ -61,7 +61,7 @@ Example:
 }
 ```
 
-Uploading and downloading the configuration can be done by admins inside the admin view.
+Admins can edit the configuration manually (JSON editor), download and upload it, or download a snapshot as context for AI-supported changes in the admin view under "Technical Administration" > "Edit Application Configuration" (`/admin/ai-agent`).
 
 ---
 
