@@ -87,6 +87,19 @@
       </div>
     </app-view-actions>
 
+    <!-- Filters are edited in the filter overlay, but must also be applied from the URL when the list opens -->
+    @if (entityConstructor() && !filterOverlayUsed()) {
+      <app-filter
+        hidden
+        [filterConfig]="filters()"
+        [entityType]="entityConstructor()!"
+        [entities]="recordsDataSource().allRecords()"
+        [useUrlQueryParams]="true"
+        [(filterObj)]="filterObj"
+        [dataSource]="recordsDataSource()"
+      ></app-filter>
+    }
+
     @if (selectedRows()) {
       <div class="bulk-action-spacing">
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
