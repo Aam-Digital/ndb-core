@@ -7,7 +7,6 @@ import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { InMemoryDataSource } from "../data-source/in-memory-data-source";
-import type { Mock } from "vitest";
 import {
   FREE_TEXT_URL_UPDATE_DELAY_MS,
   FreeTextFilterComponent,
