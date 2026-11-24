@@ -95,6 +95,12 @@
           "max": 3
         }
       }
+    },
+    "RecurringActivity": {
+      "count": 0
+    },
+    "Event": {
+      "count": 0
     }
   }
 }

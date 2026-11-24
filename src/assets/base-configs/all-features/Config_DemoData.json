@@ -90,6 +90,15 @@
     },
     "HistoricalEntityData": {
       "count": 250
+    },
+    "RecurringActivity": {
+      "count": 0
+    },
+    "Event": {
+      "count": 0
+    },
+    "ClassSession": {
+      "count": 0
     }
   }
 }
