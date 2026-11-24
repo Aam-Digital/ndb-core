@@ -1,7 +1,11 @@
+import { Location } from "@angular/common";
 import { Component, effect, inject, input } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { NavigationStart, Router } from "@angular/router";
+import { filter } from "rxjs";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
@@ -64,10 +68,15 @@ export const FREE_TEXT_URL_UPDATE_DELAY_MS = 400;
 })
 export class FreeTextFilterComponent {
   private readonly urlState = inject(UrlStateService);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   dataSource = input.required<EntitiesTableDataSource<Entity>>();
 
   private restoredDataSource?: EntitiesTableDataSource<Entity>;
+
+  /** The search text that is not yet written to the URL (as the delay has not passed). */
+  private pendingSearchText?: { text: string };
 
   constructor() {
     effect((onCleanup) => {
@@ -91,8 +100,48 @@ export class FreeTextFilterComponent {
             }),
           FREE_TEXT_URL_UPDATE_DELAY_MS,
         );
-        onCleanup(() => clearTimeout(timer));
+        this.pendingSearchText = { text: searchText };
+        onCleanup(() => {
+          clearTimeout(timer);
+          this.pendingSearchText = undefined;
+        });
       }
     });
+
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationStart),
+        takeUntilDestroyed(),
+      )
+      .subscribe((event) => this.keepPendingSearchTextInHistory(event.url));
   }
+
+  /**
+   * A record can be opened before the delay has passed (e.g. a click right after typing),
+   * which would lose the search text when the user comes back.
+   * So when the user leaves the list, the text is put into the current history entry.
+   * This must not be a router navigation: that would replace the one that has just started.
+   */
+  private keepPendingSearchTextInHistory(targetUrl: string) {
+    const currentUrl = this.router.url;
+    if (!this.pendingSearchText || pathOf(targetUrl) === pathOf(currentUrl)) {
+      return;
+    }
+
+    const urlTree = this.router.parseUrl(currentUrl);
+    if (this.pendingSearchText.text) {
+      urlTree.queryParams[SEARCH_PARAM] = this.pendingSearchText.text;
+    } else {
+      delete urlTree.queryParams[SEARCH_PARAM];
+    }
+    this.location.replaceState(
+      urlTree.toString(),
+      "",
+      this.location.getState(),
+    );
+  }
+}
+
+function pathOf(url: string): string {
+  return url.split(/[?#]/)[0];
 }

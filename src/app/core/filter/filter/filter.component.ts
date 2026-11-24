@@ -168,10 +168,7 @@ export class FilterComponent<T extends Entity = Entity> {
           this.toUrlValue(f.selectedOptionValues ?? []),
         ]),
       );
-      this.urlState.updateUrlParams(
-        { ...filterUrlParams, [filter.name]: this.toUrlValue(selectedOptions) },
-        false,
-      );
+      this.urlState.updateUrlParams(filterUrlParams, false);
     }
   }
 

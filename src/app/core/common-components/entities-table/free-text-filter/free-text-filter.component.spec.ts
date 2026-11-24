@@ -1,8 +1,12 @@
+import { Location } from "@angular/common";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { Event, NavigationStart, Router } from "@angular/router";
+import { Subject } from "rxjs";
 import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { InMemoryDataSource } from "../data-source/in-memory-data-source";
+import type { Mock } from "vitest";
 import {
   FREE_TEXT_URL_UPDATE_DELAY_MS,
   FreeTextFilterComponent,
@@ -64,6 +68,43 @@ describe("FreeTextFilterComponent", () => {
     expect(urlState.updateUrlParams).toHaveBeenCalledTimes(1);
     expect(urlState.updateUrlParams).toHaveBeenCalledWith({
       _search: "Alipore",
+    });
+  });
+
+  describe("when the user leaves the list before the delay has passed", () => {
+    let router: Router;
+    let replaceState: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      createComponent();
+      router = TestBed.inject(Router);
+      vi.spyOn(router, "url", "get").mockReturnValue("/event?team=abc");
+      const location = TestBed.inject(Location);
+      replaceState = vi.spyOn(location, "replaceState").mockReturnValue();
+      vi.spyOn(location, "getState").mockReturnValue({ navigationId: 3 });
+      dataSource.searchText.set("Ali");
+      fixture.detectChanges();
+    });
+
+    function startNavigationTo(url: string) {
+      (router.events as Subject<Event>).next(new NavigationStart(1, url));
+    }
+
+    it("keeps the search text in the history entry of the list", () => {
+      startNavigationTo("/event/123");
+
+      expect(replaceState).toHaveBeenCalledWith(
+        "/event?team=abc&_search=Ali",
+        "",
+        { navigationId: 3 },
+      );
+    });
+
+    it("does not touch the history for a change of the same page", () => {
+      startNavigationTo("/event?team=xyz");
+
+      expect(replaceState).not.toHaveBeenCalled();
     });
   });
 

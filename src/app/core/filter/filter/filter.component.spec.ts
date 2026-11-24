@@ -168,14 +168,18 @@ describe("FilterComponent", () => {
     expect(customStatusFilter.selectedOptionValues).toEqual(["A", "B,C"]);
   });
 
-  it("should encode filter values containing commas before storing them in the url", () => {
+  it("should encode filter values containing commas before storing them in the url", async () => {
     const urlState = TestBed.inject(UrlStateService);
     const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
-    fixture.componentRef.setInput("useUrlQueryParams", true);
-    fixture.detectChanges();
+    await setComponentInputs({
+      entityType: TestEntity,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "other" }],
+    });
 
-    const filter = new StringFilter("other", "Other");
-    component.filterOptionSelected(filter, ["Doe, John"]);
+    component.filterOptionSelected(component.filterSelections()[0], [
+      "Doe, John",
+    ]);
 
     expect(updateUrlParamsSpy).toHaveBeenCalledWith(
       { other: encodeURIComponent("Doe, John") },
