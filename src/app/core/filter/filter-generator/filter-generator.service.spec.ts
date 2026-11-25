@@ -955,6 +955,42 @@ describe("FilterGeneratorService", () => {
       expect(filter(allEntities, emptyOption)).toEqual([e2]);
     });
 
+    it("counts a record whose embedded list is null as not defined", async () => {
+      @DatabaseEntity("EmbeddedNullListTestEntity")
+      class EmbeddedNullListTestEntity extends Entity {}
+      EmbeddedNullListTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          type: {
+            dataType: "configurable-enum",
+            label: "Type",
+            additional: Note.schema.get("category").additional,
+          },
+        },
+      });
+
+      const withEntry = new EmbeddedNullListTestEntity();
+      withEntry["logEntries"] = [{ type: defaultInteractionTypes[1] }];
+      const withNull = new EmbeddedNullListTestEntity();
+      withNull["logEntries"] = null;
+      const allEntities = [withEntry, withNull];
+
+      const enumFilter = (
+        await service.generate(
+          [{ id: "logEntries.type" }],
+          EmbeddedNullListTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedNullListTestEntity>;
+      const emptyOption = enumFilter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+
+      expect(filter(allEntities, emptyOption)).toEqual([withNull]);
+    });
+
     describe("date range nested in an embedded array field", () => {
       @DatabaseEntity("EmbeddedPeriodTestEntity")
       class EmbeddedPeriodTestEntity extends Entity {}

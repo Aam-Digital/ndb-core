@@ -60,6 +60,7 @@ export function emptyValueFilterOfEmbeddedField<T extends Entity>(
   return {
     $or: [
       { [embedded.outerProp]: { $exists: false } },
+      { [embedded.outerProp]: null },
       { [embedded.outerProp]: { $size: 0 } },
       wrapInElemMatch<T>(innerEmpty, embedded.outerProp),
     ],

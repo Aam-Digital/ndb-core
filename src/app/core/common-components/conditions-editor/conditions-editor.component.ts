@@ -560,7 +560,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   private storedRows(): DataFilter<Entity>[] {
     const entityType = this.entityConstructor();
     return (this.working.$or ?? []).map((row) =>
-      entityType && isCompleteRow(row)
+      entityType && !this.onStoredDocuments() && isCompleteRow(row)
         ? this.filterService.editorRowToCondition(entityType, row)
         : row,
     );

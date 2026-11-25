@@ -129,11 +129,17 @@ export class FilterService {
     const fields = Object.keys(condition ?? {});
     // a row with conditions on several fields stays as it is, so that none of them gets lost
     const fieldId = fields.length === 1 ? fields[0] : undefined;
-    const entryCondition = condition?.[fieldId]?.$elemMatch;
+    const operators = condition?.[fieldId] ?? {};
+    const entryCondition = operators.$elemMatch;
     const innerKeys = isPlainObject(entryCondition)
       ? Object.keys(entryCondition)
       : [];
-    if (innerKeys.length !== 1 || innerKeys[0].startsWith("$")) {
+    // another operator on the field (like `$size`) would get lost in a row of one property
+    if (
+      Object.keys(operators).length !== 1 ||
+      innerKeys.length !== 1 ||
+      innerKeys[0].startsWith("$")
+    ) {
       return condition;
     }
     const fieldPath = `${fieldId}.${innerKeys[0]}`;

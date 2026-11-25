@@ -827,6 +827,27 @@ describe("ConditionsEditorComponent", () => {
       expect(component.conditionsArray()).toEqual([stored]);
     });
 
+    it("keeps a saved condition on a property of an embedded field as stored for conditions on the stored documents, also after an edit", () => {
+      fixture.componentRef.setInput("onStoredDocuments", true);
+      vi.spyOn(component.conditionsChange, "emit");
+      component.conditions = { "log.status": "M" };
+      component.ngOnInit();
+
+      component.addCondition();
+
+      expect(component.conditionsChange.emit).toHaveBeenLastCalledWith({
+        "log.status": "M",
+      });
+    });
+
+    it("keeps a condition on an entry of an embedded field as stored if the field has another operator", () => {
+      const stored = { log: { $elemMatch: { status: "M" }, $size: 2 } };
+      component.conditions = stored;
+      component.ngOnInit();
+
+      expect(component.conditionsArray()).toEqual([stored]);
+    });
+
     it.each([
       [{ log: { $elemMatch: { status: "M" } }, name: "Ann" }],
       [{ "log.status": "M", name: "Ann" }],
