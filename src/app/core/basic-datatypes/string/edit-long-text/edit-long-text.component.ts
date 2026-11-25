@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -7,6 +12,7 @@ import { CustomFormControlDirective } from "../../../common-components/basic-aut
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { LongTextFieldConfig } from "../display-long-text/display-long-text.component";
 
 @DynamicComponent("EditLongText")
 @Component({
@@ -23,4 +29,11 @@ export class EditLongTextComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+
+  /** height of the input box, configurable as `additional.rows` of the field */
+  protected readonly rows = computed(
+    () =>
+      (this.formFieldConfig()?.additional as LongTextFieldConfig | undefined)
+        ?.rows ?? 4,
+  );
 }

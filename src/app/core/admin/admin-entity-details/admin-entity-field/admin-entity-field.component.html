@@ -239,6 +239,25 @@
                 Offer predefined periods
               </mat-checkbox>
             }
+
+            <!-- "additional" as raw JSON for datatypes without a specific UI for it -->
+            @if (hasRawJsonAdditional(formDataType.value)) {
+              <button
+                mat-stroked-button
+                type="button"
+                class="margin-top-regular"
+                [color]="additionalValue() ? 'accent' : undefined"
+                [disabled]="additionalForm.disabled"
+                (click)="editAdditionalAsJson()"
+                [matTooltip]="rawJsonAdditionalTooltip(formDataType.value)"
+              >
+                <app-fa-dynamic-icon
+                  icon="code"
+                  class="standard-icon-with-text"
+                ></app-fa-dynamic-icon>
+                <span i18n="Button label">Edit Type Details (JSON)</span>
+              </button>
+            }
           </div>
         </div>
       </mat-tab>

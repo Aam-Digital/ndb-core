@@ -11,3 +11,12 @@
 .full-width mat-form-field {
   max-width: none;
 }
+
+/* a field group configured as `fullWidth` takes up a whole row of the grid */
+.full-width-group {
+  grid-column: 1 / -1;
+
+  mat-form-field {
+    max-width: none;
+  }
+}

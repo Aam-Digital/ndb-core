@@ -1,6 +1,6 @@
 <form [class.grid-layout]="gridLayout()">
   @for (group of filteredFieldGroups(); track $index) {
-    <div class="entity-form-cell">
+    <div class="entity-form-cell" [class.full-width-group]="group.fullWidth">
       @if (group.header) {
         <h2>{{ group.header | localeText }}</h2>
       }

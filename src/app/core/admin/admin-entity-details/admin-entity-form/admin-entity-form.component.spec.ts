@@ -489,6 +489,18 @@ describe("AdminEntityFormComponent", () => {
     ]);
   });
 
+  it("should switch a group to full width and back, without leaving the setting in the config", () => {
+    component.toggleGroupFullWidth(1);
+    expect(component.fieldGroups()[1]).toEqual({
+      fields: ["category"],
+      fullWidth: true,
+    });
+
+    component.toggleGroupFullWidth(1);
+    expect(component.fieldGroups()[1]).toEqual({ fields: ["category"] });
+    expect(component.fieldGroups()[0]).toEqual(testConfig.fieldGroups[0]);
+  });
+
   it("should update the global schema when updateEntitySchema is true", async () => {
     vi.useFakeTimers();
     try {

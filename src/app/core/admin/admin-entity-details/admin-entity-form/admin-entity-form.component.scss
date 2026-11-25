@@ -37,6 +37,11 @@ app-horizontal-scroll {
   );
 }
 
+/* a field group configured as `fullWidth` takes up a whole row, like in the actual form */
+.admin-grid-layout > .full-width-group {
+  grid-column: 1 / -1;
+}
+
 .fields-group-list {
   border: dashed 1px #ccc;
   border-radius: 4px;

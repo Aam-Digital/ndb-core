@@ -53,7 +53,7 @@ import {
   resolveLocaleText,
 } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import { merge } from "rxjs";
+import { firstValueFrom, merge } from "rxjs";
 import { filter, pairwise } from "rxjs/operators";
 import {
   takeUntilDestroyed,
@@ -75,6 +75,9 @@ import { AttendanceDatatype } from "#src/app/features/attendance/model/attendanc
 import { asArray } from "app/utils/asArray";
 import { DateRangeDatatype } from "../../../basic-datatypes/date-range/date-range.datatype";
 import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
+import { LongTextDatatype } from "../../../basic-datatypes/string/long-text.datatype";
+import { JsonEditorService } from "../../json-editor/json-editor.service";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -128,6 +131,7 @@ export interface AdminEntityFieldData {
     EntityTypeSelectComponent,
     AdminSearchableCheckboxComponent,
     TranslatableTextInputComponent,
+    FaDynamicIconComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -141,6 +145,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly entityConfigService = inject(EntityConfigService);
+  private readonly jsonEditorService = inject(JsonEditorService);
   private readonly labelValue = signal<TranslatableText | undefined>(undefined);
 
   /** the label text of the active language, for display outside the form field */
@@ -207,6 +212,17 @@ export class AdminEntityFieldComponent implements OnInit {
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
   ];
+
+  /**
+   * dataTypes whose `additional` options have no specific UI here yet
+   * and can be edited as raw JSON instead, with an example of the options shown as tooltip.
+   */
+  private static readonly RAW_JSON_ADDITIONAL_DATATYPES: Record<
+    string,
+    string
+  > = {
+    [LongTextDatatype.dataType]: $localize`Advanced settings for this field as JSON. For example, {"rows": 10} makes the text box in forms 10 lines high (instead of 4).`,
+  };
 
   constructor() {
     // a `selectionCondition` refers to fields of the linked record type, so it is removed when that type changes
@@ -510,6 +526,32 @@ export class AdminEntityFieldComponent implements OnInit {
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
 
     // TODO: this mapping of having an "additional" schema should probably become part of Datatype classes
+  }
+
+  hasRawJsonAdditional(dataType: string): boolean {
+    return dataType in AdminEntityFieldComponent.RAW_JSON_ADDITIONAL_DATATYPES;
+  }
+
+  rawJsonAdditionalTooltip(dataType: string): string {
+    return AdminEntityFieldComponent.RAW_JSON_ADDITIONAL_DATATYPES[dataType];
+  }
+
+  /** Edit the `additional` options of the field as raw JSON, for dataTypes without a specific UI for them. */
+  async editAdditionalAsJson() {
+    const result = await firstValueFrom(
+      this.jsonEditorService.openJsonEditorDialog(
+        this.additionalForm.value ?? {},
+      ),
+    );
+    if (result === null || result === undefined) {
+      // cancelled
+      return;
+    }
+    const isEmptyObject =
+      typeof result === "object" &&
+      !Array.isArray(result) &&
+      Object.keys(result).length === 0;
+    this.additionalForm.setValue(isEmptyObject ? null : result);
   }
 
   private initAdditionalForEnum(newAdditional?: string) {

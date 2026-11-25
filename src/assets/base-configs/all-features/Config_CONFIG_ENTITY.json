@@ -1712,6 +1712,14 @@
           "label": "Long Text Field",
           "dataType": "long-text"
         },
+        "detailedDescriptionField": {
+          "id": "detailedDescriptionField",
+          "label": "Detailed Description (tall, full width)",
+          "dataType": "long-text",
+          "additional": {
+            "rows": 10
+          }
+        },
         "dateOnlyField": {
           "id": "dateOnlyField",
           "label": "Date Only Field",
@@ -2020,6 +2028,12 @@
                         "embeddedArrayOfObjects",
                         "contactPersons"
                       ]
+                    },
+                    {
+                      "fields": [
+                        "detailedDescriptionField"
+                      ],
+                      "fullWidth": true
                     }
                   ]
                 }

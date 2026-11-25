@@ -13,6 +13,7 @@
       @for (group of fieldGroups(); track i; let i = $index) {
         <div
           class="entity-form-cell admin-form-column section-container"
+          [class.full-width-group]="group.fullWidth"
           cdkDrag
         >
           @if (!fieldsOnlyMode()) {
@@ -35,6 +36,22 @@
                   [condition]="group.displayCondition"
                   (conditionChange)="updateGroupDisplayCondition(group, $event)"
                 ></app-admin-display-condition-button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  [color]="group.fullWidth ? 'accent' : undefined"
+                  [attr.aria-pressed]="!!group.fullWidth"
+                  (click)="toggleGroupFullWidth(i)"
+                  aria-label="Full width"
+                  i18n-aria-label="
+                    Button label to let a field group span the whole form width
+                  "
+                  [matTooltip]="
+                    group.fullWidth ? fullWidthOnTooltip : fullWidthOffTooltip
+                  "
+                >
+                  <app-fa-dynamic-icon icon="left-right"></app-fa-dynamic-icon>
+                </button>
               </app-admin-section-header>
             </div>
           }

@@ -32,6 +32,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
 import { DataFilter } from "../../../filter/filters/filters";
@@ -92,6 +93,7 @@ type FieldDragDropEvent = CdkDragDrop<
     AdminSectionHeaderComponent,
     AdminDisplayConditionButtonComponent,
     HorizontalScrollComponent,
+    FaDynamicIconComponent,
   ],
 })
 export class AdminEntityFormComponent {
@@ -575,6 +577,20 @@ export class AdminEntityFormComponent {
   updateGroupHeader(i: number, header: TranslatableText) {
     this.fieldGroups.update((groups) =>
       groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
+    );
+  }
+
+  protected readonly fullWidthOffTooltip = $localize`Display this field group across the whole width of the form, e.g. for long text fields.`;
+  protected readonly fullWidthOnTooltip = $localize`This field group is displayed across the whole width of the form. Click to display it as a column next to other field groups again.`;
+
+  /** Switch whether the group spans the whole width of the form instead of being one of its columns. */
+  toggleGroupFullWidth(i: number) {
+    this.fieldGroups.update((groups) =>
+      groups.map((g, idx) => {
+        if (idx !== i) return g;
+        const { fullWidth, ...updated } = g;
+        return fullWidth ? updated : { ...updated, fullWidth: true };
+      }),
     );
   }
 

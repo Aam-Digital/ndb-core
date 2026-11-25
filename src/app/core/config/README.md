@@ -321,6 +321,22 @@ This means instead of placing an object in the `fields` array, simple strings do
 }
 ```
 
+A field group with `"fullWidth": true` takes up a whole row of the form instead of being one of the columns,
+and its fields stretch to that width (on small screens all groups are one column anyway).
+This is useful for a `long-text` field holding long descriptions,
+whose input box can also be made taller with the `rows` option in its `additional` (default: 4 rows):
+
+```json
+"description": { "dataType": "long-text", "additional": { "rows": 10 } }
+```
+
+```json
+{ "fields": ["description"], "fullWidth": true }
+```
+
+Both can also be set in the Admin UI: the "full width" button in the header of a field group in the form builder,
+and "Edit Type Details (JSON)" in the field settings of a long-text field.
+
 #### The PreviousSchools Component
 
 This component shows a list of `ChildSchoolRelations` of a child in table.

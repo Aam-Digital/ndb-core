@@ -14,6 +14,9 @@ export interface LongTextFieldConfig {
 
   /** Maximum number of characters to show */
   maxCharacters?: number;
+
+  /** Number of text rows of the input box in forms (default: 4) */
+  rows?: number;
 }
 
 @DynamicComponent("DisplayLongText")
