@@ -61,7 +61,8 @@ export class PwaInstallService {
     let pwaInstallType: PWAInstallType;
     if (standaloneMode) {
       pwaInstallType = PWAInstallType.RunningAsPWA;
-    } else if (os === OS.iOS && browser === Browser.Safari) {
+    } else if (os === OS.iOS && browser !== Browser.Other) {
+      // all real iOS browsers can "Add to Home Screen"; in-app webviews have no "Safari" in their user agent
       pwaInstallType = PWAInstallType.ShowiOSInstallInstructions;
     } else {
       pwaInstallType = PWAInstallType.NotAvailable;
@@ -72,12 +73,11 @@ export class PwaInstallService {
   private detectOS(): OS {
     let os: OS;
     const userAgent = this.window.navigator.userAgent;
-    if (/iphone|ipad|ipod|macintosh/i.test(userAgent)) {
-      if (this.window.innerWidth < 1025) {
-        os = OS.iOS;
-      } else {
-        os = OS.MacOS;
-      }
+    if (/iphone|ipad|ipod/i.test(userAgent)) {
+      os = OS.iOS;
+    } else if (/macintosh/i.test(userAgent)) {
+      // iPadOS reports a Mac user agent by default, but only iPads have a touch screen
+      os = this.window.navigator.maxTouchPoints > 1 ? OS.iOS : OS.MacOS;
     } else if (/android/i.test(userAgent)) {
       os = OS.Android;
     } else if (/windows|win32|win64|WinCE/i.test(userAgent)) {
