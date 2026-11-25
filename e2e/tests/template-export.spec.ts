@@ -67,7 +67,9 @@ test("Template-export action generates a file in the selected format, including 
   await page.getByRole("button", { name: "Edit" }).click();
 
   await page.getByRole("button", { name: "Add related records" }).click();
-  await page.getByRole("combobox", { name: "Related records" }).click();
+  await page.getByPlaceholder("Select related records").first().click();
+  // the selection is an autocomplete: type to narrow down the available options
+  await page.keyboard.type("Notes");
   await page.getByRole("option", { name: /^Notes \(linked through/ }).click();
   await expect(
     page.getByText("{d._related.Note.relatedEntities[i].subject}"),
