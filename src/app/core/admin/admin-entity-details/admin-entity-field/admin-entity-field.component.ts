@@ -221,7 +221,7 @@ export class AdminEntityFieldComponent implements OnInit {
     string,
     string
   > = {
-    [LongTextDatatype.dataType]: $localize`Advanced settings for this field as JSON. For example, {"rows": 10} makes the text box in forms 10 lines high (instead of 4).`,
+    [LongTextDatatype.dataType]: $localize`Advanced settings for this field as JSON. For example, {"rows": 10, "maxRows": 30} makes the text box in forms at least 10 lines high (instead of 4), growing with its text up to 30 lines (instead of 20).`,
   };
 
   constructor() {
