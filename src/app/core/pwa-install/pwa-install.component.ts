@@ -35,11 +35,10 @@ export class PwaInstallComponent implements OnInit {
 
   _showPWAInstallButton = false;
 
-  private showIOSInstructions = false;
+  private readonly showIOSInstructions =
+    this.pwaInstallService.showIOSInstallInstructions();
 
   ngOnInit() {
-    this.showIOSInstructions =
-      this.pwaInstallService.showIOSInstallInstructions();
     if (this.showIOSInstructions) {
       this.showPWAInstallButton = true;
     }

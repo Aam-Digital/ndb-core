@@ -59,7 +59,7 @@ describe("PwaInstallService", () => {
     ["Chrome on macOS", MAC_CHROME, 0, false],
     ["Firefox on Windows", WINDOWS_FIREFOX, 0, false],
   ])(
-    "shows the iOS install instructions for %s: %s",
+    "offers the install instructions only in real browsers on iOS (%s)",
     (_, userAgent, touchPoints, expected) => {
       mockWindow.navigator.userAgent = userAgent;
       mockWindow.navigator.maxTouchPoints = touchPoints;

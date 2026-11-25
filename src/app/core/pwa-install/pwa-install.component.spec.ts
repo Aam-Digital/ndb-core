@@ -42,13 +42,14 @@ describe("PwaInstallComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(() => {
+  function createComponent() {
     fixture = TestBed.createComponent(PwaInstallComponent);
     component = fixture.componentInstance;
-  });
+  }
 
   it("should show the pwa install instructions on iOS devices", () => {
     mockPWAInstallService.showIOSInstallInstructions.mockReturnValue(true);
+    createComponent();
 
     fixture.detectChanges();
     expect(component._showPWAInstallButton).toBe(true);
@@ -58,6 +59,7 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should call installPWA when no install instructions are defined and remove button once confirmed", async () => {
+    createComponent();
     vi.useFakeTimers();
     try {
       fixture.detectChanges();

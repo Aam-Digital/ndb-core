@@ -48,7 +48,10 @@ export class PwaInstallService {
     );
   }
 
-  /** In-app webviews (e.g. of an email app) cannot "Add to Home Screen" and have no "Safari" in their user agent */
+  /**
+   * Most in-app webviews (e.g. of an email app) have no "Safari" in their user agent and cannot "Add to Home Screen".
+   * In-app browsers that send Safari's user agent (e.g. `SFSafariViewController`) cannot be told apart and still get the instructions.
+   */
   private isRealBrowser(): boolean {
     return /safari/i.test(this.window.navigator.userAgent);
   }
