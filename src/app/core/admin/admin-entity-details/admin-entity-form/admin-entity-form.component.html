@@ -30,28 +30,61 @@
                 (titleChange)="updateGroupHeader(i, $event)"
                 (remove)="removeGroup(i)"
               >
-                <app-admin-display-condition-button
-                  target="fieldGroup"
-                  [entityType]="entityType()"
-                  [condition]="group.displayCondition"
-                  (conditionChange)="updateGroupDisplayCondition(group, $event)"
-                ></app-admin-display-condition-button>
                 <button
                   mat-icon-button
                   type="button"
-                  [color]="group.fullWidth ? 'accent' : undefined"
-                  [attr.aria-pressed]="!!group.fullWidth"
-                  (click)="toggleGroupFullWidth(i)"
-                  aria-label="Full width"
-                  i18n-aria-label="
-                    Button label to let a field group span the whole form width
+                  [matMenuTriggerFor]="groupMenu"
+                  [color]="
+                    group.displayCondition || group.fullWidth
+                      ? 'accent'
+                      : undefined
                   "
-                  [matTooltip]="
-                    group.fullWidth ? fullWidthOnTooltip : fullWidthOffTooltip
-                  "
+                  aria-label="Field group options"
+                  i18n-aria-label
+                  matTooltip="Field group options"
+                  i18n-matTooltip
                 >
-                  <app-fa-dynamic-icon icon="left-right"></app-fa-dynamic-icon>
+                  <app-fa-dynamic-icon
+                    icon="ellipsis-vertical"
+                  ></app-fa-dynamic-icon>
                 </button>
+                <mat-menu #groupMenu="matMenu">
+                  <button
+                    mat-menu-item
+                    type="button"
+                    (click)="editGroupDisplayCondition(i)"
+                  >
+                    <app-fa-dynamic-icon
+                      icon="filter"
+                      class="standard-icon-with-text"
+                      [class.color-accent]="!!group.displayCondition"
+                    ></app-fa-dynamic-icon>
+                    @if (group.displayCondition) {
+                      <span i18n>Edit Display Condition</span>
+                    } @else {
+                      <span i18n>Create Display Condition</span>
+                    }
+                  </button>
+                  <button
+                    mat-menu-item
+                    type="button"
+                    (click)="toggleGroupFullWidth(i)"
+                    [matTooltip]="
+                      group.fullWidth ? fullWidthOnTooltip : fullWidthOffTooltip
+                    "
+                    matTooltipPosition="after"
+                  >
+                    <app-fa-dynamic-icon
+                      [icon]="group.fullWidth ? 'table-columns' : 'left-right'"
+                      class="standard-icon-with-text"
+                    ></app-fa-dynamic-icon>
+                    @if (group.fullWidth) {
+                      <span i18n="field group option">Display as column</span>
+                    } @else {
+                      <span i18n="field group option">Display full width</span>
+                    }
+                  </button>
+                </mat-menu>
               </app-admin-section-header>
             </div>
           }

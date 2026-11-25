@@ -416,11 +416,7 @@ describe("AdminEntityFormComponent", () => {
       fixture.detectChanges();
       mockDialog.open.mockReturnValue({ afterClosed: () => of(dialogResult) });
 
-      const conditionButton: HTMLButtonElement =
-        fixture.nativeElement.querySelector(
-          'app-admin-section-header button[aria-label$="Display Condition"]',
-        );
-      conditionButton.click();
+      component.editGroupDisplayCondition(0);
       await fixture.whenStable();
 
       expect(mockDialog.open).toHaveBeenCalledWith(
@@ -437,7 +433,7 @@ describe("AdminEntityFormComponent", () => {
     },
   );
 
-  it("should highlight a group's display condition button in the accent color only while a condition is configured", async () => {
+  it("should highlight a group's options button in the accent color only while a display condition or full width is configured", async () => {
     fixture.componentRef.setInput("config", {
       fieldGroups: [
         { header: "Plain", fields: ["name"] },
@@ -446,18 +442,20 @@ describe("AdminEntityFormComponent", () => {
           fields: ["other"],
           displayCondition: { name: "x" },
         },
+        { header: "Wide", fields: ["category"], fullWidth: true },
       ],
     });
     fixture.detectChanges();
 
     const buttons: HTMLButtonElement[] = Array.from(
       fixture.nativeElement.querySelectorAll(
-        'app-admin-section-header button[aria-label$="Display Condition"]',
+        'app-admin-section-header button[aria-label="Field group options"]',
       ),
     );
 
     expect(buttons.map((b) => b.classList.contains("mat-accent"))).toEqual([
       false,
+      true,
       true,
     ]);
   });
@@ -466,11 +464,7 @@ describe("AdminEntityFormComponent", () => {
     const dialogResult = new Subject<unknown>();
     mockDialog.open.mockReturnValue({ afterClosed: () => dialogResult });
 
-    fixture.nativeElement
-      .querySelector(
-        'app-admin-section-header button[aria-label$="Display Condition"]',
-      )
-      .click();
+    component.editGroupDisplayCondition(0);
     component.dropFieldGroups({
       previousIndex: 0,
       currentIndex: 1,

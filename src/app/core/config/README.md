@@ -335,7 +335,7 @@ then it scrolls. Both can be set in the field's `additional`:
 { "fields": ["description"], "fullWidth": true }
 ```
 
-Both can also be set in the Admin UI: the "full width" button in the header of a field group in the form builder,
+Both can also be set in the Admin UI: "Display full width" in the options menu (⋮) of a field group in the form builder,
 and "Edit Type Details (JSON)" in the field settings of a long-text field.
 
 #### The PreviousSchools Component

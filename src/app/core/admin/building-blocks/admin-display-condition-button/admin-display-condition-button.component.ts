@@ -10,14 +10,10 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialog } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { DataFilter } from "../../../filter/filters/filters";
 import { EntityConstructor } from "../../../entity/model/entity";
-import {
-  ConditionEditorDialogComponent,
-  ConditionEditorDialogData,
-} from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
+import { DisplayConditionDialogService } from "./display-condition-dialog.service";
 
 /**
  * Button to edit the display condition of a field or field group in the admin UI
@@ -66,7 +62,7 @@ import {
   `,
 })
 export class AdminDisplayConditionButtonComponent {
-  private readonly dialog = inject(MatDialog);
+  private readonly conditionDialog = inject(DisplayConditionDialogService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** The currently configured condition, if any. */
@@ -131,27 +127,15 @@ export class AdminDisplayConditionButtonComponent {
   });
 
   protected openDialog() {
-    this.dialog
-      .open(ConditionEditorDialogComponent, {
-        data: {
-          entityConstructor: this.entityType(),
-          conditions: this.condition(),
-          explanation:
-            this.explanation() ??
-            (this.target() === "fieldGroup"
-              ? $localize`This field group is shown only while the record matches...`
-              : $localize`This field is shown only while the record matches...`),
-          currentRecordType: this.currentRecordType(),
-        } satisfies ConditionEditorDialogData,
-        // comparing with fields of the current record needs an additional column, for long names like "Parent action › Locations"
-        width: this.currentRecordType() ? "1000px" : "600px",
+    this.conditionDialog
+      .editCondition({
+        condition: this.condition(),
+        entityType: this.entityType(),
+        target: this.target(),
+        currentRecordType: this.currentRecordType(),
+        explanation: this.explanation(),
       })
-      .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result) => {
-        // `undefined` means the dialog was cancelled, leave the condition unchanged
-        if (result === undefined) return;
-        this.conditionChange.emit(result);
-      });
+      .subscribe((result) => this.conditionChange.emit(result));
   }
 }
