@@ -210,6 +210,12 @@ export class EditTemplateExportRelatedRecordsComponent
       return;
     }
 
+    if (!optionId) {
+      // the user cleared the text: empty the entry, so the validation asks to select or remove it
+      this.updateRow(index, () => ({ entityType: "", property: "" }));
+      return;
+    }
+
     const option = this.options().find((o) => o.id === optionId);
     if (!option) {
       return;
