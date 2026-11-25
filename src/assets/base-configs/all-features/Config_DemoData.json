@@ -21,7 +21,8 @@
           ]
         },
         "admissionDate": {
-          "yearsPast": 10
+          "yearsPast": 10,
+          "after": "dateOfBirth"
         },
         "status": {
           "valuePool": [

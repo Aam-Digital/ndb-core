@@ -26,16 +26,22 @@ export abstract class DemoDataGenerator<T extends Entity> {
   /**
    * Entity types this generator creates itself, so that the generic engine skips them.
    * Defaults to the required types, which for most generators is the type they create.
+   * A generator that cannot run owns nothing, so the engine fills those types generically.
    */
   get ownedEntityTypes(): string[] {
-    return this.requiredEntityTypes;
+    return this.canGenerate ? this.requiredEntityTypes : [];
+  }
+
+  /** whether the use case has every type this generator builds upon */
+  private get canGenerate(): boolean {
+    return this.requiredEntityTypes.every((e) => this.entityRegistry.has(e));
   }
 
   /**
    * generated demo entities
    */
   get entities() {
-    if (this.requiredEntityTypes.some((e) => !this.entityRegistry.has(e))) {
+    if (!this.canGenerate) {
       Logging.debug(
         "Skipping demo data generation because required entity types are not configured",
         this.requiredEntityTypes,

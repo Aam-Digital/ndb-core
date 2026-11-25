@@ -6,6 +6,7 @@ import { DEMO_VALUE_GENERATOR } from "./demo-value-generator";
 import {
   ConfigurableEnumDemoValueGenerator,
   DateOnlyDemoValueGenerator,
+  DateWithAgeDemoValueGenerator,
   StringDemoValueGenerator,
 } from "./core-demo-value-generators";
 import { ConfigService } from "../../config/config.service";
@@ -64,6 +65,11 @@ describe("GenericDemoDataEngine", () => {
         {
           provide: DEMO_VALUE_GENERATOR,
           useClass: DateOnlyDemoValueGenerator,
+          multi: true,
+        },
+        {
+          provide: DEMO_VALUE_GENERATOR,
+          useClass: DateWithAgeDemoValueGenerator,
           multi: true,
         },
         {
@@ -239,6 +245,22 @@ describe("GenericDemoDataEngine", () => {
     ).toBe(true);
   });
 
+  it("keeps the order when the schema lists the end date first", async () => {
+    entityConfigs = declareTypes({
+      Thing: {
+        end: { dataType: "date-only" },
+        start: { dataType: "date-only" },
+      },
+    });
+    spec = { Thing: { count: 20, fields: { end: { after: "start" } } } };
+
+    const records = await generate("Thing");
+
+    expect(records.every((record) => record["end"] >= record["start"])).toBe(
+      true,
+    );
+  });
+
   it("applies one sample per record without overwriting what is set already", async () => {
     entityConfigs = declareTypes({
       Thing: {
@@ -298,6 +320,41 @@ describe("GenericDemoDataEngine", () => {
     expect(records.every((record) => record["_rev"] === undefined)).toBe(true);
     expect(records.every((record) => record.inactive === undefined)).toBe(true);
     expect(records.every((record) => !!record["name"])).toBe(true);
+  });
+
+  it.each([
+    ["an option the spec allows", ["B"], "B"],
+    ["nothing when the spec allows none that exist", ["gone"], undefined],
+  ])("gives a dropdown %s", async (_name, ids, expected) => {
+    entityConfigs = declareTypes({
+      Thing: {
+        status: { dataType: "configurable-enum", additional: "status" },
+      },
+    });
+    spec = { Thing: { count: 1, fields: { status: { ids } } } };
+
+    const [record] = await generate("Thing");
+
+    expect(record["status"]?.id).toBe(expected);
+  });
+
+  it.each([
+    ["only an upper bound below the default lower one", { max: 3 }],
+    ["only a lower bound above the default upper one", { min: 90 }],
+    ["bounds the wrong way round", { min: 40, max: 10 }],
+  ])("still generates an age given %s", async (_name, bounds) => {
+    // faker rejects an inverted range by throwing, which would abort the whole run
+    entityConfigs = declareTypes({
+      Thing: { born: { dataType: "date-with-age" } },
+    });
+    spec = { Thing: { count: 3, fields: { born: bounds } } };
+
+    const records = await generate("Thing");
+
+    expect(records).toHaveLength(3);
+    expect(records.every((record) => record["born"] instanceof Date)).toBe(
+      true,
+    );
   });
 
   describe("linking records", () => {

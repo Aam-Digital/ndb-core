@@ -2,6 +2,8 @@ import { inject, Injectable } from "@angular/core";
 import { DemoValueContext, DemoValueGenerator } from "./demo-value-generator";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { Logging } from "../../logging/logging.service";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { SchemaEmbedDatatypeAdditional } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 
@@ -20,6 +22,26 @@ function numberOption(
   return undefined;
 }
 
+/**
+ * The bounds for a field, in ascending order. A spec or a validator may set only one
+ * of them, and faker rejects an inverted range - which would abort the whole run.
+ */
+function boundsOf(
+  context: DemoValueContext,
+  field: EntitySchemaField,
+  keys: { min: string[]; max: string[] },
+  fallback: { min: number; max: number },
+): { min: number; max: number } {
+  const min = numberOption(context, field, ...keys.min);
+  const max = numberOption(context, field, ...keys.max);
+  const bounds = [
+    min ?? Math.min(fallback.min, max ?? fallback.min),
+    max ?? Math.max(fallback.max, min ?? fallback.max),
+  ];
+
+  return { min: Math.min(...bounds), max: Math.max(...bounds) };
+}
+
 @Injectable()
 export class ConfigurableEnumDemoValueGenerator implements DemoValueGenerator {
   readonly dataType: string = "configurable-enum";
@@ -28,18 +50,32 @@ export class ConfigurableEnumDemoValueGenerator implements DemoValueGenerator {
 
   generate(field: EntitySchemaField, context: DemoValueContext) {
     const values = this.enums.getEnumValues(field.additional);
-    // a spec can narrow the options, e.g. to the genders a use case records
     const ids = context.options.ids;
-    const allowed = Array.isArray(ids)
-      ? values.filter((value) => ids.includes(value.id))
-      : values;
-    // an option without a label is a placeholder in the config, not a real choice
-    const labelled = allowed.filter((value) => !!value.label);
-    const narrowed = allowed.length ? allowed : values;
-    const options = labelled.length ? labelled : narrowed;
+    if (!Array.isArray(ids)) {
+      return this.pick(values, context);
+    }
 
-    return options.length
-      ? context.faker.helpers.arrayElement(options)
+    // a spec can narrow the options, e.g. to the genders a use case records.
+    // Falling back to all of them would contradict what it asked for, so an
+    // id the enum does not have leaves the field empty instead.
+    const allowed = values.filter((value) => ids.includes(value.id));
+    if (allowed.length === 0) {
+      Logging.debug("No such option in the demo data spec", {
+        enum: field.additional,
+        ids,
+      });
+      return undefined;
+    }
+    return this.pick(allowed, context);
+  }
+
+  /** An option that is actually offered: one without a label is a config placeholder. */
+  private pick(options: ConfigurableEnumValue[], context: DemoValueContext) {
+    const labelled = options.filter((value) => !!value.label);
+    const offered = labelled.length ? labelled : options;
+
+    return offered.length
+      ? context.faker.helpers.arrayElement(offered)
       : undefined;
   }
 }
@@ -78,8 +114,12 @@ export class DateWithAgeDemoValueGenerator implements DemoValueGenerator {
     return new DateWithAge(
       context.faker.date.birthdate({
         mode: "age",
-        min: numberOption(context, field, "min", "minAge") ?? 5,
-        max: numberOption(context, field, "max", "maxAge") ?? 50,
+        ...boundsOf(
+          context,
+          field,
+          { min: ["min", "minAge"], max: ["max", "maxAge"] },
+          { min: 5, max: 50 },
+        ),
       }),
     );
   }
@@ -99,10 +139,14 @@ export class NumberDemoValueGenerator implements DemoValueGenerator {
   readonly dataType: string = "number";
 
   generate(field: EntitySchemaField, context: DemoValueContext) {
-    return context.faker.number.int({
-      min: numberOption(context, field, "min") ?? 0,
-      max: numberOption(context, field, "max") ?? 100,
-    });
+    return context.faker.number.int(
+      boundsOf(
+        context,
+        field,
+        { min: ["min"], max: ["max"] },
+        { min: 0, max: 100 },
+      ),
+    );
   }
 }
 

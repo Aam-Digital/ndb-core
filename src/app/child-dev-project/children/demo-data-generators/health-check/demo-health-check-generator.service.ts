@@ -15,7 +15,11 @@ import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-
 export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   private readonly demoEntities = inject(DemoEntityStore);
 
-  override requiredEntityTypes = ["HealthCheck"];
+  override requiredEntityTypes = ["HealthCheck", "Child"];
+
+  override get ownedEntityTypes(): string[] {
+    return ["HealthCheck"];
+  }
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -84,7 +88,13 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   }
 
   private setNextHeightAndWeight(record, previousRecord, age: number) {
-    const ageRoundedToHalfYear = Math.round(2 * age) / 2;
+    // the tables only cover school age, and the dates a demo record is built from are
+    // generated independently - an age outside them would look up no range at all
+    const ages = Array.from(heightRangeForAge.keys());
+    const ageRoundedToHalfYear = Math.min(
+      Math.max(Math.round(2 * age) / 2, Math.min(...ages)),
+      Math.max(...ages),
+    );
 
     const randomHeight = faker.number.int(
       heightRangeForAge.get(ageRoundedToHalfYear),

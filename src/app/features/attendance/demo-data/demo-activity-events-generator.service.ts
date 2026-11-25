@@ -28,9 +28,10 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
   private readonly engine = inject(GenericDemoDataEngine);
 
   override get ownedEntityTypes(): string[] {
-    return this.attendanceService.eventTypeSettings.map(
-      (settings) => settings.eventType.ENTITY_TYPE,
-    );
+    // an event type without an activity type gets no events here, so the engine fills it
+    return this.attendanceService.eventTypeSettings
+      .filter((settings) => settings.activityType !== undefined)
+      .map((settings) => settings.eventType.ENTITY_TYPE);
   }
 
   /**

@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { HttpStatusCode } from "@angular/common/http";
 import { DemoDataGenerator } from "../demo-data-generator";
 import { Entity } from "../../entity/model/entity";
 import { EntitySchema } from "../../entity/schema/entity-schema";
@@ -120,8 +121,13 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
       const config = await this.entityMapper.load(Config, DEMO_DATA_CONFIG_ID);
       return resolveLocaleConfig((config.data ?? {}) as DemoDataSpec);
     } catch (error) {
-      // a use case without a spec is normal: every type falls back to defaults
-      Logging.debug("No demo data spec configured", error);
+      if (error?.status === HttpStatusCode.NotFound) {
+        // a use case without a spec is normal: every type falls back to defaults
+        Logging.debug("No demo data spec configured", error);
+      } else {
+        // untuned demo data is still better than none, but this is not the normal case
+        Logging.warn("Could not read the demo data spec", error);
+      }
       return {};
     }
   }
@@ -199,28 +205,63 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
     const siblings = Array.from(schema.keys());
     this.applySample(entity, schema, typeSpec, siblings);
 
-    for (const [fieldId, field] of schema) {
-      // references are filled in the second pass, once all types have records
-      const skip =
-        field.isInternalField ||
-        isReservedField(fieldId) ||
-        field.dataType === "entity" ||
-        entity[fieldId] !== undefined;
-      if (skip) {
-        continue;
-      }
+    const filling = new Set<string>();
+    for (const fieldId of siblings) {
+      this.fillOneField(entity, schema, typeSpec, siblings, fieldId, filling);
+    }
+  }
 
-      const withId = { ...field, id: fieldId };
-      const fill: FieldFill = {
-        fieldId,
-        spec: typeSpec.fields?.[fieldId],
-        depth: 0,
+  /**
+   * Fill one field, but the field its date is bound to first: a schema listing
+   * `end` before `start` would otherwise generate against an empty lower bound.
+   */
+  private fillOneField(
+    entity: Entity,
+    schema: EntitySchema,
+    typeSpec: DemoEntitySpec,
+    siblings: readonly string[],
+    fieldId: string,
+    filling: Set<string>,
+  ): void {
+    const field = schema.get(fieldId);
+    // references are filled in the second pass, once all types have records
+    const skip =
+      !field ||
+      field.isInternalField ||
+      isReservedField(fieldId) ||
+      field.dataType === "entity" ||
+      entity[fieldId] !== undefined ||
+      filling.has(fieldId);
+    if (skip) {
+      return;
+    }
+    filling.add(fieldId);
+
+    const fill: FieldFill = {
+      fieldId,
+      spec: typeSpec.fields?.[fieldId],
+      depth: 0,
+      siblings,
+    };
+    const afterField = fill.spec?.after ?? startFieldOf(fieldId, siblings);
+    if (afterField) {
+      this.fillOneField(
+        entity,
+        schema,
+        typeSpec,
         siblings,
-      };
-      const value = this.notBefore(this.fillField(withId, fill), entity, fill);
-      if (value !== undefined) {
-        entity[fieldId] = value;
-      }
+        afterField,
+        filling,
+      );
+    }
+
+    const value = this.notBefore(
+      this.fillField({ ...field, id: fieldId }, fill),
+      entity,
+      afterField,
+    );
+    if (value !== undefined) {
+      entity[fieldId] = value;
     }
   }
 
@@ -241,7 +282,12 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
     const sample = faker.helpers.arrayElement(typeSpec.samples);
     for (const [fieldId, raw] of Object.entries(sample ?? {})) {
       const field = schema.get(fieldId);
-      if (!field || entity[fieldId] !== undefined) {
+      if (
+        !field ||
+        field.isInternalField ||
+        isReservedField(fieldId) ||
+        entity[fieldId] !== undefined
+      ) {
         continue;
       }
       entity[fieldId] = this.toStoredValue({ ...field, id: fieldId }, raw, {
@@ -279,10 +325,12 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
    * Keep a date at or after the one of the field it belongs with, named by the
    * spec key `after` or guessed from both names.
    */
-  private notBefore(value: unknown, entity: Entity, fill: FieldFill): unknown {
-    const afterField =
-      fill.spec?.after ?? startFieldOf(fill.fieldId, fill.siblings);
-    if (typeof afterField !== "string" || !(value instanceof Date)) {
+  private notBefore(
+    value: unknown,
+    entity: Entity,
+    afterField: string | undefined,
+  ): unknown {
+    if (!afterField || !(value instanceof Date)) {
       return value;
     }
 
@@ -360,11 +408,12 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
       return raw;
     }
 
-    const asOption = this.demoValues.generate(
+    // an id the enum does not have would be stored as a plain string and read as an
+    // invalid option, so leave the field empty and let the spec be corrected
+    return this.demoValues.generate(
       field,
       this.contextFor({ ...fill, spec: { ids: [raw] } }),
     );
-    return asOption ?? raw;
   }
 
   /**
@@ -428,10 +477,11 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
         entities,
       );
 
+      const fieldSpecs = this.spec[entityType]?.fields ?? {};
       for (const entity of entities) {
         for (const [fieldId, field] of referenceFields) {
           if (entity[fieldId] === undefined && !managed.has(fieldId)) {
-            this.linkField(entity, fieldId, field);
+            this.linkField(entity, fieldId, field, fieldSpecs[fieldId]);
           }
         }
       }
@@ -442,7 +492,12 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
     entity: Entity,
     fieldId: string,
     field: EntitySchemaField,
+    fieldSpec: DemoFieldSpec | undefined,
   ): void {
+    if (field.validators?.required !== true && this.leaveEmpty(fieldSpec)) {
+      return;
+    }
+
     if (field.validators?.selectionCondition) {
       // only records a linked record offers are valid here, which this cannot know
       return;

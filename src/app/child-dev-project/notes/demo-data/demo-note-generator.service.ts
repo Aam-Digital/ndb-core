@@ -1,5 +1,6 @@
 import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable, inject } from "@angular/core";
 import { Note } from "../model/note";
@@ -28,6 +29,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   private readonly demoEntities = inject(DemoEntityStore);
   private demoUsers = inject(DemoUserGeneratorService);
   private readonly enums = inject(ConfigurableEnumService);
+  private readonly engine = inject(GenericDemoDataEngine);
 
   override requiredEntityTypes = ["Note"];
 
@@ -59,6 +61,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     this.dropLinksTheUseCaseDoesNotAllow(notes);
     this.applyConfiguredCategories(notes);
+    for (const note of notes) {
+      this.engine.fillRemainingFields(note, note.getType());
+    }
     return notes;
   }
 

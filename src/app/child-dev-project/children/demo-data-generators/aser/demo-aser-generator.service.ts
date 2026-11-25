@@ -17,7 +17,11 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
   private readonly demoEntities = inject(DemoEntityStore);
 
-  override requiredEntityTypes = ["Aser"];
+  override requiredEntityTypes = ["Aser", "Child"];
+
+  override get ownedEntityTypes(): string[] {
+    return ["Aser"];
+  }
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:

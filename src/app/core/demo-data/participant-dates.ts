@@ -8,5 +8,12 @@ import { faker } from "./faker";
  */
 export function admissionDateOf(participant: Entity): Date {
   const admission = participant["admissionDate"];
-  return admission instanceof Date ? admission : faker.date.past({ years: 3 });
+  if (admission instanceof Date) {
+    return admission;
+  }
+
+  // an invented admission after the recorded dropout would make every range built on it invalid
+  const dropout = participant["dropoutDate"];
+  const latest = dropout instanceof Date ? dropout : faker.defaultRefDate();
+  return faker.date.past({ years: 3, refDate: latest });
 }

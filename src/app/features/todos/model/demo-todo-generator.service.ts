@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { faker } from "../../../core/demo-data/faker";
 import moment from "moment/moment";
@@ -16,6 +17,7 @@ export class DemoTodoConfig {
 export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   private config = inject(DemoTodoConfig);
   private readonly demoEntities = inject(DemoEntityStore);
+  private readonly engine = inject(GenericDemoDataEngine);
   private demoUsers = inject(DemoUserGeneratorService);
 
   override requiredEntityTypes = ["Todo"];
@@ -33,12 +35,17 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   }
 
   public generateEntities(): Todo[] {
-    return generateTodos({
+    const todos = generateTodos({
       children: this.demoEntities.get("Child"),
       assignedTo: this.demoUsers.entities,
       minPerChild: this.config.minPerChild,
       maxPerChild: this.config.maxPerChild,
     });
+
+    for (const todo of todos) {
+      this.engine.fillRemainingFields(todo, todo.getType());
+    }
+    return todos;
   }
 }
 
