@@ -209,7 +209,7 @@ export class ConditionsEditorComponent implements OnInit, OnChanges {
   /** the row at the index with the field it is about (empty while none is chosen), none if there is no such row */
   private rowAt(
     conditionIndex: number,
-  ): { condition: any; fieldKey: string } | undefined {
+  ): { condition: DataFilter<Entity>; fieldKey: string } | undefined {
     const condition = this.conditionsArray()[conditionIndex];
     return condition
       ? { condition, fieldKey: this.getConditionField(condition) }
