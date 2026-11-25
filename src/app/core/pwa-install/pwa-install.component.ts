@@ -8,7 +8,7 @@ import {
   inject,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+import { PwaInstallService } from "./pwa-install.service";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -35,11 +35,12 @@ export class PwaInstallComponent implements OnInit {
 
   _showPWAInstallButton = false;
 
-  private pwaInstallType: PWAInstallType;
+  private showIOSInstructions = false;
 
   ngOnInit() {
-    this.pwaInstallType = this.pwaInstallService.getPWAInstallType();
-    if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
+    this.showIOSInstructions =
+      this.pwaInstallService.showIOSInstallInstructions();
+    if (this.showIOSInstructions) {
       this.showPWAInstallButton = true;
     }
     this.pwaInstallService.canInstallDirectly?.then(() => {
@@ -48,7 +49,7 @@ export class PwaInstallComponent implements OnInit {
   }
 
   pwaInstallButtonClicked() {
-    if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
+    if (this.showIOSInstructions) {
       this.snackBar.openFromTemplate(this.templateIOSInstallInstructions);
     } else {
       this.pwaInstallService.installPWA().then((choice) => {

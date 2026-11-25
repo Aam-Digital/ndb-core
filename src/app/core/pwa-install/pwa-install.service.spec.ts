@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+import { PwaInstallService } from "./pwa-install.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import {
   registerPWAInstallListener,
@@ -49,41 +49,31 @@ describe("PwaInstallService", () => {
   });
 
   it.each([
-    ["Safari on iOS", IOS_SAFARI, 5, PWAInstallType.ShowiOSInstallInstructions],
-    ["Chrome on iOS", IOS_CHROME, 5, PWAInstallType.ShowiOSInstallInstructions],
-    [
-      "Firefox on iOS",
-      IOS_FIREFOX,
-      5,
-      PWAInstallType.ShowiOSInstallInstructions,
-    ],
-    ["Edge on iOS", IOS_EDGE, 5, PWAInstallType.ShowiOSInstallInstructions],
-    [
-      "Safari on iPadOS (reports a Mac user agent)",
-      IPAD_SAFARI,
-      5,
-      PWAInstallType.ShowiOSInstallInstructions,
-    ],
-    ["an in-app browser on iOS", IOS_IN_APP, 5, PWAInstallType.NotAvailable],
-    ["Chrome on Android", ANDROID_CHROME, 5, PWAInstallType.NotAvailable],
-    ["Chrome on macOS", MAC_CHROME, 0, PWAInstallType.NotAvailable],
-    ["Firefox on Windows", WINDOWS_FIREFOX, 0, PWAInstallType.NotAvailable],
+    ["Safari on iOS", IOS_SAFARI, 5, true],
+    ["Chrome on iOS", IOS_CHROME, 5, true],
+    ["Firefox on iOS", IOS_FIREFOX, 5, true],
+    ["Edge on iOS", IOS_EDGE, 5, true],
+    ["Safari on iPadOS (reports a Mac user agent)", IPAD_SAFARI, 5, true],
+    ["an in-app browser on iOS", IOS_IN_APP, 5, false],
+    ["Chrome on Android", ANDROID_CHROME, 5, false],
+    ["Chrome on macOS", MAC_CHROME, 0, false],
+    ["Firefox on Windows", WINDOWS_FIREFOX, 0, false],
   ])(
-    "detects the install type for %s",
+    "shows the iOS install instructions for %s: %s",
     (_, userAgent, touchPoints, expected) => {
       mockWindow.navigator.userAgent = userAgent;
       mockWindow.navigator.maxTouchPoints = touchPoints;
 
-      expect(service.getPWAInstallType()).toBe(expected);
+      expect(service.showIOSInstallInstructions()).toBe(expected);
     },
   );
 
-  it("should detect standalone mode", () => {
+  it("should not show the iOS install instructions inside the installed app", () => {
     mockWindow.navigator.userAgent = IOS_SAFARI;
     vi.spyOn(mockWindow, "matchMedia").mockReturnValue({
       matches: true,
     } as any);
-    expect(service.getPWAInstallType()).toBe(PWAInstallType.RunningAsPWA);
+    expect(service.showIOSInstallInstructions()).toBe(false);
   });
 
   it("should execute install event when calling install", async () => {
