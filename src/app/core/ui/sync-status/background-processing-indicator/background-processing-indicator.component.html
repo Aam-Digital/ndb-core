@@ -3,7 +3,6 @@
   class="white"
   [style.opacity]="allTasksFinished() ? 0.5 : 1"
   [matMenuTriggerFor]="taskListDropdown"
-  (menuClosed)="markWasClosed()"
 >
   <span
     [matBadge]="taskCounter()"

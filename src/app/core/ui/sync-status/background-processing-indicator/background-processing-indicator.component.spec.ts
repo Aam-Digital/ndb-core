@@ -37,40 +37,28 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   });
 
   it("should aggregate process states by title if set to summarize", async () => {
-    vi.useFakeTimers();
-    try {
-      const taskListDropdownTrigger = component.taskListDropdownTrigger();
-      expect(taskListDropdownTrigger).toBeTruthy();
-      const openMenuSpy = vi.spyOn(taskListDropdownTrigger, "openMenu");
+    const p1 = { title: "sync", pending: true };
+    const p2a = { title: "indexing", details: "A", pending: false };
+    const p2b = { title: "indexing", details: "B", pending: true };
+    const p2c = { title: "indexing", details: "C", pending: false };
+    const p3 = { title: "completed other stuff", pending: false };
 
-      const p1 = { title: "sync", pending: true };
-      const p2a = { title: "indexing", details: "A", pending: false };
-      const p2b = { title: "indexing", details: "B", pending: true };
-      const p2c = { title: "indexing", details: "C", pending: false };
-      const p3 = { title: "completed other stuff", pending: false };
+    fixture.componentRef.setInput("backgroundProcesses", [
+      p1,
+      p2a,
+      p2b,
+      p2c,
+      p3,
+    ]);
+    fixture.componentRef.setInput("summarize", true);
+    fixture.detectChanges();
 
-      fixture.componentRef.setInput("backgroundProcesses", [
-        p1,
-        p2a,
-        p2b,
-        p2c,
-        p3,
-      ]);
-      fixture.componentRef.setInput("summarize", true);
-      fixture.detectChanges();
-
-      expect(component.taskCounter()).toBe(2);
-      await vi.advanceTimersByTimeAsync(0);
-      expect(component.filteredProcesses()).toEqual([
-        p1,
-        { title: p2a.title, pending: true },
-        p3,
-      ]);
-      await vi.advanceTimersByTimeAsync(0);
-      expect(openMenuSpy).toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(component.taskCounter()).toBe(2);
+    expect(component.filteredProcesses()).toEqual([
+      p1,
+      { title: p2a.title, pending: true },
+      p3,
+    ]);
   });
 
   it("should automatically close details after all processes finished", async () => {
@@ -99,22 +87,21 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     }
   });
 
-  it("should not open details again if they the state before was already pending (and user may have manually closed)", async () => {
+  it("should not open details automatically when processes are pending", async () => {
     vi.useFakeTimers();
     try {
-      const taskListDropdownTrigger = component.taskListDropdownTrigger();
-      expect(taskListDropdownTrigger).toBeTruthy();
-      const openMenuSpy = vi.spyOn(taskListDropdownTrigger, "openMenu");
+      const openMenuSpy = vi.spyOn(
+        component.taskListDropdownTrigger(),
+        "openMenu",
+      );
 
-      component.markWasClosed();
       fixture.componentRef.setInput("backgroundProcesses", [
         { title: "sync", pending: true },
         { title: "other", pending: true },
-        { title: "yet another", pending: true },
       ]);
       fixture.detectChanges();
-
       await vi.advanceTimersByTimeAsync(0);
+
       expect(openMenuSpy).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
