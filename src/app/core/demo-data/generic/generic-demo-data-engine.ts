@@ -90,6 +90,16 @@ interface FieldFill {
   siblings: readonly string[];
 }
 
+/** the record currently being filled, passed down while fields resolve each other */
+interface RecordFill {
+  entity: Entity;
+  schema: EntitySchema;
+  typeSpec: DemoEntitySpec;
+  siblings: readonly string[];
+  /** fields already handled, so a pair referring to each other cannot recurse */
+  filling: Set<string>;
+}
+
 /**
  * Generates demo records for every entity type a use case configures, from the type's
  * schema and the scenario's optional `Config:DemoData` spec.
@@ -108,7 +118,7 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
   private spec: DemoDataSpec = {};
   private typesOfOtherGenerators = new Set<string>();
   /** the types this engine created, whose references are all its to fill */
-  private generatedTypes = new Set<string>();
+  private readonly generatedTypes = new Set<string>();
 
   /** Load the scenario's spec before generation starts. */
   async init(typesOfOtherGenerators: string[] = []): Promise<void> {
@@ -205,9 +215,15 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
     const siblings = Array.from(schema.keys());
     this.applySample(entity, schema, typeSpec, siblings);
 
-    const filling = new Set<string>();
+    const context: RecordFill = {
+      entity,
+      schema,
+      typeSpec,
+      siblings,
+      filling: new Set(),
+    };
     for (const fieldId of siblings) {
-      this.fillOneField(entity, schema, typeSpec, siblings, fieldId, filling);
+      this.fillOneField(context, fieldId);
     }
   }
 
@@ -215,24 +231,18 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
    * Fill one field, but the field its date is bound to first: a schema listing
    * `end` before `start` would otherwise generate against an empty lower bound.
    */
-  private fillOneField(
-    entity: Entity,
-    schema: EntitySchema,
-    typeSpec: DemoEntitySpec,
-    siblings: readonly string[],
-    fieldId: string,
-    filling: Set<string>,
-  ): void {
+  private fillOneField(context: RecordFill, fieldId: string): void {
+    const { entity, schema, typeSpec, siblings, filling } = context;
+
     const field = schema.get(fieldId);
-    // references are filled in the second pass, once all types have records
-    const skip =
-      !field ||
-      field.isInternalField ||
-      isReservedField(fieldId) ||
-      field.dataType === "entity" ||
-      entity[fieldId] !== undefined ||
-      filling.has(fieldId);
-    if (skip) {
+    if (!field || field.isInternalField || isReservedField(fieldId)) {
+      return;
+    }
+    if (field.dataType === "entity") {
+      // references are filled in the second pass, once all types have records
+      return;
+    }
+    if (entity[fieldId] !== undefined || filling.has(fieldId)) {
       return;
     }
     filling.add(fieldId);
@@ -245,14 +255,7 @@ export class GenericDemoDataEngine extends DemoDataGenerator<Entity> {
     };
     const afterField = fill.spec?.after ?? startFieldOf(fieldId, siblings);
     if (afterField) {
-      this.fillOneField(
-        entity,
-        schema,
-        typeSpec,
-        siblings,
-        afterField,
-        filling,
-      );
+      this.fillOneField(context, afterField);
     }
 
     const value = this.notBefore(
