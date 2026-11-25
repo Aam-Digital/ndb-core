@@ -16,8 +16,8 @@ import {
   MatFormFieldModule,
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { BasicAutocompleteComponent } from "#src/app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -50,6 +50,8 @@ interface RelatedRecordsOption {
   label: string;
   /** whether the related records can link among themselves through this field, forming a hierarchy */
   isHierarchy: boolean;
+  /** marks a saved selection that is not available anymore (highlighted in the dropdown) */
+  isInvalid?: boolean;
 }
 
 /**
@@ -61,6 +63,8 @@ interface RelatedRecordsRow {
   optionId: string | undefined;
   /** the selected option, if it is (still) available for the applicable record types */
   option: RelatedRecordsOption | undefined;
+  /** the options to offer in this row's dropdown, including an unavailable selection so that it stays visible */
+  selectableOptions: RelatedRecordsOption[];
   levels: number;
   /** example placeholder(s) to copy into the template file */
   examples: string[];
@@ -83,7 +87,7 @@ function getOptionId(config: { entityType?: string; property?: string }) {
   styleUrl: "./edit-template-export-related-records.component.scss",
   imports: [
     MatFormFieldModule,
-    MatSelectModule,
+    BasicAutocompleteComponent,
     MatInputModule,
     MatButtonModule,
     MatTooltipModule,
@@ -141,11 +145,15 @@ export class EditTemplateExportRelatedRecordsComponent
         config,
         optionId,
         option,
+        selectableOptions: this.getSelectableOptions(config, optionId, option),
         levels,
         examples: this.getExamples(config, option, levels),
       };
     }),
   );
+
+  readonly optionToId = (option: RelatedRecordsOption) => option.id;
+  readonly optionToLabel = (option: RelatedRecordsOption) => option.label;
 
   ngOnInit() {
     // which related records are available depends on the record types selected in the same form
@@ -193,7 +201,21 @@ export class EditTemplateExportRelatedRecordsComponent
     this.updateValue(this.currentValue().filter((_, i) => i !== index));
   }
 
-  selectOption(index: number, optionId: string) {
+  selectOption(index: number, selected: string | string[]) {
+    // the dropdown emits the value type of a multi select, but only one option can be selected here
+    const optionId = asArray(selected)[0];
+
+    // the dropdown also emits the value it is given, which must not mark the form as changed
+    if (optionId === getOptionId(this.currentValue()[index] ?? {})) {
+      return;
+    }
+
+    if (!optionId) {
+      // the user cleared the text: empty the entry, so the validation asks to select or remove it
+      this.updateRow(index, () => ({ entityType: "", property: "" }));
+      return;
+    }
+
     const option = this.options().find((o) => o.id === optionId);
     if (!option) {
       return;
@@ -294,6 +316,30 @@ export class EditTemplateExportRelatedRecordsComponent
     }
 
     return [...options.values()].sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  /**
+   * The available options, plus a selection that does not fit the record types anymore:
+   * the dropdown only displays a selection that is among its options.
+   */
+  private getSelectableOptions(
+    config: TemplateExportRelatedRecords,
+    optionId: string | undefined,
+    option: RelatedRecordsOption | undefined,
+  ): RelatedRecordsOption[] {
+    if (!optionId || option) {
+      return this.options();
+    }
+
+    const unavailable: RelatedRecordsOption = {
+      id: optionId,
+      entityType: config.entityType,
+      property: config.property,
+      label: $localize`${config.entityType}:entityType:.${config.property}:field: (not available)`,
+      isHierarchy: false,
+      isInvalid: true,
+    };
+    return [unavailable, ...this.options()];
   }
 
   private getExamples(
