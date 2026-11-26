@@ -13,6 +13,20 @@ describe("EditLongTextComponent", () => {
     fixture = TestBed.createComponent(EditLongTextComponent);
   });
 
+  function renderAutosize(additional?: LongTextFieldConfig) {
+    setupCustomFormControlEditComponent(
+      fixture.componentInstance,
+      "description",
+      { additional },
+      fixture,
+    );
+    fixture.detectChanges();
+
+    return fixture.debugElement
+      .query(By.directive(CdkTextareaAutosize))
+      .injector.get(CdkTextareaAutosize);
+  }
+
   it.each<[string, LongTextFieldConfig | undefined, number, number]>([
     ["default", undefined, 4, 20],
     ["configured", { rows: 10, maxRows: 30 }, 10, 30],
@@ -20,19 +34,18 @@ describe("EditLongTextComponent", () => {
   ])(
     "should let the text box grow with its text between the min and max rows (%s)",
     (_, additional, expectedMin, expectedMax) => {
-      setupCustomFormControlEditComponent(
-        fixture.componentInstance,
-        "description",
-        { additional },
-        fixture,
-      );
-      fixture.detectChanges();
+      const autosize = renderAutosize(additional);
 
-      const autosize = fixture.debugElement
-        .query(By.directive(CdkTextareaAutosize))
-        .injector.get(CdkTextareaAutosize);
       expect(autosize.minRows).toBe(expectedMin);
       expect(autosize.maxRows).toBe(expectedMax);
     },
   );
+
+  it("should switch the autosize on once the field is rendered", () => {
+    const autosize = renderAutosize();
+    TestBed.tick();
+    fixture.detectChanges();
+
+    expect(autosize.enabled).toBe(true);
+  });
 });
