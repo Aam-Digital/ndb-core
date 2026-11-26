@@ -264,6 +264,21 @@ describe("EntityFormComponent", () => {
     fixture.detectChanges();
   }
 
+  it("should put a fullWidth group into a row of its own", async () => {
+    const entity = new TestEntity();
+    const a: FieldGroup = { fields: [{ id: "name" }] };
+    const b: FieldGroup = { fields: [{ id: "other" }] };
+    const wide: FieldGroup = { fields: [{ id: "name" }], fullWidth: true };
+
+    await setupFormWithGroups(entity, [a, wide, a, b]);
+
+    expect(component.fieldGroupRows()).toEqual([
+      { fullWidth: false, groups: [a] },
+      { fullWidth: true, groups: [wide] },
+      { fullWidth: false, groups: [a, b] },
+    ]);
+  });
+
   it("should hide and disable the whole group (including fields without a form control) while the group's displayCondition is not met", async () => {
     const entity = new TestEntity();
     entity.name = "irrelevant";

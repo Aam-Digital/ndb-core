@@ -816,8 +816,9 @@ test("Display conditions show a single field and a whole field group only while 
   await page
     .locator(".admin-form-column")
     .filter({ hasText: "Date Only Field" })
-    .getByRole("button", { name: "Display Condition" })
+    .getByRole("button", { name: "Field group options" })
     .click();
+  await page.getByRole("menuitem", { name: "Edit Display Condition" }).click();
   const conditionDialog = page.getByRole("dialog");
   await expect(
     conditionDialog.getByText(

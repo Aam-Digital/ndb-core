@@ -1,4 +1,11 @@
 @use "mixins/entity-form";
+@use "variables/sizes";
+
+.form-rows {
+  display: flex;
+  flex-direction: column;
+  gap: sizes.$large;
+}
 
 .grid-layout {
   @include entity-form.grid;
@@ -12,11 +19,7 @@
   max-width: none;
 }
 
-/* a field group configured as `fullWidth` takes up a whole row of the grid */
-.full-width-group {
-  grid-column: 1 / -1;
-
-  mat-form-field {
-    max-width: none;
-  }
+/* a field group configured as `fullWidth` is a row of its own, spanning the whole form */
+.full-width-row mat-form-field {
+  max-width: none;
 }
