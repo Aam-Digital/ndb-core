@@ -17,20 +17,35 @@ export function isLinkedTo(
   );
 }
 
-/** Whether the value of a field differs between the state of a record after and before a change. */
+/**
+ * Whether the value of a field differs between the state of a record after and before a change
+ * (after is undefined for a removed record).
+ */
 export function isFieldChanged(
-  after: Entity,
+  after: Entity | undefined,
   before: Entity,
   fieldId: string,
 ): boolean {
-  return JSON.stringify(before[fieldId]) !== JSON.stringify(after[fieldId]);
+  return JSON.stringify(before[fieldId]) !== JSON.stringify(after?.[fieldId]);
 }
 
-/** The ids of the fields whose value differs between the state of a record after and before a change. */
-export function getChangedFields(after: Entity, before: Entity): string[] {
+/**
+ * The ids of the fields whose value differs between the state of a record after and before a change
+ * (all fields with a value for a removed record).
+ */
+export function getChangedFields(
+  after: Entity | undefined,
+  before: Entity,
+): string[] {
   return [...before.getSchema().keys()].filter((fieldId) =>
     isFieldChanged(after, before, fieldId),
   );
+}
+
+/** The state of a new record before it was created, without any values */
+export function stateBeforeCreation(entity: Entity): Entity {
+  const entityType = entity.getConstructor();
+  return new entityType(Entity.extractEntityIdFromId(entity.getId()));
 }
 
 /** The state of the records: as saved before the change, or with the change and the suggested values */
@@ -39,7 +54,8 @@ export type ChangeSetState = "before" | "after";
 interface ChangedRecord {
   /** undefined for a new record */
   before: Entity | undefined;
-  after: Entity;
+  /** undefined for a removed record */
+  after: Entity | undefined;
   changedFields: Set<string>;
   /** when the record was added, as the records linking to a record are listed in that order */
   order: number;
@@ -64,6 +80,8 @@ export interface StartingChange {
   before: Entity;
   /** the fields of the changed record that are passed on */
   changedFields: string[];
+  /** whether the record was removed (e.g. the discarded record of a merge), so it no longer links to any record */
+  removed?: boolean;
 }
 
 /**
@@ -88,11 +106,11 @@ export class ChangeSet {
   version = 0;
 
   constructor(changes: StartingChange[]) {
-    for (const { entity, before, changedFields } of changes) {
+    for (const { entity, before, changedFields, removed } of changes) {
       this.records.set(entity.getId(), {
         before: before.isNew ? undefined : before,
         // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
-        after: entity.copy(),
+        after: removed ? undefined : entity.copy(),
         changedFields: new Set(changedFields),
         order: this.nextOrder++,
       });
@@ -101,11 +119,17 @@ export class ChangeSet {
 
   /**
    * The record in the given state (the given record itself if it is not changed),
-   * or undefined if the record did not exist before.
+   * or undefined if the record did not exist before or was removed.
    */
   get(entity: Entity, state: ChangeSetState): Entity | undefined {
     const record = this.records.get(entity.getId());
     return record ? record[state] : entity;
+  }
+
+  /** Whether the record with the given id was removed */
+  isRemoved(id: string): boolean {
+    const record = this.records.get(id);
+    return !!record && !record.after;
   }
 
   isChanged(entity: Entity, fieldId: string): boolean {

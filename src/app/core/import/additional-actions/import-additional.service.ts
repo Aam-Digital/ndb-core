@@ -20,6 +20,13 @@ import { asArray } from "../../../utils/asArray";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 import { Logging } from "../../logging/logging.service";
 import { entityToFieldReferenceLabel } from "../../entity/schema/entity-field-reference-label";
+import {
+  StartingChange,
+  stateBeforeCreation,
+} from "../../../features/inherited-field/automated-field-update/change-set";
+
+/** A record that an additional import action created or changed, with its state before */
+type LinkChange = Pick<StartingChange, "entity" | "before">;
 
 /**
  * Service to handle additional import actions
@@ -191,9 +198,13 @@ export class ImportAdditionalService {
    * linking entities.
    * @param entities
    * @param settings
+   * @return the records that the actions created or changed, with their state before
    */
-  public executeImport(entities: Entity[], settings: ImportSettings) {
-    const actionFuncs = [];
+  public async executeImport(
+    entities: Entity[],
+    settings: ImportSettings,
+  ): Promise<LinkChange[]> {
+    const actionFuncs: Promise<LinkChange[]>[] = [];
 
     for (const additionalImport of settings.additionalActions ?? []) {
       let action;
@@ -210,7 +221,7 @@ export class ImportAdditionalService {
       if (action) actionFuncs.push(action);
     }
 
-    return Promise.all(actionFuncs);
+    return (await Promise.all(actionFuncs)).flat();
   }
 
   public async undoImport(importMeta: ImportMetadata): Promise<void> {
@@ -247,10 +258,10 @@ export class ImportAdditionalService {
    * @param action Details of the specific action to be performed
    * @private
    */
-  private linkIndirectly(
+  private async linkIndirectly(
     entitiesToBeLinked: Entity[],
     action: AdditionalIndirectLinkAction,
-  ) {
+  ): Promise<LinkChange[]> {
     const relationCtr = this.entityRegistry.get(action.relationshipEntityType);
 
     const relations = entitiesToBeLinked.map((entity) => {
@@ -259,7 +270,11 @@ export class ImportAdditionalService {
       relation[action.relationshipTargetProperty] = action.targetId;
       return relation;
     });
-    return this.entityMapper.saveAll(relations);
+    await this.entityMapper.saveAll(relations);
+    return relations.map((entity) => ({
+      entity,
+      before: stateBeforeCreation(entity),
+    }));
   }
 
   /**
@@ -291,11 +306,12 @@ export class ImportAdditionalService {
   private async linkDirectly(
     entitiesToBeLinked: Entity[],
     action: AdditonalDirectLinkAction,
-  ) {
+  ): Promise<LinkChange[]> {
     const targetEntity = await this.entityMapper.load(
       action.targetType,
       action.targetId,
     );
+    const before = targetEntity.copy();
 
     if (!targetEntity[action.targetProperty]) {
       targetEntity[action.targetProperty] = [];
@@ -314,7 +330,8 @@ export class ImportAdditionalService {
       targetEntity[action.targetProperty].push(...ids);
     }
 
-    return this.entityMapper.save(targetEntity);
+    await this.entityMapper.save(targetEntity);
+    return [{ entity: targetEntity, before }];
   }
 
   /**

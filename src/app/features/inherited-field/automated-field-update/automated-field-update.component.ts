@@ -85,6 +85,8 @@ interface TriggerWithChanges {
 interface UpdateGroup {
   sourceFieldId: string;
   triggers: TriggerWithChanges[];
+  /** The name of the type of the changed entities, to show how many of them caused the update */
+  triggerTypeLabel: string;
   rows: DialogRow[];
 }
 
@@ -185,10 +187,6 @@ export class AutomatedFieldUpdateComponent {
    */
   private readonly triggerChanges = new Map<string, TriggerChange>();
 
-  /** The name of the type of the changed entities, to show how many of them caused the update */
-  readonly triggerTypeLabel =
-    this.data.triggers?.[0]?.entity.getConstructor().labelPlural;
-
   /**
    * Whether all entities directly linked to the changed entity are linked through the same field
    * (otherwise each of them shows how it is linked).
@@ -215,17 +213,26 @@ export class AutomatedFieldUpdateComponent {
           })),
         isEqual,
       );
+      // a changed entity that the rows are not reached from did not cause their update
+      const triggers = (this.data.triggers ?? []).filter((trigger) =>
+        reachedFrom.has(trigger.entity.getId()),
+      );
+      // e.g. a merge changes records of several types
+      const triggerTypes = uniq(
+        triggers.map((trigger) => trigger.entity.getConstructor()),
+      );
       return {
         sourceFieldId,
-        // a changed entity that the rows are not reached from did not cause their update
-        triggers: (this.data.triggers ?? [])
-          .filter((trigger) => reachedFrom.has(trigger.entity.getId()))
-          .map((trigger) => ({
-            trigger,
-            changes: computed(() =>
-              this.getTriggerChanges(trigger, sourceFieldId, links),
-            ),
-          })),
+        triggers: triggers.map((trigger) => ({
+          trigger,
+          changes: computed(() =>
+            this.getTriggerChanges(trigger, sourceFieldId, links),
+          ),
+        })),
+        triggerTypeLabel:
+          triggerTypes.length === 1
+            ? triggerTypes[0].labelPlural
+            : $localize`records`,
         rows: groupRows,
       };
     });

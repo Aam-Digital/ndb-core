@@ -196,7 +196,10 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    await service.executeImport(testEntities, testImportSettings);
+    const changes = await service.executeImport(
+      testEntities,
+      testImportSettings,
+    );
 
     const activityAfter = await TestBed.inject(EntityMapperService).load(
       DirectlyLinkingEntity,
@@ -206,6 +209,13 @@ describe("ImportAdditionalService", () => {
       "ImportedEntity:1",
       "ImportedEntity:2",
     ]);
+    // the changed record with its state before, to update the records related to it
+    expect(
+      changes.map(({ entity, before }) => [
+        entity.getId(),
+        (before as DirectlyLinkingEntity).participants ?? [],
+      ]),
+    ).toEqual([[testActivity.getId(), []]]);
   });
 
   it("should remove IDs from reference field in other entity with undo", async () => {
@@ -263,7 +273,12 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    await service.executeImport(testEntities, testImportSettings);
+    const changes = await service.executeImport(
+      testEntities,
+      testImportSettings,
+    );
+    // the created records, which did not exist before
+    expect(changes.map(({ before }) => before.isNew)).toEqual([true, true]);
 
     const createRelations = await entityMapper.loadType(RelationshipEntity);
     const expectedRelations = [

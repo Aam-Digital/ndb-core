@@ -28,6 +28,7 @@ import {
   mockConfirmationDialog,
   mockMatDialog,
 } from "#src/app/utils/test-utils/dialog-mocks";
+import { AutomatedFieldUpdateConfigService } from "app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 
 @DatabaseEntity("TestEntityWithAccounts")
 class TestEntityWithAccounts extends Entity {
@@ -79,6 +80,7 @@ describe("BulkMergeService", () => {
   };
   let matDialog: { open: Mock };
   let confirmationDialog: { getConfirmation: Mock };
+  let automatedFieldUpdate: { applyRulesToChanges: Mock };
 
   let recordA: TestEntity;
   let recordB: TestEntity;
@@ -91,6 +93,7 @@ describe("BulkMergeService", () => {
     };
     matDialog = mockMatDialog();
     confirmationDialog = mockConfirmationDialog();
+    automatedFieldUpdate = { applyRulesToChanges: vi.fn() };
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
@@ -101,6 +104,10 @@ describe("BulkMergeService", () => {
         {
           provide: ConfirmationDialogService,
           useValue: confirmationDialog,
+        },
+        {
+          provide: AutomatedFieldUpdateConfigService,
+          useValue: automatedFieldUpdate,
         },
       ],
     });
@@ -134,6 +141,62 @@ describe("BulkMergeService", () => {
     await service.showMergeDialog([recordA, recordB], TestEntity);
     const dialogData = matDialog.open.mock.calls[0][1].data;
     expect(dialogData.entitiesToMerge[0].getId()).toBe(recordA.getId());
+  });
+
+  it("passes the kept, the re-linked and the removed record with their state before the merge to the value automation", async () => {
+    const related = new EntityWithMergedRelations();
+    related.singleRelated = recordB.getId();
+    await entityMapper.save(related);
+    const mergedEntity = Object.assign(recordA.copy(), { name: "A1" });
+    matDialog.open.mockReturnValue({
+      afterClosed: () => of({ mergedEntity, entityAccounts: [] }),
+    });
+
+    await service.showMergeDialog([recordA, recordB], TestEntity);
+
+    const changes = automatedFieldUpdate.applyRulesToChanges.mock.calls[0][0];
+    expect(
+      changes.map(({ entity, before, removed }) => [
+        entity.getId(),
+        before === entity ? "same" : before.getId(),
+        removed ?? false,
+      ]),
+    ).toEqual([
+      [recordA.getId(), recordA.getId(), false],
+      [related.getId(), related.getId(), false],
+      [recordB.getId(), "same", true],
+    ]);
+    expect([changes[0].before.name, changes[0].entity.name]).toEqual([
+      "A",
+      "A1",
+    ]);
+    expect([
+      changes[1].before.singleRelated,
+      changes[1].entity.singleRelated,
+    ]).toEqual([recordB.getId(), recordA.getId()]);
+  });
+
+  it("lists the kept record once with its state before the merge, also if it linked to the discarded record", async () => {
+    recordA.ref = recordB.getId();
+    const mergedEntity = Object.assign(recordA.copy(), { name: "A1" });
+
+    const changes = await service.executeMerge(mergedEntity, [
+      recordA,
+      recordB,
+    ]);
+
+    const keptChanges = changes.filter(
+      ({ entity }) => entity.getId() === recordA.getId(),
+    );
+    expect(keptChanges).toHaveLength(1);
+    const { before, entity } = keptChanges[0] as {
+      before: TestEntity;
+      entity: TestEntity;
+    };
+    expect([before.ref, entity.ref]).toEqual([
+      recordB.getId(),
+      recordA.getId(),
+    ]);
   });
 
   it("should update record_A and delete record_B when merge is confirmed", async () => {

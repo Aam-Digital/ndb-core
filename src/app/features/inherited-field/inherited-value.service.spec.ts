@@ -18,7 +18,30 @@ import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+
+@DatabaseEntity("InheritingParent")
+class InheritingParent extends Entity {
+  @DatabaseField() region: string;
+}
+
+@DatabaseEntity("InheritingChild")
+class InheritingChild extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "InheritingParent" })
+  parent: string | string[];
+
+  @DatabaseField({
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "region" },
+    },
+  })
+  region: string;
+}
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -1202,6 +1225,60 @@ describe("InheritedValueService", () => {
       await initCollectingForm(["a"], [["a"]]);
 
       expect(mockEntityMapperService.load).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("inheriting into new records outside a form (e.g. imported)", () => {
+    const north = Object.assign(new InheritingParent("north"), {
+      region: "north",
+    });
+    const south = Object.assign(new InheritingParent("south"), {
+      region: "south",
+    });
+
+    it.each([
+      ["a new record takes the value of its parent", [north], {}, "north"],
+      ["a new record keeps its own value", [north], { region: "own" }, "own"],
+      [
+        "an existing record is not changed",
+        [north],
+        { _rev: "1-existing" },
+        undefined,
+      ],
+      [
+        "a new record stays empty if its parents differ",
+        [north, south],
+        {},
+        undefined,
+      ],
+    ])("%s", async (_, parents, values, expected) => {
+      mockEntityMapperService.load.mockImplementation(async (_type, id) =>
+        parents.find((p) => p.getId() === id),
+      );
+      const child = Object.assign(new InheritingChild(), {
+        parent: parents.map((p) => p.getId()),
+        ...values,
+      });
+
+      await service.inheritIntoNewRecords([child]);
+
+      expect(child.region).toBe(expected);
+    });
+
+    it("loads the parents shared by many records once", async () => {
+      mockEntityMapperService.load.mockResolvedValue(north);
+      const children = [1, 2, 3].map(() =>
+        Object.assign(new InheritingChild(), { parent: north.getId() }),
+      );
+
+      await service.inheritIntoNewRecords(children);
+
+      expect(children.map((c) => c.region)).toEqual([
+        "north",
+        "north",
+        "north",
+      ]);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(1);
     });
   });
 });

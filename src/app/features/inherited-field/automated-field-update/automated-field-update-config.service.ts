@@ -27,6 +27,7 @@ import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { ChangeSet, getChangedFields, StartingChange } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import {
   AffectedEntitiesCalculation,
   AffectedEntitiesContext,
@@ -96,11 +97,12 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * Applies rules to dependent entities based on the changes of the given records.
    * Also prompts user confirmation and saves updates if any changes were made.
    * Several changed records (e.g. of a bulk edit) are covered together in one dialog.
+   * A removed record (e.g. the discarded record of a merge) is given with its last state as `entity` and `before`.
    * A failure is reported and shown to the user here, as the changed records themselves are already saved.
    * @return the updated entities as they were before the update (to undo it), without the changed records themselves
    */
   public async applyRulesToChanges(
-    changes: Pick<StartingChange, "entity" | "before">[],
+    changes: Pick<StartingChange, "entity" | "before" | "removed">[],
   ): Promise<Entity[]> {
     let previousVersions: Entity[];
     try {
@@ -128,25 +130,38 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   }
 
   private async updateEntitiesDependingOn(
-    changes: Pick<StartingChange, "entity" | "before">[],
+    changes: Pick<StartingChange, "entity" | "before" | "removed">[],
   ): Promise<Entity[]> {
-    // only the entities with a change that is passed on (saving also changes e.g. the update time)
+    // only the entities with a change that is passed on (saving also changes e.g. the update time),
+    // and the new and removed ones and those with changed links, as only these show which records link to them
     const triggers: UpdateTrigger[] = changes
-      .map(({ entity, before }) => ({
+      .map(({ entity, before, removed }) => ({
         entity,
         before,
-        changedFields: getChangedFields(entity, before),
+        removed,
+        changedFields: getChangedFields(removed ? undefined : entity, before),
       }))
       .filter(
         (trigger) =>
-          this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
-            .length > 0 && !this.checkRefAlreadyProcessed(trigger.entity),
+          (trigger.removed ||
+            trigger.before.isNew ||
+            this.hasChangedLinks(trigger) ||
+            this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
+              .length > 0) &&
+          !this.checkRefAlreadyProcessed(trigger.entity),
       );
     if (triggers.length === 0) return [];
 
     const { previousVersions } =
       await this.confirmAndSaveAffectedEntities(triggers);
     return previousVersions;
+  }
+
+  private hasChangedLinks({ entity, changedFields }: UpdateTrigger): boolean {
+    const schema = entity.getSchema();
+    return changedFields.some(
+      (field) => schema.get(field)?.dataType === EntityDatatype.dataType,
+    );
   }
 
   /**

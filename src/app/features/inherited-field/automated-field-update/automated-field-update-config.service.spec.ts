@@ -4,7 +4,7 @@ import {
   AutomatedFieldUpdateConfigService,
   MAX_ENTITIES_TO_REVIEW,
 } from "./automated-field-update-config.service";
-import { ChangeSet } from "./change-set";
+import { ChangeSet, stateBeforeCreation } from "./change-set";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
@@ -543,6 +543,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
+    // like in the database, a saved record has a revision (a record without one is new)
+    const add = entityMapper.add.bind(entityMapper);
+    vi.spyOn(entityMapper, "add").mockImplementation((entity: Entity) => {
+      entity._rev ??= "1-saved";
+      add(entity);
+    });
   });
 
   it("should update mentee status when status of linked mentorship changes", async () => {
@@ -738,6 +744,45 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const updatedChild = await entityMapper.load(Child, child.getId());
     expect(updatedChild.category).toBe("secondary-student");
+  });
+
+  it("finds the records linking to a new record among the records created with it, without looking for saved ones", async () => {
+    const school = createSchool("secondary");
+    const child = new Child();
+    child.school = school.getId();
+    // e.g. created by the same import
+    entityMapper.addAll([school, child]);
+    const loadLinking = vi.spyOn(service, "loadRecordsLinkingTo");
+
+    await service.applyRulesToChanges(
+      [school, child].map((entity) => ({
+        entity,
+        before: stateBeforeCreation(entity),
+      })),
+    );
+
+    expect(loadLinking).not.toHaveBeenCalled();
+    const updatedChild = await entityMapper.load(Child, child.getId());
+    expect(updatedChild.category).toBe("secondary-student");
+  });
+
+  it("finds a saved record that now links to a new record, even if no rule starts at the saved record", async () => {
+    const group = new CommonValueGroup();
+    group.members = [];
+    entityMapper.addAll([group]);
+    const groupBefore = group.copy();
+    const school = createSchool("secondary");
+    // e.g. an import adds the new record to the saved one
+    group.members = [school.getId()];
+    entityMapper.addAll([school, group]);
+
+    await service.applyRulesToChanges([
+      { entity: school, before: stateBeforeCreation(school) },
+      { entity: group, before: groupBefore },
+    ]);
+
+    const updated = await entityMapper.load(CommonValueGroup, group.getId());
+    expect(updated.category).toBe("secondary");
   });
 
   it("should apply inheritance value mapping correctly", async () => {
@@ -1154,7 +1199,9 @@ describe("AutomatedFieldUpdateConfigService", () => {
       const subAction = createSubAction(parent, ["education"]);
       entityMapper.addAll([parent, subAction]);
 
+      // the pre-filled record before its first save
       const subActionBefore = subAction.copy();
+      subActionBefore._rev = undefined;
       subAction.tags = toTags([]);
       mockDialog.open.mockClear();
 
@@ -1372,6 +1419,60 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(suggestion.id).toBe(parent.getId());
         expect(suggestion.newValue).toEqual(["health"]);
         expect(suggestion.unlinked).toBe(true);
+      });
+
+      it.each([
+        [[], ["health"]],
+        [[["education"]], undefined],
+      ])(
+        "removes the values only a removed sub-action had from its parent (other sub-actions %j)",
+        async (otherSubActionTags, expectedParentTags) => {
+          const parent = new AggregatingAction();
+          parent.tags = toTags(["health", "education"]);
+          const subAction = createSubAction(parent, ["education"]);
+          subAction._rev = "1-existing";
+          const others = otherSubActionTags.map((tags) =>
+            createSubAction(parent, tags),
+          );
+          entityMapper.addAll([parent, subAction, ...others]);
+          await entityMapper.remove(subAction);
+          mockDialog.open.mockClear();
+
+          await service.applyRulesToChanges([
+            { entity: subAction, before: subAction, removed: true },
+          ]);
+
+          expect(suggestions()?.[0]).toEqual(
+            expectedParentTags && [parent.getId(), expectedParentTags],
+          );
+        },
+      );
+
+      it("adds the values of a sub-action moved away from a removed parent without loading the removed parent", async () => {
+        const removedParent = new AggregatingAction();
+        removedParent._rev = "1-existing";
+        const keptParent = new AggregatingAction();
+        keptParent.tags = toTags(["health"]);
+        const subAction = createSubAction(removedParent, ["education"]);
+        subAction._rev = "1-existing";
+        entityMapper.addAll([keptParent, subAction]);
+        const subActionBefore = subAction.copy();
+        subAction.parentAction = keptParent.getId();
+        const loadSpy = vi.spyOn(entityMapper, "load");
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToChanges([
+          { entity: subAction, before: subActionBefore },
+          { entity: removedParent, before: removedParent, removed: true },
+        ]);
+
+        expect(suggestions()).toEqual([
+          [keptParent.getId(), ["health", "education"]],
+        ]);
+        expect(loadSpy).not.toHaveBeenCalledWith(
+          expect.anything(),
+          removedParent.getId(),
+        );
       });
 
       it.each([

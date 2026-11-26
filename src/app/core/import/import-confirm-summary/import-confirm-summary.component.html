@@ -12,8 +12,8 @@
     <app-hint-box type="warning" class="margin-bottom-regular">
       <strong i18n>⚠️ Manual update required</strong>
       <div i18n>
-        Inherited values do not update automatically after import and must be
-        updated manually.
+        Records that already exist keep their inherited values when the import
+        changes their link. They must be updated manually.
       </div>
     </app-hint-box>
   }
@@ -22,7 +22,11 @@
   @if (importInProgress()) {
     <div class="margin-top-large">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <div i18n>Importing data ...</div>
+      @if (checkingRelatedRecords()) {
+        <div i18n>Checking related records ...</div>
+      } @else {
+        <div i18n>Importing data ...</div>
+      }
     </div>
   }
 </mat-dialog-content>
