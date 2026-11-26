@@ -766,6 +766,25 @@ describe("AutomatedFieldUpdateConfigService", () => {
     expect(updatedChild.category).toBe("secondary-student");
   });
 
+  it("finds a saved record that now links to a new record, even if no rule starts at the saved record", async () => {
+    const group = new CommonValueGroup();
+    group.members = [];
+    entityMapper.addAll([group]);
+    const groupBefore = group.copy();
+    const school = createSchool("secondary");
+    // e.g. an import adds the new record to the saved one
+    group.members = [school.getId()];
+    entityMapper.addAll([school, group]);
+
+    await service.applyRulesToChanges([
+      { entity: school, before: stateBeforeCreation(school) },
+      { entity: group, before: groupBefore },
+    ]);
+
+    const updated = await entityMapper.load(CommonValueGroup, group.getId());
+    expect(updated.category).toBe("secondary");
+  });
+
   it("should apply inheritance value mapping correctly", async () => {
     const school = new School();
     school.name = "Test School";

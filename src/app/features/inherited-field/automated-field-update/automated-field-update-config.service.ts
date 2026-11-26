@@ -27,6 +27,7 @@ import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { ChangeSet, getChangedFields, StartingChange } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
 import {
   AffectedEntitiesCalculation,
   AffectedEntitiesContext,
@@ -132,7 +133,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     changes: Pick<StartingChange, "entity" | "before" | "removed">[],
   ): Promise<Entity[]> {
     // only the entities with a change that is passed on (saving also changes e.g. the update time),
-    // and the new and removed ones, as only these show which records link to them
+    // and the new and removed ones and those with changed links, as only these show which records link to them
     const triggers: UpdateTrigger[] = changes
       .map(({ entity, before, removed }) => ({
         entity,
@@ -144,6 +145,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         (trigger) =>
           (trigger.removed ||
             trigger.before.isNew ||
+            this.hasChangedLinks(trigger) ||
             this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
               .length > 0) &&
           !this.checkRefAlreadyProcessed(trigger.entity),
@@ -153,6 +155,13 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     const { previousVersions } =
       await this.confirmAndSaveAffectedEntities(triggers);
     return previousVersions;
+  }
+
+  private hasChangedLinks({ entity, changedFields }: UpdateTrigger): boolean {
+    const schema = entity.getSchema();
+    return changedFields.some(
+      (field) => schema.get(field)?.dataType === EntityDatatype.dataType,
+    );
   }
 
   /**
