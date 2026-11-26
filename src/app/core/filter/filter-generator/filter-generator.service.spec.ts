@@ -405,16 +405,20 @@ describe("FilterGeneratorService", () => {
           "2026-03-20",
         ]);
 
-        expect(matches(recordWith(field, new Date(2026, 2, 20, 17, 0)))).toBe(
+        // local calendar days: first and last moment of the days, and just outside them
+        expect(matches(recordWith(field, new Date(2026, 2, 10, 0, 0)))).toBe(
           true,
         );
-        expect(matches(recordWith(field, new Date(2026, 2, 10, 0, 5)))).toBe(
+        expect(matches(recordWith(field, new Date(2026, 2, 15, 12, 0)))).toBe(
           true,
         );
-        expect(matches(recordWith(field, new Date(2026, 2, 9, 23, 0)))).toBe(
-          false,
-        );
-        expect(matches(recordWith(field, new Date(2026, 2, 21, 1, 0)))).toBe(
+        expect(
+          matches(recordWith(field, new Date(2026, 2, 20, 23, 59, 59, 999))),
+        ).toBe(true);
+        expect(
+          matches(recordWith(field, new Date(2026, 2, 9, 23, 59, 59, 999))),
+        ).toBe(false);
+        expect(matches(recordWith(field, new Date(2026, 2, 21, 0, 0)))).toBe(
           false,
         );
       },
