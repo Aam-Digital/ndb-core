@@ -15,7 +15,9 @@ import { AttendanceDatatype } from "../../../features/attendance/model/attendanc
 import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { mockEntityMapperProvider } from "../entity-mapper/mock-entity-mapper-service";
 import {
+  EmbeddedFieldRef,
   getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
   getEmbeddedFieldRefs,
   getEmbeddedSchema,
   resolveEmbeddedField,
@@ -123,6 +125,40 @@ describe("embedded-schema-field.util", () => {
     );
     expect(ids.filter((id) => id.startsWith("name"))).toEqual([]);
   });
+
+  it.each([
+    [
+      "both properties have a label",
+      { label: "Attendance" },
+      { label: "Status" },
+      "Attendance -> Status",
+    ],
+    [
+      "a property without a label of an internal field",
+      { labelShort: "Last updated", isInternalField: true },
+      {},
+      "Last updated",
+    ],
+    [
+      "a property without a label of another field",
+      { label: "Contact" },
+      {},
+      "Contact -> inner",
+    ],
+  ])(
+    "composes the label for %s",
+    (_, outerSchema, innerSchema, expectedLabel) => {
+      const ref = {
+        outerProp: "outer",
+        innerProp: "inner",
+        outerSchema,
+        innerSchema,
+        isArray: false,
+      } as EmbeddedFieldRef;
+
+      expect(getEmbeddedFieldLabel(ref)).toBe(expectedLabel);
+    },
+  );
 
   describe("getEmbeddedSchema", () => {
     it("returns undefined for a field that is not an embedded schema field at all", () => {

@@ -60,6 +60,11 @@ The most common options:
 
 Each record automatically holds basic data of timestamp and user who created and last updated the record
 (see the `Entity` base class in `../model/entity.ts`).
+The metadata is set on every save through the `EntityMapperService`, with the clock of the saving device.
+
+The fields are internal (`isInternalField`) and have no `label`, because a label would add them to exports
+and field pickers. The dates can be used as list filters (`created.at`, `updated.at`):
+their `labelShort` names the filter, and the admin list editor always offers them.
 
 ## Key files
 

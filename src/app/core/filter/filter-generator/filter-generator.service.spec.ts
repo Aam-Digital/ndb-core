@@ -57,6 +57,8 @@ import { expectArrayWithExactContents } from "../../../utils/test-utils/array-te
 import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { UpdateMetadata } from "../../entity/model/update-metadata";
+import { UpdateMetadataDatatype } from "../../entity/model/update-metadata.datatype";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -100,6 +102,11 @@ describe("FilterGeneratorService", () => {
         {
           provide: DefaultDatatype,
           useClass: SchemaEmbedDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: UpdateMetadataDatatype,
           multi: true,
         },
         // EntityDatatype only uses this to offer entity actions, which filters don't
@@ -371,6 +378,59 @@ describe("FilterGeneratorService", () => {
   it("should create a date range filter", async () => {
     let generatedFilter = await service.generate([{ id: "date" }], Note, []);
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
+
+  describe("filter for the created and last updated date of a record", () => {
+    function recordWith(field: "created" | "updated", date?: Date) {
+      const record = new TestEntity();
+      if (date) {
+        record[field] = new UpdateMetadata("user", date);
+      }
+      return record;
+    }
+
+    async function generatePredicate(field: string, selected: string[]) {
+      const filter = (
+        await service.generate([{ id: `${field}.at` }], TestEntity, [])
+      )[0] as DateFilter<TestEntity>;
+      filter.selectedOptionValues = selected;
+      return filterService.getFilterPredicate(filter.getFilter());
+    }
+
+    it.each(["created", "updated"] as const)(
+      "should match the whole days of the %s date, including the last day",
+      async (field) => {
+        const matches = await generatePredicate(field, [
+          "2026-03-10",
+          "2026-03-20",
+        ]);
+
+        expect(matches(recordWith(field, new Date(2026, 2, 20, 17, 0)))).toBe(
+          true,
+        );
+        expect(matches(recordWith(field, new Date(2026, 2, 10, 0, 5)))).toBe(
+          true,
+        );
+        expect(matches(recordWith(field, new Date(2026, 2, 9, 23, 0)))).toBe(
+          false,
+        );
+        expect(matches(recordWith(field, new Date(2026, 2, 21, 1, 0)))).toBe(
+          false,
+        );
+      },
+    );
+
+    it.each(["created", "updated"] as const)(
+      "should find only the records without a %s date through 'no date defined'",
+      async (field) => {
+        const matches = await generatePredicate(field, [
+          EMPTY_FILTER_OPTION_KEY,
+        ]);
+
+        expect(matches(recordWith(field))).toBe(true);
+        expect(matches(recordWith(field, new Date(2026, 2, 12)))).toBe(false);
+      },
+    );
   });
 
   describe("filter for a period field (date-range)", () => {
