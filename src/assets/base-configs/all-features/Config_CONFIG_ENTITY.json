@@ -817,9 +817,6 @@
           },
           {
             "id": "updated.at"
-          },
-          {
-            "id": "created.at"
           }
         ],
         "loaderMethod": "ChildrenService"
