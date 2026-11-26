@@ -19,6 +19,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { Logging } from "../logging/logging.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 import { AutomatedFieldUpdateConfigService } from "../../features/inherited-field/automated-field-update/automated-field-update-config.service";
+import { ImportExistingService } from "./update-existing/import-existing.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -363,6 +364,64 @@ describe("ImportService", () => {
 
       const reverted = await entityMapper.load(TestEntity, related.getId());
       expect(reverted.name).toBe(expectedValue);
+    });
+
+    it("keeps the import undoable if a related record cannot be loaded after the update", async () => {
+      // e.g. deleted by a sync right after the update
+      const notLoadable = TestEntity.create({ name: "before" });
+      vi.spyOn(
+        TestBed.inject(AutomatedFieldUpdateConfigService),
+        "applyRulesToChanges",
+      ).mockResolvedValue([notLoadable]);
+
+      const importMeta = await service.executeImport(
+        [TestEntity.create({ name: "imported" })],
+        settings,
+      );
+
+      expect(importMeta.updatedRelatedEntities).toEqual([]);
+      await expect(
+        entityMapper.load(ImportMetadata, importMeta.getId()),
+      ).resolves.toBeDefined();
+    });
+
+    it.each([
+      ["finishes the undo if a related record was deleted since", 404, true],
+      [
+        "keeps the import for another undo if a related record could not be reverted",
+        409,
+        false,
+      ],
+    ])("%s", async (_, status, undone) => {
+      vi.spyOn(
+        TestBed.inject(AutomatedFieldUpdateConfigService),
+        "applyRulesToChanges",
+      ).mockResolvedValue([]);
+      const importMeta = await service.executeImport(
+        [TestEntity.create({ name: "imported" })],
+        settings,
+      );
+      importMeta.updatedRelatedEntities = [
+        { id: `${TestEntity.ENTITY_TYPE}:related`, importDataChanges: {} },
+      ];
+      vi.spyOn(
+        TestBed.inject(ImportExistingService),
+        "revertChanges",
+      ).mockRejectedValue({ status });
+
+      const undo = service.undoImport(importMeta);
+
+      if (undone) {
+        await expect(undo).resolves.toBeUndefined();
+      } else {
+        await expect(undo).rejects.toEqual({ status });
+      }
+      expect(
+        await entityMapper
+          .load(ImportMetadata, importMeta.getId())
+          .then(() => true)
+          .catch(() => false),
+      ).toBe(!undone);
     });
   });
 

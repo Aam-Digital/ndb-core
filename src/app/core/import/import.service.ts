@@ -186,12 +186,20 @@ export class ImportService {
   private getChangesForUndo(
     previousVersions: Entity[],
   ): Promise<ImportMetadata["updatedRelatedEntities"]> {
-    return Promise.all(
+    const changes = Promise.all(
       previousVersions.map(async (previous) => {
-        const updated = await this.entityMapper.load(
-          previous.getConstructor(),
-          previous.getId(),
-        );
+        const updated = await this.entityMapper
+          .load(previous.getConstructor(), previous.getId())
+          .catch((error) => {
+            // e.g. deleted by a sync meanwhile: the import itself stays undoable
+            Logging.warn(
+              "Import: an updated related record could not be loaded to undo it later",
+              { entityType: previous.getType() },
+              error,
+            );
+            return undefined;
+          });
+        if (!updated) return undefined;
         const importDataChanges = Object.fromEntries(
           getChangedFields(updated, previous)
             // e.g. not the time of the update
@@ -216,6 +224,7 @@ export class ImportService {
         return { id: previous.getId(), importDataChanges };
       }),
     );
+    return changes.then((list) => list.filter(Boolean));
   }
 
   /**
@@ -310,10 +319,10 @@ export class ImportService {
     // afterwards, as the additional actions may have changed the same records
     await Promise.all(
       (item.updatedRelatedEntities ?? []).map((related) =>
-        // e.g. the related record was deleted since
-        this.importExistingService
-          .revertChanges(related)
-          .catch(() => undefined),
+        this.importExistingService.revertChanges(related).catch((error) => {
+          // the related record was deleted since
+          if (error?.status !== 404) throw error;
+        }),
       ),
     );
     // Or should the ImportMetadata still be kept indicating that it has been undone?
