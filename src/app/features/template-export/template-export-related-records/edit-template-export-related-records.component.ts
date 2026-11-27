@@ -33,8 +33,8 @@ import {
   isHierarchyField,
   canBeUsedInPlaceholder,
   getRelatedRecordsPlaceholder,
-  RELATED_RECORDS_MAX_LEVELS,
-  clampRelatedRecordsLevels,
+  MAX_LEVELS,
+  clampLevels,
   TemplateExportRelatedRecords,
 } from "./template-export-related-records";
 
@@ -108,7 +108,7 @@ export class EditTemplateExportRelatedRecordsComponent
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
 
-  readonly maxLevels = RELATED_RECORDS_MAX_LEVELS;
+  readonly maxLevels = MAX_LEVELS;
 
   /**
    * The record types the template is applicable for, as currently selected in the form.
@@ -219,7 +219,7 @@ export class EditTemplateExportRelatedRecordsComponent
    * (the input keeps the entered number if the saved value does not change)
    */
   setLevels(index: number, value: string): number {
-    const levels = clampRelatedRecordsLevels(value);
+    const levels = clampLevels(value);
     this.updateRow(index, (config) => {
       const { levels: _previous, ...updated } = config;
       return levels > 1 ? { ...updated, levels } : updated;

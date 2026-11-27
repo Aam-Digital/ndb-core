@@ -210,20 +210,74 @@ describe("EntityRelationResolverService", () => {
     expect(result.ref).toEqual({ _id: primary.ref });
   });
 
-  it("does not resolve the relations of a newly resolved related entity", async () => {
-    const grandchild = TestEntity.create("Grandchild");
+  it.each([
+    [undefined, 1],
+    [2, 2],
+    [3, 3],
+  ])(
+    "resolves linked records as many levels deep as given (%s), keeping the raw ids below the last level",
+    async (levels, expectedLevels) => {
+      // a chain of records, each linking to the next one
+      const chain = ["Level0", "Level1", "Level2", "Level3", "Level4"].map(
+        (name) => TestEntity.create(name),
+      );
+      chain.slice(1).forEach((entity, i) => (chain[i].ref = entity.getId()));
+      entityMapper.addAll(chain.slice(1));
+
+      const result = await service.resolveRelations(chain[0], undefined, {
+        levels,
+      });
+
+      let resolved: any = result;
+      for (let level = 1; level <= expectedLevels; level++) {
+        resolved = resolved.ref;
+        expect(resolved.name).toBe(`Level${level}`);
+      }
+      expect(resolved.ref).toBe(chain[expectedLevels + 1].getId());
+    },
+  );
+
+  it.each([
+    ["with", false],
+    ["without", true],
+  ])(
+    "does not resolve the links of a record again that is already resolved above it (a circle), for ids saved %s their type prefix",
+    async (_, withoutPrefix) => {
+      const primary = TestEntity.create("Primary");
+      const related = TestEntity.create("Related");
+      primary.ref = related.getId(withoutPrefix);
+      related.ref = primary.getId(withoutPrefix);
+      entityMapper.addAll([primary, related]);
+
+      const result = await service.resolveRelations(primary, undefined, {
+        levels: 5,
+      });
+
+      // the record linked again keeps its own fields, but its link back is not followed again
+      const resolvedRelated = result.ref as unknown as TestEntity;
+      expect(resolvedRelated.ref).toEqual(
+        expect.objectContaining({ name: "Primary", ref: primary.ref }),
+      );
+    },
+  );
+
+  it("creates a stub object for a record that cannot be found at a deeper level", async () => {
     const related = TestEntity.create("Related");
-    related.ref = grandchild.getId();
-    entityMapper.addAll([related, grandchild]);
+    related.ref = TestEntity.createPrefixedId(
+      TestEntity.ENTITY_TYPE,
+      "does-not-exist",
+    );
+    entityMapper.add(related);
     const primary = TestEntity.create("Primary");
     primary.ref = related.getId();
 
-    const result = await service.resolveRelations(primary);
+    const result = await service.resolveRelations(primary, undefined, {
+      levels: 2,
+    });
 
-    // related is resolved to an object, but *its* ref stays the raw, unresolved id
-    const resolvedRef = result.ref as unknown as TestEntity;
-    expect(resolvedRef.name).toBe("Related");
-    expect(resolvedRef.ref).toBe(grandchild.getId());
+    const resolvedRelated = result.ref as unknown as TestEntity;
+    expect(resolvedRelated.name).toBe("Related");
+    expect(resolvedRelated.ref).toEqual({ _id: related.ref });
   });
 
   it("does not modify the original entities passed in", async () => {

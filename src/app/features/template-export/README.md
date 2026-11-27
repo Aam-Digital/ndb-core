@@ -21,12 +21,24 @@ The frontend manages the templates and assembles the data that is sent with a re
 | Placeholder                               | Data                                                                                                      |
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `{d.name}`                                | a field of the record, by its field ID                                                                    |
-| `{d.school.name}`                         | a field of a record that the record links to in an entity-reference field (resolved one level deep)       |
+| `{d.school.name}`                         | a field of a record that the record links to in an entity-reference field (see below)                     |
 | `{d._related.Todo.parentTask[i].subject}` | a field of the records linking _to_ the record, if configured for the template (see below)                |
 | `{c.user.name}`                           | a field of the record linked to the logged-in user                                                        |
 | `{d[i].name}`                             | a field of each selected record, in a "Multi-Record Report" template (`arrayReport`) with `d` as an array |
 
 The exported entity objects are never modified to add this data: the request data is built from copies.
+
+## Linked records
+
+Records that the exported record links to (in entity-reference fields, also inside embedded objects)
+are always resolved, so that a template can use their fields (`{d.school.name}`).
+`TemplateExport.linkedRecordsLevels` sets how many levels deep (1 by default, at most 5):
+with 2, the links of those records are resolved as well (`{d.child.family.address}`), and so on.
+
+- Below the last level, link fields hold the plain ids, as stored.
+- A record linking back to a record above it (a circle) is included with its own fields,
+  but its links are not followed again.
+- Each record type is loaded only once per generated file, but every level makes the request data bigger.
 
 ## Related records
 
@@ -52,8 +64,8 @@ Each entry (`TemplateExportRelatedRecords`) defines
   rather than the unresolved placeholder.
 - Archived (inactive) records are excluded, together with the records below them in a hierarchy,
   unless `includeArchived` is set. Each list is sorted by the display text of the records.
-- Related records are copies with their own entity-reference fields resolved one level deep,
-  like the exported record itself. Only a plain link field to the record they are listed under
+- Related records are copies with their own entity-reference fields resolved one level deep
+  (`linkedRecordsLevels` does not apply to them). Only a plain link field to the record they are listed under
   holds just the ids (`{_id}`), as that record is available one level up.
 - The related records for all exported records are looked up together, once per entry and level
   (`EntityRelationsService.loadLinkingToEntities`), also for a bulk export.

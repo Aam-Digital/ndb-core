@@ -319,6 +319,28 @@ describe("TemplateExportApiService", () => {
     expect(parent).not.toHaveProperty("_related");
   });
 
+  it("should resolve linked records as many levels deep as configured for the template", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.linkedRecordsLevels = 2;
+    TestBed.inject(EntityRegistry).add(TestEntity.ENTITY_TYPE, TestEntity);
+    const family = TestEntity.create("Family");
+    const child = TestEntity.create({ name: "Child", ref: family.getId() });
+    const record = TestEntity.create({ name: "Record", ref: child.getId() });
+    entityMapper.addAll([family, child]);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    await lastValueFrom(
+      service.generateFileFromTemplate(templateEntity, record),
+    );
+
+    expect(mockApiResponse.mock.calls[0][1]["data"].ref.ref).toEqual(
+      expect.objectContaining({ name: "Family" }),
+    );
+  });
+
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];
