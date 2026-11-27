@@ -8,6 +8,7 @@ import moment from "moment";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
 import { AttendanceService } from "../attendance.service";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
 import { EventTypeSettings } from "../model/attendance-feature-config";
 import { extractParticipantIds } from "../model/participant-id-extractor";
 
@@ -24,6 +25,14 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
   private config = inject(DemoEventsConfig);
   private demoActivities = inject(DemoActivityGeneratorService);
   private attendanceService = inject(AttendanceService);
+  private readonly engine = inject(GenericDemoDataEngine);
+
+  override get ownedEntityTypes(): string[] {
+    // an event type without an activity type gets no events here, so the engine fills it
+    return this.attendanceService.eventTypeSettings
+      .filter((settings) => settings.activityType !== undefined)
+      .map((settings) => settings.eventType.ENTITY_TYPE);
+  }
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -123,6 +132,10 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
         return eventAtt;
       },
     );
+
+    // the type is a record type of the use case as well, so fill what it configures
+
+    this.engine.fillRemainingFields(event, event.getType());
 
     return event;
   }

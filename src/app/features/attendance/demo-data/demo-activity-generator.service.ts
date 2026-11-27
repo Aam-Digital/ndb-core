@@ -1,4 +1,4 @@
-import { DemoChildGenerator } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
@@ -8,6 +8,7 @@ import { InteractionType } from "#src/app/child-dev-project/notes/model/interact
 import { Entity } from "#src/app/core/entity/model/entity";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { AttendanceService } from "../attendance.service";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
 import { EventTypeSettings } from "../model/attendance-feature-config";
 import { AttendanceItem } from "../model/attendance-item";
 import { AttendanceDatatype } from "../model/attendance.datatype";
@@ -18,9 +19,10 @@ import { AttendanceDatatype } from "../model/attendance.datatype";
  */
 @Injectable()
 export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private readonly demoEntities = inject(DemoEntityStore);
   private demoUser = inject(DemoUserGeneratorService);
   private attendanceService = inject(AttendanceService);
+  private readonly engine = inject(GenericDemoDataEngine);
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -40,7 +42,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
 
   generateEntities(): Entity[] {
     const data: Entity[] = [];
-    const children = this.demoChildren.entities.filter((c) => !c.inactive);
+    const children = this.demoEntities.get("Child").filter((c) => !c.inactive);
 
     for (const typeSettings of this.attendanceService.eventTypeSettings) {
       if (!typeSettings.activityType) continue;
@@ -113,6 +115,10 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     if (toStringAttrs.length > 0 && activity[toStringAttrs[0]] === undefined) {
       activity[toStringAttrs[0]] = activity["title"] ?? activity.toString();
     }
+
+    // the type is a record type of the use case as well, so fill what it configures
+
+    this.engine.fillRemainingFields(activity, activity.getType());
 
     return activity;
   }

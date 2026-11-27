@@ -1,0 +1,45 @@
+{
+  "_id": "Config:DemoData",
+  "data": {
+    "Participant": {
+      "count": 60,
+      "fields": {
+        "dateOfBirth": {
+          "min": 18,
+          "max": 65
+        }
+      }
+    },
+    "Project": {
+      "count": 8
+    },
+    "Event": {
+      "count": 25,
+      "fields": {
+        "dateEnd": {
+          "after": "dateStart"
+        },
+        "eventTitle": {
+          "valuePool": [
+            "Introduction to Community Facilitation",
+            "Annual Partner Conference",
+            "Workshop: Monitoring and Evaluation",
+            "Training of Trainers",
+            "Coaching Session: Group Dynamics",
+            "Regional Networking Meeting",
+            "Workshop: Child Safeguarding",
+            "Refresher Training for Facilitators",
+            "Conference: Learning from the Field",
+            "Coaching Session: Reporting Skills"
+          ]
+        }
+      }
+    },
+    "Participant2Event": {
+      "count": 180
+    },
+    "participantSurvey": {
+      "count": 90
+    }
+  }
+}

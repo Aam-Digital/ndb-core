@@ -1,5 +1,6 @@
-import { DemoChildGenerator } from "./demo-child-generator.service";
-import { DemoSchoolGenerator } from "./demo-school-generator.service";
+import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
+import { GenericDemoDataEngine } from "#src/app/core/demo-data/generic/generic-demo-data-engine";
+import { admissionDateOf } from "#src/app/core/demo-data/participant-dates";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
@@ -13,10 +14,14 @@ import { Entity } from "../../../core/entity/model/entity";
  */
 @Injectable()
 export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
-  override requiredEntityTypes = ["ChildSchoolRelation"];
+  override requiredEntityTypes = ["ChildSchoolRelation", "Child", "School"];
 
-  private demoChildren = inject(DemoChildGenerator);
-  private demoSchools = inject(DemoSchoolGenerator);
+  override get ownedEntityTypes(): string[] {
+    return ["ChildSchoolRelation"];
+  }
+
+  private readonly demoEntities = inject(DemoEntityStore);
+  private readonly engine = inject(GenericDemoDataEngine);
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -33,8 +38,12 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
 
   generateEntities(): ChildSchoolRelation[] {
     const data = [];
+    if (this.demoEntities.get("School").length === 0) {
+      // nothing to relate the participants to in this use case
+      return data;
+    }
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.demoEntities.get("Child")) {
       data.push(...this.generateChildSchoolRecordsForChild(child));
     }
 
@@ -44,11 +53,14 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   private generateChildSchoolRecordsForChild(child: Entity): Entity[] {
     const data: ChildSchoolRelation[] = [];
 
-    const firstYear = child["admissionDate"].getFullYear();
+    const firstYear = admissionDateOf(child).getFullYear();
     let finalYear = new Date().getFullYear();
     if (child["dropoutDate"]) {
       finalYear = child["dropoutDate"].getFullYear();
     }
+    // demo dates are generated independently, so a dropout can precede the admission:
+    // keep at least the first year, otherwise there is no record to work with below
+    finalYear = Math.max(firstYear, finalYear);
 
     let currentSchool: Entity = undefined;
     let offset = 0;
@@ -81,11 +93,24 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   ): ChildSchoolRelation {
     const schoolRelation: ChildSchoolRelation = new ChildSchoolRelation();
     schoolRelation.childId = child.getId();
+    schoolRelation.schoolId = school.getId();
     schoolRelation.start = new Date(year + "-01-01");
     schoolRelation.end = new Date(year + "-12-31");
-    schoolRelation["schoolClass"] = String(schoolClass);
-    schoolRelation.schoolId = school.getId();
-    schoolRelation["result"] = faker.number.int(100);
+
+    // only in use cases that track a school year; others name these fields differently
+    const schema = schoolRelation.getSchema();
+    if (schema.has("schoolClass")) {
+      schoolRelation["schoolClass"] = String(schoolClass);
+    }
+    if (schema.has("result")) {
+      schoolRelation["result"] = faker.number.int(100);
+    }
+
+    // everything else this use case configured on the type
+    this.engine.fillRemainingFields(
+      schoolRelation,
+      ChildSchoolRelation.ENTITY_TYPE,
+    );
     return schoolRelation;
   }
 
@@ -95,11 +120,11 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    */
   private selectNextSchool(currentSchool: Entity) {
     if (!currentSchool) {
-      return faker.helpers.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoEntities.get("School"));
     }
 
     if (faker.number.int(100) > 75) {
-      return faker.helpers.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoEntities.get("School"));
     } else {
       return currentSchool;
     }

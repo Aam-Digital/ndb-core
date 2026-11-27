@@ -1,6 +1,6 @@
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils.js";
 import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
 import { TemplateExport } from "#src/app/features/template-export/template-export.entity.js";
 

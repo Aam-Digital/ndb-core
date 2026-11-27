@@ -69,14 +69,17 @@ export class DemoDataInitializerService {
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    if (window["e2eDemoData"]) {
-      const db = this.dbResolver.getDatabase();
-      await db.putAll(window["e2eDemoData"]);
-    } else {
-      await this.demoDataService.publishDemoData();
+    try {
+      if (window["e2eDemoData"]) {
+        const db = this.dbResolver.getDatabase();
+        await db.putAll(window["e2eDemoData"]);
+      } else {
+        await this.demoDataService.publishDemoData();
+      }
+    } finally {
+      // a failing generator must not leave the progress dialog up forever
+      dialogRef.close();
     }
-
-    dialogRef.close();
   }
 
   private syncDatabaseOnUserChange() {

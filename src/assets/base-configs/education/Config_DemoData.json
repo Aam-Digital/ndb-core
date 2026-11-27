@@ -1,0 +1,107 @@
+{
+  "_id": "Config:DemoData",
+  "data": {
+    "Child": {
+      "count": 120,
+      "fields": {
+        "projectNumber": {
+          "faker": "string.numeric",
+          "fakerArgs": [
+            5
+          ]
+        },
+        "dateOfBirth": {
+          "min": 6,
+          "max": 20
+        },
+        "gender": {
+          "ids": [
+            "M",
+            "F"
+          ]
+        },
+        "admissionDate": {
+          "yearsPast": 10,
+          "after": "dateOfBirth"
+        },
+        "motherTongue": {
+          "valuePool": [
+            "Hindi",
+            "Hindi",
+            "Hindi",
+            "Bengali",
+            "Bengali",
+            "Urdu"
+          ]
+        },
+        "health_bloodGroup": {
+          "valuePool": [
+            "A+",
+            "B+",
+            "O+",
+            "AB+",
+            "A-",
+            "B-",
+            "O-"
+          ]
+        },
+        "riskStatus": {
+          "nullProbability": 0.75
+        },
+        "dropoutDate": {
+          "nullProbability": 0.85,
+          "after": "admissionDate"
+        },
+        "dropoutType": {
+          "nullProbability": 0.85,
+          "valuePool": [
+            "Shifted to another city",
+            "Lost interest",
+            "Family reasons",
+            "Completed the programme"
+          ]
+        },
+        "dropoutRemarks": {
+          "nullProbability": 0.85
+        }
+      }
+    },
+    "School": {
+      "count": 8,
+      "fields": {
+        "name": {
+          "faker": "company.name"
+        },
+        "language": {
+          "valuePool": [
+            "Hindi",
+            "English",
+            "Bengali"
+          ]
+        },
+        "timing": {
+          "valuePool": [
+            "6 a.m. - 11 a.m.",
+            "11 a.m. - 4 p.m.",
+            "6:30-11:00 and 11:30-16:00"
+          ]
+        }
+      }
+    },
+    "EducationalMaterial": {
+      "count": 400,
+      "fields": {
+        "materialAmount": {
+          "min": 1,
+          "max": 3
+        }
+      }
+    },
+    "RecurringActivity": {
+      "count": 0
+    },
+    "Event": {
+      "count": 0
+    }
+  }
+}

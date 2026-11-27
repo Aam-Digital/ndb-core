@@ -19,7 +19,8 @@
       "basic/Config_Permissions.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
-      "basic/SiteSettings_global.json"
+      "basic/SiteSettings_global.json",
+      "basic/Config_DemoData.json"
     ],
     "locale": [
       "en-US",
@@ -55,7 +56,8 @@
       "education/PublicFormConfig_example.json",
       "education/ReportConfig.json",
       "education/ReportConfig_sql.json",
-      "education/EmailTemplate_birthday.json"
+      "education/EmailTemplate_birthday.json",
+      "education/Config_DemoData.json"
     ],
     "locale": [
       "en-US",
@@ -78,7 +80,8 @@
       "basic/Config_SetupWizard.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
-      "education/EmailTemplate_birthday.json"
+      "education/EmailTemplate_birthday.json",
+      "event-management/Config_DemoData.json"
     ],
     "locale": "en-US"
   },
@@ -104,7 +107,8 @@
       "education/ReportConfig_sql.json",
       "all-features/ReportConfig.json",
       "all-features/ExternalLinkConfig.json",
-      "education/EmailTemplate_birthday.json"
+      "education/EmailTemplate_birthday.json",
+      "all-features/Config_DemoData.json"
     ],
     "locale": "en-US"
   },

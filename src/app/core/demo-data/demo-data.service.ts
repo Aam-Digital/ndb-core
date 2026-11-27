@@ -27,6 +27,8 @@ import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ConfigService } from "../config/config.service";
 import { firstValueFrom } from "rxjs";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { DemoEntityStore } from "./generic/demo-entity-store";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -57,9 +59,29 @@ export class DemoDataService {
   private injector = inject(Injector);
   private config = inject(DemoDataServiceConfig);
   private configService = inject(ConfigService);
+  private readonly engine = inject(GenericDemoDataEngine);
+  private readonly demoEntities = inject(DemoEntityStore);
 
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
+
+  private collectRecordsOfOtherGenerators() {
+    for (const generator of this.dataGenerators) {
+      if (generator === this.engine) {
+        continue;
+      }
+      for (const entity of generator.entities) {
+        this.demoEntities.add(entity.getType(), [entity]);
+      }
+    }
+  }
+
+  /** Types that a generator of their own creates, so the engine leaves them alone. */
+  private typesOfOtherGenerators(): string[] {
+    return this.dataGenerators
+      .filter((generator) => generator !== this.engine)
+      .flatMap((generator) => generator.ownedEntityTypes);
+  }
 
   private registerAllProvidedDemoDataGenerators() {
     for (const provider of this.config.dataGeneratorProviders) {
@@ -82,10 +104,20 @@ export class DemoDataService {
     // Let config subscribers (e.g. EntityConfigService, AttendanceService) process the config
     await new Promise((resolve) => setTimeout(resolve));
 
+    // the engine fills every type no other generator takes care of
+    await this.engine.init(this.typesOfOtherGenerators());
+
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved
     // (e.g. the DropoutChildGenerator should be able to delete Attendance records of the Child after its dropout date)
     this.dataGenerators.forEach((generator) => generator.entities);
+
+    // records of the other generators are link targets too (e.g. a staff member
+    // a record is assigned to), so collect them before references are filled
+    this.collectRecordsOfOtherGenerators();
+
+    // link the generated records once every type has them
+    this.engine.linkReferences();
 
     // save the generated data
     for (const generator of this.dataGenerators) {
