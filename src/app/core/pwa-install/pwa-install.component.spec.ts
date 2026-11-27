@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
-import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+import { PwaInstallService } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import type { Mock } from "vitest";
 
 type PwaInstallServiceMock = Pick<
   PwaInstallService,
-  "getPWAInstallType" | "installPWA" | "canInstallDirectly"
+  "showIOSInstallInstructions" | "installPWA" | "canInstallDirectly"
 > & {
-  getPWAInstallType: Mock;
+  showIOSInstallInstructions: Mock;
   installPWA: Mock;
 };
 
@@ -26,7 +26,7 @@ describe("PwaInstallComponent", () => {
 
   beforeEach(waitForAsync(() => {
     mockPWAInstallService = {
-      getPWAInstallType: vi.fn(),
+      showIOSInstallInstructions: vi.fn(),
       installPWA: vi.fn(),
       canInstallDirectly: undefined,
     };
@@ -42,15 +42,14 @@ describe("PwaInstallComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(() => {
+  function createComponent() {
     fixture = TestBed.createComponent(PwaInstallComponent);
     component = fixture.componentInstance;
-  });
+  }
 
   it("should show the pwa install instructions on iOS devices", () => {
-    mockPWAInstallService.getPWAInstallType.mockReturnValue(
-      PWAInstallType.ShowiOSInstallInstructions,
-    );
+    mockPWAInstallService.showIOSInstallInstructions.mockReturnValue(true);
+    createComponent();
 
     fixture.detectChanges();
     expect(component._showPWAInstallButton).toBe(true);
@@ -60,6 +59,7 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should call installPWA when no install instructions are defined and remove button once confirmed", async () => {
+    createComponent();
     vi.useFakeTimers();
     try {
       fixture.detectChanges();

@@ -6,31 +6,6 @@ import {
   PWAInstallChoice,
 } from "#src/bootstrap-pwa-install";
 
-export enum PWAInstallType {
-  ShowiOSInstallInstructions,
-  RunningAsPWA,
-  NotAvailable,
-}
-
-enum Browser {
-  Opera,
-  MicrosoftInternetExplorer,
-  Edge,
-  Safari,
-  Chrome,
-  Firefox,
-  Other,
-}
-
-enum OS {
-  iOS,
-  MacOS,
-  Android,
-  Linux,
-  Windows,
-  Other,
-}
-
 @Injectable({ providedIn: "root" })
 export class PwaInstallService {
   private window = inject<Window>(WINDOW_TOKEN);
@@ -54,62 +29,31 @@ export class PwaInstallService {
     return installPrompt.userChoice;
   }
 
-  getPWAInstallType(): PWAInstallType {
-    const os: OS = this.detectOS();
-    const browser: Browser = this.detectBrowser();
-    const standaloneMode: boolean = this.detectStandaloneMode();
-    let pwaInstallType: PWAInstallType;
-    if (standaloneMode) {
-      pwaInstallType = PWAInstallType.RunningAsPWA;
-    } else if (os === OS.iOS && browser === Browser.Safari) {
-      pwaInstallType = PWAInstallType.ShowiOSInstallInstructions;
-    } else {
-      pwaInstallType = PWAInstallType.NotAvailable;
-    }
-    return pwaInstallType;
+  /**
+   * Whether the user has to be told how to install the app manually.
+   *
+   * Browsers on iOS never fire `beforeinstallprompt`, so the app cannot start the
+   * installation itself. The user has to use "Add to Home Screen" in the share menu.
+   */
+  showIOSInstallInstructions(): boolean {
+    return this.isIOS() && this.isRealBrowser() && !this.detectStandaloneMode();
   }
 
-  private detectOS(): OS {
-    let os: OS;
+  private isIOS(): boolean {
     const userAgent = this.window.navigator.userAgent;
-    if (/iphone|ipad|ipod|macintosh/i.test(userAgent)) {
-      if (this.window.innerWidth < 1025) {
-        os = OS.iOS;
-      } else {
-        os = OS.MacOS;
-      }
-    } else if (/android/i.test(userAgent)) {
-      os = OS.Android;
-    } else if (/windows|win32|win64|WinCE/i.test(userAgent)) {
-      os = OS.Windows;
-    } else if (/linux|X11/i.test(userAgent)) {
-      os = OS.Linux;
-    }
-    return os;
+    return (
+      /iphone|ipad|ipod/i.test(userAgent) ||
+      // iPadOS reports a Mac user agent by default, but only iPads have a touch screen
+      (/macintosh/i.test(userAgent) && this.window.navigator.maxTouchPoints > 1)
+    );
   }
 
-  private detectBrowser(): Browser {
-    let browser: Browser;
-    const userAgent = this.window.navigator.userAgent;
-    if (/opera/i.test(userAgent)) {
-      browser = Browser.Opera;
-    } else if (/msie|trident/i.test(userAgent)) {
-      browser = Browser.MicrosoftInternetExplorer;
-    } else if (/edg/i.test(userAgent)) {
-      browser = Browser.Edge;
-    } else if (/chrome/i.test(userAgent)) {
-      browser = Browser.Chrome;
-    } else if (/safari/i.test(userAgent)) {
-      browser = Browser.Safari;
-      if (/crios|fxios/i.test(userAgent)) {
-        browser = Browser.Chrome;
-      }
-    } else if (/firefox/i.test(userAgent)) {
-      browser = Browser.Firefox;
-    } else {
-      browser = Browser.Other;
-    }
-    return browser;
+  /**
+   * Most in-app webviews (e.g. of an email app) have no "Safari" in their user agent and cannot "Add to Home Screen".
+   * In-app browsers that send Safari's user agent (e.g. `SFSafariViewController`) cannot be told apart and still get the instructions.
+   */
+  private isRealBrowser(): boolean {
+    return /safari/i.test(this.window.navigator.userAgent);
   }
 
   private detectStandaloneMode(): boolean {

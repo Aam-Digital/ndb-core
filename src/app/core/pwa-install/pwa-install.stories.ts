@@ -1,7 +1,7 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { PwaInstallComponent } from "./pwa-install.component";
-import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+import { PwaInstallService } from "./pwa-install.service";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
@@ -14,7 +14,7 @@ export default {
         {
           provide: PwaInstallService,
           useValue: {
-            getPWAInstallType: () => PWAInstallType.ShowiOSInstallInstructions,
+            showIOSInstallInstructions: () => true,
           },
         },
       ],
