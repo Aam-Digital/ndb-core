@@ -62,7 +62,9 @@
           currentIndex() < participants().length ? 'visible' : 'hidden'
         "
       >
-        {{ currentIndex() + 1 }} / {{ participants().length }}
+        <bdi dir="ltr"
+          >{{ currentIndex() + 1 }} / {{ participants().length }}</bdi
+        >
       </div>
       <div>
         <button
