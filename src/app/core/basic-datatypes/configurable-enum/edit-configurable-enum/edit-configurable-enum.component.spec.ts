@@ -136,6 +136,23 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component.invalidOptions()).toEqual([invalidOption, invalid2]);
   });
 
+  it("should ignore empty entries in a multi-select value", () => {
+    const invalidOption = {
+      id: "INVALID",
+      isInvalidOption: true,
+      label: "[invalid option] INVALID",
+    };
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "test",
+      additional: "some-id",
+      isArray: true,
+    });
+    fixture.detectChanges();
+
+    component.ngControl.control.setValue([undefined, invalidOption]);
+    expect(component.invalidOptions()).toEqual([invalidOption]);
+  });
+
   it("should extend the existing enum with the new option", async () => {
     const confirmationSpy = vi.spyOn(
       TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),

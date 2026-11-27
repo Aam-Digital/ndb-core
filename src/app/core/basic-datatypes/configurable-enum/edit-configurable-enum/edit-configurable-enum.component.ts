@@ -123,7 +123,7 @@ export class EditConfigurableEnumComponent
       return [value];
     }
     if (this.multi() && Array.isArray(value)) {
-      return value.filter((option) => (option as any).isInvalidOption);
+      return value.filter((option) => (option as any)?.isInvalidOption);
     }
     return [];
   });
