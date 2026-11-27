@@ -10,6 +10,8 @@ import { AsyncPromiseValidatorFn } from "./validator-types";
 @Injectable()
 export class UniqueIdValidator extends FieldValidator<boolean> {
   static override readonly key = "uniqueId";
+  readonly label = $localize`Unique ID [experimental]`;
+  override readonly description = $localize`Ensures the value is not used as an ID for another existing record already. (Experimental Feature: Does not support advanced edge cases)`;
   override readonly checkOnBlur = true;
   override readonly requiresFieldId = true;
 

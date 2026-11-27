@@ -269,6 +269,12 @@ describe("DynamicValidatorsService", () => {
     await vi.waitFor(() => expect(control.disabled).toBe(true));
   });
 
+  it("gives every registered rule a label for the admin tab", () => {
+    for (const rule of service.rules.values()) {
+      expect(rule.label, rule.key).toBeTruthy();
+    }
+  });
+
   it("skips the uniqueId validator for inner fields of embedded entries", async () => {
     const entry = createEmbeddedEntity(new Map(), {
       record: new Entity("record"),
