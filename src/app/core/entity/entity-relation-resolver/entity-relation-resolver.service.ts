@@ -30,6 +30,12 @@ export interface ResolveRelationsOptions {
    * instead of the linked records (e.g. because the linked record is already available elsewhere).
    */
   idsOnly?: string[];
+
+  /**
+   * How many levels of linked records to resolve: 1 (default) for only the records linked directly
+   * from the given record(s), 2 to also resolve the links of those, and so on.
+   */
+  levels?: number;
 }
 
 /**
@@ -39,10 +45,11 @@ export interface ResolveRelationsOptions {
  * This is used to give file/PDF templates access to the details of linked records
  * (e.g. a Note's related Child) instead of only their id.
  *
- * Only the relations found directly on the given data (including relations nested
+ * The relations found directly on the given data (including relations nested
  * inside embedded objects/arrays that have their own schema, e.g. `AttendanceItem`)
- * are resolved. The relations *of* a newly resolved entity are deliberately left
- * untouched, to avoid pulling in an ever-growing tree of linked records.
+ * are resolved. The relations *of* a resolved entity are only resolved further
+ * up to the given number of `levels` (by default not at all), to avoid pulling in an ever-growing tree of linked records.
+ * A record linking back to a record above it (a circle) is not resolved any further.
  *
  * The input data is never modified - resolved data is always built as a new,
  * deep copy so that entity objects still in use elsewhere in the app remain unaffected.
@@ -81,14 +88,15 @@ export class EntityRelationResolverService {
     options: ResolveRelationsOptions = {},
   ): Promise<any> {
     const idsOnly = options.idsOnly ?? [];
+    const levels = options.levels ?? 1;
     if (Array.isArray(data)) {
       return Promise.all(
         data.map((item) =>
-          this.resolveValue(item, loadedEntitiesByType, idsOnly),
+          this.resolveValue(item, loadedEntitiesByType, idsOnly, levels),
         ),
       );
     }
-    return this.resolveValue(data, loadedEntitiesByType, idsOnly);
+    return this.resolveValue(data, loadedEntitiesByType, idsOnly, levels);
   }
 
   /**
@@ -96,11 +104,15 @@ export class EntityRelationResolverService {
    * relation fields resolved (recursing into nested schema-holding values found
    * on it); otherwise return the value unchanged.
    * @param idsOnly Fields of this value (not of nested values) to hold only stubs of the ids
+   * @param levels How many levels of linked records to resolve from this value
+   * @param path The ids of the records above this value, whose links are being resolved
    */
   private async resolveValue(
     value: any,
     loadedEntitiesByType: LoadedEntitiesCache,
     idsOnly: string[] = [],
+    levels = 1,
+    path: string[] = [],
   ): Promise<any> {
     if (value === null || typeof value !== "object") {
       return value;
@@ -110,6 +122,7 @@ export class EntityRelationResolverService {
     if (!schema) {
       return value;
     }
+    const branch = value instanceof Entity ? [...path, value.getId()] : path;
 
     // start from a full copy so enumerable properties that aren't part of the
     // schema (e.g. runtime-attached/computed values) are preserved as-is;
@@ -132,16 +145,36 @@ export class EntityRelationResolverService {
         resolved[fieldId] = Array.isArray(raw)
           ? await Promise.all(
               raw.map((id) =>
-                this.resolveReference(id, fieldSchema, loadedEntitiesByType),
+                this.resolveReference(
+                  id,
+                  fieldSchema,
+                  loadedEntitiesByType,
+                  levels,
+                  branch,
+                ),
               ),
             )
-          : await this.resolveReference(raw, fieldSchema, loadedEntitiesByType);
+          : await this.resolveReference(
+              raw,
+              fieldSchema,
+              loadedEntitiesByType,
+              levels,
+              branch,
+            );
       } else if (Array.isArray(raw)) {
         resolved[fieldId] = await Promise.all(
-          raw.map((item) => this.resolveValue(item, loadedEntitiesByType)),
+          raw.map((item) =>
+            this.resolveValue(item, loadedEntitiesByType, [], levels, branch),
+          ),
         );
       } else if (typeof raw === "object") {
-        resolved[fieldId] = await this.resolveValue(raw, loadedEntitiesByType);
+        resolved[fieldId] = await this.resolveValue(
+          raw,
+          loadedEntitiesByType,
+          [],
+          levels,
+          branch,
+        );
       } else {
         resolved[fieldId] = raw;
       }
@@ -152,12 +185,15 @@ export class EntityRelationResolverService {
   /**
    * Resolve a single entity-reference id to the actual entity
    * (or an {@link UnresolvedEntityStub} if it cannot be resolved).
-   * Deliberately does *not* resolve the relations of the returned entity itself.
+   * The relations of the returned entity are only resolved while more than one level is left,
+   * and never for an entity already on the `path` (a circle), which would repeat it within itself.
    */
   private async resolveReference(
     id: unknown,
     fieldSchema: EntitySchemaField,
     loadedEntitiesByType: LoadedEntitiesCache,
+    levels: number,
+    path: string[],
   ): Promise<Entity | UnresolvedEntityStub | unknown> {
     if (typeof id !== "string" || !id) {
       return id;
@@ -170,6 +206,15 @@ export class EntityRelationResolverService {
 
     try {
       const match = await this.getEntity(entityType, id, loadedEntitiesByType);
+      if (match && levels > 1 && !path.includes(id)) {
+        return await this.resolveValue(
+          match,
+          loadedEntitiesByType,
+          [],
+          levels - 1,
+          path,
+        );
+      }
       // a shallow, one-level copy: protects the entity instance still held
       // elsewhere in the app from being mutated through the resolved data,
       // without resolving (and thereby recursing into) its own relations.
@@ -235,7 +280,7 @@ export class EntityRelationResolverService {
   /**
    * Copy every schema field's current value onto a new plain object, one level deep.
    * Relation fields are copied as their raw (unresolved) id(s) - used for a resolved
-   * related entity, which must not have its own relations resolved further.
+   * related entity at the last level, which must not have its own relations resolved further.
    */
   private copySchemaFieldsShallow(value: Entity): Record<string, any> {
     const schema = this.getSchema(value);

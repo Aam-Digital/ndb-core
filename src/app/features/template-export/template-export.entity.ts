@@ -6,7 +6,10 @@ import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { FileFieldConfig } from "../file/file.datatype";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
-import { TemplateExportRelatedRecords } from "./template-export-related-records/template-export-related-records";
+import {
+  MAX_LEVELS,
+  TemplateExportRelatedRecords,
+} from "./template-export-related-records/template-export-related-records";
 
 /**
  * Represents a TemplateExport that can be used to generate files (PDF, or the template's own editable format) via API,
@@ -82,6 +85,18 @@ export class TemplateExport extends Entity {
     dataType: "boolean",
   })
   arrayReport?: boolean;
+
+  /**
+   * How many levels of records linked *from* the exported record are available for placeholders in the template:
+   * 1 (default) for the records it links to directly, 2 to also include the records those link to, and so on.
+   */
+  @DatabaseField({
+    label: $localize`:TemplateExport:Levels of Linked Records`,
+    description: $localize`:TemplateExport:How many levels of linked records are available in the template: 1 (default) for the records that the selected record links to (e.g. {d.child.name}), 2 to also include the records that those link to (e.g. {d.child.family.address}), and so on. Choose the lowest level the template needs, as every level adds data to each generated file. Records that link to the selected record are added under "Related Records to Include" instead.`,
+    dataType: "number",
+    validators: { min: 1, max: MAX_LEVELS },
+  })
+  linkedRecordsLevels?: number;
 
   /**
    * Lists of records linking *to* the exported record (e.g. the sub-tasks of a task)

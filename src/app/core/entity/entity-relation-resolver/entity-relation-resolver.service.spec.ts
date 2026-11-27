@@ -210,20 +210,49 @@ describe("EntityRelationResolverService", () => {
     expect(result.ref).toEqual({ _id: primary.ref });
   });
 
-  it("does not resolve the relations of a newly resolved related entity", async () => {
-    const grandchild = TestEntity.create("Grandchild");
-    const related = TestEntity.create("Related");
-    related.ref = grandchild.getId();
-    entityMapper.addAll([related, grandchild]);
+  it.each([
+    [undefined, 1],
+    [2, 2],
+    [3, 3],
+  ])(
+    "resolves linked records as many levels deep as given (%s), keeping the raw ids below the last level",
+    async (levels, expectedLevels) => {
+      // a chain of records, each linking to the next one
+      const chain = ["Level0", "Level1", "Level2", "Level3", "Level4"].map(
+        (name) => TestEntity.create(name),
+      );
+      chain.slice(1).forEach((entity, i) => (chain[i].ref = entity.getId()));
+      entityMapper.addAll(chain.slice(1));
+
+      const result = await service.resolveRelations(chain[0], undefined, {
+        levels,
+      });
+
+      let resolved: any = result;
+      for (let level = 1; level <= expectedLevels; level++) {
+        resolved = resolved.ref;
+        expect(resolved.name).toBe(`Level${level}`);
+      }
+      expect(resolved.ref).toBe(chain[expectedLevels + 1].getId());
+    },
+  );
+
+  it("does not resolve the links of a record again that is already resolved above it (a circle)", async () => {
     const primary = TestEntity.create("Primary");
+    const related = TestEntity.create("Related");
     primary.ref = related.getId();
+    related.ref = primary.getId();
+    entityMapper.addAll([primary, related]);
 
-    const result = await service.resolveRelations(primary);
+    const result = await service.resolveRelations(primary, undefined, {
+      levels: 5,
+    });
 
-    // related is resolved to an object, but *its* ref stays the raw, unresolved id
-    const resolvedRef = result.ref as unknown as TestEntity;
-    expect(resolvedRef.name).toBe("Related");
-    expect(resolvedRef.ref).toBe(grandchild.getId());
+    // the record linked again keeps its own fields, but its link back is not followed again
+    const resolvedRelated = result.ref as unknown as TestEntity;
+    expect(resolvedRelated.ref).toEqual(
+      expect.objectContaining({ name: "Primary", ref: related.getId() }),
+    );
   });
 
   it("does not modify the original entities passed in", async () => {

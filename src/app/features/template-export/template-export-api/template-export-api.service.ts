@@ -20,6 +20,7 @@ import {
   LoadedEntitiesCache,
 } from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
 import { TemplateExportRelatedRecordsService } from "../template-export-related-records/template-export-related-records.service";
+import { clampLevels } from "../template-export-related-records/template-export-related-records";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -198,7 +199,7 @@ export class TemplateExportApiService extends FileService {
   /**
    * Extend the given record(s) with the data of other records that the template can use:
    * - details of linked records (e.g. a Note's related Child) instead of just their id,
-   *   resolved one level deep (see {@link EntityRelationResolverService})
+   *   resolved as many levels deep as configured for the template (see {@link EntityRelationResolverService})
    * - lists of records linking to the record (e.g. the sub-tasks of a task),
    *   if configured for the template (see {@link TemplateExportRelatedRecordsService})
    *
@@ -212,7 +213,9 @@ export class TemplateExportApiService extends FileService {
     // resolve to the same records: load each type only once for all of them
     const loadedEntities: LoadedEntitiesCache = new Map();
     const [resolved, relatedRecords] = await Promise.all([
-      this.relationResolver.resolveRelations(data, loadedEntities),
+      this.relationResolver.resolveRelations(data, loadedEntities, {
+        levels: clampLevels(template.linkedRecordsLevels),
+      }),
       this.relatedRecords.loadRelatedRecords(
         template,
         asArray(data).filter((record) => record instanceof Entity),

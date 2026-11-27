@@ -122,6 +122,7 @@ const viewConfigs: ViewConfig[] = [
                       "description",
                       "applicableForEntityTypes",
                       "arrayReport",
+                      "linkedRecordsLevels",
                       "relatedRecords",
                     ],
                   },
