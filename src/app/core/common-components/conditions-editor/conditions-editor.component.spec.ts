@@ -9,6 +9,7 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
+import { SchemaEmbedDatatype } from "app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 @DatabaseEntity("ConditionsEditorTestEntity")
@@ -97,7 +98,10 @@ describe("ConditionsEditorComponent", () => {
 
     fixture = TestBed.createComponent(ConditionsEditorComponent);
     component = fixture.componentInstance;
-    component.entityConstructor = ConditionsEditorTestEntity;
+    fixture.componentRef.setInput(
+      "entityConstructor",
+      ConditionsEditorTestEntity,
+    );
     component.conditions = { $or: [] };
     mockEntitySchemaService.getComponent.mockImplementation(
       (fieldConfig: { dataType?: string }) =>
@@ -203,7 +207,7 @@ describe("ConditionsEditorComponent", () => {
 
   it("should handle condition field change", () => {
     component.addCondition();
-    const fieldConfig = component.entityConstructor.schema.get("name");
+    const fieldConfig = component.entityConstructor().schema.get("name");
 
     component.onConditionFieldChange(0, "name");
 
@@ -467,7 +471,7 @@ describe("ConditionsEditorComponent", () => {
       compareRowWithRecordField(field, recordField);
 
       expect(component.conditionsArray()[0]).toEqual(expected);
-      expect(component.getReferencedField(0)).toBe(recordField);
+      expect(component.rowReferences()[0].referencedField).toBe(recordField);
     });
 
     it("offers the fields of the records linked in a field with a single record type", () => {
@@ -503,7 +507,7 @@ describe("ConditionsEditorComponent", () => {
       component.ngOnInit();
 
       expect(component.isReferenceRow(0)).toBe(true);
-      expect(component.getReferencedField(0)).toBe("recordGender");
+      expect(component.rowReferences()[0].referencedField).toBe("recordGender");
       expect(component.isNegated(0)).toBe(true);
       expect(
         mockEntitySchemaService.valueToEntityFormat,
@@ -745,5 +749,171 @@ describe("ConditionsEditorComponent", () => {
         $and: [{ name: "A" }, { name: "B" }],
       });
     });
+
+    it("keeps the rows of the JSON editor's result while no record type is chosen", () => {
+      fixture.componentRef.setInput("entityConstructor", undefined);
+      const conditions = {
+        log: { $elemMatch: { status: "M" } },
+        "log.status": "F",
+      };
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(conditions) });
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.openJsonEditor();
+
+      expect(emit).toHaveBeenLastCalledWith(conditions);
+    });
+  });
+
+  describe("properties of embedded fields", () => {
+    @DatabaseEntity("ConditionsEditorEmbedTestEntity")
+    class ConditionsEditorEmbedTestEntity extends Entity {
+      @DatabaseField({
+        label: "Log",
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          status: {
+            label: "Status",
+            dataType: "configurable-enum",
+            additional: "genders",
+          },
+          date: { label: "Date", dataType: "date" },
+        },
+      })
+      log: object[];
+    }
+
+    let embedDatatype: SchemaEmbedDatatype;
+
+    beforeEach(() => {
+      embedDatatype = TestBed.runInInjectionContext(
+        () => new SchemaEmbedDatatype(),
+      );
+      mockEntitySchemaService.getDatatypeOrDefault.mockImplementation(
+        (dataType: string) =>
+          dataType === "schema-embed" ? embedDatatype : undefined,
+      );
+      fixture.componentRef.setInput(
+        "entityConstructor",
+        ConditionsEditorEmbedTestEntity,
+      );
+    });
+
+    it("offers the properties of an embedded field instead of the field itself", () => {
+      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
+        "log.status",
+        "log.date",
+      ]);
+      expect(component.conditionFields().excludedFields).toEqual(["log"]);
+    });
+
+    it("offers an embedded field only whole for conditions on the stored documents (e.g. permissions)", () => {
+      // a change of the input after the editor started updates the fields
+      fixture.componentRef.setInput("onStoredDocuments", true);
+
+      expect(component.conditionFields().options.map((o) => o.id)).toEqual([
+        "log",
+      ]);
+      expect(component.conditionFields().excludedFields).toEqual([]);
+    });
+
+    it("keeps a saved condition on an entry of an embedded field as stored for conditions on the stored documents", () => {
+      fixture.componentRef.setInput("onStoredDocuments", true);
+      const stored = { log: { $elemMatch: { status: "M" } } };
+      component.conditions = stored;
+      component.ngOnInit();
+
+      expect(component.conditionsArray()).toEqual([stored]);
+    });
+
+    it("keeps a saved condition on a property of an embedded field as stored for conditions on the stored documents, also after an edit", () => {
+      fixture.componentRef.setInput("onStoredDocuments", true);
+      vi.spyOn(component.conditionsChange, "emit");
+      component.conditions = { "log.status": "M" };
+      component.ngOnInit();
+
+      component.addCondition();
+
+      expect(component.conditionsChange.emit).toHaveBeenLastCalledWith({
+        "log.status": "M",
+      });
+    });
+
+    it("keeps a condition on an entry of an embedded field as stored if the field has another operator", () => {
+      const stored = { log: { $elemMatch: { status: "M" }, $size: 2 } };
+      component.conditions = stored;
+      component.ngOnInit();
+
+      expect(component.conditionsArray()).toEqual([stored]);
+    });
+
+    it.each([
+      [{ log: { $elemMatch: { status: "M" } }, name: "Ann" }],
+      [{ "log.status": "M", name: "Ann" }],
+    ])(
+      "keeps a row with conditions on an embedded field and on another field as stored: %j",
+      (row) => {
+        component.conditions = { $or: [row] };
+        component.ngOnInit();
+        mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+
+        component.openJsonEditor();
+
+        expect(mockDialog.open).toHaveBeenCalledWith(
+          JsonEditorDialogComponent,
+          { data: { value: { $or: [row] }, closeButton: true } },
+        );
+      },
+    );
+
+    it("offers the properties of embedded fields also when the record type is chosen later", () => {
+      const editor = TestBed.createComponent(ConditionsEditorComponent);
+      editor.componentRef.setInput("entityConstructor", null);
+      editor.detectChanges();
+
+      editor.componentRef.setInput(
+        "entityConstructor",
+        ConditionsEditorEmbedTestEntity,
+      );
+      editor.detectChanges();
+
+      expect(
+        editor.componentInstance.conditionFields().options.map((o) => o.id),
+      ).toEqual(["log.status", "log.date"]);
+    });
+
+    it.each([
+      ["status", { $in: ["M"] }, ["F"], { $in: ["F"] }],
+      [
+        "date",
+        new Date(2026, 0, 5),
+        new Date(2026, 1, 1),
+        new Date(2026, 1, 1),
+      ],
+    ])(
+      "edits a condition on one entry of an embedded field as a row of its property %s",
+      (property, stored, edited, expectedStored) => {
+        mockEntitySchemaService.valueToEntityFormat.mockImplementation(
+          (value) => value,
+        );
+        mockEntitySchemaService.valueToDatabaseFormat.mockImplementation(
+          (value) => value,
+        );
+        component.conditions = { log: { $elemMatch: { [property]: stored } } };
+        component.ngOnInit();
+        const emit = vi.spyOn(component.conditionsChange, "emit");
+
+        expect(component.conditionsArray()).toEqual([
+          { [`log.${property}`]: stored },
+        ]);
+
+        component.conditionFormControls.get("0").setValue(edited);
+
+        expect(emit).toHaveBeenLastCalledWith({
+          log: { $elemMatch: { [property]: expectedStored } },
+        });
+      },
+    );
   });
 });

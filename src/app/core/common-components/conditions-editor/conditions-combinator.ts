@@ -1,4 +1,5 @@
 import { splitNegation } from "./condition-negation";
+import { isPlainObject } from "../../../utils/filter-compare-utils";
 
 /** How the rows of a condition combine: any one row ("or") or every row ("and") has to match. */
 export type Combinator = "any" | "all";
@@ -14,9 +15,6 @@ export interface ParsedConditions {
   /** one object per row, e.g. `{ center: "x" }` */
   rows: any[];
 }
-
-const isPlainObject = (value: any): boolean =>
-  !!value && typeof value === "object" && !Array.isArray(value);
 
 /**
  * Whether a row's value is set: not null, undefined or an empty list. Negating an empty value
@@ -35,7 +33,7 @@ const hasValue = (value: any): boolean => {
 };
 
 /** A row is complete once its field has a value. */
-const isCompleteRow = (row: any): boolean =>
+export const isCompleteRow = (row: any): boolean =>
   isPlainObject(row) &&
   Object.keys(row).length > 0 &&
   Object.values(row).every(hasValue);

@@ -56,6 +56,10 @@
         "file": "../../src/app/core/config/README.md"
       },
       {
+        "title": "Filters and Conditions",
+        "file": "../../src/app/core/filter/README.md"
+      },
+      {
         "title": "User Roles and Permissions",
         "file": "../../src/app/core/permissions/README.md"
       },

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DateDatatype } from "../date/date.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import moment from "moment";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -18,6 +19,18 @@ export class MonthDatatype extends DateDatatype {
 
   override viewComponent = "DisplayMonth";
   override editComponent = "EditMonth";
+
+  /** a month ("YYYY-MM") counts as its first day */
+  override toStoredDayBound(day: string, atEndOfDay: boolean): string {
+    const date = moment(day);
+    return (
+      atEndOfDay || date.date() === 1 ? date : date.add(1, "month")
+    ).format("YYYY-MM");
+  }
+
+  override toStoredDay(day: string): string {
+    return moment(day).format("YYYY-MM");
+  }
 
   override transformToDatabaseFormat(value) {
     if (!(value instanceof Date)) {

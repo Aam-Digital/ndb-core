@@ -12,6 +12,8 @@ import { RowOptions } from "#src/app/core/common-components/entities-table/data-
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { isEqual } from "lodash-es";
+import { referenceIdCondition } from "#src/app/core/entity/default-datatype/default.datatype";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { UrlStateService } from "#src/app/utils/url-state/url-state.service";
 import { isHierarchyField } from "./hierarchy-fields";
@@ -374,17 +376,19 @@ function rowClasses(row: HierarchyRow): string | undefined {
 }
 
 /**
- * The filter without the condition `{ [key]: value }`,
+ * The filter without the condition that the field `key` links to the record with the id `value`
+ * (as built by `EntityRelationsService.referenceConditions`, alone or as the only option of an `$or`),
  * also inside `$and` (e.g. combined with the restriction to records that are not archived).
  */
 export function withoutCondition<T>(
   filter: DataFilter<T>,
   key: string,
-  value: unknown,
+  value: string,
 ): DataFilter<T> {
+  const link = referenceIdCondition(key, [value]);
   const result: DataFilter<T> = {};
   for (const [k, v] of Object.entries(filter ?? {})) {
-    if (k === key && v === value) {
+    if (isEqual({ [k]: v }, link) || (k === "$or" && isEqual(v, [link]))) {
       continue;
     }
     result[k] =

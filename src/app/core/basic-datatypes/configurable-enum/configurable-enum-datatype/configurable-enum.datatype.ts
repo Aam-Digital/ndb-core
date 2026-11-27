@@ -13,6 +13,7 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
   private enumService = inject(ConfigurableEnumService);
 
   static override dataType = "configurable-enum";
+  static override readonly storedFormat = "id";
   static override label: string = $localize`:datatype-label:dropdown option`;
 
   public override readonly viewComponent = "DisplayConfigurableEnum";

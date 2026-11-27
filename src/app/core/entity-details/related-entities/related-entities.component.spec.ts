@@ -9,6 +9,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity } from "../../entity/model/entity";
+import { FilterService } from "../../filter/filter.service";
 import { DisplayRelatedEmbeddedFieldComponent } from "./display-related-embedded-field/display-related-embedded-field.component";
 import { RelatedEntitiesComponent } from "./related-entities.component";
 
@@ -37,6 +38,21 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
   }
 
+  /** the conditions that the field links to the id, in both shapes a link may be stored in (an id or a list of ids) */
+  function linkTo(field: string, id: string) {
+    return [{ [field]: { $in: [id] } }];
+  }
+
+  /** the same for a field inside the entries of an embedded field, stored as a list of entries or a single one */
+  function linkInEntriesTo(field: string, innerField: string, id: string) {
+    return [
+      ...linkTo(innerField, id).map((entry) => ({
+        [field]: { $elemMatch: entry },
+      })),
+      ...linkTo(`${field}.${innerField}`, id),
+    ];
+  }
+
   it("should create a filter for the passed entity", async () => {
     const entity = new TestEntity();
     const columns = ["name"];
@@ -46,7 +62,9 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("columns", columns);
     await initComponent();
 
-    expect(component.filterObj()).toEqual({ ref: entity.getId() });
+    expect(component.filterObj()).toEqual({
+      $or: linkTo("ref", entity.getId()),
+    });
   });
 
   it("should also include the provided filter", async () => {
@@ -60,10 +78,93 @@ describe("RelatedEntitiesComponent", () => {
     await initComponent();
 
     expect(component.filterObj()).toEqual({
-      ...filter,
-      ref: entity.getId(),
+      $and: [filter, { $or: linkTo("ref", entity.getId()) }],
     });
   });
+
+  it("keeps a configured filter with alternatives when filtering by several related properties", async () => {
+    @DatabaseEntity("ConfiguredOrTest")
+    class ConfiguredOrTest extends Entity {}
+    ConfiguredOrTest.schema.set("first", {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ConfiguredOrTest.schema.set("second", {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ConfiguredOrTest.schema.set("status", { dataType: "string" });
+
+    const entity = new TestEntity();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("entityType", ConfiguredOrTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("filter", {
+      $or: [{ status: "open" }, { status: "new" }],
+    });
+    await initComponent();
+
+    const matches = TestBed.inject(FilterService).getFilterPredicate(
+      component.filterObj(),
+    );
+    const record = (props: object) =>
+      Object.assign(new ConfiguredOrTest(), props);
+    expect(matches(record({ first: entity.getId(), status: "open" }))).toBe(
+      true,
+    );
+    expect(matches(record({ second: entity.getId(), status: "new" }))).toBe(
+      true,
+    );
+    expect(matches(record({ second: entity.getId(), status: "closed" }))).toBe(
+      false,
+    );
+    expect(matches(record({ status: "open" }))).toBe(false);
+  });
+
+  it("pre-fills the relation of a new record also when a filter is configured", async () => {
+    const related = new TestEntity();
+    fixture.componentRef.setInput("entity", related);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("filter", { other: "A" });
+    await initComponent();
+
+    const newEntity = component.createNewRecordFactory()();
+
+    expect(newEntity["ref"]).toBe(related.getId());
+    expect(newEntity["other"]).toBe("A");
+  });
+
+  it.each(["attendance", "event-attendance-map"])(
+    "pre-fills a new record with an entry referencing the related one in an embedded %s field",
+    async (dataType) => {
+      @DatabaseEntity(`EmbeddedPrefillTest-${dataType}`)
+      class EmbeddedPrefillTest extends Entity {}
+      EmbeddedPrefillTest.schema.set("participants", {
+        dataType,
+        isArray: dataType === "attendance",
+        additional: {
+          participant: {
+            dataType: EntityDatatype.dataType,
+            additional: TestEntity.ENTITY_TYPE,
+          },
+        },
+      });
+
+      const related = new TestEntity();
+      fixture.componentRef.setInput("entity", related);
+      fixture.componentRef.setInput(
+        "entityType",
+        EmbeddedPrefillTest.ENTITY_TYPE,
+      );
+      await initComponent();
+
+      const newEntity = component.createNewRecordFactory()();
+
+      expect(newEntity["participants"]).toEqual([
+        expect.objectContaining({ participant: related.getId() }),
+      ]);
+    },
+  );
 
   it("should create a new entity that references the related one", async () => {
     const related = new TestEntity();
@@ -115,8 +216,8 @@ describe("RelatedEntitiesComponent", () => {
     // filter matching relations at any of the available props
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleChild: entity.getId() },
-        { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
+        ...linkTo("singleChild", entity.getId()),
+        ...linkTo("multiEntities", entity.getId()),
       ],
     });
     // all matching properties set when creating a new entity
@@ -140,7 +241,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      singleRelation: component.entity().getId(),
+      $or: linkTo("singleRelation", component.entity().getId()),
     });
 
     PropTest.schema.set("arrayRelation", {
@@ -155,8 +256,8 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleRelation: component.entity().getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
+        ...linkTo("singleRelation", component.entity().getId()),
+        ...linkTo("arrayRelation", component.entity().getId()),
       ],
     });
 
@@ -171,7 +272,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      multiTypeRelation: { $elemMatch: { $eq: component.entity().getId() } },
+      $or: linkTo("multiTypeRelation", component.entity().getId()),
     });
 
     // Now with 2 relations ("singleRelation" and "multiTypeRelation")
@@ -182,13 +283,9 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
       $or: [
-        { singleRelation: component.entity().getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
-        {
-          multiTypeRelation: {
-            $elemMatch: { $eq: component.entity().getId() },
-          },
-        },
+        ...linkTo("singleRelation", component.entity().getId()),
+        ...linkTo("arrayRelation", component.entity().getId()),
+        ...linkTo("multiTypeRelation", component.entity().getId()),
       ],
     });
 
@@ -199,7 +296,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.filterObj()).toEqual({
-      singleRelation: component.entity().getId(),
+      $or: linkTo("singleRelation", component.entity().getId()),
     });
   });
 
@@ -226,9 +323,11 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
 
     expect(component.filterObj()).toEqual({
-      attendance: {
-        $elemMatch: { participant: component.entity().getId() },
-      },
+      $or: linkInEntriesTo(
+        "attendance",
+        "participant",
+        component.entity().getId(),
+      ),
     });
   });
 
@@ -261,12 +360,12 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(component.filterObj()).toEqual({
       $or: [
-        { authors: { $elemMatch: { $eq: component.entity().getId() } } },
-        {
-          attendance: {
-            $elemMatch: { participant: component.entity().getId() },
-          },
-        },
+        ...linkTo("authors", component.entity().getId()),
+        ...linkInEntriesTo(
+          "attendance",
+          "participant",
+          component.entity().getId(),
+        ),
       ],
     });
   });
@@ -300,9 +399,11 @@ describe("RelatedEntitiesComponent", () => {
 
     // should only filter by attendance, not authors
     expect(component.filterObj()).toEqual({
-      attendance: {
-        $elemMatch: { participant: component.entity().getId() },
-      },
+      $or: linkInEntriesTo(
+        "attendance",
+        "participant",
+        component.entity().getId(),
+      ),
     });
   });
 
@@ -403,9 +504,13 @@ describe("RelatedEntitiesComponent", () => {
         "contactPersons.supervisor",
       );
 
-      expect(component.filterObj()).toEqual({
-        contactPersons: { $elemMatch: { supervisor: user.getId() } },
-      });
+      const matches = TestBed.inject(FilterService).getFilterPredicate(
+        component.filterObj(),
+      );
+      const record = (contactPersons: object[]) =>
+        Object.assign(new EmbedColumnTest(), { contactPersons });
+      expect(matches(record([{ supervisor: user.getId() }]))).toBe(true);
+      expect(matches(record([{ person: user.getId() }]))).toBe(false);
       expect(component._columns()[0].additional.linkProps).toEqual([
         "supervisor",
       ]);

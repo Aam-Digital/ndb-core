@@ -16,7 +16,7 @@ import {
   FilterSelectionOption,
   SelectableFilter,
 } from "../filters/filters";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   DatabaseEntity,
   entityRegistry,
@@ -57,6 +57,8 @@ import { expectArrayWithExactContents } from "../../../utils/test-utils/array-te
 import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
+import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -102,6 +104,7 @@ describe("FilterGeneratorService", () => {
           useClass: SchemaEmbedDatatype,
           multi: true,
         },
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
         // EntityDatatype only uses this to offer entity actions, which filters don't
         { provide: EntityActionsService, useValue: {} },
       ],
@@ -869,6 +872,47 @@ describe("FilterGeneratorService", () => {
       expect(filter(allEntities, emptyOption)).toEqual([e3]);
     });
 
+    it("matches the status of attendance entries, which they keep behind a getter, also for 'not defined'", async () => {
+      @DatabaseEntity("EmbeddedAttendanceStatusTestEntity")
+      class EmbeddedAttendanceStatusTestEntity extends Entity {}
+      EmbeddedAttendanceStatusTestEntity.schema.set("attendance", {
+        dataType: "attendance",
+        isArray: true,
+        label: "Attendance",
+      });
+      const allRecorded = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+        new AttendanceItem(attendanceStatus("PRESENT")),
+        new AttendanceItem(attendanceStatus("ABSENT")),
+      );
+      const oneWithoutStatus = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+        new AttendanceItem(attendanceStatus("PRESENT")),
+        new AttendanceItem(),
+      );
+      const noEntries = recordWithAttendance(
+        EmbeddedAttendanceStatusTestEntity,
+      );
+      const allEntities = [allRecorded, oneWithoutStatus, noEntries];
+
+      const statusFilter = (
+        await service.generate(
+          [{ id: "attendance.status" }],
+          EmbeddedAttendanceStatusTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedAttendanceStatusTestEntity>;
+      expect(
+        filter(allEntities, optionWithKey(statusFilter, "ABSENT")),
+      ).toEqual([allRecorded]);
+      expect(
+        filter(
+          allEntities,
+          optionWithKey(statusFilter, EMPTY_FILTER_OPTION_KEY),
+        ),
+      ).toEqual([oneWithoutStatus, noEntries]);
+    });
+
     it("filters a multi-value property nested in an embedded array field by its single values, counting an empty list as not defined", async () => {
       @DatabaseEntity("EmbeddedMultiEnumTestEntity")
       class EmbeddedMultiEnumTestEntity extends Entity {}
@@ -909,6 +953,42 @@ describe("FilterGeneratorService", () => {
         (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
       );
       expect(filter(allEntities, emptyOption)).toEqual([e2]);
+    });
+
+    it("counts a record whose embedded list is null as not defined", async () => {
+      @DatabaseEntity("EmbeddedNullListTestEntity")
+      class EmbeddedNullListTestEntity extends Entity {}
+      EmbeddedNullListTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          type: {
+            dataType: "configurable-enum",
+            label: "Type",
+            additional: Note.schema.get("category").additional,
+          },
+        },
+      });
+
+      const withEntry = new EmbeddedNullListTestEntity();
+      withEntry["logEntries"] = [{ type: defaultInteractionTypes[1] }];
+      const withNull = new EmbeddedNullListTestEntity();
+      withNull["logEntries"] = null;
+      const allEntities = [withEntry, withNull];
+
+      const enumFilter = (
+        await service.generate(
+          [{ id: "logEntries.type" }],
+          EmbeddedNullListTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedNullListTestEntity>;
+      const emptyOption = enumFilter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+
+      expect(filter(allEntities, emptyOption)).toEqual([withNull]);
     });
 
     describe("date range nested in an embedded array field", () => {
@@ -1074,7 +1154,7 @@ describe("FilterGeneratorService", () => {
   it("should build configurable-enum filters that match single and array values, independent of isArray (#4406)", async () => {
     // A plain equality selector (e.g. `{ tags: "A" }`) does not match an array
     // field in CouchDB's Mango `_find` (only client-side, ucast treats it as
-    // "array contains"), so online-only mode needs `$elemMatch`. `isArray` can be
+    // "array contains"), while `$in` matches both shapes there. `isArray` can be
     // toggled in the admin UI while existing records keep their previous shape,
     // so both variants are always matched - like EntityFilter does.
     @DatabaseEntity("ArrayEnumFilterTestEntity")
@@ -1097,13 +1177,12 @@ describe("FilterGeneratorService", () => {
     ).mockReturnValue([{ id: "A", label: "A" }]);
 
     const expectedFilter = (field: string, id: string) => ({
-      $or: [
-        { [field + ".id"]: id },
-        { [field + ".id"]: { $elemMatch: { $eq: id } } },
-      ],
+      [field + ".id"]: { $in: [id] },
     });
 
     for (const field of ["tags", "category"]) {
+      // only a multi-value field holds a list
+      const holdsList = field === "tags";
       const asSingleValue = new ArrayEnumFilterTestEntity();
       asSingleValue[field] = { id: "A", label: "A" };
       const asArray = new ArrayEnumFilterTestEntity();
@@ -1115,7 +1194,9 @@ describe("FilterGeneratorService", () => {
       otherValue[field] = { id: "B", label: "B" };
       const invalidInArray = new ArrayEnumFilterTestEntity();
       invalidInArray[field] = [{ id: "INVALID", label: "INVALID" }];
-      const data = [asSingleValue, asArray, otherValue, invalidInArray];
+      const data = holdsList
+        ? [asSingleValue, asArray, otherValue, invalidInArray]
+        : [asSingleValue, otherValue];
 
       const enumFilter = (
         await service.generate([{ id: field }], ArrayEnumFilterTestEntity, data)
@@ -1126,15 +1207,17 @@ describe("FilterGeneratorService", () => {
       // matches values stored as single value as well as inside an array
       expect(
         data.filter(filterService.getFilterPredicate(option.filter)),
-      ).toEqual([asSingleValue, asArray]);
+      ).toEqual(holdsList ? [asSingleValue, asArray] : [asSingleValue]);
 
-      const invalidOption = enumFilter.options.find(
-        (opt) => opt.key === "invalid:INVALID",
-      );
-      expect(invalidOption.filter).toEqual(expectedFilter(field, "INVALID"));
-      expect(
-        data.filter(filterService.getFilterPredicate(invalidOption.filter)),
-      ).toEqual([invalidInArray]);
+      if (holdsList) {
+        const invalidOption = enumFilter.options.find(
+          (opt) => opt.key === "invalid:INVALID",
+        );
+        expect(invalidOption.filter).toEqual(expectedFilter(field, "INVALID"));
+        expect(
+          data.filter(filterService.getFilterPredicate(invalidOption.filter)),
+        ).toEqual([invalidInArray]);
+      }
     }
   });
 
@@ -1143,5 +1226,23 @@ describe("FilterGeneratorService", () => {
     option: FilterSelectionOption<T>,
   ): T[] {
     return data.filter(filterService.getFilterPredicate(option.filter));
+  }
+
+  function optionWithKey<T extends Entity>(
+    selectable: ConfigurableEnumFilter<T>,
+    key: string,
+  ): FilterSelectionOption<T> {
+    return selectable.options.find((option) => option.key === key);
+  }
+
+  function attendanceStatus(id: string) {
+    return defaultAttendanceStatusTypes.find((status) => status.id === id);
+  }
+
+  function recordWithAttendance<E extends Entity>(
+    type: EntityConstructor<E>,
+    ...entries: AttendanceItem[]
+  ): E {
+    return Object.assign(new type(), { attendance: entries });
   }
 });

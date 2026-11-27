@@ -72,6 +72,7 @@
           [disabled]="!value()?.entityType"
           [conditions]="form.get('conditions')?.value"
           [entityConstructor]="entityConstructor()"
+          [onStoredDocuments]="true"
           (conditionsChange)="onConditionsChange($event)"
         ></app-conditions-editor>
       </div>

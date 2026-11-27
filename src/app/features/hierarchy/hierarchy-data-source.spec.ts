@@ -548,8 +548,13 @@ describe("HierarchyDataSource", () => {
         { forEntity: root, relationProperty: "parent" },
       );
       // as set by the section: only the direct sub-records are linked to the record
+      const section = TestBed.createComponent(RelatedEntitiesComponent<Action>);
+      section.componentRef.setInput("entity", root);
+      section.componentRef.setInput("entityType", "HierarchyTestAction");
+      section.componentRef.setInput("property", "parent");
+      section.detectChanges();
       dataSource.dataFilter.set(
-        restrictToNotArchived({ parent: root.getId() } as DataFilter<Action>),
+        restrictToNotArchived(section.componentInstance.filterObj()),
       );
       await settle();
 

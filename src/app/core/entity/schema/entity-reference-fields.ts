@@ -9,7 +9,7 @@ import { EntitySchemaField } from "./entity-schema-field";
  *
  * This is shared between the in-memory check which fields of a record reference an
  * entity (see {@link EntityRelationsService}) and the database query selecting
- * candidate records (see {@link DefaultDatatype.getReferenceSelector}), so that the
+ * candidate records (see {@link EntityRelationsService}), so that the
  * two cannot disagree about which inner properties hold a reference.
  * To resolve the inner schema of a field, use {@link getEmbeddedEntityReferenceFields}.
  */
