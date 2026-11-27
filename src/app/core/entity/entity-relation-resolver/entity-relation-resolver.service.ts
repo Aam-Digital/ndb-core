@@ -206,7 +206,7 @@ export class EntityRelationResolverService {
 
     try {
       const match = await this.getEntity(entityType, id, loadedEntitiesByType);
-      if (match && levels > 1 && !path.includes(id)) {
+      if (match && levels > 1 && !path.includes(match.getId())) {
         return await this.resolveValue(
           match,
           loadedEntitiesByType,
@@ -274,7 +274,9 @@ export class EntityRelationResolverService {
           .then((entities) => new Map(entities.map((e) => [e.getId(), e]))),
       );
     }
-    return loadedEntitiesByType.get(entityType).then((res) => res.get(id));
+    return loadedEntitiesByType
+      .get(entityType)
+      .then((res) => res.get(Entity.createPrefixedId(entityType, id)));
   }
 
   /**

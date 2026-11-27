@@ -237,23 +237,29 @@ describe("EntityRelationResolverService", () => {
     },
   );
 
-  it("does not resolve the links of a record again that is already resolved above it (a circle)", async () => {
-    const primary = TestEntity.create("Primary");
-    const related = TestEntity.create("Related");
-    primary.ref = related.getId();
-    related.ref = primary.getId();
-    entityMapper.addAll([primary, related]);
+  it.each([
+    ["with", false],
+    ["without", true],
+  ])(
+    "does not resolve the links of a record again that is already resolved above it (a circle), for ids saved %s their type prefix",
+    async (_, withoutPrefix) => {
+      const primary = TestEntity.create("Primary");
+      const related = TestEntity.create("Related");
+      primary.ref = related.getId(withoutPrefix);
+      related.ref = primary.getId(withoutPrefix);
+      entityMapper.addAll([primary, related]);
 
-    const result = await service.resolveRelations(primary, undefined, {
-      levels: 5,
-    });
+      const result = await service.resolveRelations(primary, undefined, {
+        levels: 5,
+      });
 
-    // the record linked again keeps its own fields, but its link back is not followed again
-    const resolvedRelated = result.ref as unknown as TestEntity;
-    expect(resolvedRelated.ref).toEqual(
-      expect.objectContaining({ name: "Primary", ref: related.getId() }),
-    );
-  });
+      // the record linked again keeps its own fields, but its link back is not followed again
+      const resolvedRelated = result.ref as unknown as TestEntity;
+      expect(resolvedRelated.ref).toEqual(
+        expect.objectContaining({ name: "Primary", ref: primary.ref }),
+      );
+    },
+  );
 
   it("creates a stub object for a record that cannot be found at a deeper level", async () => {
     const related = TestEntity.create("Related");
