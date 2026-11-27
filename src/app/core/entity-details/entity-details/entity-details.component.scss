@@ -7,7 +7,12 @@
   height: 100%;
 }
 
-/* room for the elevation shadow of panel content (e.g. tables), which the scrolling tab body would cut off otherwise */
+/*
+ * room for the elevation shadow of panel content (e.g. tables), which the scrolling tab body would cut off otherwise.
+ * height: Angular Material sets it to 100% of the tab body, which the padding would exceed,
+ * showing a second scrollbar next to the page's (the tab body grows with its content anyway).
+ */
 :host ::ng-deep .mat-mdc-tab-body-content {
   padding: 0 6px 8px;
+  height: auto;
 }
