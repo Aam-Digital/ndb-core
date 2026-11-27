@@ -30,7 +30,7 @@ export interface TemplateExportRelatedRecords {
    *
    * The related records of a related record are added to it in the same way.
    * Defaults to 1 (only records directly linking to the exported record)
-   * and is limited to {@link RELATED_RECORDS_MAX_LEVELS}.
+   * and is limited to {@link MAX_LEVELS}.
    */
   levels?: number;
 
@@ -60,9 +60,9 @@ export function getRelatedRecordsPlaceholder(
 }
 
 /**
- * Maximum number of hierarchy levels of related records loaded for a template.
+ * Maximum number of levels of related records (in a hierarchy) or linked records loaded for a template.
  */
-export const RELATED_RECORDS_MAX_LEVELS = 5;
+export const MAX_LEVELS = 5;
 
 /**
  * Allowed format of the record type and field of a config,
@@ -111,16 +111,16 @@ export function getRelatedRecordsLevels(
     return 1;
   }
 
-  return clampRelatedRecordsLevels(config.levels);
+  return clampLevels(config.levels);
 }
 
 /**
- * A number of hierarchy levels within the supported range (1 to {@link RELATED_RECORDS_MAX_LEVELS}).
+ * A number of levels within the supported range (1 to {@link MAX_LEVELS}).
  */
-export function clampRelatedRecordsLevels(value: unknown): number {
+export function clampLevels(value: unknown): number {
   const levels = Math.floor(Number(value));
   if (!Number.isFinite(levels)) {
     return 1;
   }
-  return Math.min(Math.max(levels, 1), RELATED_RECORDS_MAX_LEVELS);
+  return Math.min(Math.max(levels, 1), MAX_LEVELS);
 }
