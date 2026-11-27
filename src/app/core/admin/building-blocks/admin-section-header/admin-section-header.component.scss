@@ -4,5 +4,10 @@
 }
 
 .no-field-margin {
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
+}
+/* let the title shrink in narrow columns, so that the buttons next to it stay inside */
+:host,
+.title-field {
+  min-width: 0;
 }

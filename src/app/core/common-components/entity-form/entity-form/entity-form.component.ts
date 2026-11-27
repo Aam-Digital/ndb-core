@@ -110,6 +110,26 @@ export class EntityFormComponent<T extends Entity = Entity> {
     return this.filterFieldGroups(groups, entity, hiddenFieldIds);
   });
 
+  /**
+   * The visible field groups in rows: consecutive normal groups share one adaptive grid,
+   * a `fullWidth` group is a row of its own (so it does not affect the column widths of the others).
+   */
+  readonly fieldGroupRows = computed<
+    { fullWidth: boolean; groups: FieldGroup[] }[]
+  >(() => {
+    const rows: { fullWidth: boolean; groups: FieldGroup[] }[] = [];
+    for (const group of this.filteredFieldGroups()) {
+      const fullWidth = !!group.fullWidth;
+      const lastRow = rows.at(-1);
+      if (lastRow && !fullWidth && !lastRow.fullWidth) {
+        lastRow.groups.push(group);
+      } else {
+        rows.push({ fullWidth, groups: [group] });
+      }
+    }
+    return rows;
+  });
+
   private initialFormValues: any;
   private changesSubscription: Subscription;
 

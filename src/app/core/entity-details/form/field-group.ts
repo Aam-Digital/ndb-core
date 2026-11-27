@@ -16,4 +16,12 @@ export interface FieldGroup {
    * (in addition to the field's own condition).
    */
   displayCondition?: DataFilter<any>;
+
+  /**
+   * (Optional) Let this group span the whole width of the form (its own row)
+   * instead of being one of the side-by-side columns,
+   * e.g. for a long-text field holding long descriptions.
+   * The fields in such a group also stretch to the full width.
+   */
+  fullWidth?: boolean;
 }

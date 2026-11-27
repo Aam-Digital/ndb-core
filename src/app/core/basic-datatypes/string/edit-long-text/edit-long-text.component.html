@@ -1,1 +1,9 @@
-<textarea matInput [formControl]="formControl" rows="4" dir="auto"></textarea>
+<textarea
+  matInput
+  [formControl]="formControl"
+  [cdkTextareaAutosize]="autosizeEnabled()"
+  [rows]="minRows()"
+  [cdkAutosizeMinRows]="minRows()"
+  [cdkAutosizeMaxRows]="maxRows()"
+  dir="auto"
+></textarea>

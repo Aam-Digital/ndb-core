@@ -20,7 +20,7 @@ import {
   signal,
   untracked,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -32,6 +32,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { MatMenuModule } from "@angular/material/menu";
+import { DisplayConditionDialogService } from "../../building-blocks/admin-display-condition-button/display-condition-dialog.service";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
 import { DataFilter } from "../../../filter/filters/filters";
@@ -47,7 +50,6 @@ import { EntityFieldLabelComponent } from "../../../entity/entity-field-label/en
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityService } from "../../admin-entity.service";
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
-import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import {
   AdminEntityFieldComponent,
@@ -90,8 +92,9 @@ type FieldDragDropEvent = CdkDragDrop<
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
-    AdminDisplayConditionButtonComponent,
+    MatMenuModule,
     HorizontalScrollComponent,
+    FaDynamicIconComponent,
   ],
 })
 export class AdminEntityFormComponent {
@@ -99,6 +102,7 @@ export class AdminEntityFormComponent {
   private matDialog = inject(MatDialog);
   private adminEntityService = inject(AdminEntityService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly conditionDialog = inject(DisplayConditionDialogService);
 
   // migrate inputs to Angular `input()` signals
   readonly entityType = input<EntityConstructor>();
@@ -576,6 +580,35 @@ export class AdminEntityFormComponent {
     this.fieldGroups.update((groups) =>
       groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
     );
+  }
+
+  protected readonly fullWidthOffTooltip = $localize`Display this field group across the whole width of the form, e.g. for long text fields.`;
+  protected readonly fullWidthOnTooltip = $localize`Display this field group as a column next to other field groups again, instead of across the whole width of the form.`;
+
+  /** Switch whether the group spans the whole width of the form instead of being one of its columns. */
+  toggleGroupFullWidth(i: number) {
+    this.fieldGroups.update((groups) =>
+      groups.map((g, idx) => {
+        if (idx !== i) return g;
+        const { fullWidth, ...updated } = g;
+        return fullWidth ? updated : { ...updated, fullWidth: true };
+      }),
+    );
+  }
+
+  /** Open the editor for the display condition of the group at the given index. */
+  editGroupDisplayCondition(i: number) {
+    const group = this.fieldGroups()[i];
+    this.conditionDialog
+      .editCondition({
+        condition: group.displayCondition,
+        entityType: this.entityType(),
+        target: "fieldGroup",
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((condition) =>
+        this.updateGroupDisplayCondition(group, condition),
+      );
   }
 
   updateGroupDisplayCondition(

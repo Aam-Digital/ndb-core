@@ -34,6 +34,8 @@ import { By } from "@angular/platform-browser";
 import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableText } from "../../../config/multi-lingual-config";
+import { JsonEditorService } from "../../json-editor/json-editor.service";
+import { of } from "rxjs";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -47,6 +49,7 @@ describe("AdminEntityFieldComponent", () => {
 
   let mockEnumService: any;
   let confirmationDialog: any;
+  let mockJsonEditor: { openJsonEditorDialog: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     mockEnumService = {
@@ -59,6 +62,7 @@ describe("AdminEntityFieldComponent", () => {
       getConfirmation: vi.fn(),
     };
     confirmationDialog.getConfirmation.mockResolvedValue(true);
+    mockJsonEditor = { openJsonEditorDialog: vi.fn() };
     mockEnumService.listEnums.mockReturnValue([]);
     dialogData = {
       entitySchemaField: { datatype: "" } as unknown as EntitySchemaField,
@@ -86,6 +90,7 @@ describe("AdminEntityFieldComponent", () => {
         { provide: MatDialogRef, useValue: { close: () => null } },
         { provide: ConfigurableEnumService, useValue: mockEnumService },
         { provide: ConfirmationDialogService, useValue: confirmationDialog },
+        { provide: JsonEditorService, useValue: mockJsonEditor },
         { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
       ],
     });
@@ -118,6 +123,48 @@ describe("AdminEntityFieldComponent", () => {
     component.schemaFieldsForm.get("label").setValue("Changed Label");
     await fixture.whenStable();
     expect(component.fieldIdForm.value).toBe("new_id");
+  });
+
+  it.each([
+    ["saved", { rows: 4 }, { rows: 12 }],
+    ["cleared", { rows: 4 }, null],
+    ["cancelled", { rows: 4 }, { rows: 4 }],
+  ])(
+    "should edit the 'additional' of a long-text field as raw JSON (%s)",
+    async (action, initial, expected) => {
+      await recreateComponentWithData({
+        id: "description",
+        dataType: LongTextDatatype.dataType,
+        additional: initial,
+      });
+      const dialogResult = {
+        saved: { rows: 12 },
+        cleared: {},
+        cancelled: null,
+      }[action];
+      mockJsonEditor.openJsonEditorDialog.mockReturnValue(of(dialogResult));
+
+      const button = await loader.getHarness(
+        MatButtonHarness.with({ text: /Edit Type Details \(JSON\)/ }),
+      );
+      await button.click();
+      await fixture.whenStable();
+
+      expect(mockJsonEditor.openJsonEditorDialog).toHaveBeenCalledWith(initial);
+      expect(component.additionalForm.value).toEqual(expected);
+    },
+  );
+
+  it("should not offer to edit 'additional' as raw JSON for datatypes without such options", async () => {
+    await recreateComponentWithData({
+      id: "name",
+      dataType: StringDatatype.dataType,
+    });
+
+    const buttons = await loader.getAllHarnesses(
+      MatButtonHarness.with({ text: /Edit Type Details \(JSON\)/ }),
+    );
+    expect(buttons).toHaveLength(0);
   });
 
   it("should include 'additional' field only for relevant datatypes", async () => {
