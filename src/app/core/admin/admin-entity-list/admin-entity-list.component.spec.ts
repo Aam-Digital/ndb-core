@@ -10,6 +10,7 @@ import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
+import { UpdateMetadataDatatype } from "../../entity/model/update-metadata.datatype";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Component, input } from "@angular/core";
 import { By } from "@angular/platform-browser";
@@ -46,6 +47,11 @@ describe("AdminEntityListComponent", () => {
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: UpdateMetadataDatatype,
+          multi: true,
+        },
       ],
     });
 
@@ -60,7 +66,7 @@ describe("AdminEntityListComponent", () => {
   });
 
   it("excludes the bare embedded field (participants) from the filter candidates", () => {
-    expect(component.filterExcludedFields()).toEqual(["participants"]);
+    expect(component.filterExcludedFields()).toContain("participants");
   });
 
   it("still offers the dot-path properties of the embedded field as filter candidates, once it is a displayed column", () => {
@@ -91,6 +97,22 @@ describe("AdminEntityListComponent", () => {
 
     expect(ids).toContain("participants.participant");
     expect(ids).not.toContain("participants.status");
+  });
+
+  it("always offers the created and last updated date as filter candidates, as these fields are never a column", () => {
+    fixture.componentRef.setInput("config", {
+      entityType: "AdminEntityListTestEvent",
+      columns: ["date", "category"],
+      filters: [],
+    } as EntityListConfig);
+
+    const ids = component
+      .filterAdditionalFields()
+      .map((f) => (typeof f === "string" ? f : f.id));
+
+    expect(ids).toEqual(expect.arrayContaining(["created.at", "updated.at"]));
+    expect(ids).not.toContain("created.by");
+    expect(ids).not.toContain("updated.by");
   });
 });
 

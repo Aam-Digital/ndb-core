@@ -153,13 +153,18 @@ export function getEmbeddedFieldId(ref: EmbeddedFieldRef): string {
 /**
  * Compose the display label for a property nested inside an embedded field,
  * e.g. "Children attendance -> Participant".
+ * The property of an internal field without a label of its own (e.g. the date of "Last updated")
+ * is named like its field.
  */
 export function getEmbeddedFieldLabel(ref: EmbeddedFieldRef): string {
   const outerLabel =
     resolveLocaleText(ref.outerSchema.labelShort ?? ref.outerSchema.label) ??
     ref.outerProp;
-  const innerLabel =
-    resolveLocaleText(ref.innerSchema.labelShort ?? ref.innerSchema.label) ??
-    ref.innerProp;
-  return `${outerLabel} -> ${innerLabel}`;
+  const innerLabel = resolveLocaleText(
+    ref.innerSchema.labelShort ?? ref.innerSchema.label,
+  );
+  if (!innerLabel && ref.outerSchema.isInternalField) {
+    return outerLabel;
+  }
+  return `${outerLabel} -> ${innerLabel ?? ref.innerProp}`;
 }

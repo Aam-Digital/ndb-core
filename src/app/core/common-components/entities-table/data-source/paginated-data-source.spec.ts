@@ -327,6 +327,10 @@ describe("PaginatedDataSource", () => {
       isArray: true,
       additional: { time: { dataType: "date" } },
     });
+    DateTest.schema.set("meta", {
+      dataType: "schema-embed",
+      additional: { time: { dataType: "date" } },
+    });
 
     /** a local date and time as stored in the database for a "date" field: a UTC timestamp */
     const timestamp = (localTime: string) => moment(localTime).toISOString();
@@ -342,6 +346,7 @@ describe("PaginatedDataSource", () => {
       time: timestamp(time),
       month,
       log: [{ time: timestamp(time) }],
+      meta: { time: timestamp(time) },
     }));
 
     let database: MemoryPouchDatabase;
@@ -398,6 +403,7 @@ describe("PaginatedDataSource", () => {
     it.each([
       ["time", "2026-03-12", "2026-03-12", ["b", "c"]],
       ["log.time", "2026-03-12", "2026-03-12", ["b", "c"]],
+      ["meta.time", "2026-03-12", "2026-03-12", ["b", "c"]],
       ["month", "2026-03-01", "2026-03-31", ["b"]],
       // a month counts as its first day
       ["month", "2026-03-15", "2026-04-15", ["c"]],

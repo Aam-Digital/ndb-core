@@ -259,15 +259,19 @@ export class Entity {
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField({ anonymize: "retain", isInternalField: true }) _rev: string;
 
+  // `labelShort` names the dates as filters (see getEmbeddedFieldLabel); a `label` would also add
+  // these internal fields to exports and field pickers.
   @DatabaseField({
     anonymize: "retain",
     isInternalField: true,
+    labelShort: $localize`Created`,
   })
   created: UpdateMetadata;
 
   @DatabaseField({
     anonymize: "retain",
     isInternalField: true,
+    labelShort: $localize`Last updated`,
   })
   updated: UpdateMetadata;
 

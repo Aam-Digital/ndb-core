@@ -30,6 +30,14 @@ import {
   getEmbeddedFieldLabel,
   getEmbeddedFieldRefs,
 } from "../../entity/schema/embedded-schema-field.util";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+
+function isDateOfInternalField(ref: EmbeddedFieldRef): boolean {
+  return (
+    !!ref.outerSchema.isInternalField &&
+    ref.innerSchema.dataType === DateDatatype.dataType
+  );
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,6 +107,8 @@ export class AdminEntityListComponent {
    * Nested properties that are already configured as filters are always offered, so that
    * they are not silently dropped from the config once their embedded field is no longer
    * displayed as a column.
+   * The dates of internal fields (created, updated) are always offered, as these fields can
+   * never be a column.
    */
   private readonly embeddedFilterFields = computed<ColumnConfig[]>(() => {
     const displayedColumnIds = new Set(
@@ -109,7 +119,8 @@ export class AdminEntityListComponent {
       .filter(
         (ref) =>
           displayedColumnIds.has(ref.outerProp) ||
-          configuredFilterIds.has(getEmbeddedFieldId(ref)),
+          configuredFilterIds.has(getEmbeddedFieldId(ref)) ||
+          isDateOfInternalField(ref),
       )
       .map((ref) => ({
         id: getEmbeddedFieldId(ref),
