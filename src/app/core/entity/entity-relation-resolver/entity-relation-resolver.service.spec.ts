@@ -255,6 +255,25 @@ describe("EntityRelationResolverService", () => {
     );
   });
 
+  it("creates a stub object for a record that cannot be found at a deeper level", async () => {
+    const related = TestEntity.create("Related");
+    related.ref = TestEntity.createPrefixedId(
+      TestEntity.ENTITY_TYPE,
+      "does-not-exist",
+    );
+    entityMapper.add(related);
+    const primary = TestEntity.create("Primary");
+    primary.ref = related.getId();
+
+    const result = await service.resolveRelations(primary, undefined, {
+      levels: 2,
+    });
+
+    const resolvedRelated = result.ref as unknown as TestEntity;
+    expect(resolvedRelated.name).toBe("Related");
+    expect(resolvedRelated.ref).toEqual({ _id: related.ref });
+  });
+
   it("does not modify the original entities passed in", async () => {
     const related = TestEntity.create("Related");
     entityMapper.add(related);
