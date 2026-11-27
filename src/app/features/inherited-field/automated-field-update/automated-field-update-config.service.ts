@@ -25,7 +25,7 @@ import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entit
 import { asArray } from "#src/app/utils/asArray";
 import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
-import { ChangeSet, getChangedFields } from "./change-set";
+import { ChangeSet, getChangedFields, StartingChange } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import {
   AffectedEntitiesCalculation,
@@ -77,24 +77,34 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly processedRevisions = new Set<string>();
 
   /**
-   * Applies rules to dependent entities based on changes in the provided entities.
-   * Also prompts user confirmation and saves updates if any changes were made.
-   * Several changed entities (e.g. of a bulk edit) are covered together in one dialog.
-   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
-   * @param entities - The source entities whose changes should trigger updates
-   * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
-   *   (in the same order)
-   * @return the updated entities as they were before the update (to undo it), without the given entities themselves
+   * Applies rules to dependent entities based on changes in the provided entities
+   * (see {@link applyRulesToChanges}).
+   * @param entities The changed entities (already saved)
+   * @param entitiesBeforeChanges The state of the entities before their change (in the same order)
    */
   public async applyRulesToDependentEntities(
     entities: Entity | Entity[],
     entitiesBeforeChanges: Entity | Entity[],
   ): Promise<Entity[]> {
+    const before = asArray(entitiesBeforeChanges);
+    return this.applyRulesToChanges(
+      asArray(entities).map((entity, i) => ({ entity, before: before[i] })),
+    );
+  }
+
+  /**
+   * Applies rules to dependent entities based on the changes of the given records.
+   * Also prompts user confirmation and saves updates if any changes were made.
+   * Several changed records (e.g. of a bulk edit) are covered together in one dialog.
+   * A failure is reported and shown to the user here, as the changed records themselves are already saved.
+   * @return the updated entities as they were before the update (to undo it), without the changed records themselves
+   */
+  public async applyRulesToChanges(
+    changes: Pick<StartingChange, "entity" | "before">[],
+  ): Promise<Entity[]> {
+    let previousVersions: Entity[];
     try {
-      return await this.updateEntitiesDependingOn(
-        asArray(entities),
-        asArray(entitiesBeforeChanges),
-      );
+      previousVersions = await this.updateEntitiesDependingOn(changes);
     } catch (error) {
       const failure =
         error instanceof PartiallySavedUpdatesError ? error.cause : error;
@@ -106,23 +116,26 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         $localize`The linked records could not be updated.`,
       );
       // the records that were saved before the failure can still be undone
-      const givenIds = new Set(asArray(entities).map((e) => e.getId()));
-      return error instanceof PartiallySavedUpdatesError
-        ? error.previousVersions.filter((e) => !givenIds.has(e.getId()))
-        : [];
+      previousVersions =
+        error instanceof PartiallySavedUpdatesError
+          ? error.previousVersions
+          : [];
     }
+
+    // the caller has the changed records as they were before their change
+    const changedIds = new Set(changes.map(({ entity }) => entity.getId()));
+    return previousVersions.filter((entity) => !changedIds.has(entity.getId()));
   }
 
   private async updateEntitiesDependingOn(
-    entities: Entity[],
-    before: Entity[],
+    changes: Pick<StartingChange, "entity" | "before">[],
   ): Promise<Entity[]> {
     // only the entities with a change that is passed on (saving also changes e.g. the update time)
-    const triggers: UpdateTrigger[] = entities
-      .map((entity, i) => ({
+    const triggers: UpdateTrigger[] = changes
+      .map(({ entity, before }) => ({
         entity,
-        before: before[i],
-        changedFields: getChangedFields(entity, before[i]),
+        before,
+        changedFields: getChangedFields(entity, before),
       }))
       .filter(
         (trigger) =>
@@ -133,9 +146,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
     const { previousVersions } =
       await this.confirmAndSaveAffectedEntities(triggers);
-    // the caller has the given entities as they were before their change
-    const givenIds = new Set(entities.map((entity) => entity.getId()));
-    return previousVersions.filter((entity) => !givenIds.has(entity.getId()));
+    return previousVersions;
   }
 
   /**
