@@ -814,9 +814,6 @@
             "id": "schoolId",
             "type": "School",
             "label": "School"
-          },
-          {
-            "id": "updated.at"
           }
         ],
         "loaderMethod": "ChildrenService"
