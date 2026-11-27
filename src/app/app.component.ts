@@ -24,6 +24,7 @@ import { environment } from "environments/environment";
 import { SetupService } from "./core/setup/setup.service";
 import { from, merge, Observable, of } from "rxjs";
 import { MultiTabDetectionService } from "./core/database/multi-tab-detection.service";
+import { PreviousPageService } from "./utils/url-state/previous-page.service";
 
 /**
  * Component as the main entry point for the app.
@@ -52,6 +53,8 @@ export class AppComponent {
   constructor() {
     // Initialize multi-tab monitoring globally so warnings are shown proactively.
     inject(MultiTabDetectionService);
+    // Start remembering the previous page from the beginning, e.g. to return to a list after deleting a record.
+    inject(PreviousPageService);
 
     this.configReady$ = this.loginState.pipe(
       // if logged out, we don't wait for config and treat this separately

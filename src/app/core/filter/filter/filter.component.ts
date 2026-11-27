@@ -159,15 +159,21 @@ export class FilterComponent<T extends Entity = Entity> {
     );
     this.applyFilterSelections(updatedSelections);
     if (this.useUrlQueryParams()) {
-      this.urlState.updateUrlParams(
-        {
-          [filter.name]: selectedOptions
-            .map((value) => encodeURIComponent(value))
-            .join(","),
-        },
-        false,
+      // Store all filters, not only the changed one: a filter that is only set by
+      // its configured default would otherwise be lost when the list is opened again,
+      // because defaults are not applied to a URL with any filter param (see loadUrlParams).
+      const filterUrlParams = Object.fromEntries(
+        updatedSelections.map((f) => [
+          f.name,
+          this.toUrlValue(f.selectedOptionValues ?? []),
+        ]),
       );
+      this.urlState.updateUrlParams(filterUrlParams, false);
     }
+  }
+
+  private toUrlValue(selectedOptions: string[]): string {
+    return selectedOptions.map((value) => encodeURIComponent(value)).join(",");
   }
 
   private applyFilterSelections(

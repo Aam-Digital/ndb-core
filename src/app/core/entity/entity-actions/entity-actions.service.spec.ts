@@ -19,6 +19,7 @@ import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { BulkOperationStateService } from "./bulk-operation-state.service";
+import { PreviousPageService } from "#src/app/utils/url-state/previous-page.service";
 import type { Mock } from "vitest";
 import {
   ConfirmationDialogMock,
@@ -69,6 +70,7 @@ describe("EntityActionsService", () => {
   let mockedEntityDeleteService: EntityDeleteServiceMock;
   let mockedEntityAnonymizeService: EntityAnonymizeServiceMock;
   let mockedBulkOperationState: BulkOperationStateServiceMock;
+  let previousPage: { getPreviousPageUrl: Mock };
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -125,6 +127,7 @@ describe("EntityActionsService", () => {
     mockConfirmationDialog.showProgressDialog.mockReturnValue(
       mockMatDialogRef(),
     );
+    previousPage = { getPreviousPageUrl: vi.fn() };
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -152,6 +155,7 @@ describe("EntityActionsService", () => {
           provide: BulkOperationStateService,
           useValue: mockedBulkOperationState,
         },
+        { provide: PreviousPageService, useValue: previousPage },
       ],
     });
     mockRouter = TestBed.inject(Router);
@@ -195,6 +199,35 @@ describe("EntityActionsService", () => {
     );
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
+
+  it.each([
+    [
+      "the list the record was opened from, with its filters",
+      "/event?team=abc&_sortBy=date",
+      { team: "abc", _sortBy: "date" },
+    ],
+    [
+      "the plain list if the record was not opened from it",
+      "/other",
+      undefined,
+    ],
+    ["the plain list if the previous page is unknown", undefined, undefined],
+  ])(
+    "should navigate back to %s after deleting a record",
+    async (_, previousPageUrl, expectedQueryParams) => {
+      vi.spyOn(mockRouter, "url", "get").mockReturnValue(
+        "/event/123?_tabIndex=0",
+      );
+      previousPage.getPreviousPageUrl.mockReturnValue(previousPageUrl);
+      mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+
+      await service.delete(singleTestEntity, true);
+
+      expect(navigateSpy).toHaveBeenCalledWith(["/event"], {
+        queryParams: expectedQueryParams,
+      });
+    },
+  );
 
   it("should delete several entities and show snackbar confirmation", async () => {
     // onAction is never called

@@ -10,6 +10,7 @@ import {
   model,
   OnInit,
   output,
+  signal,
   untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -228,6 +229,13 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
 
+  /**
+   * Whether the user opened the filter overlay (small screens) since the list was opened.
+   * Until then, a hidden filter applies the filters from the URL; from then on the overlay
+   * owns the filters (two filters would overwrite each other's changes).
+   */
+  readonly filterOverlayUsed = signal(false);
+
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
   }
@@ -369,6 +377,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
    * Calling this function will display the filters in a popup
    */
   openFilterOverlay() {
+    this.filterOverlayUsed.set(true);
     this.dialog.open(FilterOverlayComponent, {
       data: {
         filterConfig: this.filters(),

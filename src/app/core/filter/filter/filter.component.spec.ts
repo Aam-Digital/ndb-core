@@ -168,17 +168,41 @@ describe("FilterComponent", () => {
     expect(customStatusFilter.selectedOptionValues).toEqual(["A", "B,C"]);
   });
 
-  it("should encode filter values containing commas before storing them in the url", () => {
+  it("should encode filter values containing commas before storing them in the url", async () => {
     const urlState = TestBed.inject(UrlStateService);
     const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
-    fixture.componentRef.setInput("useUrlQueryParams", true);
-    fixture.detectChanges();
+    await setComponentInputs({
+      entityType: TestEntity,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "other" }],
+    });
 
-    const filter = new StringFilter("other", "Other");
-    component.filterOptionSelected(filter, ["Doe, John"]);
+    component.filterOptionSelected(component.filterSelections()[0], [
+      "Doe, John",
+    ]);
 
     expect(updateUrlParamsSpy).toHaveBeenCalledWith(
       { other: encodeURIComponent("Doe, John") },
+      false,
+    );
+  });
+
+  it("should store filters set by their default in the url when the user changes another filter", async () => {
+    const urlState = TestBed.inject(UrlStateService);
+    const updateUrlParamsSpy = vi.spyOn(urlState, "updateUrlParams");
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "date", default: "0" }, { id: "category" }],
+    });
+    const categoryFilter = component
+      .filterSelections()
+      .find((f) => f.name === "category");
+
+    component.filterOptionSelected(categoryFilter, ["someCategory"]);
+
+    expect(updateUrlParamsSpy).toHaveBeenCalledWith(
+      { date: "0", category: "someCategory" },
       false,
     );
   });

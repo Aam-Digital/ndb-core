@@ -4,7 +4,7 @@ import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { getUrlWithoutParams } from "../../../utils/utils";
+import { getPathOfUrl, getUrlWithoutParams } from "../../../utils/utils";
 import {
   EntityDeleteService,
   EntityDeletionAbortedError,
@@ -18,6 +18,7 @@ import { BulkOperationStateService } from "./bulk-operation-state.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { asArray } from "#src/app/utils/asArray";
+import { PreviousPageService } from "#src/app/utils/url-state/previous-page.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -36,6 +37,7 @@ export class EntityActionsService {
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly previousPage = inject(PreviousPageService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -200,7 +202,13 @@ export class EntityActionsService {
     if (navigate) {
       currentUrl = getUrlWithoutParams(this.router);
       const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
-      await this.router.navigate([parentUrl]);
+      // return to the list with the filters and sort the user had set when opening the record
+      const previousPageUrl = this.previousPage.getPreviousPageUrl();
+      const queryParams =
+        previousPageUrl && getPathOfUrl(previousPageUrl) === parentUrl
+          ? this.router.parseUrl(previousPageUrl).queryParams
+          : undefined;
+      await this.router.navigate([parentUrl], { queryParams });
     }
 
     this.showSnackbarConfirmationWithUndo(

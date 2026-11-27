@@ -64,6 +64,7 @@ describe("EntityListComponent", () => {
     mockActivatedRoute = {
       component: undefined,
       queryParams: new Subject(),
+      queryParamMap: new Subject(),
       data: routeData,
       snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
     };
@@ -277,6 +278,55 @@ describe("EntityListComponent", () => {
         { inactive: { $eq: null } },
       ],
     });
+  });
+
+  it("applies the filters from the URL on small screens without opening the filter overlay", async () => {
+    // e.g. coming back to the list from the details page of a record
+    mockActivatedRoute.snapshot = {
+      queryParams: { inactive: "true" },
+      queryParamMap: convertToParamMap({ inactive: "true" }),
+    } as any;
+    TestBed.overrideProvider(ScreenWidthObserver, {
+      useValue: { isDesktop: () => false, platform: () => of(false) },
+    });
+
+    createComponent();
+    initComponentInputs();
+    for (let i = 0; i < 3; i++) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    expect(component.filterObj()).toEqual({ inactive: true });
+  });
+
+  it("keeps the filters changed in the filter overlay on small screens", async () => {
+    mockActivatedRoute.snapshot = {
+      queryParams: { inactive: "true" },
+      queryParamMap: convertToParamMap({ inactive: "true" }),
+    } as any;
+    TestBed.overrideProvider(ScreenWidthObserver, {
+      useValue: { isDesktop: () => false, platform: () => of(false) },
+    });
+    createComponent();
+    initComponentInputs();
+    for (let i = 0; i < 3; i++) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    component.openFilterOverlay();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const clearButton = Array.from<HTMLElement>(
+      document.querySelectorAll(".cdk-overlay-container button"),
+    ).find((button) => button.textContent.includes("Clear"));
+    clearButton.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.filterObj()).toEqual({});
   });
 
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {

@@ -14,6 +14,7 @@ import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/d
 import { TestEntity } from "../utils/test-utils/TestEntity";
 import { EntityAbility } from "./permissions/ability/entity-ability";
 import { ComponentRegistry } from "../dynamic-components";
+import { PreviousPageService } from "../utils/url-state/previous-page.service";
 
 describe("CoreModule", () => {
   beforeEach(() => {
@@ -39,6 +40,7 @@ describe("CoreModule", () => {
         },
         { provide: BulkOperationStateService, useValue: {} },
         { provide: DuplicateRecordService, useValue: {} },
+        { provide: PreviousPageService, useValue: {} },
       ],
     });
   });

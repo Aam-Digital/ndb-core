@@ -32,6 +32,14 @@ export function getUrlWithoutParams(router: Router): string {
   return urlTree.toString();
 }
 
+/**
+ * The path of a URL string, without its query params and fragment.
+ * Use this to compare whether two URLs show the same page.
+ */
+export function getPathOfUrl(url: string): string {
+  return url.split(/[?#]/)[0];
+}
+
 export function getParentUrl(router: Router): string {
   const url = getUrlWithoutParams(router);
   return url.substring(0, url.lastIndexOf("/"));
