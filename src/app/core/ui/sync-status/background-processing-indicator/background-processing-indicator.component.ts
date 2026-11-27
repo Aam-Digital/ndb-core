@@ -5,7 +5,6 @@ import {
   inject,
   ChangeDetectionStrategy,
   input,
-  signal,
   viewChild,
 } from "@angular/core";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
@@ -46,7 +45,6 @@ export class BackgroundProcessingIndicatorComponent {
 
   /** whether processes of with the same title shall be summarized into one line */
   summarize = input(true);
-  wasClosed = signal(false);
 
   private readonly dbResolver = inject(DatabaseResolverService);
 
@@ -63,37 +61,18 @@ export class BackgroundProcessingIndicatorComponent {
   );
   allTasksFinished = computed(() => this.taskCounter() === 0);
 
-  /** handle to programmatically open/close the details dropdown */
+  /** handle to programmatically close the details dropdown */
   taskListDropdownTrigger = viewChild(MatMenuTrigger);
-  private openMenuTimeout: ReturnType<typeof setTimeout> | undefined;
 
-  private readonly taskCounterEffect = effect((onCleanup) => {
-    const amount = this.taskCounter();
-    const taskListDropdownTrigger = this.taskListDropdownTrigger();
-
-    if (amount === 0) {
-      if (this.openMenuTimeout) {
-        clearTimeout(this.openMenuTimeout);
-      }
-      taskListDropdownTrigger?.closeMenu();
-      this.wasClosed.set(false);
-    } else {
-      if (!this.wasClosed()) {
-        // Need to wait for the change cycle that shows the sync button.
-        if (this.openMenuTimeout) {
-          clearTimeout(this.openMenuTimeout);
-        }
-        this.openMenuTimeout = setTimeout(() =>
-          taskListDropdownTrigger?.openMenu(),
-        );
-      }
+  /**
+   * Close the details once all processes finished.
+   * The details are never opened automatically (that would grab focus on every regular sync),
+   * users open them by clicking the sync icon.
+   */
+  private readonly closeWhenFinishedEffect = effect(() => {
+    if (this.allTasksFinished()) {
+      this.taskListDropdownTrigger()?.closeMenu();
     }
-
-    onCleanup(() => {
-      if (this.openMenuTimeout) {
-        clearTimeout(this.openMenuTimeout);
-      }
-    });
   });
 
   /**
@@ -107,10 +86,6 @@ export class BackgroundProcessingIndicatorComponent {
       // click handler, so a rethrow would only report it again as an unhandled error
       Logging.debug("Manually triggered re-sync failed", err);
     }
-  }
-
-  markWasClosed(): void {
-    this.wasClosed.set(true);
   }
 
   closeTaskListDropdown(): void {
